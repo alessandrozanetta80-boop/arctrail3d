@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F6B3A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ArcTrail 3D">
+<meta name="mobile-web-app-capable" content="yes">
+<title>ArcTrail 3D &middot; Segnapunti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22ArcTrail%203D%22%2C%22short_name%22%3A%22ArcTrail%203D%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F6F5F2%22%2C%22theme_color%22%3A%22%231F6B3A%22%2C%22start_url%22%3A%22.%22%7D">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23F6F5F2'/%3E%3Ccircle cx='50' cy='50' r='34' fill='none' stroke='%231F6B3A' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%236B4A34' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='7' fill='%231F6B3A'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#F6F5F2; --bg-panel:#ffffff; --bg-panel-2:#EFEDE6; --wood:#ffffff; --wood-2:#EFEDE6;
+    --accent:#1F6B3A; --bark:#6B4A34; --gold:#C9932A; --cream:#132615; --muted:#6B7A66;
+    --danger:#B0483A; --success:#3D7A4E; --line:#E3E0D5;
+    --qss:#1F6B3A; --qspot:#8FAF8A; --qsag:#D9B44A; --qzero:#5B5B54;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{ margin:0; color:var(--cream); position:relative;
+    background:
+      radial-gradient(ellipse 900px 500px at 8% -5%, rgba(31,107,58,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 105% 15%, rgba(201,147,42,0.14), transparent 55%),
+      radial-gradient(ellipse 800px 600px at 50% 120%, rgba(107,74,52,0.10), transparent 60%),
+      var(--bg);
+    font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; min-height:100dvh; padding-bottom:env(safe-area-inset-bottom); }
+  body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.5; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .display{ font-family:Georgia,'Times New Roman',serif; font-weight:700; letter-spacing:0.03em; }
+  #app{ max-width:520px; margin:0 auto; padding:18px 16px 32px; min-height:100dvh; position:relative; }
+  header.top{ display:flex; align-items:center; gap:10px; padding:6px 2px 18px; border-bottom:1px solid var(--line); margin-bottom:20px; }
+  header.top .logo{ width:38px;height:38px;flex:0 0 auto; filter:drop-shadow(0 2px 6px rgba(31,107,58,0.35)); }
+  header.top .headtxt{ flex:1; }
+  header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent); }
+  header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
+  .home-btn{ background:none;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:8px 12px;font-size:0.8rem;cursor:pointer; }
+  .card{ background:var(--bg-panel); border:1px solid var(--line); border-radius:22px; padding:18px; margin-bottom:16px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 24px rgba(30,40,20,0.07), 0 2px 6px rgba(30,40,20,0.04);
+    position:relative; z-index:1; }
+  h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 12px; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:14px; padding:14px 18px; font-size:1rem; font-weight:600; cursor:pointer; color:var(--cream); background:var(--bg-panel-2); border:1px solid var(--line); transition:transform .12s ease, box-shadow .12s ease, filter .12s ease; }
+  .btn:active{ transform:scale(0.96); filter:brightness(0.97); }
+  .btn:disabled{ opacity:0.4; }
+  .btn-primary{ background:linear-gradient(135deg,var(--accent),#2f8a4d); border-color:transparent; color:#fdfaf3; font-weight:700; box-shadow:0 6px 16px rgba(31,107,58,0.28); }
+  .btn-primary:active{ box-shadow:0 2px 8px rgba(31,107,58,0.22); }
+  .btn-block{ width:100%; }
+  .btn-ghost{ background:transparent; border:1px solid var(--line); color:var(--muted); }
+  .btn-sm{ padding:9px 14px; font-size:0.85rem; }
+  .btn-danger{ background:var(--danger); border-color:transparent; color:#fff; }
+  .btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
+  .menu-btn{ padding:18px; font-size:1.05rem; justify-content:flex-start; text-align:left; }
+  .menu-btn .menu-icon{ font-size:1.4rem; }
+  .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; }
+  .menu-btn .menu-sub{ font-size:0.7rem; font-weight:400; opacity:0.85; margin-top:2px; }
+  .menu-btn.training{ background:linear-gradient(135deg,var(--accent),#2f8a4d); color:#fdfaf3; border-color:transparent; }
+  .menu-btn.gara{ background:linear-gradient(135deg,var(--bark),#835a40); color:#fdfaf3; border-color:transparent; box-shadow:0 6px 16px rgba(107,74,52,0.28); }
+  .row{ display:flex; gap:10px; }
+  .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
+  .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:12px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; }
+  .chip.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
+  .lang-chip{ min-width:60px; }
+  .lang-pick-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:16px 20px; border-radius:16px; border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; box-shadow:0 4px 12px rgba(30,40,20,0.05); transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
+  .lang-pick-btn:active{ transform:scale(0.97); }
+  .lang-pick-btn .flag{ font-size:1.6rem; line-height:1; }
+  .lang-pick-btn:hover, .lang-pick-btn:focus{ border-color:var(--accent); box-shadow:0 6px 16px rgba(31,107,58,0.15); }
+  .onboard-title{ font-size:1.35rem; color:var(--accent); margin:2px 0 6px; }
+  .onboard-sub{ color:var(--muted); font-size:0.82rem; margin-bottom:26px; }
+  .onboard-stack{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px; }
+  input[type=text], input[type=number]{ width:100%; padding:13px 14px; border-radius:10px; border:1px solid var(--line); background:#fff; color:var(--cream); font-size:1rem; }
+  input[type=text]:focus, input[type=number]:focus{ outline:2px solid var(--accent); }
+  .archer-list{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+  .archer-row{ display:flex; align-items:center; justify-content:space-between; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+  .archer-row .name{ font-weight:600; }
+  .remove-x{ background:none;border:none;color:var(--danger);font-size:1.2rem;cursor:pointer;line-height:1; padding:4px 6px; }
+  .progress-wrap{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+  .progress-track{ height:8px; background:var(--bg-panel-2); border-radius:8px; overflow:hidden; margin-bottom:14px; position:relative; }
+  .progress-fill{ height:100%; background:linear-gradient(90deg,var(--accent),var(--gold)); border-radius:8px; transition:width .4s ease; position:relative; overflow:hidden; }
+  .progress-fill::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent); width:40%; animation:shimmer 2.2s ease-in-out infinite; }
+  @keyframes shimmer{ 0%{ transform:translateX(-120%); } 100%{ transform:translateX(280%); } }
+  .partial-card{ padding:12px 14px; margin-bottom:14px; }
+  .partial-title{ font-size:0.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:8px; }
+  .partial-row{ display:flex; justify-content:space-between; align-items:center; padding:5px 0; font-size:0.92rem; }
+  .partial-row + .partial-row{ border-top:1px solid var(--line); }
+  .partial-row .pname{ font-weight:600; }
+  .partial-row.leader .pname{ color:var(--accent); }
+  .partial-row .ptot{ font-weight:800; color:var(--gold); font-family:Georgia,serif; }
+  .target-stage{ text-align:center; }
+  .archer-turn{ font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
+  .archer-name-big{ font-size:1.4rem; margin-bottom:6px; }
+  .arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--gold); color:var(--gold); font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:20px; margin-bottom:12px; }
+  .mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:20px; margin-bottom:8px; text-transform:uppercase; letter-spacing:.05em; }
+  .piazzola-num{ font-size:2.6rem; font-weight:800; color:var(--accent); font-family:Georgia,serif; line-height:1; margin-bottom:2px; position:relative; display:inline-block; }
+  .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
+    background:radial-gradient(circle, rgba(31,107,58,0.16), transparent 70%); z-index:-1; }
+  .switch-row{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:12px; }
+  .board{ position:relative; border-radius:14px; padding:18px;
+    background: linear-gradient(180deg, #ffffff, #fdf9ef); border:1px solid var(--line); box-shadow: inset 0 0 14px rgba(40,40,20,0.04); }
+  .silhouette-wrap{ position:relative; max-width:280px; margin:0 auto; border-radius:10px; overflow:hidden; touch-action:pan-x pan-y; }
+  .silhouette-wrap.zoomed{ overflow:auto; max-height:360px; }
+  .silhouette-wrap svg{ width:100%; height:auto; display:block; cursor:crosshair; }
+  .silhouette-wrap.zoomed svg{ width:210%; height:auto; }
+  .zoom-toolbar{ display:flex; justify-content:center; gap:8px; margin-top:10px; }
+  .legend-row{ font-size:0.68rem; color:var(--muted); margin-top:8px; line-height:1.5; }
+  .impact-readout{ margin-top:14px; background:var(--bg-panel-2); border:1px solid var(--gold); border-radius:12px; padding:14px; text-align:center; }
+  .impact-readout .pts{ font-size:1.9rem; font-weight:800; color:var(--gold); font-family:Georgia,serif; }
+  .impact-readout .lbl{ font-size:0.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:4px; }
+  .impact-actions{ display:flex; gap:10px; margin-top:12px; }
+  .impact-actions .btn{ flex:1; }
+  .quick-grid{ display:flex; justify-content:center; align-items:flex-start; gap:7px; margin:18px 0 10px; flex-wrap:wrap; }
+  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:68px; height:76px; flex:0 0 auto; padding:10px 4px; gap:2px; position:relative; overflow:visible; border:none; border-radius:18px; line-height:1.15; transition:transform .12s ease, box-shadow .12s ease, filter .12s ease; }
+  .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(0.95); }
+  .quick-btn .quick-lbl{ font-size:0.68rem; font-weight:700; }
+  .quick-btn .quick-pts{ font-size:1.15rem; font-weight:800; font-family:Georgia,serif; }
+  .quick-btn.superspot{ background:var(--qss); color:#fdfaf3; }
+  .quick-btn.spot{ background:var(--qspot); color:#16371c; }
+  .quick-btn.sagoma{ background:var(--qsag); color:#2b2205; }
+  .quick-btn.zero{ background:var(--qzero); color:#fdfaf3; }
+  .quick-btn.perfect{ background:#2E7D6B; color:#fdfaf3; }
+  .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
+  .shots-strip{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:14px 0 4px; }
+  .shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:20px; padding:5px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
+  table.score-table{ width:100%; border-collapse:collapse; font-size:0.85rem; }
+  table.score-table th, table.score-table td{ padding:8px 6px; text-align:center; border-bottom:1px solid var(--line); }
+  table.score-table th{ color:var(--muted); font-weight:600; font-size:0.7rem; text-transform:uppercase; letter-spacing:.05em; }
+  table.score-table td.name-col, table.score-table th.name-col{ text-align:left; }
+  .piazz-flow{ display:flex; flex-direction:column; gap:10px; }
+  .piazz-card{ display:flex; align-items:center; gap:14px; background:#FFFDF6; border:1px solid #E4D6B0; border-radius:20px; padding:12px 16px; }
+  .piazz-card-num{ font-family:Georgia,serif; font-weight:800; font-size:1.25rem; color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
+  .piazz-card-right{ display:flex; flex-wrap:wrap; gap:14px; flex:1; }
+  .ring-item{ display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .ring-badge{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.92rem; color:#3a2a12;
+    background: repeating-radial-gradient(circle at center, #f1e2b8 0px, #f1e2b8 4px, #d9b96a 4px, #d9b96a 7px, #f1e2b8 7px, #f1e2b8 11px, #d9b96a 11px 14px, #f1e2b8 14px 17px);
+    border:2px solid var(--bark); box-shadow:inset 0 0 4px rgba(60,40,10,0.2); flex:0 0 auto; }
+  .ring-badge.empty{ opacity:0.35; background:#EDEAE0; border-color:#cfc9b8; color:var(--muted); }
+  .ring-name{ font-size:0.62rem; color:var(--muted); max-width:56px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rank-row.first td{ color:var(--accent); font-weight:700; }
+  .total-col{ font-weight:700; color:var(--gold); }
+  .footer-note{ text-align:center; color:var(--muted); font-size:0.72rem; margin-top:18px; line-height:1.5; }
+  .rules-panel{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-top:12px; font-size:0.78rem; line-height:1.6; }
+  .rules-panel .rp-title{ font-weight:700; color:var(--cream); margin-bottom:4px; }
+  .resume-banner{ background:var(--bg-panel-2); border:1px dashed var(--accent); border-radius:12px; padding:14px; margin-bottom:16px; font-size:0.88rem; }
+  .install-hint{ background:var(--bg-panel-2); border-left:3px solid var(--accent); border-radius:8px; padding:12px 14px; font-size:0.8rem; line-height:1.5; color:var(--cream); margin-bottom:16px; }
+  .install-hint b{ color:var(--accent); }
+  .empty-hint{ color:var(--muted); font-size:0.85rem; text-align:center; padding:10px 0; }
+  .splash-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:82dvh; text-align:center; gap:6px; }
+  .splash-logo{ width:100px; height:100px; margin-bottom:10px; filter:drop-shadow(0 8px 20px rgba(31,107,58,0.35)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
+  .splash-title{ font-size:2.1rem; color:var(--accent); margin:0; animation:splashUp .6s ease .15s both; }
+  .splash-tag{ color:var(--muted); font-size:0.85rem; margin-bottom:26px; letter-spacing:.03em; animation:splashUp .6s ease .3s both; }
+  .splash-wrap .btn{ min-width:200px; padding:16px 24px; font-size:1.05rem; animation:splashUp .6s ease .45s both; }
+  @keyframes splashLogo{ 0%{ opacity:0; transform:scale(0.6) rotate(-8deg); } 100%{ opacity:1; transform:scale(1) rotate(0deg); } }
+  @keyframes splashUp{ 0%{ opacity:0; transform:translateY(14px); } 100%{ opacity:1; transform:translateY(0); } }
+  .big-target-num{ font-size:4.4rem; font-weight:800; color:var(--accent); font-family:Georgia,serif; margin:4px 0 10px; line-height:1; position:relative; display:inline-block; }
+  .big-target-num::before{ content:""; position:absolute; left:50%; top:50%; width:180px; height:180px; transform:translate(-50%,-50%); border-radius:50%;
+    background:radial-gradient(circle, rgba(201,147,42,0.20), transparent 70%); z-index:-1; }
+  .leaf-burst{ position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:5; }
+  .leaf-particle{ position:absolute; font-size:16px; animation:leafFly .7s ease-out forwards; }
+  @keyframes leafFly{
+    0%{ transform:translate(0,0) rotate(0deg) scale(0.6); opacity:1; }
+    100%{ transform:translate(var(--lx),var(--ly)) rotate(var(--lr)) scale(1); opacity:0; }
+  }
+  .leaf-particle.celebrate{ font-size:20px; animation:leafFall 1.8s ease-in forwards; }
+  @keyframes leafFall{
+    0%{ transform:translate(0,0) rotate(0deg); opacity:1; }
+    100%{ transform:translate(var(--lx),var(--ly)) rotate(var(--lr)); opacity:0; }
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } .leaf-particle{ animation:none !important; display:none; } .splash-logo,.splash-title,.splash-tag,.splash-wrap .btn{ animation:none !important; opacity:1 !important; transform:none !important; } .progress-fill::after{ animation:none !important; display:none; } }
+  @media print{
+    .no-print{ display:none !important; }
+    body{ background:#fff !important; }
+    #app{ max-width:100%; padding:0; }
+    .card{ box-shadow:none !important; border:1px solid #ccc !important; break-inside:avoid; }
+    table.score-table{ font-size:0.8rem; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = "arctrail3d_state_v3";
+  var HISTORY_KEY = "arctrail3d_storico_v1";
+
+  var state = { screen:"menu", pendingArchers:[] };
+  var homeOverride = false;
+  var splashDismissed = false;
+  var pending = null;
+  var zoomed = false;
+
+  // ---------- lingue ----------
+  var LANG_META = {
+    it:{ name:"Italiano", locale:"it-IT", flag:"\uD83C\uDDEE\uD83C\uDDF9" },
+    en:{ name:"English", locale:"en-US", flag:"\uD83C\uDDEC\uD83C\uDDE7" },
+    fr:{ name:"Fran\u00e7ais", locale:"fr-FR", flag:"\uD83C\uDDEB\uD83C\uDDF7" }
+  };
+  var LANG_ORDER = ["it","en","fr"];
+
+  var STRINGS = {
+    it: {
+      tagline: "Segnapunti da campo \u00b7 FIARC",
+      lang_pick_title: "Scegli la lingua",
+      lang_pick_sub: "Potrai cambiarla in qualsiasi momento dal menu",
+      country_pick_title: "In quale nazione tiri?",
+      country_italy: "Italia",
+      country_other: "Altro paese",
+      federation_pick_title: "A quale associazione appartieni?",
+      federation_hint: "Per ora seguiamo il regolamento FIARC. Altre federazioni arriveranno presto.",
+      coming_soon: "Presto disponibile",
+      federation_line: "{fed} \u00b7 {country}",
+      change_word: "cambia",
+      splash_start: "Inizia \u2192",
+      menu_word: "Menu",
+      back_to_menu: "\u2190 Torna al menu",
+      back_step: "\u2190 Indietro",
+      continue_btn: "Continua \u2192",
+      install_hint: "<b>Consiglio:</b> per usarla come un\u2019app, apri il men\u00f9 del browser e scegli <b>Aggiungi a schermata Home</b>. Funziona anche offline: i dati restano salvati sul telefono.",
+      team_title: "Arcieri / Squadra",
+      archer_placeholder: "Nome arciere",
+      archer_empty_hint: "Aggiungi almeno un arciere per iniziare",
+      rotation_note: "Nelle gare l\u2019ordine di tiro segue l\u2019alfabeto ed \u00e8 gestito automaticamente (rotazione FIARC ad ogni piazzola).",
+      menu_title: "Cosa vuoi fare?",
+      menu_train_label: "Inizia Allenamento",
+      menu_train_sub: "frecce e piazzole a scelta",
+      menu_gara_label: "Inizia Gara",
+      menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
+      menu_campi_label: "Campi vicino a te",
+      menu_campi_sub: "trova un campo di tiro 3D",
+      menu_history: "Storico",
+      menu_edit_archers: "Modifica arcieri",
+      resume_banner: "Hai un percorso in corso ({mode} \u00b7 {n} piazzole).",
+      resume_btn: "Riprendi percorso",
+      reset_full_btn: "Reset totale (cancella il percorso in corso)",
+      reset_confirm: "Tocca di nuovo per confermare il reset",
+      train_setup_title: "Quante piazzole vuoi fare?",
+      train_setup_hint: "Da 1 a {max} piazzole, a tua scelta.",
+      start_round_btn: "Inizia percorso",
+      rules_training_title: "Punteggi Allenamento",
+      gara_type_title: "Tipo di gara",
+      start_gara_btn: "Inizia gara",
+      campi_title: "Trova un campo di tiro 3D",
+      campi_btn: "Cerca campi vicino a te",
+      campi_hint: "Apre Google Maps con i campi di tiro con l\u2019arco 3D nei dintorni (richiede geolocalizzazione).",
+      campi_searching: "Ricerca posizione\u2026",
+      history_title: "Storico percorsi",
+      history_empty: "Nessun percorso salvato ancora",
+      history_clear: "Cancella storico",
+      clear_confirm: "Tocca di nuovo per confermare",
+      targets_word: "piazzole",
+      target_singular: "Piazzola",
+      partial_title: "Punteggio parziale \u00b7 tutti i partecipanti",
+      turn_of: "Turno di",
+      finora: " \u00b7 finora: {list} pt",
+      vale_prima: " \u00b7 vale la prima a segno",
+      quick_hint_voice: "Segna al volo (chiamata a voce)",
+      zero_label: "Nulla",
+      quick_hint_target: "oppure segna il punto esatto sul bersaglio",
+      tap_impact_hint: "Tocca il punto esatto di impatto",
+      fuori_sagoma: "fuori sagoma",
+      zoom_btn: "Ingrandisci mira",
+      zoom_btn_reduce: "Riduci mira",
+      undo_btn: "Annulla ultima freccia",
+      interrupt_btn: "Interrompi qui e vedi classifica",
+      detected_score: "Punteggio rilevato ({unit} {n})",
+      correct_point_btn: "Correggi punto",
+      confirm_shot_btn: "Conferma tiro",
+      done_word: "fatto",
+      next_archer_btn: "Prossimo: {name} \u2192",
+      target_done: "Piazzola completata",
+      round_done: "Percorso completato",
+      next_target_btn: "Vai alla piazzola successiva \u2192",
+      view_final_btn: "Vedi classifica finale",
+      classifica_title: "Classifica \u00b7 {mode}",
+      th_archer: "Arciere",
+      th_targets: "Piazzole tirate",
+      th_total: "Totale",
+      th_vs_prev: "Vs precedente",
+      detail_title: "Punteggio piazzola per piazzola",
+      back_to_menu_full: "Torna al menu",
+      reset_round_btn: "Reset totale (cancella questo percorso)",
+      export_pdf_btn: "Esporta / stampa PDF",
+      share_btn: "Condividi classifica",
+      copied_msg: "Copiato negli appunti!",
+      share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} piazzole",
+      mode_training_label:"Allenamento", mode_training_tag:"1 freccia", mode_training_unit:"Freccia",
+      mode_training_desc:"Allenamento libero: una sola freccia per piazzola, punteggi fissi. Scegli tu quante piazzole fare.",
+      mode_round3d_label:"Round 3D", mode_round3d_tag:"gara \u00b7 2 frecce", mode_round3d_unit:"Freccia",
+      mode_round3d_desc:"Round 3D ufficiale: 24 piazzole, 2 frecce a piazzola (si sommano).",
+      mode_percorso_label:"Percorso", mode_percorso_tag:"gara \u00b7 3 frecce", mode_percorso_unit:"Freccia",
+      mode_percorso_desc:"Percorso ufficiale: 24 piazzole, 3 frecce a piazzola (si sommano tutte).",
+      mode_tracciato_label:"Tracciato", mode_tracciato_tag:"gara \u00b7 fino a 3", mode_tracciato_unit:"Freccia",
+      mode_tracciato_desc:"Tracciato ufficiale: 24 piazzole, fino a 3 frecce, vale solo la prima a segno.",
+      mode_battuta_label:"Battuta", mode_battuta_tag:"gara \u00b7 branco di 3", mode_battuta_unit:"Sagoma",
+      mode_battuta_desc:"Battuta ufficiale: 28 piazzole, branco di 3 sagome a piazzola, 1 freccia a sagoma. Punteggio fisso per ogni sagoma del branco.",
+      mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"gara \u00b7 2 frecce", mode_fitarco3d_unit:"Freccia",
+      mode_fitarco3d_desc:"Tiro 3D FITARCO: 24 sagome, 2 frecce a sagoma. A differenza della FIARC il punteggio non dipende dall'ordine delle frecce.",
+      provisional_tag:"dati provvisori",
+      provisional_note:"\u26a0\ufe0f Dati non ancora confermati da un regolamento ufficiale certo: potrebbero cambiare."
+    },
+    en: {
+      tagline: "Field scorekeeper \u00b7 FIARC",
+      lang_pick_title: "Choose your language",
+      lang_pick_sub: "You can change it anytime from the menu",
+      country_pick_title: "Which country do you shoot in?",
+      country_italy: "Italy",
+      country_other: "Other country",
+      federation_pick_title: "Which association do you belong to?",
+      federation_hint: "For now we follow the FIARC rulebook. Other federations are coming soon.",
+      coming_soon: "Coming soon",
+      federation_line: "{fed} \u00b7 {country}",
+      change_word: "change",
+      splash_start: "Start \u2192",
+      menu_word: "Menu",
+      back_to_menu: "\u2190 Back to menu",
+      back_step: "\u2190 Back",
+      continue_btn: "Continue \u2192",
+      install_hint: "<b>Tip:</b> to use it like an app, open your browser menu and choose <b>Add to Home screen</b>. It also works offline: your data stays saved on your phone.",
+      team_title: "Archers / Team",
+      archer_placeholder: "Archer name",
+      archer_empty_hint: "Add at least one archer to start",
+      rotation_note: "In competitions, the shooting order follows the alphabet and rotates automatically (FIARC rotation at each target).",
+      menu_title: "What would you like to do?",
+      menu_train_label: "Start Training",
+      menu_train_sub: "arrows and targets, your choice",
+      menu_gara_label: "Start Competition",
+      menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
+      menu_campi_label: "Fields near you",
+      menu_campi_sub: "find a 3D archery field",
+      menu_history: "History",
+      menu_edit_archers: "Edit archers",
+      resume_banner: "You have a round in progress ({mode} \u00b7 {n} targets).",
+      resume_btn: "Resume round",
+      reset_full_btn: "Full reset (delete current round)",
+      reset_confirm: "Tap again to confirm reset",
+      train_setup_title: "How many targets do you want?",
+      train_setup_hint: "From 1 to {max} targets, your choice.",
+      start_round_btn: "Start round",
+      rules_training_title: "Training scoring",
+      gara_type_title: "Competition type",
+      start_gara_btn: "Start competition",
+      campi_title: "Find a 3D archery field",
+      campi_btn: "Search fields near you",
+      campi_hint: "Opens Google Maps with 3D archery fields nearby (requires location access).",
+      campi_searching: "Locating\u2026",
+      history_title: "Round history",
+      history_empty: "No rounds saved yet",
+      history_clear: "Clear history",
+      clear_confirm: "Tap again to confirm",
+      targets_word: "targets",
+      target_singular: "Target",
+      partial_title: "Live score \u00b7 all participants",
+      turn_of: "Turn of",
+      finora: " \u00b7 so far: {list} pts",
+      vale_prima: " \u00b7 only the first hit counts",
+      quick_hint_voice: "Quick-tap scoring (called aloud)",
+      zero_label: "Miss",
+      quick_hint_target: "or mark the exact impact point on the target",
+      tap_impact_hint: "Tap the exact impact point",
+      fuori_sagoma: "miss",
+      zoom_btn: "Zoom target",
+      zoom_btn_reduce: "Zoom out",
+      undo_btn: "Undo last arrow",
+      interrupt_btn: "Stop here and view results",
+      detected_score: "Detected score ({unit} {n})",
+      correct_point_btn: "Correct point",
+      confirm_shot_btn: "Confirm shot",
+      done_word: "done",
+      next_archer_btn: "Next: {name} \u2192",
+      target_done: "Target completed",
+      round_done: "Round completed",
+      next_target_btn: "Go to next target \u2192",
+      view_final_btn: "View final results",
+      classifica_title: "Results \u00b7 {mode}",
+      th_archer: "Archer",
+      th_targets: "Targets shot",
+      th_total: "Total",
+      th_vs_prev: "Vs previous",
+      detail_title: "Score by target",
+      back_to_menu_full: "Back to menu",
+      reset_round_btn: "Full reset (delete this round)",
+      export_pdf_btn: "Export / print PDF",
+      share_btn: "Share results",
+      copied_msg: "Copied to clipboard!",
+      share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} targets",
+      mode_training_label:"Training", mode_training_tag:"1 arrow", mode_training_unit:"Arrow",
+      mode_training_desc:"Free training: a single arrow per target, fixed scoring. Choose how many targets to shoot.",
+      mode_round3d_label:"Round 3D", mode_round3d_tag:"match \u00b7 2 arrows", mode_round3d_unit:"Arrow",
+      mode_round3d_desc:"Official Round 3D: 24 targets, 2 arrows per target (summed).",
+      mode_percorso_label:"Percorso", mode_percorso_tag:"match \u00b7 3 arrows", mode_percorso_unit:"Arrow",
+      mode_percorso_desc:"Official Percorso: 24 targets, 3 arrows per target (all summed).",
+      mode_tracciato_label:"Tracciato", mode_tracciato_tag:"match \u00b7 up to 3", mode_tracciato_unit:"Arrow",
+      mode_tracciato_desc:"Official Tracciato: 24 targets, up to 3 arrows, only the first scoring hit counts.",
+      mode_battuta_label:"Battuta", mode_battuta_tag:"match \u00b7 pack of 3", mode_battuta_unit:"Target",
+      mode_battuta_desc:"Official Battuta: 28 targets, pack of 3 targets per stand, 1 arrow per target. Fixed score for each target in the pack.",
+      mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"match \u00b7 2 arrows", mode_fitarco3d_unit:"Arrow",
+      mode_fitarco3d_desc:"FITARCO 3D: 24 targets, 2 arrows per target. Unlike FIARC, the score doesn't depend on arrow order.",
+      provisional_tag:"provisional data",
+      provisional_note:"\u26a0\ufe0f Data not yet confirmed by a certain official rulebook: may change."
+    },
+    fr: {
+      tagline: "Marqueur de terrain \u00b7 FIARC",
+      lang_pick_title: "Choisissez votre langue",
+      lang_pick_sub: "Vous pourrez la changer \u00e0 tout moment depuis le menu",
+      country_pick_title: "Dans quel pays tirez-vous ?",
+      country_italy: "Italie",
+      country_other: "Autre pays",
+      federation_pick_title: "\u00c0 quelle association appartenez-vous ?",
+      federation_hint: "Pour l\u2019instant nous suivons le r\u00e8glement FIARC. D\u2019autres f\u00e9d\u00e9rations arriveront bient\u00f4t.",
+      coming_soon: "Bient\u00f4t disponible",
+      federation_line: "{fed} \u00b7 {country}",
+      change_word: "changer",
+      splash_start: "Commencer \u2192",
+      menu_word: "Menu",
+      back_to_menu: "\u2190 Retour au menu",
+      back_step: "\u2190 Retour",
+      continue_btn: "Continuer \u2192",
+      install_hint: "<b>Astuce :</b> pour l\u2019utiliser comme une application, ouvrez le menu du navigateur et choisissez <b>Ajouter \u00e0 l\u2019\u00e9cran d\u2019accueil</b>. Fonctionne aussi hors ligne : vos donn\u00e9es restent enregistr\u00e9es sur votre t\u00e9l\u00e9phone.",
+      team_title: "Archers / \u00c9quipe",
+      archer_placeholder: "Nom de l\u2019archer",
+      archer_empty_hint: "Ajoutez au moins un archer pour commencer",
+      rotation_note: "En comp\u00e9tition, l\u2019ordre de tir suit l\u2019alphabet et tourne automatiquement (rotation FIARC \u00e0 chaque cible).",
+      menu_title: "Que voulez-vous faire ?",
+      menu_train_label: "Commencer l\u2019entra\u00eenement",
+      menu_train_sub: "fl\u00e8ches et cibles \u00e0 volont\u00e9",
+      menu_gara_label: "Commencer la comp\u00e9tition",
+      menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
+      menu_campi_label: "Terrains \u00e0 proximit\u00e9",
+      menu_campi_sub: "trouvez un terrain de tir 3D",
+      menu_history: "Historique",
+      menu_edit_archers: "Modifier les archers",
+      resume_banner: "Un parcours est en cours ({mode} \u00b7 {n} cibles).",
+      resume_btn: "Reprendre le parcours",
+      reset_full_btn: "R\u00e9initialisation totale (supprime le parcours en cours)",
+      reset_confirm: "Appuyez \u00e0 nouveau pour confirmer",
+      train_setup_title: "Combien de cibles voulez-vous faire ?",
+      train_setup_hint: "De 1 \u00e0 {max} cibles, \u00e0 votre choix.",
+      start_round_btn: "Commencer le parcours",
+      rules_training_title: "Points d\u2019entra\u00eenement",
+      gara_type_title: "Type de comp\u00e9tition",
+      start_gara_btn: "Commencer la comp\u00e9tition",
+      campi_title: "Trouvez un terrain de tir 3D",
+      campi_btn: "Rechercher des terrains \u00e0 proximit\u00e9",
+      campi_hint: "Ouvre Google Maps avec les terrains de tir 3D \u00e0 proximit\u00e9 (n\u00e9cessite la g\u00e9olocalisation).",
+      campi_searching: "Localisation\u2026",
+      history_title: "Historique des parcours",
+      history_empty: "Aucun parcours enregistr\u00e9 pour le moment",
+      history_clear: "Effacer l\u2019historique",
+      clear_confirm: "Appuyez \u00e0 nouveau pour confirmer",
+      targets_word: "cibles",
+      target_singular: "Cible",
+      partial_title: "Score en direct \u00b7 tous les participants",
+      turn_of: "Tour de",
+      finora: " \u00b7 jusqu\u2019ici : {list} pts",
+      vale_prima: " \u00b7 seul le premier tir marquant compte",
+      quick_hint_voice: "Marquer \u00e0 la vol\u00e9e (annonc\u00e9 \u00e0 voix haute)",
+      zero_label: "Nul",
+      quick_hint_target: "ou marquez le point d\u2019impact exact sur la cible",
+      tap_impact_hint: "Touchez le point d\u2019impact exact",
+      fuori_sagoma: "hors cible",
+      zoom_btn: "Zoomer sur la cible",
+      zoom_btn_reduce: "D\u00e9zoomer",
+      undo_btn: "Annuler la derni\u00e8re fl\u00e8che",
+      interrupt_btn: "Arr\u00eater ici et voir le classement",
+      detected_score: "Score d\u00e9tect\u00e9 ({unit} {n})",
+      correct_point_btn: "Corriger le point",
+      confirm_shot_btn: "Confirmer le tir",
+      done_word: "termin\u00e9",
+      next_archer_btn: "Suivant : {name} \u2192",
+      target_done: "Cible termin\u00e9e",
+      round_done: "Parcours termin\u00e9",
+      next_target_btn: "Aller \u00e0 la cible suivante \u2192",
+      view_final_btn: "Voir le classement final",
+      classifica_title: "Classement \u00b7 {mode}",
+      th_archer: "Archer",
+      th_targets: "Cibles tir\u00e9es",
+      th_total: "Total",
+      th_vs_prev: "Vs pr\u00e9c\u00e9dent",
+      detail_title: "Score par cible",
+      back_to_menu_full: "Retour au menu",
+      reset_round_btn: "R\u00e9initialisation totale (supprime ce parcours)",
+      export_pdf_btn: "Exporter / imprimer en PDF",
+      share_btn: "Partager le classement",
+      copied_msg: "Copi\u00e9 dans le presse-papiers !",
+      share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} cibles",
+      mode_training_label:"Entra\u00eenement", mode_training_tag:"1 fl\u00e8che", mode_training_unit:"Fl\u00e8che",
+      mode_training_desc:"Entra\u00eenement libre : une seule fl\u00e8che par cible, points fixes. Choisissez vous-m\u00eame le nombre de cibles.",
+      mode_round3d_label:"Round 3D", mode_round3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_round3d_unit:"Fl\u00e8che",
+      mode_round3d_desc:"Round 3D officiel : 24 cibles, 2 fl\u00e8ches par cible (cumul\u00e9es).",
+      mode_percorso_label:"Percorso", mode_percorso_tag:"comp\u00e9tition \u00b7 3 fl\u00e8ches", mode_percorso_unit:"Fl\u00e8che",
+      mode_percorso_desc:"Percorso officiel : 24 cibles, 3 fl\u00e8ches par cible (toutes cumul\u00e9es).",
+      mode_tracciato_label:"Tracciato", mode_tracciato_tag:"comp\u00e9tition \u00b7 jusqu\u2019\u00e0 3", mode_tracciato_unit:"Fl\u00e8che",
+      mode_tracciato_desc:"Tracciato officiel : 24 cibles, jusqu\u2019\u00e0 3 fl\u00e8ches, seul le premier tir marquant compte.",
+      mode_battuta_label:"Battuta", mode_battuta_tag:"comp\u00e9tition \u00b7 groupe de 3", mode_battuta_unit:"Silhouette",
+      mode_battuta_desc:"Battuta officielle : 28 cibles, groupe de 3 silhouettes par poste, 1 fl\u00e8che par silhouette. Score fixe pour chaque silhouette du groupe.",
+      mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_fitarco3d_unit:"Fl\u00e8che",
+      mode_fitarco3d_desc:"3D FITARCO : 24 cibles, 2 fl\u00e8ches par cible. Contrairement \u00e0 la FIARC, le score ne d\u00e9pend pas de l'ordre des fl\u00e8ches.",
+      provisional_tag:"donn\u00e9es provisoires",
+      provisional_note:"\u26a0\ufe0f Donn\u00e9es pas encore confirm\u00e9es par un r\u00e8glement officiel certain : pourraient changer."
+    }
+  };
+
+  function t(key, vars){
+    var dict = STRINGS[state.lang] || STRINGS.it;
+    var s = (dict[key] !== undefined) ? dict[key] : (STRINGS.it[key] !== undefined ? STRINGS.it[key] : key);
+    if(vars){
+      Object.keys(vars).forEach(function(k){ s = s.split("{"+k+"}").join(vars[k]); });
+    }
+    return s;
+  }
+
+  // ---------- modalita' di gioco (dati strutturali, i testi arrivano da STRINGS) ----------
+  var SS_SP_SAG = function(ss,sp,sag){ return { superspot:ss, spot:sp, sagoma:sag }; };
+  var ZONES_3 = [ {key:"superspot",label:"Super Spot",cls:"superspot"}, {key:"spot",label:"Spot",cls:"spot"}, {key:"sagoma",label:"Sagoma",cls:"sagoma"} ];
+  var RADII_3 = [42,85,140];
+  var ZONES_4 = [ {key:"perfect",label:"Perfect",cls:"perfect"}, {key:"superspot",label:"Super Spot",cls:"superspot"}, {key:"spot",label:"Spot",cls:"spot"}, {key:"sagoma",label:"Sagoma",cls:"sagoma"} ];
+  var RADII_4 = [26,46,85,140];
+  var GAME_MODES = {
+    training: {
+      key:"training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+      zones:ZONES_3, radii:RADII_3,
+      scoring:{ 1: SS_SP_SAG(16,14,10) }
+    },
+    round3d: {
+      key:"round3d", arrowsPerTarget:2, formats:[24],
+      zones:ZONES_3, radii:RADII_3,
+      scoring:{ 1: SS_SP_SAG(16,14,10), 2: SS_SP_SAG(9,7,5) }
+    },
+    percorso: {
+      key:"percorso", arrowsPerTarget:3, formats:[24],
+      zones:ZONES_3, radii:RADII_3,
+      scoring:{ 1: SS_SP_SAG(11,9,6), 2: SS_SP_SAG(9,7,4), 3: SS_SP_SAG(7,5,2) }
+    },
+    tracciato: {
+      key:"tracciato", arrowsPerTarget:3, formats:[24], stopAtFirstHit:true,
+      zones:ZONES_3, radii:RADII_3,
+      scoring:{ 1: SS_SP_SAG(22,20,16), 2: SS_SP_SAG(16,14,10), 3: SS_SP_SAG(10,8,4) }
+    },
+    battuta: {
+      key:"battuta", arrowsPerTarget:3, formats:[28],
+      zones:ZONES_3, radii:RADII_3,
+      scoring:{ 1: SS_SP_SAG(13,11,7), 2: SS_SP_SAG(13,11,7), 3: SS_SP_SAG(13,11,7) }
+    },
+    fitarco3d: {
+      key:"fitarco3d", arrowsPerTarget:2, formats:[24], provisional:true,
+      zones:ZONES_4, radii:RADII_4,
+      scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
+    }
+  };
+  function modeLabel(key){ return t("mode_"+key+"_label"); }
+  function modeTag(key){ return t("mode_"+key+"_tag"); }
+  function modeDesc(key){ return t("mode_"+key+"_desc"); }
+  function modeUnit(key){ return t("mode_"+key+"_unit"); }
+  var FEDERATIONS = {
+    fiarc: { garaModes: ["round3d","percorso","tracciato","battuta"] },
+    fitarco: { garaModes: ["fitarco3d"] }
+  };
+
+  function load(){ try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
+  function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
+  function loadHistory(){ try{ var raw = localStorage.getItem(HISTORY_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
+  function saveHistoryList(list){ try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); }catch(e){} }
+  function hardResetAll(){ var lang = state.lang, country = state.country, federation = state.federation; state = { screen:"menu", pendingArchers:[], lang:lang, country:country, federation:federation }; try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} homeOverride=false; render(); }
+  function uid(){ return Math.random().toString(36).slice(2,9); }
+  function el(html){ var t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstChild; }
+  function clamp(n,min,max){ n = isNaN(n)?min:n; return Math.max(min, Math.min(max, n)); }
+  function totalFor(archerId){
+    var entries = state.scores[archerId] || [];
+    return entries.reduce(function(sum,ent){ return sum + ent.total; }, 0);
+  }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+
+  // pulsante a doppia conferma: primo tocco arma (mostra conferma), secondo tocco entro pochi secondi esegue
+  function armDoubleConfirm(btn, armedLabel, onConfirm){
+    var originalLabel = btn.textContent;
+    var armed = false, timer = null;
+    btn.addEventListener("click", function(){
+      if(!armed){
+        armed = true;
+        btn.textContent = armedLabel;
+        btn.classList.add("btn-armed");
+        timer = setTimeout(function(){ armed=false; btn.textContent=originalLabel; btn.classList.remove("btn-armed"); }, 4000);
+      } else {
+        clearTimeout(timer);
+        onConfirm();
+      }
+    });
+  }
+
+  function celebrationBurst(){
+    var colors = ["\uD83C\uDF43","\uD83C\uDF42","\u2728"];
+    var burst = document.createElement("div");
+    burst.className = "leaf-burst";
+    burst.style.position = "fixed"; burst.style.inset = "0"; burst.style.zIndex = "999";
+    var vh = window.innerHeight || 700;
+    for(var i=0;i<16;i++){
+      var leaf = document.createElement("span");
+      leaf.className = "leaf-particle celebrate";
+      leaf.textContent = colors[Math.floor(Math.random()*colors.length)];
+      leaf.style.left = (Math.random()*90+5)+"vw";
+      leaf.style.top = "-30px";
+      leaf.style.setProperty("--lx", (Math.random()*80-40)+"px");
+      leaf.style.setProperty("--ly", (vh*0.55 + Math.random()*vh*0.3)+"px");
+      leaf.style.setProperty("--lr", (Math.random()*360)+"deg");
+      leaf.style.animationDelay = (Math.random()*0.5)+"s";
+      burst.appendChild(leaf);
+    }
+    document.body.appendChild(burst);
+    setTimeout(function(){ burst.remove(); }, 2400);
+  }
+
+  function leafBurst(anchorBtn){
+    if(!anchorBtn) return;
+    var host = document.getElementById("app");
+    var rect = anchorBtn.getBoundingClientRect();
+    var appRect = host.getBoundingClientRect();
+    var cx = rect.left - appRect.left + rect.width/2;
+    var cy = rect.top - appRect.top + rect.height/2;
+    var burst = document.createElement("div");
+    burst.className = "leaf-burst";
+    burst.style.left = "0"; burst.style.top = "0";
+    for(var i=0;i<6;i++){
+      var leaf = document.createElement("span");
+      leaf.className = "leaf-particle";
+      leaf.textContent = "\uD83C\uDF43";
+      var angle = (Math.PI*2/6)*i + Math.random()*0.3;
+      var dist = 46 + Math.random()*18;
+      leaf.style.left = cx+"px"; leaf.style.top = cy+"px";
+      leaf.style.setProperty("--lx", Math.cos(angle)*dist+"px");
+      leaf.style.setProperty("--ly", Math.sin(angle)*dist+"px");
+      leaf.style.setProperty("--lr", (Math.random()*180-90)+"deg");
+      burst.appendChild(leaf);
+    }
+    host.appendChild(burst);
+    setTimeout(function(){ burst.remove(); }, 750);
+  }
+
+  function targetSVG(mode){
+    var zones = mode.zones, radii = mode.radii;
+    var n = zones.length;
+    var palette4 = ["#fc4c02","#ffb066","#ffd9a8","#fff4e6"];
+    var stroke4 = ["#d63f02","#e67a1a","#f2a54a","#f0c896"];
+    var palette3 = ["#fc4c02","#ffd9a8","#fff4e6"];
+    var stroke3 = ["#d63f02","#f2a54a","#f0c896"];
+    var palette = n===4 ? palette4 : palette3;
+    var stroke = n===4 ? stroke4 : stroke3;
+    var cx=150, cy=150;
+    var out = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">';
+    for(var i=n-1;i>=0;i--){
+      var isOuter = (i===n-1);
+      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="'+palette[i]+'" stroke="'+stroke[i]+'" stroke-width="2"'+(isOuter?'':' pointer-events="none"')+'/>';
+    }
+    out += '<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="#ffffff" pointer-events="none"/>';
+    out += '</svg>';
+    return out;
+  }
+
+  function logoSVG(size){
+    return '<svg viewBox="0 0 100 100" style="width:'+size+'px;height:'+size+'px;">'+
+      '<circle cx="50" cy="50" r="42" fill="none" stroke="#1F6B3A" stroke-width="6"/>'+
+      '<circle cx="50" cy="50" r="27" fill="none" stroke="#6B4A34" stroke-width="6"/>'+
+      '<circle cx="50" cy="50" r="10" fill="#1F6B3A"/>'+
+    '</svg>';
+  }
+
+  var ICON_PATHS = {
+    bow: '<path d="M6 3c-2 5-2 16 0 21"/><path d="M6 3c6 2 12 8 12 9s-6 7-12 9"/><path d="M4 12h15"/><path d="M15 8l4 4-4 4"/>',
+    target: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v3M21 12h-3M3 12h3"/><path d="M17 3l-4.5 7.5"/><path d="M20 6l-6 6.5"/>',
+    pin: '<path d="M12 21s7-6.8 7-12a7 7 0 0 0-14 0c0 5.2 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/>',
+    scroll: '<path d="M6 4h11a2 2 0 0 1 2 2v13a1.5 1.5 0 0 1-3 0V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v.5"/><path d="M4.5 6.5A1.5 1.5 0 0 1 6 5h.5"/><path d="M8 9h7M8 12.5h7M8 16h4"/>',
+    users: '<circle cx="8.5" cy="8" r="3"/><path d="M2.5 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17" cy="8.5" r="2.4"/><path d="M15.5 14.2c2.7.3 4.7 2.5 4.7 5.3"/>',
+    printer: '<path d="M7 8V4h10v4"/><rect x="4.5" y="8" width="15" height="8" rx="1.5"/><path d="M7 15v5h10v-5"/><circle cx="16.5" cy="11" r="0.6" fill="currentColor"/>',
+    share: '<circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M8.1 10.8l7.8-4.1M8.1 13.2l7.8 4.1"/>',
+    search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/>',
+    shuffle: '<path d="M3 6h3.5c2 0 3 1 4.5 3"/><path d="M14 6h3l3 3M17 3l3 3-3 3"/><path d="M3 18h3.5c2 0 3-1 4.5-3"/><path d="M14 18h3l3-3M17 21l3-3-3-3"/>',
+    leaf: '<path d="M5 19c8 1 14-5 15-15C11 5 5 11 5 19z"/><path d="M6 18c3-4 6-7 12-11"/>',
+    globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.8 2.3 4.3 5.3 4.3 8.5s-1.5 6.2-4.3 8.5c-2.8-2.3-4.3-5.3-4.3-8.5s1.5-6.2 4.3-8.5z"/>',
+    sight: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/>'
+  };
+  function icon(name, size, strokeWidth){
+    var p = ICON_PATHS[name] || "";
+    return '<svg viewBox="0 0 24 24" width="'+(size||20)+'" height="'+(size||20)+'" fill="none" stroke="currentColor" stroke-width="'+(strokeWidth||1.6)+'" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;">'+p+'</svg>';
+  }
+
+  function render(){
+    var app = document.getElementById("app");
+    app.innerHTML = "";
+    if(!state.lang){ app.appendChild(languageScreen()); return; }
+    if(!state.country){ app.appendChild(countryScreen()); return; }
+    if(!state.federation){ app.appendChild(federationScreen()); return; }
+    if(!splashDismissed){ app.appendChild(splashScreen()); return; }
+    app.appendChild(header());
+    if(homeOverride){ app.appendChild(menuScreen()); return; }
+    switch(state.screen){
+      case "registration": app.appendChild(registrationScreen()); break;
+      case "menu": app.appendChild(menuScreen()); break;
+      case "training-setup": app.appendChild(trainingSetupScreen()); break;
+      case "gara-setup": app.appendChild(garaSetupScreen()); break;
+      case "campi": app.appendChild(campiScreen()); break;
+      case "history": app.appendChild(historyScreen()); break;
+      case "round": app.appendChild(roundScreen()); break;
+      case "summary": app.appendChild(summaryScreen()); break;
+      default: app.appendChild(registrationScreen());
+    }
+  }
+
+  // ---------- SELEZIONE LINGUA ----------
+  function languageScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(84);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<h1 class="display splash-title" style="font-size:1.7rem;">ArcTrail 3D</h1>'));
+    wrap.appendChild(el('<div class="onboard-sub">Italiano &middot; English &middot; Fran\u00e7ais</div>'));
+    var stack = el('<div class="onboard-stack"></div>');
+    LANG_ORDER.forEach(function(code){
+      var meta = LANG_META[code];
+      var c = el('<button class="lang-pick-btn"><span class="flag">'+meta.flag+'</span><span>'+meta.name+'</span></button>');
+      c.addEventListener("click", function(){
+        state.lang = code;
+        save(); render();
+      });
+      stack.appendChild(c);
+    });
+    wrap.appendChild(stack);
+    return wrap;
+  }
+
+  // ---------- SELEZIONE NAZIONE ----------
+  function countryScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(84);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<div class="onboard-title display">'+t("country_pick_title")+'</div>'));
+    var stack = el('<div class="onboard-stack"></div>');
+    var itChip = el('<button class="lang-pick-btn"><span class="flag">\uD83C\uDDEE\uD83C\uDDF9</span><span>'+t("country_italy")+'</span></button>');
+    itChip.addEventListener("click", function(){ state.country = "it"; save(); render(); });
+    stack.appendChild(itChip);
+    var otherChip = el('<button class="lang-pick-btn" style="opacity:0.45;cursor:default;" disabled><span class="flag">\uD83C\uDF0D</span><span>'+t("country_other")+'<br><small style="font-weight:400;color:var(--muted);">'+t("coming_soon")+'</small></span></button>');
+    stack.appendChild(otherChip);
+    wrap.appendChild(stack);
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="max-width:300px;margin-top:16px;">'+t("back_step")+'</button>');
+    backBtn.addEventListener("click", function(){ state.lang = null; save(); render(); });
+    wrap.appendChild(backBtn);
+    return wrap;
+  }
+
+  // ---------- SELEZIONE FEDERAZIONE ----------
+  function federationScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(84);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<div class="onboard-title display">'+t("federation_pick_title")+'</div>'));
+    var stack = el('<div class="onboard-stack"></div>');
+    var fiarcChip = el('<button class="lang-pick-btn"><span class="flag">'+icon("target",26)+'</span><span>FIARC</span></button>');
+    fiarcChip.addEventListener("click", function(){ state.federation = "fiarc"; save(); render(); });
+    stack.appendChild(fiarcChip);
+    var fitarcoChip = el('<button class="lang-pick-btn"><span class="flag">'+icon("target",26)+'</span><span>FITARCO<br><small style="font-weight:400;color:var(--gold);">'+t("provisional_tag")+'</small></span></button>');
+    fitarcoChip.addEventListener("click", function(){ state.federation = "fitarco"; save(); render(); });
+    stack.appendChild(fitarcoChip);
+    wrap.appendChild(stack);
+    wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;margin-top:18px;">'+t("federation_hint")+'</div>'));
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="max-width:300px;margin-top:10px;">'+t("back_step")+'</button>');
+    backBtn.addEventListener("click", function(){ state.country = null; save(); render(); });
+    wrap.appendChild(backBtn);
+    return wrap;
+  }
+
+  // ---------- SPLASH ----------
+  function splashScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(100);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<h1 class="display splash-title">ArcTrail 3D</h1>'));
+    var startBtn = el('<button class="btn btn-primary" style="margin-top:22px;">'+t("splash_start")+'</button>');
+    startBtn.addEventListener("click", function(){
+      splashDismissed = true;
+      render();
+    });
+    wrap.appendChild(startBtn);
+    return wrap;
+  }
+
+  function header(){
+    var showHome = (!homeOverride) && state.screen !== "registration" && state.screen !== "menu";
+    var h = el(
+      '<header class="top">'+
+        '<div class="logo">'+logoSVG(38)+'</div>'+
+        '<div class="headtxt"><h1 class="display">ArcTrail 3D</h1></div>'+
+      '</header>'
+    );
+    if(showHome){
+      var homeBtn = el('<button class="home-btn no-print">'+t("back_to_menu")+'</button>');
+      homeBtn.addEventListener("click", function(){
+        if(state.screen === "round" || state.screen === "summary"){ homeOverride = true; }
+        else { state.screen = "menu"; }
+        render();
+      });
+      h.appendChild(homeBtn);
+    }
+    return h;
+  }
+
+  function langSwitcher(){
+    var wrap = el('<div class="chip-group" style="margin-bottom:14px;"></div>');
+    LANG_ORDER.forEach(function(code){
+      var c = el('<div class="chip lang-chip" style="font-size:0.8rem;padding:8px 4px;">'+LANG_META[code].name+'</div>');
+      if(state.lang === code) c.classList.add("active");
+      c.addEventListener("click", function(){ state.lang = code; save(); render(); });
+      wrap.appendChild(c);
+    });
+    return wrap;
+  }
+
+  // ---------- REGISTRAZIONE ----------
+  function registrationScreen(){
+    var wrap = el('<div></div>');
+    wrap.appendChild(el('<div class="install-hint">'+t("install_hint")+'</div>'));
+
+    var card2 = el('<div class="card"></div>');
+    card2.appendChild(el('<h2 class="section-title">'+t("team_title")+'</h2>'));
+    var form = el('<div class="row"><input type="text" id="archerInput" placeholder="'+t("archer_placeholder")+'"><button class="btn btn-primary" id="addArcherBtn">+</button></div>');
+    card2.appendChild(form);
+    var list = el('<div class="archer-list"></div>');
+    var pendingArchers = state.pendingArchers || [];
+    if(pendingArchers.length === 0){
+      list.appendChild(el('<div class="empty-hint">'+t("archer_empty_hint")+'</div>'));
+    }
+    pendingArchers.forEach(function(a){
+      var row = el('<div class="archer-row"><span class="name">'+escapeHtml(a.name)+'</span><button class="remove-x" data-id="'+a.id+'">&times;</button></div>');
+      row.querySelector(".remove-x").addEventListener("click", function(){
+        state.pendingArchers = pendingArchers.filter(function(x){ return x.id !== a.id; });
+        save(); render();
+      });
+      list.appendChild(row);
+    });
+    card2.appendChild(list);
+    card2.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:8px;">'+t("rotation_note")+'</div>'));
+    wrap.appendChild(card2);
+
+    var continueBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("continue_btn")+'</button>');
+    if(pendingArchers.length === 0) continueBtn.setAttribute("disabled","disabled");
+    continueBtn.addEventListener("click", function(){
+      if((state.pendingArchers||[]).length === 0) return;
+      state.screen = state.registrationNext || "menu";
+      state.registrationNext = null;
+      save(); render();
+    });
+    wrap.appendChild(continueBtn);
+
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
+    backBtn.addEventListener("click", function(){
+      state.registrationNext = null;
+      state.screen = "menu";
+      save(); render();
+    });
+    wrap.appendChild(backBtn);
+
+    setTimeout(function(){
+      document.getElementById("addArcherBtn").addEventListener("click", addArcher);
+      document.getElementById("archerInput").addEventListener("keydown", function(e){ if(e.key === "Enter") addArcher(); });
+    },0);
+
+    function addArcher(){
+      var input = document.getElementById("archerInput");
+      var val = input.value.trim();
+      if(!val) return;
+      state.pendingArchers = state.pendingArchers || [];
+      state.pendingArchers.push({ id: uid(), name: val });
+      input.value = "";
+      save(); render();
+    }
+    return wrap;
+  }
+
+  // ---------- MENU ----------
+  function menuScreen(){
+    var wrap = el('<div></div>');
+    var hasActiveRound = (state.screen === "round" || state.screen === "summary");
+
+    wrap.appendChild(langSwitcher());
+
+    var fedLine = el('<div style="font-size:0.72rem;color:var(--muted);margin-bottom:14px;text-align:center;"></div>');
+    var fedCountryName = state.country === "it" ? t("country_italy") : state.country;
+    var fedName = (state.federation||"fiarc").toUpperCase();
+    fedLine.innerHTML = t("federation_line",{fed:fedName, country:fedCountryName})+' &middot; <span id="changeFedLink" style="text-decoration:underline;cursor:pointer;">'+t("change_word")+'</span>';
+    wrap.appendChild(fedLine);
+
+    setTimeout(function(){
+      var link = document.getElementById("changeFedLink");
+      if(link) link.addEventListener("click", function(){ state.federation = null; save(); render(); });
+    },0);
+
+    if(hasActiveRound){
+      wrap.appendChild(el(
+        '<div class="resume-banner">'+t("resume_banner", { mode: escapeHtml(modeLabel(state.mode)), n: state.format })+
+        '<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="resumeBtn">'+t("resume_btn")+'</button></div></div>'
+      ));
+    }
+
+    var menuCard = el('<div class="card"></div>');
+    menuCard.appendChild(el('<h2 class="section-title">'+t("menu_title")+'</h2>'));
+
+    var trainBtn = el('<button class="btn menu-btn training btn-block" style="margin-bottom:10px;"><span class="menu-icon">'+icon("bow",24)+'</span><span class="menu-txt">'+t("menu_train_label")+'<span class="menu-sub">'+t("menu_train_sub")+'</span></span></button>');
+    trainBtn.addEventListener("click", function(){
+      state.pendingMode = "training";
+      if((state.pendingArchers||[]).length === 0){
+        state.registrationNext = "training-setup";
+        state.screen = "registration";
+      } else {
+        state.screen = "training-setup";
+      }
+      save(); render();
+    });
+    menuCard.appendChild(trainBtn);
+
+    var garaBtn = el('<button class="btn menu-btn gara btn-block" style="margin-bottom:10px;"><span class="menu-icon">'+icon("target",24)+'</span><span class="menu-txt">'+t("menu_gara_label")+'<span class="menu-sub">'+t("menu_gara_sub")+'</span></span></button>');
+    garaBtn.addEventListener("click", function(){
+      var garaModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
+      if(!state.pendingMode || garaModes.indexOf(state.pendingMode) === -1){ state.pendingMode = garaModes[0]; }
+      if((state.pendingArchers||[]).length === 0){
+        state.registrationNext = "gara-setup";
+        state.screen = "registration";
+      } else {
+        state.screen = "gara-setup";
+      }
+      save(); render();
+    });
+    menuCard.appendChild(garaBtn);
+
+    var campiBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("pin",24)+'</span><span class="menu-txt">'+t("menu_campi_label")+'<span class="menu-sub">'+t("menu_campi_sub")+'</span></span></button>');
+    campiBtn.addEventListener("click", function(){ state.screen = "campi"; save(); render(); });
+    menuCard.appendChild(campiBtn);
+
+    wrap.appendChild(menuCard);
+
+    var secondaryRow = el('<div class="row"></div>');
+    var histBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("scroll",16)+' '+t("menu_history")+'</button>');
+    histBtn.addEventListener("click", function(){ state.screen = "history"; save(); render(); });
+    var editBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("users",16)+' '+t("menu_edit_archers")+'</button>');
+    editBtn.addEventListener("click", function(){ state.registrationNext = "menu"; state.screen = "registration"; save(); render(); });
+    secondaryRow.appendChild(histBtn);
+    secondaryRow.appendChild(editBtn);
+    wrap.appendChild(secondaryRow);
+
+    if(hasActiveRound){
+      var resetBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("reset_full_btn")+'</button>');
+      wrap.appendChild(resetBtn);
+      armDoubleConfirm(resetBtn, t("reset_confirm"), hardResetAll);
+    }
+
+    setTimeout(function(){
+      var resumeBtn = document.getElementById("resumeBtn");
+      if(resumeBtn) resumeBtn.addEventListener("click", function(){ homeOverride = false; render(); });
+    },0);
+
+    return wrap;
+  }
+
+  // ---------- ALLENAMENTO: setup ----------
+  function trainingSetupScreen(){
+    var wrap = el('<div></div>');
+    var mode = GAME_MODES.training;
+
+    var card1 = el('<div class="card"></div>');
+    card1.appendChild(el('<h2 class="section-title">'+t("train_setup_title")+'</h2>'));
+    var numInput = el('<input type="number" id="formatInput" min="'+mode.minFormat+'" max="'+mode.maxFormat+'" value="'+(state.pendingFormat||14)+'">');
+    card1.appendChild(numInput);
+    card1.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:6px;">'+t("train_setup_hint",{max:mode.maxFormat})+'</div>'));
+    wrap.appendChild(card1);
+
+    var startBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("start_round_btn")+'</button>');
+    startBtn.addEventListener("click", function(){
+      var n = clamp(parseInt(document.getElementById("formatInput").value,10), mode.minFormat, mode.maxFormat);
+      state.pendingFormat = n;
+      beginRound("training");
+    });
+    wrap.appendChild(startBtn);
+
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
+    backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
+    wrap.appendChild(backBtn);
+
+    var s = mode.scoring[1];
+    wrap.appendChild(el('<div class="rules-panel"><div class="rp-title">'+t("rules_training_title")+'</div>Super Spot '+s.superspot+' &middot; Spot '+s.spot+' &middot; Sagoma '+s.sagoma+' &middot; '+t("fuori_sagoma")+' 0</div>'));
+
+    return wrap;
+  }
+
+  // ---------- GARA: setup ----------
+  function garaSetupScreen(){
+    var wrap = el('<div></div>');
+    var garaModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
+    var modeKey = (state.pendingMode && garaModes.indexOf(state.pendingMode) !== -1) ? state.pendingMode : garaModes[0];
+    var mode = GAME_MODES[modeKey];
+
+    var modeCard = el('<div class="card"></div>');
+    modeCard.appendChild(el('<h2 class="section-title">'+t("gara_type_title")+'</h2>'));
+    var modeGrid = el('<div class="chip-group" style="flex-wrap:wrap;"></div>');
+    garaModes.forEach(function(key){
+      var c = el('<div class="chip" style="min-width:45%;">'+modeLabel(key)+'<span class="chip-sub">'+modeTag(key)+'</span></div>');
+      if(modeKey === key) c.classList.add("active");
+      c.addEventListener("click", function(){ state.pendingMode = key; save(); render(); });
+      modeGrid.appendChild(c);
+    });
+    modeCard.appendChild(modeGrid);
+
+    var format = mode.formats[0];
+    var unit = modeUnit(modeKey);
+    var footerParts = [];
+    Object.keys(mode.scoring).forEach(function(arrowNum){
+      var s = mode.scoring[arrowNum];
+      var zoneTxt = mode.zones.map(function(z){ return z.label+" "+s[z.key]; }).join(" &middot; ");
+      footerParts.push((arrowNum==="1"?"1&#170;":arrowNum==="2"?"2&#170;":"3&#170;")+" "+unit.toLowerCase()+": "+zoneTxt);
+    });
+    var provisionalHtml = mode.provisional ? '<br><br><b style="color:var(--danger);">'+t("provisional_note")+'</b>' : '';
+    modeCard.appendChild(el(
+      '<div class="rules-panel"><div class="rp-title">'+escapeHtml(modeLabel(modeKey))+' &middot; '+format+' '+t("targets_word")+'</div>'+
+      modeDesc(modeKey)+'<br><br>'+footerParts.join("<br>")+'<br>'+t("fuori_sagoma")+' = 0.'+provisionalHtml+'</div>'
+    ));
+    wrap.appendChild(modeCard);
+
+    var startBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("start_gara_btn")+'</button>');
+    startBtn.addEventListener("click", function(){ beginRound(modeKey); });
+    wrap.appendChild(startBtn);
+
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
+    backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
+    wrap.appendChild(backBtn);
+
+    return wrap;
+  }
+
+  // ---------- CAMPI VICINO A TE ----------
+  function campiScreen(){
+    var wrap = el('<div></div>');
+    var locCard = el('<div class="card"></div>');
+    locCard.appendChild(el('<h2 class="section-title">'+t("campi_title")+'</h2>'));
+    var locBtn = el('<button class="btn btn-primary btn-block">'+icon("pin",18)+' '+t("campi_btn")+'</button>');
+    locCard.appendChild(locBtn);
+    locCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:8px;">'+t("campi_hint")+'</div>'));
+    wrap.appendChild(locCard);
+    locBtn.addEventListener("click", function(){
+      var openMaps = function(coords){
+        var url = coords
+          ? "https://www.google.com/maps/search/campo+tiro+con+arco+3D/@"+coords.latitude+","+coords.longitude+",12z"
+          : "https://www.google.com/maps/search/campo+tiro+con+arco+3D";
+        window.open(url, "_blank");
+      };
+      if(navigator.geolocation){
+        locBtn.innerHTML = t("campi_searching");
+        navigator.geolocation.getCurrentPosition(function(pos){
+          openMaps(pos.coords);
+          locBtn.innerHTML = icon("pin",18)+' '+t("campi_btn");
+        }, function(){
+          openMaps(null);
+          locBtn.innerHTML = icon("pin",18)+' '+t("campi_btn");
+        }, { timeout: 8000 });
+      } else {
+        openMaps(null);
+      }
+    });
+
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
+    backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
+    wrap.appendChild(backBtn);
+    return wrap;
+  }
+
+  // ---------- STORICO ----------
+  function historyScreen(){
+    var wrap = el('<div></div>');
+    var hist = loadHistory();
+    var histCard = el('<div class="card"></div>');
+    histCard.appendChild(el('<h2 class="section-title">'+t("history_title")+'</h2>'));
+    if(!hist.length){
+      histCard.appendChild(el('<div class="empty-hint">'+t("history_empty")+'</div>'));
+    } else {
+      var histList = el('<div class="archer-list"></div>');
+      var locale = (LANG_META[state.lang]||LANG_META.it).locale;
+      hist.slice(0,20).forEach(function(h){
+        var d = new Date(h.date);
+        var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
+        var winner = h.results.length ? h.results[0] : null;
+        var mLabel = h.modeKey ? modeLabel(h.modeKey) : (h.modeLabel || modeLabel("training"));
+        histList.appendChild(el(
+          '<div class="archer-row"><span class="name">'+dateStr+' &middot; '+escapeHtml(mLabel)+' &middot; '+h.format+' '+t("targets_word")+'</span>'+
+          '<span style="color:var(--gold);font-weight:700;">'+(winner ? escapeHtml(winner.name)+" "+winner.total+"pt" : "")+'</span></div>'
+        ));
+      });
+      histCard.appendChild(histList);
+      var clearHistBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("history_clear")+'</button>');
+      histCard.appendChild(clearHistBtn);
+      armDoubleConfirm(clearHistBtn, t("clear_confirm"), function(){
+        saveHistoryList([]);
+        render();
+      });
+    }
+    wrap.appendChild(histCard);
+
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
+    backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
+    wrap.appendChild(backBtn);
+    return wrap;
+  }
+
+  function beginRound(modeKey){
+    var mode = GAME_MODES[modeKey];
+    var format = mode.freeFormat ? clamp(parseInt(state.pendingFormat,10)||14, mode.minFormat, mode.maxFormat) : mode.formats[0];
+    var archers = state.pendingArchers.slice();
+    if(modeKey !== "training" && archers.length > 1){
+      archers.sort(function(a,b){ return a.name.localeCompare(b.name, "it"); });
+    }
+    var scores = {};
+    archers.forEach(function(a){ scores[a.id] = []; });
+    state.screen = "round";
+    state.mode = modeKey;
+    state.format = format;
+    state.archers = archers;
+    state.scores = scores;
+    state.target = 1;
+    state.archerIndex = 0;
+    state.arrowIndex = 0;
+    state.pendingArrows = [];
+    state.awaitingStep = null;
+    state.savedToHistory = false;
+    save(); render();
+  }
+
+  // ---------- ROUND ----------
+  function roundScreen(){
+    if(state.awaitingStep === "target"){ return targetTransitionScreen(); }
+    if(state.awaitingStep === "archer"){ return archerTransitionScreen(); }
+    pending = null;
+    zoomed = false;
+    var wrap = el('<div></div>');
+    var mode = GAME_MODES[state.mode] || GAME_MODES.training;
+    var unit = modeUnit(state.mode);
+    var totalTargets = state.format;
+    var pct = Math.round(((state.target-1) / totalTargets) * 100);
+
+    wrap.appendChild(el(
+      '<div class="progress-wrap"><span style="font-size:0.75rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;">'+t("targets_word").charAt(0).toUpperCase()+t("targets_word").slice(1)+' '+state.target+' / '+totalTargets+'</span>'+
+      '<span style="font-size:0.75rem;color:var(--gold);">'+pct+'%</span></div>'
+    ));
+    wrap.appendChild(el('<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%;"></div></div>'));
+
+    // punteggio parziale live - tutti i partecipanti
+    var partialCard = el('<div class="card partial-card"></div>');
+    partialCard.appendChild(el('<div class="partial-title">'+t("partial_title")+'</div>'));
+    var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
+    var topTotal = ranked.length ? totalFor(ranked[0].id) : 0;
+    ranked.forEach(function(a){
+      var tot = totalFor(a.id);
+      var isLeader = tot === topTotal && tot > 0;
+      partialCard.appendChild(el(
+        '<div class="partial-row'+(isLeader?" leader":"")+'"><span class="pname">'+escapeHtml(a.name)+'</span><span class="ptot">'+tot+'</span></div>'
+      ));
+    });
+    wrap.appendChild(partialCard);
+
+    var currentArcher = state.archers[state.archerIndex];
+    state.pendingArrows = state.pendingArrows || [];
+    var arrowNumber = state.pendingArrows.length + 1;
+    var pts = mode.scoring[arrowNumber] || mode.scoring[mode.arrowsPerTarget];
+
+    var card = el('<div class="card target-stage"></div>');
+    card.appendChild(el('<div class="mode-badge">'+escapeHtml(modeLabel(state.mode))+'</div>'));
+    card.appendChild(el('<div class="piazzola-num">'+state.target+'</div>'));
+
+    if(state.archers.length > 1){
+      var switchRow = el('<div class="switch-row"></div>');
+      state.archers.forEach(function(a, idx){
+        var doneAlready = (state.scores[a.id]||[]).length >= state.target;
+        var canSwitch = !doneAlready && state.pendingArrows.length === 0;
+        var chip = el('<button class="btn btn-ghost btn-sm"></button>');
+        chip.textContent = (doneAlready? "\u2713 " : "") + a.name;
+        if(idx === state.archerIndex){
+          chip.style.background = "var(--accent)"; chip.style.color = "#fff"; chip.style.borderColor = "var(--accent)";
+        }
+        if(!canSwitch){ chip.disabled = true; chip.style.opacity = "0.55"; }
+        else {
+          chip.addEventListener("click", function(){ state.archerIndex = idx; save(); render(); });
+        }
+        switchRow.appendChild(chip);
+      });
+      card.appendChild(switchRow);
+    }
+
+    card.appendChild(el('<div class="archer-turn">'+t("turn_of")+'</div>'));
+    card.appendChild(el('<div class="archer-name-big display">'+escapeHtml(currentArcher.name)+'</div>'));
+    var badgeExtra = state.pendingArrows.length ? t("finora",{list:state.pendingArrows.join(', ')}) : '';
+    var stopNote = mode.stopAtFirstHit ? t("vale_prima") : '';
+    card.appendChild(el('<div class="arrow-badge">'+unit+' '+arrowNumber+' / '+mode.arrowsPerTarget+badgeExtra+stopNote+'</div>'));
+
+    card.appendChild(el('<div class="quick-hint">'+icon("leaf",12)+' '+t("quick_hint_voice")+'</div>'));
+    var quickGrid = el('<div class="quick-grid"></div>');
+    mode.zones.forEach(function(z){
+      var qbtn = el('<button class="btn quick-btn '+z.cls+'"><span class="quick-lbl">'+z.label+'</span><span class="quick-pts">'+pts[z.key]+'</span></button>');
+      qbtn.addEventListener("click", function(){
+        if(navigator.vibrate){ navigator.vibrate(15); }
+        if(z.key === "perfect" || z.key === "superspot"){ leafBurst(qbtn); }
+        registerShot(pts[z.key]);
+      });
+      quickGrid.appendChild(qbtn);
+    });
+    var zeroBtn = el('<button class="btn quick-btn zero"><span class="quick-lbl">'+t("zero_label")+'</span><span class="quick-pts">0</span></button>');
+    zeroBtn.addEventListener("click", function(){
+      if(navigator.vibrate){ navigator.vibrate(15); }
+      registerShot(0);
+    });
+    quickGrid.appendChild(zeroBtn);
+    var totalBtns = quickGrid.children.length;
+    var centerIdx = (totalBtns - 1) / 2;
+    Array.prototype.forEach.call(quickGrid.children, function(btn, idx){
+      var dist = Math.abs(idx - centerIdx);
+      btn.style.transform = "translateY(" + Math.round(dist * dist * 3) + "px)";
+    });
+    card.appendChild(quickGrid);
+
+    card.appendChild(el('<div class="quick-hint" style="margin-top:10px;">'+t("quick_hint_target")+'</div>'));
+
+    var board = el('<div class="board"></div>');
+    var svgWrap = el('<div class="silhouette-wrap"></div>');
+    svgWrap.innerHTML = targetSVG(mode);
+    board.appendChild(svgWrap);
+    card.appendChild(board);
+    card.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:8px;">'+t("tap_impact_hint")+'</div>'));
+    var legendParts = mode.zones.map(function(z){ return z.label+' '+pts[z.key]; });
+    card.appendChild(el('<div class="legend-row">'+legendParts.join(" &middot; ")+' &middot; '+t("fuori_sagoma")+' 0</div>'));
+    if(mode.provisional){
+      card.appendChild(el('<div class="legend-row" style="color:var(--danger);">'+t("provisional_note")+'</div>'));
+    }
+
+    var toolbar = el('<div class="zoom-toolbar"><button class="btn btn-ghost btn-sm" id="zoomBtn">'+icon("sight",14)+' '+t("zoom_btn")+'</button></div>');
+    card.appendChild(toolbar);
+
+    var readoutHolder = el('<div id="readoutHolder"></div>');
+    card.appendChild(readoutHolder);
+
+    var strip = el('<div class="shots-strip"></div>');
+    state.archers.forEach(function(a){
+      var entries = state.scores[a.id];
+      if(entries.length >= state.target){
+        var ent = entries[state.target-1];
+        strip.appendChild(el('<span class="shot-pill">'+escapeHtml(a.name)+': '+ent.total+'</span>'));
+      }
+    });
+    if(strip.children.length){ card.appendChild(strip); }
+
+    wrap.appendChild(card);
+    wrap.appendChild(el('<div class="row"><button class="btn btn-ghost btn-block" id="undoBtn">'+t("undo_btn")+'</button></div>'));
+
+    var interruptBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("interrupt_btn")+'</button>');
+    wrap.appendChild(interruptBtn);
+
+    setTimeout(function(){
+      var svgEl = svgWrap.querySelector("svg");
+
+      svgEl.addEventListener("click", function(e){
+        var pt = svgEl.createSVGPoint();
+        pt.x = e.clientX; pt.y = e.clientY;
+        var ctm = svgEl.getScreenCTM();
+        if(!ctm) return;
+        var loc = pt.matrixTransform(ctm.inverse());
+
+        var cx = 150, cy = 150;
+        var dx = loc.x - cx, dy = loc.y - cy;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        var radii = mode.radii, zones = mode.zones;
+        var inBody = dist <= radii[radii.length-1];
+
+        var score = 0;
+        var zoneLabel = t("fuori_sagoma");
+        var zoneKey = null;
+        if(inBody){
+          for(var zi=0; zi<radii.length; zi++){
+            if(dist <= radii[zi]){ zoneKey = zones[zi].key; zoneLabel = zones[zi].label; break; }
+          }
+          score = pts[zoneKey];
+        }
+        pending = { x: loc.x, y: loc.y, score: score, zoneLabel: zoneLabel, zoneKey: zoneKey };
+        drawMarker(svgEl, loc.x, loc.y);
+        showReadout();
+      });
+
+      document.getElementById("zoomBtn").addEventListener("click", function(){
+        zoomed = !zoomed;
+        svgWrap.classList.toggle("zoomed", zoomed);
+        this.innerHTML = zoomed ? t("zoom_btn_reduce") : (icon("sight",14)+' '+t("zoom_btn"));
+        if(pending){ drawMarker(svgEl, pending.x, pending.y); }
+      });
+
+      document.getElementById("undoBtn").addEventListener("click", undoLastShot);
+      armDoubleConfirm(interruptBtn, t("clear_confirm"), function(){
+        state.screen = "summary"; save(); render();
+      });
+    },0);
+
+    function drawMarker(svgEl, x, y){
+      var old = svgEl.querySelector("#impactMarker");
+      if(old) old.remove();
+      var ns = "http://www.w3.org/2000/svg";
+      var g = document.createElementNS(ns, "g");
+      g.setAttribute("id", "impactMarker");
+      g.setAttribute("pointer-events", "none");
+      var c = document.createElementNS(ns, "circle");
+      c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 6);
+      c.setAttribute("fill", "none"); c.setAttribute("stroke", "#1d5fd1"); c.setAttribute("stroke-width", "2.6");
+      var l1 = document.createElementNS(ns, "line");
+      l1.setAttribute("x1", x-10); l1.setAttribute("y1", y); l1.setAttribute("x2", x+10); l1.setAttribute("y2", y);
+      l1.setAttribute("stroke", "#1d5fd1"); l1.setAttribute("stroke-width", "1.8");
+      var l2 = document.createElementNS(ns, "line");
+      l2.setAttribute("x1", x); l2.setAttribute("y1", y-10); l2.setAttribute("x2", x); l2.setAttribute("y2", y+10);
+      l2.setAttribute("stroke", "#1d5fd1"); l2.setAttribute("stroke-width", "1.8");
+      g.appendChild(c); g.appendChild(l1); g.appendChild(l2);
+      svgEl.appendChild(g);
+    }
+
+    function showReadout(){
+      readoutHolder.innerHTML = "";
+      readoutHolder.appendChild(el(
+        '<div class="impact-readout">'+
+          '<div class="lbl">'+t("detected_score",{unit:unit, n:arrowNumber})+'</div>'+
+          '<div class="pts">'+pending.score+'</div>'+
+          '<div style="font-size:0.8rem;color:var(--muted);margin-top:2px;">'+pending.zoneLabel+'</div>'+
+          '<div class="impact-actions">'+
+            '<button class="btn btn-ghost" id="correctBtn">'+t("correct_point_btn")+'</button>'+
+            '<button class="btn btn-primary" id="confirmBtn">'+t("confirm_shot_btn")+'</button>'+
+          '</div>'+
+        '</div>'
+      ));
+      document.getElementById("correctBtn").addEventListener("click", function(){
+        pending = null;
+        var svgEl2 = svgWrap.querySelector("svg");
+        var old = svgEl2.querySelector("#impactMarker");
+        if(old) old.remove();
+        readoutHolder.innerHTML = "";
+      });
+      document.getElementById("confirmBtn").addEventListener("click", function(){
+        if(navigator.vibrate){ navigator.vibrate(15); }
+        if(pending.zoneKey === "superspot"){ leafBurst(document.getElementById("confirmBtn")); }
+        registerShot(pending.score);
+      });
+    }
+
+    return wrap;
+  }
+
+  // ---------- TRANSIZIONE: prossimo arciere ----------
+  function archerTransitionScreen(){
+    var wrap = el('<div></div>');
+    var justDone = state.archers[state.archerIndex];
+    var entries = state.scores[justDone.id];
+    var lastEnt = entries[entries.length-1];
+    var next = state.archers[state.archerIndex+1];
+
+    var card = el('<div class="card target-stage"></div>');
+    card.appendChild(el('<div class="mode-badge">'+escapeHtml(modeLabel(state.mode))+'</div>'));
+    card.appendChild(el('<div class="archer-turn">'+t("target_singular")+' '+state.target+' &middot; '+t("done_word")+'</div>'));
+    card.appendChild(el('<div class="archer-name-big display">'+escapeHtml(justDone.name)+': '+lastEnt.total+' pt</div>'));
+    wrap.appendChild(card);
+
+    var nextBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("next_archer_btn",{name:escapeHtml(next.name)})+'</button>');
+    nextBtn.addEventListener("click", function(){
+      state.awaitingStep = null;
+      state.archerIndex += 1;
+      save(); render();
+    });
+    wrap.appendChild(nextBtn);
+
+    var undoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("undo_btn")+'</button>');
+    undoBtn.addEventListener("click", undoLastShot);
+    wrap.appendChild(undoBtn);
+
+    return wrap;
+  }
+
+  // ---------- TRANSIZIONE: prossima piazzola ----------
+  function targetTransitionScreen(){
+    var wrap = el('<div></div>');
+    var isLast = state.target >= state.format;
+
+    var card = el('<div class="card target-stage"></div>');
+    card.appendChild(el('<div class="mode-badge">'+escapeHtml(modeLabel(state.mode))+'</div>'));
+    card.appendChild(el('<div class="archer-turn">'+(isLast ? t("round_done") : t("target_done"))+'</div>'));
+    card.appendChild(el('<div class="big-target-num">'+state.target+'</div>'));
+
+    var strip = el('<div class="shots-strip"></div>');
+    state.archers.forEach(function(a){
+      var entries = state.scores[a.id];
+      var ent = entries[state.target-1];
+      if(ent){ strip.appendChild(el('<span class="shot-pill">'+escapeHtml(a.name)+': '+ent.total+'</span>')); }
+    });
+    card.appendChild(strip);
+    wrap.appendChild(card);
+
+    var nextBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.08rem;">'+(isLast ? t("view_final_btn") : t("next_target_btn"))+'</button>');
+    nextBtn.addEventListener("click", advanceToNextTarget);
+    wrap.appendChild(nextBtn);
+
+    var undoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("undo_btn")+'</button>');
+    undoBtn.addEventListener("click", undoLastShot);
+    wrap.appendChild(undoBtn);
+
+    return wrap;
+  }
+
+  function advanceToNextTarget(){
+    var mode = GAME_MODES[state.mode] || GAME_MODES.training;
+    state.awaitingStep = null;
+    state.archerIndex = 0;
+    if(state.target < state.format){
+      state.target += 1;
+      // rotazione FIARC: nelle gare, il primo arciere passa in ultima posizione ad ogni piazzola
+      if(mode.key !== "training" && state.archers.length > 1){
+        state.archers.push(state.archers.shift());
+      }
+    } else {
+      state.screen = "summary";
+    }
+    save(); render();
+  }
+
+  function registerShot(score){
+    var mode = GAME_MODES[state.mode] || GAME_MODES.training;
+    var archer = state.archers[state.archerIndex];
+    state.pendingArrows = state.pendingArrows || [];
+    state.pendingArrows.push(score);
+
+    var done = mode.stopAtFirstHit
+      ? (score > 0 || state.pendingArrows.length >= mode.arrowsPerTarget)
+      : (state.pendingArrows.length >= mode.arrowsPerTarget);
+
+    if(done){
+      var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
+      state.scores[archer.id].push({ arrows: state.pendingArrows.slice(), total: total });
+      state.pendingArrows = [];
+      state.arrowIndex = 0;
+      if(state.archerIndex < state.archers.length - 1){
+        state.awaitingStep = "archer";
+      } else {
+        state.awaitingStep = "target";
+      }
+    } else {
+      state.arrowIndex = state.pendingArrows.length;
+    }
+    save(); render();
+  }
+
+  function undoLastShot(){
+    if(state.awaitingStep === "target" || state.awaitingStep === "archer"){
+      state.awaitingStep = null;
+      var justArcher = state.archers[state.archerIndex];
+      var jEntries = state.scores[justArcher.id];
+      var popped2 = jEntries.pop();
+      state.pendingArrows = popped2.arrows.slice();
+      state.arrowIndex = state.pendingArrows.length;
+      save(); render();
+      return;
+    }
+    if(state.pendingArrows && state.pendingArrows.length > 0){
+      state.pendingArrows.pop();
+      state.arrowIndex = state.pendingArrows.length;
+      save(); render();
+      return;
+    }
+    var prevArcherIndex = state.archerIndex - 1;
+    var prevTarget = state.target;
+    if(prevArcherIndex < 0){
+      if(state.target === 1) return; // niente da annullare
+      prevTarget = state.target - 1;
+      prevArcherIndex = state.archers.length - 1;
+    }
+    var archer = state.archers[prevArcherIndex];
+    var entries = state.scores[archer.id];
+    if(entries.length >= prevTarget){
+      var popped = entries.pop();
+      state.pendingArrows = popped.arrows.slice();
+      state.arrowIndex = state.pendingArrows.length;
+    } else {
+      state.pendingArrows = [];
+      state.arrowIndex = 0;
+    }
+    state.target = prevTarget;
+    state.archerIndex = prevArcherIndex;
+    save(); render();
+  }
+
+  // ---------- SUMMARY ----------
+  function summaryScreen(){
+    var wrap = el('<div></div>');
+    var mLabel = modeLabel(state.mode);
+    var card = el('<div class="card"></div>');
+    card.appendChild(el('<h2 class="section-title">'+t("classifica_title",{mode:escapeHtml(mLabel)})+'</h2>'));
+    var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
+
+    if(!state.savedToHistory){
+      var hist = loadHistory();
+      hist.unshift({
+        date: new Date().toISOString(),
+        format: state.format,
+        modeKey: state.mode,
+        modeLabel: mLabel,
+        results: ranked.map(function(a){
+          var entries = state.scores[a.id] || [];
+          return { name: a.name, total: totalFor(a.id), perTarget: entries.map(function(e){ return e.total; }) };
+        })
+      });
+      if(hist.length > 20) hist.length = 20;
+      saveHistoryList(hist);
+      state.savedToHistory = true;
+      save();
+      setTimeout(celebrationBurst, 150);
+    }
+
+    var histAll = loadHistory();
+    function prevTotalFor(name){
+      for(var i=1;i<histAll.length;i++){
+        var h = histAll[i];
+        var hKey = h.modeKey || null;
+        if(hKey ? hKey !== state.mode : h.modeLabel !== mLabel) continue;
+        for(var j=0;j<h.results.length;j++){
+          if(h.results[j].name === name) return h.results[j].total;
+        }
+      }
+      return null;
+    }
+
+    var table = el('<table class="score-table"><thead><tr><th class="name-col">'+t("th_archer")+'</th><th>'+t("th_targets")+'</th><th>'+t("th_total")+'</th><th>'+t("th_vs_prev")+'</th></tr></thead><tbody></tbody></table>');
+    var tbody = table.querySelector("tbody");
+    ranked.forEach(function(a, i){
+      var entries = state.scores[a.id] || [];
+      var tot = totalFor(a.id);
+      var prev = prevTotalFor(a.name);
+      var deltaTxt = "&mdash;";
+      if(prev !== null){
+        var diff = tot - prev;
+        var sign = diff > 0 ? "+" : "";
+        var color = diff > 0 ? "var(--success)" : diff < 0 ? "var(--danger)" : "var(--muted)";
+        deltaTxt = '<span style="color:'+color+';font-weight:700;">'+sign+diff+'</span>';
+      }
+      tbody.appendChild(el(
+        '<tr class="rank-row'+(i===0?" first":"")+'"><td class="name-col">'+(i===0?"\uD83C\uDFC6 ":"")+escapeHtml(a.name)+'</td>'+
+        '<td>'+entries.length+'</td><td class="total-col">'+tot+'</td><td>'+deltaTxt+'</td></tr>'
+      ));
+    });
+    card.appendChild(table);
+    wrap.appendChild(card);
+
+    var detailCard = el('<div class="card printable"></div>');
+    detailCard.appendChild(el('<h2 class="section-title">'+t("detail_title")+'</h2>'));
+    var piazzFlow = el('<div class="piazz-flow"></div>');
+    for(var i=0;i<state.format;i++){
+      var pCard = el('<div class="piazz-card"></div>');
+      pCard.appendChild(el('<div class="piazz-card-num">'+(i+1)+'</div>'));
+      var rightWrap = el('<div class="piazz-card-right"></div>');
+      ranked.forEach(function(a){
+        var entries = state.scores[a.id] || [];
+        var ent = entries[i];
+        var item = el('<div class="ring-item"></div>');
+        if(ent){
+          item.appendChild(el('<div class="ring-badge">'+ent.total+'</div>'));
+          if(ent.arrows.length > 1){
+            item.appendChild(el('<span style="font-size:0.58rem;color:var(--muted);">'+ent.arrows.join('+')+'</span>'));
+          }
+        } else {
+          item.appendChild(el('<div class="ring-badge empty">&ndash;</div>'));
+        }
+        item.appendChild(el('<span class="ring-name">'+escapeHtml(a.name)+'</span>'));
+        rightWrap.appendChild(item);
+      });
+      pCard.appendChild(rightWrap);
+      piazzFlow.appendChild(pCard);
+    }
+    detailCard.appendChild(piazzFlow);
+    wrap.appendChild(detailCard);
+
+    var newRound = el('<button class="btn btn-primary btn-block no-print" style="padding:16px;">'+t("back_to_menu_full")+'</button>');
+    newRound.addEventListener("click", function(){ homeOverride = true; render(); });
+    wrap.appendChild(newRound);
+
+    var resetBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;">'+t("reset_round_btn")+'</button>');
+    wrap.appendChild(resetBtn);
+    armDoubleConfirm(resetBtn, t("reset_confirm"), hardResetAll);
+
+    var printBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;">'+icon("printer",16)+' '+t("export_pdf_btn")+'</button>');
+    printBtn.addEventListener("click", function(){
+      window.print();
+    });
+    wrap.appendChild(printBtn);
+
+    var shareBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;">'+icon("share",16)+' '+t("share_btn")+'</button>');
+    shareBtn.addEventListener("click", function(){
+      var lines = ranked.map(function(a,i){
+        var entries = state.scores[a.id] || [];
+        var perTarget = entries.map(function(ent,idx){ return (idx+1)+":"+ent.total; }).join(" ");
+        return (i+1)+". "+a.name+" \u2013 "+totalFor(a.id)+" pt\n   "+perTarget;
+      });
+      var text = t("share_header",{mode:mLabel, n:state.format})+"\n\n"+lines.join("\n\n");
+      if(navigator.share){
+        navigator.share({ title: "ArcTrail 3D", text: text }).catch(function(){});
+      } else if(navigator.clipboard){
+        navigator.clipboard.writeText(text).then(function(){
+          shareBtn.innerHTML = t("copied_msg");
+          setTimeout(function(){ shareBtn.innerHTML = icon("share",16)+' '+t("share_btn"); }, 2000);
+        });
+      }
+    });
+    wrap.appendChild(shareBtn);
+
+    return wrap;
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
