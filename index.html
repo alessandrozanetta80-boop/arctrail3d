@@ -239,6 +239,7 @@
   var authErrorMsg = "";
   var currentUser = null;
   var PENDING_EMAIL_KEY = "arctrail3d_pending_email";
+  var ADMIN_EMAIL = "alessandro.zanetta80@gmail.com";
 
   function onAuthReady(user){
     currentUser = user;
@@ -434,6 +435,14 @@
       mode_ifaa_3d_label:"IFAA 3-D Standard Round", mode_ifaa_3d_tag:"gara \u00b7 2 frecce", mode_ifaa_3d_unit:"Freccia",
       mode_ifaa_3d_desc:"IFAA 3-D Standard Round ufficiale: 28 piazzole, 2 frecce a piazzola da due piquet diversi (entrambe le frecce si sommano).",
       zone_ifaa_spot: "Spot", zone_ifaa_lowarea: "Zona Bassa",
+      menu_admin: "Approvazioni",
+      admin_title: "Gestione accessi",
+      admin_loading: "Caricamento\u2026",
+      admin_pending_title: "In attesa di approvazione",
+      admin_approved_title: "Gi\u00e0 approvati",
+      admin_empty_pending: "Nessuna richiesta in attesa.",
+      admin_approve_btn: "Approva",
+      admin_revoke_btn: "Revoca",
     },
     en: {
       tagline: "Field scorekeeper \u00b7 FIARC",
@@ -1061,6 +1070,7 @@
       case "campi": app.appendChild(campiScreen()); break;
       case "history": app.appendChild(historyScreen()); break;
       case "info": app.appendChild(infoScreen()); break;
+      case "admin": app.appendChild(adminScreen()); break;
       case "round": app.appendChild(roundScreen()); break;
       case "summary": app.appendChild(summaryScreen()); break;
       default: app.appendChild(registrationScreen());
@@ -1456,6 +1466,12 @@
     infoBtn.addEventListener("click", function(){ state.screen = "info"; save(); render(); });
     wrap.appendChild(infoBtn);
 
+    if(currentUser && currentUser.email === ADMIN_EMAIL){
+      var adminBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("users",16)+' '+t("menu_admin")+'</button>');
+      adminBtn.addEventListener("click", function(){ state.screen = "admin"; save(); render(); });
+      wrap.appendChild(adminBtn);
+    }
+
     if(currentUser){
       var logoutBtn2 = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t("logout_word")+' ('+escapeHtml(currentUser.email)+')</button>');
       logoutBtn2.addEventListener("click", function(){
@@ -1588,6 +1604,61 @@
     var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
     backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
     wrap.appendChild(backBtn);
+    return wrap;
+  }
+
+  // ---------- AMMINISTRAZIONE ACCESSI ----------
+  function adminScreen(){
+    var wrap = el('<div></div>');
+    var card = el('<div class="card"></div>');
+    card.appendChild(el('<h2 class="section-title">'+t("admin_title")+'</h2>'));
+    var listWrap = el('<div id="adminListWrap"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
+    card.appendChild(listWrap);
+    wrap.appendChild(card);
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
+    backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
+    wrap.appendChild(backBtn);
+
+    function loadList(){
+      db.collection("users").get().then(function(snap){
+        var pending = [], approved = [];
+        snap.forEach(function(doc){
+          var d = doc.data();
+          var row = { id: doc.id, email: d.email || "?", approved: !!d.approved };
+          (row.approved ? approved : pending).push(row);
+        });
+        listWrap.innerHTML = "";
+        listWrap.appendChild(el('<div style="font-weight:700;margin-bottom:8px;">'+t("admin_pending_title")+' ('+pending.length+')</div>'));
+        if(pending.length === 0){
+          listWrap.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;">'+t("admin_empty_pending")+'</div>'));
+        }
+        pending.forEach(function(row){
+          var rowEl = el('<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);"><span style="font-size:0.9rem;word-break:break-all;">'+escapeHtml(row.email)+'</span></div>');
+          var btn = el('<button class="btn btn-primary btn-sm">'+t("admin_approve_btn")+'</button>');
+          btn.addEventListener("click", function(){
+            btn.disabled = true;
+            db.collection("users").doc(row.id).update({approved:true}).then(loadList);
+          });
+          rowEl.appendChild(btn);
+          listWrap.appendChild(rowEl);
+        });
+        listWrap.appendChild(el('<div style="font-weight:700;margin:16px 0 8px;">'+t("admin_approved_title")+' ('+approved.length+')</div>'));
+        approved.forEach(function(row){
+          var rowEl = el('<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);"><span style="font-size:0.9rem;word-break:break-all;">'+escapeHtml(row.email)+'</span></div>');
+          var btn = el('<button class="btn btn-ghost btn-sm">'+t("admin_revoke_btn")+'</button>');
+          btn.addEventListener("click", function(){
+            btn.disabled = true;
+            db.collection("users").doc(row.id).update({approved:false}).then(loadList);
+          });
+          rowEl.appendChild(btn);
+          listWrap.appendChild(rowEl);
+        });
+      }).catch(function(err){
+        listWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
+      });
+    }
+    setTimeout(loadList, 0);
+
     return wrap;
   }
 
