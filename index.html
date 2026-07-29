@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1F6B3A">
+<meta name="theme-color" content="#1D9A8C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ArcTrail 3D">
@@ -12,22 +12,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22ArcTrail%203D%22%2C%22short_name%22%3A%22ArcTrail%203D%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F6F5F2%22%2C%22theme_color%22%3A%22%231F6B3A%22%2C%22start_url%22%3A%22.%22%7D">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23F6F5F2'/%3E%3Ccircle cx='50' cy='50' r='34' fill='none' stroke='%231F6B3A' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%236B4A34' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='7' fill='%231F6B3A'/%3E%3C/svg%3E">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22ArcTrail%203D%22%2C%22short_name%22%3A%22ArcTrail%203D%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23FAF8F0%22%2C%22theme_color%22%3A%22%231D9A8C%22%2C%22start_url%22%3A%22.%22%7D">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23FAF8F0'/%3E%3Ccircle cx='50' cy='50' r='34' fill='none' stroke='%23123832' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%23D99A1E' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='7' fill='%239FCB2A'/%3E%3C/svg%3E">
 <style>
   :root{
-    --bg:#F6F5F2; --bg-panel:#ffffff; --bg-panel-2:#EFEDE6; --wood:#ffffff; --wood-2:#EFEDE6;
-    --accent:#1F6B3A; --bark:#6B4A34; --gold:#C9932A; --cream:#132615; --muted:#6B7A66;
-    --danger:#B0483A; --success:#3D7A4E; --line:#E3E0D5;
-    --qss:#1F6B3A; --qspot:#8FAF8A; --qsag:#D9B44A; --qzero:#5B5B54;
+    --bg:#E8E2D0; --bg-panel:#ffffff; --bg-panel-2:#F3EEDD; --wood:#ffffff; --wood-2:#F3EEDD;
+    --accent:#1D9A8C; --bark:#E8641F; --gold:#9FCB2A; --cream:#1A1A1A; --muted:#5C574A;
+    --danger:#E23D2E; --success:#4CAF50; --line:#1A1A1A;
+    --qss:#9FCB2A; --qspot:#1D9A8C; --qsag:#F2A93B; --qzero:#6B6558;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{height:100%;}
   body{ margin:0; color:var(--cream); position:relative;
     background:
-      radial-gradient(ellipse 900px 500px at 8% -5%, rgba(31,107,58,0.16), transparent 60%),
-      radial-gradient(ellipse 700px 500px at 105% 15%, rgba(201,147,42,0.14), transparent 55%),
-      radial-gradient(ellipse 800px 600px at 50% 120%, rgba(107,74,52,0.10), transparent 60%),
+      radial-gradient(ellipse 900px 500px at 8% -5%, rgba(29,154,140,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 105% 15%, rgba(159,203,42,0.14), transparent 55%),
+      radial-gradient(ellipse 800px 600px at 50% 120%, rgba(232,100,31,0.10), transparent 60%),
       var(--bg);
     font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; min-height:100dvh; padding-bottom:env(safe-area-inset-bottom); }
   body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.5; mix-blend-mode:multiply;
@@ -35,20 +38,20 @@
   .display{ font-family:Georgia,'Times New Roman',serif; font-weight:700; letter-spacing:0.03em; }
   #app{ max-width:520px; margin:0 auto; padding:18px 16px 32px; min-height:100dvh; position:relative; }
   header.top{ display:flex; align-items:center; gap:10px; padding:6px 2px 18px; border-bottom:1px solid var(--line); margin-bottom:20px; }
-  header.top .logo{ width:38px;height:38px;flex:0 0 auto; filter:drop-shadow(0 2px 6px rgba(31,107,58,0.35)); }
+  header.top .logo{ width:38px;height:38px;flex:0 0 auto; filter:drop-shadow(0 2px 6px rgba(29,154,140,0.35)); }
   header.top .headtxt{ flex:1; }
   header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent); }
   header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
   .home-btn{ background:none;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:8px 12px;font-size:0.8rem;cursor:pointer; }
-  .card{ background:var(--bg-panel); border:1px solid var(--line); border-radius:22px; padding:18px; margin-bottom:16px;
-    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 24px rgba(30,40,20,0.07), 0 2px 6px rgba(30,40,20,0.04);
+  .card{ background:var(--bg-panel); border:3px solid var(--line); border-radius:18px; padding:18px; margin-bottom:16px;
+    box-shadow:5px 5px 0 var(--line);
     position:relative; z-index:1; }
   h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 12px; }
-  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:14px; padding:14px 18px; font-size:1rem; font-weight:600; cursor:pointer; color:var(--cream); background:var(--bg-panel-2); border:1px solid var(--line); transition:transform .12s ease, box-shadow .12s ease, filter .12s ease; }
-  .btn:active{ transform:scale(0.96); filter:brightness(0.97); }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:14px; padding:14px 18px; font-size:1rem; font-weight:700; cursor:pointer; color:var(--cream); background:var(--bg-panel-2); border:3px solid var(--line); box-shadow:4px 4px 0 var(--line); transition:transform .1s ease, box-shadow .1s ease; }
+  .btn:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 var(--line); }
   .btn:disabled{ opacity:0.4; }
-  .btn-primary{ background:linear-gradient(135deg,var(--accent),#2f8a4d); border-color:transparent; color:#fdfaf3; font-weight:700; box-shadow:0 6px 16px rgba(31,107,58,0.28); }
-  .btn-primary:active{ box-shadow:0 2px 8px rgba(31,107,58,0.22); }
+  .btn-primary{ background:var(--accent); border-color:var(--line); color:#fff; font-weight:800; box-shadow:4px 4px 0 var(--line); }
+  .btn-primary:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 var(--line); }
   .btn-block{ width:100%; }
   .btn-ghost{ background:transparent; border:1px solid var(--line); color:var(--muted); }
   .btn-sm{ padding:9px 14px; font-size:0.85rem; }
@@ -58,18 +61,18 @@
   .menu-btn .menu-icon{ font-size:1.4rem; }
   .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; }
   .menu-btn .menu-sub{ font-size:0.7rem; font-weight:400; opacity:0.85; margin-top:2px; }
-  .menu-btn.training{ background:linear-gradient(135deg,var(--accent),#2f8a4d); color:#fdfaf3; border-color:transparent; }
-  .menu-btn.gara{ background:linear-gradient(135deg,var(--bark),#835a40); color:#fdfaf3; border-color:transparent; box-shadow:0 6px 16px rgba(107,74,52,0.28); }
+  .menu-btn.training{ background:var(--accent); color:#fff; border-color:var(--line); box-shadow:4px 4px 0 var(--line); }
+  .menu-btn.gara{ background:var(--bark); color:#fff; border-color:var(--line); box-shadow:4px 4px 0 var(--line); }
   .row{ display:flex; gap:10px; }
   .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
   .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:12px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; }
   .chip.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
   .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
   .lang-chip{ min-width:60px; }
-  .lang-pick-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:16px 20px; border-radius:16px; border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; box-shadow:0 4px 12px rgba(30,40,20,0.05); transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
-  .lang-pick-btn:active{ transform:scale(0.97); }
+  .lang-pick-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:16px 20px; border-radius:16px; border:3px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; box-shadow:4px 4px 0 var(--line); transition:transform .1s ease, box-shadow .1s ease; }
+  .lang-pick-btn:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 var(--line); }
   .lang-pick-btn .flag{ font-size:1.6rem; line-height:1; }
-  .lang-pick-btn:hover, .lang-pick-btn:focus{ border-color:var(--accent); box-shadow:0 6px 16px rgba(31,107,58,0.15); }
+  .lang-pick-btn:hover, .lang-pick-btn:focus{ border-color:var(--accent); }
   .onboard-title{ font-size:1.35rem; color:var(--accent); margin:2px 0 6px; }
   .onboard-sub{ color:var(--muted); font-size:0.82rem; margin-bottom:26px; }
   .onboard-stack{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px; }
@@ -90,15 +93,15 @@
   .partial-row + .partial-row{ border-top:1px solid var(--line); }
   .partial-row .pname{ font-weight:600; }
   .partial-row.leader .pname{ color:var(--accent); }
-  .partial-row .ptot{ font-weight:800; color:var(--gold); font-family:Georgia,serif; }
+  .partial-row .ptot{ font-weight:800; color:var(--gold); font-family:"Outfit",sans-serif; }
   .target-stage{ text-align:center; }
   .archer-turn{ font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
   .archer-name-big{ font-size:1.4rem; margin-bottom:6px; }
-  .arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--gold); color:var(--gold); font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:20px; margin-bottom:12px; }
+  .arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:20px; margin-bottom:12px; }
   .mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:20px; margin-bottom:8px; text-transform:uppercase; letter-spacing:.05em; }
-  .piazzola-num{ font-size:2.6rem; font-weight:800; color:var(--accent); font-family:Georgia,serif; line-height:1; margin-bottom:2px; position:relative; display:inline-block; }
+  .piazzola-num{ font-size:2.6rem; font-weight:800; color:var(--accent); font-family:"Outfit",sans-serif; line-height:1; margin-bottom:2px; position:relative; display:inline-block; }
   .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
-    background:radial-gradient(circle, rgba(31,107,58,0.16), transparent 70%); z-index:-1; }
+    background:radial-gradient(circle, rgba(29,154,140,0.16), transparent 70%); z-index:-1; }
   .switch-row{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:12px; }
   .board{ position:relative; border-radius:14px; padding:18px;
     background: linear-gradient(180deg, #ffffff, #fdf9ef); border:1px solid var(--line); box-shadow: inset 0 0 14px rgba(40,40,20,0.04); }
@@ -114,15 +117,15 @@
   .impact-actions{ display:flex; gap:10px; margin-top:12px; }
   .impact-actions .btn{ flex:1; }
   .quick-grid{ display:flex; justify-content:center; align-items:flex-start; gap:7px; margin:18px 0 10px; flex-wrap:wrap; }
-  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:68px; height:76px; flex:0 0 auto; padding:10px 4px; gap:2px; position:relative; overflow:visible; border:none; border-radius:18px; line-height:1.15; transition:transform .12s ease, box-shadow .12s ease, filter .12s ease; }
-  .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(0.95); }
-  .quick-btn .quick-lbl{ font-size:0.68rem; font-weight:700; }
-  .quick-btn .quick-pts{ font-size:1.15rem; font-weight:800; font-family:Georgia,serif; }
-  .quick-btn.superspot{ background:var(--qss); color:#fdfaf3; }
-  .quick-btn.spot{ background:var(--qspot); color:#16371c; }
-  .quick-btn.sagoma{ background:var(--qsag); color:#2b2205; }
+  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:76px; height:84px; flex:0 0 auto; padding:10px 4px; gap:2px; position:relative; overflow:visible; border:3px solid var(--line); border-radius:16px; line-height:1.15; box-shadow:3px 3px 0 var(--line); transition:transform .1s ease, box-shadow .1s ease; }
+  .quick-btn:active{ transform:translate(2px,2px) !important; box-shadow:1px 1px 0 var(--line) !important; }
+  .quick-btn .quick-lbl{ font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.02em; }
+  .quick-btn .quick-pts{ font-size:1.4rem; font-weight:800; font-family:"Outfit",sans-serif; }
+  .quick-btn.superspot{ background:var(--qss); color:#2A2115; }
+  .quick-btn.spot{ background:var(--qspot); color:#fdfaf3; }
+  .quick-btn.sagoma{ background:var(--qsag); color:#2A2115; }
   .quick-btn.zero{ background:var(--qzero); color:#fdfaf3; }
-  .quick-btn.perfect{ background:#2E7D6B; color:#fdfaf3; }
+  .quick-btn.perfect{ background:#9FCB2A; color:#2A2115; }
   .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
   .shots-strip{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:14px 0 4px; }
   .shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:20px; padding:5px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
@@ -141,7 +144,7 @@
   .ring-badge.empty{ opacity:0.35; background:#EDEAE0; border-color:#cfc9b8; color:var(--muted); }
   .ring-name{ font-size:0.62rem; color:var(--muted); max-width:56px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .rank-row.first td{ color:var(--accent); font-weight:700; }
-  .total-col{ font-weight:700; color:var(--gold); }
+  .total-col{ font-weight:800; color:var(--gold); font-family:"Outfit",sans-serif; }
   .footer-note{ text-align:center; color:var(--muted); font-size:0.72rem; margin-top:18px; line-height:1.5; }
   .rules-panel{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-top:12px; font-size:0.78rem; line-height:1.6; }
   .rules-panel .rp-title{ font-weight:700; color:var(--cream); margin-bottom:4px; }
@@ -150,15 +153,15 @@
   .install-hint b{ color:var(--accent); }
   .empty-hint{ color:var(--muted); font-size:0.85rem; text-align:center; padding:10px 0; }
   .splash-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:82dvh; text-align:center; gap:6px; }
-  .splash-logo{ width:100px; height:100px; margin-bottom:10px; filter:drop-shadow(0 8px 20px rgba(31,107,58,0.35)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
+  .splash-logo{ width:100px; height:100px; margin-bottom:10px; filter:drop-shadow(0 8px 20px rgba(29,154,140,0.35)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
   .splash-title{ font-size:2.1rem; color:var(--accent); margin:0; animation:splashUp .6s ease .15s both; }
   .splash-tag{ color:var(--muted); font-size:0.85rem; margin-bottom:26px; letter-spacing:.03em; animation:splashUp .6s ease .3s both; }
   .splash-wrap .btn{ min-width:200px; padding:16px 24px; font-size:1.05rem; animation:splashUp .6s ease .45s both; }
   @keyframes splashLogo{ 0%{ opacity:0; transform:scale(0.6) rotate(-8deg); } 100%{ opacity:1; transform:scale(1) rotate(0deg); } }
   @keyframes splashUp{ 0%{ opacity:0; transform:translateY(14px); } 100%{ opacity:1; transform:translateY(0); } }
-  .big-target-num{ font-size:4.4rem; font-weight:800; color:var(--accent); font-family:Georgia,serif; margin:4px 0 10px; line-height:1; position:relative; display:inline-block; }
+  .big-target-num{ font-size:4.4rem; font-weight:800; color:var(--accent); font-family:"Outfit",sans-serif; margin:4px 0 10px; line-height:1; position:relative; display:inline-block; }
   .big-target-num::before{ content:""; position:absolute; left:50%; top:50%; width:180px; height:180px; transform:translate(-50%,-50%); border-radius:50%;
-    background:radial-gradient(circle, rgba(201,147,42,0.20), transparent 70%); z-index:-1; }
+    background:radial-gradient(circle, rgba(159,203,42,0.20), transparent 70%); z-index:-1; }
   .leaf-burst{ position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:5; }
   .leaf-particle{ position:absolute; font-size:16px; animation:leafFly .7s ease-out forwards; }
   @keyframes leafFly{
@@ -187,6 +190,106 @@
 <script>
 (function(){
   "use strict";
+  window.addEventListener("error", function(){
+    var app = document.getElementById("app");
+    if(app && app.innerHTML.trim() === ""){
+      app.innerHTML = '<div style="padding:40px 20px;text-align:center;font-family:sans-serif;color:#132615;">'+
+        '<div style="font-size:1.3rem;font-weight:700;margin-bottom:10px;">ArcTrail 3D</div>'+
+        '<div style="color:#6B7A66;margin-bottom:18px;">Si \u00e8 verificato un problema nel caricamento. Prova a ricaricare la pagina.</div>'+
+        '<button onclick="window.location.reload()" style="padding:12px 20px;border-radius:10px;border:none;background:#1D9A8C;color:#fff;font-weight:700;">Ricarica</button>'+
+      '</div>';
+    }
+  });
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  // ---------- MODALITA' SVILUPPO ----------
+  // Metti true per aprire il file offline/in locale saltando del tutto l'accesso Firebase (per testare le modifiche).
+  // Rimetti false SOLO nella versione da caricare sul sito online.
+  var DEV_MODE = false;
+
+  // ---------- FIREBASE (accesso + database condiviso) ----------
+  var firebaseConfig = {
+    apiKey: "AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",
+    authDomain: "arctrail3d.firebaseapp.com",
+    projectId: "arctrail3d",
+    storageBucket: "arctrail3d.firebasestorage.app",
+    messagingSenderId: "185889526349",
+    appId: "1:185889526349:web:0af3b386332664387c8204",
+    measurementId: "G-V6ML7HEGGJ"
+  };
+  var firebaseReady = true;
+  var auth, db;
+  if(DEV_MODE){
+    firebaseReady = false;
+  } else {
+  try{
+    var fbApp = firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    try{ db.enablePersistence({ synchronizeTabs:true }).catch(function(){}); }catch(e){}
+  } catch(initErr){
+    firebaseReady = false;
+  }
+  }
+
+  var authState = DEV_MODE ? "ready" : (firebaseReady ? "loading" : "firebaseError"); // loading | needLogin | linkSent | pendingApproval | authError | firebaseError | ready
+  var authErrorMsg = "";
+  var currentUser = null;
+  var PENDING_EMAIL_KEY = "arctrail3d_pending_email";
+
+  function onAuthReady(user){
+    currentUser = user;
+    db.collection("users").doc(user.uid).get().then(function(doc){
+      if(!doc.exists){
+        db.collection("users").doc(user.uid).set({
+          email: user.email,
+          approved: false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        authState = "pendingApproval";
+      } else if(doc.data().approved){
+        authState = "ready";
+      } else {
+        authState = "pendingApproval";
+      }
+      render();
+    }).catch(function(){
+      // offline al primo accesso: se non abbiamo mai potuto verificare, meglio far attendere che entrare senza controllo
+      authState = "pendingApproval";
+      render();
+    });
+  }
+
+  function initAuthFlow(){
+    if(!firebaseReady){ render(); return; }
+    try{
+      if(auth.isSignInWithEmailLink(window.location.href)){
+      var email = window.localStorage.getItem(PENDING_EMAIL_KEY);
+      if(!email){ email = window.prompt("Conferma la tua email per completare l'accesso:") || ""; }
+      auth.signInWithEmailLink(email, window.location.href).then(function(result){
+        window.localStorage.removeItem(PENDING_EMAIL_KEY);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        onAuthReady(result.user);
+      }).catch(function(err){
+        authState = "authError";
+        authErrorMsg = err && err.message ? err.message : "Link non valido o scaduto.";
+        render();
+      });
+    } else {
+      auth.onAuthStateChanged(function(user){
+        if(user){ onAuthReady(user); }
+        else { authState = "needLogin"; render(); }
+      });
+    }
+    } catch(flowErr){
+      authState = "firebaseError";
+      render();
+    }
+  }
+
   var STORAGE_KEY = "arctrail3d_state_v3";
   var HISTORY_KEY = "arctrail3d_storico_v1";
 
@@ -200,9 +303,10 @@
   var LANG_META = {
     it:{ name:"Italiano", locale:"it-IT", flag:"\uD83C\uDDEE\uD83C\uDDF9" },
     en:{ name:"English", locale:"en-US", flag:"\uD83C\uDDEC\uD83C\uDDE7" },
-    fr:{ name:"Fran\u00e7ais", locale:"fr-FR", flag:"\uD83C\uDDEB\uD83C\uDDF7" }
+    fr:{ name:"Fran\u00e7ais", locale:"fr-FR", flag:"\uD83C\uDDEB\uD83C\uDDF7" },
+    de:{ name:"Deutsch", locale:"de-DE", flag:"\uD83C\uDDE9\uD83C\uDDEA" }
   };
-  var LANG_ORDER = ["it","en","fr"];
+  var LANG_ORDER = ["it","en","fr","de"];
 
   var STRINGS = {
     it: {
@@ -212,6 +316,8 @@
       country_pick_title: "In quale nazione tiri?",
       country_italy: "Italia",
       country_other: "Altro paese",
+      country_france: "Francia",
+      country_switzerland: "Svizzera",
       federation_pick_title: "A quale associazione appartieni?",
       federation_hint: "Per ora seguiamo il regolamento FIARC. Altre federazioni arriveranno presto.",
       coming_soon: "Presto disponibile",
@@ -255,6 +361,11 @@
       history_clear: "Cancella storico",
       clear_confirm: "Tocca di nuovo per confermare",
       targets_word: "piazzole",
+      ordinal_1: "1\u00aa", ordinal_2: "2\u00aa", ordinal_3: "3\u00aa",
+      logout_word: "Esci",
+      zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
+      zone_wa_perfect: "11", zone_wa_superspot: "10", zone_wa_spot: "8", zone_wa_sagoma: "5",
+      zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letale", zone_ffta_spot: "Vitale", zone_ffta_sagoma: "Corpo",
       target_singular: "Piazzola",
       partial_title: "Punteggio parziale \u00b7 tutti i partecipanti",
       turn_of: "Turno di",
@@ -300,10 +411,29 @@
       mode_tracciato_desc:"Tracciato ufficiale: 24 piazzole, fino a 3 frecce, vale solo la prima a segno.",
       mode_battuta_label:"Battuta", mode_battuta_tag:"gara \u00b7 branco di 3", mode_battuta_unit:"Sagoma",
       mode_battuta_desc:"Battuta ufficiale: 28 piazzole, branco di 3 sagome a piazzola, 1 freccia a sagoma. Punteggio fisso per ogni sagoma del branco.",
+      menu_info: "Info",
+      info_title: "Informazioni",
+      disclaimer_text: "ArcTrail 3D \u00e8 un'app indipendente creata da appassionati per uso pratico durante allenamenti e gare. Non \u00e8 un prodotto ufficiale delle federazioni citate (FIARC, FITARCO, FFTA), n\u00e9 \u00e8 approvata o affiliata a esse. I nomi, i marchi e i regolamenti citati appartengono alle rispettive federazioni. In caso di dubbio sul punteggio ufficiale, fa sempre fede il regolamento pubblicato dalla federazione di riferimento.",
+      mode_ffta_training_label:"Allenamento", mode_ffta_training_tag:"1 freccia", mode_ffta_training_unit:"Freccia",
+      mode_ffta_training_desc:"Allenamento libero secondo le zone FFTA: una sola freccia per piazzola, punteggi fissi. Scegli tu quante piazzole fare.",
+      mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"gara \u00b7 2 frecce", mode_ffta_tir3d_unit:"Freccia",
+      mode_ffta_tir3d_desc:"Tir sur Cibles 3D ufficiale FFTA: 24 piazzole, 2 frecce a piazzola dallo stesso piquet (stesso punteggio per entrambe le frecce).",
       mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"gara \u00b7 2 frecce", mode_fitarco3d_unit:"Freccia",
       mode_fitarco3d_desc:"Tiro 3D FITARCO: 24 sagome, 2 frecce a sagoma. A differenza della FIARC il punteggio non dipende dall'ordine delle frecce.",
       provisional_tag:"dati provvisori",
-      provisional_note:"\u26a0\ufe0f Dati non ancora confermati da un regolamento ufficiale certo: potrebbero cambiare."
+      provisional_note:"\u26a0\ufe0f Dati non ancora confermati da un regolamento ufficiale certo: potrebbero cambiare.",
+      visit_site_link: "Sito ufficiale",
+      mode_swissarchery_training_label:"Allenamento", mode_swissarchery_training_tag:"1 freccia", mode_swissarchery_training_unit:"Freccia",
+      mode_swissarchery_training_desc:"Allenamento libero secondo le zone World Archery: una sola freccia per piazzola, punteggi fissi. Scegli tu quante piazzole fare.",
+      mode_swissarchery_3d_label:"Parcours 3D", mode_swissarchery_3d_tag:"gara \u00b7 2 frecce", mode_swissarchery_3d_unit:"Freccia",
+      mode_swissarchery_3d_desc:"Parcours 3D ufficiale SwissArchery (standard World Archery): 24 piazzole, 2 frecce a piazzola dallo stesso piquet, distanze sconosciute, stesso punteggio per entrambe le frecce.",
+      country_austria: "Austria",
+      country_germany: "Germania",
+      mode_ifaa_training_label:"Allenamento", mode_ifaa_training_tag:"1 freccia", mode_ifaa_training_unit:"Freccia",
+      mode_ifaa_training_desc:"Allenamento libero secondo le zone IFAA: una sola freccia per piazzola, punteggi fissi. Scegli tu quante piazzole fare.",
+      mode_ifaa_3d_label:"IFAA 3-D Standard Round", mode_ifaa_3d_tag:"gara \u00b7 2 frecce", mode_ifaa_3d_unit:"Freccia",
+      mode_ifaa_3d_desc:"IFAA 3-D Standard Round ufficiale: 28 piazzole, 2 frecce a piazzola da due piquet diversi (entrambe le frecce si sommano).",
+      zone_ifaa_spot: "Spot", zone_ifaa_lowarea: "Zona Bassa",
     },
     en: {
       tagline: "Field scorekeeper \u00b7 FIARC",
@@ -312,6 +442,8 @@
       country_pick_title: "Which country do you shoot in?",
       country_italy: "Italy",
       country_other: "Other country",
+      country_france: "France",
+      country_switzerland: "Switzerland",
       federation_pick_title: "Which association do you belong to?",
       federation_hint: "For now we follow the FIARC rulebook. Other federations are coming soon.",
       coming_soon: "Coming soon",
@@ -355,6 +487,11 @@
       history_clear: "Clear history",
       clear_confirm: "Tap again to confirm",
       targets_word: "targets",
+      ordinal_1: "1st", ordinal_2: "2nd", ordinal_3: "3rd",
+      logout_word: "Log out",
+      zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
+      zone_wa_perfect: "11", zone_wa_superspot: "10", zone_wa_spot: "8", zone_wa_sagoma: "5",
+      zone_ffta_perfect: "Center", zone_ffta_superspot: "Kill", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Body",
       target_singular: "Target",
       partial_title: "Live score \u00b7 all participants",
       turn_of: "Turn of",
@@ -400,10 +537,29 @@
       mode_tracciato_desc:"Official Tracciato: 24 targets, up to 3 arrows, only the first scoring hit counts.",
       mode_battuta_label:"Battuta", mode_battuta_tag:"match \u00b7 pack of 3", mode_battuta_unit:"Target",
       mode_battuta_desc:"Official Battuta: 28 targets, pack of 3 targets per stand, 1 arrow per target. Fixed score for each target in the pack.",
+      menu_info: "Info",
+      info_title: "Information",
+      disclaimer_text: "ArcTrail 3D is an independent app created by enthusiasts for practical use during training and competitions. It is not an official product of the federations mentioned (FIARC, FITARCO, FFTA), nor is it approved by or affiliated with them. The names, trademarks, and rules mentioned belong to their respective federations. In case of doubt about official scoring, the rulebook published by the relevant federation always prevails.",
+      mode_ffta_training_label:"Training", mode_ffta_training_tag:"1 arrow", mode_ffta_training_unit:"Arrow",
+      mode_ffta_training_desc:"Free training using FFTA zones: a single arrow per target, fixed scoring. Choose how many targets to shoot.",
+      mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"match \u00b7 2 arrows", mode_ffta_tir3d_unit:"Arrow",
+      mode_ffta_tir3d_desc:"Official FFTA Tir sur Cibles 3D: 24 targets, 2 arrows per target from the same peg (both arrows score the same).",
       mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"match \u00b7 2 arrows", mode_fitarco3d_unit:"Arrow",
       mode_fitarco3d_desc:"FITARCO 3D: 24 targets, 2 arrows per target. Unlike FIARC, the score doesn't depend on arrow order.",
       provisional_tag:"provisional data",
-      provisional_note:"\u26a0\ufe0f Data not yet confirmed by a certain official rulebook: may change."
+      provisional_note:"\u26a0\ufe0f Data not yet confirmed by a certain official rulebook: may change.",
+      visit_site_link: "Official site",
+      mode_swissarchery_training_label:"Training", mode_swissarchery_training_tag:"1 arrow", mode_swissarchery_training_unit:"Arrow",
+      mode_swissarchery_training_desc:"Free training using World Archery zones: a single arrow per target, fixed scoring. Choose how many targets to shoot.",
+      mode_swissarchery_3d_label:"Parcours 3D", mode_swissarchery_3d_tag:"match \u00b7 2 arrows", mode_swissarchery_3d_unit:"Arrow",
+      mode_swissarchery_3d_desc:"Official SwissArchery Parcours 3D (World Archery standard): 24 targets, 2 arrows per target from the same peg, unmarked distances, both arrows score the same.",
+      country_austria: "Austria",
+      country_germany: "Germany",
+      mode_ifaa_training_label:"Training", mode_ifaa_training_tag:"1 arrow", mode_ifaa_training_unit:"Arrow",
+      mode_ifaa_training_desc:"Free training using IFAA zones: a single arrow per target, fixed scoring. Choose how many targets to shoot.",
+      mode_ifaa_3d_label:"IFAA 3-D Standard Round", mode_ifaa_3d_tag:"match \u00b7 2 arrows", mode_ifaa_3d_unit:"Arrow",
+      mode_ifaa_3d_desc:"Official IFAA 3-D Standard Round: 28 targets, 2 arrows per target from two different pegs (both arrows are summed).",
+      zone_ifaa_spot: "Spot", zone_ifaa_lowarea: "Low Area",
     },
     fr: {
       tagline: "Marqueur de terrain \u00b7 FIARC",
@@ -412,6 +568,8 @@
       country_pick_title: "Dans quel pays tirez-vous ?",
       country_italy: "Italie",
       country_other: "Autre pays",
+      country_france: "France",
+      country_switzerland: "Suisse",
       federation_pick_title: "\u00c0 quelle association appartenez-vous ?",
       federation_hint: "Pour l\u2019instant nous suivons le r\u00e8glement FIARC. D\u2019autres f\u00e9d\u00e9rations arriveront bient\u00f4t.",
       coming_soon: "Bient\u00f4t disponible",
@@ -455,6 +613,11 @@
       history_clear: "Effacer l\u2019historique",
       clear_confirm: "Appuyez \u00e0 nouveau pour confirmer",
       targets_word: "cibles",
+      ordinal_1: "1\u00e8re", ordinal_2: "2e", ordinal_3: "3e",
+      logout_word: "D\u00e9connexion",
+      zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
+      zone_wa_perfect: "11", zone_wa_superspot: "10", zone_wa_spot: "8", zone_wa_sagoma: "5",
+      zone_ffta_perfect: "Petit tu\u00e9", zone_ffta_superspot: "Tu\u00e9", zone_ffta_spot: "Vitale", zone_ffta_sagoma: "Corps",
       target_singular: "Cible",
       partial_title: "Score en direct \u00b7 tous les participants",
       turn_of: "Tour de",
@@ -500,10 +663,155 @@
       mode_tracciato_desc:"Tracciato officiel : 24 cibles, jusqu\u2019\u00e0 3 fl\u00e8ches, seul le premier tir marquant compte.",
       mode_battuta_label:"Battuta", mode_battuta_tag:"comp\u00e9tition \u00b7 groupe de 3", mode_battuta_unit:"Silhouette",
       mode_battuta_desc:"Battuta officielle : 28 cibles, groupe de 3 silhouettes par poste, 1 fl\u00e8che par silhouette. Score fixe pour chaque silhouette du groupe.",
+      menu_info: "Infos",
+      info_title: "Informations",
+      disclaimer_text: "ArcTrail 3D est une application ind\u00e9pendante cr\u00e9\u00e9e par des passionn\u00e9s pour un usage pratique lors des entra\u00eenements et des comp\u00e9titions. Ce n'est pas un produit officiel des f\u00e9d\u00e9rations mentionn\u00e9es (FIARC, FITARCO, FFTA), et l'application n'est ni approuv\u00e9e ni affili\u00e9e \u00e0 celles-ci. Les noms, marques et r\u00e8glements mentionn\u00e9s appartiennent \u00e0 leurs f\u00e9d\u00e9rations respectives. En cas de doute sur le score officiel, le r\u00e8glement publi\u00e9 par la f\u00e9d\u00e9ration concern\u00e9e fait toujours foi.",
+      mode_ffta_training_label:"Entra\u00eenement", mode_ffta_training_tag:"1 fl\u00e8che", mode_ffta_training_unit:"Fl\u00e8che",
+      mode_ffta_training_desc:"Entra\u00eenement libre selon les zones FFTA : une seule fl\u00e8che par cible, points fixes. Choisissez vous-m\u00eame le nombre de cibles.",
+      mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_ffta_tir3d_unit:"Fl\u00e8che",
+      mode_ffta_tir3d_desc:"Tir sur Cibles 3D officiel FFTA : 24 cibles, 2 fl\u00e8ches par cible depuis le m\u00eame piquet (m\u00eame bar\u00e8me pour les deux fl\u00e8ches).",
       mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_fitarco3d_unit:"Fl\u00e8che",
       mode_fitarco3d_desc:"3D FITARCO : 24 cibles, 2 fl\u00e8ches par cible. Contrairement \u00e0 la FIARC, le score ne d\u00e9pend pas de l'ordre des fl\u00e8ches.",
       provisional_tag:"donn\u00e9es provisoires",
-      provisional_note:"\u26a0\ufe0f Donn\u00e9es pas encore confirm\u00e9es par un r\u00e8glement officiel certain : pourraient changer."
+      provisional_note:"\u26a0\ufe0f Donn\u00e9es pas encore confirm\u00e9es par un r\u00e8glement officiel certain : pourraient changer.",
+      visit_site_link: "Site officiel",
+      mode_swissarchery_training_label:"Entra\u00eenement", mode_swissarchery_training_tag:"1 fl\u00e8che", mode_swissarchery_training_unit:"Fl\u00e8che",
+      mode_swissarchery_training_desc:"Entra\u00eenement libre selon les zones World Archery : une seule fl\u00e8che par cible, points fixes. Choisissez vous-m\u00eame le nombre de cibles.",
+      mode_swissarchery_3d_label:"Parcours 3D", mode_swissarchery_3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_swissarchery_3d_unit:"Fl\u00e8che",
+      mode_swissarchery_3d_desc:"Parcours 3D officiel SwissArchery (standard World Archery) : 24 cibles, 2 fl\u00e8ches par cible depuis le m\u00eame piquet, distances inconnues, m\u00eame bar\u00e8me pour les deux fl\u00e8ches.",
+      country_austria: "Autriche",
+      country_germany: "Allemagne",
+      mode_ifaa_training_label:"Entra\u00eenement", mode_ifaa_training_tag:"1 fl\u00e8che", mode_ifaa_training_unit:"Fl\u00e8che",
+      mode_ifaa_training_desc:"Entra\u00eenement libre selon les zones IFAA : une seule fl\u00e8che par cible, points fixes. Choisissez vous-m\u00eame le nombre de cibles.",
+      mode_ifaa_3d_label:"IFAA 3-D Standard Round", mode_ifaa_3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_ifaa_3d_unit:"Fl\u00e8che",
+      mode_ifaa_3d_desc:"IFAA 3-D Standard Round officiel : 28 cibles, 2 fl\u00e8ches par cible depuis deux piquets diff\u00e9rents (les deux fl\u00e8ches sont cumul\u00e9es).",
+      zone_ifaa_spot: "Spot", zone_ifaa_lowarea: "Zone Basse",
+    },
+    de: {
+      tagline: "Punktezettel f\u00fcr den Parcours",
+      lang_pick_title: "W\u00e4hle deine Sprache",
+      lang_pick_sub: "Du kannst sie jederzeit im Men\u00fc \u00e4ndern",
+      country_pick_title: "In welchem Land schie\u00dft du?",
+      country_italy: "Italien",
+      country_other: "Anderes Land",
+      country_france: "Frankreich",
+      country_switzerland: "Schweiz",
+      federation_pick_title: "Welchem Verband geh\u00f6rst du an?",
+      federation_hint: "Weitere Verb\u00e4nde folgen.",
+      coming_soon: "Bald verf\u00fcgbar",
+      federation_line: "{fed} \u00b7 {country}",
+      change_word: "\u00e4ndern",
+      splash_start: "Starten \u2192",
+      menu_word: "Men\u00fc",
+      back_to_menu: "\u2190 Zur\u00fcck zum Men\u00fc",
+      back_step: "\u2190 Zur\u00fcck",
+      continue_btn: "Weiter \u2192",
+      install_hint: "<b>Tipp:</b> Um die App wie eine richtige App zu nutzen, \u00f6ffne das Browsermen\u00fc und w\u00e4hle <b>Zum Startbildschirm hinzuf\u00fcgen</b>. Funktioniert auch offline: deine Daten bleiben auf dem Telefon gespeichert.",
+      team_title: "Sch\u00fctzen / Team",
+      archer_placeholder: "Name des Sch\u00fctzen",
+      archer_empty_hint: "F\u00fcge mindestens einen Sch\u00fctzen hinzu, um zu starten",
+      rotation_note: "Bei Wettk\u00e4mpfen folgt die Schussreihenfolge dem Alphabet und rotiert automatisch (FIARC-Rotation bei jedem Ziel).",
+      menu_title: "Was m\u00f6chtest du tun?",
+      menu_train_label: "Training starten",
+      menu_train_sub: "Pfeile und Ziele nach Wahl",
+      menu_gara_label: "Wettkampf starten",
+      menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
+      menu_campi_label: "Pl\u00e4tze in der N\u00e4he",
+      menu_campi_sub: "finde einen 3D-Bogenparcours",
+      menu_history: "Verlauf",
+      menu_edit_archers: "Sch\u00fctzen bearbeiten",
+      resume_banner: "Du hast einen laufenden Parcours ({mode} \u00b7 {n} Ziele).",
+      resume_btn: "Parcours fortsetzen",
+      reset_full_btn: "Komplett zur\u00fccksetzen (l\u00f6scht den laufenden Parcours)",
+      reset_confirm: "Zum Best\u00e4tigen erneut tippen",
+      train_setup_title: "Wie viele Ziele m\u00f6chtest du schie\u00dfen?",
+      train_setup_hint: "Von 1 bis {max} Ziele, ganz nach Wahl.",
+      start_round_btn: "Parcours starten",
+      rules_training_title: "Trainingspunkte",
+      gara_type_title: "Wettkampfart",
+      start_gara_btn: "Wettkampf starten",
+      campi_title: "Finde einen 3D-Bogenparcours",
+      campi_btn: "Pl\u00e4tze in der N\u00e4he suchen",
+      campi_hint: "\u00d6ffnet Google Maps mit 3D-Bogenpl\u00e4tzen in der N\u00e4he (ben\u00f6tigt Standortzugriff).",
+      campi_searching: "Standort wird gesucht\u2026",
+      history_title: "Parcours-Verlauf",
+      history_empty: "Noch kein Parcours gespeichert",
+      history_clear: "Verlauf l\u00f6schen",
+      clear_confirm: "Zum Best\u00e4tigen erneut tippen",
+      targets_word: "Ziele",
+      ordinal_1: "1.", ordinal_2: "2.", ordinal_3: "3.",
+      logout_word: "Abmelden",
+      zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
+      zone_wa_perfect: "11", zone_wa_superspot: "10", zone_wa_spot: "8", zone_wa_sagoma: "5",
+      zone_ffta_perfect: "Kern", zone_ffta_superspot: "T\u00f6dlich", zone_ffta_spot: "Vital", zone_ffta_sagoma: "K\u00f6rper",
+      target_singular: "Ziel",
+      partial_title: "Live-Punktestand \u00b7 alle Teilnehmer",
+      turn_of: "Am Zug:",
+      finora: " \u00b7 bisher: {list} Pkt",
+      vale_prima: " \u00b7 nur der erste Treffer z\u00e4hlt",
+      quick_hint_voice: "Schnell eintragen (laut angesagt)",
+      zero_label: "Fehler",
+      quick_hint_target: "oder markiere den genauen Treffpunkt auf dem Ziel",
+      tap_impact_hint: "Tippe auf den genauen Treffpunkt",
+      fuori_sagoma: "Fehlschuss",
+      zoom_btn: "Ziel vergr\u00f6\u00dfern",
+      zoom_btn_reduce: "Verkleinern",
+      undo_btn: "Letzten Pfeil r\u00fcckg\u00e4ngig machen",
+      interrupt_btn: "Hier abbrechen und Rangliste ansehen",
+      detected_score: "Erkannter Punktwert ({unit} {n})",
+      correct_point_btn: "Punkt korrigieren",
+      confirm_shot_btn: "Schuss best\u00e4tigen",
+      done_word: "fertig",
+      next_archer_btn: "N\u00e4chste(r): {name} \u2192",
+      target_done: "Ziel abgeschlossen",
+      round_done: "Parcours abgeschlossen",
+      next_target_btn: "Zum n\u00e4chsten Ziel \u2192",
+      view_final_btn: "Endergebnis ansehen",
+      classifica_title: "Rangliste \u00b7 {mode}",
+      th_archer: "Sch\u00fctze",
+      th_targets: "Ziele geschossen",
+      th_total: "Gesamt",
+      th_vs_prev: "Vs vorher",
+      detail_title: "Punkte pro Ziel",
+      back_to_menu_full: "Zur\u00fcck zum Men\u00fc",
+      reset_round_btn: "Komplett zur\u00fccksetzen (l\u00f6scht diesen Parcours)",
+      export_pdf_btn: "Als PDF exportieren / drucken",
+      share_btn: "Rangliste teilen",
+      copied_msg: "In die Zwischenablage kopiert!",
+      share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} Ziele",
+      mode_training_label:"Training", mode_training_tag:"1 Pfeil", mode_training_unit:"Pfeil",
+      mode_training_desc:"Freies Training: ein einzelner Pfeil pro Ziel, feste Punktwerte. W\u00e4hle selbst, wie viele Ziele du schie\u00dfen willst.",
+      mode_round3d_label:"Round 3D", mode_round3d_tag:"Wettkampf \u00b7 2 Pfeile", mode_round3d_unit:"Pfeil",
+      mode_round3d_desc:"Offizielles Round 3D: 24 Ziele, 2 Pfeile pro Ziel (werden addiert).",
+      mode_percorso_label:"Percorso", mode_percorso_tag:"Wettkampf \u00b7 3 Pfeile", mode_percorso_unit:"Pfeil",
+      mode_percorso_desc:"Offizielles Percorso: 24 Ziele, 3 Pfeile pro Ziel (alle werden addiert).",
+      mode_tracciato_label:"Tracciato", mode_tracciato_tag:"Wettkampf \u00b7 bis zu 3", mode_tracciato_unit:"Pfeil",
+      mode_tracciato_desc:"Offizielles Tracciato: 24 Ziele, bis zu 3 Pfeile, nur der erste Treffer z\u00e4hlt.",
+      mode_battuta_label:"Battuta", mode_battuta_tag:"Wettkampf \u00b7 Gruppe von 3", mode_battuta_unit:"Ziel",
+      mode_battuta_desc:"Offizielle Battuta: 28 Ziele, Gruppe von 3 Zielen pro Station, 1 Pfeil pro Ziel. Fester Punktwert f\u00fcr jedes Ziel der Gruppe.",
+      menu_info: "Infos",
+      info_title: "Informationen",
+      disclaimer_text: "ArcTrail 3D ist eine unabh\u00e4ngige App, die von Enthusiasten f\u00fcr den praktischen Einsatz beim Training und bei Wettk\u00e4mpfen entwickelt wurde. Sie ist kein offizielles Produkt der genannten Verb\u00e4nde (FIARC, FITARCO, FFTA, SwissArchery) und wird von diesen weder genehmigt noch ist sie mit ihnen verbunden. Die genannten Namen, Marken und Reglemente geh\u00f6ren den jeweiligen Verb\u00e4nden. Im Zweifelsfall gilt immer das offiziell ver\u00f6ffentlichte Reglement des zust\u00e4ndigen Verbands.",
+      mode_ffta_training_label:"Training", mode_ffta_training_tag:"1 Pfeil", mode_ffta_training_unit:"Pfeil",
+      mode_ffta_training_desc:"Freies Training nach FFTA-Zonen: ein einzelner Pfeil pro Ziel, feste Punktwerte. W\u00e4hle selbst, wie viele Ziele du schie\u00dfen willst.",
+      mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"Wettkampf \u00b7 2 Pfeile", mode_ffta_tir3d_unit:"Pfeil",
+      mode_ffta_tir3d_desc:"Offizielles FFTA Tir sur Cibles 3D: 24 Ziele, 2 Pfeile pro Ziel vom selben Pflock (beide Pfeile z\u00e4hlen gleich).",
+      mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"Wettkampf \u00b7 2 Pfeile", mode_fitarco3d_unit:"Pfeil",
+      mode_fitarco3d_desc:"FITARCO 3D: 24 Ziele, 2 Pfeile pro Ziel. Im Gegensatz zu FIARC h\u00e4ngt der Punktwert nicht von der Pfeilreihenfolge ab.",
+      provisional_tag:"vorl\u00e4ufige Daten",
+      provisional_note:"\u26a0\ufe0f Noch nicht durch ein sicheres offizielles Reglement best\u00e4tigt: kann sich \u00e4ndern.",
+      visit_site_link: "Offizielle Website",
+      mode_swissarchery_training_label:"Training", mode_swissarchery_training_tag:"1 Pfeil", mode_swissarchery_training_unit:"Pfeil",
+      mode_swissarchery_training_desc:"Freies Training nach World-Archery-Zonen: ein einzelner Pfeil pro Ziel, feste Punktwerte. W\u00e4hle selbst, wie viele Ziele du schie\u00dfen willst.",
+      mode_swissarchery_3d_label:"Parcours 3D", mode_swissarchery_3d_tag:"Wettkampf \u00b7 2 Pfeile", mode_swissarchery_3d_unit:"Pfeil",
+      mode_swissarchery_3d_desc:"Offizielles SwissArchery Parcours 3D (World-Archery-Standard): 24 Ziele, 2 Pfeile pro Ziel vom selben Pflock, unbekannte Distanzen, beide Pfeile z\u00e4hlen gleich.",
+      country_austria: "\u00d6sterreich",
+      country_germany: "Deutschland",
+      mode_ifaa_training_label:"Training", mode_ifaa_training_tag:"1 Pfeil", mode_ifaa_training_unit:"Pfeil",
+      mode_ifaa_training_desc:"Freies Training nach IFAA-Zonen: ein einzelner Pfeil pro Ziel, feste Punktwerte. W\u00e4hle selbst, wie viele Ziele du schie\u00dfen willst.",
+      mode_ifaa_3d_label:"IFAA 3-D Standard Round", mode_ifaa_3d_tag:"Wettkampf \u00b7 2 Pfeile", mode_ifaa_3d_unit:"Pfeil",
+      mode_ifaa_3d_desc:"Offizielle IFAA 3-D Standardrunde: 28 Ziele, 2 Pfeile pro Ziel von zwei verschiedenen Abschusspfl\u00f6cken (beide Pfeile werden addiert).",
+      zone_ifaa_spot: "Spot", zone_ifaa_lowarea: "Low Area",
     }
   };
 
@@ -518,10 +826,14 @@
 
   // ---------- modalita' di gioco (dati strutturali, i testi arrivano da STRINGS) ----------
   var SS_SP_SAG = function(ss,sp,sag){ return { superspot:ss, spot:sp, sagoma:sag }; };
-  var ZONES_3 = [ {key:"superspot",label:"Super Spot",cls:"superspot"}, {key:"spot",label:"Spot",cls:"spot"}, {key:"sagoma",label:"Sagoma",cls:"sagoma"} ];
+  var ZONES_3 = [ {key:"superspot",labelKey:"zone_superspot",cls:"superspot"}, {key:"spot",labelKey:"zone_spot",cls:"spot"}, {key:"sagoma",labelKey:"zone_sagoma",cls:"sagoma"} ];
   var RADII_3 = [42,85,140];
-  var ZONES_4 = [ {key:"perfect",label:"Perfect",cls:"perfect"}, {key:"superspot",label:"Super Spot",cls:"superspot"}, {key:"spot",label:"Spot",cls:"spot"}, {key:"sagoma",label:"Sagoma",cls:"sagoma"} ];
+  var ZONES_4 = [ {key:"perfect",labelKey:"zone_perfect",cls:"perfect"}, {key:"superspot",labelKey:"zone_superspot",cls:"superspot"}, {key:"spot",labelKey:"zone_spot",cls:"spot"}, {key:"sagoma",labelKey:"zone_sagoma",cls:"sagoma"} ];
   var RADII_4 = [26,46,85,140];
+  var ZONES_4_FFTA = [ {key:"perfect",labelKey:"zone_ffta_perfect",cls:"perfect"}, {key:"superspot",labelKey:"zone_ffta_superspot",cls:"superspot"}, {key:"spot",labelKey:"zone_ffta_spot",cls:"spot"}, {key:"sagoma",labelKey:"zone_ffta_sagoma",cls:"sagoma"} ];
+  var ZONES_4_WA = [ {key:"perfect",labelKey:"zone_wa_perfect",cls:"perfect"}, {key:"superspot",labelKey:"zone_wa_superspot",cls:"superspot"}, {key:"spot",labelKey:"zone_wa_spot",cls:"spot"}, {key:"sagoma",labelKey:"zone_wa_sagoma",cls:"sagoma"} ];
+  var ZONES_2_IFAA = [ {key:"spot",labelKey:"zone_ifaa_spot",cls:"superspot"}, {key:"lowarea",labelKey:"zone_ifaa_lowarea",cls:"sagoma"} ];
+  var RADII_2 = [55,140];
   var GAME_MODES = {
     training: {
       key:"training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
@@ -552,6 +864,36 @@
       key:"fitarco3d", arrowsPerTarget:2, formats:[24], provisional:true,
       zones:ZONES_4, radii:RADII_4,
       scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
+    },
+    ffta_training: {
+      key:"ffta_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+      zones:ZONES_4_FFTA, radii:RADII_4,
+      scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
+    },
+    ffta_tir3d: {
+      key:"ffta_tir3d", arrowsPerTarget:2, formats:[24],
+      zones:ZONES_4_FFTA, radii:RADII_4,
+      scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
+    },
+    swissarchery_training: {
+      key:"swissarchery_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+      zones:ZONES_4_WA, radii:RADII_4,
+      scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
+    },
+    swissarchery_3d: {
+      key:"swissarchery_3d", arrowsPerTarget:2, formats:[24],
+      zones:ZONES_4_WA, radii:RADII_4,
+      scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
+    },
+    ifaa_training: {
+      key:"ifaa_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+      zones:ZONES_2_IFAA, radii:RADII_2,
+      scoring:{ 1: { spot:20, lowarea:18 } }
+    },
+    ifaa_3d: {
+      key:"ifaa_3d", arrowsPerTarget:2, formats:[28],
+      zones:ZONES_2_IFAA, radii:RADII_2,
+      scoring:{ 1: { spot:20, lowarea:18 }, 2: { spot:16, lowarea:14 } }
     }
   };
   function modeLabel(key){ return t("mode_"+key+"_label"); }
@@ -559,8 +901,12 @@
   function modeDesc(key){ return t("mode_"+key+"_desc"); }
   function modeUnit(key){ return t("mode_"+key+"_unit"); }
   var FEDERATIONS = {
-    fiarc: { garaModes: ["round3d","percorso","tracciato","battuta"] },
-    fitarco: { garaModes: ["fitarco3d"] }
+    fiarc: { garaModes: ["round3d","percorso","tracciato","battuta"], trainingMode:"training" },
+    fitarco: { garaModes: ["fitarco3d"], trainingMode:"training" },
+    ffta: { garaModes: ["ffta_tir3d"], trainingMode:"ffta_training" },
+    swissarchery: { garaModes: ["swissarchery_3d"], trainingMode:"swissarchery_training" },
+    oebsv: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" },
+    dfbv: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" }
   };
 
   function load(){ try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
@@ -645,28 +991,30 @@
   function targetSVG(mode){
     var zones = mode.zones, radii = mode.radii;
     var n = zones.length;
-    var palette4 = ["#fc4c02","#ffb066","#ffd9a8","#fff4e6"];
-    var stroke4 = ["#d63f02","#e67a1a","#f2a54a","#f0c896"];
-    var palette3 = ["#fc4c02","#ffd9a8","#fff4e6"];
-    var stroke3 = ["#d63f02","#f2a54a","#f0c896"];
-    var palette = n===4 ? palette4 : palette3;
-    var stroke = n===4 ? stroke4 : stroke3;
+    var colorVar = { perfect:"var(--qss)", superspot:"var(--qss)", spot:"var(--qspot)", sagoma:"var(--qsag)" };
     var cx=150, cy=150;
     var out = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">';
+    out += '<rect x="0" y="0" width="300" height="300" fill="var(--qzero)"/>';
     for(var i=n-1;i>=0;i--){
       var isOuter = (i===n-1);
-      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="'+palette[i]+'" stroke="'+stroke[i]+'" stroke-width="2"'+(isOuter?'':' pointer-events="none"')+'/>';
+      var fillColor = colorVar[zones[i].cls] || "var(--qsag)";
+      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="'+fillColor+'" stroke="var(--bg-panel)" stroke-width="3"'+(isOuter?'':' pointer-events="none"')+'/>';
     }
-    out += '<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="#ffffff" pointer-events="none"/>';
+    out += '<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="var(--bg-panel)" pointer-events="none"/>';
     out += '</svg>';
     return out;
   }
 
   function logoSVG(size){
     return '<svg viewBox="0 0 100 100" style="width:'+size+'px;height:'+size+'px;">'+
-      '<circle cx="50" cy="50" r="42" fill="none" stroke="#1F6B3A" stroke-width="6"/>'+
-      '<circle cx="50" cy="50" r="27" fill="none" stroke="#6B4A34" stroke-width="6"/>'+
-      '<circle cx="50" cy="50" r="10" fill="#1F6B3A"/>'+
+      '<circle cx="50" cy="49" r="32" fill="#F5EFDD" stroke="#123832" stroke-width="2"/>'+
+      '<circle cx="50" cy="49" r="22" fill="#123832"/>'+
+      '<circle cx="50" cy="49" r="12" fill="#9FCB2A"/>'+
+      '<circle cx="50" cy="49" r="3" fill="#D99A1E"/>'+
+      '<line x1="50" y1="14" x2="50" y2="49" stroke="#1A1A1A" stroke-width="2.2" stroke-linecap="round"/>'+
+      '<path d="M50 14 L45.8 21 M50 14 L54.2 21" stroke="#1A1A1A" stroke-width="2.2" stroke-linecap="round" fill="none"/>'+
+      '<path d="M40.8 65.8 L59.2 65.8 L56 78.9 L50 75.7 L43.9 78.9 Z" fill="#1A1A1A"/>'+
+      '<text x="50" y="76" font-family="Georgia, serif" font-weight="700" font-size="8" fill="#9FCB2A" text-anchor="middle">3D</text>'+
     '</svg>';
   }
 
@@ -682,7 +1030,8 @@
     shuffle: '<path d="M3 6h3.5c2 0 3 1 4.5 3"/><path d="M14 6h3l3 3M17 3l3 3-3 3"/><path d="M3 18h3.5c2 0 3-1 4.5-3"/><path d="M14 18h3l3-3M17 21l3-3-3-3"/>',
     leaf: '<path d="M5 19c8 1 14-5 15-15C11 5 5 11 5 19z"/><path d="M6 18c3-4 6-7 12-11"/>',
     globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.8 2.3 4.3 5.3 4.3 8.5s-1.5 6.2-4.3 8.5c-2.8-2.3-4.3-5.3-4.3-8.5s1.5-6.2 4.3-8.5z"/>',
-    sight: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/>'
+    sight: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/>',
+    info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"/>'
   };
   function icon(name, size, strokeWidth){
     var p = ICON_PATHS[name] || "";
@@ -692,6 +1041,12 @@
   function render(){
     var app = document.getElementById("app");
     app.innerHTML = "";
+    if(authState === "loading"){ app.appendChild(loadingScreen()); return; }
+    if(authState === "needLogin"){ app.appendChild(loginScreen()); return; }
+    if(authState === "linkSent"){ app.appendChild(linkSentScreen()); return; }
+    if(authState === "authError"){ app.appendChild(authErrorScreen()); return; }
+    if(authState === "firebaseError"){ app.appendChild(firebaseErrorScreen()); return; }
+    if(authState === "pendingApproval"){ app.appendChild(pendingApprovalScreen()); return; }
     if(!state.lang){ app.appendChild(languageScreen()); return; }
     if(!state.country){ app.appendChild(countryScreen()); return; }
     if(!state.federation){ app.appendChild(federationScreen()); return; }
@@ -705,10 +1060,124 @@
       case "gara-setup": app.appendChild(garaSetupScreen()); break;
       case "campi": app.appendChild(campiScreen()); break;
       case "history": app.appendChild(historyScreen()); break;
+      case "info": app.appendChild(infoScreen()); break;
       case "round": app.appendChild(roundScreen()); break;
       case "summary": app.appendChild(summaryScreen()); break;
       default: app.appendChild(registrationScreen());
     }
+  }
+
+  // ---------- AUTENTICAZIONE ----------
+  function loadingScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(84);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<div class="onboard-sub">Un attimo\u2026</div>'));
+    return wrap;
+  }
+
+  function loginScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(84);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<h1 class="display splash-title" style="font-size:1.6rem;">ArcTrail 3D</h1>'));
+    wrap.appendChild(el('<div class="onboard-sub">Accedi con la tua email per continuare</div>'));
+    var input = el('<input type="email" id="loginEmailInput" placeholder="La tua email" style="max-width:280px;text-align:center;">');
+    wrap.appendChild(input);
+    var errorMsg = el('<div style="color:var(--danger);font-size:0.8rem;margin-top:8px;min-height:1.2em;"></div>');
+    if(authErrorMsg){ errorMsg.textContent = authErrorMsg; }
+    wrap.appendChild(errorMsg);
+    var sendBtn = el('<button class="btn btn-primary" style="margin-top:14px;">Invia link di accesso \u2192</button>');
+    wrap.appendChild(sendBtn);
+    wrap.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:16px;max-width:280px;">Niente password: ti mandiamo un link, basta toccarlo dalla tua email per entrare.</div>'));
+
+    function trySend(){
+      var email = document.getElementById("loginEmailInput").value.trim();
+      if(!email || email.indexOf("@") < 0){
+        errorMsg.textContent = "Inserisci un'email valida.";
+        return;
+      }
+      sendBtn.disabled = true;
+      var actionCodeSettings = { url: window.location.href.split("?")[0], handleCodeInApp: true };
+      auth.sendSignInLinkToEmail(email, actionCodeSettings).then(function(){
+        window.localStorage.setItem(PENDING_EMAIL_KEY, email);
+        authState = "linkSent";
+        render();
+      }).catch(function(err){
+        sendBtn.disabled = false;
+        errorMsg.textContent = (err && err.message) ? err.message : "Non sono riuscito a inviare il link, riprova.";
+      });
+    }
+    sendBtn.addEventListener("click", trySend);
+    setTimeout(function(){
+      input.focus();
+      input.addEventListener("keydown", function(e){ if(e.key === "Enter") trySend(); });
+    },0);
+
+    return wrap;
+  }
+
+  function linkSentScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(84);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<div class="onboard-title display">Controlla la tua email \uD83D\uDCE7</div>'));
+    wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Ti abbiamo mandato un link di accesso. Aprilo dallo stesso telefono/browser dove hai fatto la richiesta.</div>'));
+    var backBtn = el('<button class="btn btn-ghost" style="margin-top:10px;">'+t("back_step")+'</button>');
+    backBtn.addEventListener("click", function(){ authState = "needLogin"; render(); });
+    wrap.appendChild(backBtn);
+    return wrap;
+  }
+
+  function authErrorScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(84);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<div class="onboard-title display">Qualcosa non ha funzionato</div>'));
+    wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;color:var(--danger);">'+escapeHtml(authErrorMsg)+'</div>'));
+    var retryBtn = el('<button class="btn btn-primary" style="margin-top:10px;">Riprova</button>');
+    retryBtn.addEventListener("click", function(){ authState = "needLogin"; authErrorMsg = ""; render(); });
+    wrap.appendChild(retryBtn);
+    return wrap;
+  }
+
+  function firebaseErrorScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(84);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<div class="onboard-title display">Connessione non riuscita</div>'));
+    wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Non sono riuscito a collegarmi al servizio di accesso. Controlla la connessione internet e riprova.</div>'));
+    var retryBtn = el('<button class="btn btn-primary" style="margin-top:10px;">Riprova</button>');
+    retryBtn.addEventListener("click", function(){ window.location.reload(); });
+    wrap.appendChild(retryBtn);
+    return wrap;
+  }
+
+  function pendingApprovalScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(84);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<div class="onboard-title display">Accesso in attesa di approvazione</div>'));
+    var emailTxt = currentUser ? currentUser.email : "";
+    wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Il tuo accesso ('+escapeHtml(emailTxt)+') deve ancora essere approvato. Riprova tra un po\u2019.</div>'));
+    var refreshBtn = el('<button class="btn btn-primary" style="margin-top:10px;">Ricontrolla</button>');
+    refreshBtn.addEventListener("click", function(){
+      authState = "loading"; render();
+      onAuthReady(currentUser);
+    });
+    wrap.appendChild(refreshBtn);
+    var logoutBtn = el('<button class="btn btn-ghost" style="margin-top:10px;">Esci</button>');
+    logoutBtn.addEventListener("click", function(){
+      auth.signOut().then(function(){ authState = "needLogin"; currentUser = null; render(); });
+    });
+    wrap.appendChild(logoutBtn);
+    return wrap;
   }
 
   // ---------- SELEZIONE LINGUA ----------
@@ -718,7 +1187,6 @@
     logo.innerHTML = logoSVG(84);
     wrap.appendChild(logo);
     wrap.appendChild(el('<h1 class="display splash-title" style="font-size:1.7rem;">ArcTrail 3D</h1>'));
-    wrap.appendChild(el('<div class="onboard-sub">Italiano &middot; English &middot; Fran\u00e7ais</div>'));
     var stack = el('<div class="onboard-stack"></div>');
     LANG_ORDER.forEach(function(code){
       var meta = LANG_META[code];
@@ -734,6 +1202,13 @@
   }
 
   // ---------- SELEZIONE NAZIONE ----------
+  var COUNTRY_LIST = [
+    { code:"it", flag:"\uD83C\uDDEE\uD83C\uDDF9", key:"country_italy" },
+    { code:"fr", flag:"\uD83C\uDDEB\uD83C\uDDF7", key:"country_france" },
+    { code:"ch", flag:"\uD83C\uDDE8\uD83C\uDDED", key:"country_switzerland" },
+    { code:"at", flag:"\uD83C\uDDE6\uD83C\uDDF9", key:"country_austria" },
+    { code:"de", flag:"\uD83C\uDDE9\uD83C\uDDEA", key:"country_germany" }
+  ];
   function countryScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
     var logo = el('<div class="splash-logo"></div>');
@@ -741,9 +1216,11 @@
     wrap.appendChild(logo);
     wrap.appendChild(el('<div class="onboard-title display">'+t("country_pick_title")+'</div>'));
     var stack = el('<div class="onboard-stack"></div>');
-    var itChip = el('<button class="lang-pick-btn"><span class="flag">\uD83C\uDDEE\uD83C\uDDF9</span><span>'+t("country_italy")+'</span></button>');
-    itChip.addEventListener("click", function(){ state.country = "it"; save(); render(); });
-    stack.appendChild(itChip);
+    COUNTRY_LIST.forEach(function(c){
+      var chip = el('<button class="lang-pick-btn"><span class="flag">'+c.flag+'</span><span>'+t(c.key)+'</span></button>');
+      chip.addEventListener("click", function(){ state.country = c.code; save(); render(); });
+      stack.appendChild(chip);
+    });
     var otherChip = el('<button class="lang-pick-btn" style="opacity:0.45;cursor:default;" disabled><span class="flag">\uD83C\uDF0D</span><span>'+t("country_other")+'<br><small style="font-weight:400;color:var(--muted);">'+t("coming_soon")+'</small></span></button>');
     stack.appendChild(otherChip);
     wrap.appendChild(stack);
@@ -754,6 +1231,13 @@
   }
 
   // ---------- SELEZIONE FEDERAZIONE ----------
+  var COUNTRY_FEDERATIONS = {
+    it: [ {code:"fiarc", label:"FIARC", url:"https://www.fiarc.it"}, {code:"fitarco", label:"FITARCO", url:"https://www.fitarco.it", provisional:true} ],
+    fr: [ {code:"ffta", label:"FFTA", url:"https://www.ffta.fr"} ],
+    ch: [ {code:"swissarchery", label:"SwissArchery", url:"https://www.swissarchery.org"} ],
+    at: [ {code:"oebsv", label:"\u00d6BSV", url:"https://www.oebsv.com"} ],
+    de: [ {code:"dfbv", label:"DFBV", url:"https://www.dfbv.de"} ]
+  };
   function federationScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
     var logo = el('<div class="splash-logo"></div>');
@@ -761,14 +1245,21 @@
     wrap.appendChild(logo);
     wrap.appendChild(el('<div class="onboard-title display">'+t("federation_pick_title")+'</div>'));
     var stack = el('<div class="onboard-stack"></div>');
-    var fiarcChip = el('<button class="lang-pick-btn"><span class="flag">'+icon("target",26)+'</span><span>FIARC</span></button>');
-    fiarcChip.addEventListener("click", function(){ state.federation = "fiarc"; save(); render(); });
-    stack.appendChild(fiarcChip);
-    var fitarcoChip = el('<button class="lang-pick-btn"><span class="flag">'+icon("target",26)+'</span><span>FITARCO<br><small style="font-weight:400;color:var(--gold);">'+t("provisional_tag")+'</small></span></button>');
-    fitarcoChip.addEventListener("click", function(){ state.federation = "fitarco"; save(); render(); });
-    stack.appendChild(fitarcoChip);
+    var list = COUNTRY_FEDERATIONS[state.country] || COUNTRY_FEDERATIONS.it;
+    list.forEach(function(f){
+      var extra = f.provisional ? '<br><small style="font-weight:400;color:var(--gold);">'+t("provisional_tag")+'</small>' : '';
+      var chip = el('<div class="lang-pick-btn" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px;"></div>');
+      var topRow = el('<div style="display:flex;align-items:center;gap:14px;width:100%;"><span class="flag">'+icon("target",26)+'</span><span>'+f.label+extra+'</span></div>');
+      chip.appendChild(topRow);
+      topRow.addEventListener("click", function(){ state.federation = f.code; save(); render(); });
+      if(f.url){
+        var link = el('<a href="'+f.url+'" target="_blank" rel="noopener" style="font-size:0.72rem;color:var(--accent);text-decoration:underline;margin-left:40px;">'+t("visit_site_link")+' \u2197</a>');
+        link.addEventListener("click", function(e){ e.stopPropagation(); });
+        chip.appendChild(link);
+      }
+      stack.appendChild(chip);
+    });
     wrap.appendChild(stack);
-    wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;margin-top:18px;">'+t("federation_hint")+'</div>'));
     var backBtn = el('<button class="btn btn-ghost btn-block" style="max-width:300px;margin-top:10px;">'+t("back_step")+'</button>');
     backBtn.addEventListener("click", function(){ state.country = null; save(); render(); });
     wrap.appendChild(backBtn);
@@ -845,7 +1336,9 @@
       list.appendChild(row);
     });
     card2.appendChild(list);
-    card2.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:8px;">'+t("rotation_note")+'</div>'));
+    if((state.federation || "fiarc") === "fiarc"){
+      card2.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:8px;">'+t("rotation_note")+'</div>'));
+    }
     wrap.appendChild(card2);
 
     var continueBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("continue_btn")+'</button>');
@@ -891,8 +1384,12 @@
     wrap.appendChild(langSwitcher());
 
     var fedLine = el('<div style="font-size:0.72rem;color:var(--muted);margin-bottom:14px;text-align:center;"></div>');
-    var fedCountryName = state.country === "it" ? t("country_italy") : state.country;
-    var fedName = (state.federation||"fiarc").toUpperCase();
+    var countryNames = { it: t("country_italy"), fr: t("country_france"), ch: t("country_switzerland") };
+    var fedCountryName = countryNames[state.country] || state.country;
+    var fedList = COUNTRY_FEDERATIONS[state.country] || COUNTRY_FEDERATIONS.it;
+    var fedEntry = null;
+    for(var fi=0; fi<fedList.length; fi++){ if(fedList[fi].code === state.federation){ fedEntry = fedList[fi]; break; } }
+    var fedName = fedEntry ? fedEntry.label : (state.federation||"fiarc").toUpperCase();
     fedLine.innerHTML = t("federation_line",{fed:fedName, country:fedCountryName})+' &middot; <span id="changeFedLink" style="text-decoration:underline;cursor:pointer;">'+t("change_word")+'</span>';
     wrap.appendChild(fedLine);
 
@@ -913,7 +1410,7 @@
 
     var trainBtn = el('<button class="btn menu-btn training btn-block" style="margin-bottom:10px;"><span class="menu-icon">'+icon("bow",24)+'</span><span class="menu-txt">'+t("menu_train_label")+'<span class="menu-sub">'+t("menu_train_sub")+'</span></span></button>');
     trainBtn.addEventListener("click", function(){
-      state.pendingMode = "training";
+      state.pendingMode = FEDERATIONS[state.federation || "fiarc"].trainingMode;
       if((state.pendingArchers||[]).length === 0){
         state.registrationNext = "training-setup";
         state.screen = "registration";
@@ -924,7 +1421,9 @@
     });
     menuCard.appendChild(trainBtn);
 
-    var garaBtn = el('<button class="btn menu-btn gara btn-block" style="margin-bottom:10px;"><span class="menu-icon">'+icon("target",24)+'</span><span class="menu-txt">'+t("menu_gara_label")+'<span class="menu-sub">'+t("menu_gara_sub")+'</span></span></button>');
+    var activeGaraModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
+    var garaSub = activeGaraModes.map(function(k){ return modeLabel(k); }).join(", ");
+    var garaBtn = el('<button class="btn menu-btn gara btn-block" style="margin-bottom:10px;"><span class="menu-icon">'+icon("target",24)+'</span><span class="menu-txt">'+t("menu_gara_label")+'<span class="menu-sub">'+garaSub+'</span></span></button>');
     garaBtn.addEventListener("click", function(){
       var garaModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
       if(!state.pendingMode || garaModes.indexOf(state.pendingMode) === -1){ state.pendingMode = garaModes[0]; }
@@ -953,6 +1452,18 @@
     secondaryRow.appendChild(editBtn);
     wrap.appendChild(secondaryRow);
 
+    var infoBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("info",16)+' '+t("menu_info")+'</button>');
+    infoBtn.addEventListener("click", function(){ state.screen = "info"; save(); render(); });
+    wrap.appendChild(infoBtn);
+
+    if(currentUser){
+      var logoutBtn2 = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t("logout_word")+' ('+escapeHtml(currentUser.email)+')</button>');
+      logoutBtn2.addEventListener("click", function(){
+        auth.signOut().then(function(){ authState = "needLogin"; currentUser = null; render(); });
+      });
+      wrap.appendChild(logoutBtn2);
+    }
+
     if(hasActiveRound){
       var resetBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("reset_full_btn")+'</button>');
       wrap.appendChild(resetBtn);
@@ -970,7 +1481,8 @@
   // ---------- ALLENAMENTO: setup ----------
   function trainingSetupScreen(){
     var wrap = el('<div></div>');
-    var mode = GAME_MODES.training;
+    var trainKey = FEDERATIONS[state.federation || "fiarc"].trainingMode;
+    var mode = GAME_MODES[trainKey];
 
     var card1 = el('<div class="card"></div>');
     card1.appendChild(el('<h2 class="section-title">'+t("train_setup_title")+'</h2>'));
@@ -983,7 +1495,7 @@
     startBtn.addEventListener("click", function(){
       var n = clamp(parseInt(document.getElementById("formatInput").value,10), mode.minFormat, mode.maxFormat);
       state.pendingFormat = n;
-      beginRound("training");
+      beginRound(trainKey);
     });
     wrap.appendChild(startBtn);
 
@@ -992,7 +1504,8 @@
     wrap.appendChild(backBtn);
 
     var s = mode.scoring[1];
-    wrap.appendChild(el('<div class="rules-panel"><div class="rp-title">'+t("rules_training_title")+'</div>Super Spot '+s.superspot+' &middot; Spot '+s.spot+' &middot; Sagoma '+s.sagoma+' &middot; '+t("fuori_sagoma")+' 0</div>'));
+    var zoneTxt = mode.zones.map(function(z){ return t(z.labelKey)+" "+s[z.key]; }).join(" &middot; ");
+    wrap.appendChild(el('<div class="rules-panel"><div class="rp-title">'+t("rules_training_title")+'</div>'+zoneTxt+' &middot; '+t("fuori_sagoma")+' 0</div>'));
 
     return wrap;
   }
@@ -1020,8 +1533,9 @@
     var footerParts = [];
     Object.keys(mode.scoring).forEach(function(arrowNum){
       var s = mode.scoring[arrowNum];
-      var zoneTxt = mode.zones.map(function(z){ return z.label+" "+s[z.key]; }).join(" &middot; ");
-      footerParts.push((arrowNum==="1"?"1&#170;":arrowNum==="2"?"2&#170;":"3&#170;")+" "+unit.toLowerCase()+": "+zoneTxt);
+      var zoneTxt = mode.zones.map(function(z){ return t(z.labelKey)+" "+s[z.key]; }).join(" &middot; ");
+      var unitDisplay = (state.lang === "de") ? unit : unit.toLowerCase();
+      footerParts.push(t("ordinal_"+arrowNum)+" "+unitDisplay+": "+zoneTxt);
     });
     var provisionalHtml = mode.provisional ? '<br><br><b style="color:var(--danger);">'+t("provisional_note")+'</b>' : '';
     modeCard.appendChild(el(
@@ -1077,6 +1591,19 @@
     return wrap;
   }
 
+  // ---------- INFO / DISCLAIMER ----------
+  function infoScreen(){
+    var wrap = el('<div></div>');
+    var infoCard = el('<div class="card"></div>');
+    infoCard.appendChild(el('<h2 class="section-title">'+t("info_title")+'</h2>'));
+    infoCard.appendChild(el('<div style="font-size:0.85rem;line-height:1.6;">'+t("disclaimer_text")+'</div>'));
+    wrap.appendChild(infoCard);
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
+    backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
+    wrap.appendChild(backBtn);
+    return wrap;
+  }
+
   // ---------- STORICO ----------
   function historyScreen(){
     var wrap = el('<div></div>');
@@ -1118,7 +1645,8 @@
     var mode = GAME_MODES[modeKey];
     var format = mode.freeFormat ? clamp(parseInt(state.pendingFormat,10)||14, mode.minFormat, mode.maxFormat) : mode.formats[0];
     var archers = state.pendingArchers.slice();
-    if(modeKey !== "training" && archers.length > 1){
+    var isFiarcGara = state.federation === "fiarc" && FEDERATIONS.fiarc.garaModes.indexOf(modeKey) !== -1;
+    if(isFiarcGara && archers.length > 1){
       archers.sort(function(a,b){ return a.name.localeCompare(b.name, "it"); });
     }
     var scores = {};
@@ -1206,7 +1734,7 @@
     card.appendChild(el('<div class="quick-hint">'+icon("leaf",12)+' '+t("quick_hint_voice")+'</div>'));
     var quickGrid = el('<div class="quick-grid"></div>');
     mode.zones.forEach(function(z){
-      var qbtn = el('<button class="btn quick-btn '+z.cls+'"><span class="quick-lbl">'+z.label+'</span><span class="quick-pts">'+pts[z.key]+'</span></button>');
+      var qbtn = el('<button class="btn quick-btn '+z.cls+'"><span class="quick-lbl">'+t(z.labelKey)+'</span><span class="quick-pts">'+pts[z.key]+'</span></button>');
       qbtn.addEventListener("click", function(){
         if(navigator.vibrate){ navigator.vibrate(15); }
         if(z.key === "perfect" || z.key === "superspot"){ leafBurst(qbtn); }
@@ -1236,7 +1764,7 @@
     board.appendChild(svgWrap);
     card.appendChild(board);
     card.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:8px;">'+t("tap_impact_hint")+'</div>'));
-    var legendParts = mode.zones.map(function(z){ return z.label+' '+pts[z.key]; });
+    var legendParts = mode.zones.map(function(z){ return t(z.labelKey)+' '+pts[z.key]; });
     card.appendChild(el('<div class="legend-row">'+legendParts.join(" &middot; ")+' &middot; '+t("fuori_sagoma")+' 0</div>'));
     if(mode.provisional){
       card.appendChild(el('<div class="legend-row" style="color:var(--danger);">'+t("provisional_note")+'</div>'));
@@ -1285,7 +1813,7 @@
         var zoneKey = null;
         if(inBody){
           for(var zi=0; zi<radii.length; zi++){
-            if(dist <= radii[zi]){ zoneKey = zones[zi].key; zoneLabel = zones[zi].label; break; }
+            if(dist <= radii[zi]){ zoneKey = zones[zi].key; zoneLabel = t(zones[zi].labelKey); break; }
           }
           score = pts[zoneKey];
         }
@@ -1422,8 +1950,8 @@
     state.archerIndex = 0;
     if(state.target < state.format){
       state.target += 1;
-      // rotazione FIARC: nelle gare, il primo arciere passa in ultima posizione ad ogni piazzola
-      if(mode.key !== "training" && state.archers.length > 1){
+      // rotazione FIARC: nelle gare FIARC, il primo arciere passa in ultima posizione ad ogni piazzola
+      if(state.federation === "fiarc" && FEDERATIONS.fiarc.garaModes.indexOf(mode.key) !== -1 && state.archers.length > 1){
         state.archers.push(state.archers.shift());
       }
     } else {
@@ -1622,7 +2150,7 @@
     return wrap;
   }
 
-  render();
+  initAuthFlow();
 })();
 </script>
 </body>
