@@ -15,8 +15,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22ArcTrail%203D%22%2C%22short_name%22%3A%22ArcTrail%203D%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23FAF8F0%22%2C%22theme_color%22%3A%22%231D9A8C%22%2C%22start_url%22%3A%22.%22%7D">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23FAF8F0'/%3E%3Ccircle cx='50' cy='50' r='34' fill='none' stroke='%23123832' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%23D99A1E' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='7' fill='%239FCB2A'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
 <style>
   :root{
     --bg:#E8E2D0; --bg-panel:#ffffff; --bg-panel-2:#F3EEDD; --wood:#ffffff; --wood-2:#F3EEDD;
@@ -300,7 +301,7 @@
         if(pendingProfileRaw){ try{ pendingProfile = JSON.parse(pendingProfileRaw); }catch(e){ pendingProfile = null; } }
         var newDoc = {
           email: user.email,
-          approved: true,
+          approved: false,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         if(pendingProfile){
@@ -318,7 +319,7 @@
           };
         }
         try{ window.localStorage.removeItem(PENDING_PROFILE_KEY); }catch(e){}
-        authState = "ready";
+        authState = "pendingApproval";
       } else {
         var data = doc.data();
         if(!state.profile && data.nomeCognome){
@@ -327,7 +328,7 @@
             email: data.email || user.email, federazioni: data.federazioni || [], arco: data.arco || null, privacy: true
           };
         }
-        authState = "ready";
+        authState = data.approved ? "ready" : "pendingApproval";
       }
       save();
       render();
@@ -549,14 +550,14 @@
       home_tagline: "Segnapunti per il tiro con l'arco 3D",
       home_register_btn: "Registrati", home_login_link: "Hai gi\u00e0 un account?", home_login_link_word: "Accedi",
       home_dev_title: "\u26a0\ufe0f App in fase di sviluppo",
-      home_dev_text: "Per segnalare errori o malfunzionamenti: {email} \u2014 {sito}. I dati inseriti in questa fase potrebbero essere cancellati o azzerati.",
+      home_dev_text: "Per segnalare errori o malfunzionamenti: {email} \u2014 {sito}. I dati inseriti in questa fase potrebbero essere cancellati o azzerati. Le registrazioni non vengono approvate automaticamente in questa fase: se non ti sei gi\u00e0 accordato direttamente con l'amministratore, la tua richiesta di accesso rester\u00e0 in attesa.",
       profile_title: "Crea il tuo profilo", profile_subtitle: "Serve una volta sola.",
       profile_nome: "Nome e cognome", profile_username: "Username", profile_username_hint: "(quello che vedono gli altri in classifica)",
       profile_email: "Email", profile_federazioni: "Federazioni di appartenenza", profile_tessera: "Numero tessera {fed}",
       profile_password: "Password (almeno 6 caratteri)", profile_password_confirm: "Conferma password",
       profile_error_password_short: "La password deve avere almeno 6 caratteri.", profile_error_password_mismatch: "Le due password non coincidono.",
       profile_error_email_in_use: "Questa email \u00e8 gi\u00e0 registrata. Usa \u201cAccedi\u201d con la tua password.",
-      login_password: "Password", login_forgot: "Password dimenticata?", login_reset_sent: "Ti abbiamo mandato un'email per reimpostare la password.",
+      login_password: "Password", login_forgot: "Password dimenticata?", login_reset_sent: "Ti abbiamo mandato un'email per reimpostare la password. Se non la vedi, controlla anche nella cartella spam.",
       profile_arco: "Arco principale", profile_privacy: "Ho letto l'informativa privacy e acconsento al trattamento dei miei dati per l'uso dell'app.",
       profile_submit: "Crea profilo e continua", profile_error: "Compila nome, username, email, almeno una federazione, l'arco principale e accetta la privacy.",
     },
@@ -1353,6 +1354,7 @@
     wrap.appendChild(el('<div class="onboard-title display">Accesso in attesa di approvazione</div>'));
     var emailTxt = currentUser ? currentUser.email : "";
     wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Il tuo accesso ('+escapeHtml(emailTxt)+') deve ancora essere approvato. Riprova tra un po\u2019.</div>'));
+    wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;font-size:0.78rem;color:var(--muted);">Ti abbiamo anche mandato un\u2019email di conferma iscrizione: se non la vedi, controlla anche nella cartella spam.</div>'));
     var refreshBtn = el('<button class="btn btn-primary" style="margin-top:10px;">Ricontrolla</button>');
     refreshBtn.addEventListener("click", function(){
       authState = "loading"; render();
@@ -1619,13 +1621,10 @@
       submitBtn.disabled = true;
       if(currentUser){
         db.collection("users").doc(currentUser.uid).set({
-          email: currentUser.email, approved: true,
+          email: currentUser.email,
           nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true
         }, { merge: true }).then(function(){
-          state.profile = profileData;
-          state.profile.email = currentUser.email;
-          state.screen = "menu";
-          save(); render();
+          onAuthReady(currentUser);
         }).catch(function(err){
           submitBtn.disabled = false;
           errorMsg.textContent = (err && err.message) ? err.message : "Non sono riuscito a salvare il profilo, riprova.";
@@ -1634,13 +1633,12 @@
       }
       auth.createUserWithEmailAndPassword(email, password).then(function(result){
         currentUser = result.user;
+        try{ result.user.sendEmailVerification(); }catch(e){}
         db.collection("users").doc(result.user.uid).set({
-          email: email, approved: true, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          email: email, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true
         }).then(function(){
-          state.profile = profileData;
-          authState = "ready";
-          state.screen = "menu";
+          authState = "pendingApproval";
           save(); render();
         });
       }).catch(function(err){
@@ -3010,6 +3008,11 @@
     return wrap;
   }
 
+  if(!DEV_MODE && 'serviceWorker' in navigator){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    });
+  }
   initAuthFlow();
 })();
 </script>
