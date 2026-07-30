@@ -259,6 +259,13 @@
   // Rimetti false SOLO nella versione da caricare sul sito online.
   var DEV_MODE = false;
 
+  // ---------- INSTALLAZIONE APP ----------
+  var deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredInstallPrompt = e;
+  });
+
   // ---------- FIREBASE (accesso + database condiviso) ----------
   var firebaseConfig = {
     apiKey: "AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",
@@ -549,6 +556,9 @@
       compagnie_piazzole_word: "piazzole", compagnie_punteggi_word: "punteggi registrati", compagnie_tutti: "Tutti",
       home_tagline: "Segnapunti per il tiro con l'arco 3D",
       home_register_btn: "Registrati", home_login_link: "Hai gi\u00e0 un account?", home_login_link_word: "Accedi",
+      home_install_btn: "Installa l'app sul telefono",
+      home_install_ios_text: "<b>Su iPhone:</b> tocca il pulsante <b>Condividi</b> in basso nel browser (il quadrato con la freccia verso l'alto), poi scegli <b>\u201cAggiungi alla schermata Home\u201d</b>. Comparir\u00e0 un'icona come per qualsiasi altra app.",
+      home_install_generic_text: "Cerca l'icona di installazione nella barra dell'indirizzo (in alto), oppure apri il menu del browser (di solito i tre puntini in alto a destra) e cerca la voce <b>\u201cInstalla app\u201d</b>.",
       home_dev_title: "\u26a0\ufe0f App in fase di sviluppo",
       home_dev_text: "Per segnalare errori o malfunzionamenti: {email} \u2014 {sito}. I dati inseriti in questa fase potrebbero essere cancellati o azzerati. Le registrazioni non vengono approvate automaticamente in questa fase: se non ti sei gi\u00e0 accordato direttamente con l'amministratore, la tua richiesta di accesso rester\u00e0 in attesa.",
       profile_title: "Crea il tuo profilo", profile_subtitle: "Serve una volta sola.",
@@ -1216,7 +1226,6 @@
     if(authState === "needLogin"){ app.appendChild(loginScreen()); return; }
     if(!state.country){ app.appendChild(countryScreen()); return; }
     if(!state.federation){ app.appendChild(federationScreen()); return; }
-    if(!splashDismissed){ app.appendChild(splashScreen()); return; }
     app.appendChild(header());
     if(homeOverride){ app.appendChild(menuScreen()); return; }
     switch(state.screen){
@@ -1512,6 +1521,24 @@
     regBtn.addEventListener("click", function(){ state.screen = "profile-registration"; save(); render(); });
     wrap.appendChild(regBtn);
 
+    var isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if(!isStandalone){
+      var installBtn = el('<button class="btn btn-ghost" style="min-width:220px;margin-top:10px;">'+icon("target",18)+' '+t("home_install_btn")+'</button>');
+      var installInstructions = el('<div class="install-hint" style="max-width:320px;margin-top:12px;text-align:left;display:none;"></div>');
+      installBtn.addEventListener("click", function(){
+        if(deferredInstallPrompt){
+          deferredInstallPrompt.prompt();
+          deferredInstallPrompt.userChoice.then(function(){ deferredInstallPrompt = null; });
+          return;
+        }
+        var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        installInstructions.innerHTML = isIOS ? t("home_install_ios_text") : t("home_install_generic_text");
+        installInstructions.style.display = "block";
+      });
+      wrap.appendChild(installBtn);
+      wrap.appendChild(installInstructions);
+    }
+
     var loginLink = el('<div style="margin-top:14px;font-size:0.85rem;color:var(--muted);">'+t("home_login_link")+' <span id="welcomeLoginLink" style="color:var(--accent);font-weight:700;cursor:pointer;text-decoration:underline;">'+t("home_login_link_word")+'</span></div>');
     wrap.appendChild(loginLink);
 
@@ -1522,6 +1549,10 @@
     var devBox = el('<div class="install-hint" style="max-width:320px;margin-top:34px;text-align:left;"></div>');
     devBox.innerHTML = '<b>'+t("home_dev_title")+'</b><br>'+devText;
     wrap.appendChild(devBox);
+
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="max-width:300px;margin-top:20px;">'+t("back_step")+'</button>');
+    backBtn.addEventListener("click", function(){ state.lang = null; save(); render(); });
+    wrap.appendChild(backBtn);
 
     setTimeout(function(){
       var link = document.getElementById("welcomeLoginLink");
@@ -1792,7 +1823,7 @@
   }
 
   function header(){
-    var showHome = (!homeOverride) && state.screen !== "registration" && state.screen !== "menu";
+    var showHome = (!homeOverride) && state.screen !== "menu";
     var h = el(
       '<header class="top">'+
         '<div class="logo">'+logoSVG(52)+'</div>'+
