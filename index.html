@@ -1538,6 +1538,9 @@
     var header = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><h2 class="section-title" style="margin:0;">'+t("profile_title")+'</h2></div>');
     card.appendChild(header);
 
+    var goLoginLink = el('<div style="font-size:0.82rem;color:var(--muted);margin:-8px 0 16px;">'+t("home_login_link")+' <span id="regGoLoginLink" style="color:var(--accent);font-weight:700;cursor:pointer;text-decoration:underline;">'+t("home_login_link_word")+'</span></div>');
+    card.appendChild(goLoginLink);
+
     card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="pfNome"></div>'));
     card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+' <span style="font-weight:400;color:var(--muted);">'+t("profile_username_hint")+'</span></label><input type="text" id="pfUsername"></div>'));
     card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_email")+'</label><input type="email" id="pfEmail"></div>'));
@@ -1652,6 +1655,13 @@
     card.appendChild(submitBtn);
 
     wrap.appendChild(card);
+    setTimeout(function(){
+      var link = document.getElementById("regGoLoginLink");
+      if(link) link.addEventListener("click", function(){
+        state.profileSkipped = true;
+        save(); render();
+      });
+    },0);
     return wrap;
   }
 
