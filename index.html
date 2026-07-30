@@ -2394,7 +2394,13 @@
         var url = coords
           ? "https://www.google.com/maps/search/campo+tiro+con+arco+3D/@"+coords.latitude+","+coords.longitude+",12z"
           : "https://www.google.com/maps/search/campo+tiro+con+arco+3D";
-        window.open(url, "_blank");
+        var a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       };
       if(navigator.geolocation){
         locBtn.innerHTML = t("campi_searching");
