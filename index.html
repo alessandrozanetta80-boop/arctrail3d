@@ -179,6 +179,10 @@
     100%{ transform:translate(var(--lx),var(--ly)) rotate(var(--lr)); opacity:0; }
   }
   ::selection{ background:var(--accent); color:#fff; }
+  @media (max-width:420px){
+    .chip-group{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .chip{ flex:none; min-width:0; }
+  }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } .leaf-particle{ animation:none !important; display:none; } .splash-logo,.splash-title,.splash-tag,.splash-wrap .btn{ animation:none !important; opacity:1 !important; transform:none !important; } .progress-fill::after{ animation:none !important; display:none; } }
   @media print{
     .no-print{ display:none !important; }
@@ -549,6 +553,10 @@
       profile_title: "Crea il tuo profilo", profile_subtitle: "Serve una volta sola.",
       profile_nome: "Nome e cognome", profile_username: "Username", profile_username_hint: "(quello che vedono gli altri in classifica)",
       profile_email: "Email", profile_federazioni: "Federazioni di appartenenza", profile_tessera: "Numero tessera {fed}",
+      profile_password: "Password (almeno 6 caratteri)", profile_password_confirm: "Conferma password",
+      profile_error_password_short: "La password deve avere almeno 6 caratteri.", profile_error_password_mismatch: "Le due password non coincidono.",
+      profile_error_email_in_use: "Questa email \u00e8 gi\u00e0 registrata. Usa \u201cAccedi\u201d con la tua password.",
+      login_password: "Password", login_forgot: "Password dimenticata?", login_reset_sent: "Ti abbiamo mandato un'email per reimpostare la password.",
       profile_arco: "Arco principale", profile_privacy: "Ho letto l'informativa privacy e acconsento al trattamento dei miei dati per l'uso dell'app.",
       profile_submit: "Crea profilo e continua", profile_error: "Compila nome, username, email, almeno una federazione, l'arco principale e accetta la privacy.",
     },
@@ -1246,34 +1254,53 @@
     wrap.appendChild(el('<div class="onboard-sub">Accedi con la tua email per continuare</div>'));
     var input = el('<input type="email" id="loginEmailInput" placeholder="La tua email" style="max-width:280px;text-align:center;">');
     wrap.appendChild(input);
+    var passInput = el('<input type="password" id="loginPasswordInput" placeholder="'+t("login_password")+'" style="max-width:280px;text-align:center;margin-top:8px;" autocomplete="current-password">');
+    wrap.appendChild(passInput);
     var errorMsg = el('<div style="color:var(--danger);font-size:0.8rem;margin-top:8px;min-height:1.2em;"></div>');
     if(authErrorMsg){ errorMsg.textContent = authErrorMsg; }
     wrap.appendChild(errorMsg);
-    var sendBtn = el('<button class="btn btn-primary" style="margin-top:14px;">Invia link di accesso \u2192</button>');
+    var sendBtn = el('<button class="btn btn-primary" style="margin-top:14px;">Accedi \u2192</button>');
     wrap.appendChild(sendBtn);
-    wrap.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:16px;max-width:280px;">Niente password: ti mandiamo un link, basta toccarlo dalla tua email per entrare.</div>'));
+    var forgotLink = el('<div style="font-size:0.78rem;color:var(--accent);margin-top:14px;cursor:pointer;text-decoration:underline;">'+t("login_forgot")+'</div>');
+    wrap.appendChild(forgotLink);
 
     function trySend(){
       var email = document.getElementById("loginEmailInput").value.trim();
+      var password = document.getElementById("loginPasswordInput").value;
       if(!email || email.indexOf("@") < 0){
         errorMsg.textContent = "Inserisci un'email valida.";
         return;
       }
+      if(!password){
+        errorMsg.textContent = t("login_password");
+        return;
+      }
       sendBtn.disabled = true;
-      var actionCodeSettings = { url: window.location.href.split("?")[0], handleCodeInApp: true };
-      auth.sendSignInLinkToEmail(email, actionCodeSettings).then(function(){
-        window.localStorage.setItem(PENDING_EMAIL_KEY, email);
-        authState = "linkSent";
-        render();
+      auth.signInWithEmailAndPassword(email, password).then(function(result){
+        onAuthReady(result.user);
       }).catch(function(err){
         sendBtn.disabled = false;
-        errorMsg.textContent = (err && err.message) ? err.message : "Non sono riuscito a inviare il link, riprova.";
+        errorMsg.textContent = (err && err.message) ? err.message : "Email o password non corretti.";
       });
     }
     sendBtn.addEventListener("click", trySend);
+    forgotLink.addEventListener("click", function(){
+      var email = document.getElementById("loginEmailInput").value.trim();
+      if(!email || email.indexOf("@") < 0){
+        errorMsg.textContent = "Inserisci prima la tua email qui sopra.";
+        return;
+      }
+      auth.sendPasswordResetEmail(email).then(function(){
+        errorMsg.style.color = "var(--accent)";
+        errorMsg.textContent = t("login_reset_sent");
+      }).catch(function(err){
+        errorMsg.style.color = "var(--danger)";
+        errorMsg.textContent = (err && err.message) ? err.message : "Non sono riuscito a inviare l'email, riprova.";
+      });
+    });
     setTimeout(function(){
       input.focus();
-      input.addEventListener("keydown", function(e){ if(e.key === "Enter") trySend(); });
+      passInput.addEventListener("keydown", function(e){ if(e.key === "Enter") trySend(); });
     },0);
 
     return wrap;
@@ -1514,6 +1541,8 @@
     card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="pfNome"></div>'));
     card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+' <span style="font-weight:400;color:var(--muted);">'+t("profile_username_hint")+'</span></label><input type="text" id="pfUsername"></div>'));
     card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_email")+'</label><input type="email" id="pfEmail"></div>'));
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_password")+'</label><input type="password" id="pfPassword" autocomplete="new-password"></div>'));
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_password_confirm")+'</label><input type="password" id="pfPasswordConfirm" autocomplete="new-password"></div>'));
 
     card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_federazioni")+'</h2>'));
     var fedWrap = el('<div></div>');
@@ -1555,6 +1584,8 @@
       var nomeCognome = document.getElementById("pfNome").value.trim();
       var username = document.getElementById("pfUsername").value.trim();
       var email = document.getElementById("pfEmail").value.trim();
+      var password = document.getElementById("pfPassword").value;
+      var passwordConfirm = document.getElementById("pfPasswordConfirm").value;
       var privacy = document.getElementById("pfPrivacy").checked;
       var federazioni = [];
       Array.prototype.forEach.call(fedWrap.querySelectorAll('input[type=checkbox][data-fed]'), function(cb){
@@ -1568,6 +1599,10 @@
         errorMsg.textContent = t("profile_error");
         return;
       }
+      if(!DEV_MODE || password || passwordConfirm){
+        if(password.length < 6){ errorMsg.textContent = t("profile_error_password_short"); return; }
+        if(password !== passwordConfirm){ errorMsg.textContent = t("profile_error_password_mismatch"); return; }
+      }
       var profileData = {
         nomeCognome: nomeCognome, username: username, email: email,
         federazioni: federazioni, arco: arcoSel, privacy: true
@@ -1578,8 +1613,8 @@
         save(); render();
         return;
       }
+      submitBtn.disabled = true;
       if(currentUser){
-        submitBtn.disabled = true;
         db.collection("users").doc(currentUser.uid).set({
           email: currentUser.email, approved: true,
           nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true
@@ -1594,16 +1629,24 @@
         });
         return;
       }
-      submitBtn.disabled = true;
-      try{ window.localStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify(profileData)); }catch(e){}
-      try{ window.localStorage.setItem(PENDING_EMAIL_KEY, email); }catch(e){}
-      var actionCodeSettings = { url: window.location.href.split("?")[0], handleCodeInApp: true };
-      auth.sendSignInLinkToEmail(email, actionCodeSettings).then(function(){
-        authState = "linkSent";
-        render();
+      auth.createUserWithEmailAndPassword(email, password).then(function(result){
+        currentUser = result.user;
+        db.collection("users").doc(result.user.uid).set({
+          email: email, approved: true, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true
+        }).then(function(){
+          state.profile = profileData;
+          authState = "ready";
+          state.screen = "menu";
+          save(); render();
+        });
       }).catch(function(err){
         submitBtn.disabled = false;
-        errorMsg.textContent = (err && err.message) ? err.message : "Non sono riuscito a inviare il link, riprova.";
+        if(err && err.code === "auth/email-already-in-use"){
+          errorMsg.textContent = t("profile_error_email_in_use");
+        } else {
+          errorMsg.textContent = (err && err.message) ? err.message : "Non sono riuscito a creare l'account, riprova.";
+        }
       });
     });
     card.appendChild(submitBtn);
