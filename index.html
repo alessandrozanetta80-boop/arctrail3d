@@ -38,20 +38,20 @@
   .display{ font-family:Georgia,'Times New Roman',serif; font-weight:700; letter-spacing:0.03em; }
   #app{ max-width:520px; margin:0 auto; padding:18px 16px 32px; min-height:100dvh; position:relative; }
   header.top{ display:flex; align-items:center; gap:10px; padding:6px 2px 18px; border-bottom:1px solid var(--line); margin-bottom:20px; }
-  header.top .logo{ width:38px;height:38px;flex:0 0 auto; filter:drop-shadow(0 2px 6px rgba(29,154,140,0.35)); }
+  header.top .logo{ width:52px;height:52px;flex:0 0 auto; filter:drop-shadow(0 2px 6px rgba(29,154,140,0.35)); }
   header.top .headtxt{ flex:1; }
   header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent); }
   header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
   .home-btn{ background:none;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:8px 12px;font-size:0.8rem;cursor:pointer; }
-  .card{ background:var(--bg-panel); border:3px solid var(--line); border-radius:18px; padding:18px; margin-bottom:16px;
-    box-shadow:5px 5px 0 var(--line);
+  .card{ background:var(--bg-panel); border:1px solid var(--line); border-radius:20px; padding:18px; margin-bottom:16px;
+    box-shadow:0 6px 18px rgba(30,30,20,0.08), 0 2px 6px rgba(30,30,20,0.05);
     position:relative; z-index:1; }
   h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 12px; }
-  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:14px; padding:14px 18px; font-size:1rem; font-weight:700; cursor:pointer; color:var(--cream); background:var(--bg-panel-2); border:3px solid var(--line); box-shadow:4px 4px 0 var(--line); transition:transform .1s ease, box-shadow .1s ease; }
-  .btn:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 var(--line); }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:14px; padding:14px 18px; font-size:1rem; font-weight:700; cursor:pointer; color:var(--cream); background:var(--bg-panel-2); border:1px solid var(--line); box-shadow:0 3px 10px rgba(30,30,20,0.08); transition:transform .12s ease, box-shadow .12s ease, filter .12s ease; }
+  .btn:active{ transform:scale(0.97); filter:brightness(0.97); }
   .btn:disabled{ opacity:0.4; }
-  .btn-primary{ background:var(--accent); border-color:var(--line); color:#fff; font-weight:800; box-shadow:4px 4px 0 var(--line); }
-  .btn-primary:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 var(--line); }
+  .btn-primary{ background:var(--accent); border-color:transparent; color:#fff; font-weight:700; box-shadow:0 6px 16px rgba(29,154,140,0.28); }
+  .btn-primary:active{ box-shadow:0 2px 8px rgba(29,154,140,0.22); }
   .btn-block{ width:100%; }
   .btn-ghost{ background:transparent; border:1px solid var(--line); color:var(--muted); }
   .btn-sm{ padding:9px 14px; font-size:0.85rem; }
@@ -61,21 +61,26 @@
   .menu-btn .menu-icon{ font-size:1.4rem; }
   .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; }
   .menu-btn .menu-sub{ font-size:0.7rem; font-weight:400; opacity:0.85; margin-top:2px; }
-  .menu-btn.training{ background:var(--accent); color:#fff; border-color:var(--line); box-shadow:4px 4px 0 var(--line); }
-  .menu-btn.gara{ background:var(--bark); color:#fff; border-color:var(--line); box-shadow:4px 4px 0 var(--line); }
+  .menu-btn.training{ background:var(--accent); color:#fff; border-color:transparent; box-shadow:0 6px 16px rgba(29,154,140,0.22); }
+  .menu-btn.gara{ background:var(--bark); color:#fff; border-color:transparent; box-shadow:0 6px 16px rgba(232,100,31,0.22); }
   .row{ display:flex; gap:10px; }
   .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
   .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:12px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; }
   .chip.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
   .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
   .lang-chip{ min-width:60px; }
-  .lang-pick-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:16px 20px; border-radius:16px; border:3px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; box-shadow:4px 4px 0 var(--line); transition:transform .1s ease, box-shadow .1s ease; }
-  .lang-pick-btn:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 var(--line); }
+  .lang-pick-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:16px 20px; border-radius:16px; border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; box-shadow:0 4px 12px rgba(30,30,20,0.06); transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
+  .lang-pick-btn:active{ transform:scale(0.98); }
   .lang-pick-btn .flag{ font-size:1.6rem; line-height:1; }
-  .lang-pick-btn:hover, .lang-pick-btn:focus{ border-color:var(--accent); }
+  .lang-pick-btn:hover, .lang-pick-btn:focus{ border-color:var(--accent); box-shadow:0 6px 16px rgba(29,154,140,0.15); }
   .onboard-title{ font-size:1.35rem; color:var(--accent); margin:2px 0 6px; }
   .onboard-sub{ color:var(--muted); font-size:0.82rem; margin-bottom:26px; }
   .onboard-stack{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px; }
+  .grid-stack{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; width:100%; max-width:320px; }
+  .grid-pick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:16px 4px; border-radius:14px; border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:0.8rem; color:var(--cream); cursor:pointer; text-align:center; box-shadow:0 4px 12px rgba(30,30,20,0.06); transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
+  .grid-pick-btn:active{ transform:scale(0.95); }
+  .grid-pick-btn:hover, .grid-pick-btn:focus{ border-color:var(--accent); }
+  .grid-pick-btn .flag{ font-size:1.7rem; line-height:1; }
   input[type=text], input[type=number]{ width:100%; padding:13px 14px; border-radius:10px; border:1px solid var(--line); background:#fff; color:var(--cream); font-size:1rem; }
   input[type=text]:focus, input[type=number]:focus{ outline:2px solid var(--accent); }
   .archer-list{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
@@ -117,8 +122,8 @@
   .impact-actions{ display:flex; gap:10px; margin-top:12px; }
   .impact-actions .btn{ flex:1; }
   .quick-grid{ display:flex; justify-content:center; align-items:flex-start; gap:7px; margin:18px 0 10px; flex-wrap:wrap; }
-  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:76px; height:84px; flex:0 0 auto; padding:10px 4px; gap:2px; position:relative; overflow:visible; border:3px solid var(--line); border-radius:16px; line-height:1.15; box-shadow:3px 3px 0 var(--line); transition:transform .1s ease, box-shadow .1s ease; }
-  .quick-btn:active{ transform:translate(2px,2px) !important; box-shadow:1px 1px 0 var(--line) !important; }
+  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:76px; height:84px; flex:0 0 auto; padding:10px 4px; gap:2px; position:relative; overflow:visible; border:none; border-radius:16px; line-height:1.15; box-shadow:0 3px 8px rgba(30,30,20,0.12); transition:transform .12s ease, box-shadow .12s ease, filter .12s ease; }
+  .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(0.96); }
   .quick-btn .quick-lbl{ font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.02em; }
   .quick-btn .quick-pts{ font-size:1.4rem; font-weight:800; font-family:"Outfit",sans-serif; }
   .quick-btn.superspot{ background:var(--qss); color:#2A2115; }
@@ -153,7 +158,7 @@
   .install-hint b{ color:var(--accent); }
   .empty-hint{ color:var(--muted); font-size:0.85rem; text-align:center; padding:10px 0; }
   .splash-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:82dvh; text-align:center; gap:6px; }
-  .splash-logo{ width:100px; height:100px; margin-bottom:10px; filter:drop-shadow(0 8px 20px rgba(29,154,140,0.35)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
+  .splash-logo{ width:160px; height:160px; margin-bottom:10px; filter:drop-shadow(0 8px 20px rgba(29,154,140,0.35)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
   .splash-title{ font-size:2.1rem; color:var(--accent); margin:0; animation:splashUp .6s ease .15s both; }
   .splash-tag{ color:var(--muted); font-size:0.85rem; margin-bottom:26px; letter-spacing:.03em; animation:splashUp .6s ease .3s both; }
   .splash-wrap .btn{ min-width:200px; padding:16px 24px; font-size:1.05rem; animation:splashUp .6s ease .45s both; }
@@ -182,6 +187,45 @@
     .card{ box-shadow:none !important; border:1px solid #ccc !important; break-inside:avoid; }
     table.score-table{ font-size:0.8rem; }
   }
+  /* ---------- COMPAGNIE ---------- */
+  .cp-select-row{ margin-bottom:12px; }
+  .cp-select-row label{ display:block; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:5px; }
+  .cp-select-row select{ width:100%; padding:12px; border-radius:10px; border:1px solid var(--line); background:#fff; color:var(--cream); font-size:0.95rem; }
+  .cp-info-row{ display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--cream); padding:4px 0; }
+  .cp-info-row a{ color:var(--accent); text-decoration:none; font-weight:600; }
+  .cp-info-row.placeholder{ color:var(--muted); font-style:italic; }
+  .cp-percorso-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:10px; cursor:pointer; }
+  .cp-percorso-top{ display:flex; justify-content:space-between; align-items:center; }
+  .cp-percorso-top h3{ margin:0; font-size:1rem; }
+  .cp-percorso-meta{ font-size:0.72rem; color:var(--muted); margin-top:2px; }
+  .cp-chev{ color:var(--muted); transition:transform .15s; }
+  .cp-percorso-card.open .cp-chev{ transform:rotate(90deg); color:var(--accent); }
+  .cp-risultati{ margin-top:10px; border-top:1px solid var(--line); padding-top:10px; display:none; }
+  .cp-percorso-card.open .cp-risultati{ display:block; }
+  .cp-risultato-row{ display:flex; justify-content:space-between; align-items:center; padding:6px 0; font-size:0.85rem; }
+  .cp-bow-chip{ font-size:0.6rem; font-weight:800; padding:2px 7px; border-radius:8px; color:#fff; text-transform:uppercase; margin-left:6px; }
+  .cp-bow-chip.compound{ background:var(--accent); }
+  .cp-bow-chip.ricurvo{ background:var(--bark); }
+  .cp-bow-chip.longbow{ background:#6a5a8c; }
+  .cp-bow-chip.storico{ background:#8a7a5c; }
+  .cp-class-tabs{ display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+  .cp-class-row{ display:flex; align-items:center; gap:10px; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:10px; padding:9px 12px; margin-bottom:7px; }
+  .cp-class-row .cp-pos{ width:22px; text-align:center; font-weight:800; color:var(--muted); flex:0 0 auto; }
+  .cp-class-row .cp-nome{ flex:1; font-weight:700; font-size:0.85rem; }
+  .cp-class-row .cp-punti{ font-weight:800; color:var(--gold); flex:0 0 auto; }
+  .cp-tag{ font-size:0.6rem; font-weight:700; color:var(--accent); background:var(--bg-panel); border:1px solid var(--line); padding:1px 5px; border-radius:5px; margin-left:5px; }
+  .cp-percorso-title{ font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:14px 0 6px; }
+  /* ---------- HOME / PROFILO ---------- */
+  .cp-select-row select, .cp-select-row input[type=text], .cp-select-row input[type=email]{
+    width:100%; padding:12px; border-radius:10px; border:1px solid var(--line); background:#fff; color:var(--cream); font-size:0.95rem;
+  }
+  .pf-fed-row{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:8px; }
+  .pf-fed-check{ display:flex; align-items:center; gap:8px; font-size:0.9rem; font-weight:600; cursor:pointer; }
+  .pf-fed-check input{ width:auto; }
+  .pf-tessera{ margin-top:8px; display:none; }
+  .pf-tessera.show{ display:block; }
+  .pf-tessera label{ font-size:0.68rem; color:var(--muted); font-weight:700; margin-bottom:4px; display:block; text-transform:uppercase; letter-spacing:.05em; }
+  .pf-tessera input{ width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:#fff; color:var(--cream); font-size:0.85rem; }
 </style>
 </head>
 <body>
@@ -239,27 +283,51 @@
   var authErrorMsg = "";
   var currentUser = null;
   var PENDING_EMAIL_KEY = "arctrail3d_pending_email";
+  var PENDING_PROFILE_KEY = "arctrail3d_pending_profile";
   var ADMIN_EMAIL = "alessandro.zanetta80@gmail.com";
 
   function onAuthReady(user){
     currentUser = user;
     db.collection("users").doc(user.uid).get().then(function(doc){
       if(!doc.exists){
-        db.collection("users").doc(user.uid).set({
+        var pendingProfileRaw = null;
+        try{ pendingProfileRaw = window.localStorage.getItem(PENDING_PROFILE_KEY); }catch(e){}
+        var pendingProfile = null;
+        if(pendingProfileRaw){ try{ pendingProfile = JSON.parse(pendingProfileRaw); }catch(e){ pendingProfile = null; } }
+        var newDoc = {
           email: user.email,
-          approved: false,
+          approved: true,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        authState = "pendingApproval";
-      } else if(doc.data().approved){
+        };
+        if(pendingProfile){
+          newDoc.nomeCognome = pendingProfile.nomeCognome;
+          newDoc.username = pendingProfile.username;
+          newDoc.federazioni = pendingProfile.federazioni;
+          newDoc.arco = pendingProfile.arco;
+          newDoc.privacy = true;
+        }
+        db.collection("users").doc(user.uid).set(newDoc);
+        state.profile = {
+          nomeCognome: newDoc.nomeCognome || "", username: newDoc.username || "",
+          email: user.email, federazioni: newDoc.federazioni || [], arco: newDoc.arco || null, privacy: true
+        };
+        try{ window.localStorage.removeItem(PENDING_PROFILE_KEY); }catch(e){}
         authState = "ready";
       } else {
-        authState = "pendingApproval";
+        var data = doc.data();
+        if(!state.profile){
+          state.profile = {
+            nomeCognome: data.nomeCognome || "", username: data.username || "",
+            email: data.email || user.email, federazioni: data.federazioni || [], arco: data.arco || null, privacy: true
+          };
+        }
+        authState = "ready";
       }
+      save();
       render();
     }).catch(function(){
-      // offline al primo accesso: se non abbiamo mai potuto verificare, meglio far attendere che entrare senza controllo
-      authState = "pendingApproval";
+      authState = "authError";
+      authErrorMsg = "Non sono riuscito a leggere il tuo profilo. Riprova.";
       render();
     });
   }
@@ -316,12 +384,12 @@
       lang_pick_sub: "Potrai cambiarla in qualsiasi momento dal menu",
       country_pick_title: "In quale nazione tiri?",
       country_italy: "Italia",
-      country_other: "Altro paese",
+      country_other: "La tua nazione manca?",
       country_france: "Francia",
       country_switzerland: "Svizzera",
-      federation_pick_title: "A quale associazione appartieni?",
+      federation_pick_title: "Scegli la tua federazione",
       federation_hint: "Per ora seguiamo il regolamento FIARC. Altre federazioni arriveranno presto.",
-      coming_soon: "Presto disponibile",
+      coming_soon: "scrivici",
       federation_line: "{fed} \u00b7 {country}",
       change_word: "cambia",
       splash_start: "Inizia \u2192",
@@ -365,7 +433,7 @@
       ordinal_1: "1\u00aa", ordinal_2: "2\u00aa", ordinal_3: "3\u00aa",
       logout_word: "Esci",
       zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
-      zone_wa_perfect: "11", zone_wa_superspot: "10", zone_wa_spot: "8", zone_wa_sagoma: "5",
+      zone_wa_perfect: "Centro", zone_wa_superspot: "Interno", zone_wa_spot: "Medio", zone_wa_sagoma: "Esterno",
       zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letale", zone_ffta_spot: "Vitale", zone_ffta_sagoma: "Corpo",
       target_singular: "Piazzola",
       partial_title: "Punteggio parziale \u00b7 tutti i partecipanti",
@@ -415,6 +483,9 @@
       menu_info: "Info",
       info_title: "Informazioni",
       disclaimer_text: "ArcTrail 3D \u00e8 un'app indipendente creata da appassionati per uso pratico durante allenamenti e gare. Non \u00e8 un prodotto ufficiale delle federazioni citate (FIARC, FITARCO, FFTA), n\u00e9 \u00e8 approvata o affiliata a esse. I nomi, i marchi e i regolamenti citati appartengono alle rispettive federazioni. In caso di dubbio sul punteggio ufficiale, fa sempre fede il regolamento pubblicato dalla federazione di riferimento.",
+      contact_title: "Segnala un errore o una federazione mancante",
+      contact_text: "Hai trovato un punteggio sbagliato? Manca la tua federazione o la tua nazione (es. Spagna, Slovenia\u2026)? Scrivici, ci fa piacere migliorare l'app insieme a chi la usa davvero.",
+      contact_button: "\u2709\ufe0f Scrivici",
       mode_ffta_training_label:"Allenamento", mode_ffta_training_tag:"1 freccia", mode_ffta_training_unit:"Freccia",
       mode_ffta_training_desc:"Allenamento libero secondo le zone FFTA: una sola freccia per piazzola, punteggi fissi. Scegli tu quante piazzole fare.",
       mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"gara \u00b7 2 frecce", mode_ffta_tir3d_unit:"Freccia",
@@ -443,6 +514,35 @@
       admin_empty_pending: "Nessuna richiesta in attesa.",
       admin_approve_btn: "Approva",
       admin_revoke_btn: "Revoca",
+      country_uk: "Regno Unito",
+      mode_archerygb_training_label:"Allenamento", mode_archerygb_training_tag:"1 freccia", mode_archerygb_training_unit:"Freccia",
+      mode_archerygb_training_desc:"Allenamento libero secondo le zone World Archery: una sola freccia per piazzola, punteggi fissi.",
+      mode_archerygb_3d_label:"3D Round", mode_archerygb_3d_tag:"gara \u00b7 2 frecce", mode_archerygb_3d_unit:"Freccia",
+      mode_archerygb_3d_desc:"3D Round ufficiale Archery GB (standard World Archery): 24 piazzole, 2 frecce a piazzola dallo stesso piquet, stesso punteggio per entrambe le frecce.",
+      mode_nfas_training_label:"Allenamento", mode_nfas_training_tag:"1 freccia", mode_nfas_training_unit:"Freccia",
+      mode_nfas_training_desc:"Allenamento libero secondo le zone NFAS: una sola freccia per piazzola, punteggi fissi.",
+      mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"gara \u00b7 fino a 3 frecce", mode_nfas_biggame_unit:"Freccia",
+      mode_nfas_biggame_desc:"Big Game Round ufficiale NFAS: 28 piazzole, fino a 3 frecce (vale solo la prima a segno), l'Inner Kill vale solo sulla prima freccia.",
+      zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
+      menu_compagnie_label: "Compagnie", menu_compagnie_sub: "Trova la compagnia pi\u00f9 vicina a te",
+      compagnie_title: "Compagnie", compagnie_regione: "Regione", compagnie_provincia: "Provincia", compagnie_luogo: "Luogo del campo",
+      compagnie_pick_regione: "Scegli la regione\u2026", compagnie_pick_provincia: "Scegli la provincia\u2026", compagnie_pick_luogo: "Scegli il campo\u2026",
+      compagnie_no_percorsi: "Questa compagnia non ha ancora percorsi caricati.",
+      compagnie_no_dati: "Dati completi non ancora caricati per questa compagnia.",
+      compagnie_new_percorso: "+ Nuovo percorso", compagnie_new_risultato: "+ Nuovo risultato", compagnie_classifica: "Classifica",
+      compagnie_nome_percorso: "Nome percorso", compagnie_num_piazzole: "Numero piazzole", compagnie_salva: "Salva", compagnie_annulla: "Annulla",
+      compagnie_arciere: "Nome arciere", compagnie_punteggio: "Punteggio", compagnie_data: "Data", compagnie_arco: "Arco usato",
+      compagnie_empty_msg: "Ancora nessun punteggio qui \u2014 il primo lo registri tu.", compagnie_classifica_empty: "Nessun punteggio per questo filtro.",
+      compagnie_piazzole_word: "piazzole", compagnie_punteggi_word: "punteggi registrati", compagnie_tutti: "Tutti",
+      home_tagline: "Segnapunti per il tiro con l'arco 3D",
+      home_register_btn: "Registrati", home_login_link: "Hai gi\u00e0 un account?", home_login_link_word: "Accedi",
+      home_dev_title: "\u26a0\ufe0f App in fase di sviluppo",
+      home_dev_text: "Per segnalare errori o malfunzionamenti: {email} \u2014 {sito}. I dati inseriti in questa fase potrebbero essere cancellati o azzerati.",
+      profile_title: "Crea il tuo profilo", profile_subtitle: "Serve una volta sola.",
+      profile_nome: "Nome e cognome", profile_username: "Username", profile_username_hint: "(quello che vedono gli altri in classifica)",
+      profile_email: "Email", profile_federazioni: "Federazioni di appartenenza", profile_tessera: "Numero tessera {fed}",
+      profile_arco: "Arco principale", profile_privacy: "Ho letto l'informativa privacy e acconsento al trattamento dei miei dati per l'uso dell'app.",
+      profile_submit: "Crea profilo e continua", profile_error: "Compila nome, username, email, almeno una federazione, l'arco principale e accetta la privacy.",
     },
     en: {
       tagline: "Field scorekeeper \u00b7 FIARC",
@@ -450,12 +550,12 @@
       lang_pick_sub: "You can change it anytime from the menu",
       country_pick_title: "Which country do you shoot in?",
       country_italy: "Italy",
-      country_other: "Other country",
+      country_other: "Missing your country?",
       country_france: "France",
       country_switzerland: "Switzerland",
       federation_pick_title: "Which association do you belong to?",
       federation_hint: "For now we follow the FIARC rulebook. Other federations are coming soon.",
-      coming_soon: "Coming soon",
+      coming_soon: "let us know",
       federation_line: "{fed} \u00b7 {country}",
       change_word: "change",
       splash_start: "Start \u2192",
@@ -499,7 +599,7 @@
       ordinal_1: "1st", ordinal_2: "2nd", ordinal_3: "3rd",
       logout_word: "Log out",
       zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
-      zone_wa_perfect: "11", zone_wa_superspot: "10", zone_wa_spot: "8", zone_wa_sagoma: "5",
+      zone_wa_perfect: "Center", zone_wa_superspot: "Inner", zone_wa_spot: "Middle", zone_wa_sagoma: "Outer",
       zone_ffta_perfect: "Center", zone_ffta_superspot: "Kill", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Body",
       target_singular: "Target",
       partial_title: "Live score \u00b7 all participants",
@@ -549,6 +649,9 @@
       menu_info: "Info",
       info_title: "Information",
       disclaimer_text: "ArcTrail 3D is an independent app created by enthusiasts for practical use during training and competitions. It is not an official product of the federations mentioned (FIARC, FITARCO, FFTA), nor is it approved by or affiliated with them. The names, trademarks, and rules mentioned belong to their respective federations. In case of doubt about official scoring, the rulebook published by the relevant federation always prevails.",
+      contact_title: "Report an error or a missing federation",
+      contact_text: "Found a wrong score? Is your federation or country missing (e.g. Spain, Slovenia\u2026)? Get in touch, we're happy to improve the app together with the people who actually use it.",
+      contact_button: "\u2709\ufe0f Contact us",
       mode_ffta_training_label:"Training", mode_ffta_training_tag:"1 arrow", mode_ffta_training_unit:"Arrow",
       mode_ffta_training_desc:"Free training using FFTA zones: a single arrow per target, fixed scoring. Choose how many targets to shoot.",
       mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"match \u00b7 2 arrows", mode_ffta_tir3d_unit:"Arrow",
@@ -576,12 +679,12 @@
       lang_pick_sub: "Vous pourrez la changer \u00e0 tout moment depuis le menu",
       country_pick_title: "Dans quel pays tirez-vous ?",
       country_italy: "Italie",
-      country_other: "Autre pays",
+      country_other: "Votre pays manque ?",
       country_france: "France",
       country_switzerland: "Suisse",
       federation_pick_title: "\u00c0 quelle association appartenez-vous ?",
       federation_hint: "Pour l\u2019instant nous suivons le r\u00e8glement FIARC. D\u2019autres f\u00e9d\u00e9rations arriveront bient\u00f4t.",
-      coming_soon: "Bient\u00f4t disponible",
+      coming_soon: "\u00e9crivez-nous",
       federation_line: "{fed} \u00b7 {country}",
       change_word: "changer",
       splash_start: "Commencer \u2192",
@@ -625,7 +728,7 @@
       ordinal_1: "1\u00e8re", ordinal_2: "2e", ordinal_3: "3e",
       logout_word: "D\u00e9connexion",
       zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
-      zone_wa_perfect: "11", zone_wa_superspot: "10", zone_wa_spot: "8", zone_wa_sagoma: "5",
+      zone_wa_perfect: "Centre", zone_wa_superspot: "Intérieur", zone_wa_spot: "Milieu", zone_wa_sagoma: "Extérieur",
       zone_ffta_perfect: "Petit tu\u00e9", zone_ffta_superspot: "Tu\u00e9", zone_ffta_spot: "Vitale", zone_ffta_sagoma: "Corps",
       target_singular: "Cible",
       partial_title: "Score en direct \u00b7 tous les participants",
@@ -675,6 +778,9 @@
       menu_info: "Infos",
       info_title: "Informations",
       disclaimer_text: "ArcTrail 3D est une application ind\u00e9pendante cr\u00e9\u00e9e par des passionn\u00e9s pour un usage pratique lors des entra\u00eenements et des comp\u00e9titions. Ce n'est pas un produit officiel des f\u00e9d\u00e9rations mentionn\u00e9es (FIARC, FITARCO, FFTA), et l'application n'est ni approuv\u00e9e ni affili\u00e9e \u00e0 celles-ci. Les noms, marques et r\u00e8glements mentionn\u00e9s appartiennent \u00e0 leurs f\u00e9d\u00e9rations respectives. En cas de doute sur le score officiel, le r\u00e8glement publi\u00e9 par la f\u00e9d\u00e9ration concern\u00e9e fait toujours foi.",
+      contact_title: "Signaler une erreur ou une f\u00e9d\u00e9ration manquante",
+      contact_text: "Un score erron\u00e9 ? Votre f\u00e9d\u00e9ration ou votre pays manque (Espagne, Slov\u00e9nie\u2026) ? \u00c9crivez-nous, nous serions ravis d'am\u00e9liorer l'appli avec ceux qui l'utilisent vraiment.",
+      contact_button: "\u2709\ufe0f \u00c9crivez-nous",
       mode_ffta_training_label:"Entra\u00eenement", mode_ffta_training_tag:"1 fl\u00e8che", mode_ffta_training_unit:"Fl\u00e8che",
       mode_ffta_training_desc:"Entra\u00eenement libre selon les zones FFTA : une seule fl\u00e8che par cible, points fixes. Choisissez vous-m\u00eame le nombre de cibles.",
       mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_ffta_tir3d_unit:"Fl\u00e8che",
@@ -702,12 +808,12 @@
       lang_pick_sub: "Du kannst sie jederzeit im Men\u00fc \u00e4ndern",
       country_pick_title: "In welchem Land schie\u00dft du?",
       country_italy: "Italien",
-      country_other: "Anderes Land",
+      country_other: "Dein Land fehlt?",
       country_france: "Frankreich",
       country_switzerland: "Schweiz",
       federation_pick_title: "Welchem Verband geh\u00f6rst du an?",
       federation_hint: "Weitere Verb\u00e4nde folgen.",
-      coming_soon: "Bald verf\u00fcgbar",
+      coming_soon: "schreib uns",
       federation_line: "{fed} \u00b7 {country}",
       change_word: "\u00e4ndern",
       splash_start: "Starten \u2192",
@@ -751,7 +857,7 @@
       ordinal_1: "1.", ordinal_2: "2.", ordinal_3: "3.",
       logout_word: "Abmelden",
       zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
-      zone_wa_perfect: "11", zone_wa_superspot: "10", zone_wa_spot: "8", zone_wa_sagoma: "5",
+      zone_wa_perfect: "Zentrum", zone_wa_superspot: "Innen", zone_wa_spot: "Mitte", zone_wa_sagoma: "Außen",
       zone_ffta_perfect: "Kern", zone_ffta_superspot: "T\u00f6dlich", zone_ffta_spot: "Vital", zone_ffta_sagoma: "K\u00f6rper",
       target_singular: "Ziel",
       partial_title: "Live-Punktestand \u00b7 alle Teilnehmer",
@@ -801,6 +907,9 @@
       menu_info: "Infos",
       info_title: "Informationen",
       disclaimer_text: "ArcTrail 3D ist eine unabh\u00e4ngige App, die von Enthusiasten f\u00fcr den praktischen Einsatz beim Training und bei Wettk\u00e4mpfen entwickelt wurde. Sie ist kein offizielles Produkt der genannten Verb\u00e4nde (FIARC, FITARCO, FFTA, SwissArchery) und wird von diesen weder genehmigt noch ist sie mit ihnen verbunden. Die genannten Namen, Marken und Reglemente geh\u00f6ren den jeweiligen Verb\u00e4nden. Im Zweifelsfall gilt immer das offiziell ver\u00f6ffentlichte Reglement des zust\u00e4ndigen Verbands.",
+      contact_title: "Einen Fehler oder einen fehlenden Verband melden",
+      contact_text: "Ein falscher Punktestand? Fehlt dein Verband oder dein Land (z.\u00a0B. Spanien, Slowenien\u2026)? Schreib uns, wir verbessern die App gerne gemeinsam mit den Leuten, die sie wirklich nutzen.",
+      contact_button: "\u2709\ufe0f Schreib uns",
       mode_ffta_training_label:"Training", mode_ffta_training_tag:"1 Pfeil", mode_ffta_training_unit:"Pfeil",
       mode_ffta_training_desc:"Freies Training nach FFTA-Zonen: ein einzelner Pfeil pro Ziel, feste Punktwerte. W\u00e4hle selbst, wie viele Ziele du schie\u00dfen willst.",
       mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"Wettkampf \u00b7 2 Pfeile", mode_ffta_tir3d_unit:"Pfeil",
@@ -843,6 +952,8 @@
   var ZONES_4_WA = [ {key:"perfect",labelKey:"zone_wa_perfect",cls:"perfect"}, {key:"superspot",labelKey:"zone_wa_superspot",cls:"superspot"}, {key:"spot",labelKey:"zone_wa_spot",cls:"spot"}, {key:"sagoma",labelKey:"zone_wa_sagoma",cls:"sagoma"} ];
   var ZONES_2_IFAA = [ {key:"spot",labelKey:"zone_ifaa_spot",cls:"superspot"}, {key:"lowarea",labelKey:"zone_ifaa_lowarea",cls:"sagoma"} ];
   var RADII_2 = [55,140];
+  var ZONES_3_NFAS = [ {key:"innerkill",labelKey:"zone_nfas_innerkill",cls:"perfect"}, {key:"kill",labelKey:"zone_nfas_kill",cls:"superspot"}, {key:"wound",labelKey:"zone_nfas_wound",cls:"sagoma"} ];
+  var RADII_3_NFAS = [24,70,140];
   var GAME_MODES = {
     training: {
       key:"training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
@@ -903,6 +1014,26 @@
       key:"ifaa_3d", arrowsPerTarget:2, formats:[28],
       zones:ZONES_2_IFAA, radii:RADII_2,
       scoring:{ 1: { spot:20, lowarea:18 }, 2: { spot:16, lowarea:14 } }
+    },
+    archerygb_training: {
+      key:"archerygb_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+      zones:ZONES_4_WA, radii:RADII_4,
+      scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
+    },
+    archerygb_3d: {
+      key:"archerygb_3d", arrowsPerTarget:2, formats:[24],
+      zones:ZONES_4_WA, radii:RADII_4,
+      scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
+    },
+    nfas_training: {
+      key:"nfas_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+      zones:ZONES_3_NFAS, radii:RADII_3_NFAS,
+      scoring:{ 1: { innerkill:24, kill:20, wound:16 } }
+    },
+    nfas_biggame: {
+      key:"nfas_biggame", arrowsPerTarget:3, formats:[28], stopAtFirstHit:true,
+      zones:ZONES_3_NFAS, radii:RADII_3_NFAS,
+      scoring:{ 1: { innerkill:24, kill:20, wound:16 }, 2: { innerkill:14, kill:14, wound:10 }, 3: { innerkill:8, kill:8, wound:4 } }
     }
   };
   function modeLabel(key){ return t("mode_"+key+"_label"); }
@@ -914,15 +1045,20 @@
     fitarco: { garaModes: ["fitarco3d"], trainingMode:"training" },
     ffta: { garaModes: ["ffta_tir3d"], trainingMode:"ffta_training" },
     swissarchery: { garaModes: ["swissarchery_3d"], trainingMode:"swissarchery_training" },
+    faas: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" },
     oebsv: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" },
-    dfbv: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" }
+    dfbv: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" },
+    archerygb: { garaModes: ["archerygb_3d"], trainingMode:"archerygb_training" },
+    nfas: { garaModes: ["nfas_biggame"], trainingMode:"nfas_training" },
+    fftl: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" },
+    efaa: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" }
   };
 
   function load(){ try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
   function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
   function loadHistory(){ try{ var raw = localStorage.getItem(HISTORY_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
   function saveHistoryList(list){ try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); }catch(e){} }
-  function hardResetAll(){ var lang = state.lang, country = state.country, federation = state.federation; state = { screen:"menu", pendingArchers:[], lang:lang, country:country, federation:federation }; try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} homeOverride=false; render(); }
+  function hardResetAll(){ var lang = state.lang, country = state.country, federation = state.federation, profile = state.profile, profileSkipped = state.profileSkipped, compagnieData = state.compagnieData; state = { screen:"menu", pendingArchers:[], lang:lang, country:country, federation:federation, profile:profile, profileSkipped:profileSkipped, compagnieData:compagnieData }; try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} homeOverride=false; render(); }
   function uid(){ return Math.random().toString(36).slice(2,9); }
   function el(html){ var t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstChild; }
   function clamp(n,min,max){ n = isNaN(n)?min:n; return Math.max(min, Math.min(max, n)); }
@@ -1050,13 +1186,17 @@
   function render(){
     var app = document.getElementById("app");
     app.innerHTML = "";
+    if(!state.lang){ app.appendChild(languageScreen()); return; }
     if(authState === "loading"){ app.appendChild(loadingScreen()); return; }
-    if(authState === "needLogin"){ app.appendChild(loginScreen()); return; }
     if(authState === "linkSent"){ app.appendChild(linkSentScreen()); return; }
     if(authState === "authError"){ app.appendChild(authErrorScreen()); return; }
     if(authState === "firebaseError"){ app.appendChild(firebaseErrorScreen()); return; }
     if(authState === "pendingApproval"){ app.appendChild(pendingApprovalScreen()); return; }
-    if(!state.lang){ app.appendChild(languageScreen()); return; }
+    if(!state.profile && !state.profileSkipped){
+      if(state.screen === "profile-registration"){ app.appendChild(profileRegistrationScreen()); return; }
+      app.appendChild(welcomeScreen()); return;
+    }
+    if(authState === "needLogin"){ app.appendChild(loginScreen()); return; }
     if(!state.country){ app.appendChild(countryScreen()); return; }
     if(!state.federation){ app.appendChild(federationScreen()); return; }
     if(!splashDismissed){ app.appendChild(splashScreen()); return; }
@@ -1068,6 +1208,7 @@
       case "training-setup": app.appendChild(trainingSetupScreen()); break;
       case "gara-setup": app.appendChild(garaSetupScreen()); break;
       case "campi": app.appendChild(campiScreen()); break;
+      case "compagnie": app.appendChild(compagnieScreen()); break;
       case "history": app.appendChild(historyScreen()); break;
       case "info": app.appendChild(infoScreen()); break;
       case "admin": app.appendChild(adminScreen()); break;
@@ -1081,7 +1222,7 @@
   function loadingScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
     var logo = el('<div class="splash-logo"></div>');
-    logo.innerHTML = logoSVG(84);
+    logo.innerHTML = logoSVG(150);
     wrap.appendChild(logo);
     wrap.appendChild(el('<div class="onboard-sub">Un attimo\u2026</div>'));
     return wrap;
@@ -1090,7 +1231,7 @@
   function loginScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
     var logo = el('<div class="splash-logo"></div>');
-    logo.innerHTML = logoSVG(84);
+    logo.innerHTML = logoSVG(150);
     wrap.appendChild(logo);
     wrap.appendChild(el('<h1 class="display splash-title" style="font-size:1.6rem;">ArcTrail 3D</h1>'));
     wrap.appendChild(el('<div class="onboard-sub">Accedi con la tua email per continuare</div>'));
@@ -1132,7 +1273,7 @@
   function linkSentScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
     var logo = el('<div class="splash-logo"></div>');
-    logo.innerHTML = logoSVG(84);
+    logo.innerHTML = logoSVG(150);
     wrap.appendChild(logo);
     wrap.appendChild(el('<div class="onboard-title display">Controlla la tua email \uD83D\uDCE7</div>'));
     wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Ti abbiamo mandato un link di accesso. Aprilo dallo stesso telefono/browser dove hai fatto la richiesta.</div>'));
@@ -1145,7 +1286,7 @@
   function authErrorScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
     var logo = el('<div class="splash-logo"></div>');
-    logo.innerHTML = logoSVG(84);
+    logo.innerHTML = logoSVG(150);
     wrap.appendChild(logo);
     wrap.appendChild(el('<div class="onboard-title display">Qualcosa non ha funzionato</div>'));
     wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;color:var(--danger);">'+escapeHtml(authErrorMsg)+'</div>'));
@@ -1158,7 +1299,7 @@
   function firebaseErrorScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
     var logo = el('<div class="splash-logo"></div>');
-    logo.innerHTML = logoSVG(84);
+    logo.innerHTML = logoSVG(150);
     wrap.appendChild(logo);
     wrap.appendChild(el('<div class="onboard-title display">Connessione non riuscita</div>'));
     wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Non sono riuscito a collegarmi al servizio di accesso. Controlla la connessione internet e riprova.</div>'));
@@ -1171,7 +1312,7 @@
   function pendingApprovalScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
     var logo = el('<div class="splash-logo"></div>');
-    logo.innerHTML = logoSVG(84);
+    logo.innerHTML = logoSVG(150);
     wrap.appendChild(logo);
     wrap.appendChild(el('<div class="onboard-title display">Accesso in attesa di approvazione</div>'));
     var emailTxt = currentUser ? currentUser.email : "";
@@ -1193,14 +1334,14 @@
   // ---------- SELEZIONE LINGUA ----------
   function languageScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
-    var logo = el('<div class="splash-logo"></div>');
-    logo.innerHTML = logoSVG(84);
+    var logo = el('<div class="splash-logo" style="width:170px;height:170px;margin-bottom:4px;"></div>');
+    logo.innerHTML = logoSVG(170);
     wrap.appendChild(logo);
-    wrap.appendChild(el('<h1 class="display splash-title" style="font-size:1.7rem;">ArcTrail 3D</h1>'));
-    var stack = el('<div class="onboard-stack"></div>');
+    wrap.appendChild(el('<h1 class="display splash-title" style="font-size:1.25rem;margin-bottom:4px;">ArcTrail 3D</h1>'));
+    var stack = el('<div class="grid-stack"></div>');
     LANG_ORDER.forEach(function(code){
       var meta = LANG_META[code];
-      var c = el('<button class="lang-pick-btn"><span class="flag">'+meta.flag+'</span><span>'+meta.name+'</span></button>');
+      var c = el('<button class="grid-pick-btn"><span class="flag">'+meta.flag+'</span><span>'+meta.name+'</span></button>');
       c.addEventListener("click", function(){
         state.lang = code;
         save(); render();
@@ -1217,23 +1358,25 @@
     { code:"fr", flag:"\uD83C\uDDEB\uD83C\uDDF7", key:"country_france" },
     { code:"ch", flag:"\uD83C\uDDE8\uD83C\uDDED", key:"country_switzerland" },
     { code:"at", flag:"\uD83C\uDDE6\uD83C\uDDF9", key:"country_austria" },
-    { code:"de", flag:"\uD83C\uDDE9\uD83C\uDDEA", key:"country_germany" }
+    { code:"de", flag:"\uD83C\uDDE9\uD83C\uDDEA", key:"country_germany" },
+    { code:"uk", flag:"\uD83C\uDDEC\uD83C\uDDE7", key:"country_uk" }
   ];
   function countryScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
-    var logo = el('<div class="splash-logo"></div>');
-    logo.innerHTML = logoSVG(84);
+    var logo = el('<div class="splash-logo" style="width:150px;height:150px;margin-bottom:6px;"></div>');
+    logo.innerHTML = logoSVG(150);
     wrap.appendChild(logo);
     wrap.appendChild(el('<div class="onboard-title display">'+t("country_pick_title")+'</div>'));
-    var stack = el('<div class="onboard-stack"></div>');
+    var stack = el('<div class="grid-stack"></div>');
     COUNTRY_LIST.forEach(function(c){
-      var chip = el('<button class="lang-pick-btn"><span class="flag">'+c.flag+'</span><span>'+t(c.key)+'</span></button>');
+      var chip = el('<button class="grid-pick-btn"><span class="flag">'+c.flag+'</span><span>'+t(c.key)+'</span></button>');
       chip.addEventListener("click", function(){ state.country = c.code; save(); render(); });
       stack.appendChild(chip);
     });
-    var otherChip = el('<button class="lang-pick-btn" style="opacity:0.45;cursor:default;" disabled><span class="flag">\uD83C\uDF0D</span><span>'+t("country_other")+'<br><small style="font-weight:400;color:var(--muted);">'+t("coming_soon")+'</small></span></button>');
-    stack.appendChild(otherChip);
     wrap.appendChild(stack);
+    var otherMailSubject = encodeURIComponent("ArcTrail 3D - nazione mancante");
+    var otherChip = el('<a href="mailto:'+ADMIN_EMAIL+'?subject='+otherMailSubject+'" class="btn btn-ghost btn-block" style="max-width:320px;margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">\uD83C\uDF0D '+t("country_other")+' \u00b7 '+t("coming_soon")+'</a>');
+    wrap.appendChild(otherChip);
     var backBtn = el('<button class="btn btn-ghost btn-block" style="max-width:300px;margin-top:16px;">'+t("back_step")+'</button>');
     backBtn.addEventListener("click", function(){ state.lang = null; save(); render(); });
     wrap.appendChild(backBtn);
@@ -1243,27 +1386,223 @@
   // ---------- SELEZIONE FEDERAZIONE ----------
   var COUNTRY_FEDERATIONS = {
     it: [ {code:"fiarc", label:"FIARC", url:"https://www.fiarc.it"}, {code:"fitarco", label:"FITARCO", url:"https://www.fitarco.it", provisional:true} ],
-    fr: [ {code:"ffta", label:"FFTA", url:"https://www.ffta.fr"} ],
-    ch: [ {code:"swissarchery", label:"SwissArchery", url:"https://www.swissarchery.org"} ],
+    fr: [ {code:"ffta", label:"FFTA", url:"https://www.ffta.fr"}, {code:"fftl", label:"FFTL", url:"https://www.fftl.com"} ],
+    ch: [ {code:"swissarchery", label:"SwissArchery", url:"https://www.swissarchery.org"}, {code:"faas", label:"FAAS", url:"https://www.faas.ch"} ],
     at: [ {code:"oebsv", label:"\u00d6BSV", url:"https://www.oebsv.com"} ],
-    de: [ {code:"dfbv", label:"DFBV", url:"https://www.dfbv.de"} ]
+    de: [ {code:"dfbv", label:"DFBV", url:"https://www.dfbv.de"} ],
+    uk: [ {code:"archerygb", label:"Archery GB", url:"https://www.archerygb.org"}, {code:"nfas", label:"NFAS", url:"https://nfas.net"}, {code:"efaa", label:"EFAA", url:"https://efaafieldarcher.com"} ]
   };
+  // ---------- COMPAGNIE: dati ----------
+  var COMPAGNIE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longbow", storico:"Storico" };
+  var COMPAGNIE_NOMI_PROVINCIA = { BI:"Biella", NO:"Novara", AL:"Alessandria", TO:"Torino", CN:"Cuneo", VA:"Varese", VC:"Vercelli", VB:"Verbano-Cusio-Ossola", GE:"Genova", SV:"Savona" };
+  var COMPAGNIE = {
+    "01VERB": { nome:"Arcieri 01 VERB \u2014 VCO & Valgrande", regione:"Piemonte", provincia:"VB", luogo:"Vignone (VB)", completa:true,
+      indirizzo:"Via A. Alberti, 28899 Vignone (VB)", telefono:"329 084 2958", sito:"arcoverbano.net" },
+    "01ARTU": { nome:"A.P.D. Pietro Micca", regione:"Piemonte", provincia:"BI", luogo:"Cerrione (BI)" },
+    "01BICO": { nome:"Compagnia Arcieri Bicocca", regione:"Piemonte", provincia:"NO", luogo:"Madonna del Sasso (NO)" },
+    "01BULE": { nome:"Arcieri della Tana dei Cinghiali", regione:"Piemonte", provincia:"AL", luogo:"Castelletto Merli (AL)" },
+    "01CICO": { nome:"Arcieri Occitani", regione:"Piemonte", provincia:"TO", luogo:"Bricherasio (TO)" },
+    "01DAHU": { nome:"Compagnia Arcieri del Dahu", regione:"Piemonte", provincia:"BI", luogo:"Valdilana Trivero (BI)" },
+    "01ELFI": { nome:"Gli Elfi del Monte Regale", regione:"Piemonte", provincia:"CN", luogo:"Mondov\u00ec-Briaglia (CN)" },
+    "01ISHI": { nome:"Arcieri di Ishi", regione:"Piemonte", provincia:"NO", luogo:"Gattico (NO)" },
+    "01LUPI": { nome:"Lupi delle Alpi", regione:"Piemonte", provincia:"\u2014", luogo:"\u2014" },
+    "01MASA": { nome:"Arcieri di Br\u00e0", regione:"Piemonte", provincia:"CN", luogo:"Pocapaglia (CN)" },
+    "01RIPE": { nome:"B.A.S. Summe Ripe", regione:"Piemonte", provincia:"CN", luogo:"Sommariva Bosco (CN)" },
+    "01SHAN": { nome:"Arcieri di Shannara", regione:"Piemonte", provincia:"NO", luogo:"Paruzzaro (NO)" },
+    "01UKKO": { nome:"Compagnia dei Liberi Arcieri", regione:"Piemonte", provincia:"VA", luogo:"Castellanza (VA)" },
+    "01VOLO": { nome:"Arcieri del Volo", regione:"Piemonte", provincia:"VC", luogo:"Borgo d'Ale (VC)" },
+    "03CROU": { nome:"Compagnia Arcieri della Rocca dei Corvi", regione:"Liguria", provincia:"GE", luogo:"Mele / Righi (GE)" },
+    "03FENI": { nome:"Arcieri della Fenice", regione:"Liguria", provincia:"AL", luogo:"Fraconalto (AL)" },
+    "03FINA": { nome:"Arcieri del Finale", regione:"Liguria", provincia:"SV", luogo:"Finale Ligure (SV)" },
+    "03LUNA": { nome:"Arcatores Lunae", regione:"Liguria", provincia:"\u2014", luogo:"\u2014" },
+    "03LUPI": { nome:"Arcieri Lupi Blu", regione:"Liguria", provincia:"GE", luogo:"Masone (GE)" },
+    "03NANT": { nome:"Arcieri di Nant Beber", regione:"Liguria", provincia:"GE", luogo:"Genova Voltri" },
+    "03STOR": { nome:"Arcieri dello Stornello", regione:"Liguria", provincia:"GE", luogo:"Mignanego (GE)" },
+    "03TIGU": { nome:"Le Frecce di S. Margherita", regione:"Liguria", provincia:"GE", luogo:"Rapallo (GE)" },
+    "03TRIS": { nome:"Arcieri del Gufo", regione:"Liguria", provincia:"GE", luogo:"Casella (GE)" },
+    "03WAKI": { nome:"03WAKI", regione:"Liguria", provincia:"SV", luogo:"Calizzano (SV)" }
+  };
+  var COMPAGNIE_REGIONI = ["Piemonte", "Liguria"];
+
+  function initCompagnieData(){
+    if(!state.compagnieData){ state.compagnieData = {}; }
+    if(!state.compagnieData["01VERB"]){
+      state.compagnieData["01VERB"] = {
+        percorsi: [
+          { id:1, nome:"Percorso Rosso", piazzole:14 },
+          { id:2, nome:"Percorso Blu", piazzole:20 }
+        ],
+        risultati: [
+          { id:1, percorsoId:1, nome:"Alessandro", arco:"compound", punteggio:312, data:"2026-07-05" },
+          { id:2, percorsoId:1, nome:"Alessandro", arco:"compound", punteggio:298, data:"2026-07-12" },
+          { id:3, percorsoId:1, nome:"Anna", arco:"ricurvo", punteggio:271, data:"2026-07-05" },
+          { id:4, percorsoId:1, nome:"Anna", arco:"ricurvo", punteggio:284, data:"2026-07-19" },
+          { id:5, percorsoId:1, nome:"Carlo", arco:"storico", punteggio:233, data:"2026-07-12" },
+          { id:6, percorsoId:1, nome:"Mauro", arco:"compound", punteggio:305, data:"2026-07-19" },
+          { id:7, percorsoId:1, nome:"Milly", arco:"ricurvo", punteggio:249, data:"2026-07-19" },
+          { id:8, percorsoId:2, nome:"Alessandro", arco:"compound", punteggio:401, data:"2026-07-26" },
+          { id:9, percorsoId:2, nome:"Anna", arco:"ricurvo", punteggio:356, data:"2026-07-26" },
+          { id:10, percorsoId:2, nome:"Pino", arco:"storico", punteggio:318, data:"2026-07-20" },
+          { id:11, percorsoId:2, nome:"Milly", arco:"ricurvo", punteggio:337, data:"2026-07-26" }
+        ],
+        nextPercorsoId: 3, nextRisultatoId: 12
+      };
+    }
+  }
+
+  // ---------- HOME / PROFILO ----------
+  var PROFILE_FEDERATIONS = [
+    {code:"fiarc", label:"FIARC"}, {code:"fitarco", label:"FITARCO"},
+    {code:"ffta", label:"FFTA"}, {code:"fftl", label:"FFTL"},
+    {code:"swissarchery", label:"SwissArchery"}, {code:"faas", label:"FAAS"},
+    {code:"oebsv", label:"\u00d6BSV"}, {code:"dfbv", label:"DFBV"},
+    {code:"archerygb", label:"Archery GB"}, {code:"nfas", label:"NFAS"}, {code:"efaa", label:"EFAA"}
+  ];
+  var PROFILE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longbow", storico:"Storico" };
+  var ADMIN_CONTACT_EMAIL = "info@arctrail3d.com";
+  var ADMIN_SITE = "www.arctrail3d.com";
+
+  function welcomeScreen(){
+    var wrap = el('<div class="splash-wrap"></div>');
+    var logo = el('<div class="splash-logo"></div>');
+    logo.innerHTML = logoSVG(150);
+    wrap.appendChild(logo);
+    wrap.appendChild(el('<h1 class="display splash-title" style="font-size:1.7rem;">ArcTrail 3D</h1>'));
+    wrap.appendChild(el('<div class="splash-tag">'+t("home_tagline")+'</div>'));
+
+    var regBtn = el('<button class="btn btn-primary" style="min-width:220px;">'+t("home_register_btn")+'</button>');
+    regBtn.addEventListener("click", function(){ state.screen = "profile-registration"; save(); render(); });
+    wrap.appendChild(regBtn);
+
+    var loginLink = el('<div style="margin-top:14px;font-size:0.85rem;color:var(--muted);">'+t("home_login_link")+' <span id="welcomeLoginLink" style="color:var(--accent);font-weight:700;cursor:pointer;text-decoration:underline;">'+t("home_login_link_word")+'</span></div>');
+    wrap.appendChild(loginLink);
+
+    var devText = t("home_dev_text", {
+      email: '<a href="mailto:'+ADMIN_CONTACT_EMAIL+'" style="color:var(--accent);font-weight:700;">'+ADMIN_CONTACT_EMAIL+'</a>',
+      sito: '<a href="https://'+ADMIN_SITE+'" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700;">'+ADMIN_SITE+'</a>'
+    });
+    var devBox = el('<div class="install-hint" style="max-width:320px;margin-top:34px;text-align:left;"></div>');
+    devBox.innerHTML = '<b>'+t("home_dev_title")+'</b><br>'+devText;
+    wrap.appendChild(devBox);
+
+    setTimeout(function(){
+      var link = document.getElementById("welcomeLoginLink");
+      if(link) link.addEventListener("click", function(){
+        state.profileSkipped = true;
+        save(); render();
+      });
+    },0);
+
+    return wrap;
+  }
+
+  function profileRegistrationScreen(){
+    var wrap = el('<div></div>');
+    var card = el('<div class="card"></div>');
+    var header = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><div><h2 class="section-title" style="margin:0;">'+t("profile_title")+'</h2><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">'+t("profile_subtitle")+'</div></div></div>');
+    card.appendChild(header);
+
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="pfNome"></div>'));
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+' <span style="font-weight:400;color:var(--muted);">'+t("profile_username_hint")+'</span></label><input type="text" id="pfUsername"></div>'));
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_email")+'</label><input type="email" id="pfEmail"></div>'));
+
+    card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_federazioni")+'</h2>'));
+    var fedWrap = el('<div></div>');
+    PROFILE_FEDERATIONS.forEach(function(f){
+      var row = el('<div class="pf-fed-row"></div>');
+      var check = el('<label class="pf-fed-check"><input type="checkbox" data-fed="'+f.code+'"><span>'+f.label+'</span></label>');
+      row.appendChild(check);
+      var tesseraBox = el('<div class="pf-tessera"><label>'+t("profile_tessera",{fed:f.label})+'</label><input type="text" data-tessera-fed="'+f.code+'"></div>');
+      row.appendChild(tesseraBox);
+      check.querySelector("input").addEventListener("change", function(e){
+        tesseraBox.classList.toggle("show", e.target.checked);
+      });
+      fedWrap.appendChild(row);
+    });
+    card.appendChild(fedWrap);
+
+    card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_arco")+'</h2>'));
+    var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
+    var arcoSel = null;
+    Object.keys(PROFILE_BOW_LABEL).forEach(function(k){
+      var chip = el('<div class="chip" style="min-width:70px;">'+PROFILE_BOW_LABEL[k]+'</div>');
+      chip.addEventListener("click", function(){
+        Array.prototype.forEach.call(bowRow.querySelectorAll(".chip"), function(c){ c.classList.remove("active"); });
+        chip.classList.add("active");
+        arcoSel = k;
+      });
+      bowRow.appendChild(chip);
+    });
+    card.appendChild(bowRow);
+
+    var privacyRow = el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:16px 0 6px;"><input type="checkbox" id="pfPrivacy" style="width:auto;margin-top:2px;"><span>'+t("profile_privacy")+'</span></label>');
+    card.appendChild(privacyRow);
+
+    var errorMsg = el('<div style="color:var(--danger);font-size:0.8rem;margin:6px 0;min-height:1.2em;"></div>');
+    card.appendChild(errorMsg);
+
+    var submitBtn = el('<button class="btn btn-primary btn-block" style="margin-top:8px;">'+t("profile_submit")+'</button>');
+    submitBtn.addEventListener("click", function(){
+      var nomeCognome = document.getElementById("pfNome").value.trim();
+      var username = document.getElementById("pfUsername").value.trim();
+      var email = document.getElementById("pfEmail").value.trim();
+      var privacy = document.getElementById("pfPrivacy").checked;
+      var federazioni = [];
+      Array.prototype.forEach.call(fedWrap.querySelectorAll('input[type=checkbox][data-fed]'), function(cb){
+        if(cb.checked){
+          var code = cb.getAttribute("data-fed");
+          var tesseraInput = fedWrap.querySelector('input[data-tessera-fed="'+code+'"]');
+          federazioni.push({ code: code, tessera: tesseraInput ? tesseraInput.value.trim() : "" });
+        }
+      });
+      if(!nomeCognome || !username || !email || !arcoSel || !privacy || federazioni.length === 0){
+        errorMsg.textContent = t("profile_error");
+        return;
+      }
+      var profileData = {
+        nomeCognome: nomeCognome, username: username, email: email,
+        federazioni: federazioni, arco: arcoSel, privacy: true
+      };
+      if(DEV_MODE){
+        state.profile = profileData;
+        state.screen = "menu";
+        save(); render();
+        return;
+      }
+      submitBtn.disabled = true;
+      try{ window.localStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify(profileData)); }catch(e){}
+      try{ window.localStorage.setItem(PENDING_EMAIL_KEY, email); }catch(e){}
+      var actionCodeSettings = { url: window.location.href.split("?")[0], handleCodeInApp: true };
+      auth.sendSignInLinkToEmail(email, actionCodeSettings).then(function(){
+        authState = "linkSent";
+        render();
+      }).catch(function(err){
+        submitBtn.disabled = false;
+        errorMsg.textContent = (err && err.message) ? err.message : "Non sono riuscito a inviare il link, riprova.";
+      });
+    });
+    card.appendChild(submitBtn);
+
+    wrap.appendChild(card);
+    return wrap;
+  }
+
   function federationScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
     var logo = el('<div class="splash-logo"></div>');
-    logo.innerHTML = logoSVG(84);
+    logo.innerHTML = logoSVG(150);
     wrap.appendChild(logo);
     wrap.appendChild(el('<div class="onboard-title display">'+t("federation_pick_title")+'</div>'));
     var stack = el('<div class="onboard-stack"></div>');
     var list = COUNTRY_FEDERATIONS[state.country] || COUNTRY_FEDERATIONS.it;
     list.forEach(function(f){
-      var extra = f.provisional ? '<br><small style="font-weight:400;color:var(--gold);">'+t("provisional_tag")+'</small>' : '';
-      var chip = el('<div class="lang-pick-btn" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:6px;"></div>');
+      var extra = ""; // nota interna: dati FITARCO non riconfermati da fonte ufficiale univoca, ma etichetta rimossa su richiesta
+      var chip = el('<div class="lang-pick-btn" style="cursor:pointer;position:relative;"></div>');
       var topRow = el('<div style="display:flex;align-items:center;gap:14px;width:100%;"><span class="flag">'+icon("target",26)+'</span><span>'+f.label+extra+'</span></div>');
       chip.appendChild(topRow);
       topRow.addEventListener("click", function(){ state.federation = f.code; save(); render(); });
       if(f.url){
-        var link = el('<a href="'+f.url+'" target="_blank" rel="noopener" style="font-size:0.72rem;color:var(--accent);text-decoration:underline;margin-left:40px;">'+t("visit_site_link")+' \u2197</a>');
+        var link = el('<a href="'+f.url+'" target="_blank" rel="noopener" title="'+t("visit_site_link")+'" style="position:absolute;top:10px;right:10px;font-size:1rem;line-height:1;padding:6px;color:var(--muted);text-decoration:none;">\uD83D\uDD17</a>');
         link.addEventListener("click", function(e){ e.stopPropagation(); });
         chip.appendChild(link);
       }
@@ -1296,7 +1635,7 @@
     var showHome = (!homeOverride) && state.screen !== "registration" && state.screen !== "menu";
     var h = el(
       '<header class="top">'+
-        '<div class="logo">'+logoSVG(38)+'</div>'+
+        '<div class="logo">'+logoSVG(52)+'</div>'+
         '<div class="headtxt"><h1 class="display">ArcTrail 3D</h1></div>'+
       '</header>'
     );
@@ -1451,6 +1790,10 @@
     campiBtn.addEventListener("click", function(){ state.screen = "campi"; save(); render(); });
     menuCard.appendChild(campiBtn);
 
+    var compagnieBtn = el('<button class="btn btn-ghost btn-block menu-btn" style="margin-top:10px;"><span class="menu-icon">'+icon("users",24)+'</span><span class="menu-txt">'+t("menu_compagnie_label")+'<span class="menu-sub">'+t("menu_compagnie_sub")+'</span></span></button>');
+    compagnieBtn.addEventListener("click", function(){ state.screen = "compagnie"; save(); render(); });
+    menuCard.appendChild(compagnieBtn);
+
     wrap.appendChild(menuCard);
 
     var secondaryRow = el('<div class="row"></div>');
@@ -1571,6 +1914,278 @@
     return wrap;
   }
 
+  // ---------- COMPAGNIE ----------
+  function formatDateIt(d){
+    var parts = String(d).split("-");
+    if(parts.length !== 3) return d;
+    return parts[2]+"/"+parts[1]+"/"+parts[0];
+  }
+
+  function compagnieScreen(){
+    initCompagnieData();
+    if(state.compagniaAttiva === undefined){
+      state.compagniaAttiva = "01VERB";
+      state.compagniaRegione = COMPAGNIE["01VERB"].regione;
+      state.compagniaProvincia = COMPAGNIE["01VERB"].provincia;
+    }
+    var wrap = el('<div></div>');
+
+    var selCard = el('<div class="card"></div>');
+    selCard.appendChild(el('<h2 class="section-title">'+t("compagnie_title")+'</h2>'));
+
+    var regRow = el('<div class="cp-select-row"><label>'+t("compagnie_regione")+'</label><select id="cpSelRegione"></select></div>');
+    var regSel = regRow.querySelector("select");
+    regSel.appendChild(el('<option value="">'+t("compagnie_pick_regione")+'</option>'));
+    COMPAGNIE_REGIONI.forEach(function(r){
+      var opt = el('<option value="'+r+'">'+r+'</option>');
+      if(state.compagniaRegione === r) opt.setAttribute("selected","selected");
+      regSel.appendChild(opt);
+    });
+    selCard.appendChild(regRow);
+
+    if(state.compagniaRegione){
+      var provRow = el('<div class="cp-select-row"><label>'+t("compagnie_provincia")+'</label><select id="cpSelProvincia"></select></div>');
+      var provSel = provRow.querySelector("select");
+      provSel.appendChild(el('<option value="">'+t("compagnie_pick_provincia")+'</option>'));
+      var provinceSet = {};
+      Object.keys(COMPAGNIE).forEach(function(cod){
+        var c = COMPAGNIE[cod];
+        if(c.regione === state.compagniaRegione && c.provincia !== "\u2014"){ provinceSet[c.provincia] = true; }
+      });
+      Object.keys(provinceSet).sort().forEach(function(p){
+        var label = (COMPAGNIE_NOMI_PROVINCIA[p]||p) + " (" + p + ")";
+        var opt = el('<option value="'+p+'">'+label+'</option>');
+        if(state.compagniaProvincia === p) opt.setAttribute("selected","selected");
+        provSel.appendChild(opt);
+      });
+      selCard.appendChild(provRow);
+    }
+
+    if(state.compagniaRegione && state.compagniaProvincia){
+      var luogoRow = el('<div class="cp-select-row"><label>'+t("compagnie_luogo")+'</label><select id="cpSelLuogo"></select></div>');
+      var luogoSel = luogoRow.querySelector("select");
+      luogoSel.appendChild(el('<option value="">'+t("compagnie_pick_luogo")+'</option>'));
+      Object.keys(COMPAGNIE).forEach(function(cod){
+        var c = COMPAGNIE[cod];
+        if(c.regione === state.compagniaRegione && c.provincia === state.compagniaProvincia){
+          var label = c.luogo + " \u2014 " + c.nome + (c.completa ? " \u2b50" : "");
+          var opt = el('<option value="'+cod+'">'+label+'</option>');
+          if(state.compagniaAttiva === cod) opt.setAttribute("selected","selected");
+          luogoSel.appendChild(opt);
+        }
+      });
+      selCard.appendChild(luogoRow);
+    }
+
+    wrap.appendChild(selCard);
+
+    var compagnia = state.compagniaAttiva ? COMPAGNIE[state.compagniaAttiva] : null;
+
+    if(compagnia){
+      var infoCard = el('<div class="card"></div>');
+      infoCard.appendChild(el('<h2 class="section-title">'+escapeHtml(compagnia.nome)+'</h2>'));
+      if(compagnia.completa){
+        infoCard.appendChild(el('<div class="cp-info-row">'+icon("pin",16)+' '+escapeHtml(compagnia.indirizzo)+'</div>'));
+        infoCard.appendChild(el('<div class="cp-info-row"><a href="tel:'+compagnia.telefono.replace(/\s/g,"")+'">\uD83D\uDCDE '+compagnia.telefono+'</a></div>'));
+        infoCard.appendChild(el('<div class="cp-info-row"><a href="https://'+compagnia.sito+'" target="_blank" rel="noopener">\uD83C\uDF10 '+compagnia.sito+'</a></div>'));
+      } else {
+        infoCard.appendChild(el('<div class="cp-info-row placeholder">'+icon("pin",16)+' '+escapeHtml(compagnia.luogo)+'</div>'));
+        infoCard.appendChild(el('<div class="cp-info-row placeholder">'+t("compagnie_no_dati")+'</div>'));
+      }
+      wrap.appendChild(infoCard);
+
+      if(compagnia.completa){
+        var cd = state.compagnieData[state.compagniaAttiva];
+        var percCard = el('<div class="card"></div>');
+        percCard.appendChild(el('<h2 class="section-title">'+t("menu_compagnie_label")+'</h2>'));
+        if(cd.percorsi.length === 0){
+          percCard.appendChild(el('<div class="empty-hint">'+t("compagnie_no_percorsi")+'</div>'));
+        }
+        cd.percorsi.forEach(function(p){
+          var risP = cd.risultati.filter(function(r){ return r.percorsoId === p.id; }).sort(function(a,b){ return b.punteggio - a.punteggio; });
+          var isOpen = (state.compagniaPercorsoAperto === p.id);
+          var card = el('<div class="cp-percorso-card'+(isOpen?' open':'')+'"></div>');
+          var top = el('<div class="cp-percorso-top"><div><h3>'+escapeHtml(p.nome)+'</h3><div class="cp-percorso-meta">'+p.piazzole+' '+t("compagnie_piazzole_word")+' &middot; '+risP.length+' '+t("compagnie_punteggi_word")+'</div></div><div class="cp-chev">\u203a</div></div>');
+          card.appendChild(top);
+          var risWrap = el('<div class="cp-risultati"></div>');
+          if(risP.length === 0){
+            risWrap.appendChild(el('<div class="empty-hint">'+t("compagnie_empty_msg")+'</div>'));
+          } else {
+            risP.forEach(function(r){
+              var row = el('<div class="cp-risultato-row"><span>'+escapeHtml(r.nome)+'<span class="cp-bow-chip '+r.arco+'">'+COMPAGNIE_BOW_LABEL[r.arco]+'</span></span><span><b style="color:var(--gold);">'+r.punteggio+'</b> &middot; '+formatDateIt(r.data)+'</span></div>');
+              risWrap.appendChild(row);
+            });
+          }
+          card.appendChild(risWrap);
+          top.addEventListener("click", function(){
+            state.compagniaPercorsoAperto = isOpen ? null : p.id;
+            save(); render();
+          });
+          percCard.appendChild(card);
+        });
+
+        var actionsRow = el('<div class="row" style="margin-top:6px;"></div>');
+        var newRisBtn = el('<button class="btn btn-primary btn-block btn-sm">'+t("compagnie_new_risultato")+'</button>');
+        newRisBtn.addEventListener("click", function(){ state.compagniaForm = "risultato"; save(); render(); });
+        var newPerBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("compagnie_new_percorso")+'</button>');
+        newPerBtn.addEventListener("click", function(){ state.compagniaForm = "percorso"; save(); render(); });
+        actionsRow.appendChild(newRisBtn); actionsRow.appendChild(newPerBtn);
+        percCard.appendChild(actionsRow);
+
+        var classBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;">'+icon("scroll",16)+' '+t("compagnie_classifica")+'</button>');
+        classBtn.addEventListener("click", function(){ state.compagniaForm = "classifica"; save(); render(); });
+        percCard.appendChild(classBtn);
+
+        wrap.appendChild(percCard);
+
+        if(state.compagniaForm === "risultato"){ wrap.appendChild(compagnieRisultatoForm(cd)); }
+        if(state.compagniaForm === "percorso"){ wrap.appendChild(compagniePercorsoForm(cd)); }
+        if(state.compagniaForm === "classifica"){ wrap.appendChild(compagnieClassificaCard(cd)); }
+      }
+    }
+
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
+    backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
+    wrap.appendChild(backBtn);
+
+    setTimeout(function(){
+      var rs = document.getElementById("cpSelRegione");
+      if(rs) rs.addEventListener("change", function(){
+        state.compagniaRegione = rs.value || null;
+        state.compagniaProvincia = null;
+        state.compagniaAttiva = null;
+        state.compagniaForm = null;
+        save(); render();
+      });
+      var ps = document.getElementById("cpSelProvincia");
+      if(ps) ps.addEventListener("change", function(){
+        state.compagniaProvincia = ps.value || null;
+        state.compagniaAttiva = null;
+        state.compagniaForm = null;
+        save(); render();
+      });
+      var ls = document.getElementById("cpSelLuogo");
+      if(ls) ls.addEventListener("change", function(){
+        if(ls.value){ state.compagniaAttiva = ls.value; state.compagniaForm = null; save(); render(); }
+      });
+    },0);
+
+    return wrap;
+  }
+
+  function compagnieRisultatoForm(cd){
+    var card = el('<div class="card"></div>');
+    card.appendChild(el('<h2 class="section-title">'+t("compagnie_new_risultato")+'</h2>'));
+
+    var percRow = el('<div class="cp-select-row"><label>'+t("menu_compagnie_label")+'</label><select id="cpFPercorso"></select></div>');
+    var percSel = percRow.querySelector("select");
+    cd.percorsi.forEach(function(p){ percSel.appendChild(el('<option value="'+p.id+'">'+escapeHtml(p.nome)+'</option>')); });
+    card.appendChild(percRow);
+
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_arciere")+'</label><input type="text" id="cpFNome" placeholder="'+t("compagnie_arciere")+'"></div>'));
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_punteggio")+'</label><input type="number" id="cpFPunteggio" min="0"></div>'));
+    var todayIso = new Date().toISOString().slice(0,10);
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_data")+'</label><input type="date" id="cpFData" value="'+todayIso+'" style="width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--cream);font-size:1rem;"></div>'));
+
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_arco")+'</label></div>'));
+    var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;"></div>');
+    var bowSel = "compound";
+    Object.keys(COMPAGNIE_BOW_LABEL).forEach(function(k){
+      var chip = el('<div class="chip" style="min-width:70px;">'+COMPAGNIE_BOW_LABEL[k]+'</div>');
+      if(k === bowSel) chip.classList.add("active");
+      chip.addEventListener("click", function(){
+        Array.prototype.forEach.call(bowRow.querySelectorAll(".chip"), function(c){ c.classList.remove("active"); });
+        chip.classList.add("active");
+        bowSel = k;
+      });
+      bowRow.appendChild(chip);
+    });
+    card.appendChild(bowRow);
+
+    var actions = el('<div class="row" style="margin-top:14px;"></div>');
+    var saveBtn = el('<button class="btn btn-primary btn-block">'+t("compagnie_salva")+'</button>');
+    var cancelBtn = el('<button class="btn btn-ghost btn-block">'+t("compagnie_annulla")+'</button>');
+    actions.appendChild(saveBtn); actions.appendChild(cancelBtn);
+    card.appendChild(actions);
+
+    cancelBtn.addEventListener("click", function(){ state.compagniaForm = null; save(); render(); });
+    saveBtn.addEventListener("click", function(){
+      var percorsoId = parseInt(document.getElementById("cpFPercorso").value,10);
+      var nome = document.getElementById("cpFNome").value.trim();
+      var punteggio = parseInt(document.getElementById("cpFPunteggio").value,10);
+      var data = document.getElementById("cpFData").value.trim();
+      if(!nome || isNaN(punteggio) || !data){ return; }
+      cd.risultati.push({ id: cd.nextRisultatoId++, percorsoId: percorsoId, nome: nome, arco: bowSel, punteggio: punteggio, data: data });
+      state.compagniaPercorsoAperto = percorsoId;
+      state.compagniaForm = null;
+      save(); render();
+    });
+
+    return card;
+  }
+
+  function compagniePercorsoForm(cd){
+    var card = el('<div class="card"></div>');
+    card.appendChild(el('<h2 class="section-title">'+t("compagnie_new_percorso")+'</h2>'));
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_nome_percorso")+'</label><input type="text" id="cpFPNome"></div>'));
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_num_piazzole")+'</label><input type="number" id="cpFPPiazzole" min="1"></div>'));
+
+    var actions = el('<div class="row" style="margin-top:14px;"></div>');
+    var saveBtn = el('<button class="btn btn-primary btn-block">'+t("compagnie_salva")+'</button>');
+    var cancelBtn = el('<button class="btn btn-ghost btn-block">'+t("compagnie_annulla")+'</button>');
+    actions.appendChild(saveBtn); actions.appendChild(cancelBtn);
+    card.appendChild(actions);
+
+    cancelBtn.addEventListener("click", function(){ state.compagniaForm = null; save(); render(); });
+    saveBtn.addEventListener("click", function(){
+      var nome = document.getElementById("cpFPNome").value.trim();
+      var piazzole = parseInt(document.getElementById("cpFPPiazzole").value,10);
+      if(!nome || isNaN(piazzole)){ return; }
+      cd.percorsi.push({ id: cd.nextPercorsoId++, nome: nome, piazzole: piazzole });
+      state.compagniaForm = null;
+      save(); render();
+    });
+
+    return card;
+  }
+
+  function compagnieClassificaCard(cd){
+    var card = el('<div class="card"></div>');
+    card.appendChild(el('<h2 class="section-title">'+t("compagnie_classifica")+'</h2>'));
+
+    var filtro = state.compagniaClassificaFiltro || "tutti";
+    var tabs = el('<div class="cp-class-tabs"></div>');
+    var filters = ["tutti"].concat(Object.keys(COMPAGNIE_BOW_LABEL));
+    filters.forEach(function(f){
+      var label = (f === "tutti") ? t("compagnie_tutti") : COMPAGNIE_BOW_LABEL[f];
+      var tab = el('<div class="chip" style="min-width:70px;">'+label+'</div>');
+      if(filtro === f) tab.classList.add("active");
+      tab.addEventListener("click", function(){ state.compagniaClassificaFiltro = f; save(); render(); });
+      tabs.appendChild(tab);
+    });
+    card.appendChild(tabs);
+
+    var any = false;
+    cd.percorsi.forEach(function(p){
+      var risP = cd.risultati.filter(function(r){ return r.percorsoId === p.id && (filtro === "tutti" || r.arco === filtro); });
+      if(risP.length === 0) return;
+      any = true;
+      risP.sort(function(a,b){ return b.punteggio - a.punteggio; });
+      card.appendChild(el('<div class="cp-percorso-title">'+escapeHtml(p.nome)+'</div>'));
+      risP.forEach(function(r, i){
+        var row = el('<div class="cp-class-row"><div class="cp-pos">'+(i+1)+'\u00ba</div><div class="cp-nome">'+escapeHtml(r.nome)+'<span class="cp-bow-chip '+r.arco+'">'+COMPAGNIE_BOW_LABEL[r.arco]+'</span> &middot; '+formatDateIt(r.data)+'</div><div class="cp-punti">'+r.punteggio+'</div></div>');
+        card.appendChild(row);
+      });
+    });
+    if(!any){ card.appendChild(el('<div class="empty-hint">'+t("compagnie_classifica_empty")+'</div>')); }
+
+    var closeBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("compagnie_annulla")+'</button>');
+    closeBtn.addEventListener("click", function(){ state.compagniaForm = null; save(); render(); });
+    card.appendChild(closeBtn);
+
+    return card;
+  }
+
   // ---------- CAMPI VICINO A TE ----------
   function campiScreen(){
     var wrap = el('<div></div>');
@@ -1669,6 +2284,15 @@
     infoCard.appendChild(el('<h2 class="section-title">'+t("info_title")+'</h2>'));
     infoCard.appendChild(el('<div style="font-size:0.85rem;line-height:1.6;">'+t("disclaimer_text")+'</div>'));
     wrap.appendChild(infoCard);
+
+    var contactCard = el('<div class="card" style="margin-top:14px;"></div>');
+    contactCard.appendChild(el('<h2 class="section-title">'+t("contact_title")+'</h2>'));
+    contactCard.appendChild(el('<div style="font-size:0.85rem;line-height:1.6;">'+t("contact_text")+'</div>'));
+    var mailSubject = encodeURIComponent("ArcTrail 3D - segnalazione");
+    var mailBtn = el('<a href="mailto:'+ADMIN_EMAIL+'?subject='+mailSubject+'" class="btn btn-primary btn-block" style="margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">'+t("contact_button")+'</a>');
+    contactCard.appendChild(mailBtn);
+    wrap.appendChild(contactCard);
+
     var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
     backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
     wrap.appendChild(backBtn);
