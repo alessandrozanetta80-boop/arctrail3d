@@ -411,6 +411,8 @@
       menu_campi_sub: "trova un campo di tiro 3D",
       menu_history: "Storico",
       menu_edit_archers: "Modifica arcieri",
+      menu_profile: "Il mio profilo", profile_edit_title: "Il tuo profilo", profile_edit_email_note: "Per cambiare l'email di accesso, contatta l'assistenza.",
+      profile_edit_save: "Salva modifiche", profile_edit_saved_msg: "Modifiche salvate.",
       resume_banner: "Hai un percorso in corso ({mode} \u00b7 {n} piazzole).",
       resume_btn: "Riprendi percorso",
       reset_full_btn: "Reset totale (cancella il percorso in corso)",
@@ -1209,6 +1211,7 @@
       case "gara-setup": app.appendChild(garaSetupScreen()); break;
       case "campi": app.appendChild(campiScreen()); break;
       case "compagnie": app.appendChild(compagnieScreen()); break;
+      case "profile-edit": app.appendChild(profileEditScreen()); break;
       case "history": app.appendChild(historyScreen()); break;
       case "info": app.appendChild(infoScreen()); break;
       case "admin": app.appendChild(adminScreen()); break;
@@ -1587,6 +1590,90 @@
     return wrap;
   }
 
+  function profileEditScreen(){
+    var wrap = el('<div></div>');
+    var card = el('<div class="card"></div>');
+    var header = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><h2 class="section-title" style="margin:0;">'+t("profile_edit_title")+'</h2></div>');
+    card.appendChild(header);
+
+    var profile = state.profile || {};
+
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_email")+'</label><input type="email" value="'+escapeHtml(profile.email||"")+'" disabled style="opacity:0.6;"></div>'));
+    card.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:-10px 0 14px;">'+t("profile_edit_email_note")+'</div>'));
+
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="peNome" value="'+escapeHtml(profile.nomeCognome||"")+'"></div>'));
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+' <span style="font-weight:400;color:var(--muted);">'+t("profile_username_hint")+'</span></label><input type="text" id="peUsername" value="'+escapeHtml(profile.username||"")+'"></div>'));
+
+    card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_federazioni")+'</h2>'));
+    var fedWrap = el('<div></div>');
+    var existingFedMap = {};
+    (profile.federazioni||[]).forEach(function(f){ existingFedMap[f.code] = f.tessera || ""; });
+    PROFILE_FEDERATIONS.forEach(function(f){
+      var already = existingFedMap.hasOwnProperty(f.code);
+      var row = el('<div class="pf-fed-row"></div>');
+      var check = el('<label class="pf-fed-check"><input type="checkbox" data-fed="'+f.code+'"'+(already?' checked':'')+'><span>'+f.label+'</span></label>');
+      row.appendChild(check);
+      var tesseraBox = el('<div class="pf-tessera'+(already?' show':'')+'"><label>'+t("profile_tessera",{fed:f.label})+'</label><input type="text" data-tessera-fed="'+f.code+'" value="'+escapeHtml(already?existingFedMap[f.code]:"")+'"></div>');
+      row.appendChild(tesseraBox);
+      check.querySelector("input").addEventListener("change", function(e){
+        tesseraBox.classList.toggle("show", e.target.checked);
+      });
+      fedWrap.appendChild(row);
+    });
+    card.appendChild(fedWrap);
+
+    card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_arco")+'</h2>'));
+    var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
+    var arcoSel = profile.arco || null;
+    Object.keys(PROFILE_BOW_LABEL).forEach(function(k){
+      var chip = el('<div class="chip" style="min-width:70px;">'+PROFILE_BOW_LABEL[k]+'</div>');
+      if(k === arcoSel) chip.classList.add("active");
+      chip.addEventListener("click", function(){
+        Array.prototype.forEach.call(bowRow.querySelectorAll(".chip"), function(c){ c.classList.remove("active"); });
+        chip.classList.add("active");
+        arcoSel = k;
+      });
+      bowRow.appendChild(chip);
+    });
+    card.appendChild(bowRow);
+
+    var savedMsg = el('<div style="color:var(--accent);font-size:0.8rem;margin:6px 0;min-height:1.2em;"></div>');
+    card.appendChild(savedMsg);
+
+    var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-top:8px;">'+t("profile_edit_save")+'</button>');
+    saveBtn.addEventListener("click", function(){
+      var nomeCognome = document.getElementById("peNome").value.trim();
+      var username = document.getElementById("peUsername").value.trim();
+      var federazioni = [];
+      Array.prototype.forEach.call(fedWrap.querySelectorAll('input[type=checkbox][data-fed]'), function(cb){
+        if(cb.checked){
+          var code = cb.getAttribute("data-fed");
+          var tesseraInput = fedWrap.querySelector('input[data-tessera-fed="'+code+'"]');
+          federazioni.push({ code: code, tessera: tesseraInput ? tesseraInput.value.trim() : "" });
+        }
+      });
+      state.profile = {
+        nomeCognome: nomeCognome, username: username, email: profile.email,
+        federazioni: federazioni, arco: arcoSel, privacy: true
+      };
+      save();
+      if(!DEV_MODE && currentUser && db){
+        db.collection("users").doc(currentUser.uid).update({
+          nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel
+        }).catch(function(){});
+      }
+      savedMsg.textContent = t("profile_edit_saved_msg");
+    });
+    card.appendChild(saveBtn);
+
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
+    backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
+    card.appendChild(backBtn);
+
+    wrap.appendChild(card);
+    return wrap;
+  }
+
   function federationScreen(){
     var wrap = el('<div class="splash-wrap"></div>');
     var logo = el('<div class="splash-logo"></div>');
@@ -1808,6 +1895,10 @@
     var infoBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("info",16)+' '+t("menu_info")+'</button>');
     infoBtn.addEventListener("click", function(){ state.screen = "info"; save(); render(); });
     wrap.appendChild(infoBtn);
+
+    var profileBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("users",16)+' '+t("menu_profile")+'</button>');
+    profileBtn.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
+    wrap.appendChild(profileBtn);
 
     if(currentUser && currentUser.email === ADMIN_EMAIL){
       var adminBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("users",16)+' '+t("menu_admin")+'</button>');
