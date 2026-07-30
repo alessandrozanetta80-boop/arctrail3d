@@ -307,17 +307,19 @@
           newDoc.privacy = true;
         }
         db.collection("users").doc(user.uid).set(newDoc);
-        state.profile = {
-          nomeCognome: newDoc.nomeCognome || "", username: newDoc.username || "",
-          email: user.email, federazioni: newDoc.federazioni || [], arco: newDoc.arco || null, privacy: true
-        };
+        if(pendingProfile && pendingProfile.nomeCognome){
+          state.profile = {
+            nomeCognome: newDoc.nomeCognome || "", username: newDoc.username || "",
+            email: user.email, federazioni: newDoc.federazioni || [], arco: newDoc.arco || null, privacy: true
+          };
+        }
         try{ window.localStorage.removeItem(PENDING_PROFILE_KEY); }catch(e){}
         authState = "ready";
       } else {
         var data = doc.data();
-        if(!state.profile){
+        if(!state.profile && data.nomeCognome){
           state.profile = {
-            nomeCognome: data.nomeCognome || "", username: data.username || "",
+            nomeCognome: data.nomeCognome, username: data.username || "",
             email: data.email || user.email, federazioni: data.federazioni || [], arco: data.arco || null, privacy: true
           };
         }
@@ -363,6 +365,10 @@
   var HISTORY_KEY = "arctrail3d_storico_v1";
 
   var state = { screen:"menu", pendingArchers:[] };
+  try{
+    var loadedState = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(loadedState){ state = loadedState; }
+  }catch(e){}
   var homeOverride = false;
   var splashDismissed = false;
   var pending = null;
@@ -1502,7 +1508,7 @@
   function profileRegistrationScreen(){
     var wrap = el('<div></div>');
     var card = el('<div class="card"></div>');
-    var header = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><div><h2 class="section-title" style="margin:0;">'+t("profile_title")+'</h2><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">'+t("profile_subtitle")+'</div></div></div>');
+    var header = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><h2 class="section-title" style="margin:0;">'+t("profile_title")+'</h2></div>');
     card.appendChild(header);
 
     card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="pfNome"></div>'));
@@ -1570,6 +1576,22 @@
         state.profile = profileData;
         state.screen = "menu";
         save(); render();
+        return;
+      }
+      if(currentUser){
+        submitBtn.disabled = true;
+        db.collection("users").doc(currentUser.uid).set({
+          email: currentUser.email, approved: true,
+          nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true
+        }, { merge: true }).then(function(){
+          state.profile = profileData;
+          state.profile.email = currentUser.email;
+          state.screen = "menu";
+          save(); render();
+        }).catch(function(err){
+          submitBtn.disabled = false;
+          errorMsg.textContent = (err && err.message) ? err.message : "Non sono riuscito a salvare il profilo, riprova.";
+        });
         return;
       }
       submitBtn.disabled = true;
@@ -1752,7 +1774,6 @@
   // ---------- REGISTRAZIONE ----------
   function registrationScreen(){
     var wrap = el('<div></div>');
-    wrap.appendChild(el('<div class="install-hint">'+t("install_hint")+'</div>'));
 
     var card2 = el('<div class="card"></div>');
     card2.appendChild(el('<h2 class="section-title">'+t("team_title")+'</h2>'));
