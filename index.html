@@ -1379,7 +1379,7 @@
     if(!state.country){ app.appendChild(countryScreen()); return; }
     if(!state.federation){ app.appendChild(federationScreen()); return; }
     app.appendChild(header());
-    if(homeOverride){ app.appendChild(menuScreen()); return; }
+    if(homeOverride && (state.screen === "round" || state.screen === "summary")){ app.appendChild(menuScreen()); return; }
     switch(state.screen){
       case "registration": app.appendChild(registrationScreen()); break;
       case "menu": app.appendChild(menuScreen()); break;
@@ -2364,6 +2364,9 @@
     regBtn.addEventListener("click", function(){ state.screen = "profile-registration"; save(); render(); });
     wrap.appendChild(regBtn);
 
+    var loginBtn = el('<button class="btn btn-ghost" id="welcomeLoginLink" style="min-width:220px;margin-top:10px;">'+t("home_login_link_word")+'</button>');
+    wrap.appendChild(loginBtn);
+
     var isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     if(!isStandalone){
       var installBtn = el('<button class="btn btn-ghost" style="min-width:220px;margin-top:10px;">'+icon("target",18)+' '+t("home_install_btn")+'</button>');
@@ -2381,9 +2384,6 @@
       wrap.appendChild(installBtn);
       wrap.appendChild(installInstructions);
     }
-
-    var loginLink = el('<div style="margin-top:14px;font-size:0.85rem;color:var(--muted);">'+t("home_login_link")+' <span id="welcomeLoginLink" style="color:var(--accent);font-weight:700;cursor:pointer;text-decoration:underline;">'+t("home_login_link_word")+'</span></div>');
-    wrap.appendChild(loginLink);
 
     var devText = t("home_dev_text", {
       email: '<a href="mailto:'+ADMIN_CONTACT_EMAIL+'" style="color:var(--accent);font-weight:700;">'+ADMIN_CONTACT_EMAIL+'</a>',
