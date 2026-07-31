@@ -2654,6 +2654,16 @@
       });
       h.appendChild(homeBtn);
     }
+    if(currentUser && currentUser.email === ADMIN_EMAIL && state.screen !== "admin"){
+      var adminQuickBtn = el('<button class="home-btn no-print" style="background:var(--bark);color:#fff;border-color:transparent;font-weight:700;white-space:nowrap;">'+icon("users",14)+' '+t("menu_admin")+'</button>');
+      adminQuickBtn.addEventListener("click", function(){
+        homeOverride = false;
+        state.screen = "admin";
+        save();
+        render();
+      });
+      h.appendChild(adminQuickBtn);
+    }
     return h;
   }
 
