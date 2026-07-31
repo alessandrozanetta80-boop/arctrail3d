@@ -2862,12 +2862,8 @@
     trainBtn.addEventListener("click", function(){
       state.pendingMode = FEDERATIONS[state.federation || "fiarc"].trainingMode;
       ensureSelfArcher();
-      if((state.pendingArchers||[]).length === 0){
-        state.registrationNext = "training-setup";
-        state.screen = "registration";
-      } else {
-        state.screen = "training-setup";
-      }
+      state.registrationNext = "training-setup";
+      state.screen = "registration";
       save(); render();
     });
     menuCard.appendChild(trainBtn);
@@ -2879,12 +2875,8 @@
       var garaModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
       if(!state.pendingMode || garaModes.indexOf(state.pendingMode) === -1){ state.pendingMode = garaModes[0]; }
       ensureSelfArcher();
-      if((state.pendingArchers||[]).length === 0){
-        state.registrationNext = "gara-setup";
-        state.screen = "registration";
-      } else {
-        state.screen = "gara-setup";
-      }
+      state.registrationNext = "gara-setup";
+      state.screen = "registration";
       save(); render();
     });
     menuCard.appendChild(garaBtn);
