@@ -2412,7 +2412,7 @@
       Object.keys(COMPAGNIE).forEach(function(cod){
         var c = COMPAGNIE[cod];
         if(c.regione === state.compagniaRegione && c.provincia === state.compagniaProvincia){
-          var label = c.luogo + " \u2014 " + c.nome + (c.completa ? " \u2b50" : "");
+          var label = c.luogo + " \u2014 " + c.nome + " (" + cod + ")" + (c.completa ? " \u2b50" : "");
           var opt = el('<option value="'+cod+'">'+label+'</option>');
           if(state.compagniaAttiva === cod) opt.setAttribute("selected","selected");
           luogoSel.appendChild(opt);
@@ -2427,7 +2427,7 @@
 
     if(compagnia){
       var infoCard = el('<div class="card"></div>');
-      infoCard.appendChild(el('<h2 class="section-title">'+escapeHtml(compagnia.nome)+'</h2>'));
+      infoCard.appendChild(el('<h2 class="section-title">'+escapeHtml(compagnia.nome)+' <span style="color:var(--muted);font-weight:600;font-size:0.8rem;">('+escapeHtml(state.compagniaAttiva)+')</span></h2>'));
       if(compagnia.completa){
         infoCard.appendChild(el('<div class="cp-info-row">'+icon("pin",16)+' '+escapeHtml(compagnia.luogo)+'</div>'));
         if(compagnia.telefono){
