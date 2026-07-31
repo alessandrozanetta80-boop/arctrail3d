@@ -2745,7 +2745,7 @@
     for(var fi=0; fi<fedList.length; fi++){ if(fedList[fi].code === state.federation){ fedEntry = fedList[fi]; break; } }
     var fedName = fedEntry ? fedEntry.label : (state.federation||"fiarc").toUpperCase();
     var fedPill = el('<div style="display:inline-flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:0.85rem;font-weight:700;color:var(--cream);cursor:pointer;"></div>');
-    fedPill.innerHTML = t("federation_line",{fed:fedName, country:fedCountryName})+' <span id="changeFedLink" style="color:var(--bark);font-weight:900;text-decoration:underline;font-size:1.05em;">'+t("change_word")+'</span>';
+    fedPill.innerHTML = t("federation_line",{fed:fedName, country:fedCountryName})+' <span id="changeFedLink" style="background:var(--bark);color:#fff;font-weight:800;font-size:0.85em;padding:4px 12px;border-radius:999px;box-shadow:0 4px 10px rgba(232,100,31,0.35);">'+t("change_word")+'</span>';
     fedLine.appendChild(fedPill);
     wrap.appendChild(fedLine);
 
