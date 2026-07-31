@@ -3435,6 +3435,8 @@
   }
 
   // ---------- INFO / DISCLAIMER ----------
+  var BUILD_STAMP = "2026-07-31-h";
+
   function infoScreen(){
     var wrap = el('<div></div>');
     var infoCard = el('<div class="card"></div>');
@@ -3449,6 +3451,8 @@
     var mailBtn = el('<a href="mailto:'+ADMIN_EMAIL+'?subject='+mailSubject+'" class="btn btn-primary btn-block" style="margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">'+t("contact_button")+'</a>');
     contactCard.appendChild(mailBtn);
     wrap.appendChild(contactCard);
+
+    wrap.appendChild(el('<div style="font-size:0.68rem;color:var(--muted);text-align:center;margin-top:16px;">Versione file: '+BUILD_STAMP+'</div>'));
 
     var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
     backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
