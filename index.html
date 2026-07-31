@@ -2745,7 +2745,7 @@
     for(var fi=0; fi<fedList.length; fi++){ if(fedList[fi].code === state.federation){ fedEntry = fedList[fi]; break; } }
     var fedName = fedEntry ? fedEntry.label : (state.federation||"fiarc").toUpperCase();
     var fedPill = el('<div style="display:inline-flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:0.85rem;font-weight:700;color:var(--cream);cursor:pointer;"></div>');
-    fedPill.innerHTML = t("federation_line",{fed:fedName, country:fedCountryName})+' <span id="changeFedLink" style="color:var(--accent);font-weight:800;text-decoration:underline;">'+t("change_word")+'</span>';
+    fedPill.innerHTML = t("federation_line",{fed:fedName, country:fedCountryName})+' <span id="changeFedLink" style="color:var(--bark);font-weight:900;text-decoration:underline;font-size:1.05em;">'+t("change_word")+'</span>';
     fedLine.appendChild(fedPill);
     wrap.appendChild(fedLine);
 
@@ -2933,12 +2933,17 @@
     return parts[2]+"/"+parts[1]+"/"+parts[0];
   }
 
+  function compagniaFederazioneOk(cod){
+    var isFitarco = cod.indexOf("FT") === 0;
+    return state.federation === "fitarco" ? isFitarco : !isFitarco;
+  }
+
   function compagnieScreen(){
     initCompagnieData();
-    if(state.compagniaAttiva === undefined){
-      state.compagniaAttiva = "01VERB";
-      state.compagniaRegione = COMPAGNIE["01VERB"].regione;
-      state.compagniaProvincia = COMPAGNIE["01VERB"].provincia;
+    if(state.compagniaAttiva && !compagniaFederazioneOk(state.compagniaAttiva)){
+      state.compagniaAttiva = null;
+      state.compagniaRegione = null;
+      state.compagniaProvincia = null;
     }
     var wrap = el('<div></div>');
 
@@ -2964,6 +2969,7 @@
       Object.keys(COMPAGNIE).forEach(function(cod){
         var c = COMPAGNIE[cod];
         if(c.regione !== state.compagniaRegione) return;
+        if(!compagniaFederazioneOk(cod)) return;
         if(c.provincia === "\u2014"){ haNonSpecificata = true; }
         else { provinceSet[c.provincia] = true; }
       });
@@ -2987,7 +2993,7 @@
       luogoSel.appendChild(el('<option value="">'+t("compagnie_pick_luogo")+'</option>'));
       Object.keys(COMPAGNIE).forEach(function(cod){
         var c = COMPAGNIE[cod];
-        if(c.regione === state.compagniaRegione && c.provincia === state.compagniaProvincia){
+        if(c.regione === state.compagniaRegione && c.provincia === state.compagniaProvincia && compagniaFederazioneOk(cod)){
           var label = c.luogo + " \u2014 " + c.nome + " (" + cod + ")" + (c.completa ? " \u2b50" : "");
           var opt = el('<option value="'+cod+'">'+label+'</option>');
           if(state.compagniaAttiva === cod) opt.setAttribute("selected","selected");
