@@ -1185,8 +1185,8 @@
       '<circle cx="50" cy="49" r="3" fill="#D99A1E"/>'+
       '<line x1="50" y1="14" x2="50" y2="49" stroke="#1A1A1A" stroke-width="2.2" stroke-linecap="round"/>'+
       '<path d="M50 14 L45.8 21 M50 14 L54.2 21" stroke="#1A1A1A" stroke-width="2.2" stroke-linecap="round" fill="none"/>'+
-      '<path d="M40.8 65.8 L59.2 65.8 L56 78.9 L50 75.7 L43.9 78.9 Z" fill="#1A1A1A"/>'+
-      '<text x="50" y="76" font-family="Georgia, serif" font-weight="700" font-size="8" fill="#9FCB2A" text-anchor="middle">3D</text>'+
+      '<path d="M37.5 64.5 L62.5 64.5 L58.5 80.5 L50 76.3 L41.5 80.5 Z" fill="#1A1A1A"/>'+
+      '<text x="50" y="76" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="12" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.3">3D</text>'+
     '</svg>';
   }
 
@@ -1441,35 +1441,157 @@
   };
   // ---------- COMPAGNIE: dati ----------
   var COMPAGNIE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longbow", storico:"Storico" };
-  var COMPAGNIE_NOMI_PROVINCIA = { BI:"Biella", NO:"Novara", AL:"Alessandria", TO:"Torino", CN:"Cuneo", VA:"Varese", VC:"Vercelli", VB:"Verbano-Cusio-Ossola", GE:"Genova", SV:"Savona" };
+  var COMPAGNIE_NOMI_PROVINCIA = { BI:"Biella", NO:"Novara", AL:"Alessandria", TO:"Torino", CN:"Cuneo", VA:"Varese", VC:"Vercelli", VB:"Verbano-Cusio-Ossola", GE:"Genova", SV:"Savona", SO:"Sondrio", BS:"Brescia", MB:"Monza e della Brianza", MI:"Milano", CO:"Como", BG:"Bergamo", MN:"Mantova", PV:"Pavia", VI:"Vicenza", PD:"Padova", TV:"Treviso", VE:"Venezia", VR:"Verona", TN:"Trento", PN:"Pordenone", GO:"Gorizia", RA:"Ravenna", PC:"Piacenza", BO:"Bologna", RE:"Reggio Emilia", MO:"Modena", FC:"Forl\u00ec-Cesena", PR:"Parma", FE:"Ferrara", AR:"Arezzo", FI:"Firenze", GR:"Grosseto", LI:"Livorno", PT:"Pistoia", SI:"Siena", PI:"Pisa", RM:"Roma", VT:"Viterbo", SA:"Salerno", BA:"Bari", TA:"Taranto", PZ:"Potenza", CS:"Cosenza", SU:"Sud Sardegna" };
   var COMPAGNIE = {
-    "01VERB": { nome:"Arcieri 01 VERB \u2014 VCO & Valgrande", regione:"Piemonte", provincia:"VB", luogo:"Vignone (VB)", completa:true,
-      indirizzo:"Via A. Alberti, 28899 Vignone (VB)", telefono:"329 084 2958", sito:"arcoverbano.net" },
-    "01ARTU": { nome:"A.P.D. Pietro Micca", regione:"Piemonte", provincia:"BI", luogo:"Cerrione (BI)" },
-    "01BICO": { nome:"Compagnia Arcieri Bicocca", regione:"Piemonte", provincia:"NO", luogo:"Madonna del Sasso (NO)" },
-    "01BULE": { nome:"Arcieri della Tana dei Cinghiali", regione:"Piemonte", provincia:"AL", luogo:"Castelletto Merli (AL)" },
-    "01CICO": { nome:"Arcieri Occitani", regione:"Piemonte", provincia:"TO", luogo:"Bricherasio (TO)" },
-    "01DAHU": { nome:"Compagnia Arcieri del Dahu", regione:"Piemonte", provincia:"BI", luogo:"Valdilana Trivero (BI)" },
-    "01ELFI": { nome:"Gli Elfi del Monte Regale", regione:"Piemonte", provincia:"CN", luogo:"Mondov\u00ec-Briaglia (CN)" },
-    "01ISHI": { nome:"Arcieri di Ishi", regione:"Piemonte", provincia:"NO", luogo:"Gattico (NO)" },
-    "01LUPI": { nome:"Lupi delle Alpi", regione:"Piemonte", provincia:"\u2014", luogo:"\u2014" },
-    "01MASA": { nome:"Arcieri di Br\u00e0", regione:"Piemonte", provincia:"CN", luogo:"Pocapaglia (CN)" },
-    "01RIPE": { nome:"B.A.S. Summe Ripe", regione:"Piemonte", provincia:"CN", luogo:"Sommariva Bosco (CN)" },
-    "01SHAN": { nome:"Arcieri di Shannara", regione:"Piemonte", provincia:"NO", luogo:"Paruzzaro (NO)" },
-    "01UKKO": { nome:"Compagnia dei Liberi Arcieri", regione:"Piemonte", provincia:"VA", luogo:"Castellanza (VA)" },
-    "01VOLO": { nome:"Arcieri del Volo", regione:"Piemonte", provincia:"VC", luogo:"Borgo d'Ale (VC)" },
-    "03CROU": { nome:"Compagnia Arcieri della Rocca dei Corvi", regione:"Liguria", provincia:"GE", luogo:"Mele / Righi (GE)" },
-    "03FENI": { nome:"Arcieri della Fenice", regione:"Liguria", provincia:"AL", luogo:"Fraconalto (AL)" },
-    "03FINA": { nome:"Arcieri del Finale", regione:"Liguria", provincia:"SV", luogo:"Finale Ligure (SV)" },
-    "03LUNA": { nome:"Arcatores Lunae", regione:"Liguria", provincia:"\u2014", luogo:"\u2014" },
-    "03LUPI": { nome:"Arcieri Lupi Blu", regione:"Liguria", provincia:"GE", luogo:"Masone (GE)" },
-    "03NANT": { nome:"Arcieri di Nant Beber", regione:"Liguria", provincia:"GE", luogo:"Genova Voltri" },
-    "03STOR": { nome:"Arcieri dello Stornello", regione:"Liguria", provincia:"GE", luogo:"Mignanego (GE)" },
-    "03TIGU": { nome:"Le Frecce di S. Margherita", regione:"Liguria", provincia:"GE", luogo:"Rapallo (GE)" },
-    "03TRIS": { nome:"Arcieri del Gufo", regione:"Liguria", provincia:"GE", luogo:"Casella (GE)" },
-    "03WAKI": { nome:"03WAKI", regione:"Liguria", provincia:"SV", luogo:"Calizzano (SV)" }
+    "01ARTU": { nome:"A.P.D. Pietro Micca", regione:"Piemonte", provincia:"BI", luogo:"Fornasona/Cascina Ronco, Cerrione (BI)", completa:true, telefono:"347 9533670", email:"01artu@libero.it", sito:"pietromicca.it" },
+    "01BICO": { nome:"A.S.D. Compagnia Arcieri Bicocca", regione:"Piemonte", provincia:"NO", luogo:"Madonna del Sasso (NO)", completa:true, telefono:"0321 74558", email:"info@arcieribicocca.com", sito:"arcieribicocca.com" },
+    "01BULE": { nome:"A.S.D. Arcieri della Tana dei Cinghiali", regione:"Piemonte", provincia:"AL", luogo:"Castelletto Merli (AL)", completa:true, email:"asdtanadeicinghiali@gmail.com" },
+    "01CICO": { nome:"Arcieri Occitani", regione:"Piemonte", provincia:"TO", luogo:"Bricherasio (TO)", completa:true, telefono:"393 9522872", email:"fiarc01cico@gmail.com" },
+    "01DAHU": { nome:"A.S.D. Compagnia Arcieri del Dahu", regione:"Piemonte", provincia:"BI", luogo:"Valdilana Trivero (BI)", completa:true, telefono:"339 4182925", email:"arcierideldahu@gmail.com", sito:"arcierideldahu.it" },
+    "01ELFI": { nome:"A.S.D. Gli Elfi del Monte Regale", regione:"Piemonte", provincia:"CN", luogo:"Mondov\u00ec-Briaglia (CN)", completa:true, telefono:"347 2180457", email:"segreteria@01elfi.it", sito:"01elfi.it" },
+    "01ISHI": { nome:"A.S.D. Arcieri di Ishi", regione:"Piemonte", provincia:"NO", luogo:"Gattico (NO)", completa:true, email:"marco@altanadelmottorossoasd.it", sito:"altanadelmottorossoasd.it" },
+    "01LUPI": { nome:"Lupi delle Alpi", regione:"Piemonte", provincia:"\u2014", luogo:"\u2014", completa:true, telefono:"328 9236568", email:"dabran@libero.it" },
+    "01MASA": { nome:"A.S.D. Arcieri di Br\u00e0", regione:"Piemonte", provincia:"CN", luogo:"Str. Salimau, Pocapaglia (CN)", completa:true, email:"paologesso@yahoo.it", sito:"arcieribra.it" },
+    "01RIPE": { nome:"B.A.S. Summe Ripe", regione:"Piemonte", provincia:"CN", luogo:"Sommariva Bosco (CN)", completa:true, email:"summeripe2019@gmail.com" },
+    "01SHAN": { nome:"A.S.D. Arcieri di Shannara", regione:"Piemonte", provincia:"NO", luogo:"Laghetto del Picchio, Paruzzaro (NO)", completa:true, email:"01shan.segreteria@libero.it" },
+    "01UKKO": { nome:"A.S.D. Compagnia dei Liberi Arcieri", regione:"Piemonte", provincia:"VA", luogo:"Castellanza (VA)", completa:true, telefono:"349 0070679", email:"01ukko@libero.it" },
+    "01VERB": { nome:"A.S.D. Arcieri del VCO & Valgrande", regione:"Piemonte", provincia:"VB", luogo:"Via A. Alberti, Vignone (VB)", completa:true, telefono:"329 0842958", email:"arcieridelverbano@gmail.com", sito:"arcoverbano.net" },
+    "01VOLO": { nome:"A.S.D. Arcieri del Volo", regione:"Piemonte", provincia:"VC", luogo:"Borgo d'Ale (VC)", completa:true, telefono:"340 1599539", email:"arcieridelvolo@gmail.com" },
+    "03CROU": { nome:"A.S.D. Compagnia Arcieri della Rocca dei Corvi", regione:"Liguria", provincia:"GE", luogo:"Mele / Parco Avventura Righi (GE)", completa:true, telefono:"347 2113559", email:"silvestro.raponsoli@fastwebnet.it" },
+    "03FENI": { nome:"A.S.D. Arcieri della Fenice", regione:"Liguria", provincia:"AL", luogo:"Fraconalto (AL)", completa:true, telefono:"338 8112947", email:"03feni@arcieridellafenice.it", sito:"arcieridellafenice.it" },
+    "03FINA": { nome:"A.S.D. Arcieri del Finale", regione:"Liguria", provincia:"SV", luogo:"Le Maine, Finale Ligure (SV)", completa:true, email:"segreteria@arcieridelfinale.com", sito:"arcieridelfinale.com" },
+    "03LUNA": { nome:"Arcatores Lunae", regione:"Liguria", provincia:"\u2014", luogo:"\u2014", completa:true, email:"fiorellacavallini@hotmail.it" },
+    "03LUPI": { nome:"A.S.D. Arcieri Lupi Blu", regione:"Liguria", provincia:"GE", luogo:"Larga Fui\u00e8, Masone (GE)", completa:true, telefono:"393 0960478", email:"asdlupiblu@gmail.com" },
+    "03NANT": { nome:"A.S.D. Arcieri di Nant Beber", regione:"Liguria", provincia:"GE", luogo:"Genova Voltri", completa:true, telefono:"347 4163390", email:"nantbeber@gmail.com" },
+    "03STOR": { nome:"A.S.D. Arcieri dello Stornello", regione:"Liguria", provincia:"GE", luogo:"Mignanego (GE)", completa:true, email:"info@arcieridellostornello.it", sito:"arcieridellostornello.it" },
+    "03TIGU": { nome:"A.S.D. Le Frecce di S. Margherita", regione:"Liguria", provincia:"GE", luogo:"Valle Christi, Rapallo (GE)", completa:true, telefono:"347 2616074", email:"03tigu@gmail.com", sito:"lefreccedisantamargherita.com" },
+    "03TRIS": { nome:"Arcieri del Gufo", regione:"Liguria", provincia:"GE", luogo:"Casella (GE)", completa:true, email:"antoniogiomi@gmail.com" },
+    "03WAKI": { nome:"A.S.D. 03WAKI", regione:"Liguria", provincia:"SV", luogo:"Calizzano (SV)", completa:true, telefono:"348 2748180", email:"03waki@gmail.com" },
+    "04AFVB": { nome:"Arcieri Aprica Orobica", regione:"Lombardia", provincia:"SO", luogo:"Aprica (SO)", completa:true, telefono:"339 4593962", email:"carlo.bresesti@virgilio.it" },
+    "04AGAR": { nome:"A.S.D. Arcieri del Garda", regione:"Lombardia", provincia:"BS", luogo:"Toscolano Maderno (BS)", completa:true, email:"info@04agar.it" },
+    "04AIKI": { nome:"A.S.D. Compagnia Arco Tradizionale Limbiate", regione:"Lombardia", provincia:"MB", luogo:"Cogliate (MB)", completa:true, telefono:"339 6652652", email:"segreteria@arcierilimbiate.it", sito:"arcierilimbiate.it" },
+    "04AIRO": { nome:"A.S.D. Arcieri dell'Airone", regione:"Lombardia", provincia:"MI", luogo:"Mediglia (MI)", completa:true, email:"04airo@gmail.com", sito:"archidegliaironi.it" },
+    "04ALCE": { nome:"Arcieri dell'Alce", regione:"Lombardia", provincia:"MI", luogo:"Inveruno (MI)", completa:true, telefono:"333 2596350", email:"04alce@gmail.com", sito:"arcieridellalce.it" },
+    "04ANEL": { nome:"Arcieri Istintivi dell'Anello", regione:"Lombardia", provincia:"BG", luogo:"Ponteranica (BG)", completa:true, telefono:"035 577201", email:"04anel.bg@gmail.com" },
+    "04ARCE": { nome:"A.S.D. Arcieri del Cerro", regione:"Lombardia", provincia:"MI", luogo:"Cerro al Lambro (MI)", completa:true, telefono:"347 7318500", email:"asdarcieridelcerro@gmail.com", sito:"arcieridelcerro.it" },
+    "04ARCH": { nome:"A.S.D. Compagnia d'Archi", regione:"Lombardia", provincia:"MB", luogo:"Meda (MB)", completa:true, email:"segreteria@compagniadarchi.it", sito:"compagniadarchi.it" },
+    "04ARGO": { nome:"A.S.D. Arcieri della Gorgona", regione:"Lombardia", provincia:"PV", luogo:"San Giacomo della Cerreta, Belgioioso (PV)", completa:true, telefono:"335 7817093", email:"04argo@gmail.com", sito:"04argo.com" },
+    "04AROC": { nome:"Arcieri della Rocca", regione:"Lombardia", provincia:"MI", luogo:"Castano Primo (MI)", completa:true, telefono:"0331 653338", email:"info@arcieridellarocca.it", sito:"arcieridellarocca.it" },
+    "04ASAI": { nome:"A.S.D. Arcieri dell'Insubria", regione:"Lombardia", provincia:"CO", luogo:"Valmorea (CO)", completa:true, telefono:"348 3187133", email:"04asai@gmail.com", sito:"04asai.it" },
+    "04BUBU": { nome:"A.S.D. Arcieri dell'Isola Bergamasca Orobici", regione:"Lombardia", provincia:"BG", luogo:"Carvico (BG)", completa:true, telefono:"348 0847363", email:"04bubu@arcierisolabergamasca.com" },
+    "04CAVG": { nome:"Compagnia Arcieri Valgandino", regione:"Lombardia", provincia:"BG", luogo:"Gandino (BG)", completa:true, telefono:"348 0409203", email:"04cavg@gmail.com", sito:"arcierivalgandino.it" },
+    "04COCA": { nome:"Arcieri della Collina dei Castagni", regione:"Lombardia", provincia:"BS", luogo:"Carpenedolo (BS)", completa:true, email:"04coca@gmail.com" },
+    "04CORM": { nome:"Gruppo Arcieri Cormorano", regione:"Lombardia", provincia:"\u2014", luogo:"\u2014", completa:true, telefono:"392 0446510", email:"dario.bononi@gmail.com" },
+    "04DEER": { nome:"A.S.D. Arcieri del Bosco del Cervo", regione:"Lombardia", provincia:"VA", luogo:"Mesenzana (VA)", completa:true, email:"info@04deer.it", sito:"04deer.it" },
+    "04ESTI": { nome:"A.S.D. Arcieri dell'Est Ticino", regione:"Lombardia", provincia:"PV", luogo:"Casorate Primo (PV)", completa:true, telefono:"347 0005680", email:"arcieri04esti@gmail.com" },
+    "04GAOP": { nome:"A.S.D. Gruppo Arcieri Oltrep\u00f2 Pavese", regione:"Lombardia", provincia:"PV", luogo:"Castana (PV)", completa:true, email:"g.villa2710@gmail.com" },
+    "04GATT": { nome:"A.S.D. Gruppo Arcieri Tecno Tradizionali", regione:"Lombardia", provincia:"BG", luogo:"Villa d'Alm\u00e8 (BG)", completa:true, telefono:"328 2364763", email:"arcieri04gatt@outlook.it" },
+    "04GROA": { nome:"A.S.D. Compagnia Arcieri delle Groane", regione:"Lombardia", provincia:"MB", luogo:"\u2014", completa:true, telefono:"348 3465553", email:"04groa@gmail.com" },
+    "04HOOD": { nome:"A.S.D. Arcieri Cesano Boscone", regione:"Lombardia", provincia:"MI", luogo:"Cesano Boscone (MI)", completa:true, telefono:"339 2281896", email:"woodypek.ga@gmail.com", sito:"arciericesanoboscone.it" },
+    "04LAKE": { nome:"A.S.D. Arcieri del Lago", regione:"Lombardia", provincia:"BG", luogo:"Ranzanico (BG)", completa:true, telefono:"0341 220191", email:"periniraffa@libero.it" },
+    "04LOTO": { nome:"A.S.D. Arcieri del Mincio", regione:"Lombardia", provincia:"MN", luogo:"Marmirolo (MN)", completa:true, email:"segreteria@arcierimincio.it", sito:"arcierimincio.it" },
+    "04LUNA": { nome:"A.S.D. Compagnia Arcieri di Brusaporto", regione:"Lombardia", provincia:"BG", luogo:"Brusaporto (BG)", completa:true, telefono:"349 5139123", email:"info@arcieridibrusaporto.it", sito:"arcieridibrusaporto.it" },
+    "04LUPO": { nome:"A.S.D. Branco Arcieri Cacciatori del Lupo", regione:"Lombardia", provincia:"BG", luogo:"Alzano Lombardo (BG)", completa:true, email:"04lupo@gmail.com", sito:"arcieridellupo.it" },
+    "04NABO": { nome:"A.S.D. Compagnia Arcieri del Barnab\u00f2", regione:"Lombardia", provincia:"MI", luogo:"Trezzo sull'Adda (MI)", completa:true, telefono:"349 8095542", email:"fabrizio.fodera74@gmail.com", sito:"arcieridelbernabo.it" },
+    "04NAVE": { nome:"A.S.D. Arcieri S. Giulia", regione:"Lombardia", provincia:"BS", luogo:"Monte Maddalena, Brescia (BS)", completa:true, telefono:"348 2332989", email:"depa@primolivello.it", sito:"arcobrescia.it" },
+    "04NIRE": { nome:"A.S.D. Arcieri del Nibbio Reale", regione:"Lombardia", provincia:"VA", luogo:"Castello Cabiaglio (VA)", completa:true, telefono:"347 7572714", email:"robyfermi@gmail.com" },
+    "04OROS": { nome:"A.S.D. Bowhunters Penna d'Oro", regione:"Lombardia", provincia:"MI", luogo:"Melzo (MI)", completa:true, email:"segreteria@04oros.it" },
+    "04OWLS": { nome:"A.S.D. Arcieri Gufi del Brembo", regione:"Lombardia", provincia:"BG", luogo:"Alzano L.do / Osio Sopra (BG)", completa:true, telefono:"035 565416", email:"info@arcieridelgufo.com", sito:"arcieridelgufo.com" },
+    "04POTA": { nome:"A.S.D. Compagnia Prealpi Orobiche Trescore Arcieristica", regione:"Lombardia", provincia:"BG", luogo:"Trescore Balneario (BG)", completa:true, telefono:"347 0395062", email:"zeroquattropota@gmail.com" },
+    "04SARE": { nome:"A.S.D. Arcieri del Ciliegio", regione:"Lombardia", provincia:"BS", luogo:"Lumezzane, Sarezzo e Odolo (BS)", completa:true, email:"segreteria.04sare@gmail.com", sito:"fiarc-brescia.it" },
+    "04SELV": { nome:"A.S.D. Arcieri della Selva", regione:"Lombardia", provincia:"MI", luogo:"Cernusco sul Naviglio (MI)", completa:true, email:"segreteria@arcieridellaselva.it", sito:"arcieridellaselva.it" },
+    "04SERE": { nome:"Arcieri del Serio", regione:"Lombardia", provincia:"BG", luogo:"Albano Sant'Alessandro (BG)", completa:true, telefono:"335 6166712", email:"dalba.giuseppe48@gmail.com" },
+    "04SOLE": { nome:"A.S.D. Compagnia Arcieri del Sole", regione:"Lombardia", provincia:"VA", luogo:"Gerenzano", completa:true, telefono:"347 0028640", email:"valter.marzorati@gmail.com" },
+    "04WOLF": { nome:"Team Archery Venegono", regione:"Lombardia", provincia:"VA", luogo:"Azzate / Castello Cabiaglio (VA)", completa:true, telefono:"347 7766348", email:"04wolf04@gmail.com", sito:"teamarcheryvenegono.it" },
+    "04YDRA": { nome:"A.S.D. Hydra Compagnia Arcieri Bascap\u00e8", regione:"Lombardia", provincia:"PV", luogo:"Bascap\u00e8 (PV)", completa:true, email:"04hydra@gmail.com" },
+    "062GRU": { nome:"A.S.D. Arcieri delle 2 Gru", regione:"Veneto", provincia:"VE", luogo:"Portogruaro (VE)", completa:true, email:"arcieri.2gru@gmail.com" },
+    "06ACBV": { nome:"A.S.D. Arco Club Bolzano Vicentino", regione:"Veneto", provincia:"VI", luogo:"Bolzano Vicentino (VI)", completa:true, telefono:"347 4503978", email:"info@arcoclubbzv.com", sito:"arcoclubbzv.com" },
+    "06AGNO": { nome:"A.S.D. Arcieri Valle d'Agno", regione:"Veneto", provincia:"VI", luogo:"Campotamaso (VI)", completa:true, email:"segreteria06agno@gmail.com", sito:"arcierivalleagno.it" },
+    "06ALPI": { nome:"Compagnia Arcieri Montegrappa", regione:"Veneto", provincia:"VI", luogo:"Semonzo del Grappa (VI)", completa:true, telefono:"348 2660596", email:"carlo@rodewax.it" },
+    "06ARTE": { nome:"Arcieri del Tesina", regione:"Veneto", provincia:"VI", luogo:"Torri di Quartesolo (VI)", completa:true, email:"segreteria06arte@gmail.com" },
+    "06ARTI": { nome:"A.S.D. Compagnia Arcieri Titulum", regione:"Veneto", provincia:"PD", luogo:"Teolo (PD)", completa:true, email:"compagnia06arti@gmail.com", sito:"arcierititulum.it" },
+    "06ARVA": { nome:"A.S.D. Arcieri della Vallata", regione:"Veneto", provincia:"TV", luogo:"Tarzo (TV)", completa:true, telefono:"335 5689996", email:"06arvasegreteria@gmail.com" },
+    "06MARE": { nome:"A.S.D. Arcieri del Mare", regione:"Veneto", provincia:"VE", luogo:"Chioggia (VE)", completa:true, telefono:"349 5829511", email:"asdarcieridelmare@libero.it" },
+    "06SABE": { nome:"A.S.D. Sagittarii Benaci", regione:"Lombardia", provincia:"MN", luogo:"Ponti sul Mincio (MN)", completa:true, telefono:"327 1363517", email:"sagittariibenaci06sabe@gmail.com" },
+    "06SOLE": { nome:"A.S.D. La Punta del Sole", regione:"Veneto", provincia:"VR", luogo:"Fumane (VR)", completa:true, email:"info06sole@gmail.com" },
+    "06WALL": { nome:"Arme D.C. e Arcieri D.Torre", regione:"Veneto", provincia:"PD", luogo:"Onara di Tombolo (PD)", completa:true, telefono:"351 6131105", email:"06wall@armedamecavalieri.it", sito:"armedamecavalieri.it" },
+    "05MORI": { nome:"A.S.D. 05Mori Arcieri Castel Albano", regione:"Trentino-Alto Adige", provincia:"TN", luogo:"Mori (TN)", completa:true, telefono:"328 4150338", email:"bertoliniloris17@gmail.com" },
+    "05POVO": { nome:"A.S.D. Arcieri del Moronar", regione:"Trentino-Alto Adige", provincia:"TN", luogo:"Povo (TN)", completa:true, telefono:"328 5774018", email:"zero5povo@gmail.com" },
+    "07BOSC": { nome:"A.S.D. Archi nel Bosco", regione:"Friuli-Venezia Giulia", provincia:"PN", luogo:"Fontanafredda e S.Lucia di Budoia (PN)", completa:true, telefono:"0434 364510", email:"segreteriadelbosco@libero.it", sito:"archinelbosco.it" },
+    "07GUFO": { nome:"Arcieri Pordenone", regione:"Friuli-Venezia Giulia", provincia:"PN", luogo:"Pordenone (PN)", completa:true, telefono:"0434 208109", email:"gianfranco.derovere@gmail.com", sito:"arcieripordenone.it" },
+    "07HAWK": { nome:"Il Falcone Arco Club", regione:"Friuli-Venezia Giulia", provincia:"GO", luogo:"Lucinico, Gorizia (GO)", completa:true, telefono:"348 3954509", email:"07hawksegreteria@gmail.com", sito:"ilfalconearcoclub.org" },
+    "08BEAR": { nome:"A.S.D. I Mercenari della Guaita", regione:"Emilia-Romagna", provincia:"RA", luogo:"Mezzano (RA)", completa:true, email:"baldo72brs@gmail.com" },
+    "08BIZA": { nome:"A.S.D. Arcieri Bizantini Ravenna", regione:"Emilia-Romagna", provincia:"RA", luogo:"Ravenna (RA)", completa:true, email:"presidente@arcieribizantini.it", sito:"arcieribizantini.it" },
+    "08CALE": { nome:"Le Lontre del Bosconé di Calendasco", regione:"Emilia-Romagna", provincia:"PC", luogo:"Monteraschio, Gazzola (PC)", completa:true, telefono:"329 6566674", email:"lontredelboscone@tiscali.it", sito:"lontredelboscone.it" },
+    "08COSI": { nome:"A.S.D. Arcus Intendere", regione:"Emilia-Romagna", provincia:"BO", luogo:"Bologna (BO)", completa:true, telefono:"339 6789320", email:"arcusintendere@gmail.com", sito:"arcusintendere.it" },
+    "08DARK": { nome:"Arcieri della Notte", regione:"Emilia-Romagna", provincia:"RE", luogo:"Salvarano Quattro Castella e San Giovanni di Querciola (RE)", completa:true, email:"presidente@arcieridellanotte.it", sito:"arcieridellanotte.it" },
+    "08ENZA": { nome:"Arcieri Val d'Enza", regione:"Emilia-Romagna", provincia:"RE", luogo:"Canossa - Sant'Ilario d'Enza (RE) / Felino (PR)", completa:true, email:"segreteria08enza@gmail.com" },
+    "08FORM": { nome:"A.S.D. Compagnia Arcieri Torre di Formigine", regione:"Emilia-Romagna", provincia:"MO", luogo:"Gorzano di Maranello (MO)", completa:true, telefono:"335 6758937", email:"maranifab@gmail.com" },
+    "08GATT": { nome:"A.S.D. Arcieri Quattro Gatti", regione:"Emilia-Romagna", provincia:"BO", luogo:"Lizzano in Belvedere (BO)", completa:true, telefono:"347 1522549", email:"segreteria@08gatt.it", sito:"08gatt.it" },
+    "08HERO": { nome:"A.S.D. Arcieri Val Secchia", regione:"Emilia-Romagna", provincia:"MO", luogo:"Sassuolo (MO)", completa:true, email:"gdenni@hotmail.com", sito:"arcierivalsecchia.it" },
+    "08HOOD": { nome:"A.S.D. Arcieri dei Boschi", regione:"Emilia-Romagna", provincia:"FC", luogo:"Civitella di Romagna, loc. Cusercoli (FC)", completa:true, telefono:"0543 67731", email:"08hood.arcierideiboschi@gmail.com" },
+    "08KOTA": { nome:"A.S.D. Arcieri Lakota", regione:"Emilia-Romagna", provincia:"BO", luogo:"Castell'Arienti, Bologna (BO)", completa:true, telefono:"335 5627251", email:"arceri.lakota@libero.it" },
+    "08LAGO": { nome:"A.S.D. Arcieri Monte Comero", regione:"Emilia-Romagna", provincia:"FC", luogo:"Bagno di Romagna (FC)", completa:true, telefono:"347 1092110", email:"arcieridelmontecomero@gmail.com" },
+    "08LUAR": { nome:"I Lunghi Archi", regione:"Emilia-Romagna", provincia:"BO", luogo:"Sasso Marconi (BO)", completa:true, telefono:"349 5366760", email:"ilunghiarchi@gmail.com", sito:"ilunghiarchi.org" },
+    "08LUCE": { nome:"A.S.D. Arcieri della Luce", regione:"Emilia-Romagna", provincia:"RE", luogo:"Quattro Castella e Coviolo (RE)", completa:true, telefono:"349 6336804", email:"arcieridellaluce@gmail.com" },
+    "08LUPI": { nome:"A.S.D. Gruppo Arcieri i Lupi della Selva", regione:"Emilia-Romagna", provincia:"BO", luogo:"Sasso Marconi (BO)", completa:true, telefono:"339 3678186", email:"segreteria.lupidellaselva@gmail.com" },
+    "08MEDI": { nome:"A.S.D. Arco Club Medicina", regione:"Emilia-Romagna", provincia:"BO", luogo:"Medicina e Monterenzio (BO)", completa:true, telefono:"380 4605122", email:"presidenza@arcoclubmedicina.it", sito:"arcoclubmedicina.it" },
+    "08MISA": { nome:"A.S.D. Arcieri di Misa", regione:"Emilia-Romagna", provincia:"BO", luogo:"Marzabotto (BO)", completa:true, email:"arcieridimisa@gmail.com" },
+    "08MMAN": { nome:"Arcieri di Monte Manulo", regione:"Emilia-Romagna", provincia:"PR", luogo:"Fidenza (PR)", completa:true, email:"asd08mman@libero.it" },
+    "08RAMI": { nome:"A.S.D. Frecce di Romagna", regione:"Emilia-Romagna", provincia:"FC", luogo:"Mercato Saraceno, fraz. Piavola (FC)", completa:true, telefono:"339 7256148", email:"freccediromagna@gmail.com", sito:"freccediromagna.com" },
+    "08RENO": { nome:"A.S.D. Arcieri del Reno", regione:"Emilia-Romagna", provincia:"BO", luogo:"Bologna (BO)", completa:true, telefono:"333 8033842", email:"info@circolorondone.it", sito:"arcieridelreno.com" },
+    "08RUPE": { nome:"A.S.D. Arcieri della Rupe", regione:"Emilia-Romagna", provincia:"BO", luogo:"Sasso Marconi e Savigno (BO)", completa:true, email:"info@arcieridellarupe.it", sito:"arcieridellarupe.it" },
+    "08SENT": { nome:"A.S.D. Sentieri Verticali", regione:"Emilia-Romagna", provincia:"BO", luogo:"Pianoro Vecchio (BO)", completa:true, telefono:"347 8844672", email:"2008sent@gmail.com" },
+    "08SVEN": { nome:"Sagittarii Venatores", regione:"Emilia-Romagna", provincia:"BO", luogo:"Sasso Marconi - Rasiglio - Montepastore (BO)", completa:true, telefono:"338 4718029", email:"svenatores@gmail.com" },
+    "08TECH": { nome:"A.S.D. Hunter Archery Team", regione:"Emilia-Romagna", provincia:"BO", luogo:"Valsamoggia, Crespellano (BO)", completa:true, telefono:"340 8521657", email:"segreteriahat@gmail.com" },
+    "08TIME": { nome:"A.S.D. Arcieri di Yr", regione:"Emilia-Romagna", provincia:"BO", luogo:"Vado, Monzuno (BO)", completa:true, telefono:"373 7193471", email:"andrea.messieri@libero.it", sito:"arcieridiyr.it" },
+    "08UNIK": { nome:"Arcieri e Balestrieri dell'Unicorno", regione:"Emilia-Romagna", provincia:"FE", luogo:"Aguscello, Ferrara (FE)", completa:true, telefono:"328 2147415", email:"mau.lor55@gmail.com" },
+    "08VENT": { nome:"Arcieri del Ventasso", regione:"Emilia-Romagna", provincia:"RE", luogo:"Sparavalle, Ventasso (RE)", completa:true, telefono:"339 2465830", email:"08ventasso@gmail.com" },
+    "09ARCA": { nome:"A.S.D. Arcadia Arcieri Casentino", regione:"Toscana", provincia:"AR", luogo:"Bibbiena (AR)", completa:true, telefono:"0575 595054", email:"linomazzi57@gmail.com", sito:"arciericacciatoriarezzo.it" },
+    "09ARTU": { nome:"Arcieri della Tavola Rotonda", regione:"Toscana", provincia:"AR", luogo:"Terranuova B.ni, loc. Castiglion Ubertini (AR)", completa:true, telefono:"338 4608289", email:"segreteria@09artu.com", sito:"09artu.com" },
+    "09ATON": { nome:"Arcieri del Sole", regione:"Toscana", provincia:"\u2014", luogo:"\u2014", completa:true, email:"alfonsopistolesi@alice.it" },
+    "09BOTA": { nome:"Arcieri Borgo Tantola", regione:"Toscana", provincia:"FI", luogo:"Sesto Fiorentino (FI)", completa:true, telefono:"353 4617577", email:"stefano09bota@gmail.com" },
+    "09COVO": { nome:"Gli Arcieri del Tiburzi", regione:"Toscana", provincia:"GR", luogo:"Castiglione della Pescaia (GR)", completa:true, telefono:"347 7997100", email:"gliarcierideltiburzi.09covo@gmail.com" },
+    "09DUCK": { nome:"A.S.D. Arcieri di Avalon", regione:"Toscana", provincia:"AR", luogo:"San Giovanni Valdarno (AR)", completa:true, email:"info@arcieridiavalon.it", sito:"arcieridiavalon.it" },
+    "09ELBA": { nome:"A.S.D. Arcieri del Mare", regione:"Toscana", provincia:"LI", luogo:"Porto Azzurro (LI)", completa:true, email:"info@09elba.org", sito:"09elba.org" },
+    "09EOLO": { nome:"A.S.D. Arcieri di Poggio al Vento", regione:"Toscana", provincia:"FI", luogo:"Vincigliata (FI)", completa:true, email:"segreteria.09eolo@gmail.com", sito:"09eolo.it" },
+    "09FIRE": { nome:"Arcieri dell'Isola di Fuoco", regione:"Toscana", provincia:"LI", luogo:"Porto Azzurro (LI)", completa:true, telefono:"0565 531540", email:"tabaccheria06@gmail.com" },
+    "09GAAP": { nome:"Gruppo Arcieri Anfrione Pescia", regione:"Toscana", provincia:"PT", luogo:"Pescia (PT)", completa:true, telefono:"347 1711537", email:"rosino67@gmail.com" },
+    "09GANO": { nome:"Arcieri di San Galgano", regione:"Toscana", provincia:"SI", luogo:"Chiusdino (SI)", completa:true, email:"09gano@fiarc-toscana.it" },
+    "09HILL": { nome:"Arcieri della Collina", regione:"Toscana", provincia:"PI", luogo:"Santa Maria a Monte (PI)", completa:true, telefono:"366 3401664", email:"arcieri.09hill@gmail.com" },
+    "09LEON": { nome:"A.S.D. Apiana Extirpe", regione:"Toscana", provincia:"GR", luogo:"Scarlino (GR)", completa:true, telefono:"339 8228000", email:"segreteria@09leon.it", sito:"09leon.it" },
+    "09OASI": { nome:"Compagnia Arcieri del Drago", regione:"Toscana", provincia:"LI", luogo:"Campiglia Marittima (LI)", completa:true, telefono:"348 6869293", email:"robertociurli.rc@gmail.com" },
+    "09REDS": { nome:"A.S.D. Arcieri delle Terre Rosse", regione:"Toscana", provincia:"LI", luogo:"San Vincenzo (LI)", completa:true, telefono:"0565 703857", email:"ilbargello1958@libero.it" },
+    "09ROSE": { nome:"A.S.D. Compagnia Arcieri delle Sei Rose", regione:"Toscana", provincia:"LI", luogo:"Rosignano Marittimo, loc. Acquabona (LI)", completa:true, telefono:"335 7142523", email:"paoloviscoli@yahoo.it" },
+    "09SUVE": { nome:"A.S.D. Arcieri dell'Aquila Nera", regione:"Toscana", provincia:"LI", luogo:"Suvereto (LI)", completa:true, telefono:"320 3123030", email:"arcieri.aquilanera.suvereto@gmail.com" },
+    "09TEAM": { nome:"Arcieri del Borgo le Piane", regione:"Toscana", provincia:"GR", luogo:"Massa Marittima (GR)", completa:true, email:"zorzimarco@hotmail.it" },
+    "09TEWA": { nome:"Arcieri Monte Penna", regione:"Toscana", provincia:"GR", luogo:"Castell'Azzara (GR)", completa:true, email:"ilpaloma@alice.it" },
+    "09WOLF": { nome:"A.S.D. Compagnia Arcieri Lupi di Sesto Fiorentino", regione:"Toscana", provincia:"FI", luogo:"Sesto Fiorentino (FI)", completa:true, email:"segreteria.asdlupisesto@gmail.com" },
+    "09WOOD": { nome:"Arcieri di Casalbosco", regione:"Toscana", provincia:"PT", luogo:"Pistoia (PT)", completa:true, telefono:"335 5950487", email:"claudiomonaco@gmail.com" },
+    "09YORK": { nome:"A.S.D. Le Frecce di York", regione:"Toscana", provincia:"FI", luogo:"Greve in Chianti (FI)", completa:true, telefono:"0559 502038", email:"aldemaro@inwind.it" },
+    "12ARSO": { nome:"Compagnia dei 4 Borghi Storici di Arsoli", regione:"Lazio", provincia:"RM", luogo:"Arsoli (RM)", completa:true, telefono:"347 5826616", email:"compagnia12arso@gmail.com", sito:"12arso.it" },
+    "12CACR": { nome:"Arcieri \"Il Corvo\"", regione:"Lazio", provincia:"RM", luogo:"Carpineto Romano (RM)", completa:true, telefono:"392 4859715", email:"compagnia12cacr@gmail.com" },
+    "12ENEA": { nome:"Arcieri di Enea", regione:"Lazio", provincia:"RM", luogo:"Lanuvio (RM)", completa:true, telefono:"06 9377060", email:"danielabonanno@libero.it" },
+    "12FALC": { nome:"Compagnia Arcieri del Falco", regione:"Lazio", provincia:"RM", luogo:"Lungotevere Pian Due Torri, Roma (RM)", completa:true, telefono:"347 0571850", email:"compagnia12falc@gmail.com" },
+    "12FOCS": { nome:"Arcieri della Volpe Bianca", regione:"Lazio", provincia:"RM", luogo:"Colleferro (RM)", completa:true, telefono:"328 2034207", email:"12focs@gmail.com", sito:"12focs.com" },
+    "12HILL": { nome:"Scuola di Tiro Tradizionale Howard Hill", regione:"Lazio", provincia:"RM", luogo:"Palestrina (RM)", completa:true, email:"papetto@aruba.it", sito:"scuolahill.it" },
+    "12LUPI": { nome:"Arcieri Lupa Capitolina", regione:"Lazio", provincia:"RM", luogo:"Roma (RM)", completa:true, email:"albinofranceschini@gmail.com", sito:"arcierilupacapitolina.it" },
+    "12NEPI": { nome:"A.S.D. Arcieri dei Borgia", regione:"Lazio", provincia:"VT", luogo:"Nepi (VT)", completa:true, telefono:"0761 556355", email:"arcierideiborgia12nepi@gmail.com", sito:"arcierideiborgia.it" },
+    "12RING": { nome:"A.S.D. La Compagnia dell'Anello", regione:"Lazio", provincia:"RM", luogo:"Riano (RM)", completa:true, telefono:"348 5963574", email:"compagnia12ring@gmail.com", sito:"12ring.org" },
+    "12ROMA": { nome:"A.S.D. Arcieri Tradizionali", regione:"Lazio", provincia:"RM", luogo:"Lido di Ostia (RM)", completa:true, telefono:"348 3583434", email:"presidente@12roma.com", sito:"12roma.com" },
+    "12VATE": { nome:"Arcieri Paeligni", regione:"Lazio", provincia:"RM", luogo:"Velletri / Corfinio", completa:true, telefono:"333 6705354", email:"g.golini.urbanista@gmail.com" },
+    "12VEIO": { nome:"A.S.D. Arcieri del Veio", regione:"Lazio", provincia:"RM", luogo:"Via Giuseppe da Copertino (RM)", completa:true, telefono:"339 2155048", email:"12veio.arcieridelveio@gmail.com", sito:"arcieridelveio.org" },
+    "12WOOD": { nome:"A.S.D. Compagnia Arcieri del Bosco", regione:"Lazio", provincia:"RM", luogo:"Cave (RM)", completa:true, email:"compagnia.arcieridelbosco@gmail.com" },
+    "14ELFI": { nome:"Elfi delle Terre Calde", regione:"Campania", provincia:"SA", luogo:"Gaiano (SA)", completa:true, telefono:"347 0105615", email:"14elfi@gmail.com" },
+    "14SELE": { nome:"Arcieri del Sele", regione:"Campania", provincia:"SA", luogo:"Contursi Terme (SA)", completa:true, telefono:"331 2545086", email:"arcieridelsele@yahoo.com" },
+    "14VOCI": { nome:"A.S.D. Le Volpi del Cilento", regione:"Campania", provincia:"SA", luogo:"Lustra, Cilento (SA)", completa:true, telefono:"377 4238969", email:"sqmariapia@hotmail.it" },
+    "15CAME": { nome:"A.S.D. Arcieri dei Peuceti", regione:"Puglia", provincia:"BA", luogo:"Gioia del Colle (BA)", completa:true, email:"quattrofrecce@libero.it" },
+    "15TERA": { nome:"A.S.D. Il Tempio delle Ombre", regione:"Puglia", provincia:"TA", luogo:"Taranto (TA)", completa:true, telefono:"375 9735597", email:"iltempiodelleombre@gmail.com" },
+    "16NOCE": { nome:"A.S.D. Arcieri del Noce", regione:"Basilicata", provincia:"PZ", luogo:"Lauria (PZ)", completa:true, telefono:"0973 823451", email:"16noce@gmail.com", sito:"arcieridelnoce.onweb.it" },
+    "17LAGO": { nome:"A.S.D. Arcieri del Lago", regione:"Calabria", provincia:"CS", luogo:"Mormanno (CS)", completa:true, telefono:"320 3680739", email:"diciassettelago@hotmail.com" },
+    "19CAST": { nome:"A.S.D. Arcieri del Castello di Sanluri", regione:"Sardegna", provincia:"SU", luogo:"Via Liguria, Sanluri (SU)", completa:true, telefono:"347 3658032", email:"arcieridelcastellodisanluri@gmail.com" }
   };
-  var COMPAGNIE_REGIONI = ["Piemonte", "Liguria"];
+  var COMPAGNIE_REGIONI = ["Piemonte", "Liguria", "Lombardia", "Veneto", "Trentino-Alto Adige", "Friuli-Venezia Giulia", "Emilia-Romagna", "Toscana", "Lazio", "Campania", "Puglia", "Basilicata", "Calabria", "Sardegna"];
 
   function initCompagnieData(){
     if(!state.compagnieData){ state.compagnieData = {}; }
@@ -1495,6 +1617,14 @@
         nextPercorsoId: 3, nextRisultatoId: 12
       };
     }
+  }
+
+  function ensureCompagniaData(codice){
+    if(!state.compagnieData){ state.compagnieData = {}; }
+    if(!state.compagnieData[codice]){
+      state.compagnieData[codice] = { percorsi: [], risultati: [], nextPercorsoId: 1, nextRisultatoId: 1 };
+    }
+    return state.compagnieData[codice];
   }
 
   // ---------- HOME / PROFILO ----------
@@ -1922,19 +2052,22 @@
 
     wrap.appendChild(langSwitcher());
 
-    var fedLine = el('<div style="font-size:0.72rem;color:var(--muted);margin-bottom:14px;text-align:center;"></div>');
+    var fedLine = el('<div style="display:flex;justify-content:center;margin-bottom:16px;"></div>');
     var countryNames = { it: t("country_italy"), fr: t("country_france"), ch: t("country_switzerland") };
     var fedCountryName = countryNames[state.country] || state.country;
     var fedList = COUNTRY_FEDERATIONS[state.country] || COUNTRY_FEDERATIONS.it;
     var fedEntry = null;
     for(var fi=0; fi<fedList.length; fi++){ if(fedList[fi].code === state.federation){ fedEntry = fedList[fi]; break; } }
     var fedName = fedEntry ? fedEntry.label : (state.federation||"fiarc").toUpperCase();
-    fedLine.innerHTML = t("federation_line",{fed:fedName, country:fedCountryName})+' &middot; <span id="changeFedLink" style="text-decoration:underline;cursor:pointer;">'+t("change_word")+'</span>';
+    var fedPill = el('<div style="display:inline-flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:0.85rem;font-weight:700;color:var(--cream);cursor:pointer;"></div>');
+    fedPill.innerHTML = t("federation_line",{fed:fedName, country:fedCountryName})+' <span id="changeFedLink" style="color:var(--accent);font-weight:800;text-decoration:underline;">'+t("change_word")+'</span>';
+    fedLine.appendChild(fedPill);
     wrap.appendChild(fedLine);
 
     setTimeout(function(){
       var link = document.getElementById("changeFedLink");
       if(link) link.addEventListener("click", function(){ state.federation = null; save(); render(); });
+      fedPill.addEventListener("click", function(){ state.federation = null; save(); render(); });
     },0);
 
     if(hasActiveRound){
@@ -2179,9 +2312,16 @@
       var infoCard = el('<div class="card"></div>');
       infoCard.appendChild(el('<h2 class="section-title">'+escapeHtml(compagnia.nome)+'</h2>'));
       if(compagnia.completa){
-        infoCard.appendChild(el('<div class="cp-info-row">'+icon("pin",16)+' '+escapeHtml(compagnia.indirizzo)+'</div>'));
-        infoCard.appendChild(el('<div class="cp-info-row"><a href="tel:'+compagnia.telefono.replace(/\s/g,"")+'">\uD83D\uDCDE '+compagnia.telefono+'</a></div>'));
-        infoCard.appendChild(el('<div class="cp-info-row"><a href="https://'+compagnia.sito+'" target="_blank" rel="noopener">\uD83C\uDF10 '+compagnia.sito+'</a></div>'));
+        infoCard.appendChild(el('<div class="cp-info-row">'+icon("pin",16)+' '+escapeHtml(compagnia.luogo)+'</div>'));
+        if(compagnia.telefono){
+          infoCard.appendChild(el('<div class="cp-info-row"><a href="tel:'+compagnia.telefono.replace(/\s/g,"")+'">\uD83D\uDCDE '+compagnia.telefono+'</a></div>'));
+        }
+        if(compagnia.email){
+          infoCard.appendChild(el('<div class="cp-info-row"><a href="mailto:'+compagnia.email+'">\u2709\uFE0F '+compagnia.email+'</a></div>'));
+        }
+        if(compagnia.sito){
+          infoCard.appendChild(el('<div class="cp-info-row"><a href="https://'+compagnia.sito+'" target="_blank" rel="noopener">\uD83C\uDF10 '+compagnia.sito+'</a></div>'));
+        }
       } else {
         infoCard.appendChild(el('<div class="cp-info-row placeholder">'+icon("pin",16)+' '+escapeHtml(compagnia.luogo)+'</div>'));
         infoCard.appendChild(el('<div class="cp-info-row placeholder">'+t("compagnie_no_dati")+'</div>'));
@@ -2189,7 +2329,7 @@
       wrap.appendChild(infoCard);
 
       if(compagnia.completa){
-        var cd = state.compagnieData[state.compagniaAttiva];
+        var cd = ensureCompagniaData(state.compagniaAttiva);
         var percCard = el('<div class="card"></div>');
         percCard.appendChild(el('<h2 class="section-title">'+t("menu_compagnie_label")+'</h2>'));
         if(cd.percorsi.length === 0){
