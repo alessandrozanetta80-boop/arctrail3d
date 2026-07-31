@@ -418,6 +418,7 @@
       install_hint: "<b>Consiglio:</b> per usarla come un\u2019app, apri il men\u00f9 del browser e scegli <b>Aggiungi a schermata Home</b>. Funziona anche offline: i dati restano salvati sul telefono.",
       team_title: "Arcieri / Squadra",
       archer_placeholder: "Nome arciere",
+      search_username_placeholder: "Cerca un iscritto per username\u2026", search_username_empty: "Nessun iscritto trovato",
       archer_empty_hint: "Aggiungi almeno un arciere per iniziare",
       rotation_note: "Nelle gare l\u2019ordine di tiro segue l\u2019alfabeto ed \u00e8 gestito automaticamente (rotazione FIARC ad ogni piazzola).",
       menu_title: "Cosa vuoi fare?",
@@ -597,6 +598,7 @@
       install_hint: "<b>Tip:</b> to use it like an app, open your browser menu and choose <b>Add to Home screen</b>. It also works offline: your data stays saved on your phone.",
       team_title: "Archers / Team",
       archer_placeholder: "Archer name",
+      search_username_placeholder: "Search a member by username\u2026", search_username_empty: "No member found",
       archer_empty_hint: "Add at least one archer to start",
       rotation_note: "In competitions, the shooting order follows the alphabet and rotates automatically (FIARC rotation at each target).",
       menu_title: "What would you like to do?",
@@ -769,6 +771,7 @@
       install_hint: "<b>Astuce :</b> pour l\u2019utiliser comme une application, ouvrez le menu du navigateur et choisissez <b>Ajouter \u00e0 l\u2019\u00e9cran d\u2019accueil</b>. Fonctionne aussi hors ligne : vos donn\u00e9es restent enregistr\u00e9es sur votre t\u00e9l\u00e9phone.",
       team_title: "Archers / \u00c9quipe",
       archer_placeholder: "Nom de l\u2019archer",
+      search_username_placeholder: "Rechercher un membre par nom d\u2019utilisateur\u2026", search_username_empty: "Aucun membre trouv\u00e9",
       archer_empty_hint: "Ajoutez au moins un archer pour commencer",
       rotation_note: "En comp\u00e9tition, l\u2019ordre de tir suit l\u2019alphabet et tourne automatiquement (rotation FIARC \u00e0 chaque cible).",
       menu_title: "Que voulez-vous faire ?",
@@ -941,6 +944,7 @@
       install_hint: "<b>Tipp:</b> Um die App wie eine richtige App zu nutzen, \u00f6ffne das Browsermen\u00fc und w\u00e4hle <b>Zum Startbildschirm hinzuf\u00fcgen</b>. Funktioniert auch offline: deine Daten bleiben auf dem Telefon gespeichert.",
       team_title: "Sch\u00fctzen / Team",
       archer_placeholder: "Name des Sch\u00fctzen",
+      search_username_placeholder: "Mitglied nach Benutzername suchen\u2026", search_username_empty: "Kein Mitglied gefunden",
       archer_empty_hint: "F\u00fcge mindestens einen Sch\u00fctzen hinzu, um zu starten",
       rotation_note: "Bei Wettk\u00e4mpfen folgt die Schussreihenfolge dem Alphabet und rotiert automatisch (FIARC-Rotation bei jedem Ziel).",
       menu_title: "Was m\u00f6chtest du tun?",
@@ -2699,6 +2703,15 @@
     return wrap;
   }
 
+  function ensureSelfArcher(){
+    if((state.pendingArchers||[]).length === 0 && state.profile){
+      var selfName = state.profile.username || state.profile.nomeCognome;
+      if(selfName){
+        state.pendingArchers = [{ id: uid(), name: selfName, isSelf:true }];
+      }
+    }
+  }
+
   // ---------- REGISTRAZIONE ----------
   function registrationScreen(){
     var wrap = el('<div></div>');
@@ -2707,6 +2720,14 @@
     card2.appendChild(el('<h2 class="section-title">'+t("team_title")+'</h2>'));
     var form = el('<div class="row"><input type="text" id="archerInput" placeholder="'+t("archer_placeholder")+'"><button class="btn btn-primary" id="addArcherBtn">+</button></div>');
     card2.appendChild(form);
+
+    var searchResults = null, searchInput = null;
+    if(!DEV_MODE && db){
+      var searchRow = el('<div class="row" style="margin-top:8px;"><input type="text" id="archerSearchInput" placeholder="'+t("search_username_placeholder")+'"></div>');
+      card2.appendChild(searchRow);
+      searchResults = el('<div id="archerSearchResults" style="margin-top:4px;display:flex;flex-wrap:wrap;gap:6px;"></div>');
+      card2.appendChild(searchResults);
+    }
     var list = el('<div class="archer-list"></div>');
     var pendingArchers = state.pendingArchers || [];
     if(pendingArchers.length === 0){
@@ -2747,6 +2768,47 @@
     setTimeout(function(){
       document.getElementById("addArcherBtn").addEventListener("click", addArcher);
       document.getElementById("archerInput").addEventListener("keydown", function(e){ if(e.key === "Enter") addArcher(); });
+
+      if(searchResults){
+        var approvedUsersCache = null;
+        function loadApprovedUsers(cb){
+          if(approvedUsersCache){ cb(approvedUsersCache); return; }
+          db.collection("users").where("approved","==",true).get().then(function(snap){
+            var list = [];
+            snap.forEach(function(doc){
+              var d = doc.data();
+              if(d.username){ list.push({ uid: doc.id, username: d.username, nomeCognome: d.nomeCognome||"" }); }
+            });
+            approvedUsersCache = list;
+            cb(list);
+          }).catch(function(){ cb([]); });
+        }
+        searchInput = document.getElementById("archerSearchInput");
+        searchInput.addEventListener("input", function(){
+          var q = searchInput.value.trim().toLowerCase();
+          searchResults.innerHTML = "";
+          if(!q) return;
+          loadApprovedUsers(function(list){
+            var already = (state.pendingArchers||[]).map(function(a){ return a.name.toLowerCase(); });
+            var matches = list.filter(function(u){
+              return u.username.toLowerCase().indexOf(q) !== -1 && already.indexOf(u.username.toLowerCase()) === -1;
+            }).slice(0,6);
+            if(matches.length === 0){
+              searchResults.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);">'+t("search_username_empty")+'</div>'));
+              return;
+            }
+            matches.forEach(function(u){
+              var chip = el('<button class="btn btn-ghost btn-sm">@'+escapeHtml(u.username)+(u.nomeCognome?' &middot; '+escapeHtml(u.nomeCognome):'')+'</button>');
+              chip.addEventListener("click", function(){
+                state.pendingArchers = state.pendingArchers || [];
+                state.pendingArchers.push({ id: uid(), name: u.username, invitedUid: u.uid });
+                save(); render();
+              });
+              searchResults.appendChild(chip);
+            });
+          });
+        });
+      }
     },0);
 
     function addArcher(){
@@ -2799,6 +2861,7 @@
     var trainBtn = el('<button class="btn menu-btn training btn-block" style="margin-bottom:10px;"><span class="menu-icon">'+icon("bow",24)+'</span><span class="menu-txt">'+t("menu_train_label")+'<span class="menu-sub">'+t("menu_train_sub")+'</span></span></button>');
     trainBtn.addEventListener("click", function(){
       state.pendingMode = FEDERATIONS[state.federation || "fiarc"].trainingMode;
+      ensureSelfArcher();
       if((state.pendingArchers||[]).length === 0){
         state.registrationNext = "training-setup";
         state.screen = "registration";
@@ -2815,6 +2878,7 @@
     garaBtn.addEventListener("click", function(){
       var garaModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
       if(!state.pendingMode || garaModes.indexOf(state.pendingMode) === -1){ state.pendingMode = garaModes[0]; }
+      ensureSelfArcher();
       if((state.pendingArchers||[]).length === 0){
         state.registrationNext = "gara-setup";
         state.screen = "registration";
@@ -2839,7 +2903,7 @@
     var histBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("scroll",16)+' '+t("menu_history")+'</button>');
     histBtn.addEventListener("click", function(){ state.screen = "history"; save(); render(); });
     var editBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("users",16)+' '+t("menu_edit_archers")+'</button>');
-    editBtn.addEventListener("click", function(){ state.registrationNext = "menu"; state.screen = "registration"; save(); render(); });
+    editBtn.addEventListener("click", function(){ ensureSelfArcher(); state.registrationNext = "menu"; state.screen = "registration"; save(); render(); });
     secondaryRow.appendChild(histBtn);
     secondaryRow.appendChild(editBtn);
     wrap.appendChild(secondaryRow);
