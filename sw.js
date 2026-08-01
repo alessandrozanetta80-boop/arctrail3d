@@ -1,31 +1,43 @@
-const CACHE_NAME = 'arctrail3d-v1';
-const APP_SHELL = ['./', './index.html'];
+// ArcTrail 3D - service worker
+// Strategia: prova sempre prima la rete (cosi chi ha connessione vede sempre
+// l'ultima versione pubblicata su GitHub), usa la cache solo come riserva
+// quando manca la connessione. Nessun numero di versione da aggiornare a mano.
 
-self.addEventListener('install', function(event){
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache){ return cache.addAll(APP_SHELL); })
-  );
+var CACHE_NAME = "arctrail3d-cache";
+
+self.addEventListener("install", function(event){
+  // Attiva subito il nuovo service worker, senza aspettare che tutte le
+  // schede vecchie vengano chiuse.
   self.skipWaiting();
 });
 
-self.addEventListener('activate', function(event){
+self.addEventListener("activate", function(event){
   event.waitUntil(
-    caches.keys().then(function(keys){
-      return Promise.all(keys.filter(function(k){ return k !== CACHE_NAME; }).map(function(k){ return caches.delete(k); }));
+    caches.keys().then(function(names){
+      return Promise.all(
+        names.filter(function(name){ return name !== CACHE_NAME; })
+             .map(function(name){ return caches.delete(name); })
+      );
+    }).then(function(){
+      return self.clients.claim();
     })
   );
-  self.clients.claim();
 });
 
-self.addEventListener('fetch', function(event){
-  if(event.request.method !== 'GET'){ return; }
+self.addEventListener("fetch", function(event){
+  if(event.request.method !== "GET"){ return; }
+
   event.respondWith(
     fetch(event.request).then(function(response){
       var copy = response.clone();
-      caches.open(CACHE_NAME).then(function(cache){ cache.put(event.request, copy); });
+      caches.open(CACHE_NAME).then(function(cache){
+        cache.put(event.request, copy);
+      });
       return response;
     }).catch(function(){
-      return caches.match(event.request).then(function(cached){ return cached || caches.match('./index.html'); });
+      return caches.match(event.request).then(function(cached){
+        return cached || caches.match("index.html");
+      });
     })
   );
 });
