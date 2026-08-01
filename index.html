@@ -83,7 +83,7 @@
   .grid-pick-btn:active{ transform:scale(0.95); }
   .grid-pick-btn:hover, .grid-pick-btn:focus{ border-color:var(--accent); }
   .grid-pick-btn .flag{ font-size:1.7rem; line-height:1; }
-  input[type=text], input[type=number]{ width:100%; padding:13px 14px; border-radius:10px; border:1px solid var(--line); background:#fff; color:var(--cream); font-size:1rem; }
+  input[type=text], input[type=number]{ width:100%; padding:13px 14px; border-radius:10px; border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:1rem; }
   input[type=text]:focus, input[type=number]:focus{ outline:2px solid var(--accent); }
   .archer-list{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
   .archer-row{ display:flex; align-items:center; justify-content:space-between; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
@@ -196,7 +196,7 @@
   /* ---------- COMPAGNIE ---------- */
   .cp-select-row{ margin-bottom:12px; }
   .cp-select-row label{ display:block; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:5px; }
-  .cp-select-row select{ width:100%; padding:12px; border-radius:10px; border:1px solid var(--line); background:#fff; color:var(--cream); font-size:0.95rem; }
+  .cp-select-row select{ width:100%; padding:12px; border-radius:10px; border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.95rem; }
   .cp-info-row{ display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--cream); padding:4px 0; }
   .cp-info-row a{ color:var(--accent); text-decoration:none; font-weight:600; }
   .cp-info-row.placeholder{ color:var(--muted); font-style:italic; }
@@ -223,7 +223,7 @@
   .cp-percorso-title{ font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:14px 0 6px; }
   /* ---------- HOME / PROFILO ---------- */
   .cp-select-row select, .cp-select-row input[type=text], .cp-select-row input[type=email]{
-    width:100%; padding:12px; border-radius:10px; border:1px solid var(--line); background:#fff; color:var(--cream); font-size:0.95rem;
+    width:100%; padding:12px; border-radius:10px; border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.95rem;
   }
   .pf-fed-row{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:8px; }
   .pf-fed-check{ display:flex; align-items:center; gap:8px; font-size:0.9rem; font-weight:600; cursor:pointer; }
@@ -231,7 +231,7 @@
   .pf-tessera{ margin-top:8px; display:none; }
   .pf-tessera.show{ display:block; }
   .pf-tessera label{ font-size:0.68rem; color:var(--muted); font-weight:700; margin-bottom:4px; display:block; text-transform:uppercase; letter-spacing:.05em; }
-  .pf-tessera input{ width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:#fff; color:var(--cream); font-size:0.85rem; }
+  .pf-tessera input{ width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.85rem; }
 </style>
 </head>
 <body>
@@ -3230,7 +3230,7 @@
     card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_arciere")+'</label><input type="text" id="cpFNome" placeholder="'+t("compagnie_arciere")+'"></div>'));
     card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_punteggio")+'</label><input type="number" id="cpFPunteggio" min="0"></div>'));
     var todayIso = new Date().toISOString().slice(0,10);
-    card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_data")+'</label><input type="date" id="cpFData" value="'+todayIso+'" style="width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--cream);font-size:1rem;"></div>'));
+    card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_data")+'</label><input type="date" id="cpFData" value="'+todayIso+'" style="width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);font-size:1rem;"></div>'));
 
     card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_arco")+'</label></div>'));
     var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;"></div>');
