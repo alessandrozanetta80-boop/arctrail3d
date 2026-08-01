@@ -1470,6 +1470,7 @@
         errorMsg.textContent = "Inserisci prima la tua email qui sopra.";
         return;
       }
+      auth.languageCode = state.lang || "it";
       auth.sendPasswordResetEmail(email).then(function(){
         errorMsg.style.color = "var(--accent)";
         errorMsg.textContent = t("login_reset_sent");
@@ -1811,6 +1812,7 @@
         });
         return;
       }
+      auth.languageCode = state.lang || "it";
       auth.createUserWithEmailAndPassword(email, password).then(function(result){
         currentUser = result.user;
         try{ result.user.sendEmailVerification(); }catch(e){}
