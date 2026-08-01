@@ -259,7 +259,7 @@
   // ---------- MODALITA' SVILUPPO ----------
   // Metti true per aprire il file offline/in locale saltando del tutto l'accesso Firebase (per testare le modifiche).
   // Rimetti false SOLO nella versione da caricare sul sito online.
-  var DEV_MODE = false;
+  var DEV_MODE = true;
 
   // ---------- INSTALLAZIONE APP ----------
   var deferredInstallPrompt = null;
@@ -339,6 +339,7 @@
         }
         authState = data.approved ? "ready" : "pendingApproval";
       }
+      if(authState === "ready"){ startIncomingSessionsListener(); }
       save();
       render();
     }).catch(function(){
@@ -443,6 +444,21 @@
       start_round_btn: "Inizia percorso",
       rules_training_title: "Punteggi Allenamento",
       train_arrows_title: "Quante frecce per piazzola?", train_arrows_hint: "Da 1 a 3 frecce, a tua scelta. Puoi sempre saltare le frecce che non vuoi tirare.",
+      train_shared_title: "Sessione condivisa", train_shared_hint: "Hai invitato arcieri online: i punteggi si sincronizzano in tempo reale sui loro telefoni. Serve connessione internet.",
+      train_double_confirm_label: "Richiedi doppia conferma dei punteggi",
+      train_double_confirm_hint: "Ogni punteggio resta \"in attesa\" finch\u00e9 un altro partecipante della sessione non lo conferma dal proprio telefono. Se disattivata, i punteggi si registrano subito, senza conferma.",
+      session_banner_title: "Sessione condivisa attiva",
+      session_banner_body: "{name} ha avviato un allenamento condiviso.",
+      session_banner_btn: "Segui la sessione",
+      session_follow_title: "Sessione in diretta",
+      session_follow_owner: "Avviata da {name}",
+      session_pending_label: "In attesa di conferma",
+      session_confirm_btn: "Conferma questo punteggio",
+      session_confirmed_label: "Confermato",
+      session_no_data: "Nessun punteggio ancora inserito.",
+      session_closed_note: "Sessione chiusa o terminata.",
+      admin_sessions_title: "Sessioni condivise attive", admin_sessions_empty: "Nessuna sessione condivisa attiva al momento.",
+      admin_sessions_participants: "Partecipanti", admin_sessions_double_confirm: "Doppia conferma attiva", admin_sessions_single: "Doppia conferma disattivata",
       skip_remaining_btn: "Salta frecce restanti \u2192",
       gara_type_title: "Tipo di gara",
       start_gara_btn: "Inizia gara",
@@ -1393,6 +1409,7 @@
       case "history": app.appendChild(historyScreen()); break;
       case "info": app.appendChild(infoScreen()); break;
       case "admin": app.appendChild(adminScreen()); break;
+      case "session-follow": app.appendChild(sessionFollowScreen()); break;
       case "round": app.appendChild(roundScreen()); break;
       case "summary": app.appendChild(summaryScreen()); break;
       default: app.appendChild(registrationScreen());
@@ -2144,6 +2161,24 @@
       ));
     }
 
+    (incomingSessions||[]).forEach(function(sess){
+      var sessBanner = el(
+        '<div class="resume-banner" style="border-color:var(--accent);"><div style="font-weight:800;">'+t("session_banner_title")+'</div>'+
+        '<div style="font-size:0.85rem;margin-top:4px;">'+t("session_banner_body",{name:escapeHtml(sess.ownerName||"?")})+'</div>'+
+        '<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="followBtn_'+sess.id+'">'+t("session_banner_btn")+'</button></div></div>'
+      );
+      wrap.appendChild(sessBanner);
+      setTimeout(function(){
+        var btn = document.getElementById("followBtn_"+sess.id);
+        if(btn) btn.addEventListener("click", function(){
+          stopFollowingSession();
+          state.followSessionId = sess.id;
+          state.screen = "session-follow";
+          save(); render();
+        });
+      },0);
+    });
+
     var menuCard = el('<div class="card"></div>');
     menuCard.appendChild(el('<h2 class="section-title">'+t("menu_title")+'</h2>'));
 
@@ -2252,6 +2287,19 @@
       arrowsCard.appendChild(arrowsGrid);
       arrowsCard.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:6px;">'+t("train_arrows_hint")+'</div>'));
       wrap.appendChild(arrowsCard);
+    }
+
+    if(hasInvitedArchers() && !DEV_MODE && db && currentUser){
+      var sharedCard = el('<div class="card"></div>');
+      sharedCard.appendChild(el('<h2 class="section-title">'+t("train_shared_title")+'</h2>'));
+      sharedCard.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">'+t("train_shared_hint")+'</div>'));
+      var dcRow = el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.85rem;"><input type="checkbox" id="doubleConfirmChk" style="width:auto;margin-top:2px;"><span>'+t("train_double_confirm_label")+'</span></label>');
+      var dcChk = dcRow.querySelector("#doubleConfirmChk");
+      dcChk.checked = !!state.doubleConfirm;
+      dcChk.addEventListener("change", function(){ state.doubleConfirm = dcChk.checked; save(); });
+      sharedCard.appendChild(dcRow);
+      sharedCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:6px;">'+t("train_double_confirm_hint")+'</div>'));
+      wrap.appendChild(sharedCard);
     }
 
     var startBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("start_round_btn")+'</button>');
@@ -2712,6 +2760,99 @@
     }
     setTimeout(loadList, 0);
 
+    var sessCard = el('<div class="card" style="margin-top:14px;"></div>');
+    sessCard.appendChild(el('<h2 class="section-title">'+t("admin_sessions_title")+'</h2>'));
+    var sessListWrap = el('<div id="adminSessListWrap"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
+    sessCard.appendChild(sessListWrap);
+    wrap.appendChild(sessCard);
+
+    function loadSessions(){
+      db.collection("sessions").where("status","==","active").get().then(function(snap){
+        sessListWrap.innerHTML = "";
+        if(snap.empty){
+          sessListWrap.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("admin_sessions_empty")+'</div>'));
+          return;
+        }
+        snap.forEach(function(doc){
+          var d = doc.data();
+          var names = (d.participants||[]).map(function(p){ return escapeHtml(p.name||"?"); }).join(", ");
+          var dcLabel = d.doubleConfirm ? t("admin_sessions_double_confirm") : t("admin_sessions_single");
+          var row = el(
+            '<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:0.85rem;">'+
+            '<div style="font-weight:700;">'+escapeHtml(d.ownerName||"?")+'</div>'+
+            '<div style="color:var(--muted);margin-top:2px;">'+t("admin_sessions_participants")+': '+names+'</div>'+
+            '<div style="color:var(--muted);margin-top:2px;">'+dcLabel+'</div>'+
+            '</div>'
+          );
+          sessListWrap.appendChild(row);
+        });
+      }).catch(function(err){
+        sessListWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
+      });
+    }
+    setTimeout(loadSessions, 0);
+
+    return wrap;
+  }
+
+  // ---------- SESSIONE IN DIRETTA (partecipante invitato che segue una sessione condivisa) ----------
+  function sessionFollowScreen(){
+    var wrap = el('<div></div>');
+    if(!followUnsub && state.followSessionId && db){
+      followUnsub = db.collection("sessions").doc(state.followSessionId).onSnapshot(function(doc){
+        state.followSessionData = doc.exists ? doc.data() : null;
+        render();
+      });
+    }
+    var data = state.followSessionData;
+    var card = el('<div class="card"></div>');
+    card.appendChild(el('<h2 class="section-title">'+t("session_follow_title")+'</h2>'));
+
+    if(!data){
+      card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div>'));
+      wrap.appendChild(card);
+    } else {
+      card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">'+t("session_follow_owner",{name:escapeHtml(data.ownerName||"?")})+'</div>'));
+      if(data.status !== "active"){
+        card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("session_closed_note")+'</div>'));
+      }
+      var archerNames = data.archerNames || [];
+      var hasAny = false;
+      archerNames.forEach(function(an){
+        var entries = (data.scores && data.scores[an.id]) || [];
+        var block = el('<div style="margin-bottom:14px;"></div>');
+        block.appendChild(el('<div style="font-weight:700;margin-bottom:6px;">'+escapeHtml(an.name)+'</div>'));
+        if(entries.length === 0){
+          block.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);">'+t("session_no_data")+'</div>'));
+        }
+        entries.forEach(function(entry, idx){
+          hasAny = true;
+          var canConfirm = data.doubleConfirm && !entry.confirmed && entry.by !== (currentUser && currentUser.uid) && data.status === "active";
+          var statusLabel = entry.confirmed ? t("session_confirmed_label") : t("session_pending_label");
+          var statusColor = entry.confirmed ? "var(--accent)" : "var(--bark)";
+          var row = el(
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:0.85rem;">'+
+            '<span>'+entry.arrows.join(", ")+' &middot; <b>'+entry.total+'</b></span>'+
+            '<span style="color:'+statusColor+';font-size:0.75rem;">'+statusLabel+'</span></div>'
+          );
+          block.appendChild(row);
+          if(canConfirm){
+            var cBtn = el('<button class="btn btn-primary btn-sm btn-block" style="margin-top:4px;">'+t("session_confirm_btn")+'</button>');
+            cBtn.addEventListener("click", function(){ confirmSessionShot(an.id, idx); });
+            block.appendChild(cBtn);
+          }
+        });
+        card.appendChild(block);
+      });
+      if(archerNames.length === 0 || !hasAny){
+        // niente da mostrare oltre a quanto gia' scritto sopra
+      }
+      wrap.appendChild(card);
+    }
+
+    var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
+    backBtn.addEventListener("click", function(){ stopFollowingSession(); state.followSessionId = null; state.screen = "menu"; save(); render(); });
+    wrap.appendChild(backBtn);
     return wrap;
   }
 
@@ -2789,6 +2930,94 @@
     return m;
   }
 
+  // ---------- SESSIONE CONDIVISA (sincronizzazione punteggi tra piu' telefoni) ----------
+  function hasInvitedArchers(){
+    return (state.pendingArchers||[]).some(function(a){ return !!a.invitedUid; });
+  }
+
+  function createSharedSession(modeKey, doubleConfirm, archers){
+    if(DEV_MODE || !db || !currentUser) return null;
+    var selfName = (state.profile && state.profile.username) || currentUser.email;
+    var participants = [{ uid: currentUser.uid, name: selfName }];
+    archers.forEach(function(a){
+      if(a.invitedUid){ participants.push({ uid: a.invitedUid, name: a.name }); }
+    });
+    if(participants.length < 2) return null;
+    var scoresInit = {};
+    archers.forEach(function(a){ scoresInit[a.id] = []; });
+    var ref = db.collection("sessions").doc();
+    ref.set({
+      ownerUid: currentUser.uid,
+      ownerName: selfName,
+      federation: state.federation,
+      mode: modeKey,
+      doubleConfirm: !!doubleConfirm,
+      archerNames: archers.map(function(a){ return { id:a.id, name:a.name }; }),
+      participants: participants,
+      participantUids: participants.map(function(p){ return p.uid; }),
+      scores: scoresInit,
+      status: "active",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(function(){});
+    return ref.id;
+  }
+
+  function syncShotToSession(archer, entry){
+    if(!state.sessionId || DEV_MODE || !db) return;
+    var confirmed = !state.doubleConfirm;
+    var payload = { arrows: entry.arrows, total: entry.total, confirmed: confirmed, by: (currentUser && currentUser.uid) || null, at: Date.now() };
+    var update = {};
+    update["scores." + archer.id] = firebase.firestore.FieldValue.arrayUnion(payload);
+    update.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+    db.collection("sessions").doc(state.sessionId).update(update).catch(function(){});
+  }
+
+  function closeSharedSession(){
+    if(!state.sessionId || DEV_MODE || !db) return;
+    db.collection("sessions").doc(state.sessionId).update({ status:"closed", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(function(){});
+  }
+
+  var incomingSessions = [];
+  var sessionsListenerStarted = false;
+  function startIncomingSessionsListener(){
+    if(sessionsListenerStarted || DEV_MODE || !db || !currentUser) return;
+    sessionsListenerStarted = true;
+    db.collection("sessions")
+      .where("participantUids", "array-contains", currentUser.uid)
+      .where("status", "==", "active")
+      .onSnapshot(function(snap){
+        var list = [];
+        snap.forEach(function(doc){
+          var d = doc.data();
+          if(d.ownerUid !== currentUser.uid){ d.id = doc.id; list.push(d); }
+        });
+        incomingSessions = list;
+        render();
+      }, function(){ /* indice Firestore mancante o permessi: ignorato in silenzio */ });
+  }
+
+  var followUnsub = null;
+  function stopFollowingSession(){
+    if(followUnsub){ followUnsub(); followUnsub = null; }
+    state.followSessionData = null;
+  }
+
+  function confirmSessionShot(archerId, idx){
+    if(!state.followSessionId || !db) return;
+    var ref = db.collection("sessions").doc(state.followSessionId);
+    ref.get().then(function(doc){
+      if(!doc.exists) return;
+      var d = doc.data();
+      var arr = (d.scores && d.scores[archerId]) ? d.scores[archerId].slice() : [];
+      if(arr[idx]){
+        arr[idx] = Object.assign({}, arr[idx], { confirmed:true, confirmedBy: currentUser.uid });
+        var update = {}; update["scores." + archerId] = arr; update.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+        ref.update(update).catch(function(){});
+      }
+    });
+  }
+
   function beginRound(modeKey){
     var mode = GAME_MODES[modeKey];
     if(!mode.freeFormat){ state.arrowsPerTargetOverride = null; }
@@ -2811,6 +3040,12 @@
     state.pendingArrows = [];
     state.awaitingStep = null;
     state.savedToHistory = false;
+    var trainKeyForFed = FEDERATIONS[state.federation || "fiarc"].trainingMode;
+    if(modeKey === trainKeyForFed && hasInvitedArchers() && !DEV_MODE && db && currentUser){
+      state.sessionId = createSharedSession(modeKey, !!state.doubleConfirm, archers);
+    } else {
+      state.sessionId = null;
+    }
     save(); render();
   }
 
@@ -3111,6 +3346,7 @@
       }
     } else {
       state.screen = "summary";
+      closeSharedSession();
     }
     save(); render();
   }
@@ -3127,7 +3363,9 @@
 
     if(done){
       var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
-      state.scores[archer.id].push({ arrows: state.pendingArrows.slice(), total: total });
+      var entry = { arrows: state.pendingArrows.slice(), total: total };
+      state.scores[archer.id].push(entry);
+      syncShotToSession(archer, entry);
       state.pendingArrows = [];
       state.arrowIndex = 0;
       if(state.archerIndex < state.archers.length - 1){
@@ -3145,7 +3383,9 @@
     var archer = state.archers[state.archerIndex];
     state.pendingArrows = state.pendingArrows || [];
     var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
-    state.scores[archer.id].push({ arrows: state.pendingArrows.slice(), total: total });
+    var earlyEntry = { arrows: state.pendingArrows.slice(), total: total };
+    state.scores[archer.id].push(earlyEntry);
+    syncShotToSession(archer, earlyEntry);
     state.pendingArrows = [];
     state.arrowIndex = 0;
     if(state.archerIndex < state.archers.length - 1){
