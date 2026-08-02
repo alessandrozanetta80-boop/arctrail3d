@@ -2176,6 +2176,7 @@
     var wrap = el('<div></div>');
     wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:Georgia,serif;color:var(--gold);font-size:1.15rem;">Prepara gara</h2><span style="display:inline-block;margin-top:6px;font-size:0.65rem;letter-spacing:.05em;text-transform:uppercase;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--bark);padding:3px 10px;border-radius:20px;">TEST \u2014 solo italiano per ora</span></div>'));
     if(state.pgScreen === "pick") wrap.appendChild(pgPickScreen());
+    else if(state.pgScreen === "elenco") wrap.appendChild(pgElencoScreen());
     else if(state.pgScreen === "setup") wrap.appendChild(pgSetupScreen());
     else if(state.pgScreen === "piazzole") wrap.appendChild(pgPiazzoleScreen());
     else if(state.pgScreen === "iscritti") wrap.appendChild(pgIscrittiScreen());
@@ -2195,6 +2196,56 @@
         state.pgScreen = "setup"; save(); render();
       });
       d.appendChild(b);
+    });
+    if(!DEV_MODE && db && currentUser){
+      var elencoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:14px;">\uD83D\uDCCB I miei percorsi salvati</button>');
+      elencoBtn.addEventListener("click", function(){ state.pgScreen = "elenco"; state.pgElenco = null; save(); render(); });
+      d.appendChild(elencoBtn);
+    }
+    return d;
+  }
+
+  function pgElencoScreen(){
+    var d = el('<div class="card"></div>');
+    d.appendChild(el('<h3 class="section-title">I miei percorsi salvati</h3>'));
+    if(state.pgElenco === null){
+      d.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);">Caricamento\u2026</div>'));
+      db.collection("percorsi").where("createdBy","==",currentUser.uid).get().then(function(snap){
+        var list = [];
+        snap.forEach(function(doc){ list.push(Object.assign({id:doc.id}, doc.data())); });
+        list.sort(function(a,b){
+          var ta = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+          var tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+          return tb - ta;
+        });
+        state.pgElenco = list;
+        render();
+      }).catch(function(err){
+        state.pgElenco = [];
+        state.pgElencoError = err && err.message ? err.message : "errore di caricamento";
+        render();
+      });
+      return d;
+    }
+    if(state.pgElencoError){
+      d.appendChild(el('<div style="font-size:0.82rem;color:var(--bark);">Errore nel caricamento: '+escapeHtml(state.pgElencoError)+'</div>'));
+      return d;
+    }
+    if(!state.pgElenco.length){
+      d.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);">Nessun percorso salvato ancora.</div>'));
+      return d;
+    }
+    state.pgElenco.forEach(function(p){
+      var pcfgLbl = (PG_MODES[p.gara]||{}).label || p.gara;
+      var card = el('<div class="gruppo-card" style="margin-bottom:10px;"></div>');
+      card.appendChild(el('<h4 style="color:var(--gold);">'+escapeHtml(p.nome||"(senza nome)")+' \u2014 '+pcfgLbl+'</h4>'));
+      card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">'+(p.data?escapeHtml(p.data)+' \u00b7 ':'')+(p.compagnia?escapeHtml(p.compagnia)+' \u00b7 ':'')+(p.iscritti?p.iscritti.length:0)+' iscritti \u00b7 '+(p.squadre?p.squadre.length:0)+' squadre</div>'));
+      if(p.squadre && p.squadre.length){
+        p.squadre.forEach(function(s, gIdx){
+          card.appendChild(el('<div style="font-size:0.76rem;background:var(--bg-panel-2);border-radius:8px;padding:6px 8px;margin-bottom:4px;"><b style="color:var(--gold);">Piazzola '+s.piazzolaPartenza+'</b> \u2014 Squadra '+(gIdx+1)+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
+        });
+      }
+      d.appendChild(card);
     });
     return d;
   }
@@ -2426,14 +2477,33 @@
       });
 
       var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-top:16px;">Salva percorso</button>');
+      var saveStatus = el('<div style="font-size:0.78rem;color:var(--muted);margin-top:8px;text-align:center;"></div>');
       saveBtn.addEventListener("click", function(){
         var completo = JSON.parse(JSON.stringify(state.pgDraft));
         completo.salvatoIl = new Date().toISOString();
-        state.percorsi.push(completo);
-        state.pgDraft = null; state.pgScreen = "pick"; state.screen = "menu";
-        save(); render();
+        if(!DEV_MODE && db && currentUser){
+          saveBtn.disabled = true;
+          saveStatus.textContent = "Salvataggio in corso\u2026";
+          completo.createdBy = currentUser.uid;
+          completo.createdByEmail = currentUser.email || "";
+          completo.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          db.collection("percorsi").add(completo).then(function(){
+            state.pgDraft = null; state.pgScreen = "pick"; state.screen = "menu";
+            save(); render();
+          }).catch(function(err){
+            saveBtn.disabled = false;
+            saveStatus.textContent = "Errore nel salvataggio online (" + (err && err.message ? err.message : "riprova") + "). Salvato solo su questo dispositivo.";
+            state.percorsi.push(completo);
+            save();
+          });
+        } else {
+          state.percorsi.push(completo);
+          state.pgDraft = null; state.pgScreen = "pick"; state.screen = "menu";
+          save(); render();
+        }
       });
       d.appendChild(saveBtn);
+      d.appendChild(saveStatus);
     }
     return d;
   }
