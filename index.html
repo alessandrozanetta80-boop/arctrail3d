@@ -2409,6 +2409,57 @@
     addRow.appendChild(addNome); addRow.appendChild(addCognome); addRow.appendChild(addBtn);
     d.appendChild(addRow);
 
+    if(!DEV_MODE && db){
+      d.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:2px 0 4px;">Oppure cerca un account gi\u00e0 registrato (cos\u00ec l\'iscritto risulta collegato, utile per le notifiche future)</div>'));
+      var searchRow = el('<div style="margin-bottom:10px;"></div>');
+      var searchInput = el('<input type="text" placeholder="'+t("search_username_placeholder")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
+      var searchResults = el('<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;"></div>');
+      searchRow.appendChild(searchInput); searchRow.appendChild(searchResults);
+      d.appendChild(searchRow);
+
+      var approvedUsersCache = null;
+      function loadApprovedUsers(cb){
+        if(approvedUsersCache){ cb(approvedUsersCache); return; }
+        db.collection("users").where("approved","==",true).get().then(function(snap){
+          var list = [];
+          snap.forEach(function(doc){
+            var dd = doc.data();
+            if(dd.username){ list.push({ uid: doc.id, username: dd.username, nomeCognome: dd.nomeCognome||"" }); }
+          });
+          approvedUsersCache = list;
+          cb(list);
+        }).catch(function(){ cb([]); });
+      }
+      searchInput.addEventListener("input", function(){
+        var q = searchInput.value.trim().toLowerCase();
+        searchResults.innerHTML = "";
+        if(!q) return;
+        loadApprovedUsers(function(list){
+          var already = state.pgDraft.iscritti.map(function(a){ return (a.uid||"")+"|"+a.cognome+"|"+a.nome; });
+          var matches = list.filter(function(u){ return u.username.toLowerCase().indexOf(q) !== -1; }).slice(0,6);
+          if(matches.length === 0){
+            searchResults.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);">'+t("search_username_empty")+'</div>'));
+            return;
+          }
+          matches.forEach(function(u){
+            var parts = u.nomeCognome ? u.nomeCognome.trim().split(/\s+/) : [];
+            var uNome = parts.length ? parts[0] : u.username;
+            var uCognome = parts.length > 1 ? parts.slice(1).join(" ") : "";
+            var already2 = already.indexOf(u.uid+"|"+uCognome+"|"+uNome) !== -1;
+            var chip = el('<button class="btn btn-ghost btn-sm">@'+escapeHtml(u.username)+(u.nomeCognome?' \u00b7 '+escapeHtml(u.nomeCognome):'')+'</button>');
+            if(already2){ chip.disabled = true; chip.style.opacity = "0.4"; }
+            chip.addEventListener("click", function(){
+              state.pgDraft.iscritti.push({ nome:uNome, cognome:uCognome, uid:u.uid, username:u.username });
+              state.pgDraft.squadre = [];
+              searchInput.value = ""; searchResults.innerHTML = "";
+              render();
+            });
+            searchResults.appendChild(chip);
+          });
+        });
+      });
+    }
+
     d.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:10px 0 4px;">Oppure incolla un elenco: un blocco per squadra separato da riga vuota o intestazione "Squadra N", un cognome (o "Cognome, Nome") per riga.</div>'));
     var bulkArea = el('<textarea placeholder="Squadra 1\nVallo\nZanetta\nBonetti\nArpaia\nNatale\n\nSquadra 2\n..." style="width:100%;min-height:120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;font-size:0.82rem;"></textarea>');
     var bulkBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:8px;margin-bottom:16px;">Importa squadre GIÀ FORMATE (mantiene i tuoi gruppi)</button>');
@@ -2441,7 +2492,19 @@
     });
     d.appendChild(bulkArea); d.appendChild(bulkBtn);
 
-    d.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">Iscritti: <b style="color:var(--gold);">'+state.pgDraft.iscritti.length+'</b></div>'));
+    d.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px;">Iscritti: <b style="color:var(--gold);">'+state.pgDraft.iscritti.length+'</b></div>'));
+    if(state.pgDraft.iscritti.length){
+      var iscrittiList = el('<div style="margin-bottom:10px;"></div>');
+      state.pgDraft.iscritti.forEach(function(p, idx){
+        var row = el('<div class="iscritto-row" style="display:flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:9px;padding:6px 10px;margin-bottom:5px;"></div>');
+        row.appendChild(el('<span style="flex:1;font-size:0.82rem;">'+escapeHtml(p.cognome)+(p.nome?' '+escapeHtml(p.nome):'')+(p.username?' <span style="color:var(--accent);">@'+escapeHtml(p.username)+'</span>':' <span style="color:var(--muted);font-size:0.7rem;">(non collegato)</span>')+'</span>'));
+        var rm = el('<button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;">\u2715</button>');
+        rm.addEventListener("click", function(){ state.pgDraft.iscritti.splice(idx,1); state.pgDraft.squadre=[]; render(); });
+        row.appendChild(rm);
+        iscrittiList.appendChild(row);
+      });
+      d.appendChild(iscrittiList);
+    }
 
     var sizeRow = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span style="font-size:0.78rem;color:var(--muted);">Persone per squadra (max 5)</span></div>');
     var sizeInp = el('<input type="number" min="2" max="5" value="'+(state.pgDraft.gruppiSize||5)+'" style="width:70px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:8px;padding:6px 8px;">');
