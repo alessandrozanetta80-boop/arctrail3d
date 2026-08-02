@@ -3412,7 +3412,7 @@
         {key:"tempo", label:"Tempo limitato (3 sagome)", sub:"3 frecce, si sommano sempre", frecce:3}
       ];
       pickOpts.forEach(function(op){
-        var b = el('<button class="btn btn-ghost btn-block" style="text-align:left;padding:14px;"><b>'+op.label+'</b><br><span style="font-size:0.78rem;color:var(--muted);">'+op.sub+'</span></button>');
+        var b = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-txt"><b>'+op.label+'</b><span class="menu-sub">'+op.sub+'</span></span></button>');
         b.addEventListener("click", function(){
           state.liveBattutaTypes = state.liveBattutaTypes || {};
           state.liveBattutaTypes[state.target] = { tipo: op.key, frecce: op.frecce };
@@ -3706,9 +3706,13 @@
     state.pendingArrows.push(score);
 
     var tac = targetArrowCount(mode);
+    var liveType = (mode.key === "battuta" && state.liveBattutaTypes) ? (state.liveBattutaTypes[state.target]||{}).tipo : null;
+    var stopAtFirstMiss = liveType === "branco";
     var done = mode.stopAtFirstHit
       ? (score > 0 || state.pendingArrows.length >= tac)
-      : (state.pendingArrows.length >= tac);
+      : stopAtFirstMiss
+        ? (score === 0 || state.pendingArrows.length >= tac)
+        : (state.pendingArrows.length >= tac);
 
     if(done){
       var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
