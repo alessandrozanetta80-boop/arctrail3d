@@ -280,7 +280,7 @@
     measurementId: "G-V6ML7HEGGJ"
   };
   var firebaseReady = true;
-  var auth, db, messaging;
+  var auth, db, messaging, messagingInitError = "";
   var VAPID_KEY = "BAf1VFe0FFTgirK8pyQ3rDhKxRfO9NuGwEKhFNKERRGZf-1B2--YCTzowswIo-qN0kyztUbRVVEYcKwzJmQe64M"; // Firebase Console -> Impostazioni progetto -> Cloud Messaging -> Web Push certificates
   if(DEV_MODE){
     firebaseReady = false;
@@ -290,7 +290,7 @@
     auth = firebase.auth();
     db = firebase.firestore();
     try{ db.enablePersistence({ synchronizeTabs:true }).catch(function(){}); }catch(e){}
-    try{ if(firebase.messaging && firebase.messaging.isSupported && firebase.messaging.isSupported()){ messaging = firebase.messaging(); } }catch(e){}
+    try{ if(firebase.messaging){ messaging = firebase.messaging(); } }catch(e){ messagingInitError = e && e.message ? e.message : String(e); }
   } catch(initErr){
     firebaseReady = false;
   }
@@ -1946,11 +1946,18 @@
     });
     card.appendChild(bowRow);
 
-    if(!DEV_MODE && messaging && currentUser){
+    if(!DEV_MODE && currentUser){
       card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">Notifiche</h2>'));
       var notifRow = el('<div style="margin-bottom:6px;"></div>');
       var notifBtn = el('<button class="btn btn-ghost btn-block">\uD83D\uDD14 Attiva notifiche su questo dispositivo</button>');
       var notifStatus = el('<div style="font-size:0.78rem;color:var(--muted);margin-top:6px;"></div>');
+      if(!messaging){
+        notifBtn.disabled = true;
+        notifStatus.textContent = "Non disponibile su questo browser/dispositivo" + (messagingInitError ? " (" + messagingInitError + ")" : "") + ".";
+      } else if(typeof Notification === "undefined"){
+        notifBtn.disabled = true;
+        notifStatus.textContent = "Questo browser non supporta le notifiche.";
+      }
       notifBtn.addEventListener("click", function(){ enableNotifications(notifStatus, notifBtn); });
       notifRow.appendChild(notifBtn); notifRow.appendChild(notifStatus);
       card.appendChild(notifRow);
