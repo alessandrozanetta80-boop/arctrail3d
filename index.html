@@ -64,6 +64,7 @@
   .menu-btn .menu-sub{ font-size:0.7rem; font-weight:400; opacity:0.85; margin-top:2px; }
   .menu-btn.training{ background:var(--accent); color:#fff; border-color:transparent; }
   .menu-btn.gara{ background:var(--bark); color:#fff; border-color:transparent; }
+  .menu-btn.prepara{ background:var(--gold); color:#241b0a; border-color:transparent; }
   .row{ display:flex; gap:10px; }
   .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
   .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:12px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; }
@@ -427,8 +428,8 @@
       menu_title: "Cosa vuoi fare?",
       menu_train_label: "Inizia Allenamento",
       menu_train_sub: "frecce e piazzole a scelta",
-      menu_gara_label: "Inizia Gara",
-      menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
+      menu_gara_label: "Gara libera",
+      menu_gara_sub: "gestisci le piazzole sul momento \u2014 TEST",
       menu_campi_label: "Campi vicino a te",
       menu_campi_sub: "trova un campo di tiro 3D",
       menu_history: "Storico",
@@ -2497,7 +2498,7 @@
     menuCard.appendChild(trainBtn);
 
     var activeGaraModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
-    var garaSub = activeGaraModes.map(function(k){ return modeLabel(k); }).join(", ");
+    var garaSub = activeGaraModes.map(function(k){ return modeLabel(k); }).join(", ") + " \u2014 gestisci le piazzole sul momento \u2014 TEST";
     var garaBtn = el('<button class="btn menu-btn gara btn-block" style="margin-bottom:10px;"><span class="menu-icon">'+icon("target",24)+'</span><span class="menu-txt">'+t("menu_gara_label")+'<span class="menu-sub">'+garaSub+'</span></span></button>');
     garaBtn.addEventListener("click", function(){
       var garaModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
@@ -2510,7 +2511,7 @@
     menuCard.appendChild(garaBtn);
 
     if((state.federation||"fiarc") === "fiarc"){
-      var pgBtn = el('<button class="btn btn-ghost btn-block menu-btn" style="margin-top:10px;"><span class="menu-icon">'+icon("pin",24)+'</span><span class="menu-txt">Prepara gara<span class="menu-sub">piazzole, iscritti e squadre \u2014 TEST</span></span></button>');
+      var pgBtn = el('<button class="btn menu-btn prepara btn-block" style="margin-top:10px;"><span class="menu-icon">'+icon("pin",24)+'</span><span class="menu-txt">Prepara gara<span class="menu-sub">per compagnie: piazzole, iscritti e squadre pronte in anticipo \u2014 TEST</span></span></button>');
       pgBtn.addEventListener("click", function(){ state.pgScreen = "pick"; state.screen = "prepara-gara"; save(); render(); });
       menuCard.appendChild(pgBtn);
     }
