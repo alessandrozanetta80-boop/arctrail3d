@@ -1883,7 +1883,24 @@
         btnEl.disabled = false;
         return;
       }
-      messaging.getToken({ vapidKey: VAPID_KEY }).then(function(token){
+    var getMessagingReg = function(){
+      return navigator.serviceWorker.getRegistration("firebase-messaging-sw.js").then(function(existing){
+        var regPromise = existing ? Promise.resolve(existing) : navigator.serviceWorker.register("firebase-messaging-sw.js");
+        return regPromise.then(function(reg){
+          if(reg.active){ return reg; }
+          return new Promise(function(resolve){
+            var check = function(){
+              if(reg.active){ resolve(reg); return; }
+              setTimeout(check, 150);
+            };
+            check();
+          });
+        });
+      });
+    };
+    getMessagingReg().then(function(reg){
+      return messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+    }).then(function(token){
         if(!token){ statusEl.textContent = "Impossibile ottenere il token. Riprova."; btnEl.disabled = false; return; }
         db.collection("users").doc(currentUser.uid).update({ fcmToken: token }).then(function(){
           statusEl.textContent = "Notifiche attivate su questo dispositivo.";
