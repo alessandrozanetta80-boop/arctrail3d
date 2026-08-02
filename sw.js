@@ -3,6 +3,47 @@
 // l'ultima versione pubblicata su GitHub), usa la cache solo come riserva
 // quando manca la connessione. Nessun numero di versione da aggiornare a mano.
 
+// --- Firebase Cloud Messaging: notifiche push anche ad app chiusa ---
+importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
+
+firebase.initializeApp({
+  apiKey: "AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",
+  authDomain: "arctrail3d.firebaseapp.com",
+  projectId: "arctrail3d",
+  messagingSenderId: "185889526349",
+  appId: "1:185889526349:web:0af3b386332664387c8204"
+});
+
+try {
+  var messaging = firebase.messaging();
+  messaging.onBackgroundMessage(function(payload){
+    var title = (payload.notification && payload.notification.title) || "ArcTrail 3D";
+    var body = (payload.notification && payload.notification.body) || "";
+    self.registration.showNotification(title, {
+      body: body,
+      icon: "icon-192.png",
+      badge: "icon-192.png"
+    });
+  });
+} catch (e) {
+  // se il browser non supporta Messaging in service worker, l'app continua
+  // a funzionare normalmente: solo le notifiche non arriveranno
+}
+
+self.addEventListener("notificationclick", function(event){
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then(function(clientList){
+      for (var i = 0; i < clientList.length; i++){
+        if ("focus" in clientList[i]) return clientList[i].focus();
+      }
+      if (clients.openWindow) return clients.openWindow("/");
+    })
+  );
+});
+
+// --- Cache offline, invariata ---
 var CACHE_NAME = "arctrail3d-cache";
 
 self.addEventListener("install", function(event){
