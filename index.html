@@ -1523,7 +1523,9 @@
     globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.8 2.3 4.3 5.3 4.3 8.5s-1.5 6.2-4.3 8.5c-2.8-2.3-4.3-5.3-4.3-8.5s1.5-6.2 4.3-8.5z"/>',
     sight: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/>',
     info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"/>',
-    clipboard: '<rect x="5" y="4" width="14" height="17" rx="1.5"/><rect x="8.5" y="2.5" width="7" height="3" rx="1"/><path d="M8.5 10.5h7M8.5 14h7M8.5 17.5h4"/>'
+    clipboard: '<rect x="5" y="4" width="14" height="17" rx="1.5"/><rect x="8.5" y="2.5" width="7" height="3" rx="1"/><path d="M8.5 10.5h7M8.5 14h7M8.5 17.5h4"/>',
+    mappin: '<path d="M12 21s7-6.8 7-12a7 7 0 0 0-14 0c0 5.2 7 12 7 12z"/><circle cx="12" cy="9" r="3.2"/><circle cx="12" cy="9" r="0.9" fill="currentColor" stroke="none"/>',
+    emblem: '<path d="M12 2.5l7 2.5v6c0 5-3 8.3-7 10.5-4-2.2-7-5.5-7-10.5V5z"/><path d="M8.7 11l2.4 2.4L15.3 9"/>'
   };
   function icon(name, size, strokeWidth){
     var p = ICON_PATHS[name] || "";
@@ -2866,11 +2868,11 @@
       menuCard.appendChild(pgBtn);
     }
 
-    var campiBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("pin",24)+'</span><span class="menu-txt">'+t("menu_campi_label")+'<span class="menu-sub">'+t("menu_campi_sub")+'</span></span></button>');
+    var campiBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("mappin",24)+'</span><span class="menu-txt">'+t("menu_campi_label")+'<span class="menu-sub">'+t("menu_campi_sub")+'</span></span></button>');
     campiBtn.addEventListener("click", function(){ state.screen = "campi"; save(); render(); });
     menuCard.appendChild(campiBtn);
 
-    var compagnieBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("users",24)+'</span><span class="menu-txt">'+t("menu_compagnie_label")+'<span class="menu-sub">'+t("menu_compagnie_sub")+'</span></span></button>');
+    var compagnieBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("emblem",24)+'</span><span class="menu-txt">'+t("menu_compagnie_label")+'<span class="menu-sub">'+t("menu_compagnie_sub")+'</span></span></button>');
     compagnieBtn.addEventListener("click", function(){ state.screen = "compagnie"; save(); render(); });
     menuCard.appendChild(compagnieBtn);
 
