@@ -50,9 +50,9 @@
     box-shadow:0 6px 16px rgba(0,0,0,0.28); border-top:2px solid var(--gold);
     position:relative; z-index:1; }
   h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 12px; }
-  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:10px; padding:14px 18px; font-size:1rem; font-weight:700; cursor:pointer; color:var(--cream); background:var(--bg-panel-2); border:1px solid var(--line); box-shadow:0 3px 8px rgba(0,0,0,0.22); transition:transform .12s ease, filter .12s ease; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:10px; padding:14px 18px; font-size:1rem; font-weight:700; cursor:pointer; color:var(--cream); background:var(--bg-panel-2); border:1px solid var(--line); box-shadow:0 3px 8px rgba(0,0,0,0.22); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease; }
   .btn:active{ transform:scale(0.97); filter:brightness(0.97); }
-  .btn:disabled{ opacity:0.4; }
+  .btn:disabled{ opacity:0.4; cursor:default; }
   .btn-primary{ background:var(--accent); border-color:transparent; color:#fff; font-weight:700; }
   .btn-primary:active{ }
   .btn-block{ width:100%; }
@@ -60,17 +60,25 @@
   .btn-sm{ padding:9px 14px; font-size:0.85rem; }
   .btn-danger{ background:var(--danger); border-color:transparent; color:#fff; }
   .btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
-  .menu-btn{ padding:18px; font-size:1.05rem; justify-content:flex-start; text-align:left; margin-bottom:10px; }
-  .menu-btn .menu-icon{ font-size:1.4rem; }
-  .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; }
+  .menu-btn{ padding:18px; font-size:1.05rem; justify-content:flex-start; text-align:left; margin-bottom:10px; position:relative; overflow:hidden; }
+  .menu-btn .menu-icon{ font-size:1.4rem; position:relative; z-index:1; }
+  .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; position:relative; z-index:1; }
   .menu-btn .menu-sub{ font-size:0.7rem; font-weight:400; opacity:0.85; margin-top:2px; }
-  .menu-btn.training{ background:#157A6E; color:#fff; border-color:transparent; }
-  .menu-btn.gara{ background:#C1571F; color:#fff; border-color:transparent; }
-  .menu-btn.prepara{ background:#B98A3A; color:#231a09; border-color:transparent; }
+  .menu-btn::after{ content:""; position:absolute; inset:0; background:linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 45%); pointer-events:none; }
+  .menu-btn.training{ background:#157A6E; color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(21,122,110,0.35); }
+  .menu-btn.gara{ background:#C1571F; color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(193,87,31,0.35); }
+  .menu-btn.prepara{ background:#B98A3A; color:#231a09; border-color:transparent; box-shadow:0 4px 14px rgba(185,138,58,0.35); }
   .row{ display:flex; gap:10px; }
   .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
-  .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; }
+  .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; transition:filter .12s ease, border-color .12s ease; }
   .chip.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  @media (hover:hover) and (pointer:fine){
+    .btn:not(:disabled):hover{ filter:brightness(1.08); }
+    .btn-ghost:hover{ border-color:var(--accent); color:var(--cream); }
+    .menu-btn:hover{ filter:brightness(1.06); transform:translateY(-1px); }
+    .chip:not(.active):hover{ border-color:var(--accent); filter:brightness(1.1); }
+  }
+  .btn:focus-visible, .chip:focus-visible, .lang-pick-btn:focus-visible, .grid-pick-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
   .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
   .lang-chip{ min-width:60px; }
   .lang-pick-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:16px 20px; border-radius:10px; border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; transition:transform .12s ease, border-color .12s ease; }
@@ -523,13 +531,13 @@
       mode_fitarco_training_label:"Allenamento", mode_fitarco_training_tag:"1 freccia", mode_fitarco_training_unit:"Freccia",
       mode_fitarco_training_desc:"Allenamento libero secondo le zone FITARCO: una sola freccia per piazzola, punteggi fissi. Scegli tu quante piazzole fare.",
       mode_round3d_label:"Round 3D", mode_round3d_tag:"gara \u00b7 2 frecce", mode_round3d_unit:"Freccia",
-      mode_round3d_desc:"Round 3D ufficiale: 24 piazzole, 2 frecce a piazzola (si sommano).",
+      mode_round3d_desc:"Round 3D ufficiale: 24 piazzole, 2 frecce a piazzola dallo stesso piquet (si sommano entrambe). 8 piazzole a tempo limitato, 4 con bersaglio mobile. Distanza massima 35 m per tutti i gruppi. Tiro in ginocchio mai ammesso.",
       mode_percorso_label:"Percorso", mode_percorso_tag:"gara \u00b7 3 frecce", mode_percorso_unit:"Freccia",
-      mode_percorso_desc:"Percorso ufficiale: 24 piazzole, 3 frecce a piazzola (si sommano tutte).",
+      mode_percorso_desc:"Percorso ufficiale: 24 piazzole, 3 frecce a piazzola (si sommano tutte). 10 piazzole a tempo limitato. Distanze da 20 a 40 m a seconda del gruppo. 10 frecce obbligatorie in ginocchio.",
       mode_tracciato_label:"Tracciato", mode_tracciato_tag:"gara \u00b7 fino a 3", mode_tracciato_unit:"Freccia",
-      mode_tracciato_desc:"Tracciato ufficiale: 24 piazzole, fino a 3 frecce, vale solo la prima a segno.",
+      mode_tracciato_desc:"Tracciato ufficiale: 24 piazzole, fino a 3 frecce a piazzola, vale solo la prima a segno. Distanze da 20 a 55 m a seconda del gruppo. 10 frecce obbligatorie in ginocchio.",
       mode_battuta_label:"Battuta", mode_battuta_tag:"gara \u00b7 branco di 3", mode_battuta_unit:"Sagoma",
-      mode_battuta_desc:"Battuta ufficiale: 28 piazzole, branco di 3 sagome a piazzola, 1 freccia a sagoma. Punteggio fisso per ogni sagoma del branco.",
+      mode_battuta_desc:"Battuta ufficiale: 28 piazzole, 48 frecce totali \u2014 14 piazzole singole e 4 mobili (1 freccia), 6 branchi da 3 sagome (si interrompe alla prima freccia Nulla) e 4 gruppi a tempo limitato da 3 sagome (si sommano sempre). Distanze da 20 a 40 m a seconda del gruppo. 10 frecce obbligatorie in ginocchio, mai sulle piazzole a tempo limitato.",
       menu_info: "Info",
       info_title: "Informazioni",
       disclaimer_text: "ArcTrail 3D \u00e8 un'app indipendente creata da appassionati per uso pratico durante allenamenti e gare. Non \u00e8 un prodotto ufficiale delle federazioni citate (FIARC, FITARCO, FFTA), n\u00e9 \u00e8 approvata o affiliata a esse. I nomi, i marchi e i regolamenti citati appartengono alle rispettive federazioni. In caso di dubbio sul punteggio ufficiale, fa sempre fede il regolamento pubblicato dalla federazione di riferimento.",
@@ -732,13 +740,13 @@
       mode_fitarco_training_label:"Training", mode_fitarco_training_tag:"1 arrow", mode_fitarco_training_unit:"Arrow",
       mode_fitarco_training_desc:"Free training using FITARCO zones: a single arrow per target, fixed scoring. Choose how many targets to shoot.",
       mode_round3d_label:"Round 3D", mode_round3d_tag:"match \u00b7 2 arrows", mode_round3d_unit:"Arrow",
-      mode_round3d_desc:"Official Round 3D: 24 targets, 2 arrows per target (summed).",
+      mode_round3d_desc:"Official Round 3D: 24 targets, 2 arrows per target from the same peg (both summed). 8 timed targets, 4 with a moving target. Maximum distance 35 m for all groups. Kneeling shots never allowed.",
       mode_percorso_label:"Percorso", mode_percorso_tag:"match \u00b7 3 arrows", mode_percorso_unit:"Arrow",
-      mode_percorso_desc:"Official Percorso: 24 targets, 3 arrows per target (all summed).",
+      mode_percorso_desc:"Official Percorso: 24 targets, 3 arrows per target (all summed). 10 timed targets. Distances from 20 to 40 m depending on the group. 10 arrows must be shot kneeling.",
       mode_tracciato_label:"Tracciato", mode_tracciato_tag:"match \u00b7 up to 3", mode_tracciato_unit:"Arrow",
-      mode_tracciato_desc:"Official Tracciato: 24 targets, up to 3 arrows, only the first scoring hit counts.",
+      mode_tracciato_desc:"Official Tracciato: 24 targets, up to 3 arrows per target, only the first scoring hit counts. Distances from 20 to 55 m depending on the group. 10 arrows must be shot kneeling.",
       mode_battuta_label:"Battuta", mode_battuta_tag:"match \u00b7 pack of 3", mode_battuta_unit:"Target",
-      mode_battuta_desc:"Official Battuta: 28 targets, pack of 3 targets per stand, 1 arrow per target. Fixed score for each target in the pack.",
+      mode_battuta_desc:"Official Battuta: 28 targets, 48 arrows total \u2014 14 single and 4 moving targets (1 arrow), 6 packs of 3 (stops at the first miss) and 4 timed groups of 3 (always summed). Distances from 20 to 40 m depending on the group. 10 arrows must be shot kneeling, never on timed targets.",
       menu_info: "Info",
       info_title: "Information",
       disclaimer_text: "ArcTrail 3D is an independent app created by enthusiasts for practical use during training and competitions. It is not an official product of the federations mentioned (FIARC, FITARCO, FFTA), nor is it approved by or affiliated with them. The names, trademarks, and rules mentioned belong to their respective federations. In case of doubt about official scoring, the rulebook published by the relevant federation always prevails.",
@@ -944,13 +952,13 @@
       mode_fitarco_training_label:"Entra\u00eenement", mode_fitarco_training_tag:"1 fl\u00e8che", mode_fitarco_training_unit:"Fl\u00e8che",
       mode_fitarco_training_desc:"Entra\u00eenement libre selon les zones FITARCO : une seule fl\u00e8che par cible, points fixes. Choisissez vous-m\u00eame le nombre de cibles.",
       mode_round3d_label:"Round 3D", mode_round3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_round3d_unit:"Fl\u00e8che",
-      mode_round3d_desc:"Round 3D officiel : 24 cibles, 2 fl\u00e8ches par cible (cumul\u00e9es).",
+      mode_round3d_desc:"Round 3D officiel : 24 cibles, 2 fl\u00e8ches par cible depuis le m\u00eame piquet (toutes deux cumul\u00e9es). 8 cibles chronom\u00e9tr\u00e9es, 4 cibles mobiles. Distance maximale de 35 m pour tous les groupes. Tir \u00e0 genou jamais admis.",
       mode_percorso_label:"Percorso", mode_percorso_tag:"comp\u00e9tition \u00b7 3 fl\u00e8ches", mode_percorso_unit:"Fl\u00e8che",
-      mode_percorso_desc:"Percorso officiel : 24 cibles, 3 fl\u00e8ches par cible (toutes cumul\u00e9es).",
+      mode_percorso_desc:"Percorso officiel : 24 cibles, 3 fl\u00e8ches par cible (toutes cumul\u00e9es). 10 cibles chronom\u00e9tr\u00e9es. Distances de 20 \u00e0 40 m selon le groupe. 10 fl\u00e8ches \u00e0 tirer obligatoirement \u00e0 genou.",
       mode_tracciato_label:"Tracciato", mode_tracciato_tag:"comp\u00e9tition \u00b7 jusqu\u2019\u00e0 3", mode_tracciato_unit:"Fl\u00e8che",
-      mode_tracciato_desc:"Tracciato officiel : 24 cibles, jusqu\u2019\u00e0 3 fl\u00e8ches, seul le premier tir marquant compte.",
+      mode_tracciato_desc:"Tracciato officiel : 24 cibles, jusqu\u2019\u00e0 3 fl\u00e8ches par cible, seul le premier tir marquant compte. Distances de 20 \u00e0 55 m selon le groupe. 10 fl\u00e8ches \u00e0 tirer obligatoirement \u00e0 genou.",
       mode_battuta_label:"Battuta", mode_battuta_tag:"comp\u00e9tition \u00b7 groupe de 3", mode_battuta_unit:"Silhouette",
-      mode_battuta_desc:"Battuta officielle : 28 cibles, groupe de 3 silhouettes par poste, 1 fl\u00e8che par silhouette. Score fixe pour chaque silhouette du groupe.",
+      mode_battuta_desc:"Battuta officielle : 28 cibles, 48 fl\u00e8ches au total \u2014 14 cibles simples et 4 mobiles (1 fl\u00e8che), 6 groupes de 3 (s\u2019arr\u00eate au premier tir manqu\u00e9) et 4 groupes chronom\u00e9tr\u00e9s de 3 (toujours cumul\u00e9s). Distances de 20 \u00e0 40 m selon le groupe. 10 fl\u00e8ches \u00e0 tirer obligatoirement \u00e0 genou, jamais sur les cibles chronom\u00e9tr\u00e9es.",
       menu_info: "Infos",
       info_title: "Informations",
       disclaimer_text: "ArcTrail 3D est une application ind\u00e9pendante cr\u00e9\u00e9e par des passionn\u00e9s pour un usage pratique lors des entra\u00eenements et des comp\u00e9titions. Ce n'est pas un produit officiel des f\u00e9d\u00e9rations mentionn\u00e9es (FIARC, FITARCO, FFTA), et l'application n'est ni approuv\u00e9e ni affili\u00e9e \u00e0 celles-ci. Les noms, marques et r\u00e8glements mentionn\u00e9s appartiennent \u00e0 leurs f\u00e9d\u00e9rations respectives. En cas de doute sur le score officiel, le r\u00e8glement publi\u00e9 par la f\u00e9d\u00e9ration concern\u00e9e fait toujours foi.",
@@ -1156,13 +1164,13 @@
       mode_fitarco_training_label:"Training", mode_fitarco_training_tag:"1 Pfeil", mode_fitarco_training_unit:"Pfeil",
       mode_fitarco_training_desc:"Freies Training nach FITARCO-Zonen: ein einzelner Pfeil pro Ziel, feste Punktwerte. W\u00e4hle selbst, wie viele Ziele du schie\u00dfen willst.",
       mode_round3d_label:"Round 3D", mode_round3d_tag:"Wettkampf \u00b7 2 Pfeile", mode_round3d_unit:"Pfeil",
-      mode_round3d_desc:"Offizielles Round 3D: 24 Ziele, 2 Pfeile pro Ziel (werden addiert).",
+      mode_round3d_desc:"Offizielles Round 3D: 24 Ziele, 2 Pfeile pro Ziel vom selben Pflock (beide werden addiert). 8 zeitlich begrenzte Ziele, 4 bewegliche Ziele. Maximale Distanz 35 m f\u00fcr alle Gruppen. Kniender Schuss nie erlaubt.",
       mode_percorso_label:"Percorso", mode_percorso_tag:"Wettkampf \u00b7 3 Pfeile", mode_percorso_unit:"Pfeil",
-      mode_percorso_desc:"Offizielles Percorso: 24 Ziele, 3 Pfeile pro Ziel (alle werden addiert).",
+      mode_percorso_desc:"Offizielles Percorso: 24 Ziele, 3 Pfeile pro Ziel (alle werden addiert). 10 zeitlich begrenzte Ziele. Distanzen von 20 bis 40 m je nach Gruppe. 10 Pfeile m\u00fcssen kniend geschossen werden.",
       mode_tracciato_label:"Tracciato", mode_tracciato_tag:"Wettkampf \u00b7 bis zu 3", mode_tracciato_unit:"Pfeil",
-      mode_tracciato_desc:"Offizielles Tracciato: 24 Ziele, bis zu 3 Pfeile, nur der erste Treffer z\u00e4hlt.",
+      mode_tracciato_desc:"Offizielles Tracciato: 24 Ziele, bis zu 3 Pfeile pro Ziel, nur der erste Treffer z\u00e4hlt. Distanzen von 20 bis 55 m je nach Gruppe. 10 Pfeile m\u00fcssen kniend geschossen werden.",
       mode_battuta_label:"Battuta", mode_battuta_tag:"Wettkampf \u00b7 Gruppe von 3", mode_battuta_unit:"Ziel",
-      mode_battuta_desc:"Offizielle Battuta: 28 Ziele, Gruppe von 3 Zielen pro Station, 1 Pfeil pro Ziel. Fester Punktwert f\u00fcr jedes Ziel der Gruppe.",
+      mode_battuta_desc:"Offizielle Battuta: 28 Ziele, 48 Pfeile insgesamt \u2014 14 einzelne und 4 bewegliche Ziele (1 Pfeil), 6 Dreiergruppen (endet beim ersten Fehlschuss) und 4 zeitlich begrenzte Dreiergruppen (immer addiert). Distanzen von 20 bis 40 m je nach Gruppe. 10 Pfeile m\u00fcssen kniend geschossen werden, nie bei zeitlich begrenzten Zielen.",
       menu_info: "Infos",
       info_title: "Informationen",
       disclaimer_text: "ArcTrail 3D ist eine unabh\u00e4ngige App, die von Enthusiasten f\u00fcr den praktischen Einsatz beim Training und bei Wettk\u00e4mpfen entwickelt wurde. Sie ist kein offizielles Produkt der genannten Verb\u00e4nde (FIARC, FITARCO, FFTA, SwissArchery) und wird von diesen weder genehmigt noch ist sie mit ihnen verbunden. Die genannten Namen, Marken und Reglemente geh\u00f6ren den jeweiligen Verb\u00e4nden. Im Zweifelsfall gilt immer das offiziell ver\u00f6ffentlichte Reglement des zust\u00e4ndigen Verbands.",
