@@ -46,10 +46,10 @@
   header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent); }
   header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
   .home-btn{ background:var(--bark);border:none;color:#fff;border-radius:10px;padding:8px 12px;font-size:0.8rem;font-weight:700;cursor:pointer; }
-  .card{ background:var(--bg-panel); border:1px solid var(--line); border-radius:20px; padding:18px; margin-bottom:16px;
+  .card{ background:var(--bg-panel); border:1px solid var(--line); border-radius:14px; padding:18px; margin-bottom:16px;
     position:relative; z-index:1; }
   h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 12px; }
-  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:14px; padding:14px 18px; font-size:1rem; font-weight:700; cursor:pointer; color:var(--cream); background:var(--bg-panel-2); border:1px solid var(--line); transition:transform .12s ease, filter .12s ease; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:10px; padding:14px 18px; font-size:1rem; font-weight:700; cursor:pointer; color:var(--cream); background:var(--bg-panel-2); border:1px solid var(--line); transition:transform .12s ease, filter .12s ease; }
   .btn:active{ transform:scale(0.97); filter:brightness(0.97); }
   .btn:disabled{ opacity:0.4; }
   .btn-primary{ background:var(--accent); border-color:transparent; color:#fff; font-weight:700; }
@@ -68,11 +68,11 @@
   .menu-btn.prepara{ background:var(--gold); color:#241b0a; border-color:transparent; }
   .row{ display:flex; gap:10px; }
   .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
-  .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:12px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; }
+  .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; }
   .chip.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
   .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
   .lang-chip{ min-width:60px; }
-  .lang-pick-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:16px 20px; border-radius:16px; border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; transition:transform .12s ease, border-color .12s ease; }
+  .lang-pick-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:16px 20px; border-radius:10px; border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; transition:transform .12s ease, border-color .12s ease; }
   .lang-pick-btn:active{ transform:scale(0.98); }
   .lang-pick-btn .flag{ font-size:1.6rem; line-height:1; }
   .lang-pick-btn:hover, .lang-pick-btn:focus{ border-color:var(--accent); }
@@ -80,14 +80,14 @@
   .onboard-sub{ color:var(--muted); font-size:0.82rem; margin-bottom:26px; }
   .onboard-stack{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px; }
   .grid-stack{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; width:100%; max-width:320px; }
-  .grid-pick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:16px 4px; border-radius:14px; border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:0.8rem; color:var(--cream); cursor:pointer; text-align:center; transition:transform .12s ease, border-color .12s ease; }
+  .grid-pick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:16px 4px; border-radius:10px; border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:0.8rem; color:var(--cream); cursor:pointer; text-align:center; transition:transform .12s ease, border-color .12s ease; }
   .grid-pick-btn:active{ transform:scale(0.95); }
   .grid-pick-btn:hover, .grid-pick-btn:focus{ border-color:var(--accent); }
   .grid-pick-btn .flag{ font-size:1.7rem; line-height:1; }
-  input[type=text], input[type=number]{ width:100%; padding:13px 14px; border-radius:10px; border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:1rem; }
+  input[type=text], input[type=number]{ width:100%; padding:13px 14px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:1rem; }
   input[type=text]:focus, input[type=number]:focus{ outline:2px solid var(--accent); }
   .archer-list{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
-  .archer-row{ display:flex; align-items:center; justify-content:space-between; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+  .archer-row{ display:flex; align-items:center; justify-content:space-between; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
   .archer-row .name{ font-weight:600; }
   .remove-x{ background:none;border:none;color:var(--danger);font-size:1.2rem;cursor:pointer;line-height:1; padding:4px 6px; }
   .progress-wrap{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
@@ -107,7 +107,7 @@
   .archer-name-big{ font-size:1.4rem; margin-bottom:6px; }
   .arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:20px; margin-bottom:12px; }
   .mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:20px; margin-bottom:8px; text-transform:uppercase; letter-spacing:.05em; }
-  .piazzola-num{ font-size:2.6rem; font-weight:800; color:var(--accent); font-family:"Outfit",sans-serif; line-height:1; margin-bottom:2px; position:relative; display:inline-block; }
+  .piazzola-num{ font-size:2.6rem; font-weight:600; color:var(--accent); font-family:"Fraunces",serif; line-height:1; margin-bottom:2px; position:relative; display:inline-block; }
   .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
     background:radial-gradient(circle, rgba(29,154,140,0.16), transparent 70%); z-index:-1; }
   .switch-row{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:12px; }
@@ -120,7 +120,7 @@
   .zoom-toolbar{ display:flex; justify-content:center; gap:8px; margin-top:10px; }
   .legend-row{ font-size:0.68rem; color:var(--muted); margin-top:8px; line-height:1.5; }
   .impact-readout{ margin-top:14px; background:var(--bg-panel-2); border:1px solid var(--gold); border-radius:12px; padding:14px; text-align:center; }
-  .impact-readout .pts{ font-size:1.9rem; font-weight:800; color:var(--gold); font-family:'Fraunces',Georgia,serif; }
+  .impact-readout .pts{ font-size:1.9rem; font-weight:600; color:var(--gold); font-family:'Fraunces',Georgia,serif; }
   .impact-readout .lbl{ font-size:0.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:4px; }
   .impact-actions{ display:flex; gap:10px; margin-top:12px; }
   .impact-actions .btn{ flex:1; }
@@ -167,7 +167,7 @@
   .splash-wrap .btn{ min-width:200px; padding:16px 24px; font-size:1.05rem; animation:splashUp .6s ease .45s both; }
   @keyframes splashLogo{ 0%{ opacity:0; transform:scale(0.6) rotate(-8deg); } 100%{ opacity:1; transform:scale(1) rotate(0deg); } }
   @keyframes splashUp{ 0%{ opacity:0; transform:translateY(14px); } 100%{ opacity:1; transform:translateY(0); } }
-  .big-target-num{ font-size:4.4rem; font-weight:800; color:var(--accent); font-family:"Outfit",sans-serif; margin:4px 0 10px; line-height:1; position:relative; display:inline-block; }
+  .big-target-num{ font-size:4.4rem; font-weight:600; color:var(--accent); font-family:"Fraunces",serif; margin:4px 0 10px; line-height:1; position:relative; display:inline-block; }
   .big-target-num::before{ content:""; position:absolute; left:50%; top:50%; width:180px; height:180px; transform:translate(-50%,-50%); border-radius:50%;
     background:radial-gradient(circle, rgba(159,203,42,0.20), transparent 70%); z-index:-1; }
   .leaf-burst{ position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:5; }
@@ -436,7 +436,7 @@
       menu_campi_label: "Campi vicino a te",
       menu_campi_sub: "trova un campo di tiro 3D",
       menu_history: "Storico",
-      menu_edit_archers: "Modifica arcieri",
+      menu_edit_archers: "Arcieri salvati",
       menu_profile: "Il mio profilo", profile_edit_title: "Il tuo profilo", profile_edit_email_note: "Per cambiare l'email di accesso, contatta l'assistenza.",
       profile_edit_save: "Salva modifiche", profile_edit_saved_msg: "Modifiche salvate.",
       resume_banner: "Hai un percorso in corso ({mode} \u00b7 {n} piazzole).",
@@ -471,7 +471,7 @@
       campi_hint: "Apre Google Maps con i campi di tiro con l\u2019arco 3D nei dintorni (richiede geolocalizzazione).",
       campi_searching: "Ricerca posizione\u2026",
       history_title: "Storico percorsi",
-      history_empty: "Nessun percorso salvato ancora",
+      history_empty: "Nessun percorso completato ancora \u2014 comparir\u00e0 qui una volta terminato",
       history_clear: "Cancella storico",
       clear_confirm: "Tocca di nuovo per confermare",
       targets_word: "piazzole",
@@ -662,7 +662,7 @@
       menu_campi_label: "Fields near you",
       menu_campi_sub: "find a 3D archery field",
       menu_history: "History",
-      menu_edit_archers: "Edit archers",
+      menu_edit_archers: "Saved archers",
       resume_banner: "You have a round in progress ({mode} \u00b7 {n} targets).",
       resume_btn: "Resume round",
       reset_full_btn: "Full reset (delete current round)",
@@ -680,7 +680,7 @@
       campi_hint: "Opens Google Maps with 3D archery fields nearby (requires location access).",
       campi_searching: "Locating\u2026",
       history_title: "Round history",
-      history_empty: "No rounds saved yet",
+      history_empty: "No completed rounds yet \u2014 it will appear here once finished",
       history_clear: "Clear history",
       clear_confirm: "Tap again to confirm",
       targets_word: "targets",
@@ -874,7 +874,7 @@
       menu_campi_label: "Terrains \u00e0 proximit\u00e9",
       menu_campi_sub: "trouvez un terrain de tir 3D",
       menu_history: "Historique",
-      menu_edit_archers: "Modifier les archers",
+      menu_edit_archers: "Archers enregistr\u00e9s",
       resume_banner: "Un parcours est en cours ({mode} \u00b7 {n} cibles).",
       resume_btn: "Reprendre le parcours",
       reset_full_btn: "R\u00e9initialisation totale (supprime le parcours en cours)",
@@ -892,7 +892,7 @@
       campi_hint: "Ouvre Google Maps avec les terrains de tir 3D \u00e0 proximit\u00e9 (n\u00e9cessite la g\u00e9olocalisation).",
       campi_searching: "Localisation\u2026",
       history_title: "Historique des parcours",
-      history_empty: "Aucun parcours enregistr\u00e9 pour le moment",
+      history_empty: "Aucun parcours termin\u00e9 pour le moment \u2014 il appara\u00eetra ici une fois termin\u00e9",
       history_clear: "Effacer l\u2019historique",
       clear_confirm: "Appuyez \u00e0 nouveau pour confirmer",
       targets_word: "cibles",
@@ -1086,7 +1086,7 @@
       menu_campi_label: "Pl\u00e4tze in der N\u00e4he",
       menu_campi_sub: "finde einen 3D-Bogenparcours",
       menu_history: "Verlauf",
-      menu_edit_archers: "Sch\u00fctzen bearbeiten",
+      menu_edit_archers: "Gespeicherte Sch\u00fctzen",
       resume_banner: "Du hast einen laufenden Parcours ({mode} \u00b7 {n} Ziele).",
       resume_btn: "Parcours fortsetzen",
       reset_full_btn: "Komplett zur\u00fccksetzen (l\u00f6scht den laufenden Parcours)",
@@ -1104,7 +1104,7 @@
       campi_hint: "\u00d6ffnet Google Maps mit 3D-Bogenpl\u00e4tzen in der N\u00e4he (ben\u00f6tigt Standortzugriff).",
       campi_searching: "Standort wird gesucht\u2026",
       history_title: "Parcours-Verlauf",
-      history_empty: "Noch kein Parcours gespeichert",
+      history_empty: "Noch kein abgeschlossener Parcours \u2014 er erscheint hier, sobald er beendet ist",
       history_clear: "Verlauf l\u00f6schen",
       clear_confirm: "Zum Best\u00e4tigen erneut tippen",
       targets_word: "Ziele",
@@ -1521,7 +1521,8 @@
     leaf: '<path d="M5 19c8 1 14-5 15-15C11 5 5 11 5 19z"/><path d="M6 18c3-4 6-7 12-11"/>',
     globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.8 2.3 4.3 5.3 4.3 8.5s-1.5 6.2-4.3 8.5c-2.8-2.3-4.3-5.3-4.3-8.5s1.5-6.2 4.3-8.5z"/>',
     sight: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/>',
-    info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"/>'
+    info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"/>',
+    clipboard: '<rect x="5" y="4" width="14" height="17" rx="1.5"/><rect x="8.5" y="2.5" width="7" height="3" rx="1"/><path d="M8.5 10.5h7M8.5 14h7M8.5 17.5h4"/>'
   };
   function icon(name, size, strokeWidth){
     var p = ICON_PATHS[name] || "";
@@ -2859,7 +2860,7 @@
     menuCard.appendChild(garaBtn);
 
     if((state.federation||"fiarc") === "fiarc"){
-      var pgBtn = el('<button class="btn menu-btn prepara btn-block"><span class="menu-icon">'+icon("pin",24)+'</span><span class="menu-txt">'+t("pg_menu_btn_label")+'<span class="menu-sub">'+t("pg_menu_btn_sub")+'</span></span></button>');
+      var pgBtn = el('<button class="btn menu-btn prepara btn-block"><span class="menu-icon">'+icon("clipboard",24)+'</span><span class="menu-txt">'+t("pg_menu_btn_label")+'<span class="menu-sub">'+t("pg_menu_btn_sub")+'</span></span></button>');
       pgBtn.addEventListener("click", function(){ state.pgScreen = "pick"; state.screen = "prepara-gara"; save(); render(); });
       menuCard.appendChild(pgBtn);
     }
