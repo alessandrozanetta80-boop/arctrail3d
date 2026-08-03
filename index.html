@@ -24,7 +24,7 @@
     --bg:#0F1412; --bg-panel:#16201C; --bg-panel-2:#1A2620; --wood:#16201C; --wood-2:#1A2620;
     --accent:#1D9A8C; --bark:#E8722F; --gold:#CBA35C; --cream:#EDE6D6; --muted:#9AA39C;
     --danger:#E23D2E; --success:#4CAF50; --line:#2A362F;
-    --qss:#E8722F; --qspot:#5CA847; --qsag:#3E6FC2; --qzero:#6B6558;
+    --qss:#E8722F; --qspot:#5CA847; --qsag:#3E6FC2; --qzero:#464A42;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{height:100%;}
@@ -59,6 +59,7 @@
   .btn-ghost{ background:transparent; border:1px solid var(--line); color:var(--muted); }
   .btn-sm{ padding:9px 14px; font-size:0.85rem; }
   .btn-danger{ background:var(--danger); border-color:transparent; color:#fff; }
+  .btn-ghost-danger{ background:transparent; border:1px solid var(--danger); color:var(--danger); }
   .btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
   .menu-btn{ padding:18px; font-size:1.05rem; justify-content:flex-start; text-align:left; margin-bottom:10px; position:relative; overflow:hidden; }
   .menu-btn .menu-icon{ font-size:1.4rem; position:relative; z-index:1; }
@@ -78,6 +79,7 @@
     .menu-btn:hover{ filter:brightness(1.06); transform:translateY(-1px); }
     .chip:not(.active):hover{ border-color:var(--accent); filter:brightness(1.1); }
     .quick-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+    .btn-ghost-danger:hover{ background:rgba(226,61,46,0.1); }
   }
   .btn:focus-visible, .chip:focus-visible, .lang-pick-btn:focus-visible, .grid-pick-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
   .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
@@ -121,8 +123,8 @@
   .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
     background:radial-gradient(circle, rgba(29,154,140,0.16), transparent 70%); z-index:-1; }
   .switch-row{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:12px; }
-  .board{ position:relative; border-radius:16px; padding:18px;
-    background: linear-gradient(180deg, #ffffff, #fdf9ef); border:1px solid var(--line); }
+  .board{ position:relative; border-radius:16px; padding:12px;
+    background:linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border:1px solid rgba(203,163,92,0.55); box-shadow:0 4px 14px rgba(0,0,0,0.3); }
   .silhouette-wrap{ position:relative; max-width:280px; margin:0 auto; border-radius:10px; overflow:hidden; touch-action:pan-x pan-y; }
   .silhouette-wrap.zoomed{ overflow:auto; max-height:360px; }
   .silhouette-wrap svg{ width:100%; height:auto; display:block; cursor:crosshair; }
@@ -1500,13 +1502,20 @@
     var n = zones.length;
     var colorVar = { perfect:"var(--qss)", superspot:"var(--qss)", spot:"var(--qspot)", sagoma:"var(--qsag)" };
     var cx=150, cy=150;
+    var outerR = radii[radii.length-1];
     var out = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">';
+    out += '<defs><radialGradient id="targetVol" cx="36%" cy="30%" r="75%">'+
+      '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>'+
+      '<stop offset="55%" stop-color="#ffffff" stop-opacity="0"/>'+
+      '<stop offset="100%" stop-color="#000000" stop-opacity="0.3"/>'+
+    '</radialGradient></defs>';
     out += '<rect x="0" y="0" width="300" height="300" fill="var(--qzero)"/>';
     for(var i=n-1;i>=0;i--){
       var isOuter = (i===n-1);
       var fillColor = colorVar[zones[i].cls] || "var(--qsag)";
-      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="'+fillColor+'" stroke="var(--bg-panel)" stroke-width="3"'+(isOuter?'':' pointer-events="none"')+'/>';
+      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="'+fillColor+'" stroke="#20241f" stroke-width="1.4"'+(isOuter?'':' pointer-events="none"')+'/>';
     }
+    out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+outerR+'" fill="url(#targetVol)" pointer-events="none"/>';
     out += '<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="var(--bg-panel)" pointer-events="none"/>';
     out += '</svg>';
     return out;
@@ -3871,7 +3880,7 @@
     if(strip.children.length){ card.appendChild(strip); }
 
     wrap.appendChild(card);
-    wrap.appendChild(el('<div class="row"><button class="btn btn-ghost btn-block" id="undoBtn">'+t("undo_btn")+'</button></div>'));
+    wrap.appendChild(el('<div class="row"><button class="btn btn-block" id="undoBtn">'+t("undo_btn")+'</button></div>'));
 
     if(state.arrowsPerTargetOverride && mode.freeFormat){
       var skipBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("skip_remaining_btn")+'</button>');
@@ -3883,7 +3892,7 @@
     standingsBtn.addEventListener("click", function(){ state.screen = "classifica-live"; save(); render(); });
     wrap.appendChild(standingsBtn);
 
-    var interruptBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("interrupt_btn")+'</button>');
+    var interruptBtn = el('<button class="btn btn-ghost-danger btn-block" style="margin-top:10px;">'+t("interrupt_btn")+'</button>');
     wrap.appendChild(interruptBtn);
 
     setTimeout(function(){
