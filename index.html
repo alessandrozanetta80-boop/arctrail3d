@@ -599,6 +599,35 @@
       login_password: "Password", login_forgot: "Password dimenticata?", login_reset_sent: "Ti abbiamo mandato un'email per reimpostare la password. Se non la vedi, controlla anche nella cartella spam.",
       profile_arco: "Arco principale", profile_privacy: "Ho letto l'informativa privacy e acconsento al trattamento dei miei dati per l'uso dell'app.",
       profile_submit: "Crea profilo e continua", profile_error: "Compila nome, username, email, almeno una federazione, l'arco principale e accetta la privacy.",
+      pg_title: "Prepara gara", pg_badge_test: "TEST", pg_back_menu: "\u2190 Torna al menu", pg_choose_gara: "Scegli la gara",
+      pg_my_saved_routes: "\uD83D\uDCCB I miei percorsi salvati", pg_saved_routes_title: "I miei percorsi salvati", pg_loading: "Caricamento\u2026", pg_error_loading: "Errore nel caricamento: {err}",
+      pg_load_error_generic: "errore di caricamento", pg_no_routes_saved: "Nessun percorso salvato ancora.", pg_no_name: "(senza nome)",
+      pg_route_summary: "{data}{compagnia}{iscritti} iscritti \u00b7 {squadre} squadre", pg_piazzola_partenza: "Piazzola {n}", pg_squadra_n: "Squadra {n}",
+      pg_section_route_data: "{gara} \u2014 dati del percorso", pg_field_route_name: "Nome percorso", pg_field_date: "Data",
+      pg_field_org: "Compagnia organizzatrice", pg_field_num_piazzole: "Numero piazzole", pg_btn_create_list: "Crea elenco piazzole",
+      pg_section_piazzole: "{gara} \u2014 piazzole", pg_configured_label: "Configurate", pg_total_arrows_label: "Frecce totali",
+      pg_to_configure: "Da configurare", pg_frecce_word: "frecce", pg_knee_suffix: "ginocchio", pg_timed_suffix: "a tempo", pg_mobile_suffix: "mobile",
+      pg_btn_participants_teams: "Iscritti e squadre \u2192", pg_piazzola_n: "Piazzola {n}", pg_type_label: "Tipo piazzola",
+      pg_distance_group_label: "Gruppo di distanza", pg_group_n: "Gruppo {n}", pg_arrows_on_this: "Frecce su questa piazzola:",
+      pg_timed_toggle: "Piazzola a tempo limitato", pg_mobile_toggle: "Bersaglio mobile", pg_knee_toggle: "Tiro in ginocchio",
+      pg_knee_not_allowed_timed: "Ginocchio non ammesso (a tempo)", pg_knee_not_allowed_gara: "Ginocchio non ammesso in questa gara",
+      pg_desc_placeholder: "Breve descrizione (facoltativa)", pg_cancel: "Annulla", pg_save_piazzola: "Salva piazzola",
+      pg_section_participants: "{gara} \u2014 iscritti e squadre", pg_first_name_ph: "Nome", pg_last_name_ph: "Cognome", pg_add_btn: "Aggiungi",
+      pg_search_account_hint: "Oppure cerca un account gi\u00e0 registrato (cos\u00ec l'iscritto risulta collegato, utile per le notifiche future)",
+      pg_bulk_import_hint: "Oppure incolla un elenco: un blocco per squadra separato da riga vuota o intestazione \u201cSquadra N\u201d, un cognome (o \u201cCognome, Nome\u201d) per riga.",
+      pg_import_teams_btn: "Importa squadre GI\u00c0 FORMATE (mantiene i tuoi gruppi)", pg_participants_count_label: "Iscritti:", pg_not_linked: "(non collegato)",
+      pg_people_per_team: "Persone per squadra (max 5)", pg_auto_teams_btn: "Crea squadre AUTOMATICHE (mischiate, non a blocchi A-Z)",
+      pg_auto_teams_warning: "\u26a0\ufe0f Ignora eventuali gruppi gi\u00e0 decisi: ricalcola le squadre da zero (mischiando i cognomi tra le squadre, ordine di tiro alfabetico solo dentro ciascuna).",
+      pg_organizer_view_title: "Vista organizzatore \u2014 chi parte da dove", pg_piazzola_label: "Piazzola", pg_team_label: "Squadra",
+      pg_save_route_btn: "Salva percorso", pg_saving: "Salvataggio in corso\u2026", pg_save_error_online: "Errore nel salvataggio online ({err}). Salvato solo su questo dispositivo.",
+      pg_retry: "riprova", pg_menu_btn_label: "Prepara gara", pg_menu_btn_sub: "per compagnie: piazzole, iscritti e squadre pronte in anticipo \u2014 TEST",
+      gl_which_piazzola: "Che piazzola hai davanti?", gl_singola: "Singola", gl_mobile: "Mobile", gl_branco: "Branco (3 sagome)", gl_tempo: "Tempo limitato (3 sagome)",
+      gl_1_arrow: "1 freccia", gl_3_arrows_stop: "3 frecce, si interrompe al primo mancato", gl_3_arrows_sum: "3 frecce, si sommano sempre",
+      notif_section_title: "Notifiche", notif_enable_btn: "\uD83D\uDD14 Attiva notifiche su questo dispositivo",
+      notif_not_available: "Non disponibile su questo browser/dispositivo", notif_not_supported: "Questo browser non supporta le notifiche.",
+      notif_requesting: "Richiesta permesso in corso\u2026", notif_denied: "Permesso negato: puoi riattivarlo dalle impostazioni del browser per questo sito.",
+      notif_token_error: "Impossibile ottenere il token. Riprova.", notif_enabled: "Notifiche attivate su questo dispositivo.",
+      notif_save_error: "Errore nel salvataggio: {err}", notif_generic_error: "Errore: {err}", notif_not_configured: "Notifiche non ancora configurate (manca la chiave sul server).",
     },
     en: {
       tagline: "Field scorekeeper \u00b7 FIARC",
@@ -628,7 +657,7 @@
       menu_title: "What would you like to do?",
       menu_train_label: "Start Training",
       menu_train_sub: "arrows and targets, your choice",
-      menu_gara_label: "Start Competition",
+      menu_gara_label: "Free Competition",
       menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
       menu_campi_label: "Fields near you",
       menu_campi_sub: "find a 3D archery field",
@@ -772,6 +801,43 @@
       profile_password: "Password (at least 6 characters)", profile_password_confirm: "Confirm password",
       profile_privacy: "I have read the privacy policy and consent to the processing of my data to use the app.",
       profile_submit: "Create profile and continue", profile_subtitle: "Only needed once.", profile_tessera: "{fed} membership number",
+      pg_title: "Prepare Event", pg_badge_test: "TEST", pg_back_menu: "\u2190 Back to menu", pg_choose_gara: "Choose the event",
+      pg_my_saved_routes: "\uD83D\uDCCB My saved routes", pg_saved_routes_title: "My saved routes", pg_loading: "Loading\u2026", pg_error_loading: "Loading error: {err}",
+      pg_load_error_generic: "loading error", pg_no_routes_saved: "No route saved yet.", pg_no_name: "(no name)",
+      pg_route_summary: "{data}{compagnia}{iscritti} participants \u00b7 {squadre} teams", pg_piazzola_partenza: "Target {n}", pg_squadra_n: "Team {n}",
+      pg_section_route_data: "{gara} \u2014 route data", pg_field_route_name: "Route name", pg_field_date: "Date",
+      pg_field_org: "Organizing club", pg_field_num_piazzole: "Number of targets", pg_btn_create_list: "Create target list",
+      pg_section_piazzole: "{gara} \u2014 targets", pg_configured_label: "Configured", pg_total_arrows_label: "Total arrows",
+      pg_to_configure: "To be configured", pg_frecce_word: "arrows", pg_knee_suffix: "kneeling", pg_timed_suffix: "timed", pg_mobile_suffix: "moving",
+      pg_btn_participants_teams: "Participants and teams \u2192", pg_piazzola_n: "Target {n}", pg_type_label: "Target type",
+      pg_distance_group_label: "Distance group", pg_group_n: "Group {n}", pg_arrows_on_this: "Arrows on this target:",
+      pg_timed_toggle: "Timed target", pg_mobile_toggle: "Moving target", pg_knee_toggle: "Kneeling shot",
+      pg_knee_not_allowed_timed: "Kneeling not allowed (timed target)", pg_knee_not_allowed_gara: "Kneeling not allowed in this event",
+      pg_desc_placeholder: "Short description (optional)", pg_cancel: "Cancel", pg_save_piazzola: "Save target",
+      pg_section_participants: "{gara} \u2014 participants and teams", pg_first_name_ph: "First name", pg_last_name_ph: "Last name", pg_add_btn: "Add",
+      pg_search_account_hint: "Or search for an already registered account (this links the participant, useful for future notifications)",
+      pg_bulk_import_hint: "Or paste a list: one block per team separated by a blank line or a \u201cTeam N\u201d heading, one last name (or \u201cLast name, First name\u201d) per line.",
+      pg_import_teams_btn: "Import ALREADY FORMED teams (keeps your groups)", pg_participants_count_label: "Participants:", pg_not_linked: "(not linked)",
+      pg_people_per_team: "People per team (max 5)", pg_auto_teams_btn: "Create AUTOMATIC teams (shuffled, not A-Z blocks)",
+      pg_auto_teams_warning: "\u26a0\ufe0f Ignores any groups already decided: recalculates teams from scratch (mixing last names across teams, alphabetical shooting order only within each team).",
+      pg_organizer_view_title: "Organizer view \u2014 who starts where", pg_piazzola_label: "Target", pg_team_label: "Team",
+      pg_save_route_btn: "Save route", pg_saving: "Saving\u2026", pg_save_error_online: "Error saving online ({err}). Saved on this device only.",
+      pg_retry: "retry", pg_menu_btn_label: "Prepare Event", pg_menu_btn_sub: "for clubs: targets, participants and teams ready in advance \u2014 TEST",
+      gl_which_piazzola: "Which target do you see?", gl_singola: "Single", gl_mobile: "Moving", gl_branco: "Group (3 targets)", gl_tempo: "Timed (3 targets)",
+      gl_1_arrow: "1 arrow", gl_3_arrows_stop: "3 arrows, stops at the first miss", gl_3_arrows_sum: "3 arrows, always added up",
+      notif_section_title: "Notifications", notif_enable_btn: "\uD83D\uDD14 Enable notifications on this device",
+      notif_not_available: "Not available on this browser/device", notif_not_supported: "This browser doesn't support notifications.",
+      notif_requesting: "Requesting permission\u2026", notif_denied: "Permission denied: you can re-enable it from your browser's settings for this site.",
+      notif_token_error: "Couldn't get the token. Please try again.", notif_enabled: "Notifications enabled on this device.",
+      notif_save_error: "Error saving: {err}", notif_generic_error: "Error: {err}", notif_not_configured: "Notifications not configured yet (server key missing).",
+      train_shared_title: "Shared session", train_shared_hint: "You've invited archers online: scores sync in real time on their phones. Requires an internet connection.",
+      train_double_confirm_label: "Require double confirmation of scores", train_double_confirm_hint: "Each score stays \"pending\" until another participant in the session confirms it from their own phone. If off, scores are recorded immediately, with no confirmation.",
+      session_banner_title: "Shared session active", session_banner_body: "{name} started a shared training session.", session_banner_btn: "Follow session",
+      session_follow_title: "Live session", session_follow_owner: "Started by {name}", session_no_data: "No scores entered yet.",
+      session_pending_label: "Waiting for confirmation", session_confirmed_label: "Confirmed", session_confirm_btn: "Confirm this score",
+      session_closed_note: "Session closed or ended.",
+      admin_sessions_title: "Active shared sessions", admin_sessions_empty: "No shared session active at the moment.",
+      admin_sessions_participants: "Participants", admin_sessions_double_confirm: "Double confirmation active", admin_sessions_single: "Double confirmation off",
       profile_title: "Create your profile", profile_username: "Username", profile_username_hint: "(what others see on the leaderboard)",
       zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
     },
@@ -803,7 +869,7 @@
       menu_title: "Que voulez-vous faire ?",
       menu_train_label: "Commencer l\u2019entra\u00eenement",
       menu_train_sub: "fl\u00e8ches et cibles \u00e0 volont\u00e9",
-      menu_gara_label: "Commencer la comp\u00e9tition",
+      menu_gara_label: "Comp\u00e9tition libre",
       menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
       menu_campi_label: "Terrains \u00e0 proximit\u00e9",
       menu_campi_sub: "trouvez un terrain de tir 3D",
@@ -947,6 +1013,43 @@
       profile_password: "Mot de passe (au moins 6 caract\u00e8res)", profile_password_confirm: "Confirmer le mot de passe",
       profile_privacy: "J'ai lu la politique de confidentialit\u00e9 et je consens au traitement de mes donn\u00e9es pour l'utilisation de l'application.",
       profile_submit: "Cr\u00e9er le profil et continuer", profile_subtitle: "N\u00e9cessaire une seule fois.", profile_tessera: "Num\u00e9ro de licence {fed}",
+      pg_title: "Pr\u00e9parer la comp\u00e9tition", pg_badge_test: "TEST", pg_back_menu: "\u2190 Retour au menu", pg_choose_gara: "Choisissez la comp\u00e9tition",
+      pg_my_saved_routes: "\uD83D\uDCCB Mes parcours enregistr\u00e9s", pg_saved_routes_title: "Mes parcours enregistr\u00e9s", pg_loading: "Chargement\u2026", pg_error_loading: "Erreur de chargement\u00a0: {err}",
+      pg_load_error_generic: "erreur de chargement", pg_no_routes_saved: "Aucun parcours enregistr\u00e9 pour l'instant.", pg_no_name: "(sans nom)",
+      pg_route_summary: "{data}{compagnia}{iscritti} inscrits \u00b7 {squadre} \u00e9quipes", pg_piazzola_partenza: "Cible {n}", pg_squadra_n: "\u00c9quipe {n}",
+      pg_section_route_data: "{gara} \u2014 donn\u00e9es du parcours", pg_field_route_name: "Nom du parcours", pg_field_date: "Date",
+      pg_field_org: "Club organisateur", pg_field_num_piazzole: "Nombre de cibles", pg_btn_create_list: "Cr\u00e9er la liste des cibles",
+      pg_section_piazzole: "{gara} \u2014 cibles", pg_configured_label: "Configur\u00e9es", pg_total_arrows_label: "Fl\u00e8ches au total",
+      pg_to_configure: "\u00c0 configurer", pg_frecce_word: "fl\u00e8ches", pg_knee_suffix: "genou", pg_timed_suffix: "chronom\u00e9tr\u00e9e", pg_mobile_suffix: "mobile",
+      pg_btn_participants_teams: "Inscrits et \u00e9quipes \u2192", pg_piazzola_n: "Cible {n}", pg_type_label: "Type de cible",
+      pg_distance_group_label: "Groupe de distance", pg_group_n: "Groupe {n}", pg_arrows_on_this: "Fl\u00e8ches sur cette cible\u00a0:",
+      pg_timed_toggle: "Cible chronom\u00e9tr\u00e9e", pg_mobile_toggle: "Cible mobile", pg_knee_toggle: "Tir \u00e0 genou",
+      pg_knee_not_allowed_timed: "Tir \u00e0 genou non admis (chronom\u00e9tr\u00e9e)", pg_knee_not_allowed_gara: "Tir \u00e0 genou non admis dans cette comp\u00e9tition",
+      pg_desc_placeholder: "Br\u00e8ve description (facultative)", pg_cancel: "Annuler", pg_save_piazzola: "Enregistrer la cible",
+      pg_section_participants: "{gara} \u2014 inscrits et \u00e9quipes", pg_first_name_ph: "Pr\u00e9nom", pg_last_name_ph: "Nom", pg_add_btn: "Ajouter",
+      pg_search_account_hint: "Ou recherchez un compte d\u00e9j\u00e0 inscrit (l'inscrit sera ainsi li\u00e9, utile pour les futures notifications)",
+      pg_bulk_import_hint: "Ou collez une liste\u00a0: un bloc par \u00e9quipe s\u00e9par\u00e9 par une ligne vide ou un titre \u00ab\u00a0\u00c9quipe N\u00a0\u00bb, un nom (ou \u00ab\u00a0Nom, Pr\u00e9nom\u00a0\u00bb) par ligne.",
+      pg_import_teams_btn: "Importer des \u00e9quipes D\u00c9J\u00c0 FORM\u00c9ES (conserve vos groupes)", pg_participants_count_label: "Inscrits\u00a0:", pg_not_linked: "(non li\u00e9)",
+      pg_people_per_team: "Personnes par \u00e9quipe (max 5)", pg_auto_teams_btn: "Cr\u00e9er des \u00e9quipes AUTOMATIQUES (m\u00e9lang\u00e9es, pas par blocs A-Z)",
+      pg_auto_teams_warning: "\u26a0\ufe0f Ignore les groupes d\u00e9j\u00e0 d\u00e9cid\u00e9s\u00a0: recalcule les \u00e9quipes \u00e0 z\u00e9ro (en m\u00e9langeant les noms entre les \u00e9quipes, ordre de tir alphab\u00e9tique seulement \u00e0 l'int\u00e9rieur de chacune).",
+      pg_organizer_view_title: "Vue organisateur \u2014 qui part d'o\u00f9", pg_piazzola_label: "Cible", pg_team_label: "\u00c9quipe",
+      pg_save_route_btn: "Enregistrer le parcours", pg_saving: "Enregistrement en cours\u2026", pg_save_error_online: "Erreur lors de l'enregistrement en ligne ({err}). Enregistr\u00e9 uniquement sur cet appareil.",
+      pg_retry: "r\u00e9essayer", pg_menu_btn_label: "Pr\u00e9parer la comp\u00e9tition", pg_menu_btn_sub: "pour les clubs\u00a0: cibles, inscrits et \u00e9quipes pr\u00eats \u00e0 l'avance \u2014 TEST",
+      gl_which_piazzola: "Quelle cible avez-vous devant vous\u00a0?", gl_singola: "Simple", gl_mobile: "Mobile", gl_branco: "Groupe (3 cibles)", gl_tempo: "Chronom\u00e9tr\u00e9e (3 cibles)",
+      gl_1_arrow: "1 fl\u00e8che", gl_3_arrows_stop: "3 fl\u00e8ches, s'arr\u00eate au premier tir manqu\u00e9", gl_3_arrows_sum: "3 fl\u00e8ches, toujours additionn\u00e9es",
+      notif_section_title: "Notifications", notif_enable_btn: "\uD83D\uDD14 Activer les notifications sur cet appareil",
+      notif_not_available: "Non disponible sur ce navigateur/appareil", notif_not_supported: "Ce navigateur ne prend pas en charge les notifications.",
+      notif_requesting: "Demande d'autorisation en cours\u2026", notif_denied: "Autorisation refus\u00e9e\u00a0: vous pouvez la r\u00e9activer depuis les param\u00e8tres de votre navigateur pour ce site.",
+      notif_token_error: "Impossible d'obtenir le jeton. R\u00e9essayez.", notif_enabled: "Notifications activ\u00e9es sur cet appareil.",
+      notif_save_error: "Erreur lors de l'enregistrement\u00a0: {err}", notif_generic_error: "Erreur\u00a0: {err}", notif_not_configured: "Notifications pas encore configur\u00e9es (cl\u00e9 serveur manquante).",
+      train_shared_title: "Session partag\u00e9e", train_shared_hint: "Vous avez invit\u00e9 des archers en ligne\u00a0: les scores se synchronisent en temps r\u00e9el sur leurs t\u00e9l\u00e9phones. Connexion internet requise.",
+      train_double_confirm_label: "Exiger une double confirmation des scores", train_double_confirm_hint: "Chaque score reste \u00ab\u00a0en attente\u00a0\u00bb jusqu'\u00e0 ce qu'un autre participant de la session le confirme depuis son propre t\u00e9l\u00e9phone. Si d\u00e9sactiv\u00e9, les scores sont enregistr\u00e9s imm\u00e9diatement, sans confirmation.",
+      session_banner_title: "Session partag\u00e9e active", session_banner_body: "{name} a d\u00e9marr\u00e9 un entra\u00eenement partag\u00e9.", session_banner_btn: "Suivre la session",
+      session_follow_title: "Session en direct", session_follow_owner: "D\u00e9marr\u00e9e par {name}", session_no_data: "Aucun score saisi pour l'instant.",
+      session_pending_label: "En attente de confirmation", session_confirmed_label: "Confirm\u00e9", session_confirm_btn: "Confirmer ce score",
+      session_closed_note: "Session ferm\u00e9e ou termin\u00e9e.",
+      admin_sessions_title: "Sessions partag\u00e9es actives", admin_sessions_empty: "Aucune session partag\u00e9e active pour le moment.",
+      admin_sessions_participants: "Participants", admin_sessions_double_confirm: "Double confirmation active", admin_sessions_single: "Double confirmation d\u00e9sactiv\u00e9e",
       profile_title: "Cr\u00e9ez votre profil", profile_username: "Pseudo", profile_username_hint: "(ce que les autres voient dans le classement)",
       zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
     },
@@ -978,7 +1081,7 @@
       menu_title: "Was m\u00f6chtest du tun?",
       menu_train_label: "Training starten",
       menu_train_sub: "Pfeile und Ziele nach Wahl",
-      menu_gara_label: "Wettkampf starten",
+      menu_gara_label: "Freier Wettkampf",
       menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
       menu_campi_label: "Pl\u00e4tze in der N\u00e4he",
       menu_campi_sub: "finde einen 3D-Bogenparcours",
@@ -1122,6 +1225,43 @@
       profile_password: "Passwort (mindestens 6 Zeichen)", profile_password_confirm: "Passwort best\u00e4tigen",
       profile_privacy: "Ich habe die Datenschutzerkl\u00e4rung gelesen und stimme der Verarbeitung meiner Daten zur Nutzung der App zu.",
       profile_submit: "Profil erstellen und fortfahren", profile_subtitle: "Nur einmal erforderlich.", profile_tessera: "{fed}-Mitgliedsnummer",
+      pg_title: "Wettkampf vorbereiten", pg_badge_test: "TEST", pg_back_menu: "\u2190 Zur\u00fcck zum Men\u00fc", pg_choose_gara: "Wettkampf ausw\u00e4hlen",
+      pg_my_saved_routes: "\uD83D\uDCCB Meine gespeicherten Strecken", pg_saved_routes_title: "Meine gespeicherten Strecken", pg_loading: "Wird geladen\u2026", pg_error_loading: "Fehler beim Laden: {err}",
+      pg_load_error_generic: "Ladefehler", pg_no_routes_saved: "Noch keine Strecke gespeichert.", pg_no_name: "(kein Name)",
+      pg_route_summary: "{data}{compagnia}{iscritti} Teilnehmer \u00b7 {squadre} Teams", pg_piazzola_partenza: "Ziel {n}", pg_squadra_n: "Team {n}",
+      pg_section_route_data: "{gara} \u2014 Streckendaten", pg_field_route_name: "Name der Strecke", pg_field_date: "Datum",
+      pg_field_org: "Ausrichtender Verein", pg_field_num_piazzole: "Anzahl Ziele", pg_btn_create_list: "Zielliste erstellen",
+      pg_section_piazzole: "{gara} \u2014 Ziele", pg_configured_label: "Konfiguriert", pg_total_arrows_label: "Pfeile insgesamt",
+      pg_to_configure: "Noch einzurichten", pg_frecce_word: "Pfeile", pg_knee_suffix: "kniend", pg_timed_suffix: "zeitlich begrenzt", pg_mobile_suffix: "beweglich",
+      pg_btn_participants_teams: "Teilnehmer und Teams \u2192", pg_piazzola_n: "Ziel {n}", pg_type_label: "Zieltyp",
+      pg_distance_group_label: "Distanzgruppe", pg_group_n: "Gruppe {n}", pg_arrows_on_this: "Pfeile auf diesem Ziel:",
+      pg_timed_toggle: "Zeitlich begrenztes Ziel", pg_mobile_toggle: "Bewegliches Ziel", pg_knee_toggle: "Schuss kniend",
+      pg_knee_not_allowed_timed: "Kniender Schuss nicht erlaubt (zeitlich begrenzt)", pg_knee_not_allowed_gara: "Kniender Schuss bei diesem Wettkampf nicht erlaubt",
+      pg_desc_placeholder: "Kurze Beschreibung (optional)", pg_cancel: "Abbrechen", pg_save_piazzola: "Ziel speichern",
+      pg_section_participants: "{gara} \u2014 Teilnehmer und Teams", pg_first_name_ph: "Vorname", pg_last_name_ph: "Nachname", pg_add_btn: "Hinzuf\u00fcgen",
+      pg_search_account_hint: "Oder ein bereits registriertes Konto suchen (so wird der Teilnehmer verkn\u00fcpft, n\u00fctzlich f\u00fcr k\u00fcnftige Benachrichtigungen)",
+      pg_bulk_import_hint: "Oder eine Liste einf\u00fcgen: ein Block pro Team, getrennt durch eine Leerzeile oder eine \u201eTeam N\u201c-\u00dcberschrift, ein Nachname (oder \u201eNachname, Vorname\u201c) pro Zeile.",
+      pg_import_teams_btn: "BEREITS GEBILDETE Teams importieren (beh\u00e4lt deine Gruppen)", pg_participants_count_label: "Teilnehmer:", pg_not_linked: "(nicht verkn\u00fcpft)",
+      pg_people_per_team: "Personen pro Team (max. 5)", pg_auto_teams_btn: "AUTOMATISCHE Teams erstellen (gemischt, nicht in A-Z-Bl\u00f6cken)",
+      pg_auto_teams_warning: "\u26a0\ufe0f Ignoriert bereits festgelegte Gruppen: berechnet die Teams komplett neu (mischt Nachnamen zwischen den Teams, alphabetische Schie\u00dfreihenfolge nur innerhalb jedes Teams).",
+      pg_organizer_view_title: "Organisator-Ansicht \u2014 wer startet wo", pg_piazzola_label: "Ziel", pg_team_label: "Team",
+      pg_save_route_btn: "Strecke speichern", pg_saving: "Wird gespeichert\u2026", pg_save_error_online: "Fehler beim Online-Speichern ({err}). Nur auf diesem Ger\u00e4t gespeichert.",
+      pg_retry: "erneut versuchen", pg_menu_btn_label: "Wettkampf vorbereiten", pg_menu_btn_sub: "f\u00fcr Vereine: Ziele, Teilnehmer und Teams im Voraus bereit \u2014 TEST",
+      gl_which_piazzola: "Welches Ziel siehst du vor dir?", gl_singola: "Einzeln", gl_mobile: "Beweglich", gl_branco: "Gruppe (3 Ziele)", gl_tempo: "Zeitlich begrenzt (3 Ziele)",
+      gl_1_arrow: "1 Pfeil", gl_3_arrows_stop: "3 Pfeile, endet beim ersten Fehlschuss", gl_3_arrows_sum: "3 Pfeile, immer zusammengez\u00e4hlt",
+      notif_section_title: "Benachrichtigungen", notif_enable_btn: "\uD83D\uDD14 Benachrichtigungen auf diesem Ger\u00e4t aktivieren",
+      notif_not_available: "Auf diesem Browser/Ger\u00e4t nicht verf\u00fcgbar", notif_not_supported: "Dieser Browser unterst\u00fctzt keine Benachrichtigungen.",
+      notif_requesting: "Berechtigung wird angefragt\u2026", notif_denied: "Berechtigung verweigert: du kannst sie in den Browser-Einstellungen f\u00fcr diese Seite wieder aktivieren.",
+      notif_token_error: "Token konnte nicht abgerufen werden. Bitte erneut versuchen.", notif_enabled: "Benachrichtigungen auf diesem Ger\u00e4t aktiviert.",
+      notif_save_error: "Fehler beim Speichern: {err}", notif_generic_error: "Fehler: {err}", notif_not_configured: "Benachrichtigungen noch nicht konfiguriert (Server-Schl\u00fcssel fehlt).",
+      train_shared_title: "Geteilte Sitzung", train_shared_hint: "Du hast Bogensch\u00fctzen online eingeladen: Die Punktzahlen werden in Echtzeit auf ihren Telefonen synchronisiert. Internetverbindung erforderlich.",
+      train_double_confirm_label: "Doppelte Best\u00e4tigung der Punktzahlen verlangen", train_double_confirm_hint: "Jeder Punktestand bleibt \u201eausstehend\u201c, bis ihn ein anderer Teilnehmer der Sitzung von seinem eigenen Telefon aus best\u00e4tigt. Ist die Option deaktiviert, werden Punktzahlen sofort ohne Best\u00e4tigung gespeichert.",
+      session_banner_title: "Geteilte Sitzung aktiv", session_banner_body: "{name} hat ein gemeinsames Training gestartet.", session_banner_btn: "Sitzung folgen",
+      session_follow_title: "Live-Sitzung", session_follow_owner: "Gestartet von {name}", session_no_data: "Noch keine Punktzahlen eingetragen.",
+      session_pending_label: "Warten auf Best\u00e4tigung", session_confirmed_label: "Best\u00e4tigt", session_confirm_btn: "Diesen Punktestand best\u00e4tigen",
+      session_closed_note: "Sitzung geschlossen oder beendet.",
+      admin_sessions_title: "Aktive geteilte Sitzungen", admin_sessions_empty: "Derzeit keine aktive geteilte Sitzung.",
+      admin_sessions_participants: "Teilnehmer", admin_sessions_double_confirm: "Doppelte Best\u00e4tigung aktiv", admin_sessions_single: "Doppelte Best\u00e4tigung deaktiviert",
       profile_title: "Erstelle dein Profil", profile_username: "Benutzername", profile_username_hint: "(was andere in der Rangliste sehen)",
       zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
     }
@@ -1873,13 +2013,13 @@
   }
 
   function enableNotifications(statusEl, btnEl){
-    if(!messaging){ statusEl.textContent = "Le notifiche non sono supportate su questo browser/dispositivo."; return; }
-    if(VAPID_KEY === "INCOLLA_QUI_LA_TUA_VAPID_KEY"){ statusEl.textContent = "Notifiche non ancora configurate (manca la chiave sul server)."; return; }
+    if(!messaging){ statusEl.textContent = t("notif_not_supported"); return; }
+    if(VAPID_KEY === "INCOLLA_QUI_LA_TUA_VAPID_KEY"){ statusEl.textContent = t("notif_not_configured"); return; }
     btnEl.disabled = true;
-    statusEl.textContent = "Richiesta permesso in corso\u2026";
+    statusEl.textContent = t("notif_requesting");
     Notification.requestPermission().then(function(permission){
       if(permission !== "granted"){
-        statusEl.textContent = "Permesso negato: puoi riattivarlo dalle impostazioni del browser per questo sito.";
+        statusEl.textContent = t("notif_denied");
         btnEl.disabled = false;
         return;
       }
@@ -1901,16 +2041,16 @@
     getMessagingReg().then(function(reg){
       return messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
     }).then(function(token){
-        if(!token){ statusEl.textContent = "Impossibile ottenere il token. Riprova."; btnEl.disabled = false; return; }
+        if(!token){ statusEl.textContent = t("notif_token_error"); btnEl.disabled = false; return; }
         db.collection("users").doc(currentUser.uid).update({ fcmToken: token }).then(function(){
-          statusEl.textContent = "Notifiche attivate su questo dispositivo.";
+          statusEl.textContent = t("notif_enabled");
           statusEl.style.color = "var(--accent)";
         }).catch(function(err){
-          statusEl.textContent = "Errore nel salvataggio: " + (err && err.message ? err.message : "riprova");
+          statusEl.textContent = t("notif_save_error", {err: err && err.message ? err.message : t("pg_retry")});
           btnEl.disabled = false;
         });
       }).catch(function(err){
-        statusEl.textContent = "Errore: " + (err && err.message ? err.message : "riprova");
+        statusEl.textContent = t("notif_generic_error", {err: err && err.message ? err.message : t("pg_retry")});
         btnEl.disabled = false;
       });
     });
@@ -1964,16 +2104,16 @@
     card.appendChild(bowRow);
 
     if(!DEV_MODE && currentUser){
-      card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">Notifiche</h2>'));
+      card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("notif_section_title")+'</h2>'));
       var notifRow = el('<div style="margin-bottom:6px;"></div>');
-      var notifBtn = el('<button class="btn btn-ghost btn-block">\uD83D\uDD14 Attiva notifiche su questo dispositivo</button>');
+      var notifBtn = el('<button class="btn btn-ghost btn-block">'+t("notif_enable_btn")+'</button>');
       var notifStatus = el('<div style="font-size:0.78rem;color:var(--muted);margin-top:6px;"></div>');
       if(!messaging){
         notifBtn.disabled = true;
-        notifStatus.textContent = "Non disponibile su questo browser/dispositivo" + (messagingInitError ? " (" + messagingInitError + ")" : "") + ".";
+        notifStatus.textContent = t("notif_not_available") + (messagingInitError ? " (" + messagingInitError + ")" : "") + ".";
       } else if(typeof Notification === "undefined"){
         notifBtn.disabled = true;
-        notifStatus.textContent = "Questo browser non supporta le notifiche.";
+        notifStatus.textContent = t("notif_not_supported");
       }
       notifBtn.addEventListener("click", function(){ enableNotifications(notifStatus, notifBtn); });
       notifRow.appendChild(notifBtn); notifRow.appendChild(notifStatus);
@@ -2220,13 +2360,15 @@
   }
 
   // ---------- MENU ----------
-  // ---------- PREPARA GARA (TEST, solo italiano per ora) ----------
-  var PG_TIPI = [
-    { key:"singola", label:"Singola", frecce:1 },
-    { key:"mobile", label:"Mobile", frecce:1 },
-    { key:"branco", label:"Branco (3 sagome)", frecce:3 },
-    { key:"tempo", label:"Tempo limitato (3 sagome)", frecce:3 }
-  ];
+  // ---------- PREPARA GARA ----------
+  function getPgTipi(){
+    return [
+      { key:"singola", label:t("gl_singola"), frecce:1 },
+      { key:"mobile", label:t("gl_mobile"), frecce:1 },
+      { key:"branco", label:t("gl_branco"), frecce:3 },
+      { key:"tempo", label:t("gl_tempo"), frecce:3 }
+    ];
+  }
   var PG_MODES = {
     round3d:   { label:"Round 3D",  piazzoleDefault:24, gruppi:[["g1","max 35 m"],["g2","max 35 m"],["g3","max 35 m"],["g4","max 35 m"]], hasTipo:false, hasTempo:true,  hasMobileToggle:true,  ginocchioAllowed:false, frecceFixed:2 },
     percorso:  { label:"Percorso",  piazzoleDefault:24, gruppi:[["g1","max 40 m"],["g2","max 40 m"],["g3","max 30 m"],["g4","max 20 m"]], hasTipo:false, hasTempo:true,  hasMobileToggle:false, ginocchioAllowed:true,  frecceFixed:3 },
@@ -2238,13 +2380,13 @@
   function preparaGaraScreen(){
     if(!state.pgScreen) state.pgScreen = "pick";
     var wrap = el('<div></div>');
-    wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:Georgia,serif;color:var(--gold);font-size:1.15rem;">Prepara gara</h2><span style="display:inline-block;margin-top:6px;font-size:0.65rem;letter-spacing:.05em;text-transform:uppercase;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--bark);padding:3px 10px;border-radius:20px;">TEST \u2014 solo italiano per ora</span></div>'));
+    wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:Georgia,serif;color:var(--gold);font-size:1.15rem;">'+t("pg_title")+'</h2><span style="display:inline-block;margin-top:6px;font-size:0.65rem;letter-spacing:.05em;text-transform:uppercase;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--bark);padding:3px 10px;border-radius:20px;">'+t("pg_badge_test")+'</span></div>'));
     if(state.pgScreen === "pick") wrap.appendChild(pgPickScreen());
     else if(state.pgScreen === "elenco") wrap.appendChild(pgElencoScreen());
     else if(state.pgScreen === "setup") wrap.appendChild(pgSetupScreen());
     else if(state.pgScreen === "piazzole") wrap.appendChild(pgPiazzoleScreen());
     else if(state.pgScreen === "iscritti") wrap.appendChild(pgIscrittiScreen());
-    var back = el('<div style="text-align:center;margin-top:22px;"><button class="btn btn-ghost">\u2190 Torna al menu</button></div>');
+    var back = el('<div style="text-align:center;margin-top:22px;"><button class="btn btn-ghost">'+t("pg_back_menu")+'</button></div>');
     back.querySelector("button").addEventListener("click", function(){ state.screen="menu"; save(); render(); });
     wrap.appendChild(back);
     return wrap;
@@ -2252,7 +2394,7 @@
 
   function pgPickScreen(){
     var d = el('<div class="card"></div>');
-    d.appendChild(el('<h3 class="section-title">Scegli la gara</h3>'));
+    d.appendChild(el('<h3 class="section-title">'+t("pg_choose_gara")+'</h3>'));
     Object.keys(PG_MODES).forEach(function(key){
       var b = el('<button class="btn btn-ghost btn-block menu-btn" style="margin-bottom:8px;">'+PG_MODES[key].label+'</button>');
       b.addEventListener("click", function(){
@@ -2262,7 +2404,7 @@
       d.appendChild(b);
     });
     if(!DEV_MODE && db && currentUser){
-      var elencoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:14px;">\uD83D\uDCCB I miei percorsi salvati</button>');
+      var elencoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:14px;">'+t("pg_my_saved_routes")+'</button>');
       elencoBtn.addEventListener("click", function(){ state.pgScreen = "elenco"; state.pgElenco = null; save(); render(); });
       d.appendChild(elencoBtn);
     }
@@ -2271,9 +2413,9 @@
 
   function pgElencoScreen(){
     var d = el('<div class="card"></div>');
-    d.appendChild(el('<h3 class="section-title">I miei percorsi salvati</h3>'));
+    d.appendChild(el('<h3 class="section-title">'+t("pg_saved_routes_title")+'</h3>'));
     if(state.pgElenco === null){
-      d.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);">Caricamento\u2026</div>'));
+      d.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);">'+t("pg_loading")+'</div>'));
       db.collection("percorsi").where("createdBy","==",currentUser.uid).get().then(function(snap){
         var list = [];
         snap.forEach(function(doc){ list.push(Object.assign({id:doc.id}, doc.data())); });
@@ -2286,27 +2428,33 @@
         render();
       }).catch(function(err){
         state.pgElenco = [];
-        state.pgElencoError = err && err.message ? err.message : "errore di caricamento";
+        state.pgElencoError = err && err.message ? err.message : t("pg_load_error_generic");
         render();
       });
       return d;
     }
     if(state.pgElencoError){
-      d.appendChild(el('<div style="font-size:0.82rem;color:var(--bark);">Errore nel caricamento: '+escapeHtml(state.pgElencoError)+'</div>'));
+      d.appendChild(el('<div style="font-size:0.82rem;color:var(--bark);">'+t("pg_error_loading",{err:escapeHtml(state.pgElencoError)})+'</div>'));
       return d;
     }
     if(!state.pgElenco.length){
-      d.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);">Nessun percorso salvato ancora.</div>'));
+      d.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);">'+t("pg_no_routes_saved")+'</div>'));
       return d;
     }
     state.pgElenco.forEach(function(p){
       var pcfgLbl = (PG_MODES[p.gara]||{}).label || p.gara;
       var card = el('<div class="gruppo-card" style="margin-bottom:10px;"></div>');
-      card.appendChild(el('<h4 style="color:var(--gold);">'+escapeHtml(p.nome||"(senza nome)")+' \u2014 '+pcfgLbl+'</h4>'));
-      card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">'+(p.data?escapeHtml(p.data)+' \u00b7 ':'')+(p.compagnia?escapeHtml(p.compagnia)+' \u00b7 ':'')+(p.iscritti?p.iscritti.length:0)+' iscritti \u00b7 '+(p.squadre?p.squadre.length:0)+' squadre</div>'));
+      card.appendChild(el('<h4 style="color:var(--gold);">'+escapeHtml(p.nome||t("pg_no_name"))+' \u2014 '+pcfgLbl+'</h4>'));
+      var summary = t("pg_route_summary", {
+        data: p.data ? escapeHtml(p.data)+' \u00b7 ' : '',
+        compagnia: p.compagnia ? escapeHtml(p.compagnia)+' \u00b7 ' : '',
+        iscritti: p.iscritti ? p.iscritti.length : 0,
+        squadre: p.squadre ? p.squadre.length : 0
+      });
+      card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">'+summary+'</div>'));
       if(p.squadre && p.squadre.length){
         p.squadre.forEach(function(s, gIdx){
-          card.appendChild(el('<div style="font-size:0.76rem;background:var(--bg-panel-2);border-radius:8px;padding:6px 8px;margin-bottom:4px;"><b style="color:var(--gold);">Piazzola '+s.piazzolaPartenza+'</b> \u2014 Squadra '+(gIdx+1)+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
+          card.appendChild(el('<div style="font-size:0.76rem;background:var(--bg-panel-2);border-radius:8px;padding:6px 8px;margin-bottom:4px;"><b style="color:var(--gold);">'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
         });
       }
       d.appendChild(card);
@@ -2325,16 +2473,16 @@
   function pgSetupScreen(){
     var pcfg = PG_MODES[state.pgDraft.gara];
     var d = el('<div class="card"></div>');
-    d.appendChild(el('<h3 class="section-title">'+pcfg.label+' \u2014 dati del percorso</h3>'));
-    d.appendChild(pgField("Nome percorso", state.pgDraft.nome, function(v){ state.pgDraft.nome=v; }));
-    d.appendChild(pgField("Data", state.pgDraft.data, function(v){ state.pgDraft.data=v; }, "date"));
-    d.appendChild(pgField("Compagnia organizzatrice", state.pgDraft.compagnia, function(v){ state.pgDraft.compagnia=v; }));
-    var numField = el('<div style="margin-bottom:14px;"><label style="display:block;font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">Numero piazzole</label></div>');
+    d.appendChild(el('<h3 class="section-title">'+t("pg_section_route_data",{gara:pcfg.label})+'</h3>'));
+    d.appendChild(pgField(t("pg_field_route_name"), state.pgDraft.nome, function(v){ state.pgDraft.nome=v; }));
+    d.appendChild(pgField(t("pg_field_date"), state.pgDraft.data, function(v){ state.pgDraft.data=v; }, "date"));
+    d.appendChild(pgField(t("pg_field_org"), state.pgDraft.compagnia, function(v){ state.pgDraft.compagnia=v; }));
+    var numField = el('<div style="margin-bottom:14px;"><label style="display:block;font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">'+t("pg_field_num_piazzole")+'</label></div>');
     var numInp = el('<input type="number" min="1" max="60" value="'+state.pgDraft.numPiazzole+'" style="width:100px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
     numInp.oninput = function(){ state.pgDraft.numPiazzole = parseInt(this.value)||1; };
     numField.appendChild(numInp);
     d.appendChild(numField);
-    var goBtn = el('<button class="btn btn-primary btn-block">Crea elenco piazzole</button>');
+    var goBtn = el('<button class="btn btn-primary btn-block">'+t("pg_btn_create_list")+'</button>');
     goBtn.addEventListener("click", function(){
       state.pgDraft.piazzole = [];
       for(var i=0;i<state.pgDraft.numPiazzole;i++) state.pgDraft.piazzole.push(null);
@@ -2348,10 +2496,10 @@
     var pcfg = PG_MODES[state.pgDraft.gara];
     var d = el('<div></div>');
     var card = el('<div class="card"></div>');
-    card.appendChild(el('<h3 class="section-title">'+pcfg.label+' \u2014 piazzole</h3>'));
+    card.appendChild(el('<h3 class="section-title">'+t("pg_section_piazzole",{gara:pcfg.label})+'</h3>'));
     var doneCount = state.pgDraft.piazzole.filter(function(p){return p;}).length;
     var totFrecce = state.pgDraft.piazzole.reduce(function(a,p){ return a+(p?p.frecce:0); },0);
-    card.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">Configurate: <b style="color:var(--gold);">'+doneCount+' / '+state.pgDraft.piazzole.length+'</b> \u00b7 Frecce totali: <b style="color:var(--gold);">'+totFrecce+'</b></div>'));
+    card.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">'+t("pg_configured_label")+': <b style="color:var(--gold);">'+doneCount+' / '+state.pgDraft.piazzole.length+'</b> \u00b7 '+t("pg_total_arrows_label")+': <b style="color:var(--gold);">'+totFrecce+'</b></div>'));
 
     state.pgDraft.piazzole.forEach(function(p, idx){
       if(state.pgEditingIndex === idx){
@@ -2359,13 +2507,13 @@
       } else {
         var row = el('<div style="display:flex;align-items:center;gap:10px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:7px;cursor:pointer;"></div>');
         row.innerHTML = '<div style="width:28px;height:28px;border-radius:50%;background:var(--bg-panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;flex-shrink:0;">'+(idx+1)+'</div>' +
-          '<div style="flex:1;font-size:0.82rem;">' + (p ? (pcfg.hasTipo ? p.tipoLabel : pgGruppoLabel(pcfg,p.gruppo)) + ' \u00b7 '+p.frecce+' frecce' + (p.ginocchio?' \u00b7 ginocchio':'') + (p.tempo?' \u00b7 a tempo':'') + (p.mobile?' \u00b7 mobile':'') + (p.descrizione?' \u00b7 '+escapeHtml(p.descrizione):'') : '<span style="color:var(--muted);">Da configurare</span>') + '</div>';
+          '<div style="flex:1;font-size:0.82rem;">' + (p ? (pcfg.hasTipo ? p.tipoLabel : pgGruppoLabel(pcfg,p.gruppo)) + ' \u00b7 '+p.frecce+' '+t("pg_frecce_word") + (p.ginocchio?' \u00b7 '+t("pg_knee_suffix"):'') + (p.tempo?' \u00b7 '+t("pg_timed_suffix"):'') + (p.mobile?' \u00b7 '+t("pg_mobile_suffix"):'') + (p.descrizione?' \u00b7 '+escapeHtml(p.descrizione):'') : '<span style="color:var(--muted);">'+t("pg_to_configure")+'</span>') + '</div>';
         row.addEventListener("click", function(){ state.pgEditingIndex = idx; state.pgEditDraft = null; render(); });
         card.appendChild(row);
       }
     });
 
-    var iscrittiBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:14px;">Iscritti e squadre \u2192</button>');
+    var iscrittiBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:14px;">'+t("pg_btn_participants_teams")+'</button>');
     iscrittiBtn.addEventListener("click", function(){ state.pgScreen="iscritti"; save(); render(); });
     card.appendChild(iscrittiBtn);
     d.appendChild(card);
@@ -2378,12 +2526,12 @@
     }
     var draft = state.pgEditDraft;
     var box = el('<div style="background:var(--bg-panel);border:1px solid var(--accent);border-radius:14px;padding:14px;margin-bottom:10px;"></div>');
-    box.appendChild(el('<h4 style="font-size:0.9rem;color:var(--gold);margin-bottom:10px;">Piazzola '+(idx+1)+'</h4>'));
+    box.appendChild(el('<h4 style="font-size:0.9rem;color:var(--gold);margin-bottom:10px;">'+t("pg_piazzola_n",{n:idx+1})+'</h4>'));
 
     if(pcfg.hasTipo){
-      box.appendChild(el('<div style="font-size:0.68rem;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Tipo piazzola</div>'));
+      box.appendChild(el('<div style="font-size:0.68rem;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">'+t("pg_type_label")+'</div>'));
       var tipoRow = el('<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>');
-      PG_TIPI.forEach(function(tp){
+      getPgTipi().forEach(function(tp){
         var b = el('<button type="button" class="btn '+(draft.tipo===tp.key?'btn-primary':'btn-ghost')+'" style="padding:8px 12px;font-size:0.8rem;">'+tp.label+'</button>');
         b.addEventListener("click", function(){ draft.tipo=tp.key; draft.frecce=tp.frecce; if(tp.key==="tempo") draft.ginocchio=false; render(); });
         tipoRow.appendChild(b);
@@ -2393,17 +2541,17 @@
       draft.frecce = pcfg.frecceFixed;
     }
 
-    box.appendChild(el('<div style="font-size:0.68rem;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Gruppo di distanza</div>'));
+    box.appendChild(el('<div style="font-size:0.68rem;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">'+t("pg_distance_group_label")+'</div>'));
     var gruppoRow = el('<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>');
     pcfg.gruppi.forEach(function(g, gi){
-      var b = el('<button type="button" class="btn '+(draft.gruppo===g[0]?'btn-primary':'btn-ghost')+'" style="padding:8px 12px;font-size:0.8rem;">Gruppo '+(gi+1)+' \u00b7 '+g[1]+'</button>');
+      var b = el('<button type="button" class="btn '+(draft.gruppo===g[0]?'btn-primary':'btn-ghost')+'" style="padding:8px 12px;font-size:0.8rem;">'+t("pg_group_n",{n:gi+1})+' \u00b7 '+g[1]+'</button>');
       b.addEventListener("click", function(){ draft.gruppo=g[0]; render(); });
       gruppoRow.appendChild(b);
     });
     box.appendChild(gruppoRow);
 
     if(!pcfg.hasTipo){
-      box.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">Frecce su questa piazzola: <b style="color:var(--cream);">'+pcfg.frecceFixed+'</b></div>'));
+      box.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">'+t("pg_arrows_on_this")+' <b style="color:var(--cream);">'+pcfg.frecceFixed+'</b></div>'));
     }
 
     var togglesRow = el('<div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;"></div>');
@@ -2411,39 +2559,39 @@
       var tempoLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;cursor:pointer;"></label>');
       var tempoChk = el('<input type="checkbox" '+(draft.tempo?'checked':'')+'>');
       tempoChk.onchange = function(){ draft.tempo=this.checked; if(draft.tempo) draft.ginocchio=false; render(); };
-      tempoLbl.appendChild(tempoChk); tempoLbl.appendChild(document.createTextNode("Piazzola a tempo limitato"));
+      tempoLbl.appendChild(tempoChk); tempoLbl.appendChild(document.createTextNode(t("pg_timed_toggle")));
       togglesRow.appendChild(tempoLbl);
     }
     if(pcfg.hasMobileToggle){
       var mobLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;cursor:pointer;"></label>');
       var mobChk = el('<input type="checkbox" '+(draft.mobile?'checked':'')+'>');
       mobChk.onchange = function(){ draft.mobile=this.checked; render(); };
-      mobLbl.appendChild(mobChk); mobLbl.appendChild(document.createTextNode("Bersaglio mobile"));
+      mobLbl.appendChild(mobChk); mobLbl.appendChild(document.createTextNode(t("pg_mobile_toggle")));
       togglesRow.appendChild(mobLbl);
     }
     if(pcfg.ginocchioAllowed){
       var ginLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;cursor:'+(draft.tempo?'not-allowed':'pointer')+';color:'+(draft.tempo?'var(--muted)':'var(--cream)')+';"></label>');
       var ginChk = el('<input type="checkbox" '+(draft.ginocchio?'checked':'')+(draft.tempo?' disabled':'')+'>');
       ginChk.onchange = function(){ draft.ginocchio=this.checked; render(); };
-      ginLbl.appendChild(ginChk); ginLbl.appendChild(document.createTextNode(draft.tempo?"Ginocchio non ammesso (a tempo)":"Tiro in ginocchio"));
+      ginLbl.appendChild(ginChk); ginLbl.appendChild(document.createTextNode(draft.tempo?t("pg_knee_not_allowed_timed"):t("pg_knee_toggle")));
       togglesRow.appendChild(ginLbl);
     } else {
-      togglesRow.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);">Ginocchio non ammesso in questa gara</div>'));
+      togglesRow.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);">'+t("pg_knee_not_allowed_gara")+'</div>'));
     }
     box.appendChild(togglesRow);
 
-    var descInp = el('<input type="text" placeholder="Breve descrizione (facoltativa)" value="'+(draft.descrizione||"").replace(/"/g,"&quot;")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;font-size:0.85rem;margin-bottom:12px;">');
+    var descInp = el('<input type="text" placeholder="'+t("pg_desc_placeholder")+'" value="'+(draft.descrizione||"").replace(/"/g,"&quot;")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;font-size:0.85rem;margin-bottom:12px;">');
     descInp.oninput = function(){ draft.descrizione=this.value; };
     box.appendChild(descInp);
 
     var actions = el('<div style="display:flex;gap:10px;"></div>');
-    var cancelBtn = el('<button class="btn btn-ghost">Annulla</button>');
+    var cancelBtn = el('<button class="btn btn-ghost">'+t("pg_cancel")+'</button>');
     cancelBtn.addEventListener("click", function(){ state.pgEditingIndex=null; state.pgEditDraft=null; render(); });
-    var saveBtn = el('<button class="btn btn-primary" style="flex:1;">Salva piazzola</button>');
+    var saveBtn = el('<button class="btn btn-primary" style="flex:1;">'+t("pg_save_piazzola")+'</button>');
     saveBtn.disabled = pcfg.hasTipo && !draft.tipo;
     saveBtn.addEventListener("click", function(){
       if(pcfg.hasTipo && !draft.tipo) return;
-      draft.tipoLabel = pcfg.hasTipo ? (PG_TIPI.filter(function(t){return t.key===draft.tipo;})[0]||{}).label : null;
+      draft.tipoLabel = pcfg.hasTipo ? (getPgTipi().filter(function(tt){return tt.key===draft.tipo;})[0]||{}).label : null;
       state.pgDraft.piazzole[idx] = draft;
       state.pgEditingIndex = null; state.pgEditDraft = null;
       render();
@@ -2456,12 +2604,12 @@
   function pgIscrittiScreen(){
     var pcfg = PG_MODES[state.pgDraft.gara];
     var d = el('<div class="card"></div>');
-    d.appendChild(el('<h3 class="section-title">'+pcfg.label+' \u2014 iscritti e squadre</h3>'));
+    d.appendChild(el('<h3 class="section-title">'+t("pg_section_participants",{gara:pcfg.label})+'</h3>'));
 
     var addRow = el('<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;"></div>');
-    var addNome = el('<input type="text" placeholder="Nome" style="flex:1 1 120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
-    var addCognome = el('<input type="text" placeholder="Cognome" style="flex:1 1 120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
-    var addBtn = el('<button class="btn btn-primary" style="flex:1 1 100%;">Aggiungi</button>');
+    var addNome = el('<input type="text" placeholder="'+t("pg_first_name_ph")+'" style="flex:1 1 120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
+    var addCognome = el('<input type="text" placeholder="'+t("pg_last_name_ph")+'" style="flex:1 1 120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
+    var addBtn = el('<button class="btn btn-primary" style="flex:1 1 100%;">'+t("pg_add_btn")+'</button>');
     function doAdd(){
       var n=addNome.value.trim(), c=addCognome.value.trim();
       if(!n||!c) return;
@@ -2474,7 +2622,7 @@
     d.appendChild(addRow);
 
     if(!DEV_MODE && db){
-      d.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:2px 0 4px;">Oppure cerca un account gi\u00e0 registrato (cos\u00ec l\'iscritto risulta collegato, utile per le notifiche future)</div>'));
+      d.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:2px 0 4px;">'+t("pg_search_account_hint")+'</div>'));
       var searchRow = el('<div style="margin-bottom:10px;"></div>');
       var searchInput = el('<input type="text" placeholder="'+t("search_username_placeholder")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
       var searchResults = el('<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;"></div>');
@@ -2524,9 +2672,9 @@
       });
     }
 
-    d.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:10px 0 4px;">Oppure incolla un elenco: un blocco per squadra separato da riga vuota o intestazione "Squadra N", un cognome (o "Cognome, Nome") per riga.</div>'));
+    d.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:10px 0 4px;">'+t("pg_bulk_import_hint")+'</div>'));
     var bulkArea = el('<textarea placeholder="Squadra 1\nVallo\nZanetta\nBonetti\nArpaia\nNatale\n\nSquadra 2\n..." style="width:100%;min-height:120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;font-size:0.82rem;"></textarea>');
-    var bulkBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:8px;margin-bottom:16px;">Importa squadre GIÀ FORMATE (mantiene i tuoi gruppi)</button>');
+    var bulkBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:8px;margin-bottom:16px;">'+t("pg_import_teams_btn")+'</button>');
     bulkBtn.addEventListener("click", function(){
       var blocks = bulkArea.value.split(/\n\s*\n/);
       var squadre = [], tutti = [];
@@ -2556,12 +2704,12 @@
     });
     d.appendChild(bulkArea); d.appendChild(bulkBtn);
 
-    d.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px;">Iscritti: <b style="color:var(--gold);">'+state.pgDraft.iscritti.length+'</b></div>'));
+    d.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px;">'+t("pg_participants_count_label")+' <b style="color:var(--gold);">'+state.pgDraft.iscritti.length+'</b></div>'));
     if(state.pgDraft.iscritti.length){
       var iscrittiList = el('<div style="margin-bottom:10px;"></div>');
       state.pgDraft.iscritti.forEach(function(p, idx){
         var row = el('<div class="iscritto-row" style="display:flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:9px;padding:6px 10px;margin-bottom:5px;"></div>');
-        row.appendChild(el('<span style="flex:1;font-size:0.82rem;">'+escapeHtml(p.cognome)+(p.nome?' '+escapeHtml(p.nome):'')+(p.username?' <span style="color:var(--accent);">@'+escapeHtml(p.username)+'</span>':' <span style="color:var(--muted);font-size:0.7rem;">(non collegato)</span>')+'</span>'));
+        row.appendChild(el('<span style="flex:1;font-size:0.82rem;">'+escapeHtml(p.cognome)+(p.nome?' '+escapeHtml(p.nome):'')+(p.username?' <span style="color:var(--accent);">@'+escapeHtml(p.username)+'</span>':' <span style="color:var(--muted);font-size:0.7rem;">'+t("pg_not_linked")+'</span>')+'</span>'));
         var rm = el('<button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;">\u2715</button>');
         rm.addEventListener("click", function(){ state.pgDraft.iscritti.splice(idx,1); state.pgDraft.squadre=[]; render(); });
         row.appendChild(rm);
@@ -2570,14 +2718,14 @@
       d.appendChild(iscrittiList);
     }
 
-    var sizeRow = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span style="font-size:0.78rem;color:var(--muted);">Persone per squadra (max 5)</span></div>');
+    var sizeRow = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span style="font-size:0.78rem;color:var(--muted);">'+t("pg_people_per_team")+'</span></div>');
     var sizeInp = el('<input type="number" min="2" max="5" value="'+(state.pgDraft.gruppiSize||5)+'" style="width:70px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:8px;padding:6px 8px;">');
     sizeInp.oninput = function(){ state.pgDraft.gruppiSize = Math.max(2,Math.min(5,parseInt(this.value)||2)); };
     sizeRow.appendChild(sizeInp);
     d.appendChild(sizeRow);
 
-    var autoBtn = el('<button class="btn btn-ghost btn-block" style="margin-bottom:6px;">Crea squadre AUTOMATICHE (mischiate, non a blocchi A-Z)</button>');
-    var autoWarn = el('<p style="font-size:0.7rem;color:var(--bark);margin:0 0 16px;">⚠️ Ignora eventuali gruppi già decisi: ricalcola le squadre da zero (mischiando i cognomi tra le squadre, ordine di tiro alfabetico solo dentro ciascuna).</p>');
+    var autoBtn = el('<button class="btn btn-ghost btn-block" style="margin-bottom:6px;">'+t("pg_auto_teams_btn")+'</button>');
+    var autoWarn = el('<p style="font-size:0.7rem;color:var(--bark);margin:0 0 16px;">'+t("pg_auto_teams_warning")+'</p>');
     autoBtn.disabled = state.pgDraft.iscritti.length < 2;
     autoBtn.addEventListener("click", function(){
       var ordinati = state.pgDraft.iscritti.slice().sort(function(a,b){ return a.cognome.localeCompare(b.cognome) || a.nome.localeCompare(b.nome); });
@@ -2598,19 +2746,19 @@
 
     if(state.pgDraft.squadre.length){
       var numPiazzole = state.pgDraft.piazzole.length || state.pgDraft.numPiazzole || 1;
-      d.appendChild(el('<h4 style="font-size:0.85rem;color:var(--gold);margin:14px 0 8px;">Vista organizzatore \u2014 chi parte da dove</h4>'));
+      d.appendChild(el('<h4 style="font-size:0.85rem;color:var(--gold);margin:14px 0 8px;">'+t("pg_organizer_view_title")+'</h4>'));
       state.pgDraft.squadre.forEach(function(s, gIdx){
-        d.appendChild(el('<div style="font-size:0.8rem;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:6px;"><b style="color:var(--gold);">Piazzola '+s.piazzolaPartenza+'</b> \u2014 Squadra '+(gIdx+1)+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
+        d.appendChild(el('<div style="font-size:0.8rem;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:6px;"><b style="color:var(--gold);">'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
       });
 
-      var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-top:16px;">Salva percorso</button>');
+      var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-top:16px;">'+t("pg_save_route_btn")+'</button>');
       var saveStatus = el('<div style="font-size:0.78rem;color:var(--muted);margin-top:8px;text-align:center;"></div>');
       saveBtn.addEventListener("click", function(){
         var completo = JSON.parse(JSON.stringify(state.pgDraft));
         completo.salvatoIl = new Date().toISOString();
         if(!DEV_MODE && db && currentUser){
           saveBtn.disabled = true;
-          saveStatus.textContent = "Salvataggio in corso\u2026";
+          saveStatus.textContent = t("pg_saving");
           completo.createdBy = currentUser.uid;
           completo.createdByEmail = currentUser.email || "";
           completo.createdAt = firebase.firestore.FieldValue.serverTimestamp();
@@ -2619,7 +2767,7 @@
             save(); render();
           }).catch(function(err){
             saveBtn.disabled = false;
-            saveStatus.textContent = "Errore nel salvataggio online (" + (err && err.message ? err.message : "riprova") + "). Salvato solo su questo dispositivo.";
+            saveStatus.textContent = t("pg_save_error_online", {err: err && err.message ? err.message : t("pg_retry")});
             state.percorsi.push(completo);
             save();
           });
@@ -2711,7 +2859,7 @@
     menuCard.appendChild(garaBtn);
 
     if((state.federation||"fiarc") === "fiarc"){
-      var pgBtn = el('<button class="btn menu-btn prepara btn-block"><span class="menu-icon">'+icon("pin",24)+'</span><span class="menu-txt">Prepara gara<span class="menu-sub">per compagnie: piazzole, iscritti e squadre pronte in anticipo \u2014 TEST</span></span></button>');
+      var pgBtn = el('<button class="btn menu-btn prepara btn-block"><span class="menu-icon">'+icon("pin",24)+'</span><span class="menu-txt">'+t("pg_menu_btn_label")+'<span class="menu-sub">'+t("pg_menu_btn_sub")+'</span></span></button>');
       pgBtn.addEventListener("click", function(){ state.pgScreen = "pick"; state.screen = "prepara-gara"; save(); render(); });
       menuCard.appendChild(pgBtn);
     }
@@ -3600,13 +3748,13 @@
       var pickCard = el('<div class="card target-stage"></div>');
       pickCard.appendChild(el('<div class="mode-badge">'+escapeHtml(modeLabel(state.mode))+'</div>'));
       pickCard.appendChild(el('<div class="piazzola-num">'+state.target+'</div>'));
-      pickCard.appendChild(el('<div class="archer-turn">Che piazzola hai davanti?</div>'));
+      pickCard.appendChild(el('<div class="archer-turn">'+t("gl_which_piazzola")+'</div>'));
       var pickGrid = el('<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;"></div>');
       var pickOpts = [
-        {key:"singola", label:"Singola", sub:"1 freccia", frecce:1},
-        {key:"mobile", label:"Mobile", sub:"1 freccia", frecce:1},
-        {key:"branco", label:"Branco (3 sagome)", sub:"3 frecce, si interrompe al primo mancato", frecce:3},
-        {key:"tempo", label:"Tempo limitato (3 sagome)", sub:"3 frecce, si sommano sempre", frecce:3}
+        {key:"singola", label:t("gl_singola"), sub:t("gl_1_arrow"), frecce:1},
+        {key:"mobile", label:t("gl_mobile"), sub:t("gl_1_arrow"), frecce:1},
+        {key:"branco", label:t("gl_branco"), sub:t("gl_3_arrows_stop"), frecce:3},
+        {key:"tempo", label:t("gl_tempo"), sub:t("gl_3_arrows_sum"), frecce:3}
       ];
       pickOpts.forEach(function(op){
         var b = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-txt"><b>'+op.label+'</b><span class="menu-sub">'+op.sub+'</span></span></button>');
