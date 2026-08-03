@@ -46,7 +46,7 @@
   header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent); }
   header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
   .home-btn{ background:var(--bark);border:none;color:#fff;border-radius:10px;padding:8px 12px;font-size:0.8rem;font-weight:700;cursor:pointer; }
-  .card{ background:linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border:1px solid var(--line); border-radius:14px; padding:18px; margin-bottom:16px;
+  .card{ background:linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border:1px solid var(--line); border-radius:16px; padding:18px; margin-bottom:16px;
     box-shadow:0 6px 16px rgba(0,0,0,0.28); border-top:2px solid var(--gold);
     position:relative; z-index:1; }
   h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 12px; }
@@ -77,6 +77,7 @@
     .btn-ghost:hover{ border-color:var(--accent); color:var(--cream); }
     .menu-btn:hover{ filter:brightness(1.06); transform:translateY(-1px); }
     .chip:not(.active):hover{ border-color:var(--accent); filter:brightness(1.1); }
+    .quick-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
   }
   .btn:focus-visible, .chip:focus-visible, .lang-pick-btn:focus-visible, .grid-pick-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
   .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
@@ -114,13 +115,13 @@
   .target-stage{ text-align:center; }
   .archer-turn{ font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
   .archer-name-big{ font-size:1.4rem; margin-bottom:6px; }
-  .arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:20px; margin-bottom:12px; }
-  .mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:20px; margin-bottom:8px; text-transform:uppercase; letter-spacing:.05em; }
+  .arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:999px; margin-bottom:12px; }
+  .mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:999px; margin-bottom:8px; text-transform:uppercase; letter-spacing:.05em; }
   .piazzola-num{ font-size:2.6rem; font-weight:600; color:var(--accent); font-family:"Fraunces",serif; line-height:1; margin-bottom:2px; position:relative; display:inline-block; }
   .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
     background:radial-gradient(circle, rgba(29,154,140,0.16), transparent 70%); z-index:-1; }
   .switch-row{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:12px; }
-  .board{ position:relative; border-radius:14px; padding:18px;
+  .board{ position:relative; border-radius:16px; padding:18px;
     background: linear-gradient(180deg, #ffffff, #fdf9ef); border:1px solid var(--line); }
   .silhouette-wrap{ position:relative; max-width:280px; margin:0 auto; border-radius:10px; overflow:hidden; touch-action:pan-x pan-y; }
   .silhouette-wrap.zoomed{ overflow:auto; max-height:360px; }
@@ -134,7 +135,7 @@
   .impact-actions{ display:flex; gap:10px; margin-top:12px; }
   .impact-actions .btn{ flex:1; }
   .quick-grid{ display:flex; justify-content:center; align-items:flex-start; gap:7px; margin:18px 0 10px; flex-wrap:wrap; }
-  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:76px; height:84px; flex:0 0 auto; padding:10px 4px; gap:2px; position:relative; overflow:visible; border:none; border-radius:16px; line-height:1.15; transition:transform .12s ease, filter .12s ease; }
+  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:76px; height:84px; flex:0 0 auto; padding:10px 4px; gap:2px; position:relative; overflow:visible; border:none; border-radius:16px; line-height:1.15; box-shadow:0 3px 8px rgba(0,0,0,0.25); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease; }
   .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(0.96); }
   .quick-btn .quick-lbl{ font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.02em; }
   .quick-btn .quick-pts{ font-size:1.4rem; font-weight:800; font-family:"Outfit",sans-serif; }
@@ -145,13 +146,13 @@
   .quick-btn.perfect{ background:#9FCB2A; color:#2A2115; }
   .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
   .shots-strip{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:14px 0 4px; }
-  .shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:20px; padding:5px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
+  .shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
   table.score-table{ width:100%; border-collapse:collapse; font-size:0.85rem; }
   table.score-table th, table.score-table td{ padding:8px 6px; text-align:center; border-bottom:1px solid var(--line); }
   table.score-table th{ color:var(--muted); font-weight:600; font-size:0.7rem; text-transform:uppercase; letter-spacing:.05em; }
   table.score-table td.name-col, table.score-table th.name-col{ text-align:left; }
   .piazz-flow{ display:flex; flex-direction:column; gap:10px; }
-  .piazz-card{ display:flex; align-items:center; gap:14px; background:var(--bg-panel); border:1px solid var(--line); border-radius:20px; padding:12px 16px; }
+  .piazz-card{ display:flex; align-items:center; gap:14px; background:var(--bg-panel); border:1px solid var(--line); border-radius:16px; padding:12px 16px; box-shadow:0 2px 8px rgba(0,0,0,0.18); }
   .piazz-card-num{ font-family:'Fraunces',Georgia,serif; font-weight:800; font-size:1.25rem; color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
   .piazz-card-right{ display:flex; flex-wrap:wrap; gap:14px; flex:1; }
   .ring-item{ display:flex; flex-direction:column; align-items:center; gap:3px; }
@@ -210,7 +211,7 @@
   .cp-info-row{ display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--cream); padding:4px 0; }
   .cp-info-row a{ color:var(--accent); text-decoration:none; font-weight:600; }
   .cp-info-row.placeholder{ color:var(--muted); font-style:italic; }
-  .cp-percorso-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:10px; cursor:pointer; }
+  .cp-percorso-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:16px; padding:14px 16px; margin-bottom:10px; cursor:pointer; }
   .cp-percorso-top{ display:flex; justify-content:space-between; align-items:center; }
   .cp-percorso-top h3{ margin:0; font-size:1rem; }
   .cp-percorso-meta{ font-size:0.72rem; color:var(--muted); margin-top:2px; }
@@ -229,7 +230,7 @@
   .cp-class-row .cp-pos{ width:22px; text-align:center; font-weight:800; color:var(--muted); flex:0 0 auto; }
   .cp-class-row .cp-nome{ flex:1; font-weight:700; font-size:0.85rem; }
   .cp-class-row .cp-punti{ font-weight:800; color:var(--gold); flex:0 0 auto; }
-  .cp-tag{ font-size:0.6rem; font-weight:700; color:var(--accent); background:var(--bg-panel); border:1px solid var(--line); padding:1px 5px; border-radius:5px; margin-left:5px; }
+  .cp-tag{ font-size:0.6rem; font-weight:700; color:var(--accent); background:var(--bg-panel); border:1px solid var(--line); padding:1px 5px; border-radius:8px; margin-left:5px; }
   .cp-percorso-title{ font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:14px 0 6px; }
   /* ---------- HOME / PROFILO ---------- */
   .cp-select-row select, .cp-select-row input[type=text], .cp-select-row input[type=email]{
@@ -2392,7 +2393,7 @@
   function preparaGaraScreen(){
     if(!state.pgScreen) state.pgScreen = "pick";
     var wrap = el('<div></div>');
-    wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:&quot;Fraunces&quot;,Georgia,serif;color:var(--gold);font-size:1.15rem;">'+t("pg_title")+'</h2><span style="display:inline-block;margin-top:6px;font-size:0.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:linear-gradient(180deg,#D9BA80,#B98A3A);color:#241a09;padding:3px 12px;border-radius:3px;box-shadow:0 2px 5px rgba(0,0,0,0.3);">'+t("pg_badge_test")+'</span></div>'));
+    wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:&quot;Fraunces&quot;,Georgia,serif;color:var(--gold);font-size:1.15rem;">'+t("pg_title")+'</h2><span style="display:inline-block;margin-top:6px;font-size:0.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:linear-gradient(180deg,#D9BA80,#B98A3A);color:#241a09;padding:3px 12px;border-radius:999px;box-shadow:0 2px 5px rgba(0,0,0,0.3);">'+t("pg_badge_test")+'</span></div>'));
     if(state.pgScreen === "pick") wrap.appendChild(pgPickScreen());
     else if(state.pgScreen === "elenco") wrap.appendChild(pgElencoScreen());
     else if(state.pgScreen === "setup") wrap.appendChild(pgSetupScreen());
@@ -2476,7 +2477,7 @@
 
   function pgField(label, value, onChange, type){
     var f = el('<div style="margin-bottom:12px;"><label style="display:block;font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">'+label+'</label></div>');
-    var inp = el('<input type="'+(type||"text")+'" value="'+(value||"").toString().replace(/"/g,"&quot;")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;font-size:0.88rem;">');
+    var inp = el('<input type="'+(type||"text")+'" value="'+(value||"").toString().replace(/"/g,"&quot;")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;font-size:0.88rem;">');
     inp.oninput = function(){ onChange(this.value); };
     f.appendChild(inp);
     return f;
@@ -2490,7 +2491,7 @@
     d.appendChild(pgField(t("pg_field_date"), state.pgDraft.data, function(v){ state.pgDraft.data=v; }, "date"));
     d.appendChild(pgField(t("pg_field_org"), state.pgDraft.compagnia, function(v){ state.pgDraft.compagnia=v; }));
     var numField = el('<div style="margin-bottom:14px;"><label style="display:block;font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">'+t("pg_field_num_piazzole")+'</label></div>');
-    var numInp = el('<input type="number" min="1" max="60" value="'+state.pgDraft.numPiazzole+'" style="width:100px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
+    var numInp = el('<input type="number" min="1" max="60" value="'+state.pgDraft.numPiazzole+'" style="width:100px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;">');
     numInp.oninput = function(){ state.pgDraft.numPiazzole = parseInt(this.value)||1; };
     numField.appendChild(numInp);
     d.appendChild(numField);
@@ -2537,7 +2538,7 @@
       state.pgEditDraft = JSON.parse(JSON.stringify(state.pgDraft.piazzole[idx] || { tipo:null, gruppo:null, frecce:pcfg.frecceFixed||1, ginocchio:false, tempo:false, mobile:false, descrizione:"" }));
     }
     var draft = state.pgEditDraft;
-    var box = el('<div style="background:var(--bg-panel);border:1px solid var(--accent);border-radius:14px;padding:14px;margin-bottom:10px;"></div>');
+    var box = el('<div style="background:var(--bg-panel);border:1px solid var(--accent);border-radius:16px;padding:14px;margin-bottom:10px;"></div>');
     box.appendChild(el('<h4 style="font-size:0.9rem;color:var(--gold);margin-bottom:10px;">'+t("pg_piazzola_n",{n:idx+1})+'</h4>'));
 
     if(pcfg.hasTipo){
@@ -2592,7 +2593,7 @@
     }
     box.appendChild(togglesRow);
 
-    var descInp = el('<input type="text" placeholder="'+t("pg_desc_placeholder")+'" value="'+(draft.descrizione||"").replace(/"/g,"&quot;")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;font-size:0.85rem;margin-bottom:12px;">');
+    var descInp = el('<input type="text" placeholder="'+t("pg_desc_placeholder")+'" value="'+(draft.descrizione||"").replace(/"/g,"&quot;")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;font-size:0.85rem;margin-bottom:12px;">');
     descInp.oninput = function(){ draft.descrizione=this.value; };
     box.appendChild(descInp);
 
@@ -2619,8 +2620,8 @@
     d.appendChild(el('<h3 class="section-title">'+t("pg_section_participants",{gara:pcfg.label})+'</h3>'));
 
     var addRow = el('<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;"></div>');
-    var addNome = el('<input type="text" placeholder="'+t("pg_first_name_ph")+'" style="flex:1 1 120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
-    var addCognome = el('<input type="text" placeholder="'+t("pg_last_name_ph")+'" style="flex:1 1 120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
+    var addNome = el('<input type="text" placeholder="'+t("pg_first_name_ph")+'" style="flex:1 1 120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;">');
+    var addCognome = el('<input type="text" placeholder="'+t("pg_last_name_ph")+'" style="flex:1 1 120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;">');
     var addBtn = el('<button class="btn btn-primary" style="flex:1 1 100%;">'+t("pg_add_btn")+'</button>');
     function doAdd(){
       var n=addNome.value.trim(), c=addCognome.value.trim();
@@ -2636,7 +2637,7 @@
     if(!DEV_MODE && db){
       d.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:2px 0 4px;">'+t("pg_search_account_hint")+'</div>'));
       var searchRow = el('<div style="margin-bottom:10px;"></div>');
-      var searchInput = el('<input type="text" placeholder="'+t("search_username_placeholder")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;">');
+      var searchInput = el('<input type="text" placeholder="'+t("search_username_placeholder")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;">');
       var searchResults = el('<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;"></div>');
       searchRow.appendChild(searchInput); searchRow.appendChild(searchResults);
       d.appendChild(searchRow);
@@ -2685,7 +2686,7 @@
     }
 
     d.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:10px 0 4px;">'+t("pg_bulk_import_hint")+'</div>'));
-    var bulkArea = el('<textarea placeholder="Squadra 1\nVallo\nZanetta\nBonetti\nArpaia\nNatale\n\nSquadra 2\n..." style="width:100%;min-height:120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:9px;padding:9px 11px;font-size:0.82rem;"></textarea>');
+    var bulkArea = el('<textarea placeholder="Squadra 1\nVallo\nZanetta\nBonetti\nArpaia\nNatale\n\nSquadra 2\n..." style="width:100%;min-height:120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;font-size:0.82rem;"></textarea>');
     var bulkBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:8px;margin-bottom:16px;">'+t("pg_import_teams_btn")+'</button>');
     bulkBtn.addEventListener("click", function(){
       var blocks = bulkArea.value.split(/\n\s*\n/);
@@ -2720,7 +2721,7 @@
     if(state.pgDraft.iscritti.length){
       var iscrittiList = el('<div style="margin-bottom:10px;"></div>');
       state.pgDraft.iscritti.forEach(function(p, idx){
-        var row = el('<div class="iscritto-row" style="display:flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:9px;padding:6px 10px;margin-bottom:5px;"></div>');
+        var row = el('<div class="iscritto-row" style="display:flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin-bottom:5px;"></div>');
         row.appendChild(el('<span style="flex:1;font-size:0.82rem;">'+escapeHtml(p.cognome)+(p.nome?' '+escapeHtml(p.nome):'')+(p.username?' <span style="color:var(--accent);">@'+escapeHtml(p.username)+'</span>':' <span style="color:var(--muted);font-size:0.7rem;">'+t("pg_not_linked")+'</span>')+'</span>'));
         var rm = el('<button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;">\u2715</button>');
         rm.addEventListener("click", function(){ state.pgDraft.iscritti.splice(idx,1); state.pgDraft.squadre=[]; render(); });
