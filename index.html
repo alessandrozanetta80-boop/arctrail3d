@@ -11,7 +11,7 @@
 <title>ArcTrail 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -37,12 +37,12 @@
     font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; min-height:100dvh; padding-bottom:env(safe-area-inset-bottom); }
   body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.5; mix-blend-mode:multiply;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-  .display{ font-family:Georgia,'Times New Roman',serif; font-weight:700; letter-spacing:0.03em; }
+  .display{ font-family:'Fraunces',Georgia,serif; font-weight:700; letter-spacing:0.03em; }
   #app{ max-width:520px; margin:0 auto; padding:18px 16px 32px; min-height:100dvh; position:relative; }
   header.top{ display:flex; align-items:center; gap:10px; padding:6px 2px 18px; border-bottom:1px solid var(--line); margin-bottom:20px; }
   header.top .logo{ width:52px;height:52px;flex:0 0 auto; filter:drop-shadow(0 2px 6px rgba(29,154,140,0.35)); }
   header.top .headtxt{ flex:1; }
-  header.top .brand-title{ font-family:Georgia,'Times New Roman',serif; font-weight:400; font-size:1.15rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); }
+  header.top .brand-title{ font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:1.15rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); }
   header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent); }
   header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
   .home-btn{ background:var(--bark);border:none;color:#fff;border-radius:10px;padding:8px 12px;font-size:0.8rem;font-weight:700;cursor:pointer; }
@@ -120,7 +120,7 @@
   .zoom-toolbar{ display:flex; justify-content:center; gap:8px; margin-top:10px; }
   .legend-row{ font-size:0.68rem; color:var(--muted); margin-top:8px; line-height:1.5; }
   .impact-readout{ margin-top:14px; background:var(--bg-panel-2); border:1px solid var(--gold); border-radius:12px; padding:14px; text-align:center; }
-  .impact-readout .pts{ font-size:1.9rem; font-weight:800; color:var(--gold); font-family:Georgia,serif; }
+  .impact-readout .pts{ font-size:1.9rem; font-weight:800; color:var(--gold); font-family:'Fraunces',Georgia,serif; }
   .impact-readout .lbl{ font-size:0.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:4px; }
   .impact-actions{ display:flex; gap:10px; margin-top:12px; }
   .impact-actions .btn{ flex:1; }
@@ -143,7 +143,7 @@
   table.score-table td.name-col, table.score-table th.name-col{ text-align:left; }
   .piazz-flow{ display:flex; flex-direction:column; gap:10px; }
   .piazz-card{ display:flex; align-items:center; gap:14px; background:var(--bg-panel); border:1px solid var(--line); border-radius:20px; padding:12px 16px; }
-  .piazz-card-num{ font-family:Georgia,serif; font-weight:800; font-size:1.25rem; color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
+  .piazz-card-num{ font-family:'Fraunces',Georgia,serif; font-weight:800; font-size:1.25rem; color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
   .piazz-card-right{ display:flex; flex-wrap:wrap; gap:14px; flex:1; }
   .ring-item{ display:flex; flex-direction:column; align-items:center; gap:3px; }
   .ring-badge{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.92rem; color:#3a2a12;
@@ -2380,7 +2380,7 @@
   function preparaGaraScreen(){
     if(!state.pgScreen) state.pgScreen = "pick";
     var wrap = el('<div></div>');
-    wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:Georgia,serif;color:var(--gold);font-size:1.15rem;">'+t("pg_title")+'</h2><span style="display:inline-block;margin-top:6px;font-size:0.65rem;letter-spacing:.05em;text-transform:uppercase;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--bark);padding:3px 10px;border-radius:20px;">'+t("pg_badge_test")+'</span></div>'));
+    wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:&quot;Fraunces&quot;,Georgia,serif;color:var(--gold);font-size:1.15rem;">'+t("pg_title")+'</h2><span style="display:inline-block;margin-top:6px;font-size:0.65rem;letter-spacing:.05em;text-transform:uppercase;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--bark);padding:3px 10px;border-radius:20px;">'+t("pg_badge_test")+'</span></div>'));
     if(state.pgScreen === "pick") wrap.appendChild(pgPickScreen());
     else if(state.pgScreen === "elenco") wrap.appendChild(pgElencoScreen());
     else if(state.pgScreen === "setup") wrap.appendChild(pgSetupScreen());
