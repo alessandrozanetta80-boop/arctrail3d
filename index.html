@@ -11,7 +11,7 @@
 <title>ArcTrail 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -116,7 +116,7 @@
   .partial-row .ptot{ font-weight:800; color:var(--gold); font-family:"Outfit",sans-serif; }
   .target-stage{ text-align:center; }
   .archer-turn{ font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
-  .archer-name-big{ font-size:1.4rem; margin-bottom:6px; }
+  .archer-name-big{ font-size:1.4rem; margin-bottom:6px; font-family:'Playfair Display',Georgia,serif; font-weight:900; letter-spacing:0.01em; }
   .arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:999px; margin-bottom:12px; }
   .mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:999px; margin-bottom:8px; text-transform:uppercase; letter-spacing:.05em; }
   .piazzola-num{ font-size:2.6rem; font-weight:600; color:var(--accent); font-family:"Fraunces",serif; line-height:1; margin-bottom:2px; position:relative; display:inline-block; }
@@ -137,15 +137,15 @@
   .impact-actions{ display:flex; gap:10px; margin-top:12px; }
   .impact-actions .btn{ flex:1; }
   .quick-grid{ display:flex; justify-content:center; align-items:flex-start; gap:7px; margin:18px 0 10px; flex-wrap:wrap; }
-  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:76px; height:84px; flex:0 0 auto; padding:10px 4px; gap:2px; position:relative; overflow:visible; border:none; border-radius:16px; line-height:1.15; box-shadow:0 3px 8px rgba(0,0,0,0.25); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease; }
-  .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(0.96); }
-  .quick-btn .quick-lbl{ font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.02em; }
-  .quick-btn .quick-pts{ font-size:1.4rem; font-weight:800; font-family:"Outfit",sans-serif; }
-  .quick-btn.superspot{ background:var(--qss); color:#fff; }
-  .quick-btn.spot{ background:var(--qspot); color:#fff; }
-  .quick-btn.sagoma{ background:var(--qsag); color:#fff; }
-  .quick-btn.zero{ background:var(--qzero); color:#fdfaf3; }
-  .quick-btn.perfect{ background:#9FCB2A; color:#2A2115; }
+  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:76px; height:84px; flex:0 0 auto; padding:10px 4px; gap:3px; position:relative; overflow:visible; border-radius:16px; line-height:1.15; box-shadow:0 3px 10px rgba(0,0,0,0.22); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease, background .12s ease; }
+  .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(1.15); }
+  .quick-btn .quick-lbl{ font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; opacity:0.92; }
+  .quick-btn .quick-pts{ font-size:1.55rem; font-weight:900; font-family:"Playfair Display",Georgia,serif; }
+  .quick-btn.superspot{ background:color-mix(in srgb, var(--qss) 20%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qss) 60%, transparent); color:var(--qss); }
+  .quick-btn.spot{ background:color-mix(in srgb, var(--qspot) 20%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qspot) 60%, transparent); color:var(--qspot); }
+  .quick-btn.sagoma{ background:color-mix(in srgb, var(--qsag) 20%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qsag) 60%, transparent); color:var(--qsag); }
+  .quick-btn.zero{ background:color-mix(in srgb, var(--qzero) 35%, var(--bg-panel)); border:1px solid var(--line); color:var(--muted); }
+  .quick-btn.perfect{ background:color-mix(in srgb, #9FCB2A 20%, var(--bg-panel)); border:1px solid color-mix(in srgb, #9FCB2A 60%, transparent); color:#9FCB2A; }
   .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
   .shots-strip{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:14px 0 4px; }
   .shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
