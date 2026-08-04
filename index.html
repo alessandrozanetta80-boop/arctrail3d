@@ -546,7 +546,7 @@
       turn_of: "Turno di",
       finora: " \u00b7 finora: {list} pt",
       vale_prima: " \u00b7 vale la prima a segno",
-      quick_hint_voice: "Segna al volo (chiamata a voce)", timer_start: "Timer", timer_reset: "Azzera",
+      timer_start: "Timer", timer_reset: "Azzera",
       zero_label: "Nulla",
       quick_hint_target: "oppure segna il punto esatto sul bersaglio",
       tap_impact_hint: "Tocca il punto esatto di impatto",
@@ -756,7 +756,7 @@
       turn_of: "Turn of",
       finora: " \u00b7 so far: {list} pts",
       vale_prima: " \u00b7 only the first hit counts",
-      quick_hint_voice: "Quick-tap scoring (called aloud)", timer_start: "Timer", timer_reset: "Reset",
+      timer_start: "Timer", timer_reset: "Reset",
       zero_label: "Miss",
       quick_hint_target: "or mark the exact impact point on the target",
       tap_impact_hint: "Tap the exact impact point",
@@ -969,7 +969,7 @@
       turn_of: "Tour de",
       finora: " \u00b7 jusqu\u2019ici : {list} pts",
       vale_prima: " \u00b7 seul le premier tir marquant compte",
-      quick_hint_voice: "Marquer \u00e0 la vol\u00e9e (annonc\u00e9 \u00e0 voix haute)", timer_start: "Minuteur", timer_reset: "R\u00e9initialiser",
+      timer_start: "Minuteur", timer_reset: "R\u00e9initialiser",
       zero_label: "Nul",
       quick_hint_target: "ou marquez le point d\u2019impact exact sur la cible",
       tap_impact_hint: "Touchez le point d\u2019impact exact",
@@ -1182,7 +1182,7 @@
       turn_of: "Am Zug:",
       finora: " \u00b7 bisher: {list} Pkt",
       vale_prima: " \u00b7 nur der erste Treffer z\u00e4hlt",
-      quick_hint_voice: "Schnell eintragen (laut angesagt)", timer_start: "Timer", timer_reset: "Zur\u00fccksetzen",
+      timer_start: "Timer", timer_reset: "Zur\u00fccksetzen",
       zero_label: "Fehler",
       quick_hint_target: "oder markiere den genauen Treffpunkt auf dem Ziel",
       tap_impact_hint: "Tippe auf den genauen Treffpunkt",
@@ -3858,19 +3858,33 @@
     ));
     wrap.appendChild(el('<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%;"></div></div>'));
 
-    // punteggio parziale live - tutti i partecipanti
+    // punteggio parziale live - solo l'arciere corrente, classifica completa a comparsa
+    var scoreArcher = state.archers[state.archerIndex];
     var partialCard = el('<div class="card partial-card"></div>');
     partialCard.appendChild(el('<div class="partial-title">'+t("partial_title")+'</div>'));
+    partialCard.appendChild(el(
+      '<div class="partial-row"><span class="pname">'+escapeHtml(scoreArcher.name)+'</span><span class="ptot">'+totalFor(scoreArcher.id)+'</span></div>'
+    ));
+    wrap.appendChild(partialCard);
+
+    var standingsBtn = el('<button class="btn btn-ghost btn-block" style="margin-bottom:14px;">'+icon("target",16)+' '+t("check_standings_btn")+'</button>');
+    wrap.appendChild(standingsBtn);
+
+    var leaderboardBox = el('<div class="card partial-card" style="display:none;margin-top:-8px;margin-bottom:14px;"></div>');
     var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
     var topTotal = ranked.length ? totalFor(ranked[0].id) : 0;
     ranked.forEach(function(a){
       var tot = totalFor(a.id);
       var isLeader = tot === topTotal && tot > 0;
-      partialCard.appendChild(el(
+      leaderboardBox.appendChild(el(
         '<div class="partial-row'+(isLeader?" leader":"")+'"><span class="pname">'+escapeHtml(a.name)+'</span><span class="ptot">'+tot+'</span></div>'
       ));
     });
-    wrap.appendChild(partialCard);
+    wrap.appendChild(leaderboardBox);
+    standingsBtn.addEventListener("click", function(){
+      var isOpen = leaderboardBox.style.display !== "none";
+      leaderboardBox.style.display = isOpen ? "none" : "block";
+    });
 
     var currentArcher = state.archers[state.archerIndex];
     state.pendingArrows = state.pendingArrows || [];
@@ -3984,7 +3998,6 @@
     renderTimerBox();
     card.appendChild(timerBox);
 
-    card.appendChild(el('<div class="quick-hint">'+icon("leaf",12)+' '+t("quick_hint_voice")+'</div>'));
     var quickGrid = el('<div class="quick-grid"></div>');
     mode.zones.forEach(function(z){
       var qbtn = el('<button class="btn quick-btn '+z.cls+'"><span class="quick-lbl">'+t(z.labelKey)+'</span><span class="quick-pts">'+pts[z.key]+'</span></button>');
@@ -4052,10 +4065,6 @@
       skipBtn.addEventListener("click", finishTargetEarly);
       wrap.appendChild(skipBtn);
     }
-
-    var standingsBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+icon("target",16)+' '+t("check_standings_btn")+'</button>');
-    standingsBtn.addEventListener("click", function(){ state.screen = "classifica-live"; save(); render(); });
-    wrap.appendChild(standingsBtn);
 
     var interruptBtn = el('<button class="btn btn-ghost-danger btn-block" style="margin-top:10px;">'+t("interrupt_btn")+'</button>');
     wrap.appendChild(interruptBtn);
