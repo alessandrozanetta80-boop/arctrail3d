@@ -87,7 +87,7 @@
   body.theme-light .menu-btn .menu-sub{ color:var(--muted); opacity:1; }
   .row{ display:flex; gap:10px; }
   .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
-  .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; transition:filter .12s ease, border-color .12s ease; }
+  .chip{ flex:1 1 0; min-width:0; text-align:center; padding:12px 4px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; white-space:normal; overflow-wrap:break-word; line-height:1.2; transition:filter .12s ease, border-color .12s ease; }
   .chip.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
   @media (hover:hover) and (pointer:fine){
     .btn:not(:disabled):hover{ filter:brightness(1.08); }
@@ -170,6 +170,10 @@
   body.theme-satura .quick-btn.zero{ background:var(--qzero); border:none; color:#fdfaf3; }
   body.theme-satura .quick-btn.perfect{ background:#9FCB2A; border:none; color:#2A2115; }
   .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
+  .stats-row{ display:flex; gap:8px; margin-bottom:14px; }
+  .stat-box{ flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 6px; }
+  .stat-box .stat-num{ font-family:"Playfair Display",Georgia,serif; font-weight:900; font-size:1.5rem; color:var(--accent); }
+  .stat-box .stat-lbl{ font-size:0.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:2px; }
   .timer-box{ margin:8px 0 4px; display:flex; justify-content:center; }
   .timer-idle{ display:flex; align-items:center; gap:8px; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:6px 10px; }
   .timer-idle .btn-sm{ padding:4px 9px; min-width:0; }
@@ -232,11 +236,20 @@
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } .leaf-particle{ animation:none !important; display:none; } .splash-logo,.splash-title,.splash-tag,.splash-wrap .btn{ animation:none !important; opacity:1 !important; transform:none !important; } .progress-fill::after{ animation:none !important; display:none; } }
   @media print{
     .no-print{ display:none !important; }
-    body{ background:#fff !important; }
+    body{ background:#fff !important; color:#111 !important; }
+    body::before{ display:none !important; }
     #app{ max-width:100%; padding:0; }
-    .card{ box-shadow:none !important; border:1px solid #ccc !important; break-inside:avoid; }
+    .card{ box-shadow:none !important; border:1px solid #999 !important; break-inside:avoid; background:#fff !important; }
     table.score-table{ font-size:0.8rem; }
+    *{ color:#111 !important; text-shadow:none !important; }
+    .rank-row.first .name-col, .total-col{ font-weight:800 !important; }
+    table.score-table th, table.score-table td{ border:1px solid #999 !important; }
+    .ring-badge, .piazz-card-num{ border:1px solid #999 !important; background:#f2f2f2 !important; }
+    .print-signatures{ display:flex !important; gap:24px; margin-top:28px; }
+    .print-signatures div{ flex:1; border-top:1px solid #333; padding-top:6px; font-size:0.78rem; text-align:center; }
+    .print-header{ display:block !important; text-align:center; margin-bottom:14px; }
   }
+  .print-signatures, .print-header{ display:none; }
   /* ---------- COMPAGNIE ---------- */
   .cp-select-row{ margin-bottom:12px; }
   .cp-select-row label{ display:block; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:5px; }
@@ -519,7 +532,7 @@
       campi_hint: "Apre Google Maps con i campi di tiro con l\u2019arco 3D nei dintorni (richiede geolocalizzazione).",
       campi_searching: "Ricerca posizione\u2026",
       history_title: "Storico percorsi",
-      history_empty: "Nessun percorso completato ancora \u2014 comparir\u00e0 qui una volta terminato",
+      history_empty: "Nessun percorso completato ancora \u2014 comparir\u00e0 qui una volta terminato", stats_rounds: "Gare", stats_avg: "Media", stats_best: "Record",
       history_clear: "Cancella storico",
       clear_confirm: "Tocca di nuovo per confermare",
       targets_word: "piazzole",
@@ -561,7 +574,7 @@
       detail_title: "Punteggio piazzola per piazzola",
       back_to_menu_full: "Torna al menu",
       reset_round_btn: "Reset totale (cancella questo percorso)",
-      export_pdf_btn: "Esporta / stampa PDF",
+      export_pdf_btn: "Esporta / stampa PDF", print_sign_archer: "Firma arciere", print_sign_judge: "Firma giudice di gara",
       share_btn: "Condividi classifica",
       copied_msg: "Copiato negli appunti!",
       share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} piazzole",
@@ -649,7 +662,7 @@
       theme_section_title: "Aspetto", theme_satura_label: "Satura", theme_elegante_label: "Soft", theme_light_label: "Chiara",
       profile_submit: "Crea profilo e continua", profile_error: "Compila nome, username, email, almeno una federazione, l'arco principale e accetta la privacy.",
       pg_title: "Prepara gara", pg_badge_test: "TEST", pg_back_menu: "\u2190 Torna al menu", pg_choose_gara: "Scegli la gara",
-      pg_my_saved_routes: "\uD83D\uDCCB I miei percorsi salvati", pg_saved_routes_title: "I miei percorsi salvati", pg_loading: "Caricamento\u2026", pg_error_loading: "Errore nel caricamento: {err}",
+      pg_my_saved_routes: "\uD83D\uDCCB I miei percorsi salvati", pg_saved_routes_title: "I miei percorsi salvati", pg_loading: "Caricamento\u2026", pg_error_loading: "Errore nel caricamento: {err}", pg_use_route_btn: "Usa questo percorso",
       pg_load_error_generic: "errore di caricamento", pg_no_routes_saved: "Nessun percorso salvato ancora.", pg_no_name: "(senza nome)",
       pg_route_summary: "{data}{compagnia}{iscritti} iscritti \u00b7 {squadre} squadre", pg_piazzola_partenza: "Piazzola {n}", pg_squadra_n: "Squadra {n}",
       pg_section_route_data: "{gara} \u2014 dati del percorso", pg_field_route_name: "Nome percorso", pg_field_date: "Data",
@@ -729,7 +742,7 @@
       campi_hint: "Opens Google Maps with 3D archery fields nearby (requires location access).",
       campi_searching: "Locating\u2026",
       history_title: "Round history",
-      history_empty: "No completed rounds yet \u2014 it will appear here once finished",
+      history_empty: "No completed rounds yet \u2014 it will appear here once finished", stats_rounds: "Rounds", stats_avg: "Average", stats_best: "Best",
       history_clear: "Clear history",
       clear_confirm: "Tap again to confirm",
       targets_word: "targets",
@@ -771,7 +784,7 @@
       detail_title: "Score by target",
       back_to_menu_full: "Back to menu",
       reset_round_btn: "Full reset (delete this round)",
-      export_pdf_btn: "Export / print PDF",
+      export_pdf_btn: "Export / print PDF", print_sign_archer: "Archer's signature", print_sign_judge: "Judge's signature",
       share_btn: "Share results",
       copied_msg: "Copied to clipboard!",
       share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} targets",
@@ -852,7 +865,7 @@
       profile_privacy: "I have read the privacy policy and consent to the processing of my data to use the app.",
       profile_submit: "Create profile and continue", profile_subtitle: "Only needed once.", profile_tessera: "{fed} membership number",
       pg_title: "Prepare Event", pg_badge_test: "TEST", pg_back_menu: "\u2190 Back to menu", pg_choose_gara: "Choose the event",
-      pg_my_saved_routes: "\uD83D\uDCCB My saved routes", pg_saved_routes_title: "My saved routes", pg_loading: "Loading\u2026", pg_error_loading: "Loading error: {err}",
+      pg_my_saved_routes: "\uD83D\uDCCB My saved routes", pg_saved_routes_title: "My saved routes", pg_loading: "Loading\u2026", pg_error_loading: "Loading error: {err}", pg_use_route_btn: "Use this route",
       pg_load_error_generic: "loading error", pg_no_routes_saved: "No route saved yet.", pg_no_name: "(no name)",
       pg_route_summary: "{data}{compagnia}{iscritti} participants \u00b7 {squadre} teams", pg_piazzola_partenza: "Target {n}", pg_squadra_n: "Team {n}",
       pg_section_route_data: "{gara} \u2014 route data", pg_field_route_name: "Route name", pg_field_date: "Date",
@@ -942,7 +955,7 @@
       campi_hint: "Ouvre Google Maps avec les terrains de tir 3D \u00e0 proximit\u00e9 (n\u00e9cessite la g\u00e9olocalisation).",
       campi_searching: "Localisation\u2026",
       history_title: "Historique des parcours",
-      history_empty: "Aucun parcours termin\u00e9 pour le moment \u2014 il appara\u00eetra ici une fois termin\u00e9",
+      history_empty: "Aucun parcours termin\u00e9 pour le moment \u2014 il appara\u00eetra ici une fois termin\u00e9", stats_rounds: "Parcours", stats_avg: "Moyenne", stats_best: "Record",
       history_clear: "Effacer l\u2019historique",
       clear_confirm: "Appuyez \u00e0 nouveau pour confirmer",
       targets_word: "cibles",
@@ -984,7 +997,7 @@
       detail_title: "Score par cible",
       back_to_menu_full: "Retour au menu",
       reset_round_btn: "R\u00e9initialisation totale (supprime ce parcours)",
-      export_pdf_btn: "Exporter / imprimer en PDF",
+      export_pdf_btn: "Exporter / imprimer en PDF", print_sign_archer: "Signature de l'archer", print_sign_judge: "Signature du juge",
       share_btn: "Partager le classement",
       copied_msg: "Copi\u00e9 dans le presse-papiers !",
       share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} cibles",
@@ -1065,7 +1078,7 @@
       profile_privacy: "J'ai lu la politique de confidentialit\u00e9 et je consens au traitement de mes donn\u00e9es pour l'utilisation de l'application.",
       profile_submit: "Cr\u00e9er le profil et continuer", profile_subtitle: "N\u00e9cessaire une seule fois.", profile_tessera: "Num\u00e9ro de licence {fed}",
       pg_title: "Pr\u00e9parer la comp\u00e9tition", pg_badge_test: "TEST", pg_back_menu: "\u2190 Retour au menu", pg_choose_gara: "Choisissez la comp\u00e9tition",
-      pg_my_saved_routes: "\uD83D\uDCCB Mes parcours enregistr\u00e9s", pg_saved_routes_title: "Mes parcours enregistr\u00e9s", pg_loading: "Chargement\u2026", pg_error_loading: "Erreur de chargement\u00a0: {err}",
+      pg_my_saved_routes: "\uD83D\uDCCB Mes parcours enregistr\u00e9s", pg_saved_routes_title: "Mes parcours enregistr\u00e9s", pg_loading: "Chargement\u2026", pg_error_loading: "Erreur de chargement\u00a0: {err}", pg_use_route_btn: "Utiliser ce parcours",
       pg_load_error_generic: "erreur de chargement", pg_no_routes_saved: "Aucun parcours enregistr\u00e9 pour l'instant.", pg_no_name: "(sans nom)",
       pg_route_summary: "{data}{compagnia}{iscritti} inscrits \u00b7 {squadre} \u00e9quipes", pg_piazzola_partenza: "Cible {n}", pg_squadra_n: "\u00c9quipe {n}",
       pg_section_route_data: "{gara} \u2014 donn\u00e9es du parcours", pg_field_route_name: "Nom du parcours", pg_field_date: "Date",
@@ -1155,7 +1168,7 @@
       campi_hint: "\u00d6ffnet Google Maps mit 3D-Bogenpl\u00e4tzen in der N\u00e4he (ben\u00f6tigt Standortzugriff).",
       campi_searching: "Standort wird gesucht\u2026",
       history_title: "Parcours-Verlauf",
-      history_empty: "Noch kein abgeschlossener Parcours \u2014 er erscheint hier, sobald er beendet ist",
+      history_empty: "Noch kein abgeschlossener Parcours \u2014 er erscheint hier, sobald er beendet ist", stats_rounds: "Runden", stats_avg: "Durchschnitt", stats_best: "Bestwert",
       history_clear: "Verlauf l\u00f6schen",
       clear_confirm: "Zum Best\u00e4tigen erneut tippen",
       targets_word: "Ziele",
@@ -1197,7 +1210,7 @@
       detail_title: "Punkte pro Ziel",
       back_to_menu_full: "Zur\u00fcck zum Men\u00fc",
       reset_round_btn: "Komplett zur\u00fccksetzen (l\u00f6scht diesen Parcours)",
-      export_pdf_btn: "Als PDF exportieren / drucken",
+      export_pdf_btn: "Als PDF exportieren / drucken", print_sign_archer: "Unterschrift Sch\u00fctze", print_sign_judge: "Unterschrift Kampfrichter",
       share_btn: "Rangliste teilen",
       copied_msg: "In die Zwischenablage kopiert!",
       share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} Ziele",
@@ -1278,7 +1291,7 @@
       profile_privacy: "Ich habe die Datenschutzerkl\u00e4rung gelesen und stimme der Verarbeitung meiner Daten zur Nutzung der App zu.",
       profile_submit: "Profil erstellen und fortfahren", profile_subtitle: "Nur einmal erforderlich.", profile_tessera: "{fed}-Mitgliedsnummer",
       pg_title: "Wettkampf vorbereiten", pg_badge_test: "TEST", pg_back_menu: "\u2190 Zur\u00fcck zum Men\u00fc", pg_choose_gara: "Wettkampf ausw\u00e4hlen",
-      pg_my_saved_routes: "\uD83D\uDCCB Meine gespeicherten Strecken", pg_saved_routes_title: "Meine gespeicherten Strecken", pg_loading: "Wird geladen\u2026", pg_error_loading: "Fehler beim Laden: {err}",
+      pg_my_saved_routes: "\uD83D\uDCCB Meine gespeicherten Strecken", pg_saved_routes_title: "Meine gespeicherten Strecken", pg_loading: "Wird geladen\u2026", pg_error_loading: "Fehler beim Laden: {err}", pg_use_route_btn: "Diese Strecke verwenden",
       pg_load_error_generic: "Ladefehler", pg_no_routes_saved: "Noch keine Strecke gespeichert.", pg_no_name: "(kein Name)",
       pg_route_summary: "{data}{compagnia}{iscritti} Teilnehmer \u00b7 {squadre} Teams", pg_piazzola_partenza: "Ziel {n}", pg_squadra_n: "Team {n}",
       pg_section_route_data: "{gara} \u2014 Streckendaten", pg_field_route_name: "Name der Strecke", pg_field_date: "Datum",
@@ -2543,6 +2556,13 @@
         squadre: p.squadre ? p.squadre.length : 0
       });
       card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">'+summary+'</div>'));
+      var useBtn = el('<button class="btn btn-ghost btn-sm" style="margin-bottom:8px;">'+t("pg_use_route_btn")+'</button>');
+      useBtn.addEventListener("click", function(){
+        state.pgDraft = JSON.parse(JSON.stringify(p));
+        state.pgScreen = "iscritti";
+        save(); render();
+      });
+      card.appendChild(useBtn);
       if(p.squadre && p.squadre.length){
         p.squadre.forEach(function(s, gIdx){
           card.appendChild(el('<div style="font-size:0.76rem;background:var(--bg-panel-2);border-radius:8px;padding:6px 8px;margin-bottom:4px;"><b style="color:var(--gold);">'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
@@ -3641,6 +3661,22 @@
     if(!hist.length){
       histCard.appendChild(el('<div class="empty-hint">'+t("history_empty")+'</div>'));
     } else {
+      var myName = state.profile && state.profile.nomeCognome;
+      var myTotals = [];
+      hist.forEach(function(h){
+        for(var ri=0; ri<h.results.length; ri++){
+          if(myName && h.results[ri].name === myName){ myTotals.push(h.results[ri].total); break; }
+        }
+      });
+      if(myTotals.length){
+        var avg = Math.round(myTotals.reduce(function(a,b){return a+b;},0) / myTotals.length);
+        var best = Math.max.apply(null, myTotals);
+        var statsRow = el('<div class="stats-row"></div>');
+        statsRow.appendChild(el('<div class="stat-box"><span class="stat-num">'+myTotals.length+'</span><span class="stat-lbl">'+t("stats_rounds")+'</span></div>'));
+        statsRow.appendChild(el('<div class="stat-box"><span class="stat-num">'+avg+'</span><span class="stat-lbl">'+t("stats_avg")+'</span></div>'));
+        statsRow.appendChild(el('<div class="stat-box"><span class="stat-num">'+best+'</span><span class="stat-lbl">'+t("stats_best")+'</span></div>'));
+        histCard.appendChild(statsRow);
+      }
       var histList = el('<div class="archer-list"></div>');
       var locale = (LANG_META[state.lang]||LANG_META.it).locale;
       hist.slice(0,20).forEach(function(h){
@@ -4342,6 +4378,7 @@
     var wrap = el('<div></div>');
     var mLabel = modeLabel(state.mode);
     var card = el('<div class="card"></div>');
+    card.appendChild(el('<div class="print-header"><h2 style="margin:0;">ArcTrail 3D \u2014 '+escapeHtml(mLabel)+'</h2><div style="font-size:0.85rem;">'+new Date().toLocaleDateString(state.lang||'it')+'</div></div>'));
     card.appendChild(el('<h2 class="section-title">'+t("classifica_title",{mode:escapeHtml(mLabel)})+'</h2>'));
     var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
 
@@ -4425,6 +4462,9 @@
     }
     detailCard.appendChild(piazzFlow);
     wrap.appendChild(detailCard);
+
+    var sigRow = el('<div class="print-signatures"><div>'+t("print_sign_archer")+'</div><div>'+t("print_sign_judge")+'</div></div>');
+    wrap.appendChild(sigRow);
 
     var newRound = el('<button class="btn btn-primary btn-block no-print" style="padding:16px;">'+t("back_to_menu_full")+'</button>');
     newRound.addEventListener("click", function(){ homeOverride = true; render(); });
