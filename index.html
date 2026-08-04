@@ -1571,21 +1571,23 @@
         '<stop offset="100%" stop-color="color-mix(in srgb, '+gc+' 65%, black)"/>'+
       '</radialGradient>';
     }
-    out += '<radialGradient id="targetVol" cx="36%" cy="30%" r="75%">'+
-      '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"/>'+
-      '<stop offset="55%" stop-color="#ffffff" stop-opacity="0"/>'+
-      '<stop offset="100%" stop-color="#000000" stop-opacity="0.22"/>'+
-    '</radialGradient>';
+    out += '<clipPath id="outerClip"><circle cx="'+cx+'" cy="'+cy+'" r="'+outerR+'"/></clipPath>';
     out += '</defs>';
     out += '<rect x="0" y="0" width="300" height="300" fill="var(--qzero)"/>';
     for(var i=n-1;i>=0;i--){
       var isOuter = (i===n-1);
       var c = colorVar[zones[i].cls] || "var(--qsag)";
       var gid2 = "zoneGrad_" + c.replace(/[^a-z0-9]/gi,'');
-      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#'+gid2+')" stroke="#20241f" stroke-width="1.4"'+(isOuter?'':' pointer-events="none"')+'/>';
+      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#'+gid2+')" stroke="rgba(203,163,92,0.6)" stroke-width="3"'+(isOuter?'':' pointer-events="none"')+'/>';
+      if(isOuter){
+        // trama fine a cerchi concentrici sulla zona esterna, come nel mockup
+        out += '<g clip-path="url(#outerClip)" style="mix-blend-mode:overlay;opacity:0.5;pointer-events:none;">';
+        for(var rr=4; rr<=outerR; rr+=7){
+          out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rr+'" fill="none" stroke="rgba(217,185,106,0.5)" stroke-width="3.5"/>';
+        }
+        out += '</g>';
+      }
     }
-    out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+outerR+'" fill="url(#targetVol)" pointer-events="none"/>';
-    out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(outerR-2)+'" fill="none" stroke="rgba(203,163,92,0.6)" stroke-width="3" pointer-events="none"/>';
     out += '<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="var(--bg-panel)" pointer-events="none"/>';
     out += '</svg>';
     return out;
