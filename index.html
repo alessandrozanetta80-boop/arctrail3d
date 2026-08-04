@@ -69,6 +69,11 @@
   .menu-btn.training{ background:#157A6E; color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(21,122,110,0.35); }
   .menu-btn.gara{ background:#C1571F; color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(193,87,31,0.35); }
   .menu-btn.prepara{ background:#B98A3A; color:#231a09; border-color:transparent; box-shadow:0 4px 14px rgba(185,138,58,0.35); }
+  body.theme-elegante .menu-btn.training{ background:color-mix(in srgb, #157A6E 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #157A6E 60%, transparent); color:#1D9A8C; box-shadow:none; }
+  body.theme-elegante .menu-btn.gara{ background:color-mix(in srgb, #C1571F 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #C1571F 60%, transparent); color:#E8722F; box-shadow:none; }
+  body.theme-elegante .menu-btn.prepara{ background:color-mix(in srgb, #B98A3A 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #B98A3A 60%, transparent); color:#CBA35C; box-shadow:none; }
+  body.theme-elegante .menu-btn .menu-txt{ color:#fff; }
+  body.theme-elegante .menu-btn .menu-sub{ color:var(--muted); opacity:1; }
   .row{ display:flex; gap:10px; }
   .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
   .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; transition:filter .12s ease, border-color .12s ease; }
@@ -141,11 +146,16 @@
   .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(1.15); }
   .quick-btn .quick-lbl{ font-size:clamp(0.5rem,2.4vw,0.64rem); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
   .quick-btn .quick-pts{ font-size:1.55rem; font-weight:900; font-family:"Playfair Display",Georgia,serif; color:#fff; }
-  .quick-btn.superspot{ background:color-mix(in srgb, var(--qss) 20%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qss) 60%, transparent); color:var(--qss); }
-  .quick-btn.spot{ background:color-mix(in srgb, var(--qspot) 20%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qspot) 60%, transparent); color:var(--qspot); }
-  .quick-btn.sagoma{ background:color-mix(in srgb, var(--qsag) 20%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qsag) 60%, transparent); color:var(--qsag); }
-  .quick-btn.zero{ background:color-mix(in srgb, var(--qzero) 35%, var(--bg-panel)); border:1px solid var(--line); color:var(--muted); }
-  .quick-btn.perfect{ background:color-mix(in srgb, #9FCB2A 20%, var(--bg-panel)); border:1px solid color-mix(in srgb, #9FCB2A 60%, transparent); color:#9FCB2A; }
+  .quick-btn.superspot{ background:color-mix(in srgb, var(--qss) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qss) 60%, transparent); color:var(--qss); }
+  .quick-btn.spot{ background:color-mix(in srgb, var(--qspot) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qspot) 60%, transparent); color:var(--qspot); }
+  .quick-btn.sagoma{ background:color-mix(in srgb, var(--qsag) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qsag) 60%, transparent); color:var(--qsag); }
+  .quick-btn.zero{ background:color-mix(in srgb, var(--qzero) 40%, var(--bg-panel)); border:1px solid var(--line); color:var(--muted); }
+  .quick-btn.perfect{ background:color-mix(in srgb, #9FCB2A 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #9FCB2A 60%, transparent); color:#9FCB2A; }
+  body.theme-satura .quick-btn.superspot{ background:var(--qss); border:none; color:#fff; }
+  body.theme-satura .quick-btn.spot{ background:var(--qspot); border:none; color:#fff; }
+  body.theme-satura .quick-btn.sagoma{ background:var(--qsag); border:none; color:#fff; }
+  body.theme-satura .quick-btn.zero{ background:var(--qzero); border:none; color:#fdfaf3; }
+  body.theme-satura .quick-btn.perfect{ background:#9FCB2A; border:none; color:#2A2115; }
   .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
   .shots-strip{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:14px 0 4px; }
   .shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
@@ -610,6 +620,7 @@
       profile_error_email_in_use: "Questa email \u00e8 gi\u00e0 registrata. Usa \u201cAccedi\u201d con la tua password.",
       login_password: "Password", login_forgot: "Password dimenticata?", login_reset_sent: "Ti abbiamo mandato un'email per reimpostare la password. Se non la vedi, controlla anche nella cartella spam.",
       profile_arco: "Arco principale", profile_privacy: "Ho letto l'informativa privacy e acconsento al trattamento dei miei dati per l'uso dell'app.",
+      theme_section_title: "Aspetto", theme_satura_label: "Satura", theme_elegante_label: "Elegante",
       profile_submit: "Crea profilo e continua", profile_error: "Compila nome, username, email, almeno una federazione, l'arco principale e accetta la privacy.",
       pg_title: "Prepara gara", pg_badge_test: "TEST", pg_back_menu: "\u2190 Torna al menu", pg_choose_gara: "Scegli la gara",
       pg_my_saved_routes: "\uD83D\uDCCB I miei percorsi salvati", pg_saved_routes_title: "I miei percorsi salvati", pg_loading: "Caricamento\u2026", pg_error_loading: "Errore nel caricamento: {err}",
@@ -670,7 +681,7 @@
       menu_train_label: "Start Training",
       menu_train_sub: "arrows and targets, your choice",
       menu_gara_label: "Free Competition",
-      menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
+      menu_gara_sub: "manage the targets on the spot \u2014 TEST",
       menu_campi_label: "Fields near you",
       menu_campi_sub: "find a 3D archery field",
       menu_history: "History",
@@ -805,6 +816,7 @@
       mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"match \u00b7 up to 3 arrows", mode_nfas_biggame_unit:"Arrow",
       mode_nfas_biggame_desc:"Official NFAS Big Game Round: 28 targets, up to 3 arrows (only the first hit counts), the Inner Kill only counts on the first arrow.",
       profile_arco: "Main bow", profile_edit_email_note: "To change your login email, contact support.",
+      theme_section_title: "Appearance", theme_satura_label: "Vivid", theme_elegante_label: "Elegant",
       profile_edit_save: "Save changes", profile_edit_saved_msg: "Changes saved.", profile_edit_title: "Your profile",
       profile_email: "Email", profile_error: "Fill in name, username, email, at least one federation, your main bow, and accept the privacy policy.",
       profile_error_email_in_use: "This email is already registered. Use \u201cLog in\u201d with your password.",
@@ -882,7 +894,7 @@
       menu_train_label: "Commencer l\u2019entra\u00eenement",
       menu_train_sub: "fl\u00e8ches et cibles \u00e0 volont\u00e9",
       menu_gara_label: "Comp\u00e9tition libre",
-      menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
+      menu_gara_sub: "g\u00e9rez les cibles sur le moment \u2014 TEST",
       menu_campi_label: "Terrains \u00e0 proximit\u00e9",
       menu_campi_sub: "trouvez un terrain de tir 3D",
       menu_history: "Historique",
@@ -1017,6 +1029,7 @@
       mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"comp\u00e9tition \u00b7 jusqu'\u00e0 3 fl\u00e8ches", mode_nfas_biggame_unit:"Fl\u00e8che",
       mode_nfas_biggame_desc:"Big Game Round officiel NFAS\u00a0: 28 cibles, jusqu'\u00e0 3 fl\u00e8ches (seul le premier impact compte), l'Inner Kill ne compte que sur la premi\u00e8re fl\u00e8che.",
       profile_arco: "Arc principal", profile_edit_email_note: "Pour changer votre e-mail de connexion, contactez l'assistance.",
+      theme_section_title: "Apparence", theme_satura_label: "Vive", theme_elegante_label: "\u00c9l\u00e9gante",
       profile_edit_save: "Enregistrer les modifications", profile_edit_saved_msg: "Modifications enregistr\u00e9es.", profile_edit_title: "Votre profil",
       profile_email: "E-mail", profile_error: "Remplissez le nom, le pseudo, l'e-mail, au moins une f\u00e9d\u00e9ration, votre arc principal, et acceptez la politique de confidentialit\u00e9.",
       profile_error_email_in_use: "Cet e-mail est d\u00e9j\u00e0 enregistr\u00e9. Utilisez \u00abSe connecter\u00bb avec votre mot de passe.",
@@ -1094,7 +1107,7 @@
       menu_train_label: "Training starten",
       menu_train_sub: "Pfeile und Ziele nach Wahl",
       menu_gara_label: "Freier Wettkampf",
-      menu_gara_sub: "Round 3D, Percorso, Tracciato, Battuta",
+      menu_gara_sub: "verwalte die Ziele spontan \u2014 TEST",
       menu_campi_label: "Pl\u00e4tze in der N\u00e4he",
       menu_campi_sub: "finde einen 3D-Bogenparcours",
       menu_history: "Verlauf",
@@ -1229,6 +1242,7 @@
       mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"Wettkampf \u00b7 bis zu 3 Pfeile", mode_nfas_biggame_unit:"Pfeil",
       mode_nfas_biggame_desc:"Offizielle NFAS Big Game Round: 28 Ziele, bis zu 3 Pfeile (nur der erste Treffer z\u00e4hlt), der Inner Kill z\u00e4hlt nur beim ersten Pfeil.",
       profile_arco: "Hauptbogen", profile_edit_email_note: "Um deine Anmelde-E-Mail zu \u00e4ndern, wende dich an den Support.",
+      theme_section_title: "Erscheinungsbild", theme_satura_label: "Kr\u00e4ftig", theme_elegante_label: "Elegant",
       profile_edit_save: "\u00c4nderungen speichern", profile_edit_saved_msg: "\u00c4nderungen gespeichert.", profile_edit_title: "Dein Profil",
       profile_email: "E-Mail", profile_error: "F\u00fclle Name, Benutzername, E-Mail, mindestens einen Verband und deinen Hauptbogen aus und akzeptiere die Datenschutzerkl\u00e4rung.",
       profile_error_email_in_use: "Diese E-Mail ist bereits registriert. Nutze \u201eAnmelden\u201c mit deinem Passwort.",
@@ -1568,6 +1582,9 @@
   function render(){
     var app = document.getElementById("app");
     app.innerHTML = "";
+    if(state.lang){ document.documentElement.lang = state.lang; }
+    document.body.classList.toggle("theme-satura", state.theme === "satura");
+    document.body.classList.toggle("theme-elegante", state.theme !== "satura");
     if(!state.lang){ app.appendChild(languageScreen()); return; }
     if(authState === "loading"){ app.appendChild(loadingScreen()); return; }
     if(authState === "linkSent"){ app.appendChild(linkSentScreen()); return; }
@@ -2125,6 +2142,24 @@
     });
     card.appendChild(bowRow);
 
+    card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("theme_section_title")+'</h2>'));
+    var themeSel = state.theme || "elegante";
+    var themeRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
+    [["satura", t("theme_satura_label")], ["elegante", t("theme_elegante_label")]].forEach(function(pair){
+      var k = pair[0], label = pair[1];
+      var chip = el('<div class="chip" style="min-width:100px;">'+label+'</div>');
+      if(k === themeSel) chip.classList.add("active");
+      chip.addEventListener("click", function(){
+        Array.prototype.forEach.call(themeRow.querySelectorAll(".chip"), function(c){ c.classList.remove("active"); });
+        chip.classList.add("active");
+        themeSel = k;
+        document.body.classList.toggle("theme-satura", themeSel === "satura");
+        document.body.classList.toggle("theme-elegante", themeSel === "elegante");
+      });
+      themeRow.appendChild(chip);
+    });
+    card.appendChild(themeRow);
+
     if(!DEV_MODE && currentUser){
       card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("notif_section_title")+'</h2>'));
       var notifRow = el('<div style="margin-bottom:6px;"></div>');
@@ -2161,6 +2196,7 @@
         nomeCognome: nomeCognome, username: username, email: profile.email,
         federazioni: federazioni, arco: arcoSel, privacy: true
       };
+      state.theme = themeSel;
       save();
       if(!DEV_MODE && currentUser && db){
         db.collection("users").doc(currentUser.uid).update({
@@ -2868,7 +2904,7 @@
     menuCard.appendChild(trainBtn);
 
     var activeGaraModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
-    var garaSub = activeGaraModes.map(function(k){ return modeLabel(k); }).join(", ") + "<br>gestisci le piazzole sul momento \u2014 TEST";
+    var garaSub = activeGaraModes.map(function(k){ return modeLabel(k); }).join(", ") + "<br>" + t("menu_gara_sub");
     var garaBtn = el('<button class="btn menu-btn gara btn-block"><span class="menu-icon">'+icon("target",24)+'</span><span class="menu-txt">'+t("menu_gara_label")+'<span class="menu-sub">'+garaSub+'</span></span></button>');
     garaBtn.addEventListener("click", function(){
       var garaModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
