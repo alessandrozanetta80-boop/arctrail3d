@@ -2896,7 +2896,7 @@
 
   function menuScreen(){
     var wrap = el('<div></div>');
-    var hasActiveRound = (state.screen === "round" || state.screen === "classifica-live" || state.screen === "summary");
+    var hasActiveRound = (state.screen === "round" || state.screen === "classifica-live");
 
     wrap.appendChild(langSwitcher());
 
@@ -3024,7 +3024,11 @@
 
     setTimeout(function(){
       var resumeBtn = document.getElementById("resumeBtn");
-      if(resumeBtn) resumeBtn.addEventListener("click", function(){ homeOverride = false; render(); });
+      if(resumeBtn) resumeBtn.addEventListener("click", function(){
+        homeOverride = false;
+        if(state.screen === "classifica-live"){ state.screen = "round"; }
+        save(); render();
+      });
     },0);
 
     return wrap;
