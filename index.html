@@ -25,11 +25,12 @@
     --accent:#1D9A8C; --bark:#E8722F; --gold:#CBA35C; --cream:#EDE6D6; --muted:#9AA39C;
     --danger:#E23D2E; --success:#4CAF50; --line:#2A362F;
     --qss:#E8722F; --qspot:#5CA847; --qsag:#3E6FC2; --qzero:#464A42;
+    --checkbox-border: rgba(237,230,214,0.4);
   }
   body.theme-light{
     --bg:#F5F4F0; --bg-panel:#FFFFFF; --bg-panel-2:#FAFAF7; --wood:#FFFFFF; --wood-2:#FAFAF7;
     --accent:#0F8A7C; --bark:#D9601E; --gold:#A6791F; --cream:#1A1D1B; --muted:#6B7069;
-    --line:#E4E1D8; --qzero:#9A9C93;
+    --line:#E4E1D8; --qzero:#9A9C93; --checkbox-border: rgba(26,29,27,0.4);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{height:100%;}
@@ -262,7 +263,7 @@
   }
   .pf-fed-row{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:8px; }
   .pf-fed-check{ display:flex; align-items:center; gap:8px; font-size:0.9rem; font-weight:600; cursor:pointer; }
-  .pf-fed-check input{ width:auto; }
+  .pf-fed-check input{ width:17px; height:17px; accent-color:var(--accent); outline:1.5px solid var(--checkbox-border); outline-offset:2px; border-radius:3px; }
   .pf-tessera{ margin-top:8px; display:none; }
   .pf-tessera.show{ display:block; }
   .pf-tessera label{ font-size:0.68rem; color:var(--muted); font-weight:700; margin-bottom:4px; display:block; text-transform:uppercase; letter-spacing:.05em; }
@@ -2135,6 +2136,7 @@
       row.appendChild(tesseraBox);
       check.querySelector("input").addEventListener("change", function(e){
         tesseraBox.classList.toggle("show", e.target.checked);
+        if(savedMsg) savedMsg.textContent = "";
       });
       fedWrap.appendChild(row);
     });
@@ -2150,6 +2152,7 @@
         Array.prototype.forEach.call(bowRow.querySelectorAll(".chip"), function(c){ c.classList.remove("active"); });
         chip.classList.add("active");
         arcoSel = k;
+        if(savedMsg) savedMsg.textContent = "";
       });
       bowRow.appendChild(chip);
     });
@@ -2169,6 +2172,7 @@
         document.body.classList.toggle("theme-satura", themeSel === "satura");
         document.body.classList.toggle("theme-light", themeSel === "light");
         document.body.classList.toggle("theme-elegante", themeSel !== "satura" && themeSel !== "light");
+        if(savedMsg) savedMsg.textContent = "";
       });
       themeRow.appendChild(chip);
     });
