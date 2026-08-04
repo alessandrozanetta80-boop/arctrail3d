@@ -26,6 +26,11 @@
     --danger:#E23D2E; --success:#4CAF50; --line:#2A362F;
     --qss:#E8722F; --qspot:#5CA847; --qsag:#3E6FC2; --qzero:#464A42;
   }
+  body.theme-light{
+    --bg:#F5F4F0; --bg-panel:#FFFFFF; --bg-panel-2:#FAFAF7; --wood:#FFFFFF; --wood-2:#FAFAF7;
+    --accent:#0F8A7C; --bark:#D9601E; --gold:#A6791F; --cream:#1A1D1B; --muted:#6B7069;
+    --line:#E4E1D8; --qzero:#9A9C93;
+  }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{height:100%;}
   body{ margin:0; color:var(--cream); position:relative;
@@ -74,6 +79,11 @@
   body.theme-elegante .menu-btn.prepara{ background:color-mix(in srgb, #B98A3A 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #B98A3A 60%, transparent); color:#CBA35C; box-shadow:none; }
   body.theme-elegante .menu-btn .menu-txt{ color:#fff; }
   body.theme-elegante .menu-btn .menu-sub{ color:var(--muted); opacity:1; }
+  body.theme-light .menu-btn.training{ background:color-mix(in srgb, #157A6E 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, #157A6E 55%, transparent); color:#0F8A7C; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  body.theme-light .menu-btn.gara{ background:color-mix(in srgb, #C1571F 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, #C1571F 55%, transparent); color:#D9601E; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  body.theme-light .menu-btn.prepara{ background:color-mix(in srgb, #B98A3A 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, #B98A3A 55%, transparent); color:#A6791F; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  body.theme-light .menu-btn .menu-txt{ color:var(--cream); }
+  body.theme-light .menu-btn .menu-sub{ color:var(--muted); opacity:1; }
   .row{ display:flex; gap:10px; }
   .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
   .chip{ flex:1; min-width:80px; text-align:center; padding:12px 6px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; transition:filter .12s ease, border-color .12s ease; }
@@ -146,6 +156,8 @@
   .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(1.15); }
   .quick-btn .quick-lbl{ font-size:clamp(0.5rem,2.4vw,0.64rem); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
   .quick-btn .quick-pts{ font-size:1.55rem; font-weight:900; font-family:"Playfair Display",Georgia,serif; color:#fff; }
+  body.theme-light .quick-btn .quick-pts{ color:inherit; }
+  body.theme-light .quick-btn{ box-shadow:0 1px 3px rgba(0,0,0,0.08); }
   .quick-btn.superspot{ background:color-mix(in srgb, var(--qss) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qss) 60%, transparent); color:var(--qss); }
   .quick-btn.spot{ background:color-mix(in srgb, var(--qspot) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qspot) 60%, transparent); color:var(--qspot); }
   .quick-btn.sagoma{ background:color-mix(in srgb, var(--qsag) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qsag) 60%, transparent); color:var(--qsag); }
@@ -620,7 +632,7 @@
       profile_error_email_in_use: "Questa email \u00e8 gi\u00e0 registrata. Usa \u201cAccedi\u201d con la tua password.",
       login_password: "Password", login_forgot: "Password dimenticata?", login_reset_sent: "Ti abbiamo mandato un'email per reimpostare la password. Se non la vedi, controlla anche nella cartella spam.",
       profile_arco: "Arco principale", profile_privacy: "Ho letto l'informativa privacy e acconsento al trattamento dei miei dati per l'uso dell'app.",
-      theme_section_title: "Aspetto", theme_satura_label: "Satura", theme_elegante_label: "Elegante",
+      theme_section_title: "Aspetto", theme_satura_label: "Satura", theme_elegante_label: "Soft", theme_light_label: "Chiara",
       profile_submit: "Crea profilo e continua", profile_error: "Compila nome, username, email, almeno una federazione, l'arco principale e accetta la privacy.",
       pg_title: "Prepara gara", pg_badge_test: "TEST", pg_back_menu: "\u2190 Torna al menu", pg_choose_gara: "Scegli la gara",
       pg_my_saved_routes: "\uD83D\uDCCB I miei percorsi salvati", pg_saved_routes_title: "I miei percorsi salvati", pg_loading: "Caricamento\u2026", pg_error_loading: "Errore nel caricamento: {err}",
@@ -816,7 +828,7 @@
       mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"match \u00b7 up to 3 arrows", mode_nfas_biggame_unit:"Arrow",
       mode_nfas_biggame_desc:"Official NFAS Big Game Round: 28 targets, up to 3 arrows (only the first hit counts), the Inner Kill only counts on the first arrow.",
       profile_arco: "Main bow", profile_edit_email_note: "To change your login email, contact support.",
-      theme_section_title: "Appearance", theme_satura_label: "Vivid", theme_elegante_label: "Elegant",
+      theme_section_title: "Appearance", theme_satura_label: "Vivid", theme_elegante_label: "Soft", theme_light_label: "Light",
       profile_edit_save: "Save changes", profile_edit_saved_msg: "Changes saved.", profile_edit_title: "Your profile",
       profile_email: "Email", profile_error: "Fill in name, username, email, at least one federation, your main bow, and accept the privacy policy.",
       profile_error_email_in_use: "This email is already registered. Use \u201cLog in\u201d with your password.",
@@ -1029,7 +1041,7 @@
       mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"comp\u00e9tition \u00b7 jusqu'\u00e0 3 fl\u00e8ches", mode_nfas_biggame_unit:"Fl\u00e8che",
       mode_nfas_biggame_desc:"Big Game Round officiel NFAS\u00a0: 28 cibles, jusqu'\u00e0 3 fl\u00e8ches (seul le premier impact compte), l'Inner Kill ne compte que sur la premi\u00e8re fl\u00e8che.",
       profile_arco: "Arc principal", profile_edit_email_note: "Pour changer votre e-mail de connexion, contactez l'assistance.",
-      theme_section_title: "Apparence", theme_satura_label: "Vive", theme_elegante_label: "\u00c9l\u00e9gante",
+      theme_section_title: "Apparence", theme_satura_label: "Vive", theme_elegante_label: "Douce", theme_light_label: "Claire",
       profile_edit_save: "Enregistrer les modifications", profile_edit_saved_msg: "Modifications enregistr\u00e9es.", profile_edit_title: "Votre profil",
       profile_email: "E-mail", profile_error: "Remplissez le nom, le pseudo, l'e-mail, au moins une f\u00e9d\u00e9ration, votre arc principal, et acceptez la politique de confidentialit\u00e9.",
       profile_error_email_in_use: "Cet e-mail est d\u00e9j\u00e0 enregistr\u00e9. Utilisez \u00abSe connecter\u00bb avec votre mot de passe.",
@@ -1242,7 +1254,7 @@
       mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"Wettkampf \u00b7 bis zu 3 Pfeile", mode_nfas_biggame_unit:"Pfeil",
       mode_nfas_biggame_desc:"Offizielle NFAS Big Game Round: 28 Ziele, bis zu 3 Pfeile (nur der erste Treffer z\u00e4hlt), der Inner Kill z\u00e4hlt nur beim ersten Pfeil.",
       profile_arco: "Hauptbogen", profile_edit_email_note: "Um deine Anmelde-E-Mail zu \u00e4ndern, wende dich an den Support.",
-      theme_section_title: "Erscheinungsbild", theme_satura_label: "Kr\u00e4ftig", theme_elegante_label: "Elegant",
+      theme_section_title: "Erscheinungsbild", theme_satura_label: "Kr\u00e4ftig", theme_elegante_label: "Sanft", theme_light_label: "Hell",
       profile_edit_save: "\u00c4nderungen speichern", profile_edit_saved_msg: "\u00c4nderungen gespeichert.", profile_edit_title: "Dein Profil",
       profile_email: "E-Mail", profile_error: "F\u00fclle Name, Benutzername, E-Mail, mindestens einen Verband und deinen Hauptbogen aus und akzeptiere die Datenschutzerkl\u00e4rung.",
       profile_error_email_in_use: "Diese E-Mail ist bereits registriert. Nutze \u201eAnmelden\u201c mit deinem Passwort.",
@@ -1584,7 +1596,8 @@
     app.innerHTML = "";
     if(state.lang){ document.documentElement.lang = state.lang; }
     document.body.classList.toggle("theme-satura", state.theme === "satura");
-    document.body.classList.toggle("theme-elegante", state.theme !== "satura");
+    document.body.classList.toggle("theme-light", state.theme === "light");
+    document.body.classList.toggle("theme-elegante", state.theme !== "satura" && state.theme !== "light");
     if(!state.lang){ app.appendChild(languageScreen()); return; }
     if(authState === "loading"){ app.appendChild(loadingScreen()); return; }
     if(authState === "linkSent"){ app.appendChild(linkSentScreen()); return; }
@@ -2145,7 +2158,7 @@
     card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("theme_section_title")+'</h2>'));
     var themeSel = state.theme || "elegante";
     var themeRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
-    [["satura", t("theme_satura_label")], ["elegante", t("theme_elegante_label")]].forEach(function(pair){
+    [["satura", t("theme_satura_label")], ["elegante", t("theme_elegante_label")], ["light", t("theme_light_label")]].forEach(function(pair){
       var k = pair[0], label = pair[1];
       var chip = el('<div class="chip" style="min-width:100px;">'+label+'</div>');
       if(k === themeSel) chip.classList.add("active");
@@ -2154,7 +2167,8 @@
         chip.classList.add("active");
         themeSel = k;
         document.body.classList.toggle("theme-satura", themeSel === "satura");
-        document.body.classList.toggle("theme-elegante", themeSel === "elegante");
+        document.body.classList.toggle("theme-light", themeSel === "light");
+        document.body.classList.toggle("theme-elegante", themeSel !== "satura" && themeSel !== "light");
       });
       themeRow.appendChild(chip);
     });
