@@ -153,9 +153,9 @@
   .impact-actions{ display:flex; gap:10px; margin-top:12px; }
   .impact-actions .btn{ flex:1; }
   .quick-grid{ display:grid; gap:7px; margin:18px 0 10px; }
-  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:84px; padding:8px 2px; gap:3px; position:relative; overflow:visible; border-radius:16px; line-height:1.15; box-shadow:0 3px 10px rgba(0,0,0,0.22); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease, background .12s ease; }
+  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:92px; padding:8px 2px; gap:3px; position:relative; overflow:visible; border-radius:16px; line-height:1.15; box-shadow:0 3px 10px rgba(0,0,0,0.22); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease, background .12s ease; }
   .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(1.15); }
-  .quick-btn .quick-lbl{ font-size:clamp(0.5rem,2.4vw,0.64rem); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  .quick-btn .quick-lbl{ font-size:clamp(0.5rem,2.4vw,0.64rem); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:normal; line-height:1.15; text-wrap:pretty; max-width:100%; }
   .quick-btn .quick-pts{ font-size:1.55rem; font-weight:900; font-family:"Playfair Display",Georgia,serif; color:#fff; }
   body.theme-light .quick-btn .quick-pts{ color:inherit; }
   body.theme-light .quick-btn{ box-shadow:0 1px 3px rgba(0,0,0,0.08); }
@@ -1554,20 +1554,31 @@
     var outerR = radii[radii.length-1];
     var out = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">';
     out += '<defs>';
-    out += '<clipPath id="outerClip"><circle cx="'+cx+'" cy="'+cy+'" r="'+outerR+'"/></clipPath>';
+    // gradiente radiale per ogni zona (luce in alto a sinistra) - generato per qualsiasi colore/zona, non solo le 3 fisse del mockup
+    var usedGrad = {};
+    for(var gi=0; gi<n; gi++){
+      var gc = colorVar[zones[gi].cls] || "var(--qsag)";
+      var gid = "zoneGrad_" + gc.replace(/[^a-z0-9]/gi,'');
+      if(usedGrad[gid]) continue;
+      usedGrad[gid] = true;
+      out += '<radialGradient id="'+gid+'" cx="35%" cy="30%">'+
+        '<stop offset="0%" stop-color="color-mix(in srgb, '+gc+' 75%, white)"/>'+
+        '<stop offset="60%" stop-color="'+gc+'"/>'+
+        '<stop offset="100%" stop-color="color-mix(in srgb, '+gc+' 80%, black)"/>'+
+      '</radialGradient>';
+    }
+    // texture "a corda" (stessa lingua grafica di .ring-badge), sovrapposta con mix-blend-mode
+    out += '<pattern id="ropeTexture" width="7" height="7" patternUnits="userSpaceOnUse">'+
+      '<rect width="7" height="7" fill="#f1e2b8" opacity="0.35"/>'+
+      '<circle cx="3.5" cy="3.5" r="3.5" fill="#d9b96a" opacity="0.35"/>'+
+    '</pattern>';
     out += '</defs>';
     for(var i=n-1;i>=0;i--){
       var isOuter = (i===n-1);
       var c = colorVar[zones[i].cls] || "var(--qsag)";
-      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="'+c+'" stroke="rgba(203,163,92,0.6)" stroke-width="3"'+(isOuter?'':' pointer-events="none"')+'/>';
-      if(isOuter){
-        // trama fine a cerchi concentrici sulla zona esterna, come nel mockup
-        out += '<g clip-path="url(#outerClip)" style="mix-blend-mode:overlay;opacity:0.5;pointer-events:none;">';
-        for(var rr=4; rr<=outerR; rr+=7){
-          out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rr+'" fill="none" stroke="rgba(217,185,106,0.5)" stroke-width="3.5"/>';
-        }
-        out += '</g>';
-      }
+      var gid2 = "zoneGrad_" + c.replace(/[^a-z0-9]/gi,'');
+      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#'+gid2+')" stroke="#CBA35C" stroke-width="2" stroke-opacity="0.6"'+(isOuter?'':' pointer-events="none"')+'/>';
+      out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#ropeTexture)" style="mix-blend-mode:overlay;" pointer-events="none"/>';
     }
     out += '<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="var(--bg-panel)" pointer-events="none"/>';
     out += '</svg>';
