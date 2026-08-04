@@ -140,7 +140,7 @@
     background:radial-gradient(circle, rgba(29,154,140,0.16), transparent 70%); z-index:-1; }
   .switch-row{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:12px; }
   .board{ position:relative; border-radius:16px; padding:12px;
-    background:linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border:1px solid rgba(203,163,92,0.55); box-shadow:0 4px 14px rgba(0,0,0,0.3); }
+    background:var(--bg-panel-2); border:1px solid rgba(203,163,92,0.55); box-shadow:0 4px 14px rgba(0,0,0,0.3); }
   .silhouette-wrap{ position:relative; max-width:280px; margin:0 auto; border-radius:10px; overflow:hidden; touch-action:pan-x pan-y; }
   .silhouette-wrap.zoomed{ overflow:auto; max-height:360px; }
   .silhouette-wrap svg{ width:100%; height:auto; display:block; cursor:crosshair; }
@@ -549,7 +549,6 @@
       timer_start: "Timer", timer_reset: "Azzera",
       zero_label: "Nulla",
       quick_hint_target: "oppure segna il punto esatto sul bersaglio",
-      tap_impact_hint: "Tocca il punto esatto di impatto",
       fuori_sagoma: "fuori sagoma",
       zoom_btn: "Ingrandisci mira",
       zoom_btn_reduce: "Riduci mira",
@@ -759,7 +758,6 @@
       timer_start: "Timer", timer_reset: "Reset",
       zero_label: "Miss",
       quick_hint_target: "or mark the exact impact point on the target",
-      tap_impact_hint: "Tap the exact impact point",
       fuori_sagoma: "miss",
       zoom_btn: "Zoom target",
       zoom_btn_reduce: "Zoom out",
@@ -972,7 +970,6 @@
       timer_start: "Minuteur", timer_reset: "R\u00e9initialiser",
       zero_label: "Nul",
       quick_hint_target: "ou marquez le point d\u2019impact exact sur la cible",
-      tap_impact_hint: "Touchez le point d\u2019impact exact",
       fuori_sagoma: "hors cible",
       zoom_btn: "Zoomer sur la cible",
       zoom_btn_reduce: "D\u00e9zoomer",
@@ -1185,7 +1182,6 @@
       timer_start: "Timer", timer_reset: "Zur\u00fccksetzen",
       zero_label: "Fehler",
       quick_hint_target: "oder markiere den genauen Treffpunkt auf dem Ziel",
-      tap_impact_hint: "Tippe auf den genauen Treffpunkt",
       fuori_sagoma: "Fehlschuss",
       zoom_btn: "Ziel vergr\u00f6\u00dfern",
       zoom_btn_reduce: "Verkleinern",
@@ -1558,27 +1554,12 @@
     var outerR = radii[radii.length-1];
     var out = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">';
     out += '<defs>';
-    // gradiente lucido per ogni zona (luce in alto a sinistra, come nel mockup) - generato per qualsiasi set di zone/colori
-    var usedColors = {};
-    for(var gi=0; gi<n; gi++){
-      var gc = colorVar[zones[gi].cls] || "var(--qsag)";
-      var gid = "zoneGrad_" + gc.replace(/[^a-z0-9]/gi,'');
-      if(usedColors[gid]) continue;
-      usedColors[gid] = true;
-      out += '<radialGradient id="'+gid+'" cx="35%" cy="30%" r="75%">'+
-        '<stop offset="0%" stop-color="color-mix(in srgb, '+gc+' 55%, white)"/>'+
-        '<stop offset="60%" stop-color="'+gc+'"/>'+
-        '<stop offset="100%" stop-color="color-mix(in srgb, '+gc+' 65%, black)"/>'+
-      '</radialGradient>';
-    }
     out += '<clipPath id="outerClip"><circle cx="'+cx+'" cy="'+cy+'" r="'+outerR+'"/></clipPath>';
     out += '</defs>';
-    out += '<rect x="0" y="0" width="300" height="300" fill="var(--qzero)"/>';
     for(var i=n-1;i>=0;i--){
       var isOuter = (i===n-1);
       var c = colorVar[zones[i].cls] || "var(--qsag)";
-      var gid2 = "zoneGrad_" + c.replace(/[^a-z0-9]/gi,'');
-      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#'+gid2+')" stroke="rgba(203,163,92,0.6)" stroke-width="3"'+(isOuter?'':' pointer-events="none"')+'/>';
+      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="'+c+'" stroke="rgba(203,163,92,0.6)" stroke-width="3"'+(isOuter?'':' pointer-events="none"')+'/>';
       if(isOuter){
         // trama fine a cerchi concentrici sulla zona esterna, come nel mockup
         out += '<g clip-path="url(#outerClip)" style="mix-blend-mode:overlay;opacity:0.5;pointer-events:none;">';
@@ -4077,19 +4058,16 @@
     var svgWrap = el('<div class="silhouette-wrap"></div>');
     svgWrap.innerHTML = targetSVG(mode);
     board.appendChild(svgWrap);
-    card.appendChild(board);
-    card.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:8px;">'+t("tap_impact_hint")+'</div>'));
-    var legendParts = mode.zones.map(function(z){ return t(z.labelKey)+' '+pts[z.key]; });
-    card.appendChild(el('<div class="legend-row">'+legendParts.join(" &middot; ")+' &middot; '+t("fuori_sagoma")+' 0</div>'));
-    if(mode.provisional){
-      card.appendChild(el('<div class="legend-row" style="color:var(--danger);">'+t("provisional_note")+'</div>'));
-    }
-
     var toolbar = el('<div class="zoom-toolbar"><button class="btn btn-ghost btn-sm" id="zoomBtn">'+icon("sight",14)+' '+t("zoom_btn")+'</button></div>');
-    card.appendChild(toolbar);
-
+    board.appendChild(toolbar);
+    var legendParts = mode.zones.map(function(z){ return t(z.labelKey)+' '+pts[z.key]; });
+    board.appendChild(el('<div class="legend-row">'+legendParts.join(" &middot; ")+' &middot; '+t("fuori_sagoma")+' 0</div>'));
+    if(mode.provisional){
+      board.appendChild(el('<div class="legend-row" style="color:var(--danger);">'+t("provisional_note")+'</div>'));
+    }
     var readoutHolder = el('<div id="readoutHolder"></div>');
-    card.appendChild(readoutHolder);
+    board.appendChild(readoutHolder);
+    card.appendChild(board);
 
     var strip = el('<div class="shots-strip"></div>');
     state.archers.forEach(function(a){
