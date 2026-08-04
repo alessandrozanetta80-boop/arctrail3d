@@ -1567,18 +1567,21 @@
         '<stop offset="100%" stop-color="color-mix(in srgb, '+gc+' 80%, black)"/>'+
       '</radialGradient>';
     }
-    // texture "a corda" (stessa lingua grafica di .ring-badge), sovrapposta con mix-blend-mode
-    out += '<pattern id="ropeTexture" width="7" height="7" patternUnits="userSpaceOnUse">'+
-      '<rect width="7" height="7" fill="#f1e2b8" opacity="0.35"/>'+
-      '<circle cx="3.5" cy="3.5" r="3.5" fill="#d9b96a" opacity="0.35"/>'+
-    '</pattern>';
     out += '</defs>';
     for(var i=n-1;i>=0;i--){
       var isOuter = (i===n-1);
       var c = colorVar[zones[i].cls] || "var(--qsag)";
       var gid2 = "zoneGrad_" + c.replace(/[^a-z0-9]/gi,'');
       out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#'+gid2+')" stroke="#CBA35C" stroke-width="2" stroke-opacity="0.6"'+(isOuter?'':' pointer-events="none"')+'/>';
-      out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#ropeTexture)" style="mix-blend-mode:overlay;" pointer-events="none"/>';
+      if(isOuter){
+        // linee concentriche ben definite (come nel mockup): disegnate qui, le zone interne
+        // (che seguono nel ciclo) le coprono naturalmente, restano visibili solo sulla fascia esterna
+        out += '<g style="mix-blend-mode:overlay;opacity:0.5;pointer-events:none;">';
+        for(var rr=4; rr<=outerR; rr+=7){
+          out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rr+'" fill="none" stroke="rgba(217,185,106,0.6)" stroke-width="2"/>';
+        }
+        out += '</g>';
+      }
     }
     out += '<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="var(--bg-panel)" pointer-events="none"/>';
     out += '</svg>';
@@ -4052,15 +4055,7 @@
     quickGrid.appendChild(zeroBtn);
     var totalBtns = quickGrid.children.length;
     quickGrid.style.gridTemplateColumns = "repeat(" + totalBtns + ", 1fr)";
-    var centerIdx = (totalBtns - 1) / 2;
-    var maxOffset = 0;
-    Array.prototype.forEach.call(quickGrid.children, function(btn, idx){
-      var dist = Math.abs(idx - centerIdx);
-      var offset = Math.round(dist * dist * 11);
-      if(offset > maxOffset){ maxOffset = offset; }
-      btn.style.transform = "translateY(" + offset + "px)";
-    });
-    quickGrid.style.marginBottom = (10 + maxOffset) + "px";
+    quickGrid.style.marginBottom = "18px";
     card.appendChild(quickGrid);
 
     card.appendChild(el('<div class="quick-hint" style="margin-top:10px;">'+t("quick_hint_target")+'</div>'));
