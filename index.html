@@ -170,6 +170,14 @@
   body.theme-satura .quick-btn.zero{ background:var(--qzero); border:none; color:#fdfaf3; }
   body.theme-satura .quick-btn.perfect{ background:#9FCB2A; border:none; color:#2A2115; }
   .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
+  .timer-box{ margin:8px 0 4px; display:flex; justify-content:center; }
+  .timer-idle{ display:flex; align-items:center; gap:8px; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:6px 10px; }
+  .timer-idle .btn-sm{ padding:4px 9px; min-width:0; }
+  .timer-dur{ font-variant-numeric:tabular-nums; font-weight:700; font-size:0.85rem; min-width:44px; text-align:center; }
+  .timer-running{ display:flex; align-items:center; gap:14px; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:6px 16px; }
+  .timer-num{ font-family:"Playfair Display",Georgia,serif; font-weight:900; font-size:1.6rem; font-variant-numeric:tabular-nums; color:var(--accent); min-width:64px; text-align:center; }
+  .timer-num.timer-warn{ color:var(--gold); }
+  .timer-num.timer-danger{ color:var(--danger); }
   .shots-strip{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:14px 0 4px; }
   .shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
   table.score-table{ width:100%; border-collapse:collapse; font-size:0.85rem; }
@@ -427,6 +435,11 @@
   var splashDismissed = false;
   var pending = null;
   var zoomed = false;
+  var timerRemaining = null;
+  var timerRunning = false;
+  var timerTargetKey = null;
+  var timerIntervalId = null;
+  var timerDuration = 120;
 
   // ---------- lingue ----------
   var LANG_META = {
@@ -520,7 +533,7 @@
       turn_of: "Turno di",
       finora: " \u00b7 finora: {list} pt",
       vale_prima: " \u00b7 vale la prima a segno",
-      quick_hint_voice: "Segna al volo (chiamata a voce)",
+      quick_hint_voice: "Segna al volo (chiamata a voce)", timer_start: "Timer", timer_reset: "Azzera",
       zero_label: "Nulla",
       quick_hint_target: "oppure segna il punto esatto sul bersaglio",
       tap_impact_hint: "Tocca il punto esatto di impatto",
@@ -730,7 +743,7 @@
       turn_of: "Turn of",
       finora: " \u00b7 so far: {list} pts",
       vale_prima: " \u00b7 only the first hit counts",
-      quick_hint_voice: "Quick-tap scoring (called aloud)",
+      quick_hint_voice: "Quick-tap scoring (called aloud)", timer_start: "Timer", timer_reset: "Reset",
       zero_label: "Miss",
       quick_hint_target: "or mark the exact impact point on the target",
       tap_impact_hint: "Tap the exact impact point",
@@ -943,7 +956,7 @@
       turn_of: "Tour de",
       finora: " \u00b7 jusqu\u2019ici : {list} pts",
       vale_prima: " \u00b7 seul le premier tir marquant compte",
-      quick_hint_voice: "Marquer \u00e0 la vol\u00e9e (annonc\u00e9 \u00e0 voix haute)",
+      quick_hint_voice: "Marquer \u00e0 la vol\u00e9e (annonc\u00e9 \u00e0 voix haute)", timer_start: "Minuteur", timer_reset: "R\u00e9initialiser",
       zero_label: "Nul",
       quick_hint_target: "ou marquez le point d\u2019impact exact sur la cible",
       tap_impact_hint: "Touchez le point d\u2019impact exact",
@@ -1156,7 +1169,7 @@
       turn_of: "Am Zug:",
       finora: " \u00b7 bisher: {list} Pkt",
       vale_prima: " \u00b7 nur der erste Treffer z\u00e4hlt",
-      quick_hint_voice: "Schnell eintragen (laut angesagt)",
+      quick_hint_voice: "Schnell eintragen (laut angesagt)", timer_start: "Timer", timer_reset: "Zur\u00fccksetzen",
       zero_label: "Fehler",
       quick_hint_target: "oder markiere den genauen Treffpunkt auf dem Ziel",
       tap_impact_hint: "Tippe auf den genauen Treffpunkt",
@@ -1570,7 +1583,8 @@
     info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"/>',
     clipboard: '<rect x="5" y="4" width="14" height="17" rx="1.5"/><rect x="8.5" y="2.5" width="7" height="3" rx="1"/><path d="M8.5 10.5h7M8.5 14h7M8.5 17.5h4"/>',
     mappin: '<path d="M12 21s7-6.8 7-12a7 7 0 0 0-14 0c0 5.2 7 12 7 12z"/><circle cx="12" cy="9" r="3.2"/><circle cx="12" cy="9" r="0.9" fill="currentColor" stroke="none"/>',
-    emblem: '<path d="M12 2.5l7 2.5v6c0 5-3 8.3-7 10.5-4-2.2-7-5.5-7-10.5V5z"/><path d="M8.7 11l2.4 2.4L15.3 9"/>'
+    emblem: '<path d="M12 2.5l7 2.5v6c0 5-3 8.3-7 10.5-4-2.2-7-5.5-7-10.5V5z"/><path d="M8.7 11l2.4 2.4L15.3 9"/>',
+    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.5l3.5 2"/>'
   };
   function icon(name, size, strokeWidth){
     var p = ICON_PATHS[name] || "";
@@ -2295,6 +2309,7 @@
     if(showHome){
       var homeBtn = el('<button class="home-btn no-print">'+t("back_to_menu")+'</button>');
       homeBtn.addEventListener("click", function(){
+        if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; timerRunning = false; timerRemaining = null; timerTargetKey = null; }
         if(state.screen === "round" || state.screen === "classifica-live" || state.screen === "summary"){ homeOverride = true; }
         else { state.screen = "menu"; }
         render();
@@ -3877,6 +3892,57 @@
     var badgeExtra = state.pendingArrows.length ? t("finora",{list:state.pendingArrows.join(', ')}) : '';
     var stopNote = mode.stopAtFirstHit ? t("vale_prima") : '';
     card.appendChild(el('<div class="arrow-badge">'+unit+' '+arrowNumber+' / '+targetArrowCount(mode)+badgeExtra+stopNote+'</div>'));
+
+    var tKey = state.target + "_" + state.archerIndex;
+    if(tKey !== timerTargetKey){
+      timerTargetKey = tKey; timerRemaining = null; timerRunning = false;
+      if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; }
+    }
+    var timerBox = el('<div class="timer-box"></div>');
+    function fmtTime(s){ var m = Math.floor(s/60), r = s%60; return m + ":" + (r<10?"0":"") + r; }
+    function renderTimerBox(){
+      timerBox.innerHTML = "";
+      if(!timerRunning && timerRemaining === null){
+        var row = el('<div class="timer-idle"></div>');
+        var minus = el('<button type="button" class="btn btn-ghost btn-sm">\u2212</button>');
+        var dur = el('<span class="timer-dur">'+fmtTime(timerDuration)+'</span>');
+        var plus = el('<button type="button" class="btn btn-ghost btn-sm">+</button>');
+        var startBtn = el('<button type="button" class="btn btn-ghost btn-sm">'+icon("clock",14)+' '+t("timer_start")+'</button>');
+        minus.addEventListener("click", function(){ if(timerDuration>15){ timerDuration -= 15; dur.textContent = fmtTime(timerDuration); } });
+        plus.addEventListener("click", function(){ if(timerDuration<600){ timerDuration += 15; dur.textContent = fmtTime(timerDuration); } });
+        startBtn.addEventListener("click", function(){
+          timerRemaining = timerDuration; timerRunning = true; renderTimerBox();
+        });
+        row.appendChild(minus); row.appendChild(dur); row.appendChild(plus); row.appendChild(startBtn);
+        timerBox.appendChild(row);
+      } else {
+        var big = el('<div class="timer-running"></div>');
+        var num = el('<span class="timer-num">'+fmtTime(timerRemaining)+'</span>');
+        var resetBtn = el('<button type="button" class="btn btn-ghost btn-sm">'+t("timer_reset")+'</button>');
+        resetBtn.addEventListener("click", function(){
+          if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; }
+          timerRunning = false; timerRemaining = null; renderTimerBox();
+        });
+        big.appendChild(num); big.appendChild(resetBtn);
+        timerBox.appendChild(big);
+        num.classList.toggle("timer-warn", timerRemaining <= 20 && timerRemaining > 10);
+        num.classList.toggle("timer-danger", timerRemaining <= 10);
+        if(timerIntervalId){ clearInterval(timerIntervalId); }
+        timerIntervalId = setInterval(function(){
+          timerRemaining--;
+          if(timerRemaining <= 0){
+            clearInterval(timerIntervalId); timerIntervalId = null; timerRemaining = 0; timerRunning = false;
+            if(navigator.vibrate){ navigator.vibrate([80,60,80]); }
+          }
+          num.textContent = fmtTime(Math.max(0,timerRemaining));
+          num.classList.toggle("timer-warn", timerRemaining <= 20 && timerRemaining > 10);
+          num.classList.toggle("timer-danger", timerRemaining <= 10);
+          if(!timerRunning){ renderTimerBox(); }
+        }, 1000);
+      }
+    }
+    renderTimerBox();
+    card.appendChild(timerBox);
 
     card.appendChild(el('<div class="quick-hint">'+icon("leaf",12)+' '+t("quick_hint_voice")+'</div>'));
     var quickGrid = el('<div class="quick-grid"></div>');
