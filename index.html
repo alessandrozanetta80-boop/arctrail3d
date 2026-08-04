@@ -1557,18 +1557,35 @@
     var cx=150, cy=150;
     var outerR = radii[radii.length-1];
     var out = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">';
-    out += '<defs><radialGradient id="targetVol" cx="36%" cy="30%" r="75%">'+
-      '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>'+
+    out += '<defs>';
+    // gradiente lucido per ogni zona (luce in alto a sinistra, come nel mockup) - generato per qualsiasi set di zone/colori
+    var usedColors = {};
+    for(var gi=0; gi<n; gi++){
+      var gc = colorVar[zones[gi].cls] || "var(--qsag)";
+      var gid = "zoneGrad_" + gc.replace(/[^a-z0-9]/gi,'');
+      if(usedColors[gid]) continue;
+      usedColors[gid] = true;
+      out += '<radialGradient id="'+gid+'" cx="35%" cy="30%" r="75%">'+
+        '<stop offset="0%" stop-color="color-mix(in srgb, '+gc+' 55%, white)"/>'+
+        '<stop offset="60%" stop-color="'+gc+'"/>'+
+        '<stop offset="100%" stop-color="color-mix(in srgb, '+gc+' 65%, black)"/>'+
+      '</radialGradient>';
+    }
+    out += '<radialGradient id="targetVol" cx="36%" cy="30%" r="75%">'+
+      '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"/>'+
       '<stop offset="55%" stop-color="#ffffff" stop-opacity="0"/>'+
-      '<stop offset="100%" stop-color="#000000" stop-opacity="0.3"/>'+
-    '</radialGradient></defs>';
+      '<stop offset="100%" stop-color="#000000" stop-opacity="0.22"/>'+
+    '</radialGradient>';
+    out += '</defs>';
     out += '<rect x="0" y="0" width="300" height="300" fill="var(--qzero)"/>';
     for(var i=n-1;i>=0;i--){
       var isOuter = (i===n-1);
-      var fillColor = colorVar[zones[i].cls] || "var(--qsag)";
-      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="'+fillColor+'" stroke="#20241f" stroke-width="1.4"'+(isOuter?'':' pointer-events="none"')+'/>';
+      var c = colorVar[zones[i].cls] || "var(--qsag)";
+      var gid2 = "zoneGrad_" + c.replace(/[^a-z0-9]/gi,'');
+      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#'+gid2+')" stroke="#20241f" stroke-width="1.4"'+(isOuter?'':' pointer-events="none"')+'/>';
     }
     out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+outerR+'" fill="url(#targetVol)" pointer-events="none"/>';
+    out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(outerR-2)+'" fill="none" stroke="rgba(203,163,92,0.6)" stroke-width="3" pointer-events="none"/>';
     out += '<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="var(--bg-panel)" pointer-events="none"/>';
     out += '</svg>';
     return out;
@@ -3880,6 +3897,31 @@
         '<div class="partial-row'+(isLeader?" leader":"")+'"><span class="pname">'+escapeHtml(a.name)+'</span><span class="ptot">'+tot+'</span></div>'
       ));
     });
+    // dettaglio piazzola per piazzola, dentro la stessa scheda a comparsa
+    var piazzFlow = el('<div class="piazz-flow" style="margin-top:10px;"></div>');
+    for(var pfi=0; pfi<state.target; pfi++){
+      var pCard = el('<div class="piazz-card"></div>');
+      pCard.appendChild(el('<div class="piazz-card-num">'+(pfi+1)+'</div>'));
+      var rightWrap = el('<div class="piazz-card-right"></div>');
+      ranked.forEach(function(a){
+        var entries = state.scores[a.id] || [];
+        var ent = entries[pfi];
+        var item = el('<div class="ring-item"></div>');
+        if(ent){
+          item.appendChild(el('<div class="ring-badge">'+ent.total+'</div>'));
+          if(ent.arrows.length > 1){
+            item.appendChild(el('<span style="font-size:0.58rem;color:var(--muted);">'+ent.arrows.join('+')+'</span>'));
+          }
+        } else {
+          item.appendChild(el('<div class="ring-badge empty">&ndash;</div>'));
+        }
+        item.appendChild(el('<span class="ring-name">'+escapeHtml(a.name)+'</span>'));
+        rightWrap.appendChild(item);
+      });
+      pCard.appendChild(rightWrap);
+      piazzFlow.appendChild(pCard);
+    }
+    leaderboardBox.appendChild(piazzFlow);
     wrap.appendChild(leaderboardBox);
     standingsBtn.addEventListener("click", function(){
       var isOpen = leaderboardBox.style.display !== "none";
