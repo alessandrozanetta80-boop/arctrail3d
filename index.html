@@ -372,6 +372,7 @@
   var PENDING_EMAIL_KEY = "arctrail3d_pending_email";
   var PENDING_PROFILE_KEY = "arctrail3d_pending_profile";
   var ADMIN_EMAIL = "alessandro.zanetta80@gmail.com";
+  var CONTACT_EMAIL = "info@arctrail3d.com";
 
   function onAuthReady(user){
     currentUser = user;
@@ -1864,7 +1865,7 @@
     });
     wrap.appendChild(stack);
     var otherMailSubject = encodeURIComponent("ArcTrail 3D - nazione mancante");
-    var otherChip = el('<a href="mailto:'+ADMIN_EMAIL+'?subject='+otherMailSubject+'" class="btn btn-ghost btn-block" style="max-width:320px;margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">\uD83C\uDF0D '+t("country_other")+' \u00b7 '+t("coming_soon")+'</a>');
+    var otherChip = el('<a href="mailto:'+CONTACT_EMAIL+'?subject='+otherMailSubject+'" class="btn btn-ghost btn-block" style="max-width:320px;margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">\uD83C\uDF0D '+t("country_other")+' \u00b7 '+t("coming_soon")+'</a>');
     wrap.appendChild(otherChip);
     var backBtn = el('<button class="btn btn-ghost btn-block" style="max-width:300px;margin-top:16px;">'+t("back_step")+'</button>');
     backBtn.addEventListener("click", function(){ state.lang = null; save(); render(); });
@@ -3669,7 +3670,7 @@
     contactCard.appendChild(el('<h2 class="section-title">'+t("contact_title")+'</h2>'));
     contactCard.appendChild(el('<div style="font-size:0.85rem;line-height:1.6;">'+t("contact_text")+'</div>'));
     var mailSubject = encodeURIComponent("ArcTrail 3D - segnalazione");
-    var mailBtn = el('<a href="mailto:'+ADMIN_EMAIL+'?subject='+mailSubject+'" class="btn btn-primary btn-block" style="margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">'+t("contact_button")+'</a>');
+    var mailBtn = el('<a href="mailto:'+CONTACT_EMAIL+'?subject='+mailSubject+'" class="btn btn-primary btn-block" style="margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">'+t("contact_button")+'</a>');
     contactCard.appendChild(mailBtn);
     wrap.appendChild(contactCard);
 
