@@ -57,7 +57,7 @@ self.addEventListener("activate", function(event){
     caches.keys().then(function(names){
       return Promise.all(
         names.filter(function(name){ return name !== CACHE_NAME; })
-             .map(function(name){ return caches.delete(name); })
+            .map(function(name){ return caches.delete(name); })
       );
     }).then(function(){
       return self.clients.claim();
@@ -65,19 +65,23 @@ self.addEventListener("activate", function(event){
   );
 });
 
+// Strategia fetch: "stale-while-revalidate". Risponde subito con la cache se
+// disponibile (caricamento istantaneo), e intanto scarica in background la
+// versione aggiornata per la prossima volta. Se la cache e' vuota o la rete
+// fallisce, si comporta come prima (aspetta la rete, poi fallback alla cache).
 self.addEventListener("fetch", function(event){
   if(event.request.method !== "GET"){ return; }
 
   event.respondWith(
-    fetch(event.request).then(function(response){
-      var copy = response.clone();
-      caches.open(CACHE_NAME).then(function(cache){
-        cache.put(event.request, copy);
-      });
-      return response;
-    }).catch(function(){
-      return caches.match(event.request).then(function(cached){
-        return cached || caches.match("index.html");
+    caches.open(CACHE_NAME).then(function(cache){
+      return cache.match(event.request).then(function(cached){
+        var networkFetch = fetch(event.request).then(function(response){
+          cache.put(event.request, response.clone());
+          return response;
+        }).catch(function(){
+          return cached || caches.match("index.html");
+        });
+        return cached || networkFetch;
       });
     })
   );
