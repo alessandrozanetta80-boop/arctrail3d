@@ -8,44 +8,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ArcTrail 3D">
 <meta name="mobile-web-app-capable" content="yes">
-<title>ArcTrail 3D \u2013 Scoring App for 3D Archery / Segnapunti Tiro con l'Arco 3D</title>
-<meta name="description" content="ArcTrail 3D: free scoring app for 3D archery, supporting multiple federations (FIARC, FITARCO, IFAA and more) in Italian, English, French and German. Track scores, rounds and live rankings on your phone. App gratuita per il punteggio del tiro con l'arco 3D, multi-federazione e multi-lingua.">
-<link rel="canonical" href="https://www.arctrail3d.com/">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="ArcTrail 3D">
-<meta property="og:title" content="ArcTrail 3D \u2013 Scoring App for 3D Archery">
-<meta property="og:description" content="Free scoring app for 3D archery, supporting multiple federations in Italian, English, French and German.">
-<meta property="og:url" content="https://www.arctrail3d.com/">
-<meta property="og:image" content="https://www.arctrail3d.com/logo.jpg">
-<meta property="og:locale" content="it_IT">
-<meta property="og:locale:alternate" content="en_US">
-<meta property="og:locale:alternate" content="fr_FR">
-<meta property="og:locale:alternate" content="de_DE">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ArcTrail 3D \u2013 Scoring App for 3D Archery">
-<meta name="twitter:description" content="Free scoring app for 3D archery, supporting multiple federations in Italian, English, French and German.">
-<meta name="twitter:image" content="https://www.arctrail3d.com/logo.jpg">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "ArcTrail 3D",
-  "alternateName": "ArcTrail3D",
-  "description": "Free scoring app for 3D archery (tiro con l'arco 3D), supporting multiple federations (FIARC, FITARCO, IFAA and more) in Italian, English, French and German.",
-  "url": "https://www.arctrail3d.com/",
-  "applicationCategory": "SportsApplication",
-  "operatingSystem": "Any (Web/PWA)",
-  "inLanguage": ["it", "en", "fr", "de"],
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
-}
-</script>
+<title>ArcTrail 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" defer></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
@@ -95,7 +65,7 @@
   .btn-ghost{ background:transparent; border:1px solid var(--line); color:var(--muted); }
   .btn-sm{ padding:9px 14px; font-size:0.85rem; }
   .btn-danger{ background:var(--danger); border-color:transparent; color:#fff; }
-  .btn-ghost-danger{ background:transparent; border:1px solid var(--danger); color:var(--danger); }
+  .btn-ghost-danger{ background:color-mix(in srgb, var(--danger) 14%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--danger) 55%, transparent); color:color-mix(in srgb, var(--danger) 55%, white); }
   .btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
   .menu-btn{ padding:18px; font-size:1.05rem; justify-content:flex-start; text-align:left; margin-bottom:10px; position:relative; overflow:hidden; }
   .menu-btn .menu-icon{ font-size:1.4rem; position:relative; z-index:1; }
@@ -125,7 +95,7 @@
     .menu-btn:hover{ filter:brightness(1.06); transform:translateY(-1px); }
     .chip:not(.active):hover{ border-color:var(--accent); filter:brightness(1.1); }
     .quick-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
-    .btn-ghost-danger:hover{ background:rgba(226,61,46,0.1); }
+    .btn-ghost-danger:hover{ background:color-mix(in srgb, var(--danger) 24%, var(--bg-panel)); }
   }
   .btn:focus-visible, .chip:focus-visible, .lang-pick-btn:focus-visible, .grid-pick-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
   .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
@@ -170,7 +140,7 @@
     background:radial-gradient(circle, rgba(29,154,140,0.16), transparent 70%); z-index:-1; }
   .switch-row{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:12px; }
   .board{ position:relative; border-radius:16px; padding:12px;
-    background:var(--bg-panel-2); border:1px solid rgba(203,163,92,0.55); box-shadow:0 4px 14px rgba(0,0,0,0.3); }
+    background:linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border:1px solid rgba(203,163,92,0.55); box-shadow:0 4px 14px rgba(0,0,0,0.3); }
   .silhouette-wrap{ position:relative; max-width:280px; margin:0 auto; border-radius:10px; overflow:hidden; touch-action:pan-x pan-y; }
   .silhouette-wrap.zoomed{ overflow:auto; max-height:360px; }
   .silhouette-wrap svg{ width:100%; height:auto; display:block; cursor:crosshair; }
@@ -183,9 +153,9 @@
   .impact-actions{ display:flex; gap:10px; margin-top:12px; }
   .impact-actions .btn{ flex:1; }
   .quick-grid{ display:grid; gap:7px; margin:18px 0 10px; }
-  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:92px; padding:8px 2px; gap:3px; position:relative; overflow:visible; border-radius:16px; line-height:1.15; box-shadow:0 3px 10px rgba(0,0,0,0.22); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease, background .12s ease; }
+  .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:84px; padding:8px 2px; gap:3px; position:relative; overflow:visible; border-radius:16px; line-height:1.15; box-shadow:0 3px 10px rgba(0,0,0,0.22); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease, background .12s ease; }
   .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(1.15); }
-  .quick-btn .quick-lbl{ font-size:clamp(0.5rem,2.4vw,0.64rem); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:normal; line-height:1.15; text-wrap:pretty; max-width:100%; }
+  .quick-btn .quick-lbl{ font-size:clamp(0.5rem,2.4vw,0.64rem); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
   .quick-btn .quick-pts{ font-size:1.55rem; font-weight:900; font-family:"Playfair Display",Georgia,serif; color:#fff; }
   body.theme-light .quick-btn .quick-pts{ color:inherit; }
   body.theme-light .quick-btn{ box-shadow:0 1px 3px rgba(0,0,0,0.08); }
@@ -205,10 +175,10 @@
   .stat-box .stat-num{ font-family:"Playfair Display",Georgia,serif; font-weight:900; font-size:1.5rem; color:var(--accent); }
   .stat-box .stat-lbl{ font-size:0.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:2px; }
   .timer-box{ margin:8px 0 4px; display:flex; justify-content:center; }
-  .timer-idle{ display:flex; align-items:center; gap:8px; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:6px 10px; }
+  .timer-idle{ display:flex; align-items:center; gap:8px; background:color-mix(in srgb, var(--danger) 14%, var(--bg-panel-2)); border:1px solid color-mix(in srgb, var(--danger) 55%, transparent); border-radius:18px; padding:6px 10px; }
   .timer-idle .btn-sm{ padding:4px 9px; min-width:0; }
   .timer-dur{ font-variant-numeric:tabular-nums; font-weight:700; font-size:0.85rem; min-width:44px; text-align:center; }
-  .timer-running{ display:flex; align-items:center; gap:14px; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:6px 16px; }
+  .timer-running{ display:flex; align-items:center; gap:14px; background:color-mix(in srgb, var(--danger) 14%, var(--bg-panel-2)); border:1px solid color-mix(in srgb, var(--danger) 55%, transparent); border-radius:18px; padding:6px 16px; }
   .timer-num{ font-family:"Playfair Display",Georgia,serif; font-weight:900; font-size:1.6rem; font-variant-numeric:tabular-nums; color:var(--accent); min-width:64px; text-align:center; }
   .timer-num.timer-warn{ color:var(--gold); }
   .timer-num.timer-danger{ color:var(--danger); }
@@ -237,20 +207,6 @@
   .install-hint{ background:var(--bg-panel-2); border-left:3px solid var(--accent); border-radius:8px; padding:12px 14px; font-size:0.8rem; line-height:1.5; color:var(--cream); margin-bottom:16px; }
   .install-hint b{ color:var(--accent); }
   .empty-hint{ color:var(--muted); font-size:0.85rem; text-align:center; padding:10px 0; }
-  .empty-state-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:14px; padding:20px 18px; }
-  .empty-state-icon{ width:40px; height:40px; border-radius:50%; background:rgba(29,154,140,0.15); color:var(--accent); display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
-  .empty-state-title{ font-family:'Playfair Display',Georgia,serif; font-weight:900; font-size:1.1rem; margin-bottom:8px; }
-  .empty-state-body{ font-size:0.85rem; color:var(--muted); line-height:1.55; margin-bottom:16px; }
-  .editorial-block{ text-align:center; padding:22px 10px; }
-  .editorial-icon{ width:44px; height:44px; border-radius:50%; background:var(--qsag); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
-  .editorial-title{ font-family:'Playfair Display',Georgia,serif; font-weight:900; font-size:1.05rem; line-height:1.45; margin-bottom:10px; }
-  .editorial-body{ font-size:0.84rem; color:var(--muted); line-height:1.6; max-width:360px; margin:0 auto; }
-  .timeline-row{ display:flex; align-items:center; gap:12px; padding:10px 12px; background:var(--bg-panel-2); border-left:3px solid var(--accent); border-radius:10px; margin-bottom:8px; }
-  .timeline-icon{ width:30px; height:30px; border-radius:50%; background:rgba(29,154,140,0.15); color:var(--accent); display:flex; align-items:center; justify-content:center; flex:none; }
-  .timeline-content{ flex:1; display:flex; flex-direction:column; min-width:0; }
-  .timeline-meta{ font-size:0.78rem; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .timeline-result{ font-size:0.85rem; font-weight:800; color:var(--gold); flex:none; }
-  .section-block-header{ font-size:0.68rem; text-transform:uppercase; letter-spacing:.08em; font-weight:800; padding:4px 10px; border-radius:999px; display:inline-block; margin-bottom:10px; }
   .splash-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:82dvh; text-align:center; gap:6px; }
   .splash-logo{ width:160px; height:160px; margin-bottom:10px; filter:drop-shadow(0 8px 20px rgba(29,154,140,0.35)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
   .splash-title{ font-size:2.1rem; color:var(--accent); margin:0; animation:splashUp .6s ease .15s both; }
@@ -353,9 +309,9 @@
   });
 })();
 </script>
-<script src="compagnie-data.js" defer></script>
+<script src="compagnie-data.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function(){
+(function(){
   "use strict";
   // ---------- MODALITA' SVILUPPO ----------
   // Metti true per aprire il file offline/in locale saltando del tutto l'accesso Firebase (per testare le modifiche).
@@ -402,7 +358,6 @@ document.addEventListener("DOMContentLoaded", function(){
   var PENDING_EMAIL_KEY = "arctrail3d_pending_email";
   var PENDING_PROFILE_KEY = "arctrail3d_pending_profile";
   var ADMIN_EMAIL = "alessandro.zanetta80@gmail.com";
-  var CONTACT_EMAIL = "info@arctrail3d.com";
 
   function onAuthReady(user){
     currentUser = user;
@@ -577,7 +532,7 @@ document.addEventListener("DOMContentLoaded", function(){
       campi_hint: "Apre Google Maps con i campi di tiro con l\u2019arco 3D nei dintorni (richiede geolocalizzazione).",
       campi_searching: "Ricerca posizione\u2026",
       history_title: "Storico percorsi",
-      history_empty: "I percorsi completati appariranno qui in ordine cronologico, con punteggio e piazzole.", history_empty_title: "Ancora nessun percorso", history_empty_cta: "Inizia il primo percorso", stats_rounds: "Gare", stats_avg: "Media", stats_best: "Record",
+      history_empty: "Nessun percorso completato ancora \u2014 comparir\u00e0 qui una volta terminato", stats_rounds: "Gare", stats_avg: "Media", stats_best: "Record",
       history_clear: "Cancella storico",
       clear_confirm: "Tocca di nuovo per confermare",
       targets_word: "piazzole",
@@ -594,6 +549,7 @@ document.addEventListener("DOMContentLoaded", function(){
       timer_start: "Timer", timer_reset: "Azzera",
       zero_label: "Nulla",
       quick_hint_target: "oppure segna il punto esatto sul bersaglio",
+      tap_impact_hint: "Tocca il punto esatto di impatto",
       fuori_sagoma: "fuori sagoma",
       zoom_btn: "Ingrandisci mira",
       zoom_btn_reduce: "Riduci mira",
@@ -635,6 +591,7 @@ document.addEventListener("DOMContentLoaded", function(){
       mode_battuta_label:"Battuta", mode_battuta_tag:"gara \u00b7 branco di 3", mode_battuta_unit:"Sagoma",
       mode_battuta_desc:"Battuta ufficiale: 28 piazzole, 48 frecce totali \u2014 14 piazzole singole e 4 mobili (1 freccia), 6 branchi da 3 sagome (si interrompe alla prima freccia Nulla) e 4 gruppi a tempo limitato da 3 sagome (si sommano sempre). Distanze da 20 a 40 m a seconda del gruppo. 10 frecce obbligatorie in ginocchio, mai sulle piazzole a tempo limitato.",
       menu_info: "Info",
+      info_title: "Informazioni",
       disclaimer_text: "ArcTrail 3D \u00e8 un'app indipendente creata da appassionati per uso pratico durante allenamenti e gare. Non \u00e8 un prodotto ufficiale delle federazioni citate (FIARC, FITARCO, FFTA), n\u00e9 \u00e8 approvata o affiliata a esse. I nomi, i marchi e i regolamenti citati appartengono alle rispettive federazioni. In caso di dubbio sul punteggio ufficiale, fa sempre fede il regolamento pubblicato dalla federazione di riferimento.",
       contact_title: "Segnala un errore o una federazione mancante",
       contact_text: "Hai trovato un punteggio sbagliato? Manca la tua federazione o la tua nazione (es. Spagna, Slovenia\u2026)? Scrivici, ci fa piacere migliorare l'app insieme a chi la usa davvero.",
@@ -785,7 +742,7 @@ document.addEventListener("DOMContentLoaded", function(){
       campi_hint: "Opens Google Maps with 3D archery fields nearby (requires location access).",
       campi_searching: "Locating\u2026",
       history_title: "Round history",
-      history_empty: "Completed rounds will appear here in chronological order, with score and targets.", history_empty_title: "No rounds yet", history_empty_cta: "Start your first round", stats_rounds: "Rounds", stats_avg: "Average", stats_best: "Best",
+      history_empty: "No completed rounds yet \u2014 it will appear here once finished", stats_rounds: "Rounds", stats_avg: "Average", stats_best: "Best",
       history_clear: "Clear history",
       clear_confirm: "Tap again to confirm",
       targets_word: "targets",
@@ -802,6 +759,7 @@ document.addEventListener("DOMContentLoaded", function(){
       timer_start: "Timer", timer_reset: "Reset",
       zero_label: "Miss",
       quick_hint_target: "or mark the exact impact point on the target",
+      tap_impact_hint: "Tap the exact impact point",
       fuori_sagoma: "miss",
       zoom_btn: "Zoom target",
       zoom_btn_reduce: "Zoom out",
@@ -843,6 +801,7 @@ document.addEventListener("DOMContentLoaded", function(){
       mode_battuta_label:"Battuta", mode_battuta_tag:"match \u00b7 pack of 3", mode_battuta_unit:"Target",
       mode_battuta_desc:"Official Battuta: 28 targets, 48 arrows total \u2014 14 single and 4 moving targets (1 arrow), 6 packs of 3 (stops at the first miss) and 4 timed groups of 3 (always summed). Distances from 20 to 40 m depending on the group. 10 arrows must be shot kneeling, never on timed targets.",
       menu_info: "Info",
+      info_title: "Information",
       disclaimer_text: "ArcTrail 3D is an independent app created by enthusiasts for practical use during training and competitions. It is not an official product of the federations mentioned (FIARC, FITARCO, FFTA), nor is it approved by or affiliated with them. The names, trademarks, and rules mentioned belong to their respective federations. In case of doubt about official scoring, the rulebook published by the relevant federation always prevails.",
       contact_title: "Report an error or a missing federation",
       contact_text: "Found a wrong score? Is your federation or country missing (e.g. Spain, Slovenia\u2026)? Get in touch, we're happy to improve the app together with the people who actually use it.",
@@ -996,7 +955,7 @@ document.addEventListener("DOMContentLoaded", function(){
       campi_hint: "Ouvre Google Maps avec les terrains de tir 3D \u00e0 proximit\u00e9 (n\u00e9cessite la g\u00e9olocalisation).",
       campi_searching: "Localisation\u2026",
       history_title: "Historique des parcours",
-      history_empty: "Les parcours termin\u00e9s appara\u00eetront ici par ordre chronologique, avec le score et les piquets.", history_empty_title: "Aucun parcours pour l'instant", history_empty_cta: "Commencer le premier parcours", stats_rounds: "Parcours", stats_avg: "Moyenne", stats_best: "Record",
+      history_empty: "Aucun parcours termin\u00e9 pour le moment \u2014 il appara\u00eetra ici une fois termin\u00e9", stats_rounds: "Parcours", stats_avg: "Moyenne", stats_best: "Record",
       history_clear: "Effacer l\u2019historique",
       clear_confirm: "Appuyez \u00e0 nouveau pour confirmer",
       targets_word: "cibles",
@@ -1013,6 +972,7 @@ document.addEventListener("DOMContentLoaded", function(){
       timer_start: "Minuteur", timer_reset: "R\u00e9initialiser",
       zero_label: "Nul",
       quick_hint_target: "ou marquez le point d\u2019impact exact sur la cible",
+      tap_impact_hint: "Touchez le point d\u2019impact exact",
       fuori_sagoma: "hors cible",
       zoom_btn: "Zoomer sur la cible",
       zoom_btn_reduce: "D\u00e9zoomer",
@@ -1054,6 +1014,7 @@ document.addEventListener("DOMContentLoaded", function(){
       mode_battuta_label:"Battuta", mode_battuta_tag:"comp\u00e9tition \u00b7 groupe de 3", mode_battuta_unit:"Silhouette",
       mode_battuta_desc:"Battuta officielle : 28 cibles, 48 fl\u00e8ches au total \u2014 14 cibles simples et 4 mobiles (1 fl\u00e8che), 6 groupes de 3 (s\u2019arr\u00eate au premier tir manqu\u00e9) et 4 groupes chronom\u00e9tr\u00e9s de 3 (toujours cumul\u00e9s). Distances de 20 \u00e0 40 m selon le groupe. 10 fl\u00e8ches \u00e0 tirer obligatoirement \u00e0 genou, jamais sur les cibles chronom\u00e9tr\u00e9es.",
       menu_info: "Infos",
+      info_title: "Informations",
       disclaimer_text: "ArcTrail 3D est une application ind\u00e9pendante cr\u00e9\u00e9e par des passionn\u00e9s pour un usage pratique lors des entra\u00eenements et des comp\u00e9titions. Ce n'est pas un produit officiel des f\u00e9d\u00e9rations mentionn\u00e9es (FIARC, FITARCO, FFTA), et l'application n'est ni approuv\u00e9e ni affili\u00e9e \u00e0 celles-ci. Les noms, marques et r\u00e8glements mentionn\u00e9s appartiennent \u00e0 leurs f\u00e9d\u00e9rations respectives. En cas de doute sur le score officiel, le r\u00e8glement publi\u00e9 par la f\u00e9d\u00e9ration concern\u00e9e fait toujours foi.",
       contact_title: "Signaler une erreur ou une f\u00e9d\u00e9ration manquante",
       contact_text: "Un score erron\u00e9 ? Votre f\u00e9d\u00e9ration ou votre pays manque (Espagne, Slov\u00e9nie\u2026) ? \u00c9crivez-nous, nous serions ravis d'am\u00e9liorer l'appli avec ceux qui l'utilisent vraiment.",
@@ -1207,7 +1168,7 @@ document.addEventListener("DOMContentLoaded", function(){
       campi_hint: "\u00d6ffnet Google Maps mit 3D-Bogenpl\u00e4tzen in der N\u00e4he (ben\u00f6tigt Standortzugriff).",
       campi_searching: "Standort wird gesucht\u2026",
       history_title: "Parcours-Verlauf",
-      history_empty: "Abgeschlossene Parcours erscheinen hier in chronologischer Reihenfolge, mit Punktzahl und Zielen.", history_empty_title: "Noch keine Runde", history_empty_cta: "Ersten Parcours starten", stats_rounds: "Runden", stats_avg: "Durchschnitt", stats_best: "Bestwert",
+      history_empty: "Noch kein abgeschlossener Parcours \u2014 er erscheint hier, sobald er beendet ist", stats_rounds: "Runden", stats_avg: "Durchschnitt", stats_best: "Bestwert",
       history_clear: "Verlauf l\u00f6schen",
       clear_confirm: "Zum Best\u00e4tigen erneut tippen",
       targets_word: "Ziele",
@@ -1224,6 +1185,7 @@ document.addEventListener("DOMContentLoaded", function(){
       timer_start: "Timer", timer_reset: "Zur\u00fccksetzen",
       zero_label: "Fehler",
       quick_hint_target: "oder markiere den genauen Treffpunkt auf dem Ziel",
+      tap_impact_hint: "Tippe auf den genauen Treffpunkt",
       fuori_sagoma: "Fehlschuss",
       zoom_btn: "Ziel vergr\u00f6\u00dfern",
       zoom_btn_reduce: "Verkleinern",
@@ -1265,6 +1227,7 @@ document.addEventListener("DOMContentLoaded", function(){
       mode_battuta_label:"Battuta", mode_battuta_tag:"Wettkampf \u00b7 Gruppe von 3", mode_battuta_unit:"Ziel",
       mode_battuta_desc:"Offizielle Battuta: 28 Ziele, 48 Pfeile insgesamt \u2014 14 einzelne und 4 bewegliche Ziele (1 Pfeil), 6 Dreiergruppen (endet beim ersten Fehlschuss) und 4 zeitlich begrenzte Dreiergruppen (immer addiert). Distanzen von 20 bis 40 m je nach Gruppe. 10 Pfeile m\u00fcssen kniend geschossen werden, nie bei zeitlich begrenzten Zielen.",
       menu_info: "Infos",
+      info_title: "Informationen",
       disclaimer_text: "ArcTrail 3D ist eine unabh\u00e4ngige App, die von Enthusiasten f\u00fcr den praktischen Einsatz beim Training und bei Wettk\u00e4mpfen entwickelt wurde. Sie ist kein offizielles Produkt der genannten Verb\u00e4nde (FIARC, FITARCO, FFTA, SwissArchery) und wird von diesen weder genehmigt noch ist sie mit ihnen verbunden. Die genannten Namen, Marken und Reglemente geh\u00f6ren den jeweiligen Verb\u00e4nden. Im Zweifelsfall gilt immer das offiziell ver\u00f6ffentlichte Reglement des zust\u00e4ndigen Verbands.",
       contact_title: "Einen Fehler oder einen fehlenden Verband melden",
       contact_text: "Ein falscher Punktestand? Fehlt dein Verband oder dein Land (z.\u00a0B. Spanien, Slowenien\u2026)? Schreib uns, wir verbessern die App gerne gemeinsam mit den Leuten, die sie wirklich nutzen.",
@@ -1595,31 +1558,32 @@ document.addEventListener("DOMContentLoaded", function(){
     var outerR = radii[radii.length-1];
     var out = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">';
     out += '<defs>';
-    // gradiente radiale per ogni zona (luce in alto a sinistra) - generato per qualsiasi colore/zona, non solo le 3 fisse del mockup
-    var usedGrad = {};
+    // gradiente lucido per ogni zona (luce in alto a sinistra, come nel mockup) - generato per qualsiasi set di zone/colori
+    var usedColors = {};
     for(var gi=0; gi<n; gi++){
       var gc = colorVar[zones[gi].cls] || "var(--qsag)";
       var gid = "zoneGrad_" + gc.replace(/[^a-z0-9]/gi,'');
-      if(usedGrad[gid]) continue;
-      usedGrad[gid] = true;
-      out += '<radialGradient id="'+gid+'" cx="35%" cy="30%">'+
-        '<stop offset="0%" stop-color="color-mix(in srgb, '+gc+' 75%, white)"/>'+
+      if(usedColors[gid]) continue;
+      usedColors[gid] = true;
+      out += '<radialGradient id="'+gid+'" cx="35%" cy="30%" r="75%">'+
+        '<stop offset="0%" stop-color="color-mix(in srgb, '+gc+' 55%, white)"/>'+
         '<stop offset="60%" stop-color="'+gc+'"/>'+
-        '<stop offset="100%" stop-color="color-mix(in srgb, '+gc+' 80%, black)"/>'+
+        '<stop offset="100%" stop-color="color-mix(in srgb, '+gc+' 65%, black)"/>'+
       '</radialGradient>';
     }
+    out += '<clipPath id="outerClip"><circle cx="'+cx+'" cy="'+cy+'" r="'+outerR+'"/></clipPath>';
     out += '</defs>';
+    out += '<rect x="0" y="0" width="300" height="300" fill="var(--qzero)"/>';
     for(var i=n-1;i>=0;i--){
       var isOuter = (i===n-1);
       var c = colorVar[zones[i].cls] || "var(--qsag)";
       var gid2 = "zoneGrad_" + c.replace(/[^a-z0-9]/gi,'');
-      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#'+gid2+')" stroke="#CBA35C" stroke-width="2" stroke-opacity="0.6"'+(isOuter?'':' pointer-events="none"')+'/>';
+      out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#'+gid2+')" stroke="rgba(203,163,92,0.6)" stroke-width="3"'+(isOuter?'':' pointer-events="none"')+'/>';
       if(isOuter){
-        // linee concentriche ben definite (come nel mockup): disegnate qui, le zone interne
-        // (che seguono nel ciclo) le coprono naturalmente, restano visibili solo sulla fascia esterna
-        out += '<g style="mix-blend-mode:overlay;opacity:0.5;pointer-events:none;">';
+        // trama fine a cerchi concentrici sulla zona esterna, come nel mockup
+        out += '<g clip-path="url(#outerClip)" style="mix-blend-mode:overlay;opacity:0.5;pointer-events:none;">';
         for(var rr=4; rr<=outerR; rr+=7){
-          out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rr+'" fill="none" stroke="rgba(217,185,106,0.6)" stroke-width="2"/>';
+          out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rr+'" fill="none" stroke="rgba(217,185,106,0.5)" stroke-width="3.5"/>';
         }
         out += '</g>';
       }
@@ -1652,8 +1616,7 @@ document.addEventListener("DOMContentLoaded", function(){
     clipboard: '<rect x="5" y="4" width="14" height="17" rx="1.5"/><rect x="8.5" y="2.5" width="7" height="3" rx="1"/><path d="M8.5 10.5h7M8.5 14h7M8.5 17.5h4"/>',
     mappin: '<path d="M12 21s7-6.8 7-12a7 7 0 0 0-14 0c0 5.2 7 12 7 12z"/><circle cx="12" cy="9" r="3.2"/><circle cx="12" cy="9" r="0.9" fill="currentColor" stroke="none"/>',
     emblem: '<path d="M12 2.5l7 2.5v6c0 5-3 8.3-7 10.5-4-2.2-7-5.5-7-10.5V5z"/><path d="M8.7 11l2.4 2.4L15.3 9"/>',
-    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.5l3.5 2"/>',
-    empty: '<circle cx="12" cy="12" r="8.5"/><path d="M6.5 6.5l11 11"/>'
+    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.5l3.5 2"/>'
   };
   function icon(name, size, strokeWidth){
     var p = ICON_PATHS[name] || "";
@@ -1895,7 +1858,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     wrap.appendChild(stack);
     var otherMailSubject = encodeURIComponent("ArcTrail 3D - nazione mancante");
-    var otherChip = el('<a href="mailto:'+CONTACT_EMAIL+'?subject='+otherMailSubject+'" class="btn btn-ghost btn-block" style="max-width:320px;margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">\uD83C\uDF0D '+t("country_other")+' \u00b7 '+t("coming_soon")+'</a>');
+    var otherChip = el('<a href="mailto:'+ADMIN_EMAIL+'?subject='+otherMailSubject+'" class="btn btn-ghost btn-block" style="max-width:320px;margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">\uD83C\uDF0D '+t("country_other")+' \u00b7 '+t("coming_soon")+'</a>');
     wrap.appendChild(otherChip);
     var backBtn = el('<button class="btn btn-ghost btn-block" style="max-width:300px;margin-top:16px;">'+t("back_step")+'</button>');
     backBtn.addEventListener("click", function(){ state.lang = null; save(); render(); });
@@ -3691,16 +3654,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
   function infoScreen(){
     var wrap = el('<div></div>');
-    var editorial = el('<div class="editorial-block"></div>');
-    editorial.appendChild(el('<div class="editorial-icon">'+icon("info",20)+'</div>'));
-    editorial.appendChild(el('<div class="editorial-body">'+t("disclaimer_text")+'</div>'));
-    wrap.appendChild(editorial);
+    var infoCard = el('<div class="card"></div>');
+    infoCard.appendChild(el('<h2 class="section-title">'+t("info_title")+'</h2>'));
+    infoCard.appendChild(el('<div style="font-size:0.85rem;line-height:1.6;">'+t("disclaimer_text")+'</div>'));
+    wrap.appendChild(infoCard);
 
     var contactCard = el('<div class="card" style="margin-top:14px;"></div>');
     contactCard.appendChild(el('<h2 class="section-title">'+t("contact_title")+'</h2>'));
     contactCard.appendChild(el('<div style="font-size:0.85rem;line-height:1.6;">'+t("contact_text")+'</div>'));
     var mailSubject = encodeURIComponent("ArcTrail 3D - segnalazione");
-    var mailBtn = el('<a href="mailto:'+CONTACT_EMAIL+'?subject='+mailSubject+'" class="btn btn-primary btn-block" style="margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">'+t("contact_button")+'</a>');
+    var mailBtn = el('<a href="mailto:'+ADMIN_EMAIL+'?subject='+mailSubject+'" class="btn btn-primary btn-block" style="margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">'+t("contact_button")+'</a>');
     contactCard.appendChild(mailBtn);
     wrap.appendChild(contactCard);
 
@@ -3719,20 +3682,7 @@ document.addEventListener("DOMContentLoaded", function(){
     var histCard = el('<div class="card"></div>');
     histCard.appendChild(el('<h2 class="section-title">'+t("history_title")+'</h2>'));
     if(!hist.length){
-      var emptyCard = el('<div class="empty-state-card"></div>');
-      emptyCard.appendChild(el('<div class="empty-state-icon">'+icon("empty",20)+'</div>'));
-      emptyCard.appendChild(el('<div class="empty-state-title">'+t("history_empty_title")+'</div>'));
-      emptyCard.appendChild(el('<div class="empty-state-body">'+t("history_empty")+'</div>'));
-      var ctaBtn = el('<button class="btn btn-primary btn-block">'+t("history_empty_cta")+' &rarr;</button>');
-      ctaBtn.addEventListener("click", function(){
-        state.pendingMode = FEDERATIONS[state.federation || "fiarc"].trainingMode;
-        ensureSelfArcher();
-        state.registrationNext = "training-setup";
-        state.screen = "registration";
-        save(); render();
-      });
-      emptyCard.appendChild(ctaBtn);
-      histCard.appendChild(emptyCard);
+      histCard.appendChild(el('<div class="empty-hint">'+t("history_empty")+'</div>'));
     } else {
       var myName = state.profile && state.profile.nomeCognome;
       var myTotals = [];
@@ -3750,20 +3700,17 @@ document.addEventListener("DOMContentLoaded", function(){
         statsRow.appendChild(el('<div class="stat-box"><span class="stat-num">'+best+'</span><span class="stat-lbl">'+t("stats_best")+'</span></div>'));
         histCard.appendChild(statsRow);
       }
-      var histList = el('<div style="margin-top:4px;"></div>');
+      var histList = el('<div class="archer-list"></div>');
       var locale = (LANG_META[state.lang]||LANG_META.it).locale;
       hist.slice(0,20).forEach(function(h){
         var d = new Date(h.date);
         var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
         var winner = h.results.length ? h.results[0] : null;
         var mLabel = h.modeKey ? modeLabel(h.modeKey) : (h.modeLabel || modeLabel("training"));
-        var row = el('<div class="timeline-row"></div>');
-        row.appendChild(el('<div class="timeline-icon">'+icon("target",16)+'</div>'));
-        var content = el('<div class="timeline-content"></div>');
-        content.appendChild(el('<span class="timeline-meta">'+dateStr+' &middot; '+escapeHtml(mLabel)+' &middot; '+h.format+' '+t("targets_word")+'</span>'));
-        row.appendChild(content);
-        row.appendChild(el('<span class="timeline-result">'+(winner ? escapeHtml(winner.name)+" "+winner.total+"pt" : "")+'</span>'));
-        histList.appendChild(row);
+        histList.appendChild(el(
+          '<div class="archer-row"><span class="name">'+dateStr+' &middot; '+escapeHtml(mLabel)+' &middot; '+h.format+' '+t("targets_word")+'</span>'+
+          '<span style="color:var(--gold);font-weight:700;">'+(winner ? escapeHtml(winner.name)+" "+winner.total+"pt" : "")+'</span></div>'
+        ));
       });
       histCard.appendChild(histList);
       var clearHistBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("history_clear")+'</button>');
@@ -4113,7 +4060,15 @@ document.addEventListener("DOMContentLoaded", function(){
     quickGrid.appendChild(zeroBtn);
     var totalBtns = quickGrid.children.length;
     quickGrid.style.gridTemplateColumns = "repeat(" + totalBtns + ", 1fr)";
-    quickGrid.style.marginBottom = "18px";
+    var centerIdx = (totalBtns - 1) / 2;
+    var maxOffset = 0;
+    Array.prototype.forEach.call(quickGrid.children, function(btn, idx){
+      var dist = Math.abs(idx - centerIdx);
+      var offset = Math.round(dist * dist * 11);
+      if(offset > maxOffset){ maxOffset = offset; }
+      btn.style.transform = "translateY(" + offset + "px)";
+    });
+    quickGrid.style.marginBottom = (10 + maxOffset) + "px";
     card.appendChild(quickGrid);
 
     card.appendChild(el('<div class="quick-hint" style="margin-top:10px;">'+t("quick_hint_target")+'</div>'));
@@ -4122,16 +4077,19 @@ document.addEventListener("DOMContentLoaded", function(){
     var svgWrap = el('<div class="silhouette-wrap"></div>');
     svgWrap.innerHTML = targetSVG(mode);
     board.appendChild(svgWrap);
-    var toolbar = el('<div class="zoom-toolbar"><button class="btn btn-ghost btn-sm" id="zoomBtn">'+icon("sight",14)+' '+t("zoom_btn")+'</button></div>');
-    board.appendChild(toolbar);
-    var legendParts = mode.zones.map(function(z){ return t(z.labelKey)+' '+pts[z.key]; });
-    board.appendChild(el('<div class="legend-row">'+legendParts.join(" &middot; ")+' &middot; '+t("fuori_sagoma")+' 0</div>'));
-    if(mode.provisional){
-      board.appendChild(el('<div class="legend-row" style="color:var(--danger);">'+t("provisional_note")+'</div>'));
-    }
-    var readoutHolder = el('<div id="readoutHolder"></div>');
-    board.appendChild(readoutHolder);
     card.appendChild(board);
+    card.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:8px;">'+t("tap_impact_hint")+'</div>'));
+    var legendParts = mode.zones.map(function(z){ return t(z.labelKey)+' '+pts[z.key]; });
+    card.appendChild(el('<div class="legend-row">'+legendParts.join(" &middot; ")+' &middot; '+t("fuori_sagoma")+' 0</div>'));
+    if(mode.provisional){
+      card.appendChild(el('<div class="legend-row" style="color:var(--danger);">'+t("provisional_note")+'</div>'));
+    }
+
+    var toolbar = el('<div class="zoom-toolbar"><button class="btn btn-ghost btn-sm" id="zoomBtn">'+icon("sight",14)+' '+t("zoom_btn")+'</button></div>');
+    card.appendChild(toolbar);
+
+    var readoutHolder = el('<div id="readoutHolder"></div>');
+    card.appendChild(readoutHolder);
 
     var strip = el('<div class="shots-strip"></div>');
     state.archers.forEach(function(a){
@@ -4613,7 +4571,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
   initAuthFlow();
-});
+})();
 </script>
 </body>
 </html>
