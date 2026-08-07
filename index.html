@@ -204,15 +204,21 @@ body.theme-satura .quick-btn.perfect{ background:#9FCB2A; border:none; color:#2A
 .stat-box{ flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 6px; }
 .stat-box .stat-num{ font-family:"Playfair Display",Georgia,serif; font-weight:900; font-size:1.5rem; color:var(--accent); }
 .stat-box .stat-lbl{ font-size:0.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:2px; }
-.timer-box{ margin:8px 0 4px; display:flex; justify-content:center; }
-.timer-idle{ display:flex; align-items:center; gap:8px; background:color-mix(in srgb, var(--danger) 14%, var(--bg-panel-2)); border:1px solid color-mix(in srgb, var(--danger) 55%, transparent); border-radius:18px; padding:6px 10px; }
+@keyframes timerPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
+.timer-box{ margin:8px 0 20px; }
+.timer-idle{ background:linear-gradient(135deg, rgba(26,38,32,0.9), rgba(22,32,28,0.9)); border:1.5px solid var(--line); border-radius:24px; padding:20px; text-align:center; }
+.timer-idle-row{ display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:14px; }
 .timer-idle .btn-sm{ padding:4px 9px; min-width:0; }
-.timer-idle .btn-ghost, .timer-running .btn-ghost{ color:var(--cream); }
-.timer-dur{ font-family:"Outfit",sans-serif; font-variant-numeric:tabular-nums; font-weight:700; font-size:1.1rem; color:var(--cream); min-width:44px; text-align:center; }
-.timer-running{ display:flex; align-items:center; gap:14px; background:color-mix(in srgb, var(--danger) 14%, var(--bg-panel-2)); border:1px solid color-mix(in srgb, var(--danger) 55%, transparent); border-radius:18px; padding:6px 16px; }
-.timer-num{ font-family:"Outfit",sans-serif; font-weight:800; font-size:1.85rem; font-variant-numeric:tabular-nums; color:var(--cream); min-width:64px; text-align:center; }
+.timer-dur{ font-family:"Outfit",sans-serif; font-variant-numeric:tabular-nums; font-weight:700; font-size:1.4rem; color:var(--cream); min-width:80px; text-align:center; }
+.timer-start-btn{ width:100%; }
+.timer-running{ background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), color-mix(in srgb, var(--gold) 8%, transparent)); border:1.5px solid var(--accent); border-radius:24px; padding:28px 20px; text-align:center; box-shadow:0 0 34px color-mix(in srgb, var(--accent) 28%, transparent), inset 0 0 26px color-mix(in srgb, var(--accent) 10%, transparent); transition:border-color .3s, box-shadow .3s; }
+.timer-running.timer-warn{ border-color:var(--gold); box-shadow:0 0 34px color-mix(in srgb, var(--gold) 28%, transparent), inset 0 0 26px color-mix(in srgb, var(--gold) 10%, transparent); }
+.timer-running.timer-danger{ border-color:var(--danger); box-shadow:0 0 34px color-mix(in srgb, var(--danger) 28%, transparent), inset 0 0 26px color-mix(in srgb, var(--danger) 10%, transparent); }
+.timer-running-label{ font-size:0.7rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:8px; }
+.timer-num{ font-family:"Outfit",sans-serif; font-weight:800; font-size:4rem; font-variant-numeric:tabular-nums; color:var(--accent); line-height:1; display:block; margin-bottom:16px; animation:timerPulse 1s ease-in-out infinite; }
 .timer-num.timer-warn{ color:var(--gold); }
 .timer-num.timer-danger{ color:var(--danger); }
+.timer-pause-btn{ width:100%; }
 .shots-strip{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:14px 0 4px; }
 .shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
 table.score-table{ width:100%; border-collapse:collapse; font-size:0.85rem; }
@@ -592,7 +598,7 @@ partial_title: "Punteggio parziale \u00b7 tutti i partecipanti",
 turn_of: "Turno di",
 finora: " \u00b7 finora: {list} pt",
 vale_prima: " \u00b7 vale la prima a segno",
-timer_start: "Timer", timer_reset: "Azzera",
+timer_start: "Avvia timer", timer_reset: "Azzera", timer_remaining: "Tempo rimanente",
 zero_label: "Nulla",
 quick_hint_target: "oppure segna il punto esatto sul bersaglio",
 fuori_sagoma: "fuori sagoma",
@@ -800,7 +806,7 @@ partial_title: "Live score \u00b7 all participants",
 turn_of: "Turn of",
 finora: " \u00b7 so far: {list} pts",
 vale_prima: " \u00b7 only the first hit counts",
-timer_start: "Timer", timer_reset: "Reset",
+timer_start: "Start timer", timer_reset: "Reset", timer_remaining: "Time remaining",
 zero_label: "Miss",
 quick_hint_target: "or mark the exact impact point on the target",
 fuori_sagoma: "miss",
@@ -1011,7 +1017,7 @@ partial_title: "Score en direct \u00b7 tous les participants",
 turn_of: "Tour de",
 finora: " \u00b7 jusqu\u2019ici : {list} pts",
 vale_prima: " \u00b7 seul le premier tir marquant compte",
-timer_start: "Minuteur", timer_reset: "R\u00e9initialiser",
+timer_start: "D\u00e9marrer", timer_reset: "R\u00e9initialiser", timer_remaining: "Temps restant",
 zero_label: "Nul",
 quick_hint_target: "ou marquez le point d\u2019impact exact sur la cible",
 fuori_sagoma: "hors cible",
@@ -1222,7 +1228,7 @@ partial_title: "Live-Punktestand \u00b7 alle Teilnehmer",
 turn_of: "Am Zug:",
 finora: " \u00b7 bisher: {list} Pkt",
 vale_prima: " \u00b7 nur der erste Treffer z\u00e4hlt",
-timer_start: "Timer", timer_reset: "Zur\u00fccksetzen",
+timer_start: "Timer starten", timer_reset: "Zur\u00fccksetzen", timer_remaining: "Verbleibende Zeit",
 zero_label: "Fehler",
 quick_hint_target: "oder markiere den genauen Treffpunkt auf dem Ziel",
 fuori_sagoma: "Fehlschuss",
@@ -4056,29 +4062,37 @@ function renderTimerBox(){
 timerBox.innerHTML = "";
 if(!timerRunning && timerRemaining === null){
 var row = el('<div class="timer-idle"></div>');
+var innerRow = el('<div class="timer-idle-row"></div>');
 var minus = el('<button type="button" class="btn btn-ghost btn-sm">\u2212</button>');
 var dur = el('<span class="timer-dur">'+fmtTime(timerDuration)+'</span>');
 var plus = el('<button type="button" class="btn btn-ghost btn-sm">+</button>');
-var startBtn = el('<button type="button" class="btn btn-ghost btn-sm">'+icon("clock",14)+' '+t("timer_start")+'</button>');
+var startBtn = el('<button type="button" class="btn btn-primary timer-start-btn">'+icon("clock",14)+' '+t("timer_start")+'</button>');
 minus.addEventListener("click", function(){ if(timerDuration>15){ timerDuration -= 15; dur.textContent = fmtTime(timerDuration); } });
 plus.addEventListener("click", function(){ if(timerDuration<600){ timerDuration += 15; dur.textContent = fmtTime(timerDuration); } });
 startBtn.addEventListener("click", function(){
 timerRemaining = timerDuration; timerRunning = true; renderTimerBox();
 });
-row.appendChild(minus); row.appendChild(dur); row.appendChild(plus); row.appendChild(startBtn);
+innerRow.appendChild(minus); innerRow.appendChild(dur); innerRow.appendChild(plus);
+row.appendChild(innerRow); row.appendChild(startBtn);
 timerBox.appendChild(row);
 } else {
 var big = el('<div class="timer-running"></div>');
+var label = el('<div class="timer-running-label">'+t("timer_remaining")+'</div>');
 var num = el('<span class="timer-num">'+fmtTime(timerRemaining)+'</span>');
-var resetBtn = el('<button type="button" class="btn btn-ghost btn-sm">'+t("timer_reset")+'</button>');
+var resetBtn = el('<button type="button" class="btn btn-primary timer-pause-btn">'+t("timer_reset")+'</button>');
 resetBtn.addEventListener("click", function(){
 if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; }
 timerRunning = false; timerRemaining = null; renderTimerBox();
 });
-big.appendChild(num); big.appendChild(resetBtn);
+big.appendChild(label); big.appendChild(num); big.appendChild(resetBtn);
 timerBox.appendChild(big);
+function updateTimerColors(){
 num.classList.toggle("timer-warn", timerRemaining <= 20 && timerRemaining > 10);
 num.classList.toggle("timer-danger", timerRemaining <= 10);
+big.classList.toggle("timer-warn", timerRemaining <= 20 && timerRemaining > 10);
+big.classList.toggle("timer-danger", timerRemaining <= 10);
+}
+updateTimerColors();
 if(timerIntervalId){ clearInterval(timerIntervalId); }
 timerIntervalId = setInterval(function(){
 timerRemaining--;
@@ -4087,8 +4101,7 @@ clearInterval(timerIntervalId); timerIntervalId = null; timerRemaining = 0; time
 if(navigator.vibrate){ navigator.vibrate([80,60,80]); }
 }
 num.textContent = fmtTime(Math.max(0,timerRemaining));
-num.classList.toggle("timer-warn", timerRemaining <= 20 && timerRemaining > 10);
-num.classList.toggle("timer-danger", timerRemaining <= 10);
+updateTimerColors();
 if(!timerRunning){ renderTimerBox(); }
 }, 1000);
 }
