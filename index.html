@@ -168,16 +168,12 @@ input[type=text]:focus, input[type=number]:focus{ outline:2px solid var(--accent
 .archer-turn{ font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
 .archer-name-big{ font-size:1.4rem; margin-bottom:6px; font-family:'Playfair Display',Georgia,serif; font-weight:900; letter-spacing:0.01em; }
 .arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:999px; margin-bottom:12px; }
-.mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:999px; margin-bottom:10px; text-transform:uppercase; letter-spacing:.05em; }
-.piazzola-hero{ margin-bottom:10px; }
-.piazzola-hero-lbl{ font-size:0.7rem; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin-bottom:2px; }
-.piazzola-num{ font-size:3.4rem; font-weight:700; color:var(--accent); font-family:"Playfair Display",Georgia,serif; line-height:1; position:relative; display:inline-block; }
-.piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:130px; height:130px; transform:translate(-50%,-50%); border-radius:50%;
-background:radial-gradient(circle, rgba(29,154,140,0.16), transparent 70%); z-index:-1; }
-.archer-progress-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:7px; margin-bottom:12px; }
-.archer-progress-dot{ width:9px; height:9px; border-radius:50%; background:var(--line); display:inline-block; }
-.archer-progress-dot.done{ background:var(--muted); }
-.archer-progress-dot.current{ background:var(--accent); transform:scale(1.4); }
+.mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:999px; margin-bottom:7px; text-transform:uppercase; letter-spacing:.05em; }
+.piazzola-hero{ margin-bottom:6px; }
+.piazzola-hero-lbl{ font-size:0.7rem; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin-bottom:0px; }
+.piazzola-num{ font-size:3.1rem; font-weight:700; color:var(--bark); font-family:"Playfair Display",Georgia,serif; line-height:1; position:relative; display:inline-block; }
+.piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
+background:radial-gradient(circle, rgba(232,114,47,0.16), transparent 70%); z-index:-1; }
 .archer-check-wrap{ margin-bottom:10px; }
 .archer-check-btn{ background:none; border:1px dashed var(--line); color:var(--muted); font-size:0.72rem; font-weight:600; padding:5px 12px; border-radius:999px; cursor:pointer; text-transform:uppercase; letter-spacing:.05em; }
 .archer-name-big.archer-name-hidden{ display:none; }
@@ -612,7 +608,7 @@ zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letale", zone_ffta_spot: "Vit
 target_singular: "Piazzola",
 partial_title: "Punteggio parziale \u00b7 tutti i partecipanti",
 turn_of: "Turno di",
-check_archer_btn: "Controlla chi tira",
+check_archer_btn: "Controlla tiratori",
 finora: " \u00b7 finora: {list} pt",
 vale_prima: " \u00b7 vale la prima a segno",
 timer_start: "Avvia timer", timer_reset: "Azzera", timer_remaining: "Tempo rimanente",
@@ -837,7 +833,7 @@ zone_ffta_perfect: "Center", zone_ffta_superspot: "Kill", zone_ffta_spot: "Vital
 target_singular: "Target",
 partial_title: "Live score \u00b7 all participants",
 turn_of: "Turn of",
-check_archer_btn: "Check who's shooting",
+check_archer_btn: "Check archers",
 finora: " \u00b7 so far: {list} pts",
 vale_prima: " \u00b7 only the first hit counts",
 timer_start: "Start timer", timer_reset: "Reset", timer_remaining: "Time remaining",
@@ -1065,7 +1061,7 @@ zone_ffta_perfect: "Petit tu\u00e9", zone_ffta_superspot: "Tu\u00e9", zone_ffta_
 target_singular: "Cible",
 partial_title: "Score en direct \u00b7 tous les participants",
 turn_of: "Tour de",
-check_archer_btn: "V\u00e9rifier le tireur",
+check_archer_btn: "V\u00e9rifier les tireurs",
 finora: " \u00b7 jusqu\u2019ici : {list} pts",
 vale_prima: " \u00b7 seul le premier tir marquant compte",
 timer_start: "D\u00e9marrer", timer_reset: "R\u00e9initialiser", timer_remaining: "Temps restant",
@@ -1538,7 +1534,7 @@ zone_ffta_perfect: "Merkez", zone_ffta_superspot: "\u00d6ld\u00fcr\u00fcc\u00fc"
 target_singular: "Hedef",
 partial_title: "K\u0131smi puan \u00b7 t\u00fcm kat\u0131l\u0131mc\u0131lar",
 turn_of: "S\u0131ra kimde:",
-check_archer_btn: "Ok\u00e7uyu kontrol et",
+check_archer_btn: "Ok\u00e7ular\u0131 kontrol et",
 finora: " \u00b7 \u015fu ana kadar: {list} p",
 vale_prima: " \u00b7 sadece ilk isabet ge\u00e7erli",
 timer_start: "Zamanlay\u0131c\u0131y\u0131 ba\u015flat", timer_reset: "S\u0131f\u0131rla", timer_remaining: "Kalan s\u00fcre",
@@ -1780,7 +1776,7 @@ zone_ffta_perfect: "Центр", zone_ffta_superspot: "Смертельная", 
 target_singular: "Мишень",
 partial_title: "Промежуточный результат · все участники",
 turn_of: "Очередь стрелка",
-check_archer_btn: "Проверить стрелка",
+check_archer_btn: "Проверить стрелков",
 finora: " · пока что: {list} очк.",
 vale_prima: " · засчитывается только первое попадание",
 timer_start: "Запустить таймер", timer_reset: "Сбросить", timer_remaining: "Оставшееся время",
@@ -2022,7 +2018,7 @@ zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letal", zone_ffta_spot: "Vita
 target_singular: "Diana",
 partial_title: "Puntuaci\u00f3n parcial \u00b7 todos los participantes",
 turn_of: "Turno de",
-check_archer_btn: "Comprobar arquero",
+check_archer_btn: "Comprobar arqueros",
 finora: " \u00b7 hasta ahora: {list} pts",
 vale_prima: " \u00b7 solo cuenta el primer impacto",
 timer_start: "Iniciar temporizador", timer_reset: "Reiniciar", timer_remaining: "Tiempo restante",
@@ -2264,7 +2260,7 @@ zone_ffta_perfect: "Centrum", zone_ffta_superspot: "D\u00f6dlig", zone_ffta_spot
 target_singular: "M\u00e5l",
 partial_title: "Del-po\u00e4ng \u00b7 alla deltagare",
 turn_of: "Tur f\u00f6r",
-check_archer_btn: "Kontrollera sk\u00e4tt",
+check_archer_btn: "Kontrollera skyttar",
 finora: " \u00b7 hittills: {list} p",
 vale_prima: " \u00b7 endast f\u00f6rsta tr\u00e4ffen r\u00e4knas",
 timer_start: "Starta timer", timer_reset: "Nollst\u00e4ll", timer_remaining: "\u00c5terst\u00e5ende tid",
@@ -2506,7 +2502,7 @@ zone_ffta_perfect: "Centrum", zone_ffta_superspot: "Dodelijk", zone_ffta_spot: "
 target_singular: "Doel",
 partial_title: "Tussenstand \u00b7 alle deelnemers",
 turn_of: "Beurt van",
-check_archer_btn: "Boogschutter controleren",
+check_archer_btn: "Boogschutters controleren",
 finora: " \u00b7 tot nu toe: {list} pt",
 vale_prima: " \u00b7 alleen de eerste treffer telt",
 timer_start: "Timer starten", timer_reset: "Resetten", timer_remaining: "Resterende tijd",
@@ -5501,18 +5497,6 @@ var piazzolaHero = el('<div class="piazzola-hero"></div>');
 piazzolaHero.appendChild(el('<div class="piazzola-hero-lbl">'+t("target_singular")+'</div>'));
 piazzolaHero.appendChild(el('<div class="piazzola-num">'+state.target+'</div>'));
 card.appendChild(piazzolaHero);
-
-if(state.archers.length > 1){
-var progressRow = el('<div class="archer-progress-row"></div>');
-state.archers.forEach(function(a, idx){
-var doneAlready = (state.scores[a.id]||[]).length >= state.target;
-var dot = el('<span class="archer-progress-dot"></span>');
-if(idx === state.archerIndex){ dot.classList.add("current"); }
-else if(doneAlready){ dot.classList.add("done"); }
-progressRow.appendChild(dot);
-});
-card.appendChild(progressRow);
-}
 
 var nameCheckWrap = el('<div class="archer-check-wrap"></div>');
 var nameToggleBtn = el('<button type="button" class="archer-check-btn">\uD83D\uDC41\uFE0F '+t("check_archer_btn")+'</button>');
