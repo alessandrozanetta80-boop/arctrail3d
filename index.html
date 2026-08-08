@@ -54,7 +54,7 @@
 --bg:#0F1412; --bg-panel:#16201C; --bg-panel-2:#1A2620; --wood:#16201C; --wood-2:#1A2620;
 --accent:#1D9A8C; --bark:#E8722F; --gold:#CBA35C; --cream:#EDE6D6; --muted:#9AA39C;
 --danger:#E23D2E; --success:#4CAF50; --line:#2A362F;
---qss:#E8722F; --qspot:#5CA847; --qsag:#3E6FC2; --qzero:#464A42;
+--qss:#E8722F; --qspot:#5CA847; --qsag:#3E6FC2; --qzero:#464A42; --qperfect:#C1272D;
 --checkbox-border: rgba(237,230,214,0.4);
 }
 body.theme-light{
@@ -97,6 +97,9 @@ h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.
 .btn-danger{ background:var(--danger); border-color:transparent; color:#fff; }
 .btn-ghost-danger{ background:color-mix(in srgb, var(--danger) 14%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--danger) 55%, transparent); color:color-mix(in srgb, var(--danger) 55%, white); }
 .btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
+.btn-standings{ background:var(--gold); border-color:transparent; color:#231a09; font-weight:800; box-shadow:0 4px 14px rgba(203,163,92,0.35); }
+body.theme-elegante .btn-standings{ background:color-mix(in srgb, var(--gold) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--gold) 60%, transparent); color:var(--gold); box-shadow:none; }
+body.theme-light .btn-standings{ background:color-mix(in srgb, var(--gold) 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--gold) 55%, transparent); color:var(--gold); box-shadow:0 1px 3px rgba(0,0,0,0.08); }
 .menu-btn{ padding:18px; font-size:1.05rem; justify-content:flex-start; text-align:left; margin-bottom:10px; position:relative; overflow:hidden; }
 .menu-btn .menu-icon{ font-size:1.4rem; position:relative; z-index:1; }
 .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; position:relative; z-index:1; }
@@ -126,6 +129,7 @@ body.theme-light .menu-btn .menu-sub{ color:var(--muted); opacity:1; }
 .chip:not(.active):hover{ border-color:var(--accent); filter:brightness(1.1); }
 .quick-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
 .btn-ghost-danger:hover{ background:color-mix(in srgb, var(--danger) 24%, var(--bg-panel)); }
+.btn-standings:hover{ filter:brightness(1.08); transform:translateY(-1px); }
 }
 .btn:focus-visible, .chip:focus-visible, .lang-pick-btn:focus-visible, .grid-pick-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
 .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
@@ -193,12 +197,12 @@ body.theme-light .quick-btn{ box-shadow:0 1px 3px rgba(0,0,0,0.08); }
 .quick-btn.spot{ background:color-mix(in srgb, var(--qspot) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qspot) 60%, transparent); color:var(--qspot); }
 .quick-btn.sagoma{ background:color-mix(in srgb, var(--qsag) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qsag) 60%, transparent); color:var(--qsag); }
 .quick-btn.zero{ background:color-mix(in srgb, var(--qzero) 40%, var(--bg-panel)); border:1px solid var(--line); color:var(--muted); }
-.quick-btn.perfect{ background:color-mix(in srgb, #9FCB2A 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #9FCB2A 60%, transparent); color:#9FCB2A; }
+.quick-btn.perfect{ background:color-mix(in srgb, var(--qperfect) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qperfect) 60%, transparent); color:var(--qperfect); }
 body.theme-satura .quick-btn.superspot{ background:var(--qss); border:none; color:#fff; }
 body.theme-satura .quick-btn.spot{ background:var(--qspot); border:none; color:#fff; }
 body.theme-satura .quick-btn.sagoma{ background:var(--qsag); border:none; color:#fff; }
 body.theme-satura .quick-btn.zero{ background:var(--qzero); border:none; color:#fdfaf3; }
-body.theme-satura .quick-btn.perfect{ background:#9FCB2A; border:none; color:#2A2115; }
+body.theme-satura .quick-btn.perfect{ background:var(--qperfect); border:none; color:#fff; }
 .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
 .stats-row{ display:flex; gap:8px; margin-bottom:14px; }
 .stat-box{ flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 6px; }
@@ -591,7 +595,6 @@ targets_word: "piazzole",
 ordinal_1: "1\u00aa", ordinal_2: "2\u00aa", ordinal_3: "3\u00aa",
 logout_word: "Esci",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
-zone_wa_perfect: "Centro", zone_wa_superspot: "Interno", zone_wa_spot: "Medio", zone_wa_sagoma: "Esterno",
 zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letale", zone_ffta_spot: "Vitale", zone_ffta_sagoma: "Corpo",
 target_singular: "Piazzola",
 partial_title: "Punteggio parziale \u00b7 tutti i partecipanti",
@@ -605,7 +608,7 @@ fuori_sagoma: "fuori sagoma",
 zoom_btn: "Ingrandisci mira",
 zoom_btn_reduce: "Riduci mira",
 undo_btn: "Annulla ultima freccia",
-interrupt_btn: "Interrompi qui e vedi classifica",
+interrupt_btn: "Termina percorso e vedi classifica",
 detected_score: "Punteggio rilevato ({unit} {n})",
 correct_point_btn: "Correggi punto",
 confirm_shot_btn: "Conferma tiro",
@@ -803,7 +806,6 @@ targets_word: "targets",
 ordinal_1: "1st", ordinal_2: "2nd", ordinal_3: "3rd",
 logout_word: "Log out",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
-zone_wa_perfect: "Center", zone_wa_superspot: "Inner", zone_wa_spot: "Middle", zone_wa_sagoma: "Outer",
 zone_ffta_perfect: "Center", zone_ffta_superspot: "Kill", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Body",
 target_singular: "Target",
 partial_title: "Live score \u00b7 all participants",
@@ -817,7 +819,7 @@ fuori_sagoma: "miss",
 zoom_btn: "Zoom target",
 zoom_btn_reduce: "Zoom out",
 undo_btn: "Undo last arrow",
-interrupt_btn: "Stop here and view results",
+interrupt_btn: "End round and view results",
 detected_score: "Detected score ({unit} {n})",
 correct_point_btn: "Correct point",
 confirm_shot_btn: "Confirm shot",
@@ -1018,7 +1020,6 @@ targets_word: "cibles",
 ordinal_1: "1\u00e8re", ordinal_2: "2e", ordinal_3: "3e",
 logout_word: "D\u00e9connexion",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
-zone_wa_perfect: "Centre", zone_wa_superspot: "Intérieur", zone_wa_spot: "Milieu", zone_wa_sagoma: "Extérieur",
 zone_ffta_perfect: "Petit tu\u00e9", zone_ffta_superspot: "Tu\u00e9", zone_ffta_spot: "Vitale", zone_ffta_sagoma: "Corps",
 target_singular: "Cible",
 partial_title: "Score en direct \u00b7 tous les participants",
@@ -1032,7 +1033,7 @@ fuori_sagoma: "hors cible",
 zoom_btn: "Zoomer sur la cible",
 zoom_btn_reduce: "D\u00e9zoomer",
 undo_btn: "Annuler la derni\u00e8re fl\u00e8che",
-interrupt_btn: "Arr\u00eater ici et voir le classement",
+interrupt_btn: "Terminer le parcours et voir le classement",
 detected_score: "Score d\u00e9tect\u00e9 ({unit} {n})",
 correct_point_btn: "Corriger le point",
 confirm_shot_btn: "Confirmer le tir",
@@ -1233,7 +1234,6 @@ targets_word: "Ziele",
 ordinal_1: "1.", ordinal_2: "2.", ordinal_3: "3.",
 logout_word: "Abmelden",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
-zone_wa_perfect: "Zentrum", zone_wa_superspot: "Innen", zone_wa_spot: "Mitte", zone_wa_sagoma: "Außen",
 zone_ffta_perfect: "Kern", zone_ffta_superspot: "T\u00f6dlich", zone_ffta_spot: "Vital", zone_ffta_sagoma: "K\u00f6rper",
 target_singular: "Ziel",
 partial_title: "Live-Punktestand \u00b7 alle Teilnehmer",
@@ -1247,7 +1247,7 @@ fuori_sagoma: "Fehlschuss",
 zoom_btn: "Ziel vergr\u00f6\u00dfern",
 zoom_btn_reduce: "Verkleinern",
 undo_btn: "Letzten Pfeil r\u00fcckg\u00e4ngig machen",
-interrupt_btn: "Hier abbrechen und Rangliste ansehen",
+interrupt_btn: "Parcours beenden und Rangliste ansehen",
 detected_score: "Erkannter Punktwert ({unit} {n})",
 correct_point_btn: "Punkt korrigieren",
 confirm_shot_btn: "Schuss best\u00e4tigen",
@@ -1408,7 +1408,6 @@ var RADII_3 = [42,85,140];
 var ZONES_4 = [ {key:"perfect",labelKey:"zone_perfect",cls:"perfect"}, {key:"superspot",labelKey:"zone_superspot",cls:"superspot"}, {key:"spot",labelKey:"zone_spot",cls:"spot"}, {key:"sagoma",labelKey:"zone_sagoma",cls:"sagoma"} ];
 var RADII_4 = [26,46,85,140];
 var ZONES_4_FFTA = [ {key:"perfect",labelKey:"zone_ffta_perfect",cls:"perfect"}, {key:"superspot",labelKey:"zone_ffta_superspot",cls:"superspot"}, {key:"spot",labelKey:"zone_ffta_spot",cls:"spot"}, {key:"sagoma",labelKey:"zone_ffta_sagoma",cls:"sagoma"} ];
-var ZONES_4_WA = [ {key:"perfect",labelKey:"zone_wa_perfect",cls:"perfect"}, {key:"superspot",labelKey:"zone_wa_superspot",cls:"superspot"}, {key:"spot",labelKey:"zone_wa_spot",cls:"spot"}, {key:"sagoma",labelKey:"zone_wa_sagoma",cls:"sagoma"} ];
 var ZONES_2_IFAA = [ {key:"spot",labelKey:"zone_ifaa_spot",cls:"superspot"}, {key:"lowarea",labelKey:"zone_ifaa_lowarea",cls:"sagoma"} ];
 var RADII_2 = [55,140];
 var ZONES_3_NFAS = [ {key:"innerkill",labelKey:"zone_nfas_innerkill",cls:"perfect"}, {key:"kill",labelKey:"zone_nfas_kill",cls:"superspot"}, {key:"wound",labelKey:"zone_nfas_wound",cls:"sagoma"} ];
@@ -1465,22 +1464,22 @@ scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, su
 },
 swissarchery_training: {
 key:"swissarchery_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
-zones:ZONES_4_WA, radii:RADII_4,
+zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 swissarchery_3d: {
 key:"swissarchery_3d", arrowsPerTarget:2, formats:[24],
-zones:ZONES_4_WA, radii:RADII_4,
+zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 turkey_training: {
 key:"turkey_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
-zones:ZONES_4_WA, radii:RADII_4,
+zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 turkey_3d: {
 key:"turkey_3d", arrowsPerTarget:2, formats:[24],
-zones:ZONES_4_WA, radii:RADII_4,
+zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 ifaa_training: {
@@ -1495,12 +1494,12 @@ scoring:{ 1: { spot:20, lowarea:18 }, 2: { spot:16, lowarea:14 } }
 },
 archerygb_training: {
 key:"archerygb_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
-zones:ZONES_4_WA, radii:RADII_4,
+zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 archerygb_3d: {
 key:"archerygb_3d", arrowsPerTarget:2, formats:[24],
-zones:ZONES_4_WA, radii:RADII_4,
+zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 nfas_training: {
@@ -1624,7 +1623,7 @@ setTimeout(function(){ burst.remove(); }, 750);
 function targetSVG(mode){
 var zones = mode.zones, radii = mode.radii;
 var n = zones.length;
-var colorVar = { perfect:"var(--qss)", superspot:"var(--qss)", spot:"var(--qspot)", sagoma:"var(--qsag)" };
+var colorVar = { perfect:"var(--qperfect)", superspot:"var(--qss)", spot:"var(--qspot)", sagoma:"var(--qsag)" };
 var cx=150, cy=150;
 var outerR = radii[radii.length-1];
 var out = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">';
@@ -4011,7 +4010,7 @@ partialCard.appendChild(el(
 ));
 wrap.appendChild(partialCard);
 
-var standingsBtn = el('<button class="btn btn-ghost btn-block" style="margin-bottom:14px;">'+icon("target",16)+' '+t("check_standings_btn")+'</button>');
+var standingsBtn = el('<button class="btn btn-standings btn-block" style="margin-bottom:14px;">'+icon("target",16)+' '+t("check_standings_btn")+'</button>');
 wrap.appendChild(standingsBtn);
 
 var leaderboardBox = el('<div class="card partial-card" style="display:none;margin-top:-8px;margin-bottom:14px;"></div>');
