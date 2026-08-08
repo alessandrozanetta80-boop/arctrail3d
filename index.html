@@ -3026,7 +3026,7 @@ if(authState === "needLogin"){ app.appendChild(loginScreen()); return; }
 if(!state.country){ app.appendChild(countryScreen()); return; }
 if(!state.federation){ app.appendChild(federationScreen()); return; }
 app.appendChild(header());
-if(homeOverride && (state.screen === "round" || state.screen === "classifica-live" || state.screen === "summary")){ app.appendChild(menuScreen()); return; }
+if(homeOverride && (state.screen === "round" || state.screen === "summary")){ app.appendChild(menuScreen()); return; }
 switch(state.screen){
 case "registration": app.appendChild(registrationScreen()); break;
 case "menu": app.appendChild(menuScreen()); break;
@@ -3042,7 +3042,6 @@ case "info": app.appendChild(infoScreen()); break;
 case "admin": app.appendChild(adminScreen()); break;
 case "session-follow": app.appendChild(sessionFollowScreen()); break;
 case "round": app.appendChild(roundScreen()); break;
-case "classifica-live": app.appendChild(classificaLiveScreen()); break;
 case "summary": app.appendChild(summaryScreen()); break;
 default: app.appendChild(registrationScreen());
 }
@@ -3736,7 +3735,7 @@ if(showHome){
 var homeBtn = el('<button class="home-btn no-print">'+t("back_to_menu")+'</button>');
 homeBtn.addEventListener("click", function(){
 if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; timerRunning = false; timerRemaining = null; timerTargetKey = null; }
-if(state.screen === "round" || state.screen === "classifica-live" || state.screen === "summary"){ homeOverride = true; }
+if(state.screen === "round" || state.screen === "summary"){ homeOverride = true; }
 else { state.screen = "menu"; }
 render();
 });
@@ -4330,7 +4329,7 @@ return d;
 
 function menuScreen(){
 var wrap = el('<div></div>');
-var hasActiveRound = (state.screen === "round" || state.screen === "classifica-live");
+var hasActiveRound = (state.screen === "round");
 
 wrap.appendChild(langSwitcher());
 
@@ -4460,7 +4459,6 @@ setTimeout(function(){
 var resumeBtn = document.getElementById("resumeBtn");
 if(resumeBtn) resumeBtn.addEventListener("click", function(){
 homeOverride = false;
-if(state.screen === "classifica-live"){ state.screen = "round"; }
 save(); render();
 });
 },0);
@@ -5889,61 +5887,6 @@ save(); render();
 }
 
 // ---------- SUMMARY ----------
-function classificaLiveScreen(){
-var wrap = el('<div></div>');
-var mLabel = modeLabel(state.mode);
-var card = el('<div class="card"></div>');
-card.appendChild(el('<h2 class="section-title">'+t("classifica_title",{mode:escapeHtml(mLabel)})+'</h2>'));
-var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
-
-var table = el('<table class="score-table"><thead><tr><th class="name-col">'+t("th_archer")+'</th><th>'+t("th_targets")+'</th><th>'+t("th_total")+'</th></tr></thead><tbody></tbody></table>');
-var tbody = table.querySelector("tbody");
-ranked.forEach(function(a, i){
-var entries = state.scores[a.id] || [];
-var tot = totalFor(a.id);
-tbody.appendChild(el(
-'<tr class="rank-row'+(i===0?" first":"")+'"><td class="name-col">'+(i===0?"\uD83C\uDFC6 ":"")+escapeHtml(a.name)+'</td>'+
-'<td>'+entries.length+'</td><td class="total-col">'+tot+'</td></tr>'
-));
-});
-card.appendChild(table);
-wrap.appendChild(card);
-
-var detailCard = el('<div class="card printable"></div>');
-detailCard.appendChild(el('<h2 class="section-title">'+t("detail_title")+'</h2>'));
-var piazzFlow = el('<div class="piazz-flow"></div>');
-for(var i=0;i<state.format;i++){
-var pCard = el('<div class="piazz-card"></div>');
-pCard.appendChild(el('<div class="piazz-card-num">'+(i+1)+'</div>'));
-var rightWrap = el('<div class="piazz-card-right"></div>');
-ranked.forEach(function(a){
-var entries = state.scores[a.id] || [];
-var ent = entries[i];
-var item = el('<div class="ring-item"></div>');
-if(ent){
-item.appendChild(el('<div class="ring-badge">'+ent.total+'</div>'));
-if(ent.arrows.length > 1){
-item.appendChild(el('<span style="font-size:0.58rem;color:var(--muted);">'+ent.arrows.join('+')+'</span>'));
-}
-} else {
-item.appendChild(el('<div class="ring-badge empty">&ndash;</div>'));
-}
-item.appendChild(el('<span class="ring-name">'+escapeHtml(a.name)+'</span>'));
-rightWrap.appendChild(item);
-});
-pCard.appendChild(rightWrap);
-piazzFlow.appendChild(pCard);
-}
-detailCard.appendChild(piazzFlow);
-wrap.appendChild(detailCard);
-
-var backBtn = el('<button class="btn btn-primary btn-block no-print" style="padding:16px;">'+t("back_to_shooting_btn")+'</button>');
-backBtn.addEventListener("click", function(){ state.screen = "round"; save(); render(); });
-wrap.appendChild(backBtn);
-
-return wrap;
-}
-
 function summaryScreen(){
 var wrap = el('<div></div>');
 var mLabel = modeLabel(state.mode);
