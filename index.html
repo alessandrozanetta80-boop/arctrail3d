@@ -632,6 +632,7 @@ th_total: "Totale",
 th_vs_prev: "Vs precedente",
 detail_title: "Punteggio piazzola per piazzola",
 back_to_menu_full: "Torna al menu",
+back_to_history_btn: "\u2190 Torna allo storico",
 reset_round_btn: "Reset totale (cancella questo percorso)",
 export_pdf_btn: "Esporta / stampa PDF", print_sign_archer: "Firma arciere", print_sign_judge: "Firma giudice di gara",
 share_btn: "Condividi classifica",
@@ -855,6 +856,7 @@ th_total: "Total",
 th_vs_prev: "Vs previous",
 detail_title: "Score by target",
 back_to_menu_full: "Back to menu",
+back_to_history_btn: "\u2190 Back to history",
 reset_round_btn: "Full reset (delete this round)",
 export_pdf_btn: "Export / print PDF", print_sign_archer: "Archer's signature", print_sign_judge: "Judge's signature",
 share_btn: "Share results",
@@ -1081,6 +1083,7 @@ th_total: "Total",
 th_vs_prev: "Vs pr\u00e9c\u00e9dent",
 detail_title: "Score par cible",
 back_to_menu_full: "Retour au menu",
+back_to_history_btn: "\u2190 Retour \u00e0 l'historique",
 reset_round_btn: "R\u00e9initialisation totale (supprime ce parcours)",
 export_pdf_btn: "Exporter / imprimer en PDF", print_sign_archer: "Signature de l'archer", print_sign_judge: "Signature du juge",
 share_btn: "Partager le classement",
@@ -1307,6 +1310,7 @@ th_total: "Gesamt",
 th_vs_prev: "Vs vorher",
 detail_title: "Punkte pro Ziel",
 back_to_menu_full: "Zur\u00fcck zum Men\u00fc",
+back_to_history_btn: "\u2190 Zur\u00fcck zum Verlauf",
 reset_round_btn: "Komplett zur\u00fccksetzen (l\u00f6scht diesen Parcours)",
 export_pdf_btn: "Als PDF exportieren / drucken", print_sign_archer: "Unterschrift Sch\u00fctze", print_sign_judge: "Unterschrift Kampfrichter",
 share_btn: "Rangliste teilen",
@@ -1550,6 +1554,7 @@ th_total: "Toplam",
 th_vs_prev: "\u00d6ncekine g\u00f6re",
 detail_title: "Hedef hedef puan",
 back_to_menu_full: "Men\u00fcye d\u00f6n",
+back_to_history_btn: "\u2190 Ge\u00e7mi\u015fe d\u00f6n",
 reset_round_btn: "Tam s\u0131f\u0131rlama (bu parkuru sil)",
 export_pdf_btn: "PDF olarak d\u0131\u015fa aktar / yazd\u0131r", print_sign_archer: "Ok\u00e7u imzas\u0131", print_sign_judge: "Hakem imzas\u0131",
 share_btn: "S\u0131ralamay\u0131 payla\u015f",
@@ -1790,6 +1795,7 @@ th_total: "Итого",
 th_vs_prev: "По сравнению с предыдущим",
 detail_title: "Результат по каждой мишени",
 back_to_menu_full: "Вернуться в меню",
+back_to_history_btn: "\u2190 Назад к истории",
 reset_round_btn: "Полный сброс (удалить этот маршрут)",
 export_pdf_btn: "Экспорт / печать PDF", print_sign_archer: "Подпись стрелка", print_sign_judge: "Подпись судьи",
 share_btn: "Поделиться результатами",
@@ -2030,6 +2036,7 @@ th_total: "Total",
 th_vs_prev: "Vs anterior",
 detail_title: "Puntuaci\u00f3n diana por diana",
 back_to_menu_full: "Volver al men\u00fa",
+back_to_history_btn: "\u2190 Volver al historial",
 reset_round_btn: "Reinicio total (borra este recorrido)",
 export_pdf_btn: "Exportar / imprimir PDF", print_sign_archer: "Firma del arquero", print_sign_judge: "Firma del juez",
 share_btn: "Compartir clasificaci\u00f3n",
@@ -2270,6 +2277,7 @@ th_total: "Totalt",
 th_vs_prev: "Vs f\u00f6reg\u00e5ende",
 detail_title: "Po\u00e4ng m\u00e5l f\u00f6r m\u00e5l",
 back_to_menu_full: "Tillbaka till menyn",
+back_to_history_btn: "\u2190 Tillbaka till historik",
 reset_round_btn: "Total \u00e5terst\u00e4llning (raderar denna runda)",
 export_pdf_btn: "Exportera / skriv ut PDF", print_sign_archer: "Sk\u00e4ttens underskrift", print_sign_judge: "Domarens underskrift",
 share_btn: "Dela resultat",
@@ -2510,6 +2518,7 @@ th_total: "Totaal",
 th_vs_prev: "Vs vorige",
 detail_title: "Score per doel",
 back_to_menu_full: "Terug naar menu",
+back_to_history_btn: "\u2190 Terug naar geschiedenis",
 reset_round_btn: "Volledige reset (verwijdert deze ronde)",
 export_pdf_btn: "PDF exporteren / afdrukken", print_sign_archer: "Handtekening boogschutter", print_sign_judge: "Handtekening scheidsrechter",
 share_btn: "Klassement delen",
@@ -3028,6 +3037,7 @@ case "campi": app.appendChild(campiScreen()); break;
 case "compagnie": app.appendChild(compagnieScreen()); break;
 case "profile-edit": app.appendChild(profileEditScreen()); break;
 case "history": app.appendChild(historyScreen()); break;
+case "history-detail": app.appendChild(historyDetailScreen()); break;
 case "info": app.appendChild(infoScreen()); break;
 case "admin": app.appendChild(adminScreen()); break;
 case "session-follow": app.appendChild(sessionFollowScreen()); break;
@@ -5120,17 +5130,22 @@ histCard.appendChild(statsRow);
 }
 var histList = el('<div style="margin-top:4px;"></div>');
 var locale = (LANG_META[state.lang]||LANG_META.it).locale;
-hist.slice(0,20).forEach(function(h){
+hist.slice(0,20).forEach(function(h, hIdx){
 var d = new Date(h.date);
 var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 var winner = h.results.length ? h.results[0] : null;
 var mLabel = h.modeKey ? modeLabel(h.modeKey) : (h.modeLabel || modeLabel("training"));
-var row = el('<div class="timeline-row"></div>');
+var row = el('<div class="timeline-row" style="cursor:pointer;"></div>');
 row.appendChild(el('<div class="timeline-icon">'+icon("target",16)+'</div>'));
 var content = el('<div class="timeline-content"></div>');
 content.appendChild(el('<span class="timeline-meta">'+dateStr+' &middot; '+escapeHtml(mLabel)+' &middot; '+h.format+' '+t("targets_word")+'</span>'));
 row.appendChild(content);
 row.appendChild(el('<span class="timeline-result">'+(winner ? escapeHtml(winner.name)+" "+winner.total+"pt" : "")+'</span>'));
+row.addEventListener("click", function(){
+state.historyIndex = hIdx;
+state.screen = "history-detail";
+save(); render();
+});
 histList.appendChild(row);
 });
 histCard.appendChild(histList);
@@ -5146,6 +5161,96 @@ wrap.appendChild(histCard);
 var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
 wrap.appendChild(backBtn);
+return wrap;
+}
+
+function historyDetailScreen(){
+var wrap = el('<div></div>');
+var hist = loadHistory();
+var h = hist[state.historyIndex];
+if(!h){
+var backBtnEmpty = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_history_btn")+'</button>');
+backBtnEmpty.addEventListener("click", function(){ state.screen = "history"; save(); render(); });
+wrap.appendChild(backBtnEmpty);
+return wrap;
+}
+var mLabel = h.modeKey ? modeLabel(h.modeKey) : (h.modeLabel || modeLabel("training"));
+var locale = (LANG_META[state.lang]||LANG_META.it).locale;
+var d = new Date(h.date);
+var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
+
+var card = el('<div class="card printable"></div>');
+card.appendChild(el('<div class="print-header"><h2 style="margin:0;">ArcTrail 3D \u2014 '+escapeHtml(mLabel)+'</h2><div style="font-size:0.85rem;">'+dateStr+'</div></div>'));
+card.appendChild(el('<h2 class="section-title">'+t("classifica_title",{mode:escapeHtml(mLabel)})+'</h2>'));
+
+var table = el('<table class="score-table"><thead><tr><th class="name-col">'+t("th_archer")+'</th><th>'+t("th_targets")+'</th><th>'+t("th_total")+'</th></tr></thead><tbody></tbody></table>');
+var tbody = table.querySelector("tbody");
+h.results.forEach(function(r, i){
+tbody.appendChild(el(
+'<tr class="rank-row'+(i===0?" first":"")+'"><td class="name-col">'+(i===0?"\uD83C\uDFC6 ":"")+escapeHtml(r.name)+'</td>'+
+'<td>'+(r.perTarget?r.perTarget.length:h.format)+'</td><td class="total-col">'+r.total+'</td></tr>'
+));
+});
+card.appendChild(table);
+wrap.appendChild(card);
+
+var detailCard = el('<div class="card printable"></div>');
+detailCard.appendChild(el('<h2 class="section-title">'+t("detail_title")+'</h2>'));
+var piazzFlow = el('<div class="piazz-flow"></div>');
+for(var i=0;i<h.format;i++){
+var pCard = el('<div class="piazz-card"></div>');
+pCard.appendChild(el('<div class="piazz-card-num">'+(i+1)+'</div>'));
+var rightWrap = el('<div class="piazz-card-right"></div>');
+h.results.forEach(function(r){
+var tot = r.perTarget ? r.perTarget[i] : undefined;
+var arrows = r.arrows ? r.arrows[i] : null;
+var item = el('<div class="ring-item"></div>');
+if(tot !== undefined && tot !== null){
+item.appendChild(el('<div class="ring-badge">'+tot+'</div>'));
+if(arrows && arrows.length > 1){
+item.appendChild(el('<span style="font-size:0.58rem;color:var(--muted);">'+arrows.join('+')+'</span>'));
+}
+} else {
+item.appendChild(el('<div class="ring-badge empty">&ndash;</div>'));
+}
+item.appendChild(el('<span class="ring-name">'+escapeHtml(r.name)+'</span>'));
+rightWrap.appendChild(item);
+});
+pCard.appendChild(rightWrap);
+piazzFlow.appendChild(pCard);
+}
+detailCard.appendChild(piazzFlow);
+wrap.appendChild(detailCard);
+
+var sigRow = el('<div class="print-signatures"><div>'+t("print_sign_archer")+'</div><div>'+t("print_sign_judge")+'</div></div>');
+wrap.appendChild(sigRow);
+
+var printBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;">'+icon("printer",16)+' '+t("export_pdf_btn")+'</button>');
+printBtn.addEventListener("click", function(){ window.print(); });
+wrap.appendChild(printBtn);
+
+var shareBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;">'+icon("share",16)+' '+t("share_btn")+'</button>');
+shareBtn.addEventListener("click", function(){
+var lines = h.results.map(function(r,i){
+var perTarget = (r.perTarget||[]).map(function(tot,idx){ return (idx+1)+":"+tot; }).join(" ");
+return (i+1)+". "+r.name+" \u2013 "+r.total+" pt\n "+perTarget;
+});
+var text = t("share_header",{mode:mLabel, n:h.format})+"\n\n"+lines.join("\n\n");
+if(navigator.share){
+navigator.share({ title: "ArcTrail 3D", text: text }).catch(function(){});
+} else if(navigator.clipboard){
+navigator.clipboard.writeText(text).then(function(){
+shareBtn.innerHTML = t("copied_msg");
+setTimeout(function(){ shareBtn.innerHTML = icon("share",16)+' '+t("share_btn"); }, 2000);
+});
+}
+});
+wrap.appendChild(shareBtn);
+
+var backBtn = el('<button class="btn btn-primary btn-block no-print" style="margin-top:10px;">'+t("back_to_history_btn")+'</button>');
+backBtn.addEventListener("click", function(){ state.screen = "history"; save(); render(); });
+wrap.appendChild(backBtn);
+
 return wrap;
 }
 
@@ -5298,17 +5403,7 @@ wrap.appendChild(el(
 ));
 wrap.appendChild(el('<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%;"></div></div>'));
 
-// punteggio parziale live - solo l'arciere corrente, classifica completa a comparsa
-var scoreArcher = state.archers[state.archerIndex];
-var partialCard = el('<div class="card partial-card"></div>');
-partialCard.appendChild(el('<div class="partial-title">'+t("partial_title")+'</div>'));
-partialCard.appendChild(el(
-'<div class="partial-row"><span class="pname">'+escapeHtml(scoreArcher.name)+'</span><span class="ptot">'+totalFor(scoreArcher.id)+'</span></div>'
-));
-wrap.appendChild(partialCard);
-
 var standingsBtn = el('<button class="btn btn-standings btn-block" style="margin-bottom:14px;">'+icon("target",16)+' '+t("check_standings_btn")+'</button>');
-wrap.appendChild(standingsBtn);
 
 var leaderboardBox = el('<div class="card partial-card" style="display:none;margin-top:-8px;margin-bottom:14px;"></div>');
 var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
@@ -5345,7 +5440,6 @@ pCard.appendChild(rightWrap);
 piazzFlow.appendChild(pCard);
 }
 leaderboardBox.appendChild(piazzFlow);
-wrap.appendChild(leaderboardBox);
 standingsBtn.addEventListener("click", function(){
 var isOpen = leaderboardBox.style.display !== "none";
 leaderboardBox.style.display = isOpen ? "none" : "block";
@@ -5519,6 +5613,8 @@ strip.appendChild(el('<span class="shot-pill">'+escapeHtml(a.name)+': '+ent.tota
 if(strip.children.length){ card.appendChild(strip); }
 
 wrap.appendChild(card);
+wrap.appendChild(standingsBtn);
+wrap.appendChild(leaderboardBox);
 wrap.appendChild(el('<div class="row"><button class="btn btn-block" id="undoBtn">'+t("undo_btn")+'</button></div>'));
 
 if(state.arrowsPerTargetOverride && mode.freeFormat){
@@ -5865,7 +5961,7 @@ modeKey: state.mode,
 modeLabel: mLabel,
 results: ranked.map(function(a){
 var entries = state.scores[a.id] || [];
-return { name: a.name, total: totalFor(a.id), perTarget: entries.map(function(e){ return e.total; }) };
+return { name: a.name, total: totalFor(a.id), perTarget: entries.map(function(e){ return e.total; }), arrows: entries.map(function(e){ return e.arrows; }) };
 })
 });
 if(hist.length > 20) hist.length = 20;
