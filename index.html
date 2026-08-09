@@ -5999,6 +5999,7 @@ archers.sort(function(a,b){ return a.name.localeCompare(b.name, state.lang || "i
 var scores = {};
 archers.forEach(function(a){ scores[a.id] = []; });
 state.archersBase = archers.slice(); // ordine della prima piazzola: da qui si ricava quello di tutte le altre
+state.rotBaseTarget = 1;
 state.screen = "round";
 state.mode = modeKey;
 state.format = format;
@@ -6056,7 +6057,10 @@ for(var pfi=0; pfi<state.target; pfi++){
 var pCard = el('<div class="piazz-card"></div>');
 pCard.appendChild(el('<div class="piazz-card-num">'+(pfi+1)+'</div>'));
 var rightWrap = el('<div class="piazz-card-right"></div>');
-ranked.forEach(function(a){
+// ogni piazzola mostra gli arcieri nell'ordine in cui hanno tirato in quella piazzola
+var ordineQui = orderForTarget(pfi + 1);
+if(!ordineQui || ordineQui.length !== state.archers.length) ordineQui = ranked;
+ordineQui.forEach(function(a){
 var entries = state.scores[a.id] || [];
 var ent = entries[pfi];
 var item = el('<div class="ring-item"></div>');
@@ -6406,10 +6410,20 @@ return wrap;
 //                            Con 3 arcieri il terzo vale come seconda coppia, con 5 il quinto come terza.
 // L'ordine viene RICALCOLATO dal numero di piazzola invece che applicato a passi:
 // cos\u00ec resta giusto anche tornando indietro con l'annulla.
+// Se un giro era gi\u00e0 in corso quando l'ordine di partenza non veniva ancora
+// memorizzato, lo si fissa adesso partendo dalla piazzola corrente.
+function ensureRotationBase(){
+if(!state.archersBase || !state.archersBase.length){
+state.archersBase = (state.archers || []).slice();
+state.rotBaseTarget = state.target || 1;
+}
+if(!state.rotBaseTarget) state.rotBaseTarget = 1;
+}
+
 function orderForTarget(n){
 if(!state.archersBase || state.archersBase.length < 2) return (state.archers || []).slice();
 var base = state.archersBase;
-var steps = Math.max(0, (n || 1) - 1);
+var steps = Math.max(0, (n || 1) - (state.rotBaseTarget || 1));
 
 if(state.federation === "fiarc"){
 var k = steps % base.length;
@@ -6440,6 +6454,7 @@ if(state.target < state.format){
 state.target += 1;
 // Ad ogni piazzola l'ordine cambia, in gara come in allenamento,
 // secondo lo stile della federazione scelta.
+ensureRotationBase();
 state.archers = orderForTarget(state.target);
 } else {
 state.screen = "summary";
@@ -6525,6 +6540,7 @@ archerIdx = state.archers.length - 1;
 
 // tornando a una piazzola precedente va ripristinato anche l'ordine di quella piazzola,
 // altrimenti si annullerebbe il punteggio dell'arciere sbagliato
+ensureRotationBase();
 if(targetNum !== state.target){ state.archers = orderForTarget(targetNum); }
 var archer = state.archers[archerIdx];
 var entries = state.scores[archer.id];
