@@ -3127,6 +3127,23 @@ backfillLifetimeOnce();
 // niente viene mai sovrascritto o cancellato.
 var cloudSyncState = { running:false, lastError:"" };
 
+// Trasforma un errore Firebase in un testo comprensibile, cos\u00ec si capisce
+// cosa correggere senza dover aprire la console del browser.
+function describeFirebaseError(err){
+if(!err) return "errore sconosciuto";
+var code = err.code || "";
+var msg = err.message || String(err);
+if(code.indexOf("permission-denied") !== -1 || /insufficient permissions/i.test(msg)){
+return "permessi negati: vanno aggiornate le regole di Firestore per la sottocollezione storico";
+}
+if(code.indexOf("unauthenticated") !== -1) return "non autenticato: rifai l'accesso";
+if(code.indexOf("unavailable") !== -1 || /offline|network/i.test(msg)) return "nessuna connessione al server";
+if(code.indexOf("failed-precondition") !== -1) return "manca un indice su Firestore (campo date)";
+if(code.indexOf("resource-exhausted") !== -1) return "quota Firestore esaurita";
+if(code.indexOf("invalid-argument") !== -1) return "dati non validi inviati al server";
+return (code ? code + " \u2014 " : "") + msg;
+}
+
 function cloudHistoryRef(){
 if(DEV_MODE || !db || !currentUser) return null;
 return db.collection("users").doc(currentUser.uid).collection("storico");
@@ -3134,6 +3151,31 @@ return db.collection("users").doc(currentUser.uid).collection("storico");
 
 // Un giro = un documento, id derivato dalla data: se lo stesso giro viene inviato
 // due volte non si duplica.
+// Firestore non accetta array dentro array: il campo "arrows" \u00e8 un array che per ogni
+// piazzola contiene l'array delle frecce. Prima di inviare lo si incapsula in oggetti,
+// al ritorno si rimette com'era. Nessuna perdita di dati.
+function packRound(r){
+if(!r) return r;
+var out = { name: r.name || "", total: (typeof r.total === "number" ? r.total : 0) };
+out.perTarget = Array.isArray(r.perTarget) ? r.perTarget.slice() : [];
+out.arrows = Array.isArray(r.arrows) ? r.arrows.map(function(a){
+return { v: Array.isArray(a) ? a.slice() : (a == null ? [] : [a]) };
+}) : [];
+return out;
+}
+function unpackRound(r){
+if(!r) return r;
+var out = { name: r.name || "", total: (typeof r.total === "number" ? r.total : 0) };
+out.perTarget = Array.isArray(r.perTarget) ? r.perTarget.slice() : [];
+out.arrows = Array.isArray(r.arrows) ? r.arrows.map(function(a){
+if(a && Array.isArray(a.v)) return a.v.slice();
+return Array.isArray(a) ? a.slice() : [];
+}) : [];
+return out;
+}
+function packResults(list){ return (Array.isArray(list) ? list : []).map(packRound); }
+function unpackResults(list){ return (Array.isArray(list) ? list : []).map(unpackRound); }
+
 function roundDocId(dateISO){
 return String(dateISO || "").replace(/[^0-9]/g, "").slice(0, 17) || String(Date.now());
 }
@@ -3147,12 +3189,12 @@ date: roundEntry.date,
 format: roundEntry.format || null,
 modeKey: roundEntry.modeKey || null,
 modeLabel: roundEntry.modeLabel || "",
-results: roundEntry.results || [],
+results: packResults(roundEntry.results),
 savedAt: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true }).catch(function(err){
-cloudSyncState.lastError = (err && err.message) ? err.message : "errore";
+cloudSyncState.lastError = describeFirebaseError(err);
 });
-}catch(e){ cloudSyncState.lastError = e && e.message ? e.message : "errore"; }
+}catch(e){ cloudSyncState.lastError = describeFirebaseError(e); }
 }
 
 // Invia sul cloud i giri locali che non ci sono ancora (per chi aveva gi\u00e0 storico
@@ -3171,13 +3213,13 @@ var batch = db.batch();
 todo.slice(0, 400).forEach(function(h){
 batch.set(ref.doc(roundDocId(h.date)), {
 date: h.date, format: h.format || null, modeKey: h.modeKey || null,
-modeLabel: h.modeLabel || "", results: h.results || [],
+modeLabel: h.modeLabel || "", results: packResults(h.results),
 savedAt: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true });
 });
 return batch.commit().then(function(){ if(cb) cb(null, todo.length); });
 }).catch(function(err){
-cloudSyncState.lastError = (err && err.message) ? err.message : "errore";
+cloudSyncState.lastError = describeFirebaseError(err);
 if(cb) cb(err, 0);
 });
 }
@@ -3195,7 +3237,7 @@ snap.forEach(function(doc){
 if(haveLocal[doc.id]) return;
 var d = doc.data();
 if(!d || !d.date) return;
-local.push({ date:d.date, format:d.format, modeKey:d.modeKey, modeLabel:d.modeLabel, results:d.results || [] });
+local.push({ date:d.date, format:d.format, modeKey:d.modeKey, modeLabel:d.modeLabel, results:unpackResults(d.results) });
 added++;
 });
 if(added){
@@ -3207,7 +3249,7 @@ backfillLifetimeOnce();
 }
 if(cb) cb(null, added);
 }).catch(function(err){
-cloudSyncState.lastError = (err && err.message) ? err.message : "errore";
+cloudSyncState.lastError = describeFirebaseError(err);
 if(cb) cb(err, 0);
 });
 }
@@ -5577,7 +5619,7 @@ upBtn.disabled = true; downBtn.disabled = true;
 cloudMsg.textContent = t("diario_cloud_working");
 pushLocalHistoryToCloud(function(err, n){
 upBtn.disabled = false; downBtn.disabled = false;
-cloudMsg.textContent = err ? t("diario_cloud_error") : (n > 0 ? t("diario_cloud_done") : t("diario_cloud_none"));
+cloudMsg.textContent = err ? (t("diario_cloud_error") + " \u2014 " + cloudSyncState.lastError) : (n > 0 ? t("diario_cloud_done") : t("diario_cloud_none"));
 });
 });
 downBtn.addEventListener("click", function(){
@@ -5585,7 +5627,7 @@ upBtn.disabled = true; downBtn.disabled = true;
 cloudMsg.textContent = t("diario_cloud_working");
 restoreHistoryFromCloud(function(err, n){
 upBtn.disabled = false; downBtn.disabled = false;
-if(err){ cloudMsg.textContent = t("diario_cloud_error"); return; }
+if(err){ cloudMsg.textContent = t("diario_cloud_error") + " \u2014 " + cloudSyncState.lastError; return; }
 if(n > 0){ render(); return; }
 cloudMsg.textContent = t("diario_cloud_none");
 });
