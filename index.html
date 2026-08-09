@@ -3745,17 +3745,19 @@ return wrap;
 var setupCountry = null;
 
 function setupScreen(){
-var wrap = el('<div style="max-width:420px;margin:0 auto;"></div>');
+// Questa schermata si apre a casa, non in mezzo al bosco: fondo chiaro e
+// testo scuro, indipendente dal tema del resto dell'app.
+var wrap = el('<div style="max-width:420px;margin:0 auto;background:#F5F4F0;border-radius:16px;padding:18px 16px 20px;color:#1A1D1B;"></div>');
 
 var logo = el('<div style="text-align:center;margin:6px 0 16px;"></div>');
 logo.innerHTML = logoSVG(84);
 wrap.appendChild(logo);
 
-var etichettaStile = 'display:block;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--cream);margin-bottom:8px;';
-var tendinaStile = 'width:100%;font-size:1.05rem;padding:15px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-family:inherit;font-weight:600;';
+var etichettaStile = 'display:block;font-size:0.82rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#5A6B5F;margin-bottom:8px;';
+var tendinaStile = 'width:100%;font-size:1.05rem;padding:15px 14px;border-radius:12px;border:2px solid #C9CFC7;background:#FFFFFF;color:#1A1D1B;font-family:inherit;font-weight:600;';
 
 // ---- 1. lingua ----
-var c1 = el('<div class="card" style="padding:16px;"></div>');
+var c1 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:16px;margin-bottom:14px;"></div>');
 c1.appendChild(el('<label style="'+etichettaStile+'">1 &middot; '+(state.lang ? t("setup_lang_label") : "Lingua / Language")+'</label>'));
 var selLang = el('<select style="'+tendinaStile+'"></select>');
 if(!state.lang) selLang.appendChild(el('<option value="" disabled selected>\u2014</option>'));
@@ -3778,7 +3780,7 @@ if(!state.lang) return wrap;
 // ---- 2. nazione ----
 if(setupCountry === null) setupCountry = state.country || LANG_TO_COUNTRY[state.lang] || null;
 
-var c2 = el('<div class="card" style="padding:16px;"></div>');
+var c2 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:16px;margin-bottom:14px;"></div>');
 c2.appendChild(el('<label style="'+etichettaStile+'">2 &middot; '+t("setup_country_label")+'</label>'));
 var selPaese = el('<select style="'+tendinaStile+'"></select>');
 if(!setupCountry) selPaese.appendChild(el('<option value="" disabled selected>'+t("setup_country_placeholder")+'</option>'));
@@ -3798,18 +3800,18 @@ wrap.appendChild(c2);
 // ---- 3. federazioni della nazione scelta ----
 if(setupCountry){
 var feds = COUNTRY_FEDERATIONS[setupCountry] || [];
-var c3 = el('<div class="card" style="padding:16px;"></div>');
+var c3 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:16px;margin-bottom:14px;"></div>');
 c3.appendChild(el('<label style="'+etichettaStile+'">3 &middot; '+t("setup_fed_label")+'</label>'));
 
 if(feds.length === 0){
-c3.appendChild(el('<div style="font-size:0.9rem;color:var(--muted);padding:8px 0;">'+t("coming_soon")+'</div>'));
+c3.appendChild(el('<div style="font-size:0.9rem;color:#5A6B5F;padding:8px 0;">'+t("coming_soon")+'</div>'));
 } else {
 feds.forEach(function(f){
 var scelta = (state.country === setupCountry && state.federation === f.code);
 var b = el('<button style="width:100%;min-height:56px;display:flex;align-items:center;gap:10px;padding:14px 16px;margin-bottom:10px;border-radius:12px;cursor:pointer;text-align:left;font-family:inherit;font-size:1.05rem;font-weight:700;'+
 (scelta
-? 'background:var(--accent);border:2px solid var(--accent);color:#fff;'
-: 'background:var(--bg-panel-2);border:2px solid var(--line);color:var(--cream);')+'"></button>');
+? 'background:#0F8A7C;border:2px solid #0F8A7C;color:#fff;'
+: 'background:#FFFFFF;border:2px solid #C9CFC7;color:#1A1D1B;')+'"></button>');
 b.innerHTML = '<span style="flex:1;">'+escapeHtml(f.label)+'</span>'+(scelta ? '<span style="font-size:1.2rem;">\u2713</span>' : '');
 b.addEventListener("click", function(){
 state.country = setupCountry;
@@ -4432,13 +4434,8 @@ else { h.querySelector(".headtxt").innerHTML = '<span class="brand-title">ArcTra
 // Nel menu, al posto del titolo, la nazione e la federazione attive: toccandole
 // si apre la scelta. E' l'unico punto da imparare per cambiarle.
 if(state.screen === "menu" && state.country && state.federation){
-var bandiera = "", nomeFed = state.federation.toUpperCase();
-for(var ci=0; ci<COUNTRY_LIST.length; ci++){ if(COUNTRY_LIST[ci].code === state.country){ bandiera = COUNTRY_LIST[ci].flag; break; } }
-var feds = COUNTRY_FEDERATIONS[state.country] || [];
-for(var fi=0; fi<feds.length; fi++){ if(feds[fi].code === state.federation){ nomeFed = feds[fi].label; break; } }
 var fedBtn = el('<button class="home-btn small no-print" style="margin-left:auto;"></button>');
-fedBtn.innerHTML = '<span style="font-size:1.15em;margin-right:6px;">'+bandiera+'</span>'+escapeHtml(nomeFed)+
-'<span style="margin-left:8px;font-weight:400;opacity:0.85;font-size:0.85em;">'+t("setup_change_btn")+'</span>';
+fedBtn.textContent = t("setup_change_btn");
 fedBtn.addEventListener("click", function(){
 setupCountry = state.country;
 state.screen = "setup";
@@ -5040,6 +5037,21 @@ if(hasActiveRound){
 wrap.appendChild(el(
 '<div class="resume-banner">'+t("resume_banner", { mode: escapeHtml(modeLabel(state.mode)), n: state.format })+
 '<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="resumeBtn">'+t("resume_btn")+'</button></div></div>'
+));
+}
+
+// Federazione e nazione attive: indicazione, non comando. Si cambia dalla barra in alto.
+if(state.country && state.federation){
+var fedFlag = "", fedPaese = state.country, fedNome = state.federation.toUpperCase();
+for(var ci=0; ci<COUNTRY_LIST.length; ci++){ if(COUNTRY_LIST[ci].code === state.country){ fedFlag = COUNTRY_LIST[ci].flag; fedPaese = t(COUNTRY_LIST[ci].key); break; } }
+var fedsQui = COUNTRY_FEDERATIONS[state.country] || [];
+for(var fi=0; fi<fedsQui.length; fi++){ if(fedsQui[fi].code === state.federation){ fedNome = fedsQui[fi].label; break; } }
+wrap.appendChild(el(
+'<div style="display:flex;justify-content:center;margin-bottom:16px;">'+
+'<span style="display:inline-flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:0.9rem;font-weight:700;color:var(--cream);">'+
+'<span style="font-size:1.25em;line-height:1;">'+fedFlag+'</span>'+
+escapeHtml(fedNome)+'<span style="color:var(--muted);font-weight:400;">&middot;</span>'+
+'<span style="color:var(--muted);font-weight:600;">'+escapeHtml(fedPaese)+'</span></span></div>'
 ));
 }
 
