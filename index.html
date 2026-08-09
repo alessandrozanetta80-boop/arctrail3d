@@ -174,9 +174,6 @@ input[type=text]:focus, input[type=number]:focus{ outline:2px solid var(--accent
 .piazzola-num{ font-size:3.1rem; font-weight:700; color:var(--bark); font-family:"Playfair Display",Georgia,serif; line-height:1; position:relative; display:inline-block; }
 .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
 background:radial-gradient(circle, rgba(232,114,47,0.16), transparent 70%); z-index:-1; }
-.archer-check-wrap{ margin-bottom:10px; }
-.archer-check-btn{ background:none; border:1px dashed var(--line); color:var(--muted); font-size:0.72rem; font-weight:600; padding:5px 12px; border-radius:999px; cursor:pointer; text-transform:uppercase; letter-spacing:.05em; }
-.archer-name-big.archer-name-hidden{ display:none; }
 .board{ position:relative; border-radius:16px; padding:12px;
 background:var(--bg-panel-2); border:1px solid rgba(203,163,92,0.55); box-shadow:0 4px 14px rgba(0,0,0,0.3); }
 .silhouette-wrap{ position:relative; max-width:280px; margin:0 auto; border-radius:10px; overflow:hidden; touch-action:pan-x pan-y; }
@@ -635,7 +632,6 @@ zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letale", zone_ffta_spot: "Vit
 target_singular: "Piazzola",
 partial_title: "Punteggio parziale \u00b7 tutti i partecipanti",
 turn_of: "Turno di",
-check_archer_btn: "Controlla tiratori",
 finora: " \u00b7 finora: {list} pt",
 vale_prima: " \u00b7 vale la prima a segno",
 timer_start: "Avvia timer", timer_reset: "Azzera", timer_remaining: "Tempo rimanente",
@@ -883,7 +879,6 @@ zone_ffta_perfect: "Center", zone_ffta_superspot: "Kill", zone_ffta_spot: "Vital
 target_singular: "Target",
 partial_title: "Live score \u00b7 all participants",
 turn_of: "Turn of",
-check_archer_btn: "Check archers",
 finora: " \u00b7 so far: {list} pts",
 vale_prima: " \u00b7 only the first hit counts",
 timer_start: "Start timer", timer_reset: "Reset", timer_remaining: "Time remaining",
@@ -1134,7 +1129,6 @@ zone_ffta_perfect: "Petit tu\u00e9", zone_ffta_superspot: "Tu\u00e9", zone_ffta_
 target_singular: "Cible",
 partial_title: "Score en direct \u00b7 tous les participants",
 turn_of: "Tour de",
-check_archer_btn: "V\u00e9rifier les tireurs",
 finora: " \u00b7 jusqu\u2019ici : {list} pts",
 vale_prima: " \u00b7 seul le premier tir marquant compte",
 timer_start: "D\u00e9marrer", timer_reset: "R\u00e9initialiser", timer_remaining: "Temps restant",
@@ -1385,7 +1379,6 @@ zone_ffta_perfect: "Kern", zone_ffta_superspot: "T\u00f6dlich", zone_ffta_spot: 
 target_singular: "Ziel",
 partial_title: "Live-Punktestand \u00b7 alle Teilnehmer",
 turn_of: "Am Zug:",
-check_archer_btn: "Sch\u00fctzen pr\u00fcfen",
 finora: " \u00b7 bisher: {list} Pkt",
 vale_prima: " \u00b7 nur der erste Treffer z\u00e4hlt",
 timer_start: "Timer starten", timer_reset: "Zur\u00fccksetzen", timer_remaining: "Verbleibende Zeit",
@@ -1653,7 +1646,6 @@ zone_ffta_perfect: "Merkez", zone_ffta_superspot: "\u00d6ld\u00fcr\u00fcc\u00fc"
 target_singular: "Hedef",
 partial_title: "K\u0131smi puan \u00b7 t\u00fcm kat\u0131l\u0131mc\u0131lar",
 turn_of: "S\u0131ra kimde:",
-check_archer_btn: "Ok\u00e7ular\u0131 kontrol et",
 finora: " \u00b7 \u015fu ana kadar: {list} p",
 vale_prima: " \u00b7 sadece ilk isabet ge\u00e7erli",
 timer_start: "Zamanlay\u0131c\u0131y\u0131 ba\u015flat", timer_reset: "S\u0131f\u0131rla", timer_remaining: "Kalan s\u00fcre",
@@ -1918,7 +1910,6 @@ zone_ffta_perfect: "Центр", zone_ffta_superspot: "Смертельная", 
 target_singular: "Мишень",
 partial_title: "Промежуточный результат · все участники",
 turn_of: "Очередь стрелка",
-check_archer_btn: "Проверить стрелков",
 finora: " · пока что: {list} очк.",
 vale_prima: " · засчитывается только первое попадание",
 timer_start: "Запустить таймер", timer_reset: "Сбросить", timer_remaining: "Оставшееся время",
@@ -2183,7 +2174,6 @@ zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letal", zone_ffta_spot: "Vita
 target_singular: "Diana",
 partial_title: "Puntuaci\u00f3n parcial \u00b7 todos los participantes",
 turn_of: "Turno de",
-check_archer_btn: "Comprobar arqueros",
 finora: " \u00b7 hasta ahora: {list} pts",
 vale_prima: " \u00b7 solo cuenta el primer impacto",
 timer_start: "Iniciar temporizador", timer_reset: "Reiniciar", timer_remaining: "Tiempo restante",
@@ -2448,7 +2438,6 @@ zone_ffta_perfect: "Centrum", zone_ffta_superspot: "D\u00f6dlig", zone_ffta_spot
 target_singular: "M\u00e5l",
 partial_title: "Del-po\u00e4ng \u00b7 alla deltagare",
 turn_of: "Tur f\u00f6r",
-check_archer_btn: "Kontrollera skyttar",
 finora: " \u00b7 hittills: {list} p",
 vale_prima: " \u00b7 endast f\u00f6rsta tr\u00e4ffen r\u00e4knas",
 timer_start: "Starta timer", timer_reset: "Nollst\u00e4ll", timer_remaining: "\u00c5terst\u00e5ende tid",
@@ -2713,7 +2702,6 @@ zone_ffta_perfect: "Centrum", zone_ffta_superspot: "Dodelijk", zone_ffta_spot: "
 target_singular: "Doel",
 partial_title: "Tussenstand \u00b7 alle deelnemers",
 turn_of: "Beurt van",
-check_archer_btn: "Boogschutters controleren",
 finora: " \u00b7 tot nu toe: {list} pt",
 vale_prima: " \u00b7 alleen de eerste treffer telt",
 timer_start: "Timer starten", timer_reset: "Resetten", timer_remaining: "Resterende tijd",
@@ -3063,6 +3051,30 @@ efaa: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" }
 
 function load(){ try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
 function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
+// Riconosce se un risultato salvato appartiene all'utente. In ordine di affidabilit\u00e0:
+// 1) l'identificativo utente salvato nel risultato (non cambia mai)
+// 2) il contrassegno "sono io" messo quando il giro \u00e8 stato registrato
+// 3) il nome, confrontato con TUTTI i nomi con cui l'utente pu\u00f2 essersi registrato
+//    (username e nome e cognome), ignorando maiuscole e spazi
+function myArcherNames(){
+var names = {};
+if(state.profile){
+[state.profile.username, state.profile.nomeCognome].forEach(function(n){
+if(n && String(n).trim()) names[String(n).trim().toLowerCase()] = true;
+});
+}
+return names;
+}
+function isMyResult(r){
+if(!r) return false;
+var myUid = (currentUser && currentUser.uid) || null;
+if(myUid && r.ownerUid) return r.ownerUid === myUid;
+if(r.isSelf === true) return true;
+var names = myArcherNames();
+if(r.name && Object.keys(names).length) return names[String(r.name).trim().toLowerCase()] === true;
+return false;
+}
+
 function loadHistory(){ try{ var raw = localStorage.getItem(HISTORY_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
 function saveHistoryList(list){ try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); }catch(e){} }
 
@@ -3075,15 +3087,17 @@ try{ var raw = localStorage.getItem(LIFETIME_KEY); return raw ? JSON.parse(raw) 
 function saveLifetime(obj){ try{ localStorage.setItem(LIFETIME_KEY, JSON.stringify(obj)); }catch(e){} }
 
 // Registra un giro nel riepilogo permanente. Chiave = nome arciere + modalit\u00e0.
-function recordLifetime(name, modeKey, modeLabel, total, dateISO, format){
+function recordLifetime(name, modeKey, modeLabel, total, dateISO, format, ownerUid, isSelf){
 if(!name || typeof total !== "number") return;
 var lt = loadLifetime();
 var k = name + "|" + (modeKey || modeLabel || "?");
 var e = lt[k];
 if(!e){
-e = { name:name, modeKey:modeKey||null, modeLabel:modeLabel||"", rounds:0, sum:0, best:0, bestDate:null, bestFormat:null, firstDate:dateISO, lastDate:dateISO };
+e = { name:name, modeKey:modeKey||null, modeLabel:modeLabel||"", rounds:0, sum:0, best:0, bestDate:null, bestFormat:null, firstDate:dateISO, lastDate:dateISO, ownerUid:ownerUid||null, isSelf:(isSelf===true) };
 lt[k] = e;
 }
+if(ownerUid && !e.ownerUid) e.ownerUid = ownerUid;
+if(isSelf === true) e.isSelf = true;
 e.rounds += 1;
 e.sum += total;
 e.lastDate = dateISO;
@@ -3107,9 +3121,11 @@ if(!r || typeof r.total !== "number") return;
 var k = r.name + "|" + (h.modeKey || h.modeLabel || "?");
 var e = lt[k];
 if(!e){
-e = { name:r.name, modeKey:h.modeKey||null, modeLabel:h.modeLabel||"", rounds:0, sum:0, best:0, bestDate:null, bestFormat:null, firstDate:h.date, lastDate:h.date };
+e = { name:r.name, modeKey:h.modeKey||null, modeLabel:h.modeLabel||"", rounds:0, sum:0, best:0, bestDate:null, bestFormat:null, firstDate:h.date, lastDate:h.date, ownerUid:r.ownerUid||null, isSelf:(r.isSelf===true) };
 lt[k] = e;
 }
+if(r.ownerUid && !e.ownerUid) e.ownerUid = r.ownerUid;
+if(r.isSelf === true) e.isSelf = true;
 e.rounds += 1;
 e.sum += r.total;
 e.lastDate = h.date;
@@ -3126,6 +3142,7 @@ backfillLifetimeOnce();
 // Al ripristino i giri vengono UNITI a quelli locali usando la data come identificativo:
 // niente viene mai sovrascritto o cancellato.
 var cloudSyncState = { running:false, lastError:"" };
+var lastCloudRestoreMsg = ""; // messaggio da mostrare dopo il ridisegno seguente a un ripristino
 
 // Trasforma un errore Firebase in un testo comprensibile, cos\u00ec si capisce
 // cosa correggere senza dover aprire la console del browser.
@@ -3156,7 +3173,7 @@ return db.collection("users").doc(currentUser.uid).collection("storico");
 // al ritorno si rimette com'era. Nessuna perdita di dati.
 function packRound(r){
 if(!r) return r;
-var out = { name: r.name || "", total: (typeof r.total === "number" ? r.total : 0) };
+var out = { name: r.name || "", total: (typeof r.total === "number" ? r.total : 0), isSelf: (r.isSelf === true), ownerUid: r.ownerUid || null };
 out.perTarget = Array.isArray(r.perTarget) ? r.perTarget.slice() : [];
 out.arrows = Array.isArray(r.arrows) ? r.arrows.map(function(a){
 return { v: Array.isArray(a) ? a.slice() : (a == null ? [] : [a]) };
@@ -3165,7 +3182,7 @@ return out;
 }
 function unpackRound(r){
 if(!r) return r;
-var out = { name: r.name || "", total: (typeof r.total === "number" ? r.total : 0) };
+var out = { name: r.name || "", total: (typeof r.total === "number" ? r.total : 0), isSelf: (r.isSelf === true), ownerUid: r.ownerUid || null };
 out.perTarget = Array.isArray(r.perTarget) ? r.perTarget.slice() : [];
 out.arrows = Array.isArray(r.arrows) ? r.arrows.map(function(a){
 if(a && Array.isArray(a.v)) return a.v.slice();
@@ -4180,7 +4197,7 @@ function ensureSelfArcher(){
 if((state.pendingArchers||[]).length === 0 && state.profile){
 var selfName = state.profile.username || state.profile.nomeCognome;
 if(selfName){
-state.pendingArchers = [{ id: uid(), name: selfName, isSelf:true }];
+state.pendingArchers = [{ id: uid(), name: selfName, isSelf:true, ownerUid: (currentUser && currentUser.uid) || null }];
 }
 }
 }
@@ -5529,14 +5546,17 @@ return wrap;
 // ---------- DIARIO (beta) ----------
 function diarioScreen(){
 var wrap = el('<div></div>');
-var myName = (state.profile && state.profile.nomeCognome) ? state.profile.nomeCognome : null;
 var hist = loadHistory();
 
 var mine = [];
 hist.forEach(function(h){
-(h.results||[]).forEach(function(r){
-if(!myName || r.name === myName || (state.archers||[]).some(function(a){ return a.self && a.name === r.name; })){
-mine.push({ date: h.date, modeLabel: h.modeLabel, modeKey: h.modeKey, format: h.format, total: r.total, perTarget: r.perTarget||[], pos: (h.results.indexOf(r)+1), tot: h.results.length });
+var res = h.results || [];
+var anyMine = res.some(isMyResult);
+res.forEach(function(r){
+// Se in un giro nessun risultato \u00e8 riconoscibile ed \u00e8 un giro da solo,
+// \u00e8 quasi certamente dell'utente: giri vecchi salvati prima di questa modifica.
+if(isMyResult(r) || (!anyMine && res.length === 1)){
+mine.push({ date: h.date, modeLabel: h.modeLabel, modeKey: h.modeKey, format: h.format, total: r.total, perTarget: r.perTarget||[], pos: (res.indexOf(r)+1), tot: res.length });
 }
 });
 });
@@ -5560,9 +5580,7 @@ var ltRounds = 0, ltSum = 0, ltBest = 0, ltBestLabel = "";
 Object.keys(ltAll).forEach(function(k){
 var e = ltAll[k];
 if(!e || !e.name) return;
-var isMine = (!myName && Object.keys(ltAll).length === 1) || (myName && e.name === myName) ||
-(state.archers||[]).some(function(a){ return a.self && a.name === e.name; });
-if(!isMine) return;
+if(!isMyResult({ name: e.name, ownerUid: e.ownerUid || null, isSelf: e.isSelf === true })) return;
 ltRounds += (e.rounds || 0);
 ltSum += (e.sum || 0);
 if((e.best || 0) > ltBest){ ltBest = e.best; ltBestLabel = e.modeLabel || ""; }
@@ -5611,6 +5629,7 @@ if(DEV_MODE || !db || !currentUser){
 cloudCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);">'+t("diario_cloud_offline")+'</div>'));
 } else {
 var cloudMsg = el('<div style="font-size:0.8rem;color:var(--muted);min-height:1.2em;margin-bottom:10px;"></div>');
+if(lastCloudRestoreMsg){ cloudMsg.textContent = lastCloudRestoreMsg; lastCloudRestoreMsg = ""; }
 cloudCard.appendChild(cloudMsg);
 var upBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:8px;">'+t("diario_cloud_backup")+'</button>');
 var downBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("diario_cloud_restore")+'</button>');
@@ -5628,7 +5647,7 @@ cloudMsg.textContent = t("diario_cloud_working");
 restoreHistoryFromCloud(function(err, n){
 upBtn.disabled = false; downBtn.disabled = false;
 if(err){ cloudMsg.textContent = t("diario_cloud_error") + " \u2014 " + cloudSyncState.lastError; return; }
-if(n > 0){ render(); return; }
+if(n > 0){ lastCloudRestoreMsg = t("diario_cloud_added",{n:n}); render(); return; }
 cloudMsg.textContent = t("diario_cloud_none");
 });
 });
@@ -5665,11 +5684,13 @@ save(); render();
 emptyCard.appendChild(ctaBtn);
 histCard.appendChild(emptyCard);
 } else {
-var myName = state.profile && state.profile.nomeCognome;
 var myTotals = [];
 hist.forEach(function(h){
-for(var ri=0; ri<h.results.length; ri++){
-if(myName && h.results[ri].name === myName){ myTotals.push(h.results[ri].total); break; }
+var res = h.results || [];
+var anyMine = res.some(isMyResult);
+for(var ri=0; ri<res.length; ri++){
+// come nel diario: un giro da solo senza nessuno riconoscibile \u00e8 dell'utente
+if(isMyResult(res[ri]) || (!anyMine && res.length === 1)){ myTotals.push(res[ri].total); break; }
 }
 });
 if(myTotals.length){
@@ -6040,15 +6061,7 @@ piazzolaHero.appendChild(el('<div class="piazzola-hero-lbl">'+t("target_singular
 piazzolaHero.appendChild(el('<div class="piazzola-num">'+state.target+'</div>'));
 card.appendChild(piazzolaHero);
 
-var nameCheckWrap = el('<div class="archer-check-wrap"></div>');
-var nameToggleBtn = el('<button type="button" class="archer-check-btn">\uD83D\uDC41\uFE0F '+t("check_archer_btn")+'</button>');
-var nameReveal = el('<div class="archer-name-big display archer-name-hidden">'+escapeHtml(currentArcher.name)+'</div>');
-nameToggleBtn.addEventListener("click", function(){
-nameReveal.classList.toggle("archer-name-hidden");
-});
-nameCheckWrap.appendChild(nameToggleBtn);
-nameCheckWrap.appendChild(nameReveal);
-card.appendChild(nameCheckWrap);
+card.appendChild(el('<div class="archer-name-big display" style="margin-bottom:10px;">'+escapeHtml(currentArcher.name)+'</div>'));
 var badgeExtra = state.pendingArrows.length ? t("finora",{list:state.pendingArrows.join(', ')}) : '';
 var stopNote = mode.stopAtFirstHit ? t("vale_prima") : '';
 card.appendChild(el('<div class="arrow-badge">'+unit+' '+arrowNumber+' / '+targetArrowCount(mode)+badgeExtra+stopNote+'</div>'));
@@ -6454,12 +6467,12 @@ modeKey: state.mode,
 modeLabel: mLabel,
 results: ranked.map(function(a){
 var entries = state.scores[a.id] || [];
-return { name: a.name, total: totalFor(a.id), perTarget: entries.map(function(e){ return e.total; }), arrows: entries.map(function(e){ return e.arrows; }) };
+return { name: a.name, total: totalFor(a.id), isSelf: (a.isSelf === true), ownerUid: a.ownerUid || null, perTarget: entries.map(function(e){ return e.total; }), arrows: entries.map(function(e){ return e.arrows; }) };
 })
 };
 hist.unshift(roundEntry);
 roundEntry.results.forEach(function(r){
-recordLifetime(r.name, state.mode, mLabel, r.total, nowISO, state.format);
+recordLifetime(r.name, state.mode, mLabel, r.total, nowISO, state.format, r.ownerUid, r.isSelf);
 });
 if(hist.length > HISTORY_MAX) hist.length = HISTORY_MAX;
 saveHistoryList(hist);
