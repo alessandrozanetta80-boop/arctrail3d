@@ -75,13 +75,19 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
 background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .display{ font-family:'Fraunces',Georgia,serif; font-weight:700; letter-spacing:0.03em; }
 #app{ max-width:520px; margin:0 auto; padding:18px 16px 32px; min-height:100dvh; position:relative; }
-header.top{ display:flex; align-items:center; gap:10px; padding:6px 2px 18px; border-bottom:1px solid var(--line); margin-bottom:20px; }
+header.top{ display:flex; align-items:center; gap:10px; padding:8px 2px; border-bottom:1px solid var(--line); margin-bottom:20px;
+position:sticky; top:0; z-index:50; background:var(--bg); padding-top:calc(8px + env(safe-area-inset-top)); }
+header.top .screen-title{ font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold); text-align:right; }
 header.top .logo{ width:52px;height:52px;flex:0 0 auto; filter:drop-shadow(0 2px 6px rgba(29,154,140,0.35)); }
 header.top .headtxt{ flex:1; }
 header.top .brand-title{ font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:1.15rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); }
 header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent); }
 header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
-.home-btn{ background:var(--bark);border:none;color:#fff;border-radius:10px;padding:8px 12px;font-size:0.8rem;font-weight:700;cursor:pointer; }
+.home-btn{ background:var(--bark); border:none; color:#fff; border-radius:999px;
+min-height:48px; padding:0 18px; font-size:1rem; font-weight:700; cursor:pointer;
+display:inline-flex; align-items:center; white-space:nowrap; flex:0 0 auto; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+.home-btn:active{ transform:scale(0.97); }
+.home-btn.small{ font-size:0.85rem; padding:0 14px; }
 .card{ background:linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border:1px solid var(--line); border-radius:16px; padding:18px; margin-bottom:16px;
 box-shadow:0 6px 16px rgba(0,0,0,0.28); border-top:2px solid var(--gold);
 position:relative; z-index:1; }
@@ -588,6 +594,11 @@ diario_cloud_error: "Non riuscito, riprova",
 diario_cloud_offline: "Serve l'accesso per usare la copia sul cloud",
 diario_by_mode_title: "Per disciplina",
 diario_by_mode_hint: "Ogni disciplina ha un punteggio massimo diverso: qui i numeri sono confrontabili.",
+nav_back: "\u2190 Indietro",
+nav_menu: "\u2190 Menu",
+nav_menu_saved: "\u2190 Menu \u00b7 il percorso resta salvato",
+reg_done_btn: "Fatto",
+screen_title_target: "Piazzola {n} / {tot}",
 menu_edit_archers: "Arcieri salvati",
 menu_profile: "Il mio profilo", profile_edit_title: "Il tuo profilo", profile_edit_email_note: "Per cambiare l'email di accesso, contatta l'assistenza.",
 profile_edit_save: "Salva modifiche", profile_edit_saved_msg: "Modifiche salvate.",
@@ -854,6 +865,11 @@ diario_cloud_error: "Didn't work, try again",
 diario_cloud_offline: "Sign in to use the cloud backup",
 diario_by_mode_title: "By discipline",
 diario_by_mode_hint: "Each discipline has a different maximum score: here the numbers are comparable.",
+nav_back: "\u2190 Back",
+nav_menu: "\u2190 Menu",
+nav_menu_saved: "\u2190 Menu \u00b7 your round stays saved",
+reg_done_btn: "Done",
+screen_title_target: "Target {n} / {tot}",
 menu_edit_archers: "Saved archers",
 resume_banner: "You have a round in progress ({mode} \u00b7 {n} targets).",
 resume_btn: "Resume round",
@@ -1106,6 +1122,11 @@ diario_cloud_error: "\u00c9chec, r\u00e9essayez",
 diario_cloud_offline: "Connectez-vous pour utiliser la sauvegarde",
 diario_by_mode_title: "Par discipline",
 diario_by_mode_hint: "Chaque discipline a un score maximum diff\u00e9rent : ici les chiffres sont comparables.",
+nav_back: "\u2190 Retour",
+nav_menu: "\u2190 Menu",
+nav_menu_saved: "\u2190 Menu \u00b7 le parcours reste enregistr\u00e9",
+reg_done_btn: "Termin\u00e9",
+screen_title_target: "Cible {n} / {tot}",
 menu_edit_archers: "Archers enregistr\u00e9s",
 resume_banner: "Un parcours est en cours ({mode} \u00b7 {n} cibles).",
 resume_btn: "Reprendre le parcours",
@@ -1358,6 +1379,11 @@ diario_cloud_error: "Fehlgeschlagen, nochmal versuchen",
 diario_cloud_offline: "Melde dich an, um die Cloud-Sicherung zu nutzen",
 diario_by_mode_title: "Nach Disziplin",
 diario_by_mode_hint: "Jede Disziplin hat eine andere H\u00f6chstpunktzahl: hier sind die Zahlen vergleichbar.",
+nav_back: "\u2190 Zur\u00fcck",
+nav_menu: "\u2190 Men\u00fc",
+nav_menu_saved: "\u2190 Men\u00fc \u00b7 die Runde bleibt gespeichert",
+reg_done_btn: "Fertig",
+screen_title_target: "Ziel {n} / {tot}",
 menu_edit_archers: "Gespeicherte Sch\u00fctzen",
 resume_banner: "Du hast einen laufenden Parcours ({mode} \u00b7 {n} Ziele).",
 resume_btn: "Parcours fortsetzen",
@@ -1610,6 +1636,11 @@ diario_cloud_error: "Ba\u015far\u0131s\u0131z, tekrar dene",
 diario_cloud_offline: "Bulut yede\u011fi i\u00e7in giri\u015f yap",
 diario_by_mode_title: "Disipline g\u00f6re",
 diario_by_mode_hint: "Her disiplinin azami puan\u0131 farkl\u0131d\u0131r: burada say\u0131lar kar\u015f\u0131la\u015ft\u0131r\u0131labilir.",
+nav_back: "\u2190 Geri",
+nav_menu: "\u2190 Men\u00fc",
+nav_menu_saved: "\u2190 Men\u00fc \u00b7 turun kay\u0131tl\u0131 kal\u0131r",
+reg_done_btn: "Tamam",
+screen_title_target: "Hedef {n} / {tot}",
 menu_edit_archers: "Kay\u0131tl\u0131 ok\u00e7ular",
 menu_profile: "Profilim", profile_edit_title: "Profilin", profile_edit_email_note: "Giri\u015f e-postan\u0131 de\u011fi\u015ftirmek i\u00e7in destekle ileti\u015fime ge\u00e7.",
 profile_edit_save: "De\u011fi\u015fiklikleri kaydet", profile_edit_saved_msg: "De\u011fi\u015fiklikler kaydedildi.",
@@ -1876,6 +1907,11 @@ diario_cloud_error: "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c, \u
 diario_cloud_offline: "\u0412\u043e\u0439\u0434\u0438\u0442\u0435, \u0447\u0442\u043e\u0431\u044b \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u044c \u043a\u043e\u043f\u0438\u044e \u0432 \u043e\u0431\u043b\u0430\u043a\u0435",
 diario_by_mode_title: "\u041f\u043e \u0434\u0438\u0441\u0446\u0438\u043f\u043b\u0438\u043d\u0430\u043c",
 diario_by_mode_hint: "\u0423 \u043a\u0430\u0436\u0434\u043e\u0439 \u0434\u0438\u0441\u0446\u0438\u043f\u043b\u0438\u043d\u044b \u0441\u0432\u043e\u0439 \u043c\u0430\u043a\u0441\u0438\u043c\u0443\u043c \u043e\u0447\u043a\u043e\u0432: \u0437\u0434\u0435\u0441\u044c \u0446\u0438\u0444\u0440\u044b \u0441\u043e\u043f\u043e\u0441\u0442\u0430\u0432\u0438\u043c\u044b.",
+nav_back: "\u2190 \u041d\u0430\u0437\u0430\u0434",
+nav_menu: "\u2190 \u041c\u0435\u043d\u044e",
+nav_menu_saved: "\u2190 \u041c\u0435\u043d\u044e \u00b7 \u043a\u0440\u0443\u0433 \u043e\u0441\u0442\u0430\u043d\u0435\u0442\u0441\u044f \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d\u043d\u044b\u043c",
+reg_done_btn: "\u0413\u043e\u0442\u043e\u0432\u043e",
+screen_title_target: "\u041c\u0438\u0448\u0435\u043d\u044c {n} / {tot}",
 menu_edit_archers: "Сохранённые стрелки",
 menu_profile: "Мой профиль", profile_edit_title: "Твой профиль", profile_edit_email_note: "Чтобы изменить email для входа, обратитесь в поддержку.",
 profile_edit_save: "Сохранить изменения", profile_edit_saved_msg: "Изменения сохранены.",
@@ -2142,6 +2178,11 @@ diario_cloud_error: "No ha funcionado, int\u00e9ntalo de nuevo",
 diario_cloud_offline: "Inicia sesi\u00f3n para usar la copia en la nube",
 diario_by_mode_title: "Por disciplina",
 diario_by_mode_hint: "Cada disciplina tiene una puntuaci\u00f3n m\u00e1xima distinta: aqu\u00ed los n\u00fameros son comparables.",
+nav_back: "\u2190 Atr\u00e1s",
+nav_menu: "\u2190 Men\u00fa",
+nav_menu_saved: "\u2190 Men\u00fa \u00b7 la ronda queda guardada",
+reg_done_btn: "Hecho",
+screen_title_target: "Diana {n} / {tot}",
 menu_edit_archers: "Arqueros guardados",
 menu_profile: "Mi perfil", profile_edit_title: "Tu perfil", profile_edit_email_note: "Para cambiar el email de acceso, contacta con soporte.",
 profile_edit_save: "Guardar cambios", profile_edit_saved_msg: "Cambios guardados.",
@@ -2408,6 +2449,11 @@ diario_cloud_error: "Misslyckades, f\u00f6rs\u00f6k igen",
 diario_cloud_offline: "Logga in f\u00f6r att anv\u00e4nda molnkopian",
 diario_by_mode_title: "Per disciplin",
 diario_by_mode_hint: "Varje disciplin har olika maxpo\u00e4ng: h\u00e4r \u00e4r siffrorna j\u00e4mf\u00f6rbara.",
+nav_back: "\u2190 Tillbaka",
+nav_menu: "\u2190 Meny",
+nav_menu_saved: "\u2190 Meny \u00b7 rundan f\u00f6rblir sparad",
+reg_done_btn: "Klar",
+screen_title_target: "M\u00e5l {n} / {tot}",
 menu_edit_archers: "Sparade sk\u00e4ttar",
 menu_profile: "Min profil", profile_edit_title: "Din profil", profile_edit_email_note: "F\u00f6r att \u00e4ndra inloggnings-e-posten, kontakta supporten.",
 profile_edit_save: "Spara \u00e4ndringar", profile_edit_saved_msg: "\u00c4ndringarna sparades.",
@@ -2674,6 +2720,11 @@ diario_cloud_error: "Mislukt, probeer opnieuw",
 diario_cloud_offline: "Log in om de cloud-back-up te gebruiken",
 diario_by_mode_title: "Per discipline",
 diario_by_mode_hint: "Elke discipline heeft een andere maximumscore: hier zijn de cijfers vergelijkbaar.",
+nav_back: "\u2190 Terug",
+nav_menu: "\u2190 Menu",
+nav_menu_saved: "\u2190 Menu \u00b7 de ronde blijft bewaard",
+reg_done_btn: "Klaar",
+screen_title_target: "Doel {n} / {tot}",
 menu_edit_archers: "Opgeslagen boogschutters",
 menu_profile: "Mijn profiel", profile_edit_title: "Jouw profiel", profile_edit_email_note: "Om je inlog-e-mail te wijzigen, neem contact op met support.",
 profile_edit_save: "Wijzigingen opslaan", profile_edit_saved_msg: "Wijzigingen opgeslagen.",
@@ -3436,24 +3487,10 @@ var p = ICON_PATHS[name] || "";
 return '<svg viewBox="0 0 24 24" width="'+(size||20)+'" height="'+(size||20)+'" fill="none" stroke="currentColor" stroke-width="'+(strokeWidth||1.6)+'" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;">'+p+'</svg>';
 }
 
-function adminQuickBar(){
-var bar = el('<div class="no-print" style="display:flex;justify-content:flex-end;margin-bottom:10px;"><button style="background:var(--bark);color:#fff;border:none;border-radius:999px;padding:7px 14px;font-weight:700;font-size:0.8rem;cursor:pointer;"></button></div>');
-var btn = bar.querySelector("button");
-btn.innerHTML = icon("users",14)+' '+t("menu_admin");
-btn.addEventListener("click", function(){
-homeOverride = false;
-state.screen = "admin";
-state.country = state.country || "it";
-state.federation = state.federation || "fiarc";
-save();
-render();
-});
-return bar;
-}
-
 function render(){
 var app = document.getElementById("app");
 app.innerHTML = "";
+if(typeof syncNavGuard === "function") syncNavGuard();
 if(state.lang){ document.documentElement.lang = state.lang; }
 document.body.classList.toggle("theme-satura", state.theme === "satura");
 document.body.classList.toggle("theme-light", state.theme === "light");
@@ -3464,8 +3501,6 @@ if(authState === "linkSent"){ app.appendChild(linkSentScreen()); return; }
 if(authState === "authError"){ app.appendChild(authErrorScreen()); return; }
 if(authState === "firebaseError"){ app.appendChild(firebaseErrorScreen()); return; }
 if(authState === "pendingApproval"){ app.appendChild(pendingApprovalScreen()); return; }
-var isAdminUser = currentUser && currentUser.email === ADMIN_EMAIL;
-if(isAdminUser && state.screen !== "admin"){ app.appendChild(adminQuickBar()); }
 if(!state.profile && !state.profileSkipped){
 if(state.screen === "profile-registration"){ app.appendChild(profileRegistrationScreen()); return; }
 app.appendChild(welcomeScreen()); return;
@@ -4106,9 +4141,6 @@ savedMsg.textContent = t("profile_edit_saved_msg");
 });
 card.appendChild(saveBtn);
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
-card.appendChild(backBtn);
 
 wrap.appendChild(card);
 return wrap;
@@ -4177,24 +4209,49 @@ wrap.appendChild(startBtn);
 return wrap;
 }
 
+// Titolo della schermata mostrato in barra: durante il percorso indica la piazzola,
+// che e' l'informazione utile mentre si tira.
+function screenTitle(){
+if(state.screen === "round" && state.format){
+return t("screen_title_target", { n: state.target, tot: state.format });
+}
+var m = {
+"history": "history_title", "history-detail": "history_title", "diario": "diario_btn_label",
+"compagnie": "compagnie_title", "campi": "campi_title", "profile-edit": "menu_profile",
+"admin": "admin_title", "info": "menu_info", "prepara-gara": "menu_edit_archers",
+"training-setup": "menu_train_label", "gara-setup": "menu_gara_label"
+};
+var k = m[state.screen];
+if(!k) return "";
+var s = t(k);
+return (s && s !== k) ? s : "";
+}
+
 function header(){
+var duranteGiro = (state.screen === "round" || state.screen === "summary");
 var showHome = (!homeOverride) && state.screen !== "menu";
 var h = el(
 '<header class="top">'+
-'<div class="logo">'+logoSVG(52)+'</div>'+
-'<div class="headtxt"><span class="brand-title">ArcTrail 3D</span></div>'+
+'<div class="logo">'+logoSVG(38)+'</div>'+
+'<div class="headtxt"></div>'+
 '</header>'
 );
 if(showHome){
-var homeBtn = el('<button class="home-btn no-print">'+t("back_to_menu")+'</button>');
+var etichetta = duranteGiro ? t("nav_menu_saved") : t("nav_menu");
+var homeBtn = el('<button class="home-btn no-print'+(duranteGiro?' small':'')+'">'+etichetta+'</button>');
 homeBtn.addEventListener("click", function(){
 if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; timerRunning = false; timerRemaining = null; timerTargetKey = null; }
-if(state.screen === "round" || state.screen === "summary"){ homeOverride = true; }
+if(state.screen === "session-follow"){ stopFollowingSession(); state.followSessionId = null; }
+if(duranteGiro){ homeOverride = true; }
 else { state.screen = "menu"; }
-render();
+save(); render();
 });
-h.appendChild(homeBtn);
+h.insertBefore(homeBtn, h.firstChild);
+h.querySelector(".logo").style.display = "none";
 }
+var titolo = screenTitle();
+if(titolo){ h.querySelector(".headtxt").innerHTML = '<div class="screen-title">'+escapeHtml(titolo)+'</div>'; }
+else { h.querySelector(".headtxt").innerHTML = '<span class="brand-title">ArcTrail 3D</span>'; }
 return h;
 }
 
@@ -4255,7 +4312,10 @@ card2.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top
 }
 wrap.appendChild(card2);
 
-var continueBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("continue_btn")+'</button>');
+// Se si arriva qui da "Arcieri salvati" si sta solo gestendo la rubrica,
+// quindi il pulsante non deve far credere che si stia avviando una gara.
+var soloRubrica = (state.registrationNext === "menu");
+var continueBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t(soloRubrica ? "reg_done_btn" : "continue_btn")+'</button>');
 if(pendingArchers.length === 0) continueBtn.setAttribute("disabled","disabled");
 continueBtn.addEventListener("click", function(){
 if((state.pendingArchers||[]).length === 0) return;
@@ -4265,13 +4325,6 @@ save(); render();
 });
 wrap.appendChild(continueBtn);
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){
-state.registrationNext = null;
-state.screen = "menu";
-save(); render();
-});
-wrap.appendChild(backBtn);
 
 setTimeout(function(){
 document.getElementById("addArcherBtn").addEventListener("click", addArcher);
@@ -4783,7 +4836,9 @@ return d;
 
 function menuScreen(){
 var wrap = el('<div></div>');
-var hasActiveRound = (state.screen === "round");
+// Il percorso resta "in corso" anche se apri Storico o Diario: prima dipendeva
+// dalla schermata aperta, quindi il banner spariva e il percorso era irraggiungibile.
+var hasActiveRound = (state.roundActive === true) || (state.screen === "round");
 
 wrap.appendChild(langSwitcher());
 
@@ -4925,6 +4980,7 @@ setTimeout(function(){
 var resumeBtn = document.getElementById("resumeBtn");
 if(resumeBtn) resumeBtn.addEventListener("click", function(){
 homeOverride = false;
+state.screen = "round";
 save(); render();
 });
 },0);
@@ -4983,9 +5039,6 @@ beginRound(trainKey);
 });
 wrap.appendChild(startBtn);
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
-wrap.appendChild(backBtn);
 
 var s = mode.scoring[1];
 var zoneTxt = mode.zones.map(function(z){ return t(z.labelKey)+" "+s[z.key]; }).join(" &middot; ");
@@ -5032,9 +5085,6 @@ var startBtn = el('<button class="btn btn-primary btn-block" style="padding:16px
 startBtn.addEventListener("click", function(){ beginRound(modeKey); });
 wrap.appendChild(startBtn);
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
-wrap.appendChild(backBtn);
 
 return wrap;
 }
@@ -5196,9 +5246,6 @@ if(state.compagniaForm === "classifica"){ wrap.appendChild(compagnieClassificaCa
 }
 }
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
-wrap.appendChild(backBtn);
 
 setTimeout(function(){
 var rs = document.getElementById("cpSelRegione");
@@ -5374,9 +5421,6 @@ openMaps(null);
 }
 });
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
-wrap.appendChild(backBtn);
 return wrap;
 }
 
@@ -5388,9 +5432,6 @@ card.appendChild(el('<h2 class="section-title">'+t("admin_title")+'</h2>'));
 var listWrap = el('<div id="adminListWrap"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
 card.appendChild(listWrap);
 wrap.appendChild(card);
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
-wrap.appendChild(backBtn);
 
 function loadList(){
 db.collection("users").get().then(function(snap){
@@ -5528,9 +5569,6 @@ if(archerNames.length === 0 || !hasAny){
 wrap.appendChild(card);
 }
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){ stopFollowingSession(); state.followSessionId = null; state.screen = "menu"; save(); render(); });
-wrap.appendChild(backBtn);
 return wrap;
 }
 
@@ -5554,9 +5592,6 @@ wrap.appendChild(contactCard);
 
 wrap.appendChild(el('<div style="font-size:0.68rem;color:var(--muted);text-align:center;margin-top:16px;">Versione file: '+BUILD_STAMP+'</div>'));
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
-wrap.appendChild(backBtn);
 return wrap;
 }
 
@@ -5716,9 +5751,6 @@ cloudCard.appendChild(downBtn);
 }
 wrap.appendChild(cloudCard);
 
-var backBtn = el('<button class="btn btn-ghost btn-block">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
-wrap.appendChild(backBtn);
 
 return wrap;
 }
@@ -5792,9 +5824,6 @@ render();
 }
 wrap.appendChild(histCard);
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_menu")+'</button>');
-backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
-wrap.appendChild(backBtn);
 return wrap;
 }
 
@@ -5988,6 +6017,7 @@ ref.update(update).catch(function(){});
 }
 
 function beginRound(modeKey){
+homeOverride = false; // senza questo un percorso nuovo veniva dirottato al menu
 var mode = GAME_MODES[modeKey];
 if(!mode.freeFormat){ state.arrowsPerTargetOverride = null; }
 var format = mode.freeFormat ? clamp(parseInt(state.pendingFormat,10)||14, mode.minFormat, mode.maxFormat) : mode.formats[0];
@@ -5998,6 +6028,7 @@ archers.sort(function(a,b){ return a.name.localeCompare(b.name, state.lang || "i
 }
 var scores = {};
 archers.forEach(function(a){ scores[a.id] = []; });
+state.roundActive = true;
 state.archersBase = archers.slice(); // ordine della prima piazzola: da qui si ricava quello di tutte le altre
 state.rotBaseTarget = 1;
 state.screen = "round";
@@ -6457,6 +6488,7 @@ state.target += 1;
 ensureRotationBase();
 state.archers = orderForTarget(state.target);
 } else {
+state.roundActive = false;
 state.screen = "summary";
 closeSharedSession();
 }
@@ -6704,6 +6736,36 @@ swReloaded = true;
 window.location.reload();
 });
 }
+// Tasto indietro fisico di Android e gesto di scorrimento laterale.
+// Si aggancia alla cronologia del browser: premere indietro riporta al menu
+// invece di chiudere l'app, e da una schermata gia' al menu esce davvero.
+var navGuardActive = false;
+function pushNavGuard(){
+if(navGuardActive) return;
+try{ history.pushState({ arctrail:true }, ""); navGuardActive = true; }catch(e){}
+}
+function syncNavGuard(){
+var dentro = state.lang && state.screen && state.screen !== "menu" && !homeOverride;
+if(dentro) pushNavGuard();
+}
+window.addEventListener("popstate", function(){
+navGuardActive = false;
+if(!state.lang) return;
+if(state.screen === "round" || state.screen === "summary"){
+// durante un percorso non si esce per sbaglio: si torna al menu, i punteggi restano
+homeOverride = true;
+save(); render();
+pushNavGuard();
+return;
+}
+if(state.screen && state.screen !== "menu"){
+if(state.screen === "session-follow"){ stopFollowingSession(); state.followSessionId = null; }
+state.screen = "menu";
+save(); render();
+pushNavGuard();
+}
+});
+
 initAuthFlow();
 });
 </script>
