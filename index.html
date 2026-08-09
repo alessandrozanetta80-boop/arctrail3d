@@ -4395,7 +4395,7 @@ h.appendChild(homeBtn);
 
 // Nel menu, al posto del titolo, la nazione e la federazione attive: toccandole
 // si apre la scelta. E' l'unico punto da imparare per cambiarle.
-if(state.screen === "menu" && state.country && state.federation){
+if((state.screen === "menu" || mostraMenu) && state.country && state.federation){
 var fedBtn = el('<button class="home-btn small no-print" style="margin-left:auto;"></button>');
 fedBtn.textContent = t("setup_change_btn");
 fedBtn.addEventListener("click", function(){
