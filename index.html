@@ -75,10 +75,10 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
 background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .display{ font-family:'Fraunces',Georgia,serif; font-weight:700; letter-spacing:0.03em; }
 #app{ max-width:520px; margin:0 auto; padding:18px 16px 32px; min-height:100dvh; position:relative; }
-header.top{ display:flex; align-items:center; gap:12px; height:60px; padding:0 4px; border-bottom:1px solid var(--line); margin-bottom:18px;
-position:sticky; top:0; z-index:50; background:var(--bg); margin-top:env(safe-area-inset-top); }
-header.top .screen-title{ font-size:0.8rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); font-weight:700; }
-header.top .logo{ width:40px; height:40px; flex:0 0 auto; }
+header.top{ display:flex; align-items:center; gap:12px; height:64px; padding:0 4px; border-bottom:1px solid var(--line); margin-bottom:18px;
+position:sticky; top:0; z-index:50; margin-top:env(safe-area-inset-top);
+background:transparent; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+header.top .logo{ width:52px; height:52px; flex:0 0 auto; }
 header.top .logo svg{ width:100%; height:100%; display:block; }
 header.top .headtxt{ flex:1; min-width:0; overflow:hidden; }
 header.top .brand-title{ font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:0.95rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; }
@@ -598,7 +598,6 @@ diario_by_mode_title: "Per disciplina",
 diario_by_mode_hint: "Ogni disciplina ha un punteggio massimo diverso: qui i numeri sono confrontabili.",
 nav_back: "\u2190 Indietro",
 nav_menu: "\u2190 Menu",
-nav_menu_saved: "\u2190 Menu \u00b7 il percorso resta salvato",
 reg_done_btn: "Fatto",
 setup_where_title: "Dove tiri?",
 setup_pick_fed: "Scegli la federazione",
@@ -608,7 +607,6 @@ setup_country_label: "Nazione dove tiri",
 setup_fed_label: "Federazione",
 setup_country_placeholder: "Scegli la nazione\u2026",
 setup_done_btn: "Conferma",
-screen_title_target: "Piazzola {n} / {tot}",
 menu_edit_archers: "Arcieri salvati",
 menu_profile: "Il mio profilo", profile_edit_title: "Il tuo profilo", profile_edit_email_note: "Per cambiare l'email di accesso, contatta l'assistenza.",
 profile_edit_save: "Salva modifiche", profile_edit_saved_msg: "Modifiche salvate.",
@@ -877,7 +875,6 @@ diario_by_mode_title: "By discipline",
 diario_by_mode_hint: "Each discipline has a different maximum score: here the numbers are comparable.",
 nav_back: "\u2190 Back",
 nav_menu: "\u2190 Menu",
-nav_menu_saved: "\u2190 Menu \u00b7 your round stays saved",
 reg_done_btn: "Done",
 setup_where_title: "Where do you shoot?",
 setup_pick_fed: "Choose your federation",
@@ -887,7 +884,6 @@ setup_country_label: "Country where you shoot",
 setup_fed_label: "Federation",
 setup_country_placeholder: "Choose the country\u2026",
 setup_done_btn: "Confirm",
-screen_title_target: "Target {n} / {tot}",
 menu_edit_archers: "Saved archers",
 resume_banner: "You have a round in progress ({mode} \u00b7 {n} targets).",
 resume_btn: "Resume round",
@@ -1142,7 +1138,6 @@ diario_by_mode_title: "Par discipline",
 diario_by_mode_hint: "Chaque discipline a un score maximum diff\u00e9rent : ici les chiffres sont comparables.",
 nav_back: "\u2190 Retour",
 nav_menu: "\u2190 Menu",
-nav_menu_saved: "\u2190 Menu \u00b7 le parcours reste enregistr\u00e9",
 reg_done_btn: "Termin\u00e9",
 setup_where_title: "O\u00f9 tirez-vous\u00a0?",
 setup_pick_fed: "Choisissez la f\u00e9d\u00e9ration",
@@ -1152,7 +1147,6 @@ setup_country_label: "Pays o\u00f9 vous tirez",
 setup_fed_label: "F\u00e9d\u00e9ration",
 setup_country_placeholder: "Choisissez le pays\u2026",
 setup_done_btn: "Confirmer",
-screen_title_target: "Cible {n} / {tot}",
 menu_edit_archers: "Archers enregistr\u00e9s",
 resume_banner: "Un parcours est en cours ({mode} \u00b7 {n} cibles).",
 resume_btn: "Reprendre le parcours",
@@ -1407,7 +1401,6 @@ diario_by_mode_title: "Nach Disziplin",
 diario_by_mode_hint: "Jede Disziplin hat eine andere H\u00f6chstpunktzahl: hier sind die Zahlen vergleichbar.",
 nav_back: "\u2190 Zur\u00fcck",
 nav_menu: "\u2190 Men\u00fc",
-nav_menu_saved: "\u2190 Men\u00fc \u00b7 die Runde bleibt gespeichert",
 reg_done_btn: "Fertig",
 setup_where_title: "Wo schie\u00dft du?",
 setup_pick_fed: "W\u00e4hle den Verband",
@@ -1417,7 +1410,6 @@ setup_country_label: "Land, in dem du schie\u00dft",
 setup_fed_label: "Verband",
 setup_country_placeholder: "Land w\u00e4hlen\u2026",
 setup_done_btn: "Best\u00e4tigen",
-screen_title_target: "Ziel {n} / {tot}",
 menu_edit_archers: "Gespeicherte Sch\u00fctzen",
 resume_banner: "Du hast einen laufenden Parcours ({mode} \u00b7 {n} Ziele).",
 resume_btn: "Parcours fortsetzen",
@@ -1672,7 +1664,6 @@ diario_by_mode_title: "Disipline g\u00f6re",
 diario_by_mode_hint: "Her disiplinin azami puan\u0131 farkl\u0131d\u0131r: burada say\u0131lar kar\u015f\u0131la\u015ft\u0131r\u0131labilir.",
 nav_back: "\u2190 Geri",
 nav_menu: "\u2190 Men\u00fc",
-nav_menu_saved: "\u2190 Men\u00fc \u00b7 turun kay\u0131tl\u0131 kal\u0131r",
 reg_done_btn: "Tamam",
 setup_where_title: "Nerede at\u0131\u015f yap\u0131yorsun?",
 setup_pick_fed: "Federasyonu se\u00e7",
@@ -1682,7 +1673,6 @@ setup_country_label: "At\u0131\u015f yapt\u0131\u011f\u0131n \u00fclke",
 setup_fed_label: "Federasyon",
 setup_country_placeholder: "\u00dclke se\u00e7\u2026",
 setup_done_btn: "Onayla",
-screen_title_target: "Hedef {n} / {tot}",
 menu_edit_archers: "Kay\u0131tl\u0131 ok\u00e7ular",
 menu_profile: "Profilim", profile_edit_title: "Profilin", profile_edit_email_note: "Giri\u015f e-postan\u0131 de\u011fi\u015ftirmek i\u00e7in destekle ileti\u015fime ge\u00e7.",
 profile_edit_save: "De\u011fi\u015fiklikleri kaydet", profile_edit_saved_msg: "De\u011fi\u015fiklikler kaydedildi.",
@@ -1951,7 +1941,6 @@ diario_by_mode_title: "\u041f\u043e \u0434\u0438\u0441\u0446\u0438\u043f\u043b\u
 diario_by_mode_hint: "\u0423 \u043a\u0430\u0436\u0434\u043e\u0439 \u0434\u0438\u0441\u0446\u0438\u043f\u043b\u0438\u043d\u044b \u0441\u0432\u043e\u0439 \u043c\u0430\u043a\u0441\u0438\u043c\u0443\u043c \u043e\u0447\u043a\u043e\u0432: \u0437\u0434\u0435\u0441\u044c \u0446\u0438\u0444\u0440\u044b \u0441\u043e\u043f\u043e\u0441\u0442\u0430\u0432\u0438\u043c\u044b.",
 nav_back: "\u2190 \u041d\u0430\u0437\u0430\u0434",
 nav_menu: "\u2190 \u041c\u0435\u043d\u044e",
-nav_menu_saved: "\u2190 \u041c\u0435\u043d\u044e \u00b7 \u043a\u0440\u0443\u0433 \u043e\u0441\u0442\u0430\u043d\u0435\u0442\u0441\u044f \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d\u043d\u044b\u043c",
 reg_done_btn: "\u0413\u043e\u0442\u043e\u0432\u043e",
 setup_where_title: "\u0413\u0434\u0435 \u0432\u044b \u0441\u0442\u0440\u0435\u043b\u044f\u0435\u0442\u0435?",
 setup_pick_fed: "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0444\u0435\u0434\u0435\u0440\u0430\u0446\u0438\u044e",
@@ -1961,7 +1950,6 @@ setup_country_label: "\u0421\u0442\u0440\u0430\u043d\u0430, \u0433\u0434\u0435 \
 setup_fed_label: "\u0424\u0435\u0434\u0435\u0440\u0430\u0446\u0438\u044f",
 setup_country_placeholder: "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0441\u0442\u0440\u0430\u043d\u0443\u2026",
 setup_done_btn: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c",
-screen_title_target: "\u041c\u0438\u0448\u0435\u043d\u044c {n} / {tot}",
 menu_edit_archers: "Сохранённые стрелки",
 menu_profile: "Мой профиль", profile_edit_title: "Твой профиль", profile_edit_email_note: "Чтобы изменить email для входа, обратитесь в поддержку.",
 profile_edit_save: "Сохранить изменения", profile_edit_saved_msg: "Изменения сохранены.",
@@ -2230,7 +2218,6 @@ diario_by_mode_title: "Por disciplina",
 diario_by_mode_hint: "Cada disciplina tiene una puntuaci\u00f3n m\u00e1xima distinta: aqu\u00ed los n\u00fameros son comparables.",
 nav_back: "\u2190 Atr\u00e1s",
 nav_menu: "\u2190 Men\u00fa",
-nav_menu_saved: "\u2190 Men\u00fa \u00b7 la ronda queda guardada",
 reg_done_btn: "Hecho",
 setup_where_title: "\u00bfD\u00f3nde tiras?",
 setup_pick_fed: "Elige la federaci\u00f3n",
@@ -2240,7 +2227,6 @@ setup_country_label: "Pa\u00eds donde tiras",
 setup_fed_label: "Federaci\u00f3n",
 setup_country_placeholder: "Elige el pa\u00eds\u2026",
 setup_done_btn: "Confirmar",
-screen_title_target: "Diana {n} / {tot}",
 menu_edit_archers: "Arqueros guardados",
 menu_profile: "Mi perfil", profile_edit_title: "Tu perfil", profile_edit_email_note: "Para cambiar el email de acceso, contacta con soporte.",
 profile_edit_save: "Guardar cambios", profile_edit_saved_msg: "Cambios guardados.",
@@ -2509,7 +2495,6 @@ diario_by_mode_title: "Per disciplin",
 diario_by_mode_hint: "Varje disciplin har olika maxpo\u00e4ng: h\u00e4r \u00e4r siffrorna j\u00e4mf\u00f6rbara.",
 nav_back: "\u2190 Tillbaka",
 nav_menu: "\u2190 Meny",
-nav_menu_saved: "\u2190 Meny \u00b7 rundan f\u00f6rblir sparad",
 reg_done_btn: "Klar",
 setup_where_title: "Var skjuter du?",
 setup_pick_fed: "V\u00e4lj f\u00f6rbund",
@@ -2519,7 +2504,6 @@ setup_country_label: "Land d\u00e4r du skjuter",
 setup_fed_label: "F\u00f6rbund",
 setup_country_placeholder: "V\u00e4lj land\u2026",
 setup_done_btn: "Bekr\u00e4fta",
-screen_title_target: "M\u00e5l {n} / {tot}",
 menu_edit_archers: "Sparade sk\u00e4ttar",
 menu_profile: "Min profil", profile_edit_title: "Din profil", profile_edit_email_note: "F\u00f6r att \u00e4ndra inloggnings-e-posten, kontakta supporten.",
 profile_edit_save: "Spara \u00e4ndringar", profile_edit_saved_msg: "\u00c4ndringarna sparades.",
@@ -2788,7 +2772,6 @@ diario_by_mode_title: "Per discipline",
 diario_by_mode_hint: "Elke discipline heeft een andere maximumscore: hier zijn de cijfers vergelijkbaar.",
 nav_back: "\u2190 Terug",
 nav_menu: "\u2190 Menu",
-nav_menu_saved: "\u2190 Menu \u00b7 de ronde blijft bewaard",
 reg_done_btn: "Klaar",
 setup_where_title: "Waar schiet je?",
 setup_pick_fed: "Kies de federatie",
@@ -2798,7 +2781,6 @@ setup_country_label: "Land waar je schiet",
 setup_fed_label: "Federatie",
 setup_country_placeholder: "Kies het land\u2026",
 setup_done_btn: "Bevestigen",
-screen_title_target: "Doel {n} / {tot}",
 menu_edit_archers: "Opgeslagen boogschutters",
 menu_profile: "Mijn profiel", profile_edit_title: "Jouw profiel", profile_edit_email_note: "Om je inlog-e-mail te wijzigen, neem contact op met support.",
 profile_edit_save: "Wijzigingen opslaan", profile_edit_saved_msg: "Wijzigingen opgeslagen.",
@@ -4388,37 +4370,19 @@ wrap.appendChild(startBtn);
 return wrap;
 }
 
-// Titolo della schermata mostrato in barra: durante il percorso indica la piazzola,
-// che e' l'informazione utile mentre si tira.
-function screenTitle(){
-if(state.screen === "round" && state.format){
-return t("screen_title_target", { n: state.target, tot: state.format });
-}
-var m = {
-"history": "history_title", "history-detail": "history_title", "diario": "diario_btn_label",
-"compagnie": "compagnie_title", "campi": "campi_title", "profile-edit": "menu_profile",
-"admin": "admin_title", "info": "menu_info", "prepara-gara": "menu_edit_archers",
-"training-setup": "menu_train_label", "gara-setup": "menu_gara_label"
-};
-var k = m[state.screen];
-if(!k) return "";
-var s = t(k);
-return (s && s !== k) ? s : "";
-}
-
+// Struttura sempre uguale: logo a sinistra, nome, comando a destra.
 function header(){
 var duranteGiro = (state.screen === "round" || state.screen === "summary");
 var mostraMenu = homeOverride && (state.screen === "round" || state.screen === "summary");
 var showHome = !mostraMenu && state.screen !== "menu";
 var h = el(
 '<header class="top">'+
-'<div class="logo">'+logoSVG(38)+'</div>'+
-'<div class="headtxt"></div>'+
+'<div class="logo">'+logoSVG(52)+'</div>'+
+'<div class="headtxt"><span class="brand-title">ArcTrail 3D</span></div>'+
 '</header>'
 );
 if(showHome){
-var etichetta = duranteGiro ? t("nav_menu_saved") : t("nav_menu");
-var homeBtn = el('<button class="home-btn no-print'+(duranteGiro?' small':'')+'">'+etichetta+'</button>');
+var homeBtn = el('<button class="home-btn no-print" style="margin-left:auto;">'+t("nav_menu")+'</button>');
 homeBtn.addEventListener("click", function(){
 if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; timerRunning = false; timerRemaining = null; timerTargetKey = null; }
 if(state.screen === "session-follow"){ stopFollowingSession(); state.followSessionId = null; }
@@ -4426,12 +4390,8 @@ if(duranteGiro){ homeOverride = true; }
 else { state.screen = "menu"; }
 save(); render();
 });
-h.insertBefore(homeBtn, h.firstChild);
-h.querySelector(".logo").style.display = "none";
+h.appendChild(homeBtn);
 }
-var titolo = screenTitle();
-if(titolo){ h.querySelector(".headtxt").innerHTML = '<div class="screen-title">'+escapeHtml(titolo)+'</div>'; }
-else { h.querySelector(".headtxt").innerHTML = '<span class="brand-title">ArcTrail 3D</span>'; }
 
 // Nel menu, al posto del titolo, la nazione e la federazione attive: toccandole
 // si apre la scelta. E' l'unico punto da imparare per cambiarle.
