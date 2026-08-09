@@ -499,6 +499,8 @@ render();
 
 var STORAGE_KEY = "arctrail3d_state_v3";
 var HISTORY_KEY = "arctrail3d_storico_v1";
+var LIFETIME_KEY = "arctrail3d_lifetime_v1"; // riepilogo permanente: non viene mai cancellato dal taglio dello storico
+var HISTORY_MAX = 150;
 
 var state = { screen:"menu", pendingArchers:[] };
 try{
@@ -577,6 +579,16 @@ diario_last_rounds: "Ultimi giri",
 diario_targets_word: "piazzole",
 diario_record_badge: "record",
 diario_position: "{pos}\u00b0 su {tot}",
+diario_cloud_title: "Copia di sicurezza",
+diario_cloud_hint: "I giri restano sul telefono. Con la copia sul cloud li ritrovi anche cambiando dispositivo.",
+diario_cloud_backup: "Salva sul cloud",
+diario_cloud_restore: "Recupera dal cloud",
+diario_cloud_working: "Attendere\u2026",
+diario_cloud_done: "Copia completata",
+diario_cloud_none: "Gi\u00e0 tutto salvato",
+diario_cloud_added: "{n} giri recuperati",
+diario_cloud_error: "Non riuscito, riprova",
+diario_cloud_offline: "Serve l'accesso per usare la copia sul cloud",
 menu_edit_archers: "Arcieri salvati",
 menu_profile: "Il mio profilo", profile_edit_title: "Il tuo profilo", profile_edit_email_note: "Per cambiare l'email di accesso, contatta l'assistenza.",
 profile_edit_save: "Salva modifiche", profile_edit_saved_msg: "Modifiche salvate.",
@@ -832,6 +844,16 @@ diario_last_rounds: "Recent rounds",
 diario_targets_word: "targets",
 diario_record_badge: "best",
 diario_position: "{pos} of {tot}",
+diario_cloud_title: "Backup",
+diario_cloud_hint: "Rounds stay on your phone. With a cloud copy you keep them when you change device.",
+diario_cloud_backup: "Save to cloud",
+diario_cloud_restore: "Restore from cloud",
+diario_cloud_working: "Please wait\u2026",
+diario_cloud_done: "Backup complete",
+diario_cloud_none: "Everything already saved",
+diario_cloud_added: "{n} rounds restored",
+diario_cloud_error: "Didn't work, try again",
+diario_cloud_offline: "Sign in to use the cloud backup",
 menu_edit_archers: "Saved archers",
 resume_banner: "You have a round in progress ({mode} \u00b7 {n} targets).",
 resume_btn: "Resume round",
@@ -1073,6 +1095,16 @@ diario_last_rounds: "Derniers parcours",
 diario_targets_word: "cibles",
 diario_record_badge: "record",
 diario_position: "{pos}e sur {tot}",
+diario_cloud_title: "Sauvegarde",
+diario_cloud_hint: "Les parcours restent sur le t\u00e9l\u00e9phone. Avec la copie sur le cloud, vous les gardez en changeant d'appareil.",
+diario_cloud_backup: "Sauvegarder sur le cloud",
+diario_cloud_restore: "R\u00e9cup\u00e9rer du cloud",
+diario_cloud_working: "Patientez\u2026",
+diario_cloud_done: "Sauvegarde termin\u00e9e",
+diario_cloud_none: "D\u00e9j\u00e0 tout sauvegard\u00e9",
+diario_cloud_added: "{n} parcours r\u00e9cup\u00e9r\u00e9s",
+diario_cloud_error: "\u00c9chec, r\u00e9essayez",
+diario_cloud_offline: "Connectez-vous pour utiliser la sauvegarde",
 menu_edit_archers: "Archers enregistr\u00e9s",
 resume_banner: "Un parcours est en cours ({mode} \u00b7 {n} cibles).",
 resume_btn: "Reprendre le parcours",
@@ -1314,6 +1346,16 @@ diario_last_rounds: "Letzte Runden",
 diario_targets_word: "Ziele",
 diario_record_badge: "Bestwert",
 diario_position: "{pos}. von {tot}",
+diario_cloud_title: "Sicherung",
+diario_cloud_hint: "Die Runden bleiben auf dem Telefon. Mit der Cloud-Kopie hast du sie auch auf einem neuen Ger\u00e4t.",
+diario_cloud_backup: "In der Cloud sichern",
+diario_cloud_restore: "Aus der Cloud holen",
+diario_cloud_working: "Bitte warten\u2026",
+diario_cloud_done: "Sicherung fertig",
+diario_cloud_none: "Bereits alles gesichert",
+diario_cloud_added: "{n} Runden wiederhergestellt",
+diario_cloud_error: "Fehlgeschlagen, nochmal versuchen",
+diario_cloud_offline: "Melde dich an, um die Cloud-Sicherung zu nutzen",
 menu_edit_archers: "Gespeicherte Sch\u00fctzen",
 resume_banner: "Du hast einen laufenden Parcours ({mode} \u00b7 {n} Ziele).",
 resume_btn: "Parcours fortsetzen",
@@ -1555,6 +1597,16 @@ diario_last_rounds: "Son turlar",
 diario_targets_word: "hedef",
 diario_record_badge: "rekor",
 diario_position: "{tot} ki\u015fide {pos}.",
+diario_cloud_title: "Yedekleme",
+diario_cloud_hint: "Turlar telefonda kal\u0131r. Bulut kopyas\u0131yla cihaz de\u011fi\u015ftirdi\u011finde de durur.",
+diario_cloud_backup: "Buluta kaydet",
+diario_cloud_restore: "Buluttan geri al",
+diario_cloud_working: "L\u00fctfen bekleyin\u2026",
+diario_cloud_done: "Yedekleme tamam",
+diario_cloud_none: "Zaten her \u015fey kay\u0131tl\u0131",
+diario_cloud_added: "{n} tur geri al\u0131nd\u0131",
+diario_cloud_error: "Ba\u015far\u0131s\u0131z, tekrar dene",
+diario_cloud_offline: "Bulut yede\u011fi i\u00e7in giri\u015f yap",
 menu_edit_archers: "Kay\u0131tl\u0131 ok\u00e7ular",
 menu_profile: "Profilim", profile_edit_title: "Profilin", profile_edit_email_note: "Giri\u015f e-postan\u0131 de\u011fi\u015ftirmek i\u00e7in destekle ileti\u015fime ge\u00e7.",
 profile_edit_save: "De\u011fi\u015fiklikleri kaydet", profile_edit_saved_msg: "De\u011fi\u015fiklikler kaydedildi.",
@@ -1810,6 +1862,16 @@ diario_last_rounds: "\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0435 \u04
 diario_targets_word: "\u043c\u0438\u0448\u0435\u043d\u0435\u0439",
 diario_record_badge: "\u0440\u0435\u043a\u043e\u0440\u0434",
 diario_position: "{pos} \u0438\u0437 {tot}",
+diario_cloud_title: "\u0420\u0435\u0437\u0435\u0440\u0432\u043d\u0430\u044f \u043a\u043e\u043f\u0438\u044f",
+diario_cloud_hint: "\u041a\u0440\u0443\u0433\u0438 \u0445\u0440\u0430\u043d\u044f\u0442\u0441\u044f \u043d\u0430 \u0442\u0435\u043b\u0435\u0444\u043e\u043d\u0435. \u041a\u043e\u043f\u0438\u044f \u0432 \u043e\u0431\u043b\u0430\u043a\u0435 \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442 \u0438\u0445 \u043f\u0440\u0438 \u0441\u043c\u0435\u043d\u0435 \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u0430.",
+diario_cloud_backup: "\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u0432 \u043e\u0431\u043b\u0430\u043a\u043e",
+diario_cloud_restore: "\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u0438\u0437 \u043e\u0431\u043b\u0430\u043a\u0430",
+diario_cloud_working: "\u041f\u043e\u0434\u043e\u0436\u0434\u0438\u0442\u0435\u2026",
+diario_cloud_done: "\u041a\u043e\u043f\u0438\u044f \u0433\u043e\u0442\u043e\u0432\u0430",
+diario_cloud_none: "\u0412\u0441\u0451 \u0443\u0436\u0435 \u0441\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u043e",
+diario_cloud_added: "\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u043e \u043a\u0440\u0443\u0433\u043e\u0432: {n}",
+diario_cloud_error: "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c, \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0441\u043d\u043e\u0432\u0430",
+diario_cloud_offline: "\u0412\u043e\u0439\u0434\u0438\u0442\u0435, \u0447\u0442\u043e\u0431\u044b \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u044c \u043a\u043e\u043f\u0438\u044e \u0432 \u043e\u0431\u043b\u0430\u043a\u0435",
 menu_edit_archers: "Сохранённые стрелки",
 menu_profile: "Мой профиль", profile_edit_title: "Твой профиль", profile_edit_email_note: "Чтобы изменить email для входа, обратитесь в поддержку.",
 profile_edit_save: "Сохранить изменения", profile_edit_saved_msg: "Изменения сохранены.",
@@ -2065,6 +2127,16 @@ diario_last_rounds: "\u00daltimas rondas",
 diario_targets_word: "dianas",
 diario_record_badge: "r\u00e9cord",
 diario_position: "{pos}.\u00ba de {tot}",
+diario_cloud_title: "Copia de seguridad",
+diario_cloud_hint: "Las rondas se quedan en el m\u00f3vil. Con la copia en la nube las conservas al cambiar de dispositivo.",
+diario_cloud_backup: "Guardar en la nube",
+diario_cloud_restore: "Recuperar de la nube",
+diario_cloud_working: "Espera\u2026",
+diario_cloud_done: "Copia completada",
+diario_cloud_none: "Ya est\u00e1 todo guardado",
+diario_cloud_added: "{n} rondas recuperadas",
+diario_cloud_error: "No ha funcionado, int\u00e9ntalo de nuevo",
+diario_cloud_offline: "Inicia sesi\u00f3n para usar la copia en la nube",
 menu_edit_archers: "Arqueros guardados",
 menu_profile: "Mi perfil", profile_edit_title: "Tu perfil", profile_edit_email_note: "Para cambiar el email de acceso, contacta con soporte.",
 profile_edit_save: "Guardar cambios", profile_edit_saved_msg: "Cambios guardados.",
@@ -2320,6 +2392,16 @@ diario_last_rounds: "Senaste rundor",
 diario_targets_word: "m\u00e5l",
 diario_record_badge: "rekord",
 diario_position: "{pos} av {tot}",
+diario_cloud_title: "S\u00e4kerhetskopia",
+diario_cloud_hint: "Rundorna finns i telefonen. Med molnkopian beh\u00e5ller du dem n\u00e4r du byter enhet.",
+diario_cloud_backup: "Spara i molnet",
+diario_cloud_restore: "H\u00e4mta fr\u00e5n molnet",
+diario_cloud_working: "V\u00e4nta\u2026",
+diario_cloud_done: "Kopian klar",
+diario_cloud_none: "Allt \u00e4r redan sparat",
+diario_cloud_added: "{n} rundor h\u00e4mtade",
+diario_cloud_error: "Misslyckades, f\u00f6rs\u00f6k igen",
+diario_cloud_offline: "Logga in f\u00f6r att anv\u00e4nda molnkopian",
 menu_edit_archers: "Sparade sk\u00e4ttar",
 menu_profile: "Min profil", profile_edit_title: "Din profil", profile_edit_email_note: "F\u00f6r att \u00e4ndra inloggnings-e-posten, kontakta supporten.",
 profile_edit_save: "Spara \u00e4ndringar", profile_edit_saved_msg: "\u00c4ndringarna sparades.",
@@ -2575,6 +2657,16 @@ diario_last_rounds: "Laatste rondes",
 diario_targets_word: "doelen",
 diario_record_badge: "record",
 diario_position: "{pos}e van {tot}",
+diario_cloud_title: "Back-up",
+diario_cloud_hint: "De rondes blijven op je telefoon. Met de kopie in de cloud houd je ze bij een nieuw toestel.",
+diario_cloud_backup: "Opslaan in de cloud",
+diario_cloud_restore: "Ophalen uit de cloud",
+diario_cloud_working: "Even wachten\u2026",
+diario_cloud_done: "Back-up klaar",
+diario_cloud_none: "Alles is al opgeslagen",
+diario_cloud_added: "{n} rondes hersteld",
+diario_cloud_error: "Mislukt, probeer opnieuw",
+diario_cloud_offline: "Log in om de cloud-back-up te gebruiken",
 menu_edit_archers: "Opgeslagen boogschutters",
 menu_profile: "Mijn profiel", profile_edit_title: "Jouw profiel", profile_edit_email_note: "Om je inlog-e-mail te wijzigen, neem contact op met support.",
 profile_edit_save: "Wijzigingen opslaan", profile_edit_saved_msg: "Wijzigingen opgeslagen.",
@@ -2973,6 +3065,152 @@ function load(){ try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? 
 function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
 function loadHistory(){ try{ var raw = localStorage.getItem(HISTORY_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
 function saveHistoryList(list){ try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); }catch(e){} }
+
+// ---------- RIEPILOGO PERMANENTE ----------
+// Lo storico viene tagliato a HISTORY_MAX giri: questo riepilogo no, cos\u00ec record e totali
+// restano corretti anche quando i giri pi\u00f9 vecchi spariscono dallo storico.
+function loadLifetime(){
+try{ var raw = localStorage.getItem(LIFETIME_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; }
+}
+function saveLifetime(obj){ try{ localStorage.setItem(LIFETIME_KEY, JSON.stringify(obj)); }catch(e){} }
+
+// Registra un giro nel riepilogo permanente. Chiave = nome arciere + modalit\u00e0.
+function recordLifetime(name, modeKey, modeLabel, total, dateISO, format){
+if(!name || typeof total !== "number") return;
+var lt = loadLifetime();
+var k = name + "|" + (modeKey || modeLabel || "?");
+var e = lt[k];
+if(!e){
+e = { name:name, modeKey:modeKey||null, modeLabel:modeLabel||"", rounds:0, sum:0, best:0, bestDate:null, bestFormat:null, firstDate:dateISO, lastDate:dateISO };
+lt[k] = e;
+}
+e.rounds += 1;
+e.sum += total;
+e.lastDate = dateISO;
+if(total > e.best){ e.best = total; e.bestDate = dateISO; e.bestFormat = format || null; }
+saveLifetime(lt);
+return e;
+}
+
+// Ricostruisce il riepilogo dallo storico presente: serve una sola volta per chi
+// aggiorna l'app avendo gi\u00e0 dei giri salvati da prima.
+function backfillLifetimeOnce(){
+try{
+if(localStorage.getItem(LIFETIME_KEY)) return;
+var hist = loadHistory();
+if(!hist.length){ saveLifetime({}); return; }
+var lt = {};
+for(var i = hist.length - 1; i >= 0; i--){
+var h = hist[i];
+(h.results || []).forEach(function(r){
+if(!r || typeof r.total !== "number") return;
+var k = r.name + "|" + (h.modeKey || h.modeLabel || "?");
+var e = lt[k];
+if(!e){
+e = { name:r.name, modeKey:h.modeKey||null, modeLabel:h.modeLabel||"", rounds:0, sum:0, best:0, bestDate:null, bestFormat:null, firstDate:h.date, lastDate:h.date };
+lt[k] = e;
+}
+e.rounds += 1;
+e.sum += r.total;
+e.lastDate = h.date;
+if(r.total > e.best){ e.best = r.total; e.bestDate = h.date; e.bestFormat = h.format || null; }
+});
+}
+saveLifetime(lt);
+}catch(e){}
+}
+backfillLifetimeOnce();
+
+// ---------- COPIA DELLO STORICO SUL CLOUD ----------
+// Principio: il telefono resta la fonte primaria. Il cloud \u00e8 una copia di sicurezza.
+// Al ripristino i giri vengono UNITI a quelli locali usando la data come identificativo:
+// niente viene mai sovrascritto o cancellato.
+var cloudSyncState = { running:false, lastError:"" };
+
+function cloudHistoryRef(){
+if(DEV_MODE || !db || !currentUser) return null;
+return db.collection("users").doc(currentUser.uid).collection("storico");
+}
+
+// Un giro = un documento, id derivato dalla data: se lo stesso giro viene inviato
+// due volte non si duplica.
+function roundDocId(dateISO){
+return String(dateISO || "").replace(/[^0-9]/g, "").slice(0, 17) || String(Date.now());
+}
+
+function backupRoundToCloud(roundEntry){
+var ref = cloudHistoryRef();
+if(!ref || !roundEntry) return;
+try{
+ref.doc(roundDocId(roundEntry.date)).set({
+date: roundEntry.date,
+format: roundEntry.format || null,
+modeKey: roundEntry.modeKey || null,
+modeLabel: roundEntry.modeLabel || "",
+results: roundEntry.results || [],
+savedAt: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true }).catch(function(err){
+cloudSyncState.lastError = (err && err.message) ? err.message : "errore";
+});
+}catch(e){ cloudSyncState.lastError = e && e.message ? e.message : "errore"; }
+}
+
+// Invia sul cloud i giri locali che non ci sono ancora (per chi aveva gi\u00e0 storico
+// prima di questo aggiornamento). Non tocca nulla in locale.
+function pushLocalHistoryToCloud(cb){
+var ref = cloudHistoryRef();
+if(!ref){ if(cb) cb(null, 0); return; }
+var hist = loadHistory();
+if(!hist.length){ if(cb) cb(null, 0); return; }
+ref.get().then(function(snap){
+var have = {};
+snap.forEach(function(d){ have[d.id] = true; });
+var todo = hist.filter(function(h){ return h && h.date && !have[roundDocId(h.date)]; });
+if(!todo.length){ if(cb) cb(null, 0); return; }
+var batch = db.batch();
+todo.slice(0, 400).forEach(function(h){
+batch.set(ref.doc(roundDocId(h.date)), {
+date: h.date, format: h.format || null, modeKey: h.modeKey || null,
+modeLabel: h.modeLabel || "", results: h.results || [],
+savedAt: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true });
+});
+return batch.commit().then(function(){ if(cb) cb(null, todo.length); });
+}).catch(function(err){
+cloudSyncState.lastError = (err && err.message) ? err.message : "errore";
+if(cb) cb(err, 0);
+});
+}
+
+// Scarica dal cloud i giri mancanti in locale e li UNISCE. Non cancella nulla.
+function restoreHistoryFromCloud(cb){
+var ref = cloudHistoryRef();
+if(!ref){ if(cb) cb(null, 0); return; }
+ref.orderBy("date", "desc").limit(HISTORY_MAX).get().then(function(snap){
+var local = loadHistory();
+var haveLocal = {};
+local.forEach(function(h){ if(h && h.date) haveLocal[roundDocId(h.date)] = true; });
+var added = 0;
+snap.forEach(function(doc){
+if(haveLocal[doc.id]) return;
+var d = doc.data();
+if(!d || !d.date) return;
+local.push({ date:d.date, format:d.format, modeKey:d.modeKey, modeLabel:d.modeLabel, results:d.results || [] });
+added++;
+});
+if(added){
+local.sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
+if(local.length > HISTORY_MAX) local.length = HISTORY_MAX;
+saveHistoryList(local);
+try{ localStorage.removeItem(LIFETIME_KEY); }catch(e){}
+backfillLifetimeOnce();
+}
+if(cb) cb(null, added);
+}).catch(function(err){
+cloudSyncState.lastError = (err && err.message) ? err.message : "errore";
+if(cb) cb(err, 0);
+});
+}
 function hardResetAll(){ var lang = state.lang, country = state.country, federation = state.federation, profile = state.profile, profileSkipped = state.profileSkipped, compagnieData = state.compagnieData, percorsi = state.percorsi; state = { screen:"menu", pendingArchers:[], lang:lang, country:country, federation:federation, profile:profile, profileSkipped:profileSkipped, compagnieData:compagnieData, percorsi:percorsi }; try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} homeOverride=false; render(); }
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function el(html){ var t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstChild; }
@@ -5271,6 +5509,26 @@ wrap.appendChild(head);
 var best = mine[0], sum = 0;
 mine.forEach(function(m){ sum += m.total; if(m.total > best.total) best = m; });
 var media = Math.round(sum / mine.length);
+var roundsCount = mine.length;
+
+// Il riepilogo permanente sopravvive al taglio dello storico: se conosce un record
+// pi\u00f9 alto o pi\u00f9 giri di quelli ancora in memoria, vincono i suoi numeri.
+var ltAll = loadLifetime();
+var ltRounds = 0, ltSum = 0, ltBest = 0, ltBestLabel = "";
+Object.keys(ltAll).forEach(function(k){
+var e = ltAll[k];
+if(!e || !e.name) return;
+var isMine = (!myName && Object.keys(ltAll).length === 1) || (myName && e.name === myName) ||
+(state.archers||[]).some(function(a){ return a.self && a.name === e.name; });
+if(!isMine) return;
+ltRounds += (e.rounds || 0);
+ltSum += (e.sum || 0);
+if((e.best || 0) > ltBest){ ltBest = e.best; ltBestLabel = e.modeLabel || ""; }
+});
+if(ltRounds > roundsCount){ roundsCount = ltRounds; }
+if(ltRounds > 0 && ltSum > 0 && ltRounds >= mine.length){ media = Math.round(ltSum / ltRounds); }
+var bestTotal = best.total, bestLabel = best.modeLabel || "";
+if(ltBest > bestTotal){ bestTotal = ltBest; bestLabel = ltBestLabel; }
 
 var last5 = mine.slice(0, 5), prev5 = mine.slice(5, 10);
 var trend = "", trendUp = false;
@@ -5282,8 +5540,8 @@ if(d !== 0){ trend = t("diario_trend",{d:(d>0?"+":"")+d}); trendUp = (d>0); }
 }
 
 var grid = el('<div style="display:flex;gap:10px;margin-bottom:4px;"></div>');
-grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;"><div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div><div style="font-size:1.7rem;font-weight:800;color:var(--gold);line-height:1.2;">'+best.total+'</div><div style="font-size:0.68rem;color:var(--muted);">'+escapeHtml(best.modeLabel||"")+'</div></div>'));
-grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;"><div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div><div style="font-size:1.7rem;font-weight:800;color:var(--cream);line-height:1.2;">'+media+'</div><div style="font-size:0.68rem;color:var(--muted);">'+t("diario_on_rounds",{n:mine.length})+'</div></div>'));
+grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;"><div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div><div style="font-size:1.7rem;font-weight:800;color:var(--gold);line-height:1.2;">'+bestTotal+'</div><div style="font-size:0.68rem;color:var(--muted);">'+escapeHtml(bestLabel||"")+'</div></div>'));
+grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;"><div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div><div style="font-size:1.7rem;font-weight:800;color:var(--cream);line-height:1.2;">'+media+'</div><div style="font-size:0.68rem;color:var(--muted);">'+t("diario_on_rounds",{n:roundsCount})+'</div></div>'));
 head.appendChild(grid);
 if(trend){ head.appendChild(el('<div style="font-size:0.75rem;color:'+(trendUp?"var(--success)":"var(--muted)")+';margin-top:8px;font-weight:700;">'+escapeHtml(trend)+'</div>')); }
 wrap.appendChild(head);
@@ -5293,7 +5551,7 @@ listCard.appendChild(el('<h2 class="section-title">'+t("diario_last_rounds")+'</
 mine.slice(0,15).forEach(function(m){
 var d = new Date(m.date);
 var dStr = isNaN(d.getTime()) ? "" : d.toLocaleDateString(state.lang||'it', {day:'2-digit', month:'short', year:'numeric'});
-var isBest = (m.total === best.total && m.date === best.date);
+var isBest = (m.total === bestTotal);
 var row = el('<div style="background:var(--bg-panel-2);border:1px solid '+(isBest?'var(--gold)':'var(--line)')+';border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;"></div>');
 row.innerHTML =
 '<div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:0.9rem;color:var(--cream);">'+escapeHtml(m.modeLabel||"")+(isBest?' <span style="color:var(--gold);">'+t("diario_record_badge")+'</span>':'')+'</div>'+
@@ -5303,6 +5561,39 @@ listCard.appendChild(row);
 });
 wrap.appendChild(listCard);
 }
+
+var cloudCard = el('<div class="card"></div>');
+cloudCard.appendChild(el('<h2 class="section-title">'+t("diario_cloud_title")+'</h2>'));
+cloudCard.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:12px;">'+t("diario_cloud_hint")+'</div>'));
+if(DEV_MODE || !db || !currentUser){
+cloudCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);">'+t("diario_cloud_offline")+'</div>'));
+} else {
+var cloudMsg = el('<div style="font-size:0.8rem;color:var(--muted);min-height:1.2em;margin-bottom:10px;"></div>');
+cloudCard.appendChild(cloudMsg);
+var upBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:8px;">'+t("diario_cloud_backup")+'</button>');
+var downBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("diario_cloud_restore")+'</button>');
+upBtn.addEventListener("click", function(){
+upBtn.disabled = true; downBtn.disabled = true;
+cloudMsg.textContent = t("diario_cloud_working");
+pushLocalHistoryToCloud(function(err, n){
+upBtn.disabled = false; downBtn.disabled = false;
+cloudMsg.textContent = err ? t("diario_cloud_error") : (n > 0 ? t("diario_cloud_done") : t("diario_cloud_none"));
+});
+});
+downBtn.addEventListener("click", function(){
+upBtn.disabled = true; downBtn.disabled = true;
+cloudMsg.textContent = t("diario_cloud_working");
+restoreHistoryFromCloud(function(err, n){
+upBtn.disabled = false; downBtn.disabled = false;
+if(err){ cloudMsg.textContent = t("diario_cloud_error"); return; }
+if(n > 0){ render(); return; }
+cloudMsg.textContent = t("diario_cloud_none");
+});
+});
+cloudCard.appendChild(upBtn);
+cloudCard.appendChild(downBtn);
+}
+wrap.appendChild(cloudCard);
 
 var backBtn = el('<button class="btn btn-ghost btn-block">'+t("back_to_menu")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
@@ -6113,8 +6404,9 @@ var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - t
 
 if(!state.savedToHistory){
 var hist = loadHistory();
-hist.unshift({
-date: new Date().toISOString(),
+var nowISO = new Date().toISOString();
+var roundEntry = {
+date: nowISO,
 format: state.format,
 modeKey: state.mode,
 modeLabel: mLabel,
@@ -6122,9 +6414,14 @@ results: ranked.map(function(a){
 var entries = state.scores[a.id] || [];
 return { name: a.name, total: totalFor(a.id), perTarget: entries.map(function(e){ return e.total; }), arrows: entries.map(function(e){ return e.arrows; }) };
 })
+};
+hist.unshift(roundEntry);
+roundEntry.results.forEach(function(r){
+recordLifetime(r.name, state.mode, mLabel, r.total, nowISO, state.format);
 });
-if(hist.length > 20) hist.length = 20;
+if(hist.length > HISTORY_MAX) hist.length = HISTORY_MAX;
 saveHistoryList(hist);
+backupRoundToCloud(roundEntry);
 state.savedToHistory = true;
 save();
 setTimeout(celebrationBurst, 150);
