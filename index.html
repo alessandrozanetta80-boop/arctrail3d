@@ -456,7 +456,7 @@ try{ window.localStorage.removeItem(PENDING_PROFILE_KEY); }catch(e){}
 authState = "pendingApproval";
 } else {
 var data = doc.data();
-IS_BETA_TESTER = (data.betaTester === true) || (user.email === ADMIN_EMAIL);
+IS_BETA_TESTER = (data.betaTester === true);
 if(!state.profile && data.nomeCognome){
 state.profile = {
 nomeCognome: data.nomeCognome, username: data.username || "",
