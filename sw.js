@@ -1,9 +1,9 @@
 // ArcTrail 3D - service worker
-// Strategia: prova sempre prima la rete (cosi chi ha connessione vede sempre
-// l'ultima versione pubblicata su GitHub), usa la cache solo come riserva
-// quando manca la connessione. Nessun numero di versione da aggiornare a mano.
+// Strategia: network-first. Prova sempre la rete; usa la cache solo se
+// offline. Così ogni aggiornamento pubblicato su GitHub è visibile
+// al caricamento successivo, senza aspettare un secondo giro.
 
-// --- Firebase Cloud Messaging: notifiche push anche ad app chiusa ---
+// --- Firebase Cloud Messaging ---
 importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
 
@@ -19,36 +19,27 @@ try {
   var messaging = firebase.messaging();
   messaging.onBackgroundMessage(function(payload){
     var title = (payload.notification && payload.notification.title) || "ArcTrail 3D";
-    var body = (payload.notification && payload.notification.body) || "";
+    var body  = (payload.notification && payload.notification.body)  || "";
     self.registration.showNotification(title, {
-      body: body,
-      icon: "icon-192.png",
-      badge: "icon-192.png"
+      body: body, icon: "icon-192.png", badge: "icon-192.png"
     });
   });
-} catch (e) {
-  // se il browser non supporta Messaging in service worker, l'app continua
-  // a funzionare normalmente: solo le notifiche non arriveranno
-}
+} catch(e) {}
 
 self.addEventListener("notificationclick", function(event){
   event.notification.close();
   event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then(function(clientList){
-      for (var i = 0; i < clientList.length; i++){
-        if ("focus" in clientList[i]) return clientList[i].focus();
-      }
-      if (clients.openWindow) return clients.openWindow("/");
+    clients.matchAll({ type:"window", includeUncontrolled:true }).then(function(list){
+      for(var i=0;i<list.length;i++){ if("focus" in list[i]) return list[i].focus(); }
+      if(clients.openWindow) return clients.openWindow("/");
     })
   );
 });
 
-// --- Cache offline, invariata ---
-var CACHE_NAME = "arctrail3d-cache";
+// --- Cache offline ---
+var CACHE_NAME = "arctrail3d-v2";
 
 self.addEventListener("install", function(event){
-  // Attiva subito il nuovo service worker, senza aspettare che tutte le
-  // schede vecchie vengano chiuse.
   self.skipWaiting();
 });
 
@@ -56,32 +47,33 @@ self.addEventListener("activate", function(event){
   event.waitUntil(
     caches.keys().then(function(names){
       return Promise.all(
-        names.filter(function(name){ return name !== CACHE_NAME; })
-            .map(function(name){ return caches.delete(name); })
+        names.filter(function(n){ return n !== CACHE_NAME; })
+             .map(function(n){ return caches.delete(n); })
       );
-    }).then(function(){
-      return self.clients.claim();
-    })
+    }).then(function(){ return self.clients.claim(); })
   );
 });
 
-// Strategia fetch: "stale-while-revalidate". Risponde subito con la cache se
-// disponibile (caricamento istantaneo), e intanto scarica in background la
-// versione aggiornata per la prossima volta. Se la cache e' vuota o la rete
-// fallisce, si comporta come prima (aspetta la rete, poi fallback alla cache).
+// Network-first: scarica dalla rete, salva in cache, restituisce.
+// Se la rete fallisce, usa la cache. Se anche la cache manca, index.html.
+// Non viene mai restituita una risposta non-2xx dalla rete.
 self.addEventListener("fetch", function(event){
-  if(event.request.method !== "GET"){ return; }
+  if(event.request.method !== "GET") return;
+
+  // Non intercettare richieste esterne (Firebase, CDN, ecc.)
+  var url = new URL(event.request.url);
+  if(url.origin !== self.location.origin) return;
 
   event.respondWith(
     caches.open(CACHE_NAME).then(function(cache){
-      return cache.match(event.request).then(function(cached){
-        var networkFetch = fetch(event.request).then(function(response){
+      return fetch(event.request).then(function(response){
+        if(response && response.status === 200){
           cache.put(event.request, response.clone());
-          return response;
-        }).catch(function(){
-          return cached || caches.match("index.html");
-        });
-        return cached || networkFetch;
+        }
+        return response;
+      }).catch(function(){
+        return cache.match(event.request)
+          .then(function(cached){ return cached || caches.match("index.html"); });
       });
     })
   );
