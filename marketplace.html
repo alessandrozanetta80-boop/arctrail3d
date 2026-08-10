@@ -11,6 +11,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <style>
 :root{
   --bg:#0F1412;--bg-p:#16201C;--bg-p2:#1A2620;
@@ -164,6 +165,12 @@ section.active{display:block}
 .photo-slot:hover{border-color:var(--accent);color:var(--accent)}
 .photo-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .photo-slot .rm-ph{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(226,61,46,.85);color:#fff;border:none;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
+.photo-slot.busy{border-style:solid;border-color:var(--accent)}
+.ph-prog{position:absolute;inset:0;background:rgba(15,20,18,.78);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:3;font-size:11px;font-weight:700;color:var(--accent);}
+.ph-prog .ring{width:20px;height:20px;border:2.5px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+.load-err{margin:20px 16px;padding:14px;background:rgba(226,61,46,.08);border:1px solid rgba(226,61,46,.35);border-radius:var(--r-m);font-size:13px;line-height:1.6;color:var(--cream);}
+.load-err b{color:var(--danger);display:block;margin-bottom:4px}
+.load-err code{font-size:11.5px;background:var(--bg-p2);padding:2px 6px;border-radius:4px;word-break:break-all;}
 .filter-sec{margin-bottom:18px}
 .filter-sec-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;}
 .range-row{display:flex;gap:9px;align-items:center}
@@ -291,11 +298,10 @@ section.active{display:block}
       <button class="btn-crea" id="btnCrea"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuovo annuncio</button>
     </div>
   </div>
-  <div class="result-info"><span id="rCount"></span><button class="result-clear" id="btnClrFlt" style="display:none">Azzera filtri</button></div>
+  <div class="result-info"><span id="rCount"></span><span style="display:flex;gap:14px;align-items:center"><button class="result-clear" id="btnClrFlt" style="display:none">Azzera filtri</button><button class="result-clear" id="btnReload">Aggiorna</button></span></div>
   <div class="listings" id="lstCont"></div>
 </section>
 </div>
-<button class="fab fab-hidden" id="btnFab"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuovo annuncio</button>
 <nav class="bnav" id="bnav" style="display:none">
   <button class="bnav-item on" id="navMkt"><div class="bnav-iw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>Mercatino</button>
   <button class="bnav-item" id="navFav"><div class="bnav-iw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>Preferiti</button>
@@ -408,11 +414,12 @@ section.active{display:block}
       <div class="fgroup mt12"><label class="flabel">Marca</label>
         <select class="fselect" id="fMarcaA">
           <option value="">— seleziona —</option>
-          <option>HOYT</option><option>MATHEWS</option><option>BOWTECH</option><option>BEAR ARCHERY</option>
-          <option>PSE ARCHERY</option><option>ELITE ARCHERY</option><option>PRIME ARCHERY</option>
-          <option>OBSESSION</option><option>WIN&WIN</option><option>INNO</option><option>SF ARCHERY</option>
-          <option>SAMICK</option><option>GILLO</option><option>SEBASTIEN FLUTE</option>
-          <option>BORDER</option><option>UUKHA</option><option>GREAT PLAINS</option><option>BEARPAW</option>
+          <option>BEAR ARCHERY</option><option>BEARPAW</option><option>BORDER</option>
+          <option>BOWTECH</option><option>ELITE ARCHERY</option><option>GILLO</option>
+          <option>GREAT PLAINS</option><option>HOYT</option><option>INNO</option>
+          <option>MATHEWS</option><option>OBSESSION</option><option>PRIME ARCHERY</option>
+          <option>PSE ARCHERY</option><option>SAMICK</option><option>SEBASTIEN FLUTE</option>
+          <option>SF ARCHERY</option><option>UUKHA</option><option>WIN&amp;WIN</option>
           <option value="altro">ALTRO (specifica nella descrizione)</option>
         </select>
       </div>
@@ -428,9 +435,10 @@ section.active{display:block}
       <div class="fgroup mt12"><label class="flabel">Marca frecce</label>
         <select class="fselect" id="fMarcaF">
           <option value="">— seleziona —</option>
-          <option>EASTON</option><option>GOLD TIP</option><option>CARBON EXPRESS</option>
-          <option>BLACK EAGLE</option><option>VICTORY ARCHERY</option><option>SKYLON</option>
-          <option>AVALON</option><option>BEARPAW</option><option>NIJORA</option><option value="altro">ALTRO</option>
+          <option>AVALON</option><option>BEARPAW</option><option>BLACK EAGLE</option>
+          <option>CARBON EXPRESS</option><option>EASTON</option><option>GOLD TIP</option>
+          <option>NIJORA</option><option>SKYLON</option><option>VICTORY ARCHERY</option>
+          <option value="altro">ALTRO</option>
         </select>
       </div>
       <div style="display:flex;gap:10px" class="mt12">
@@ -456,8 +464,10 @@ section.active{display:block}
     </div>
     <div class="fgroup mt12"><label class="flabel">Città / Zona</label><input class="finput" type="text" id="fLoc" placeholder="es. Verbania (VB)" maxlength="60"></div>
     <div class="fgroup mt12" id="fPhG">
-      <label class="flabel">Foto (max 4 · URL da <a href="https://imgbb.com" target="_blank" style="color:var(--accent);font-weight:400">ImgBB</a>)</label>
+      <label class="flabel">Foto (max 4)</label>
       <div class="photo-row" id="phSlots"></div>
+      <input type="file" id="phFile" accept="image/*" style="display:none">
+      <p style="font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5">Le foto vengono ridimensionate e caricate automaticamente. Puoi anche incollare un link.</p>
     </div>
     <div class="fgroup mt12"><label class="flabel">Descrizione</label><textarea class="ftextarea" id="fDesc" placeholder="Stato d'uso, accessori inclusi, motivo della vendita…" maxlength="1200"></textarea></div>
     <p class="err-msg" id="fErr"></p>
@@ -541,13 +551,13 @@ section.active{display:block}
 <script>
 var FC={apiKey:"AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",authDomain:"arctrail3d.firebaseapp.com",projectId:"arctrail3d",storageBucket:"arctrail3d.firebasestorage.app",messagingSenderId:"185889526349",appId:"1:185889526349:web:0af3b386332664387c8204"};
 firebase.initializeApp(FC);
-var auth=firebase.auth(),db=firebase.firestore();
-var ADMIN="alessandro.zanetta80@gmail.com";
-var cu=null,isVerArch=false,allAds=[],myFavs=new Set(),savedS=[],editId=null,fPhs=["","","",""],curAd=null,curConvId=null,detPhs=[],detIdx=0,selStars=0,revTgtUid=null,revAdId=null;
+var auth=firebase.auth(),db=firebase.firestore(),stg=firebase.storage();
+var cu=null,isVerArch=false,allAds=[],myFavs=new Set(),savedS=[],editId=null,fPhs=["","","",""],curAd=null,curConvId=null,curConv=null,detPhs=[],detIdx=0,selStars=0,revTgtUid=null,revAdId=null,revCache={},phTargetIdx=null;
 var F={cat:"",fat:"",fm:"",ffm:"",lbMn:"",lbMx:"",dwMn:"",dwMx:"",spMn:"",spMx:"",prMn:"",prMx:"",co:"",sh:"",cerco:false};
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-function euro(v){return "€ "+Number(v).toLocaleString("it-IT");}
-function ago(ts){if(!ts)return"";var d=ts.toDate?ts.toDate():new Date(ts),df=Math.floor((Date.now()-d)/1000);if(df<60)return"ora";if(df<3600)return Math.floor(df/60)+"min fa";if(df<86400)return Math.floor(df/3600)+"h fa";if(df<86400*30)return Math.floor(df/86400)+"g fa";return Math.floor(df/86400/30)+"mesi fa";}
+function euro(v){return "€ "+Number(v||0).toLocaleString("it-IT");}
+function tms(ts){if(!ts)return 0;return ts.toDate?ts.toDate().getTime():new Date(ts).getTime();}
+function ago(ts){if(!ts)return"";var t=tms(ts);if(!t)return"";var df=Math.floor((Date.now()-t)/1000);if(df<60)return"ora";if(df<3600)return Math.floor(df/60)+"min fa";if(df<86400)return Math.floor(df/3600)+"h fa";if(df<86400*30)return Math.floor(df/86400)+"g fa";return Math.floor(df/86400/30)+"mesi fa";}
 function ini(n){return(n||"?").split(" ").map(function(w){return w[0]||"";}).join("").toUpperCase().slice(0,2)||"?";}
 var CM={arco:"🏹 Archi",frecce:"🪶 Frecce",mirino:"🎯 Mirini & Rest",stabilizzatori:"Stabilizzatori",faretra:"Faretre",corda:"Corde",protezioni:"Protezioni",abbigliamento:"Abbigliamento",bersagli:"Bersagli 3D",altro:"Altro"};
 var KM={nuovo:"Nuovo",ottimo:"Ottimo",buono:"Buono",usato:"Usato"};
@@ -561,45 +571,62 @@ function openFS(id){document.getElementById(id).classList.add("open");document.b
 function closeFS(id){document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
 ["ovFlt","ovDet","ovForm","ovOff","ovRev","ovAct"].forEach(function(id){document.getElementById(id).addEventListener("click",function(e){if(e.target===this)closeOv(id);});});
 
-/* AUTH */
+/* ══ AUTH — gating stretto: SOLO betaTester===true, nessuna eccezione admin ══ */
 auth.onAuthStateChanged(function(user){
   if(!user){showS("secAuth");return;}
   cu=user;document.getElementById("uav").textContent=ini(user.displayName||user.email);
   db.collection("users").doc(user.uid).get().then(function(doc){
     if(!doc.exists){showS("secDen");return;}
     var d=doc.data();
-    if(!(d.betaTester===true||user.email===ADMIN)){showS("secDen");return;}
+    if(d.betaTester!==true){showS("secDen");return;}
     isVerArch=d.approved===true;enter();
   }).catch(function(){showS("secDen");});
 });
 function enter(){
-  showS("secMkt");document.getElementById("bnav").style.display="flex";document.getElementById("btnFab").classList.remove("fab-hidden");
+  showS("secMkt");document.getElementById("bnav").style.display="flex";
   loadSav();loadFavs();loadAds();listenConvs();
 }
 document.getElementById("btnLogin").addEventListener("click",function(){
   var e=document.getElementById("aEmail").value.trim(),p=document.getElementById("aPwd").value,er=document.getElementById("aErr");
   er.style.display="none";if(!e||!p){er.textContent="Email e password obbligatorie.";er.style.display="block";return;}
   this.disabled=true;var s=this;
-  auth.signInWithEmailAndPassword(e,p).catch(function(err){s.disabled=false;var m="Credenziali non valide.";if(err.code==="auth/too-many-requests")m="Troppi tentativi.";er.textContent=m;er.style.display="block";});
+  auth.signInWithEmailAndPassword(e,p).catch(function(err){s.disabled=false;var m="Credenziali non valide.";if(err.code==="auth/too-many-requests")m="Troppi tentativi, riprova tra poco.";er.textContent=m;er.style.display="block";});
 });
 document.getElementById("aPwd").addEventListener("keydown",function(e){if(e.key==="Enter")document.getElementById("btnLogin").click();});
 document.getElementById("uav").addEventListener("click",function(){
   if(!cu)return;
   openAS("",[
     {l:"Ricerche salvate 🔔",fn:openSavSearches},
-    {l:"Esci ("+cu.email+")",red:true,fn:function(){auth.signOut().then(function(){showS("secAuth");document.getElementById("bnav").style.display="none";document.getElementById("btnFab").classList.add("fab-hidden");});}}
+    {l:"Esci ("+cu.email+")",red:true,fn:function(){auth.signOut().then(function(){showS("secAuth");document.getElementById("bnav").style.display="none";});}}
   ]);
 });
 
-/* LISTINGS */
+/* ══ LISTINGS — nessun orderBy sul server: ordino lato client (niente indici da creare) ══ */
+function applySnap(docs){
+  allAds=docs.map(function(d){return Object.assign({id:d.id},d.data());});
+  allAds.sort(function(a,b){return tms(b.createdAt)-tms(a.createdAt);});
+  renderAds();
+}
+function adsQuery(){return db.collection("market_listings").where("status","==","active").limit(200);}
+var adsUnsub=null;
 function loadAds(){
-  db.collection("market_listings").where("status","==","active").orderBy("createdAt","desc").limit(150).onSnapshot(function(snap){
-    allAds=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});renderAds();
-  },function(e){console.error(e);toast("Errore caricamento");});
+  if(adsUnsub){adsUnsub();adsUnsub=null;}
+  adsUnsub=adsQuery().onSnapshot(function(snap){applySnap(snap.docs);},function(e){
+    console.error(e);adsUnsub=null;
+    document.getElementById("lstCont").innerHTML='<div class="load-err"><b>Impossibile caricare gli annunci</b>'
+      +'Codice: <code>'+esc(e.code||"sconosciuto")+'</code><br>'+esc(e.message||"")
+      +'<br><button class="btn btn-ghost btn-sm mt12" onclick="loadAds()">Riprova</button></div>';
+  });
+}
+// Lettura singola: non dipende dal listener, usata dopo la pubblicazione
+function refreshAds(){
+  return adsQuery().get().then(function(snap){
+    applySnap(snap.docs);
+    if(!adsUnsub)loadAds();
+  }).catch(function(e){console.error(e);});
 }
 function matchF(a){
   if(F.cerco&&a.type!=="cerco")return false;
-  if(!F.cerco&&a.type==="cerco")return false;
   if(F.cat&&a.category!==F.cat)return false;
   if(F.fat&&a.arcoTipo!==F.fat)return false;
   if(F.fm&&a.mano!==F.fm)return false;
@@ -622,11 +649,22 @@ function matchF(a){
 function hasAF(){return F.cat||F.fat||F.fm||F.ffm||F.lbMn||F.lbMx||F.dwMn||F.dwMx||F.spMn||F.spMx||F.prMn||F.prMx||F.co||F.sh||document.getElementById("sInput").value.trim();}
 function renderAds(){
   var fl=allAds.filter(matchF);
-  document.getElementById("rCount").textContent=fl.length+" annunci";
+  var hid=allAds.length-fl.length;
+  document.getElementById("rCount").textContent=fl.length+" annunci"+(hid>0?" · "+hid+" nascosti dai filtri":"");
   document.getElementById("btnClrFlt").style.display=(hasAF()||F.cerco)?"inline-block":"none";
   document.getElementById("fltDot").classList.toggle("show",!!(F.cat||F.fat||F.fm||F.ffm||F.lbMn||F.lbMx||F.dwMn||F.dwMx||F.spMn||F.spMx||F.prMn||F.prMx||F.co||F.sh));
   var c=document.getElementById("lstCont");
-  if(!fl.length){c.innerHTML='<div class="empty"><p>Nessun annuncio</p><p class="empty-sub">Prova a cambiare ricerca o filtri.</p></div>';return;}
+  if(!fl.length){
+    var tot=allAds.length;
+    if(tot>0){
+      c.innerHTML='<div class="empty"><p>Nessun annuncio corrisponde ai filtri</p><p class="empty-sub">Ci sono <b>'+tot+'</b> annunci pubblicati, ma i filtri attivi li nascondono tutti.<br>Premi <b>Azzera filtri</b> qui sopra.'
+        +(F.cerco?'<br><br>Il chip <b>Solo richieste</b> è attivo: stai vedendo solo gli annunci di tipo "Cerco".':'')
+        +'</p></div>';
+    } else {
+      c.innerHTML='<div class="empty"><p>Nessun annuncio pubblicato</p><p class="empty-sub">Il mercatino è vuoto. Premi <b>Nuovo annuncio</b> per pubblicare il primo.<br><br>Se hai appena pubblicato e non lo vedi, apri <b>I miei</b> nella barra in basso: lì trovi tutti i tuoi annunci con il loro stato.</p></div>';
+    }
+    return;
+  }
   c.innerHTML=fl.map(function(a){
     var fav=myFavs.has(a.id);
     var th=a.photos&&a.photos[0]?'<img src="'+esc(a.photos[0])+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">':'<div class="lthumb-ph">🏹</div>';
@@ -645,7 +683,22 @@ function renderAds(){
   c.querySelectorAll("[data-id]").forEach(function(el){el.addEventListener("click",function(){openDet(el.dataset.id);});});
 }
 
-/* DETTAGLIO */
+/* ══ RECENSIONI: cache + calcolo media lato client (niente scritture su /users) ══ */
+function getRevs(uid){
+  if(revCache[uid])return Promise.resolve(revCache[uid]);
+  return db.collection("market_reviews").where("targetUid","==",uid).limit(50).get().then(function(snap){
+    var list=snap.docs.map(function(d){return d.data();});
+    list.sort(function(a,b){return tms(b.createdAt)-tms(a.createdAt);});
+    var tot=0;list.forEach(function(r){tot+=r.rating||0;});
+    var res={list:list,count:list.length,avg:list.length?tot/list.length:0};
+    revCache[uid]=res;return res;
+  }).catch(function(){return{list:[],count:0,avg:0};});
+}
+function revCardHtml(r){
+  return'<div class="review-card"><div class="rev-head"><div class="rev-av">'+ini(r.fromName)+'</div><div><div class="rev-name">'+esc(r.fromName)+'</div><div class="rev-date">'+stars(r.rating)+" · "+ago(r.createdAt)+'</div></div></div>'+(r.text?'<div class="rev-text">'+esc(r.text)+'</div>':'')+'</div>';
+}
+
+/* ══ DETTAGLIO ══ */
 function openDet(id){
   var a=allAds.find(function(x){return x.id===id;});if(!a)return;
   curAd=a;detPhs=(a.photos||[]).filter(Boolean);detIdx=0;
@@ -683,13 +736,20 @@ function openDet(id){
   if(a.accOffers)sp.push(["Offerte","Accettate ✓"]);
   document.getElementById("detSpec").innerHTML=sp.map(function(s){return'<div class="spec-row"><dt>'+esc(s[0])+'</dt><dd>'+esc(String(s[1]))+'</dd></div>';}).join("");
   var im=cu&&a.sellerUid===cu.uid;
-  document.getElementById("detSell").innerHTML='<div class="seller-av">'+ini(a.sellerName||a.sellerEmail)+'</div><div><div class="seller-name">'+esc(a.sellerName||a.sellerEmail||"Utente")+(a.sellerVerified?'<span class="bv" style="font-size:10px">✓ Arciere</span>':'')+'</div><div class="seller-meta">'+(a.sellerRating?stars(Math.round(a.sellerRating))+" "+a.sellerRating.toFixed(1)+" ("+a.sellerReviews+" rec.)":"Nessuna recensione ancora")+'</div></div>'+(im?'':`<svg style="margin-left:auto;flex-shrink:0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`);
-  document.getElementById("detSell").onclick=im?null:function(){openPro(a.sellerUid,a.sellerName||a.sellerEmail);};
+  var sellName=a.sellerName||a.sellerEmail||"Utente";
+  document.getElementById("detSell").innerHTML='<div class="seller-av">'+ini(sellName)+'</div><div><div class="seller-name">'+esc(sellName)+(a.sellerVerified?'<span class="bv" style="font-size:10px">✓ Arciere</span>':'')+'</div><div class="seller-meta" id="detSellMeta">…</div></div>'+(im?'':`<svg style="margin-left:auto;flex-shrink:0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`);
+  document.getElementById("detSell").onclick=im?null:function(){openPro(a.sellerUid,sellName);};
   var bar=document.getElementById("detBar");
   if(im){bar.innerHTML='<button class="btn btn-ghost" style="width:auto;padding:0 20px;flex:1;border-color:var(--bark);color:var(--bark)" onclick="openEditAd(\''+id+'\')">Modifica annuncio</button>';}
   else{var favBtn='<button class="btn-fav-det" onclick="toggleFav(event,\''+id+'\')" id="detFB">'+(myFavs.has(id)?"❤️":"🤍")+'</button>';var cb='<button class="btn btn-primary" onclick="startChat(\''+id+'\')" style="flex:1">Contatta venditore</button>';var ob=(a.type!=="cerco"&&a.accOffers)?'<button class="btn btn-ghost" onclick="openOff(\''+id+'\')" style="flex:1">Fai un\'offerta</button>':'';bar.innerHTML=favBtn+(ob?ob+cb:cb);}
   document.getElementById("btnRep").onclick=function(){reportAd(id);};
-  loadRevs(a.sellerUid);
+  getRevs(a.sellerUid).then(function(r){
+    var mt=document.getElementById("detSellMeta");
+    if(mt)mt.textContent=r.count?stars(Math.round(r.avg))+" "+r.avg.toFixed(1)+" ("+r.count+" rec.)":"Nessuna recensione ancora";
+    var sec=document.getElementById("detRevSec"),lst=document.getElementById("detRevList");
+    if(!r.count){sec.style.display="none";return;}
+    sec.style.display="block";lst.innerHTML=r.list.slice(0,3).map(revCardHtml).join("");
+  });
   openOv("ovDet");
 }
 document.getElementById("btnCDet").addEventListener("click",function(){closeOv("ovDet");});
@@ -705,10 +765,10 @@ document.getElementById("btnDetMore").addEventListener("click",function(){
 });
 function rdDots(){document.getElementById("detDts").innerHTML=detPhs.map(function(_,i){return'<div class="det-dot'+(i===detIdx?" on":"")+'"></div>';}).join("");}
 function syncPh(){document.getElementById("detPh").querySelectorAll("img").forEach(function(img,i){img.classList.toggle("on",i===detIdx);});rdDots();}
-document.getElementById("detNL").addEventListener("click",function(){detIdx=(detIdx-1+detPhs.length)%detPhs.length;syncPh();});
-document.getElementById("detNR").addEventListener("click",function(){detIdx=(detIdx+1)%detPhs.length;syncPh();});
+document.getElementById("detNL").addEventListener("click",function(){if(!detPhs.length)return;detIdx=(detIdx-1+detPhs.length)%detPhs.length;syncPh();});
+document.getElementById("detNR").addEventListener("click",function(){if(!detPhs.length)return;detIdx=(detIdx+1)%detPhs.length;syncPh();});
 
-/* PREFERITI */
+/* ══ PREFERITI ══ */
 function loadFavs(){try{var s=localStorage.getItem("mf_"+cu.uid);if(s)JSON.parse(s).forEach(function(id){myFavs.add(id);});}catch(e){}}
 function saveFavs(){try{localStorage.setItem("mf_"+cu.uid,JSON.stringify(Array.from(myFavs)));}catch(e){}}
 function toggleFav(e,id){e.stopPropagation();if(myFavs.has(id)){myFavs.delete(id);toast("Rimosso dai preferiti");}else{myFavs.add(id);toast("Aggiunto ai preferiti ❤️");}saveFavs();renderAds();var fb=document.getElementById("detFB");if(fb)fb.textContent=myFavs.has(id)?"❤️":"🤍";}
@@ -716,13 +776,67 @@ function openFavs(){
   var ads=allAds.filter(function(a){return myFavs.has(a.id);});
   var el=document.getElementById("favList");
   if(!ads.length){el.innerHTML='<div class="empty"><p>Nessun preferito</p><p class="empty-sub">Premi ❤️ su un annuncio per salvarlo qui.</p></div>';}
-  else{el.innerHTML=ads.map(function(a){var th=a.photos&&a.photos[0]?'<img src="'+esc(a.photos[0])+'" style="width:72px;height:72px;border-radius:var(--r-s);object-fit:cover" alt="">':'<div style="width:72px;height:72px;border-radius:var(--r-s);background:var(--bg-p2);display:flex;align-items:center;justify-content:center;font-size:28px">🏹</div>';return'<div style="display:grid;grid-template-columns:72px 1fr;gap:12px;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:12px;margin-bottom:10px;cursor:pointer" data-fi="'+a.id+'">'+th+'<div><div style="font-size:14.5px;font-weight:700;margin-bottom:4px">'+esc(a.title)+'</div><div style="font-size:15px;font-weight:800;color:var(--bark)">'+euro(a.price)+'</div><div style="font-size:12px;color:var(--muted);margin-top:2px">'+esc(a.location||"")+'</div></div></div>';}).join("");el.querySelectorAll("[data-fi]").forEach(function(el){el.addEventListener("click",function(){closeFS("fsFavs");openDet(el.dataset.fi);});});}
+  else{el.innerHTML=ads.map(function(a){var th=a.photos&&a.photos[0]?'<img src="'+esc(a.photos[0])+'" style="width:72px;height:72px;border-radius:var(--r-s);object-fit:cover" alt="">':'<div style="width:72px;height:72px;border-radius:var(--r-s);background:var(--bg-p2);display:flex;align-items:center;justify-content:center;font-size:28px">🏹</div>';return'<div style="display:grid;grid-template-columns:72px 1fr;gap:12px;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:12px;margin-bottom:10px;cursor:pointer" data-fi="'+a.id+'">'+th+'<div><div style="font-size:14.5px;font-weight:700;margin-bottom:4px">'+esc(a.title)+'</div><div style="font-size:15px;font-weight:800;color:var(--bark)">'+euro(a.price)+'</div><div style="font-size:12px;color:var(--muted);margin-top:2px">'+esc(a.location||"")+'</div></div></div>';}).join("");el.querySelectorAll("[data-fi]").forEach(function(x){x.addEventListener("click",function(){closeFS("fsFavs");openDet(x.dataset.fi);});});}
   openFS("fsFavs");
 }
-document.getElementById("btnCFavs").addEventListener("click",function(){closeFS("fsFavs");setNav("navMkt");document.getElementById("btnFab").classList.remove("fab-hidden");});
+document.getElementById("btnCFavs").addEventListener("click",function(){closeFS("fsFavs");setNav("navMkt");});
 
-/* FORM */
-function openNewAd(){editId=null;fPhs=["","","",""];document.getElementById("formTB").textContent="Nuovo annuncio";["fTit","fLoc","fDesc"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fCat").value="";document.getElementById("fPr").value="";document.getElementById("fBu").value="";document.getElementById("fShp").checked=false;document.getElementById("fAccOff").checked=true;document.getElementById("btnDel").style.display="none";document.getElementById("btnSave").textContent="Pubblica annuncio";document.getElementById("fErr").style.display="none";setADT("vendo");setCondU("ottimo");updCatS();rndPh();openOv("ovForm");}
+/* ══ FOTO: upload su Firebase Storage con compressione ══ */
+function compressImg(file,maxDim,quality){
+  return new Promise(function(res,rej){
+    var url=URL.createObjectURL(file),img=new Image();
+    img.onload=function(){
+      var w=img.naturalWidth,h=img.naturalHeight;
+      if(w>h&&w>maxDim){h=Math.round(h*maxDim/w);w=maxDim;}
+      else if(h>=w&&h>maxDim){w=Math.round(w*maxDim/h);h=maxDim;}
+      var c=document.createElement("canvas");c.width=w;c.height=h;
+      var ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      c.toBlob(function(b){b?res(b):rej(new Error("Compressione fallita"));},"image/jpeg",quality);
+    };
+    img.onerror=function(){URL.revokeObjectURL(url);rej(new Error("File immagine non valido"));};
+    img.src=url;
+  });
+}
+function setSlotProgress(i,pct){
+  var slot=document.querySelector('.photo-slot[data-i="'+i+'"]');if(!slot)return;
+  var p=slot.querySelector(".ph-prog");
+  if(!p){p=document.createElement("div");p.className="ph-prog";p.innerHTML='<div class="ring"></div><span></span>';slot.appendChild(p);slot.classList.add("busy");}
+  p.querySelector("span").textContent=pct+"%";
+}
+document.getElementById("phFile").addEventListener("change",function(){
+  var file=this.files&&this.files[0];this.value="";
+  if(!file||phTargetIdx===null)return;
+  var i=phTargetIdx;phTargetIdx=null;
+  if(!/^image\//.test(file.type)){toast("Seleziona un'immagine");return;}
+  fPhs[i]="__uploading__";rndPh();setSlotProgress(i,0);
+  compressImg(file,1400,0.82).then(function(blob){
+    var name=Date.now()+"_"+i+".jpg";
+    var ref=stg.ref("market/"+cu.uid+"/"+name);
+    var task=ref.put(blob,{contentType:"image/jpeg"});
+    task.on("state_changed",function(s){setSlotProgress(i,Math.round(s.bytesTransferred/s.totalBytes*100));},
+      function(err){console.error(err);fPhs[i]="";rndPh();toast("Caricamento fallito: "+(err.code||err.message));},
+      function(){task.snapshot.ref.getDownloadURL().then(function(url){fPhs[i]=url;rndPh();toast("Foto caricata ✓");});});
+  }).catch(function(err){fPhs[i]="";rndPh();toast(err.message);});
+});
+function pickPhoto(i){
+  openAS("Aggiungi foto",[
+    {l:"📷 Scegli dal dispositivo",bold:true,fn:function(){phTargetIdx=i;document.getElementById("phFile").click();}},
+    {l:"🔗 Incolla un link",fn:function(){var url=prompt("Incolla il link diretto alla foto (https://…):");if(url&&/^https?:\/\//.test(url.trim())){fPhs[i]=url.trim();rndPh();}else if(url)toast("Link non valido");}}
+  ]);
+}
+function rndPh(){
+  var r=document.getElementById("phSlots");
+  r.innerHTML=fPhs.map(function(url,i){
+    if(url==="__uploading__")return'<div class="photo-slot busy" data-i="'+i+'"></div>';
+    if(url)return'<div class="photo-slot" data-i="'+i+'"><img src="'+esc(url)+'" alt=""><button class="rm-ph" onclick="rmPh(event,'+i+')">×</button></div>';
+    return'<div class="photo-slot" data-i="'+i+'" onclick="pickPhoto('+i+')">+</div>';
+  }).join("");
+}
+function rmPh(e,i){e.stopPropagation();fPhs[i]="";rndPh();}
+
+/* ══ FORM ══ */
+function openNewAd(){editId=null;fPhs=["","","",""];document.getElementById("formTB").textContent="Nuovo annuncio";["fTit","fLoc","fDesc"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fCat").value="";document.getElementById("fPr").value="";document.getElementById("fBu").value="";["fLb","fDrw","fSpi","fQty"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fArcoT").value="";document.getElementById("fMarcaA").value="";document.getElementById("fMarcaF").value="";document.getElementById("fShp").checked=false;document.getElementById("fAccOff").checked=true;document.getElementById("btnDel").style.display="none";document.getElementById("btnSave").textContent="Pubblica annuncio";document.getElementById("fErr").style.display="none";setADT("vendo");setCondU("ottimo");updCatS();rndPh();openOv("ovForm");}
 function openEditAd(id){
   var a=allAds.find(function(x){return x.id===id;});if(!a)return;
   editId=id;fPhs=(a.photos||[]).concat(["","","",""]).slice(0,4);
@@ -731,10 +845,11 @@ function openEditAd(id){
   document.getElementById("fPr").value=a.price||"";document.getElementById("fBu").value=a.budget||"";
   document.getElementById("fLoc").value=a.location||"";document.getElementById("fDesc").value=a.description||"";
   document.getElementById("fShp").checked=!!a.shipping;document.getElementById("fAccOff").checked=a.accOffers!==false;
-  if(a.lb)document.getElementById("fLb").value=a.lb;if(a.draw)document.getElementById("fDrw").value=a.draw;
-  if(a.spine)document.getElementById("fSpi").value=a.spine;if(a.qty)document.getElementById("fQty").value=a.qty;
-  if(a.marca)document.getElementById(a.category==="frecce"?"fMarcaF":"fMarcaA").value=a.marca;
-  if(a.arcoTipo)document.getElementById("fArcoT").value=a.arcoTipo;
+  document.getElementById("fLb").value=a.lb||"";document.getElementById("fDrw").value=a.draw||"";
+  document.getElementById("fSpi").value=a.spine||"";document.getElementById("fQty").value=a.qty||"";
+  document.getElementById("fArcoT").value=a.arcoTipo||"";
+  document.getElementById("fMarcaA").value=(a.category==="arco"?a.marca:"")||"";
+  document.getElementById("fMarcaF").value=(a.category==="frecce"?a.marca:"")||"";
   document.getElementById("btnDel").style.display="block";document.getElementById("btnSave").textContent="Salva modifiche";
   document.getElementById("fErr").style.display="none";
   setADT(a.type||"vendo");setCondU(a.condition||"ottimo");
@@ -742,7 +857,6 @@ function openEditAd(id){
   if(a.frMat)document.querySelectorAll("[data-ff]").forEach(function(b){b.classList.toggle("on",b.dataset.ff===a.frMat);});
   updCatS();rndPh();openOv("ovForm");
 }
-document.getElementById("btnFab").addEventListener("click",openNewAd);
 document.getElementById("btnCrea").addEventListener("click",openNewAd);
 document.getElementById("btnCForm").addEventListener("click",function(){closeOv("ovForm");});
 document.querySelectorAll("[data-adt]").forEach(function(b){b.addEventListener("click",function(){setADT(b.dataset.adt);});});
@@ -757,86 +871,115 @@ function getMano(){return(document.querySelector("[data-mf].on")||{dataset:{mf:"
 function getFrMat(){return(document.querySelector("[data-ff].on")||{dataset:{ff:"carbonio"}}).dataset.ff;}
 document.getElementById("fCat").addEventListener("change",updCatS);
 function updCatS(){var c=document.getElementById("fCat").value;document.getElementById("fArcoSec").style.display=c==="arco"?"block":"none";document.getElementById("fFrSec").style.display=c==="frecce"?"block":"none";}
-function rndPh(){var r=document.getElementById("phSlots");r.innerHTML=fPhs.map(function(url,i){if(url)return'<div class="photo-slot" data-i="'+i+'"><img src="'+esc(url)+'" alt=""><button class="rm-ph" onclick="rmPh(event,'+i+')">×</button></div>';return'<div class="photo-slot" onclick="addPh('+i+')">+</div>';}).join("");}
-function rmPh(e,i){e.stopPropagation();fPhs[i]="";rndPh();}
-function addPh(i){var url=prompt("Incolla link diretto alla foto (https://…):");if(url&&url.startsWith("http")){fPhs[i]=url.trim();rndPh();}}
 document.getElementById("btnSave").addEventListener("click",function(){
   var type=getADT(),title=document.getElementById("fTit").value.trim(),cat=document.getElementById("fCat").value,price=parseFloat(document.getElementById("fPr").value),budget=parseFloat(document.getElementById("fBu").value),loc=document.getElementById("fLoc").value.trim(),desc=document.getElementById("fDesc").value.trim(),ship=document.getElementById("fShp").checked,acc=document.getElementById("fAccOff").checked,er=document.getElementById("fErr");
   er.style.display="none";
+  if(fPhs.indexOf("__uploading__")>=0){er.textContent="Attendi la fine del caricamento delle foto.";er.style.display="block";return;}
   if(!title){er.textContent="Inserisci un titolo.";er.style.display="block";return;}
   if(type==="vendo"&&(!price||price<=0)){er.textContent="Inserisci il prezzo.";er.style.display="block";return;}
-  var payload={type:type,title:title,category:cat,location:loc,description:desc,photos:fPhs.filter(Boolean),sellerUid:cu.uid,sellerEmail:cu.email,sellerName:cu.displayName||cu.email.split("@")[0],sellerVerified:isVerArch,status:"active",updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  var payload={type:type,title:title,category:cat,location:loc,description:desc,photos:fPhs.filter(function(p){return p&&p!=="__uploading__";}),sellerUid:cu.uid,sellerEmail:cu.email,sellerName:cu.displayName||cu.email.split("@")[0],sellerVerified:isVerArch,status:"active",updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(type==="vendo"){payload.price=price;payload.shipping=ship;payload.accOffers=acc;payload.condition=getCond();}
   else if(budget>0)payload.budget=budget;
   if(cat==="arco"){payload.arcoTipo=document.getElementById("fArcoT").value;payload.marca=document.getElementById("fMarcaA").value;var lb=document.getElementById("fLb").value,drw=document.getElementById("fDrw").value;if(lb)payload.lb=parseFloat(lb);if(drw)payload.draw=parseFloat(drw);payload.mano=getMano();}
   if(cat==="frecce"){payload.marca=document.getElementById("fMarcaF").value;payload.frMat=getFrMat();var sp=document.getElementById("fSpi").value,qt=document.getElementById("fQty").value;if(sp)payload.spine=parseFloat(sp);if(qt)payload.qty=parseFloat(qt);}
   var btn=document.getElementById("btnSave");btn.disabled=true;btn.textContent="Salvataggio…";
-  var pr=editId?db.collection("market_listings").doc(editId).update(payload):(function(){payload.createdAt=firebase.firestore.FieldValue.serverTimestamp();return db.collection("market_listings").add(payload);})();
-  pr.then(function(){closeOv("ovForm");toast(editId?"Annuncio aggiornato ✓":"Annuncio pubblicato ✓");btn.disabled=false;btn.textContent=editId?"Salva modifiche":"Pubblica annuncio";}).catch(function(e){er.textContent="Errore: "+e.message;er.style.display="block";btn.disabled=false;btn.textContent=editId?"Salva modifiche":"Pubblica annuncio";});
+  var pr;
+  if(editId){pr=db.collection("market_listings").doc(editId).update(payload);}
+  else{payload.createdAt=firebase.firestore.FieldValue.serverTimestamp();pr=db.collection("market_listings").add(payload);}
+  pr.then(function(){closeOv("ovForm");toast(editId?"Annuncio aggiornato ✓":"Annuncio pubblicato ✓");document.getElementById("sInput").value="";resetFilterUI();refreshAds();btn.disabled=false;btn.textContent=editId?"Salva modifiche":"Pubblica annuncio";})
+    .catch(function(e){er.textContent="Errore ("+(e.code||"")+"): "+e.message;er.style.display="block";btn.disabled=false;btn.textContent=editId?"Salva modifiche":"Pubblica annuncio";});
 });
 document.getElementById("btnDel").addEventListener("click",function(){if(!editId||!confirm("Eliminare definitivamente?"))return;db.collection("market_listings").doc(editId).update({status:"deleted"}).then(function(){closeOv("ovForm");toast("Eliminato");});});
 
-/* I MIEI */
+/* ══ I MIEI ANNUNCI ══ */
 function openMyAds(){
-  var mine=allAds.filter(function(a){return a.sellerUid===cu.uid;});
-  var el=document.getElementById("myList");
-  if(!mine.length){el.innerHTML='<div class="empty"><p>Nessun annuncio</p><p class="empty-sub">Premi "Nuovo annuncio" per iniziare a vendere.</p></div>';}
-  else{el.innerHTML=mine.map(function(a){var th=a.photos&&a.photos[0]?'<img src="'+esc(a.photos[0])+'" style="width:72px;height:72px;border-radius:var(--r-s);object-fit:cover" alt="">':'<div style="width:72px;height:72px;border-radius:var(--r-s);background:var(--bg-p2);display:flex;align-items:center;justify-content:center;font-size:28px">🏹</div>';var sm={active:"Attivo",paused:"In pausa",sold:"Venduto"};var sc={active:"rgba(76,175,80,.18)",paused:"rgba(154,163,156,.14)",sold:"rgba(29,154,140,.18)"};var tc={active:"#4CAF50",paused:"var(--muted)",sold:"var(--accent)"};return'<div style="display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:12px;margin-bottom:9px;cursor:pointer" data-eid="'+a.id+'">'+th+'<div><div style="font-size:14.5px;font-weight:700;margin-bottom:3px">'+esc(a.title)+'</div><div style="font-size:13px;color:var(--bark);font-weight:700">'+(a.type==="cerco"?(a.budget?"max "+euro(a.budget):"Budget aperto"):euro(a.price))+'</div></div><span style="font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:var(--r-p);background:'+(sc[a.status]||"rgba(154,163,156,.14)")+';color:'+(tc[a.status]||"var(--muted)")+'">'+(sm[a.status]||a.status)+'</span></div>';}).join("");el.querySelectorAll("[data-eid]").forEach(function(c){c.addEventListener("click",function(){openEditAd(c.dataset.eid);});});}
+  db.collection("market_listings").where("sellerUid","==",cu.uid).limit(100).get().then(function(snap){
+    var mine=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());}).filter(function(a){return a.status!=="deleted";});
+    mine.sort(function(a,b){return tms(b.createdAt)-tms(a.createdAt);});
+    var el=document.getElementById("myList");
+    if(!mine.length){el.innerHTML='<div class="empty"><p>Nessun annuncio</p><p class="empty-sub">Premi "Nuovo annuncio" per iniziare a vendere.</p></div>';}
+    else{
+      el.innerHTML=mine.map(function(a){
+        var th=a.photos&&a.photos[0]?'<img src="'+esc(a.photos[0])+'" style="width:72px;height:72px;border-radius:var(--r-s);object-fit:cover" alt="">':'<div style="width:72px;height:72px;border-radius:var(--r-s);background:var(--bg-p2);display:flex;align-items:center;justify-content:center;font-size:28px">🏹</div>';
+        var sm={active:"Attivo",paused:"In pausa",sold:"Venduto"},sc={active:"rgba(76,175,80,.18)",paused:"rgba(154,163,156,.14)",sold:"rgba(29,154,140,.18)"},tc={active:"#4CAF50",paused:"var(--muted)",sold:"var(--accent)"};
+        var tipoBadge=a.type==="cerco"?'<span style="font-size:10px;font-weight:700;color:var(--gold);background:rgba(203,163,92,.18);padding:2px 7px;border-radius:var(--r-p);margin-right:6px">CERCO</span>':'<span style="font-size:10px;font-weight:700;color:var(--accent);background:rgba(29,154,140,.14);padding:2px 7px;border-radius:var(--r-p);margin-right:6px">VENDO</span>';
+        return'<div style="display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:12px;margin-bottom:9px;cursor:pointer" data-eid="'+a.id+'">'+th+'<div><div style="font-size:14.5px;font-weight:700;margin-bottom:4px">'+esc(a.title)+'</div><div style="margin-bottom:3px">'+tipoBadge+'</div><div style="font-size:13px;color:var(--bark);font-weight:700">'+(a.type==="cerco"?(a.budget?"max "+euro(a.budget):"Budget aperto"):euro(a.price))+'</div></div><span style="font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:var(--r-p);background:'+(sc[a.status]||"rgba(154,163,156,.14)")+';color:'+(tc[a.status]||"var(--muted)")+'">'+(sm[a.status]||a.status)+'</span></div>';
+      }).join("");
+      el.querySelectorAll("[data-eid]").forEach(function(c){c.addEventListener("click",function(){
+        var ad=mine.find(function(x){return x.id===c.dataset.eid;});
+        if(ad&&!allAds.find(function(x){return x.id===ad.id;}))allAds.push(ad);
+        openEditAd(c.dataset.eid);
+      });});
+    }
+  }).catch(function(e){document.getElementById("myList").innerHTML='<div class="load-err"><b>Errore</b><code>'+esc(e.code||"")+'</code> '+esc(e.message)+'</div>';});
   openFS("fsMyAds");
 }
-document.getElementById("btnCMy").addEventListener("click",function(){closeFS("fsMyAds");setNav("navMkt");document.getElementById("btnFab").classList.remove("fab-hidden");});
+document.getElementById("btnCMy").addEventListener("click",function(){closeFS("fsMyAds");setNav("navMkt");});
 
-/* PROFILO */
+/* ══ PROFILO VENDITORE ══ */
 function openPro(uid,name){
   document.getElementById("proName").textContent=name||"Venditore";
-  db.collection("users").doc(uid).get().then(function(doc){var d=doc.exists?doc.data():{};var avg=d.avgRating||0,rc=d.reviewCount||0;document.getElementById("proHero").innerHTML='<div class="profile-hero"><div class="profile-av">'+ini(name)+'</div><div><div class="profile-name">'+esc(name)+'</div><div class="profile-meta">'+(avg?stars(Math.round(avg))+" "+avg.toFixed(1)+" ("+rc+" rec.)":"Nessuna recensione")+'<br>Iscritto '+(d.createdAt?ago(d.createdAt):"—")+'</div></div></div><div class="stat-row"><div class="stat-item"><div class="stat-num">'+(d.soldCount||0)+'</div><div class="stat-lbl">Venduti</div></div><div class="stat-item"><div class="stat-num">'+rc+'</div><div class="stat-lbl">Recensioni</div></div><div class="stat-item"><div class="stat-num">'+(avg?avg.toFixed(1):"—")+'</div><div class="stat-lbl">Rating</div></div></div>';});
   var ha=allAds.filter(function(a){return a.sellerUid===uid&&a.status==="active";});
-  var el=document.getElementById("proAds");el.innerHTML='<div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px">Annunci attivi</div>';
-  if(!ha.length)el.innerHTML+='<p style="font-size:13.5px;color:var(--muted)">Nessun annuncio attivo.</p>';
-  else{el.innerHTML+=ha.map(function(a){var th=a.photos&&a.photos[0]?'<img src="'+esc(a.photos[0])+'" style="width:64px;height:64px;border-radius:var(--r-s);object-fit:cover" alt="">':'<div style="width:64px;height:64px;border-radius:var(--r-s);background:var(--bg-p2);display:flex;align-items:center;justify-content:center;font-size:24px">🏹</div>';return'<div style="display:grid;grid-template-columns:64px 1fr;gap:10px;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:10px;margin-bottom:8px;cursor:pointer" data-pid="'+a.id+'">'+th+'<div><div style="font-size:14px;font-weight:600;margin-bottom:3px">'+esc(a.title)+'</div><div style="font-size:15px;font-weight:800;color:var(--bark)">'+euro(a.price)+'</div></div></div>';}).join("");el.querySelectorAll("[data-pid]").forEach(function(c){c.addEventListener("click",function(){closeFS("fsPro");openDet(c.dataset.pid);});});}
-  db.collection("market_reviews").where("targetUid","==",uid).orderBy("createdAt","desc").limit(10).get().then(function(snap){if(snap.empty)return;el.innerHTML+='<div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:20px 0 12px">Recensioni</div>';el.innerHTML+=snap.docs.map(function(d){var r=d.data();return'<div class="review-card"><div class="rev-head"><div class="rev-av">'+ini(r.fromName)+'</div><div><div class="rev-name">'+esc(r.fromName)+'</div><div class="rev-date">'+stars(r.rating)+" · "+ago(r.createdAt)+'</div></div></div>'+(r.text?'<div class="rev-text">'+esc(r.text)+'</div>':'')+'</div>';}).join("");});
+  getRevs(uid).then(function(r){
+    document.getElementById("proHero").innerHTML='<div class="profile-hero"><div class="profile-av">'+ini(name)+'</div><div><div class="profile-name">'+esc(name)+'</div><div class="profile-meta">'+(r.count?stars(Math.round(r.avg))+" "+r.avg.toFixed(1)+" ("+r.count+" recensioni)":"Nessuna recensione")+'</div></div></div><div class="stat-row"><div class="stat-item"><div class="stat-num">'+ha.length+'</div><div class="stat-lbl">Annunci attivi</div></div><div class="stat-item"><div class="stat-num">'+r.count+'</div><div class="stat-lbl">Recensioni</div></div><div class="stat-item"><div class="stat-num">'+(r.count?r.avg.toFixed(1):"—")+'</div><div class="stat-lbl">Rating</div></div></div>';
+    var el=document.getElementById("proAds");
+    el.innerHTML='<div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px">Annunci attivi</div>';
+    if(!ha.length)el.innerHTML+='<p style="font-size:13.5px;color:var(--muted)">Nessun annuncio attivo.</p>';
+    else{
+      el.innerHTML+=ha.map(function(a){var th=a.photos&&a.photos[0]?'<img src="'+esc(a.photos[0])+'" style="width:64px;height:64px;border-radius:var(--r-s);object-fit:cover" alt="">':'<div style="width:64px;height:64px;border-radius:var(--r-s);background:var(--bg-p2);display:flex;align-items:center;justify-content:center;font-size:24px">🏹</div>';return'<div style="display:grid;grid-template-columns:64px 1fr;gap:10px;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:10px;margin-bottom:8px;cursor:pointer" data-pid="'+a.id+'">'+th+'<div><div style="font-size:14px;font-weight:600;margin-bottom:3px">'+esc(a.title)+'</div><div style="font-size:15px;font-weight:800;color:var(--bark)">'+euro(a.price)+'</div></div></div>';}).join("");
+      el.querySelectorAll("[data-pid]").forEach(function(c){c.addEventListener("click",function(){closeFS("fsPro");openDet(c.dataset.pid);});});
+    }
+    if(r.count){el.innerHTML+='<div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:20px 0 12px">Recensioni</div>'+r.list.slice(0,10).map(revCardHtml).join("");}
+  });
   openFS("fsPro");
 }
 document.getElementById("btnCPro").addEventListener("click",function(){closeFS("fsPro");});
-function loadRevs(uid){
-  db.collection("market_reviews").where("targetUid","==",uid).orderBy("createdAt","desc").limit(3).get().then(function(snap){
-    var sec=document.getElementById("detRevSec"),list=document.getElementById("detRevList");
-    if(snap.empty){sec.style.display="none";return;}sec.style.display="block";
-    list.innerHTML=snap.docs.map(function(d){var r=d.data();return'<div class="review-card"><div class="rev-head"><div class="rev-av">'+ini(r.fromName)+'</div><div><div class="rev-name">'+esc(r.fromName)+'</div><div class="rev-date">'+stars(r.rating)+" · "+ago(r.createdAt)+'</div></div></div>'+(r.text?'<div class="rev-text">'+esc(r.text)+'</div>':'')+'</div>';}).join("");
-  });
-}
 
-/* OFFERTA */
+/* ══ OFFERTE ══ */
+function convIdFor(otherUid,adId){return[cu.uid,otherUid].sort().join("_")+"_"+adId;}
+function convPayload(a){
+  var nm={};nm[cu.uid]=cu.displayName||cu.email.split("@")[0];nm[a.sellerUid]=a.sellerName||a.sellerEmail||"Venditore";
+  return{participants:[cu.uid,a.sellerUid],participantNames:nm,adId:a.id,adTitle:a.title||"",adPhoto:(a.photos&&a.photos[0])||"",adPrice:a.price||0};
+}
 function openOff(id){
   var a=allAds.find(function(x){return x.id===id;});if(!a)return;
-  document.getElementById("offTit").textContent="Offerta per "+esc(a.title);
-  document.getElementById("offSub").textContent="Prezzo richiesto: "+euro(a.price);
+  document.getElementById("offTit").textContent="Fai un'offerta";
+  document.getElementById("offSub").textContent=a.title+" · prezzo richiesto "+euro(a.price);
   document.getElementById("offAmt").value="";document.getElementById("offErr").style.display="none";document.getElementById("btnOff").disabled=true;
   var inp=document.getElementById("offAmt");
   inp.oninput=function(){var v=parseFloat(inp.value);document.getElementById("btnOff").disabled=!(v>0&&v<a.price);document.getElementById("offErr").style.display="none";};
   document.getElementById("btnOff").onclick=function(){
-    var v=parseFloat(inp.value);if(!(v>0&&v<a.price)){document.getElementById("offErr").textContent="L'offerta deve essere inferiore al prezzo.";document.getElementById("offErr").style.display="block";return;}
-    var cid=[cu.uid,a.sellerUid].sort().join("_")+"_"+id,cr=db.collection("market_conversations").doc(cid);
-    cr.get().then(function(doc){if(!doc.exists){var nm={};nm[cu.uid]=cu.displayName||cu.email.split("@")[0];nm[a.sellerUid]=a.sellerName||"Venditore";return cr.set({participants:[cu.uid,a.sellerUid],participantNames:nm,adId:id,adTitle:a.title,adPhoto:(a.photos&&a.photos[0])||"",adPrice:a.price,lastMsg:"💰 Offerta: "+euro(v),lastAt:firebase.firestore.FieldValue.serverTimestamp(),unreadBy:{}});}}).then(function(){return cr.collection("messages").add({type:"offer",amount:v,senderUid:cu.uid,senderName:cu.displayName||cu.email.split("@")[0],status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()});}).then(function(){var u={};u["unreadBy."+a.sellerUid]=true;u.lastMsg="💰 Offerta: "+euro(v);u.lastAt=firebase.firestore.FieldValue.serverTimestamp();cr.update(u);closeOv("ovOff");closeOv("ovDet");toast("Offerta inviata ✓");});
+    var v=parseFloat(inp.value);
+    if(!(v>0&&v<a.price)){document.getElementById("offErr").textContent="L'offerta deve essere inferiore al prezzo.";document.getElementById("offErr").style.display="block";return;}
+    var cid=convIdFor(a.sellerUid,id),cr=db.collection("market_conversations").doc(cid);
+    var base=convPayload(a);base.lastMsg="💰 Offerta: "+euro(v);base.lastAt=firebase.firestore.FieldValue.serverTimestamp();
+    base["unreadBy"]={};base.unreadBy[a.sellerUid]=true;
+    cr.set(base,{merge:true})
+      .then(function(){return cr.collection("messages").add({type:"offer",amount:v,senderUid:cu.uid,senderName:cu.displayName||cu.email.split("@")[0],status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()});})
+      .then(function(){closeOv("ovOff");closeOv("ovDet");toast("Offerta inviata ✓");})
+      .catch(function(e){document.getElementById("offErr").textContent="Errore ("+(e.code||"")+"): "+e.message;document.getElementById("offErr").style.display="block";});
   };
   openOv("ovOff");
 }
 document.getElementById("btnCOff").addEventListener("click",function(){closeOv("ovOff");});
 
-/* RECENSIONI */
-function openRevSheet(tUid,tName,adId){revTgtUid=tUid;revAdId=adId;selStars=0;document.getElementById("revSub").textContent="Stai recensendo: "+esc(tName);document.getElementById("revTxt").value="";document.getElementById("revErr").style.display="none";document.getElementById("btnSRev").disabled=true;document.querySelectorAll("#starPick button").forEach(function(b){b.classList.remove("on");});openOv("ovRev");}
+/* ══ RECENSIONI ══ */
+function openRevSheet(tUid,tName,adId){revTgtUid=tUid;revAdId=adId||null;selStars=0;document.getElementById("revSub").textContent="Stai recensendo: "+tName;document.getElementById("revTxt").value="";document.getElementById("revErr").style.display="none";document.getElementById("btnSRev").disabled=true;document.querySelectorAll("#starPick button").forEach(function(b){b.classList.remove("on");});openOv("ovRev");}
 document.getElementById("starPick").querySelectorAll("button").forEach(function(b,i){b.addEventListener("click",function(){selStars=i+1;document.querySelectorAll("#starPick button").forEach(function(x,j){x.classList.toggle("on",j<=i);});document.getElementById("btnSRev").disabled=false;});});
 document.getElementById("btnSRev").addEventListener("click",function(){
   if(!selStars||!revTgtUid)return;
-  db.collection("market_reviews").add({targetUid:revTgtUid,adId:revAdId,fromUid:cu.uid,fromName:cu.displayName||cu.email.split("@")[0],rating:selStars,text:document.getElementById("revTxt").value.trim(),createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){db.collection("market_reviews").where("targetUid","==",revTgtUid).get().then(function(snap){var tot=0;snap.forEach(function(d){tot+=d.data().rating||0;});db.collection("users").doc(revTgtUid).update({avgRating:tot/snap.size,reviewCount:snap.size});});closeOv("ovRev");toast("Recensione pubblicata ✓");});
+  var btn=this;btn.disabled=true;
+  db.collection("market_reviews").add({targetUid:revTgtUid,adId:revAdId,fromUid:cu.uid,fromName:cu.displayName||cu.email.split("@")[0],rating:selStars,text:document.getElementById("revTxt").value.trim(),createdAt:firebase.firestore.FieldValue.serverTimestamp()})
+    .then(function(){delete revCache[revTgtUid];closeOv("ovRev");toast("Recensione pubblicata ✓");btn.disabled=false;})
+    .catch(function(e){document.getElementById("revErr").textContent="Errore ("+(e.code||"")+"): "+e.message;document.getElementById("revErr").style.display="block";btn.disabled=false;});
 });
 document.getElementById("btnCRev").addEventListener("click",function(){closeOv("ovRev");});
 
-/* SEGNALAZIONE */
+/* ══ SEGNALAZIONI ══ */
 function reportAd(id){openAS("Segnala annuncio",[{l:"Prezzo non realistico",fn:function(){doRep(id,"price");}},{l:"Foto non veritiere",fn:function(){doRep(id,"photo");}},{l:"Articolo vietato",fn:function(){doRep(id,"forbidden");}},{l:"Spam o truffa",red:true,fn:function(){doRep(id,"spam");}}]);}
-function doRep(id,reason){db.collection("market_reports").add({adId:id,reason:reason,fromUid:cu.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){closeOv("ovDet");toast("Segnalazione inviata, grazie");});}
+function doRep(id,reason){db.collection("market_reports").add({adId:id,reason:reason,fromUid:cu.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){closeOv("ovDet");toast("Segnalazione inviata, grazie");}).catch(function(e){toast("Errore: "+(e.code||e.message));});}
 
-/* FILTRI */
+/* ══ FILTRI ══ */
 document.getElementById("chipFlt").addEventListener("click",function(){openOv("ovFlt");});
 document.getElementById("btnCFlt").addEventListener("click",function(){closeOv("ovFlt");});
 document.getElementById("chipCerco").addEventListener("click",function(){F.cerco=!F.cerco;this.classList.toggle("on",F.cerco);renderAds();});
@@ -845,82 +988,139 @@ document.querySelectorAll("[data-fc]").forEach(function(b){b.addEventListener("c
 document.getElementById("btnAppFlt").addEventListener("click",function(){
   F.cat=(document.querySelector("[data-fc].on")||{dataset:{fc:""}}).dataset.fc;
   F.fat=(document.querySelector("[data-fat].on")||{dataset:{fat:""}}).dataset.fat||"";
-  F.fm=(document.querySelector("[data-fm].on")||{dataset:{fm:""}}).dataset.fm;
+  F.fm=(document.querySelector("[data-fm].on")||{dataset:{fm:""}}).dataset.fm||"";
   F.ffm=(document.querySelector("[data-ffm].on")||{dataset:{ffm:""}}).dataset.ffm||"";
-  F.co=(document.querySelector("[data-fco].on")||{dataset:{fco:""}}).dataset.fco;
-  F.sh=(document.querySelector("[data-fsh].on")||{dataset:{fsh:""}}).dataset.fsh;
+  F.co=(document.querySelector("[data-fco].on")||{dataset:{fco:""}}).dataset.fco||"";
+  F.sh=(document.querySelector("[data-fsh].on")||{dataset:{fsh:""}}).dataset.fsh||"";
   F.lbMn=document.getElementById("fLbMn").value;F.lbMx=document.getElementById("fLbMx").value;
   F.dwMn=document.getElementById("fDwMn").value;F.dwMx=document.getElementById("fDwMx").value;
   F.spMn=document.getElementById("fSpMn").value;F.spMx=document.getElementById("fSpMx").value;
   F.prMn=document.getElementById("fPrMn").value;F.prMx=document.getElementById("fPrMx").value;
   closeOv("ovFlt");renderAds();
 });
-document.getElementById("btnRstFlt").addEventListener("click",function(){
-  F={cat:"",fat:"",fm:"",ffm:"",lbMn:"",lbMx:"",dwMn:"",dwMx:"",spMn:"",spMx:"",prMn:"",prMx:"",co:"",sh:"",cerco:false};
+function resetFilterUI(){
   ["fLbMn","fLbMx","fDwMn","fDwMx","fSpMn","fSpMx","fPrMn","fPrMx"].forEach(function(id){document.getElementById(id).value="";});
-  closeOv("ovFlt");renderAds();
-});
-document.getElementById("btnClrFlt").addEventListener("click",function(){document.getElementById("sInput").value="";F={cat:"",fat:"",fm:"",ffm:"",lbMn:"",lbMx:"",dwMn:"",dwMx:"",spMn:"",spMx:"",prMn:"",prMx:"",co:"",sh:"",cerco:false};document.getElementById("chipCerco").classList.remove("on");renderAds();});
+  ["[data-fc]","[data-fat]","[data-fm]","[data-ffm]","[data-fco]","[data-fsh]"].forEach(function(sel){
+    var btns=document.querySelectorAll(sel);btns.forEach(function(b,i){b.classList.toggle("on",i===0);});
+  });
+  document.getElementById("fltArcoSec").style.display="none";
+  document.getElementById("fltFrSec").style.display="none";
+  document.getElementById("chipCerco").classList.remove("on");
+  F={cat:"",fat:"",fm:"",ffm:"",lbMn:"",lbMx:"",dwMn:"",dwMx:"",spMn:"",spMx:"",prMn:"",prMx:"",co:"",sh:"",cerco:false};
+}
+document.getElementById("btnRstFlt").addEventListener("click",function(){resetFilterUI();closeOv("ovFlt");renderAds();});
+document.getElementById("btnClrFlt").addEventListener("click",function(){document.getElementById("sInput").value="";resetFilterUI();renderAds();});
 document.getElementById("sInput").addEventListener("input",function(){renderAds();});
+document.getElementById("btnReload").addEventListener("click",function(){var b=this;b.textContent="…";refreshAds().then(function(){b.textContent="Aggiorna";toast("Lista aggiornata");});});
 
-/* RICERCHE SALVATE */
-document.getElementById("btnSaveS").addEventListener("click",function(){var q=document.getElementById("sInput").value.trim();if(!q){openSavSearches();return;}if(savedS.findIndex(function(s){return s.q===q;})>=0){toast("Ricerca già salvata");return;}savedS.push({q:q,active:true,filters:Object.assign({},F)});saveSav();toast("Ricerca salvata 🔔");});
+/* ══ RICERCHE SALVATE ══ */
+document.getElementById("btnSaveS").addEventListener("click",function(){var q=document.getElementById("sInput").value.trim();if(!q){openSavSearches();return;}if(savedS.findIndex(function(s){return s.q===q;})>=0){toast("Ricerca già salvata");return;}savedS.push({q:q,active:true});saveSav();toast("Ricerca salvata 🔔");});
 function loadSav(){try{var s=localStorage.getItem("ms_"+cu.uid);if(s)savedS=JSON.parse(s);}catch(e){}}
 function saveSav(){try{localStorage.setItem("ms_"+cu.uid,JSON.stringify(savedS));}catch(e){}}
 function openSavSearches(){
   var el=document.getElementById("savList");
   if(!savedS.length)el.innerHTML='<div class="empty"><p>Nessuna ricerca salvata</p><p class="empty-sub">Cerca qualcosa e premi 🔔 per salvare la ricerca e ricevere notifiche di nuovi annunci.</p></div>';
-  else el.innerHTML=savedS.map(function(s,i){return'<div class="saved-card"><div class="saved-body"><div class="saved-q">'+esc(s.q)+'</div><div class="saved-meta">Avvisi '+(s.active?"attivi":"disattivati")+'</div></div><button class="tgl '+(s.active?"on":"off")+'" onclick="tglSav('+i+')" style="border:none"><div class="tgl-k"></div></button><button class="btn-icon" style="margin-left:6px;color:var(--danger)" onclick="delSav('+i+')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div>';}).join("");
+  else el.innerHTML=savedS.map(function(s,i){return'<div class="saved-card"><div class="saved-body"><div class="saved-q">'+esc(s.q)+'</div><div class="saved-meta">Avvisi '+(s.active?"attivi":"disattivati")+'</div></div><button class="tgl '+(s.active?"on":"off")+'" onclick="tglSav('+i+')"><div class="tgl-k"></div></button><button class="btn-icon" style="margin-left:6px;color:var(--danger)" onclick="delSav('+i+')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div>';}).join("");
   openFS("fsSav");
 }
 function tglSav(i){savedS[i].active=!savedS[i].active;saveSav();openSavSearches();}
 function delSav(i){savedS.splice(i,1);saveSav();openSavSearches();toast("Ricerca eliminata");}
 document.getElementById("btnCSav").addEventListener("click",function(){closeFS("fsSav");});
 
-/* MESSAGGI */
+/* ══ MESSAGGI ══ */
 var cUnsub=null,chUnsub=null;
-function listenConvs(){if(cUnsub)cUnsub();cUnsub=db.collection("market_conversations").where("participants","array-contains",cu.uid).orderBy("lastAt","desc").onSnapshot(function(snap){rndConvs(snap.docs.map(function(d){return Object.assign({id:d.id},d.data());}));var un=snap.docs.filter(function(d){var x=d.data();return x.unreadBy&&x.unreadBy[cu.uid];}).length;var b=document.getElementById("msgB");b.textContent=un;b.classList.toggle("show",un>0);},console.error);}
+function listenConvs(){
+  if(cUnsub)cUnsub();
+  cUnsub=db.collection("market_conversations").where("participants","array-contains",cu.uid).limit(100).onSnapshot(function(snap){
+    var convs=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+    convs.sort(function(a,b){return tms(b.lastAt)-tms(a.lastAt);});
+    rndConvs(convs);
+    var un=convs.filter(function(c){return c.unreadBy&&c.unreadBy[cu.uid];}).length;
+    var b=document.getElementById("msgB");b.textContent=un;b.classList.toggle("show",un>0);
+  },function(e){console.error(e);document.getElementById("convList").innerHTML='<div class="load-err"><b>Errore messaggi</b><code>'+esc(e.code||"")+'</code> '+esc(e.message)+'</div>';});
+}
 function rndConvs(convs){
   var el=document.getElementById("convList");
   if(!convs.length){el.innerHTML='<div class="empty"><p>Nessun messaggio</p><p class="empty-sub">Apri un annuncio e premi "Contatta venditore" per iniziare una chat.</p></div>';return;}
-  el.innerHTML=convs.map(function(c){var other=c.participantNames?Object.entries(c.participantNames).filter(function(kv){return kv[0]!==cu.uid;}).map(function(kv){return kv[1];})[0]||"Utente":"Utente";var ur=c.unreadBy&&c.unreadBy[cu.uid];return'<div class="conv" data-cid="'+c.id+'"><div class="conv-av">'+ini(other)+'</div><div class="conv-mid"><div class="conv-name">'+esc(other)+(ur?'<span class="udot"></span>':'')+'</div><div class="conv-sub">'+esc(c.adTitle||"")+'</div><div class="conv-last">'+esc(c.lastMsg||"")+'</div></div><div class="conv-right"><span class="conv-time">'+ago(c.lastAt)+'</span></div></div>';}).join("");
-  el.querySelectorAll("[data-cid]").forEach(function(el){el.addEventListener("click",function(){openChat(el.dataset.cid,convs.find(function(c){return c.id===el.dataset.cid;}));});});
+  el.innerHTML=convs.map(function(c){
+    var other="Utente";
+    if(c.participantNames)Object.keys(c.participantNames).forEach(function(k){if(k!==cu.uid)other=c.participantNames[k];});
+    var ur=c.unreadBy&&c.unreadBy[cu.uid];
+    return'<div class="conv" data-cid="'+c.id+'"><div class="conv-av">'+ini(other)+'</div><div class="conv-mid"><div class="conv-name">'+esc(other)+(ur?'<span class="udot"></span>':'')+'</div><div class="conv-sub">'+esc(c.adTitle||"")+'</div><div class="conv-last">'+esc(c.lastMsg||"")+'</div></div><div class="conv-right"><span class="conv-time">'+ago(c.lastAt)+'</span></div></div>';
+  }).join("");
+  el.querySelectorAll("[data-cid]").forEach(function(x){x.addEventListener("click",function(){openChat(x.dataset.cid,convs.find(function(c){return c.id===x.dataset.cid;}));});});
 }
 function openMsgs(){document.getElementById("fsMsgs").classList.add("open");document.body.style.overflow="hidden";document.getElementById("chatVI").classList.remove("open");document.getElementById("convList").style.display="block";document.getElementById("msgTBT").textContent="Messaggi";}
 document.getElementById("btnCMsg").addEventListener("click",function(){
   if(document.getElementById("chatVI").classList.contains("open")){if(chUnsub){chUnsub();chUnsub=null;}document.getElementById("chatVI").classList.remove("open");document.getElementById("convList").style.display="block";document.getElementById("msgTBT").textContent="Messaggi";return;}
-  closeFS("fsMsgs");setNav("navMkt");document.getElementById("btnFab").classList.remove("fab-hidden");
+  closeFS("fsMsgs");setNav("navMkt");
 });
 function openChat(cid,conv){
-  curConvId=cid;document.getElementById("convList").style.display="none";document.getElementById("chatVI").classList.add("open");
-  var other=conv.participantNames?Object.entries(conv.participantNames).filter(function(kv){return kv[0]!==cu.uid;}).map(function(kv){return kv[1];})[0]||"Utente":"Utente";
+  if(!conv)return;
+  curConvId=cid;curConv=conv;
+  document.getElementById("convList").style.display="none";document.getElementById("chatVI").classList.add("open");
+  var other="Utente";
+  if(conv.participantNames)Object.keys(conv.participantNames).forEach(function(k){if(k!==cu.uid)other=conv.participantNames[k];});
   document.getElementById("msgTBT").textContent=other;
-  var ctx=document.getElementById("chatCtx");
   var th=conv.adPhoto?'<img class="chat-ctx-th" src="'+esc(conv.adPhoto)+'" alt="">':'<div class="chat-ctx-th">🏹</div>';
-  ctx.innerHTML=th+'<span class="t">'+esc(conv.adTitle||"")+'</span>'+(conv.adPrice?'<span class="p">'+euro(conv.adPrice)+'</span>':'');
+  document.getElementById("chatCtx").innerHTML=th+'<span class="t">'+esc(conv.adTitle||"")+'</span>'+(conv.adPrice?'<span class="p">'+euro(conv.adPrice)+'</span>':'');
   var u={};u["unreadBy."+cu.uid]=false;db.collection("market_conversations").doc(cid).update(u).catch(function(){});
   if(chUnsub){chUnsub();chUnsub=null;}
-  chUnsub=db.collection("market_conversations").doc(cid).collection("messages").orderBy("createdAt","asc").onSnapshot(function(snap){
+  chUnsub=db.collection("market_conversations").doc(cid).collection("messages").orderBy("createdAt","asc").limit(200).onSnapshot(function(snap){
     var body=document.getElementById("chatBody");
-    body.innerHTML=snap.docs.map(function(d){var m=d.data(),isMe=m.senderUid===cu.uid;
-      if(m.type==="offer"){var myS=m.senderUid===cu.uid;var sl={pending:myS?"In attesa…":"Offerta ricevuta",accepted:"✓ Accettata",rejected:"✗ Rifiutata",countered:"Controproposta inviata"}[m.status]||"";return'<div class="bub-offer"><div class="bub-offer-amt">'+euro(m.amount)+'</div><div class="bub-offer-lbl">Offerta · '+sl+'</div>'+(m.status==="pending"&&!myS?'<div class="bub-offer-btns"><button class="btn btn-primary btn-sm" style="flex:1" onclick="replyOff(\''+d.id+'\',\'accepted\')">Accetta</button><button class="btn btn-ghost btn-sm" style="flex:1" onclick="cntOff(\''+d.id+'\')">Controproposta</button><button class="btn btn-dg btn-sm" style="flex:1" onclick="replyOff(\''+d.id+'\',\'rejected\')">Rifiuta</button></div>':'')+'</div>';}
+    body.innerHTML=snap.docs.map(function(d){
+      var m=d.data(),isMe=m.senderUid===cu.uid;
+      if(m.type==="offer"){
+        var sl={pending:isMe?"In attesa di risposta…":"Offerta ricevuta",accepted:"✓ Accettata",rejected:"✗ Rifiutata",countered:"Controproposta inviata"}[m.status]||"";
+        return'<div class="bub-offer"><div class="bub-offer-amt">'+euro(m.amount)+'</div><div class="bub-offer-lbl">Offerta · '+sl+'</div>'
+          +(m.status==="pending"&&!isMe?'<div class="bub-offer-btns"><button class="btn btn-primary btn-sm" style="flex:1" onclick="replyOff(\''+d.id+'\',\'accepted\')">Accetta</button><button class="btn btn-ghost btn-sm" style="flex:1" onclick="cntOff(\''+d.id+'\')">Contro</button><button class="btn btn-dg btn-sm" style="flex:1" onclick="replyOff(\''+d.id+'\',\'rejected\')">Rifiuta</button></div>':'')
+          +'</div>';
+      }
       return'<div class="bub '+(isMe?"me":"them")+'">'+esc(m.text||"")+'</div><div class="bub-time'+(isMe?" me":"")+'">'+ago(m.createdAt)+'</div>';
-    }).join("");body.scrollTop=body.scrollHeight;
-  });
+    }).join("");
+    body.scrollTop=body.scrollHeight;
+  },function(e){console.error(e);document.getElementById("chatBody").innerHTML='<div class="load-err"><b>Errore chat</b><code>'+esc(e.code||"")+'</code></div>';});
 }
-function replyOff(mId,st){db.collection("market_conversations").doc(curConvId).collection("messages").doc(mId).update({status:st}).then(function(){var l=st==="accepted"?"Offerta accettata ✓":"Offerta rifiutata";db.collection("market_conversations").doc(curConvId).update({lastMsg:l,lastAt:firebase.firestore.FieldValue.serverTimestamp()});toast(l);});}
-function cntOff(mId){var v=prompt("Scrivi la tua controproposta (€):");if(!v||isNaN(v))return;db.collection("market_conversations").doc(curConvId).collection("messages").doc(mId).update({status:"countered"}).then(function(){return db.collection("market_conversations").doc(curConvId).collection("messages").add({type:"offer",amount:parseFloat(v),senderUid:cu.uid,senderName:cu.displayName||cu.email.split("@")[0],status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()});}).then(function(){var u={lastMsg:"💰 Controproposta: "+euro(v),lastAt:firebase.firestore.FieldValue.serverTimestamp()};db.collection("market_conversations").doc(curConvId).update(u);toast("Controproposta inviata");});}
+function otherOf(conv){var o=null;if(conv&&conv.participants)o=conv.participants.find(function(u){return u!==cu.uid;});return o;}
+function replyOff(mId,st){
+  db.collection("market_conversations").doc(curConvId).collection("messages").doc(mId).update({status:st}).then(function(){
+    var l=st==="accepted"?"Offerta accettata ✓":"Offerta rifiutata";
+    var u={lastMsg:l,lastAt:firebase.firestore.FieldValue.serverTimestamp()};
+    var o=otherOf(curConv);if(o)u["unreadBy."+o]=true;
+    db.collection("market_conversations").doc(curConvId).update(u);toast(l);
+  }).catch(function(e){toast("Errore: "+(e.code||e.message));});
+}
+function cntOff(mId){
+  var v=prompt("Scrivi la tua controproposta (€):");if(!v||isNaN(parseFloat(v)))return;
+  db.collection("market_conversations").doc(curConvId).collection("messages").doc(mId).update({status:"countered"})
+    .then(function(){return db.collection("market_conversations").doc(curConvId).collection("messages").add({type:"offer",amount:parseFloat(v),senderUid:cu.uid,senderName:cu.displayName||cu.email.split("@")[0],status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()});})
+    .then(function(){var u={lastMsg:"💰 Controproposta: "+euro(v),lastAt:firebase.firestore.FieldValue.serverTimestamp()};var o=otherOf(curConv);if(o)u["unreadBy."+o]=true;db.collection("market_conversations").doc(curConvId).update(u);toast("Controproposta inviata");})
+    .catch(function(e){toast("Errore: "+(e.code||e.message));});
+}
 document.getElementById("btnSnd").addEventListener("click",sndMsg);
 document.getElementById("chatIn").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sndMsg();}});
-document.getElementById("chatIn").addEventListener("input",function(){this.style.height="auto";this.style.height=this.scrollHeight+"px";});
-function sndMsg(){var t=document.getElementById("chatIn").value.trim();if(!t||!curConvId)return;document.getElementById("chatIn").value="";document.getElementById("chatIn").style.height="auto";var cr=db.collection("market_conversations").doc(curConvId);cr.collection("messages").add({text:t,senderUid:cu.uid,senderName:cu.displayName||cu.email.split("@")[0],createdAt:firebase.firestore.FieldValue.serverTimestamp()});cr.get().then(function(d){if(!d.exists)return;var data=d.data(),ou=(data.participants||[]).find(function(u){return u!==cu.uid;});var upd={lastMsg:t,lastAt:firebase.firestore.FieldValue.serverTimestamp()};if(ou)upd["unreadBy."+ou]=true;cr.update(upd);});}
+document.getElementById("chatIn").addEventListener("input",function(){this.style.height="auto";this.style.height=Math.min(this.scrollHeight,120)+"px";});
+function sndMsg(){
+  var t=document.getElementById("chatIn").value.trim();if(!t||!curConvId)return;
+  document.getElementById("chatIn").value="";document.getElementById("chatIn").style.height="auto";
+  var cr=db.collection("market_conversations").doc(curConvId);
+  cr.collection("messages").add({text:t,senderUid:cu.uid,senderName:cu.displayName||cu.email.split("@")[0],createdAt:firebase.firestore.FieldValue.serverTimestamp()})
+    .then(function(){var u={lastMsg:t,lastAt:firebase.firestore.FieldValue.serverTimestamp()};var o=otherOf(curConv);if(o)u["unreadBy."+o]=true;return cr.update(u);})
+    .catch(function(e){toast("Invio fallito: "+(e.code||e.message));});
+}
 function startChat(adId){
-  var a=allAds.find(function(x){return x.id===adId;});if(!a)return;if(a.sellerUid===cu.uid){toast("È il tuo annuncio");return;}
-  closeOv("ovDet");var cid=[cu.uid,a.sellerUid].sort().join("_")+"_"+adId,cr=db.collection("market_conversations").doc(cid);
-  cr.get().then(function(doc){if(!doc.exists){var nm={};nm[cu.uid]=cu.displayName||cu.email.split("@")[0];nm[a.sellerUid]=a.sellerName||"Venditore";return cr.set({participants:[cu.uid,a.sellerUid],participantNames:nm,adId:adId,adTitle:a.title,adPhoto:(a.photos&&a.photos[0])||"",adPrice:a.price||0,lastMsg:"",lastAt:firebase.firestore.FieldValue.serverTimestamp(),unreadBy:{}});}}).then(function(){setNav("navMsg");document.getElementById("btnFab").classList.add("fab-hidden");openMsgs();cr.get().then(function(doc){openChat(cid,Object.assign({id:cid},doc.data()));});});
+  var a=allAds.find(function(x){return x.id===adId;});if(!a)return;
+  if(a.sellerUid===cu.uid){toast("È il tuo annuncio");return;}
+  closeOv("ovDet");
+  var cid=convIdFor(a.sellerUid,adId),cr=db.collection("market_conversations").doc(cid);
+  var base=convPayload(a);base.lastAt=firebase.firestore.FieldValue.serverTimestamp();
+  cr.set(base,{merge:true}).then(function(){
+    setNav("navMsg");openMsgs();
+    openChat(cid,Object.assign({id:cid},base,{lastMsg:""}));
+  }).catch(function(e){toast("Errore ("+(e.code||"")+"): "+e.message);});
 }
 
-/* ACTION SHEET */
+/* ══ ACTION SHEET ══ */
 function openAS(title,items){
   var c=document.getElementById("shActC");
   c.innerHTML=(title?'<div class="a-title">'+esc(title)+'</div>':'')
@@ -930,11 +1130,11 @@ function openAS(title,items){
   openOv("ovAct");
 }
 
-/* BOTTOM NAV */
-document.getElementById("navMkt").addEventListener("click",function(){setNav("navMkt");closeFS("fsMyAds");closeFS("fsFavs");closeFS("fsMsgs");closeFS("fsPro");document.getElementById("btnFab").classList.remove("fab-hidden");});
-document.getElementById("navFav").addEventListener("click",function(){setNav("navFav");document.getElementById("btnFab").classList.add("fab-hidden");openFavs();});
-document.getElementById("navMy").addEventListener("click",function(){setNav("navMy");document.getElementById("btnFab").classList.add("fab-hidden");openMyAds();});
-document.getElementById("navMsg").addEventListener("click",function(){setNav("navMsg");document.getElementById("btnFab").classList.add("fab-hidden");openMsgs();});
+/* ══ BOTTOM NAV ══ */
+document.getElementById("navMkt").addEventListener("click",function(){setNav("navMkt");closeFS("fsMyAds");closeFS("fsFavs");closeFS("fsMsgs");closeFS("fsPro");closeFS("fsSav");});
+document.getElementById("navFav").addEventListener("click",function(){setNav("navFav");openFavs();});
+document.getElementById("navMy").addEventListener("click",function(){setNav("navMy");openMyAds();});
+document.getElementById("navMsg").addEventListener("click",function(){setNav("navMsg");openMsgs();});
 function setNav(id){document.querySelectorAll(".bnav-item").forEach(function(n){n.classList.toggle("on",n.id===id);});}
 </script>
 </body>
