@@ -465,7 +465,7 @@ email: data.email || user.email, federazioni: data.federazioni || [], arco: data
 }
 authState = data.approved ? "ready" : "pendingApproval";
 }
-if(authState === "ready"){ startIncomingSessionsListener(); }
+if(authState === "ready"){ startIncomingSessionsListener(); loadOpenTrainings(); }
 save();
 render();
 }).catch(function(){
@@ -624,6 +624,28 @@ train_arrows_title: "Quante frecce per piazzola?", train_arrows_hint: "Da 1 a 3 
 train_shared_title: "Sessione condivisa", train_shared_hint: "Hai invitato arcieri online: i punteggi si sincronizzano in tempo reale sui loro telefoni. Serve connessione internet.",
 train_double_confirm_label: "Richiedi doppia conferma dei punteggi",
 train_double_confirm_hint: "Ogni punteggio resta \"in attesa\" finch\u00e9 un altro partecipante della sessione non lo conferma dal proprio telefono. Se disattivata, i punteggi si registrano subito, senza conferma.",
+ot_section_title: "Allenamenti aperti",
+ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
+ot_join_btn: "Unisciti",
+ot_joined_label: "Sei iscritto ✔",
+ot_leave_btn: "Annulla iscrizione",
+ot_full_label: "Al completo",
+ot_create_btn: "+ Annuncia allenamento",
+ot_create_title: "Annuncia allenamento aperto",
+ot_field_label: "Campo / percorso",
+ot_field_placeholder: "Es. Percorso rosso di Vignone",
+ot_date_label: "Data",
+ot_time_label: "Ora",
+ot_spots_label: "Posti disponibili (escluso te)",
+ot_note_label: "Note (opzionale)",
+ot_note_placeholder: "Es. portiamo il materiale FIARC…",
+ot_save_btn: "Pubblica",
+ot_cancel_btn: "Annulla",
+ot_by: "organizzato da {name}",
+ot_spots_left: "{n} posto/i libero/i",
+ot_no_trainings: "Nessun allenamento aperto al momento. Sii il primo!",
+ot_delete_btn: "Elimina",
+ot_confirm_delete: "Eliminare questo allenamento?",
 session_banner_title: "Sessione condivisa attiva",
 session_banner_body: "{name} ha avviato un allenamento condiviso.",
 session_banner_btn: "Segui la sessione",
@@ -636,6 +658,7 @@ session_no_data: "Nessun punteggio ancora inserito.",
 session_closed_note: "Sessione chiusa o terminata.",
 admin_sessions_title: "Sessioni condivise attive", admin_sessions_empty: "Nessuna sessione condivisa attiva al momento.",
 admin_sessions_participants: "Partecipanti", admin_sessions_double_confirm: "Doppia conferma attiva", admin_sessions_single: "Doppia conferma disattivata",
+fr_report_btn: "\u26a0\ufe0f Segnala problema", fr_report_title: "Segnala un problema sul percorso", fr_report_field: "Campo / percorso", fr_report_field_ph: "Es. Percorso rosso di Vignone", fr_report_desc: "Descrizione del problema", fr_report_desc_ph: "Es. sagoma ribaltata alla piazzola 7, albero caduto\u2026", fr_report_send: "Invia segnalazione", fr_report_cancel: "Annulla", fr_report_sent: "Segnalazione inviata. La compagnia sar\u00e0 avvisata.", fr_report_error: "Errore nell'invio. Riprova.",
 skip_remaining_btn: "Salta frecce restanti \u2192",
 gara_type_title: "Tipo di gara",
 start_gara_btn: "Inizia gara",
@@ -898,6 +921,7 @@ train_setup_hint: "From 1 to {max} targets, your choice.",
 start_round_btn: "Start round",
 rules_training_title: "Training scoring",
 train_arrows_title: "How many arrows per target?", train_arrows_hint: "From 1 to 3 arrows, your choice. You can always skip arrows you don't want to shoot.",
+fr_report_btn: "\u26a0\ufe0f Report issue", fr_report_title: "Report a course issue", fr_report_field: "Field / course", fr_report_field_ph: "E.g. Red course Vignone", fr_report_desc: "Description", fr_report_desc_ph: "E.g. target knocked over at post 7, fallen tree\u2026", fr_report_send: "Send report", fr_report_cancel: "Cancel", fr_report_sent: "Report sent. The club will be notified.", fr_report_error: "Send error. Please try again.",
 skip_remaining_btn: "Skip remaining arrows \u2192",
 gara_type_title: "Competition type",
 start_gara_btn: "Start competition",
@@ -1073,6 +1097,7 @@ notif_token_error: "Couldn't get the token. Please try again.", notif_enabled: "
 notif_save_error: "Error saving: {err}", notif_generic_error: "Error: {err}", notif_not_configured: "Notifications not configured yet (server key missing).",
 train_shared_title: "Shared session", train_shared_hint: "You've invited archers online: scores sync in real time on their phones. Requires an internet connection.",
 train_double_confirm_label: "Require double confirmation of scores", train_double_confirm_hint: "Each score stays \"pending\" until another participant in the session confirms it from their own phone. If off, scores are recorded immediately, with no confirmation.",
+ot_section_title: "Open trainings", ot_section_hint: "Join others training today, or announce yours.", ot_join_btn: "Join", ot_joined_label: "You're in ✔", ot_leave_btn: "Cancel", ot_full_label: "Full", ot_create_btn: "+ Announce training", ot_create_title: "Announce open training", ot_field_label: "Field / course", ot_field_placeholder: "E.g. Red course Vignone", ot_date_label: "Date", ot_time_label: "Time", ot_spots_label: "Available spots (excl. you)", ot_note_label: "Notes (optional)", ot_note_placeholder: "E.g. we bring FIARC targets…", ot_save_btn: "Publish", ot_cancel_btn: "Cancel", ot_by: "by {name}", ot_spots_left: "{n} spot(s) left", ot_no_trainings: "No open trainings right now. Be the first!", ot_delete_btn: "Delete", ot_confirm_delete: "Delete this training?",
 session_banner_title: "Shared session active", session_banner_body: "{name} started a shared training session.", session_banner_btn: "Follow session",
 session_follow_title: "Live session", session_follow_owner: "Started by {name}", session_no_data: "No scores entered yet.",
 session_pending_label: "Waiting for confirmation", session_confirmed_label: "Confirmed", session_confirm_btn: "Confirm this score",
@@ -1163,6 +1188,7 @@ train_setup_hint: "De 1 \u00e0 {max} cibles, \u00e0 votre choix.",
 start_round_btn: "Commencer le parcours",
 rules_training_title: "Points d\u2019entra\u00eenement",
 train_arrows_title: "Combien de fl\u00e8ches par cible ?", train_arrows_hint: "De 1 \u00e0 3 fl\u00e8ches, \u00e0 votre choix. Vous pouvez toujours sauter les fl\u00e8ches que vous ne voulez pas tirer.",
+fr_report_btn: "\u26a0\ufe0f Signaler un probl\u00e8me", fr_report_title: "Signaler un probl\u00e8me sur le parcours", fr_report_field: "Terrain / parcours", fr_report_field_ph: "Ex. Parcours rouge Vignone", fr_report_desc: "Description du probl\u00e8me", fr_report_desc_ph: "Ex. cible renvers\u00e9e au poste 7, arbre tomb\u00e9\u2026", fr_report_send: "Envoyer", fr_report_cancel: "Annuler", fr_report_sent: "Signalement envoy\u00e9. Le club sera notifi\u00e9.", fr_report_error: "Erreur d'envoi. R\u00e9essayez.",
 skip_remaining_btn: "Sauter les fl\u00e8ches restantes \u2192",
 gara_type_title: "Type de comp\u00e9tition",
 start_gara_btn: "Commencer la comp\u00e9tition",
@@ -1338,6 +1364,7 @@ notif_token_error: "Impossible d'obtenir le jeton. R\u00e9essayez.", notif_enabl
 notif_save_error: "Erreur lors de l'enregistrement\u00a0: {err}", notif_generic_error: "Erreur\u00a0: {err}", notif_not_configured: "Notifications pas encore configur\u00e9es (cl\u00e9 serveur manquante).",
 train_shared_title: "Session partag\u00e9e", train_shared_hint: "Vous avez invit\u00e9 des archers en ligne\u00a0: les scores se synchronisent en temps r\u00e9el sur leurs t\u00e9l\u00e9phones. Connexion internet requise.",
 train_double_confirm_label: "Exiger une double confirmation des scores", train_double_confirm_hint: "Chaque score reste \u00ab\u00a0en attente\u00a0\u00bb jusqu'\u00e0 ce qu'un autre participant de la session le confirme depuis son propre t\u00e9l\u00e9phone. Si d\u00e9sactiv\u00e9, les scores sont enregistr\u00e9s imm\u00e9diatement, sans confirmation.",
+ot_section_title: "Entra\u00eenements ouverts", ot_section_hint: "Rejoignez quelqu'un qui s'entra\u00eene aujourd'hui, ou annoncez le v\u00f4tre.", ot_join_btn: "Rejoindre", ot_joined_label: "Inscrit \u2714", ot_leave_btn: "Annuler", ot_full_label: "Complet", ot_create_btn: "+ Annoncer un entra\u00eenement", ot_create_title: "Annoncer un entra\u00eenement ouvert", ot_field_label: "Terrain / parcours", ot_field_placeholder: "Ex. Parcours rouge Vignone", ot_date_label: "Date", ot_time_label: "Heure", ot_spots_label: "Places disponibles (hors vous)", ot_note_label: "Notes (facultatif)", ot_note_placeholder: "Ex. on apporte le mat\u00e9riel FIARC\u2026", ot_save_btn: "Publier", ot_cancel_btn: "Annuler", ot_by: "par {name}", ot_spots_left: "{n} place(s) libre(s)", ot_no_trainings: "Aucun entra\u00eenement ouvert. Soyez le premier\u00a0!", ot_delete_btn: "Supprimer", ot_confirm_delete: "Supprimer cet entra\u00eenement\u00a0?",
 session_banner_title: "Session partag\u00e9e active", session_banner_body: "{name} a d\u00e9marr\u00e9 un entra\u00eenement partag\u00e9.", session_banner_btn: "Suivre la session",
 session_follow_title: "Session en direct", session_follow_owner: "D\u00e9marr\u00e9e par {name}", session_no_data: "Aucun score saisi pour l'instant.",
 session_pending_label: "En attente de confirmation", session_confirmed_label: "Confirm\u00e9", session_confirm_btn: "Confirmer ce score",
@@ -1428,6 +1455,7 @@ train_setup_hint: "Von 1 bis {max} Ziele, ganz nach Wahl.",
 start_round_btn: "Parcours starten",
 rules_training_title: "Trainingspunkte",
 train_arrows_title: "Wie viele Pfeile pro Ziel?", train_arrows_hint: "Von 1 bis 3 Pfeile, ganz nach Wahl. Du kannst Pfeile, die du nicht schie\u00dfen willst, immer \u00fcberspringen.",
+fr_report_btn: "\u26a0\ufe0f Problem melden", fr_report_title: "Parcours-Problem melden", fr_report_field: "Feld / Parcours", fr_report_field_ph: "z.B. Roter Parcours Vignone", fr_report_desc: "Beschreibung", fr_report_desc_ph: "z.B. Zielscheibe umgekippt bei Pfosten 7\u2026", fr_report_send: "Senden", fr_report_cancel: "Abbrechen", fr_report_sent: "Meldung gesendet. Der Verein wird benachrichtigt.", fr_report_error: "Sendefehler. Bitte erneut versuchen.",
 skip_remaining_btn: "Restliche Pfeile \u00fcberspringen \u2192",
 gara_type_title: "Wettkampfart",
 start_gara_btn: "Wettkampf starten",
@@ -1603,6 +1631,7 @@ notif_token_error: "Token konnte nicht abgerufen werden. Bitte erneut versuchen.
 notif_save_error: "Fehler beim Speichern: {err}", notif_generic_error: "Fehler: {err}", notif_not_configured: "Benachrichtigungen noch nicht konfiguriert (Server-Schl\u00fcssel fehlt).",
 train_shared_title: "Geteilte Sitzung", train_shared_hint: "Du hast Bogensch\u00fctzen online eingeladen: Die Punktzahlen werden in Echtzeit auf ihren Telefonen synchronisiert. Internetverbindung erforderlich.",
 train_double_confirm_label: "Doppelte Best\u00e4tigung der Punktzahlen verlangen", train_double_confirm_hint: "Jeder Punktestand bleibt \u201eausstehend\u201c, bis ihn ein anderer Teilnehmer der Sitzung von seinem eigenen Telefon aus best\u00e4tigt. Ist die Option deaktiviert, werden Punktzahlen sofort ohne Best\u00e4tigung gespeichert.",
+ot_section_title: "Offene Trainings", ot_section_hint: "Schließ dich an oder kündige dein Training an.", ot_join_btn: "Teilnehmen", ot_joined_label: "Dabei ✔", ot_leave_btn: "Absagen", ot_full_label: "Voll", ot_create_btn: "+ Training ankündigen", ot_create_title: "Offenes Training ankündigen", ot_field_label: "Feld / Parcours", ot_field_placeholder: "z.B. Roter Parcours Vignone", ot_date_label: "Datum", ot_time_label: "Uhrzeit", ot_spots_label: "Freie Plätze (ohne dich)", ot_note_label: "Notizen (optional)", ot_note_placeholder: "z.B. wir bringen FIARC-Material…", ot_save_btn: "Veröffentlichen", ot_cancel_btn: "Abbrechen", ot_by: "von {name}", ot_spots_left: "{n} Platz/Plätze frei", ot_no_trainings: "Kein offenes Training gerade. Sei der Erste!", ot_delete_btn: "Löschen", ot_confirm_delete: "Dieses Training löschen?",
 session_banner_title: "Geteilte Sitzung aktiv", session_banner_body: "{name} hat ein gemeinsames Training gestartet.", session_banner_btn: "Sitzung folgen",
 session_follow_title: "Live-Sitzung", session_follow_owner: "Gestartet von {name}", session_no_data: "Noch keine Punktzahlen eingetragen.",
 session_pending_label: "Warten auf Best\u00e4tigung", session_confirmed_label: "Best\u00e4tigt", session_confirm_btn: "Diesen Punktestand best\u00e4tigen",
@@ -1698,6 +1727,7 @@ train_arrows_title: "Hedef ba\u015f\u0131na ka\u00e7 ok?", train_arrows_hint: "1
 train_shared_title: "Ortak oturum", train_shared_hint: "\u00c7evrimi\u00e7i ok\u00e7ular davet ettin: puanlar telefonlar\u0131nda ger\u00e7ek zamanl\u0131 senkronize olur. \u0130nternet ba\u011flant\u0131s\u0131 gerekir.",
 train_double_confirm_label: "Puanlar i\u00e7in \u00e7ift onay iste",
 train_double_confirm_hint: "Her puan, oturumdaki ba\u015fka bir kat\u0131l\u0131mc\u0131 kendi telefonundan onaylayana kadar \u201cbeklemede\u201d kal\u0131r. Kapal\u0131ysa puanlar onaysız hemen kaydedilir.",
+ot_section_title: "Açık antrenmanlar", ot_section_hint: "Bugün antrenmana katıl veya kendi antrenmanını duyur.", ot_join_btn: "Katıl", ot_joined_label: "Kayıtlısın ✔", ot_leave_btn: "Vazgeç", ot_full_label: "Dolu", ot_create_btn: "+ Antrenman duyur", ot_create_title: "Açık antrenman duyur", ot_field_label: "Alan / Parkur", ot_field_placeholder: "Ör. Kırmızı parkur Vignone", ot_date_label: "Tarih", ot_time_label: "Saat", ot_spots_label: "Boş yer (sen hariç)", ot_note_label: "Not (isteğe bağlı)", ot_note_placeholder: "Ör. FIARC malzemeleri getiriyoruz…", ot_save_btn: "Yayınla", ot_cancel_btn: "İptal", ot_by: "{name} tarafından", ot_spots_left: "{n} yer kaldı", ot_no_trainings: "şu an açık antrenman yok. İlk sen ol!", ot_delete_btn: "Sil", ot_confirm_delete: "Bu antrenmanı sil?",
 session_banner_title: "Ortak oturum aktif",
 session_banner_body: "{name} ortak bir antrenman ba\u015flatt\u0131.",
 session_banner_btn: "Oturumu takip et",
@@ -1710,6 +1740,7 @@ session_no_data: "Hen\u00fcz puan girilmedi.",
 session_closed_note: "Oturum kapand\u0131 veya sona erdi.",
 admin_sessions_title: "Aktif ortak oturumlar", admin_sessions_empty: "\u015eu anda aktif ortak oturum yok.",
 admin_sessions_participants: "Kat\u0131l\u0131mc\u0131lar", admin_sessions_double_confirm: "\u00c7ift onay aktif", admin_sessions_single: "\u00c7ift onay kapal\u0131",
+fr_report_btn: "\u26a0\ufe0f Sorun bildir", fr_report_title: "Parkurda sorun bildir", fr_report_field: "Alan / Parkur", fr_report_field_ph: "\u00d6r. K\u0131rm\u0131z\u0131 parkur Vignone", fr_report_desc: "A\u00e7\u0131klama", fr_report_desc_ph: "\u00d6r. 7. kaz\u0131kta hedef devrildi\u2026", fr_report_send: "G\u00f6nder", fr_report_cancel: "\u0130ptal", fr_report_sent: "Bildirim g\u00f6nderildi.", fr_report_error: "G\u00f6nderme hatas\u0131. Tekrar deneyin.",
 skip_remaining_btn: "Kalan oklar\u0131 atla \u2192",
 gara_type_title: "Yar\u0131\u015fma t\u00fcr\u00fc",
 start_gara_btn: "Yar\u0131\u015fmay\u0131 ba\u015flat",
@@ -1977,6 +2008,7 @@ train_arrows_title: "Сколько стрел на мишень?", train_arrows
 train_shared_title: "Совместная сессия", train_shared_hint: "Вы пригласили стрелков онлайн: очки синхронизируются в реальном времени на их телефонах. Требуется интернет.",
 train_double_confirm_label: "Требовать двойное подтверждение очков",
 train_double_confirm_hint: "Каждый результат остаётся «в ожидании», пока другой участник сессии не подтвердит его со своего телефона. Если отключено, очки записываются сразу, без подтверждения.",
+ot_section_title: "Открытые тренировки", ot_section_hint: "Присоединяйтесь к тренировке или объявите свою.", ot_join_btn: "Присоединиться", ot_joined_label: "Записан ✔", ot_leave_btn: "Отменить", ot_full_label: "Мест нет", ot_create_btn: "+ Объявить тренировку", ot_create_title: "Объявить открытую тренировку", ot_field_label: "Поле / маршрут", ot_field_placeholder: "Напр. Красный маршрут Vignone", ot_date_label: "Дата", ot_time_label: "Время", ot_spots_label: "Свободных мест (кроме вас)", ot_note_label: "Примечание (необязательно)", ot_note_placeholder: "Напр. принесём материалы FIARC…", ot_save_btn: "Опубликовать", ot_cancel_btn: "Отмена", ot_by: "орг. {name}", ot_spots_left: "свободно {n} место/мест", ot_no_trainings: "Нет открытых тренировок. Будьте первым!", ot_delete_btn: "Удалить", ot_confirm_delete: "Удалить эту тренировку?",
 session_banner_title: "Совместная сессия активна",
 session_banner_body: "{name} начал(а) совместную тренировку.",
 session_banner_btn: "Следить за сессией",
@@ -1989,6 +2021,7 @@ session_no_data: "Пока не введено ни одного результ�
 session_closed_note: "Сессия закрыта или завершена.",
 admin_sessions_title: "Активные совместные сессии", admin_sessions_empty: "На данный момент нет активных совместных сессий.",
 admin_sessions_participants: "Участники", admin_sessions_double_confirm: "Двойное подтверждение активно", admin_sessions_single: "Двойное подтверждение отключено",
+fr_report_btn: "⚠️ Сообщить о проблеме", fr_report_title: "Сообщить о проблеме на маршруте", fr_report_field: "Поле / маршрут", fr_report_field_ph: "Напр. Красный маршрут Vignone", fr_report_desc: "Описание", fr_report_desc_ph: "Напр. мишень упала на стойке 7…", fr_report_send: "Отправить", fr_report_cancel: "Отмена", fr_report_sent: "Сообщение отправлено.", fr_report_error: "Ошибка отправки.",
 skip_remaining_btn: "Пропустить оставшиеся стрелы →",
 gara_type_title: "Тип соревнования",
 start_gara_btn: "Начать соревнование",
@@ -2256,6 +2289,7 @@ train_arrows_title: "\u00bfCu\u00e1ntas flechas por diana?", train_arrows_hint: 
 train_shared_title: "Sesi\u00f3n compartida", train_shared_hint: "Has invitado a arqueros online: las puntuaciones se sincronizan en tiempo real en sus tel\u00e9fonos. Se necesita conexi\u00f3n a internet.",
 train_double_confirm_label: "Requerir doble confirmaci\u00f3n de las puntuaciones",
 train_double_confirm_hint: "Cada puntuaci\u00f3n queda \"pendiente\" hasta que otro participante de la sesi\u00f3n la confirme desde su tel\u00e9fono. Si est\u00e1 desactivada, las puntuaciones se registran al instante, sin confirmaci\u00f3n.",
+ot_section_title: "Entrenamientos abiertos", ot_section_hint: "\u00danete a alguien que entrena hoy, o anuncia el tuyo.", ot_join_btn: "Unirme", ot_joined_label: "Apuntado \u2714", ot_leave_btn: "Cancelar", ot_full_label: "Completo", ot_create_btn: "+ Anunciar entrenamiento", ot_create_title: "Anunciar entrenamiento abierto", ot_field_label: "Campo / recorrido", ot_field_placeholder: "Ej. Recorrido rojo Vignone", ot_date_label: "Fecha", ot_time_label: "Hora", ot_spots_label: "Plazas disponibles (sin contar contigo)", ot_note_label: "Notas (opcional)", ot_note_placeholder: "Ej. llevamos material FIARC\u2026", ot_save_btn: "Publicar", ot_cancel_btn: "Cancelar", ot_by: "organizado por {name}", ot_spots_left: "{n} plaza(s) libre(s)", ot_no_trainings: "Sin entrenamientos abiertos. \u00a1S\u00e9 el primero!", ot_delete_btn: "Eliminar", ot_confirm_delete: "\u00bfEliminar este entrenamiento?",
 session_banner_title: "Sesi\u00f3n compartida activa",
 session_banner_body: "{name} ha iniciado un entrenamiento compartido.",
 session_banner_btn: "Seguir la sesi\u00f3n",
@@ -2268,6 +2302,7 @@ session_no_data: "A\u00fan no se ha introducido ninguna puntuaci\u00f3n.",
 session_closed_note: "Sesi\u00f3n cerrada o finalizada.",
 admin_sessions_title: "Sesiones compartidas activas", admin_sessions_empty: "No hay ninguna sesi\u00f3n compartida activa en este momento.",
 admin_sessions_participants: "Participantes", admin_sessions_double_confirm: "Doble confirmaci\u00f3n activa", admin_sessions_single: "Doble confirmaci\u00f3n desactivada",
+fr_report_btn: "\u26a0\ufe0f Reportar problema", fr_report_title: "Reportar un problema en el recorrido", fr_report_field: "Campo / recorrido", fr_report_field_ph: "Ej. Recorrido rojo Vignone", fr_report_desc: "Descripci\u00f3n", fr_report_desc_ph: "Ej. diana volcada en poste 7\u2026", fr_report_send: "Enviar", fr_report_cancel: "Cancelar", fr_report_sent: "Reporte enviado. El club ser\u00e1 notificado.", fr_report_error: "Error al enviar. Int\u00e9ntelo de nuevo.",
 skip_remaining_btn: "Saltar flechas restantes \u2192",
 gara_type_title: "Tipo de competici\u00f3n",
 start_gara_btn: "Iniciar competici\u00f3n",
@@ -2535,6 +2570,7 @@ train_arrows_title: "Hur m\u00e5nga pilar per m\u00e5l?", train_arrows_hint: "Fr
 train_shared_title: "Delad session", train_shared_hint: "Du har bjudit in sk\u00e4ttar online: po\u00e4ngen synkas i realtid p\u00e5 deras telefoner. Internetanslutning kr\u00e4vs.",
 train_double_confirm_label: "Kr\u00e4v dubbel bekr\u00e4ftelse av po\u00e4ng",
 train_double_confirm_hint: "Varje po\u00e4ng f\u00f6rblir \"v\u00e4ntande\" tills en annan deltagare i sessionen bekr\u00e4ftar den fr\u00e5n sin egen telefon. Om avst\u00e4ngd registreras po\u00e4ngen direkt, utan bekr\u00e4ftelse.",
+ot_section_title: "Öppna träningar", ot_section_hint: "Anslut till någon som tränar idag, eller lägg upp din.", ot_join_btn: "Gå med", ot_joined_label: "Anmäld ✔", ot_leave_btn: "Avboka", ot_full_label: "Fullt", ot_create_btn: "+ Annonsera träning", ot_create_title: "Annonsera öppen träning", ot_field_label: "Bana / fält", ot_field_placeholder: "T.ex. Röd bana Vignone", ot_date_label: "Datum", ot_time_label: "Tid", ot_spots_label: "Lediga platser (exkl. dig)", ot_note_label: "Anteckningar (valfritt)", ot_note_placeholder: "T.ex. vi tar med FIARC-material…", ot_save_btn: "Publicera", ot_cancel_btn: "Avbryt", ot_by: "av {name}", ot_spots_left: "{n} plats/platser kvar", ot_no_trainings: "Inga öppna träningar just nu. Var den första!", ot_delete_btn: "Ta bort", ot_confirm_delete: "Ta bort denna träning?",
 session_banner_title: "Delad session aktiv",
 session_banner_body: "{name} har startat en delad tr\u00e4ning.",
 session_banner_btn: "F\u00f6lj sessionen",
@@ -2547,6 +2583,7 @@ session_no_data: "Ingen po\u00e4ng har registrerats \u00e4nnu.",
 session_closed_note: "Sessionen \u00e4r st\u00e4ngd eller avslutad.",
 admin_sessions_title: "Aktiva delade sessioner", admin_sessions_empty: "Ingen aktiv delad session f\u00f6r tillf\u00e4llet.",
 admin_sessions_participants: "Deltagare", admin_sessions_double_confirm: "Dubbel bekr\u00e4ftelse aktiv", admin_sessions_single: "Dubbel bekr\u00e4ftelse avst\u00e4ngd",
+fr_report_btn: "\u26a0\ufe0f Rapportera problem", fr_report_title: "Rapportera ett problem p\u00e5 banan", fr_report_field: "Bana / f\u00e4lt", fr_report_field_ph: "T.ex. R\u00f6d bana Vignone", fr_report_desc: "Beskrivning", fr_report_desc_ph: "T.ex. m\u00e5ltavla v\u00e4ltad vid p\u00e5le 7\u2026", fr_report_send: "Skicka", fr_report_cancel: "Avbryt", fr_report_sent: "Rapport skickad. Klubben meddelas.", fr_report_error: "Fel vid s\u00e4ndning. F\u00f6rs\u00f6k igen.",
 skip_remaining_btn: "Hoppa \u00f6ver \u00e5terst\u00e5ende pilar \u2192",
 gara_type_title: "T\u00e4vlingstyp",
 start_gara_btn: "Starta t\u00e4vling",
@@ -2814,6 +2851,7 @@ train_arrows_title: "Hoeveel pijlen per doel?", train_arrows_hint: "Van 1 tot 3 
 train_shared_title: "Gedeelde sessie", train_shared_hint: "Je hebt boogschutters online uitgenodigd: de scores worden in realtime gesynchroniseerd op hun telefoons. Internetverbinding vereist.",
 train_double_confirm_label: "Dubbele bevestiging van scores vereisen",
 train_double_confirm_hint: "Elke score blijft \"in afwachting\" totdat een andere deelnemer van de sessie deze vanaf zijn eigen telefoon bevestigt. Indien uitgeschakeld worden scores direct geregistreerd, zonder bevestiging.",
+ot_section_title: "Open trainingen", ot_section_hint: "Sluit aan bij iemand die vandaag traint, of kondig je eigen training aan.", ot_join_btn: "Doe mee", ot_joined_label: "Ingeschreven ✔", ot_leave_btn: "Afmelden", ot_full_label: "Vol", ot_create_btn: "+ Training aankondigen", ot_create_title: "Open training aankondigen", ot_field_label: "Veld / parcours", ot_field_placeholder: "Bijv. Rode baan Vignone", ot_date_label: "Datum", ot_time_label: "Tijd", ot_spots_label: "Beschikbare plaatsen (excl. jou)", ot_note_label: "Notities (optioneel)", ot_note_placeholder: "Bijv. we brengen FIARC-materiaal…", ot_save_btn: "Publiceren", ot_cancel_btn: "Annuleren", ot_by: "door {name}", ot_spots_left: "{n} plek(ken) vrij", ot_no_trainings: "Geen open trainingen nu. Wees de eerste!", ot_delete_btn: "Verwijderen", ot_confirm_delete: "Deze training verwijderen?",
 session_banner_title: "Gedeelde sessie actief",
 session_banner_body: "{name} is een gedeelde training gestart.",
 session_banner_btn: "Sessie volgen",
@@ -2826,6 +2864,7 @@ session_no_data: "Er is nog geen score ingevoerd.",
 session_closed_note: "Sessie gesloten of be\u00ebindigd.",
 admin_sessions_title: "Actieve gedeelde sessies", admin_sessions_empty: "Op dit moment geen actieve gedeelde sessie.",
 admin_sessions_participants: "Deelnemers", admin_sessions_double_confirm: "Dubbele bevestiging actief", admin_sessions_single: "Dubbele bevestiging uitgeschakeld",
+fr_report_btn: "\u26a0\ufe0f Probleem melden", fr_report_title: "Probleem melden op het parcours", fr_report_field: "Veld / parcours", fr_report_field_ph: "Bijv. Rode baan Vignone", fr_report_desc: "Beschrijving", fr_report_desc_ph: "Bijv. schijf omgevallen bij paal 7\u2026", fr_report_send: "Verzenden", fr_report_cancel: "Annuleren", fr_report_sent: "Melding verzonden. De club wordt ge\u00efnformeerd.", fr_report_error: "Verzendfout. Probeer opnieuw.",
 skip_remaining_btn: "Resterende pijlen overslaan \u2192",
 gara_type_title: "Type wedstrijd",
 start_gara_btn: "Wedstrijd starten",
@@ -3602,6 +3641,8 @@ case "history-detail": app.appendChild(historyDetailScreen()); break;
 case "info": app.appendChild(infoScreen()); break;
 case "admin": app.appendChild(adminScreen()); break;
 case "session-follow": app.appendChild(sessionFollowScreen()); break;
+case "open-training-create": app.appendChild(openTrainingCreateScreen()); break;
+case "field-report": app.appendChild(fieldReportScreen()); break;
 case "diario": app.appendChild(diarioScreen()); break;
 case "round": app.appendChild(roundScreen()); break;
 case "summary": app.appendChild(summaryScreen()); break;
@@ -4411,6 +4452,14 @@ else { state.screen = "menu"; }
 save(); render();
 });
 h.appendChild(homeBtn);
+// Pulsante segnalazione percorso: visibile solo durante il round
+if(duranteGiro && currentUser){
+var reportBtn = el('<button class="home-btn no-print" style="margin-left:8px;background:var(--danger);font-size:0.75rem;padding:5px 10px;" title="'+t("fr_report_btn")+'">⚠️</button>');
+reportBtn.addEventListener("click", function(){
+state.screen = "field-report"; save(); render();
+});
+h.appendChild(reportBtn);
+}
 }
 
 // Nel menu, al posto del titolo, la nazione e la federazione attive: toccandole
@@ -5064,6 +5113,74 @@ render();
 
 var menuCard = el('<div class="card"></div>');
 menuCard.appendChild(el('<h2 class="section-title">'+t("menu_title")+'</h2>'));
+
+// ── SEZIONE ALLENAMENTI APERTI ────────────────────────────────────────────
+if(openTrainings.length > 0 || currentUser){
+var otCard = el('<div class="card" style="margin-bottom:14px;"></div>');
+var otHeader = el('<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div><div style="font-weight:800;font-size:1rem;">'+t("ot_section_title")+'</div><div style="font-size:0.8rem;color:var(--muted);margin-top:2px;">'+t("ot_section_hint")+'</div></div></div>');
+otCard.appendChild(otHeader);
+
+if(openTrainings.length === 0){
+otCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">'+t("ot_no_trainings")+'</div>'));
+} else {
+openTrainings.forEach(function(ot){
+var myUid = currentUser && currentUser.uid;
+var isOwner = ot.ownerUid === myUid;
+var joined = myUid && (ot.participantUids||[]).indexOf(myUid) !== -1;
+var total = 1 + (ot.spots||2); // owner + posti
+var taken = 1 + (ot.participantUids||[]).length;
+var full = taken >= total;
+var spotsLeft = total - taken;
+
+var otRow = el(
+'<div style="padding:10px 0;border-bottom:1px solid var(--line);">'+
+'<div style="font-weight:700;font-size:0.95rem;">'+escapeHtml(ot.field||"?")+'</div>'+
+'<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">'+escapeHtml(ot.date||"")+(ot.time?" · "+escapeHtml(ot.time):"")+'</div>'+
+'<div style="font-size:0.82rem;color:var(--muted);">'+t("ot_by",{name:escapeHtml(ot.ownerName||"?")})+'</div>'+
+(ot.note?'<div style="font-size:0.82rem;color:var(--cream);margin-top:2px;">'+escapeHtml(ot.note)+'</div>':'')+
+'<div style="font-size:0.82rem;margin-top:4px;color:'+(full&&!joined?'var(--danger)':'var(--accent)')+';">'+
+(joined?t("ot_joined_label"):full?t("ot_full_label"):t("ot_spots_left",{n:spotsLeft}))+
+'</div></div>'
+);
+
+if(!isOwner && currentUser){
+var actionBtn = el('<button style="margin-top:6px;padding:6px 14px;border-radius:8px;border:none;cursor:pointer;font-size:0.85rem;font-weight:700;background:'+(joined?"var(--bg-panel-2)":"var(--accent)")+'";color:'+(joined?"var(--cream)":"#fff")+';>'+(joined?t("ot_leave_btn"):full?t("ot_full_label"):t("ot_join_btn"))+'</button>');
+if(!full || joined){
+(function(otId, isJoined){
+actionBtn.addEventListener("click", function(){
+if(!db || !currentUser) return;
+var ref = db.collection("open_trainings").doc(otId);
+if(isJoined){
+ref.update({ participantUids: firebase.firestore.FieldValue.arrayRemove(currentUser.uid), participants: firebase.firestore.FieldValue.arrayRemove({uid:currentUser.uid,name:selfName||currentUser.displayName||currentUser.email||"?"}) }).then(function(){ loadOpenTrainings(); }).catch(function(){});
+} else {
+ref.update({ participantUids: firebase.firestore.FieldValue.arrayUnion(currentUser.uid), participants: firebase.firestore.FieldValue.arrayUnion({uid:currentUser.uid,name:selfName||currentUser.displayName||currentUser.email||"?"}) }).then(function(){ loadOpenTrainings(); }).catch(function(){});
+}
+});
+})(ot.id, joined);
+}
+otRow.appendChild(actionBtn);
+}
+if(isOwner){
+var delBtn = el('<button style="margin-top:6px;padding:4px 10px;border-radius:8px;border:none;cursor:pointer;font-size:0.8rem;background:var(--danger);color:#fff;">'+t("ot_delete_btn")+'</button>');
+(function(otId){
+delBtn.addEventListener("click", function(){
+if(!confirm(t("ot_confirm_delete"))) return;
+db.collection("open_trainings").doc(otId).delete().then(function(){ loadOpenTrainings(); }).catch(function(){});
+});
+})(ot.id);
+otRow.appendChild(delBtn);
+}
+otCard.appendChild(otRow);
+});
+}
+
+if(currentUser){
+var createBtn = el('<button class="btn btn-primary btn-block" style="margin-top:10px;font-size:0.9rem;">'+t("ot_create_btn")+'</button>');
+createBtn.addEventListener("click", function(){ state.screen="open-training-create"; save(); render(); });
+otCard.appendChild(createBtn);
+}
+menuCard.insertBefore(otCard, menuCard.firstChild);
+}
 
 var trainBtn = el('<button class="btn menu-btn training btn-block"><span class="menu-icon">'+icon("bow",24)+'</span><span class="menu-txt">'+t("menu_train_label")+'<span class="menu-sub">'+t("menu_train_sub")+'</span></span></button>');
 trainBtn.addEventListener("click", function(){
@@ -6180,6 +6297,162 @@ function closeSharedSession(){
 if(!state.sessionId || DEV_MODE || !db) return;
 db.collection("sessions").doc(state.sessionId).update({ status:"closed", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(function(){});
 }
+
+// ── SEGNALAZIONE PERCORSO ──────────────────────────────────────────────────
+function fieldReportScreen(){
+var wrap = el('<div></div>');
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("fr_report_title")+'</h2>'));
+
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_report_field")+'</label>'));
+var fieldInp = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("fr_report_field_ph"))+'" style="margin-bottom:12px;">');
+card.appendChild(fieldInp);
+
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_report_desc")+'</label>'));
+var descInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("fr_report_desc_ph"))+'" rows="4" style="margin-bottom:16px;resize:none;"></textarea>');
+card.appendChild(descInp);
+
+var status = el('<div style="font-size:0.85rem;margin-bottom:10px;min-height:20px;"></div>');
+card.appendChild(status);
+
+var sendBtn = el('<button class="btn btn-danger btn-block" style="margin-bottom:10px;">'+t("fr_report_send")+'</button>');
+sendBtn.addEventListener("click", function(){
+if(!fieldInp.value.trim()){ fieldInp.focus(); return; }
+if(!descInp.value.trim()){ descInp.focus(); return; }
+if(!db || !currentUser){ status.textContent = t("fr_report_error"); return; }
+sendBtn.disabled = true;
+db.collection("field_reports").add({
+reporterUid: currentUser.uid,
+reporterName: selfName || currentUser.displayName || currentUser.email || "?",
+field: fieldInp.value.trim(),
+description: descInp.value.trim(),
+federation: state.federation || null,
+country: state.country || null,
+status: "open",
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}).then(function(){
+status.style.color = "var(--accent)";
+status.textContent = t("fr_report_sent");
+setTimeout(function(){ state.screen = "round"; save(); render(); }, 1800);
+}).catch(function(){
+sendBtn.disabled = false;
+status.style.color = "var(--danger)";
+status.textContent = t("fr_report_error");
+});
+});
+card.appendChild(sendBtn);
+
+var cancelBtn = el('<button class="btn btn-block" style="background:var(--bg-panel-2);">'+t("fr_report_cancel")+'</button>');
+cancelBtn.addEventListener("click", function(){ state.screen = "round"; save(); render(); });
+card.appendChild(cancelBtn);
+
+wrap.appendChild(card);
+return wrap;
+}
+
+
+// ── ALLENAMENTI APERTI ──────────────────────────────────────────────────────
+var openTrainings = [];
+var OT_MAX_AGE_MS = 24 * 60 * 60 * 1000; // spariscono dopo 24h dalla data/ora
+
+function loadOpenTrainings(){
+if(!db) return;
+var cutoff = new Date(Date.now() - OT_MAX_AGE_MS);
+db.collection("open_trainings")
+.where("status","==","active")
+.orderBy("createdAt","desc")
+.limit(20)
+.get().then(function(snap){
+var list = [];
+snap.forEach(function(doc){
+var d = doc.data(); d.id = doc.id;
+// Rimuovi automaticamente quelli scaduti (data/ora passata)
+if(d.datetime && d.datetime < Date.now() - OT_MAX_AGE_MS){
+doc.ref.update({status:"closed"}).catch(function(){});
+return;
+}
+list.push(d);
+});
+openTrainings = list;
+render();
+}).catch(function(){ openTrainings = []; });
+}
+
+function openTrainingCreateScreen(){
+var wrap = el('<div></div>');
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("ot_create_title")+'</h2>'));
+
+// Campo testo libero
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_field_label")+'</label>'));
+var fieldInp = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("ot_field_placeholder"))+'" style="margin-bottom:12px;">');
+card.appendChild(fieldInp);
+
+// Data
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_date_label")+'</label>'));
+var dateInp = el('<input type="date" class="input-field" style="margin-bottom:12px;">');
+var today = new Date(); dateInp.value = today.toISOString().slice(0,10);
+card.appendChild(dateInp);
+
+// Ora
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_time_label")+'</label>'));
+var timeInp = el('<input type="time" class="input-field" style="margin-bottom:12px;">');
+card.appendChild(timeInp);
+
+// Posti (1-4, da aggiungere a te = 2-5 totali)
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_spots_label")+'</label>'));
+var spotsWrap = el('<div style="display:flex;gap:10px;margin-bottom:12px;"></div>');
+var spotsVal = 3;
+[1,2,3,4].forEach(function(n){
+var btn = el('<button style="flex:1;padding:10px 0;border-radius:10px;border:2px solid '+(n===3?'var(--accent)':'var(--line)')+';background:'+(n===3?'var(--accent)':'transparent')+';color:'+(n===3?'#fff':'var(--cream)')+';font-weight:700;font-size:1rem;cursor:pointer;">'+n+'</button>');
+btn.addEventListener("click", function(){
+spotsVal = n;
+spotsWrap.querySelectorAll("button").forEach(function(b,i){ b.style.borderColor=(i+1===n?'var(--accent)':'var(--line)'); b.style.background=(i+1===n?'var(--accent)':'transparent'); b.style.color=(i+1===n?'#fff':'var(--cream)'); });
+});
+spotsWrap.appendChild(btn);
+});
+card.appendChild(spotsWrap);
+
+// Note
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_note_label")+'</label>'));
+var noteInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("ot_note_placeholder"))+'" rows="2" style="margin-bottom:16px;resize:none;"></textarea>');
+card.appendChild(noteInp);
+
+// Pulsanti
+var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-bottom:10px;">'+t("ot_save_btn")+'</button>');
+saveBtn.addEventListener("click", function(){
+if(!fieldInp.value.trim()){ fieldInp.focus(); return; }
+if(!dateInp.value){ dateInp.focus(); return; }
+if(!db || !currentUser) return;
+var datetime = new Date(dateInp.value + (timeInp.value ? "T"+timeInp.value : "T00:00")).getTime();
+db.collection("open_trainings").add({
+ownerUid: currentUser.uid,
+ownerName: selfName || currentUser.displayName || currentUser.email || "?",
+field: fieldInp.value.trim(),
+date: dateInp.value,
+time: timeInp.value,
+datetime: datetime,
+spots: spotsVal,
+note: noteInp.value.trim(),
+participantUids: [],
+participants: [],
+status: "active",
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}).then(function(){
+state.screen = "menu";
+save(); loadOpenTrainings(); render();
+}).catch(function(err){ alert(err && err.message ? err.message : "Errore"); });
+});
+card.appendChild(saveBtn);
+
+var cancelBtn = el('<button class="btn btn-block" style="background:var(--bg-panel-2);">'+t("ot_cancel_btn")+'</button>');
+cancelBtn.addEventListener("click", function(){ state.screen="menu"; save(); render(); });
+card.appendChild(cancelBtn);
+
+wrap.appendChild(card);
+return wrap;
+}
+
 
 var incomingSessions = [];
 var dismissedSessions = {};
