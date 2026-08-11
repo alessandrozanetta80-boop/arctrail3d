@@ -467,7 +467,19 @@ email: data.email || user.email, federazioni: data.federazioni || [], arco: data
 }
 authState = data.approved ? "ready" : "pendingApproval";
 }
-if(authState === "ready"){ startIncomingSessionsListener(); loadOpenTrainings(); startNotificationsListener(); }
+if(authState === "ready"){
+startIncomingSessionsListener();
+loadOpenTrainings();
+startNotificationsListener();
+// Admin app: assegna automaticamente 01VERB se non ancora assegnato
+if(currentUser && currentUser.email === ADMIN_EMAIL && db){
+db.collection("compagnie_admin").doc("01VERB").get().then(function(doc){
+if(!doc.exists || !doc.data().adminUid){
+db.collection("compagnie_admin").doc("01VERB").set({ adminUid: currentUser.uid }, { merge: true }).catch(function(){});
+}
+}).catch(function(){});
+}
+}
 save();
 render();
 }).catch(function(){
@@ -803,6 +815,22 @@ compagnie_nome_percorso: "Nome percorso", compagnie_num_piazzole: "Numero piazzo
 compagnie_arciere: "Nome arciere", compagnie_punteggio: "Punteggio", compagnie_data: "Data", compagnie_arco: "Arco usato",
 compagnie_empty_msg: "Ancora nessun punteggio qui \u2014 il primo lo registri tu.", compagnie_classifica_empty: "Nessun punteggio per questo filtro.",
 compagnie_piazzole_word: "piazzole", compagnie_punteggi_word: "punteggi registrati", compagnie_tutti: "Tutti",
+cp_admin_section: "Gestione campo (admin)",
+cp_admin_claim_btn: "🔑 Richiedi amministrazione di questa compagnia",
+cp_admin_claim_pending: "Richiesta inviata — in attesa di approvazione dall'admin app.",
+cp_admin_claim_done: "Sei amministratore di questa compagnia.",
+cp_admin_map_title: "Posizione del campo",
+cp_admin_map_hint: "Tocca la mappa per posizionare il pin, poi salva.",
+cp_admin_map_locate: "📍 Usa la mia posizione",
+cp_admin_map_save: "Salva posizione",
+cp_admin_map_saved: "Posizione salvata ✔",
+cp_admin_map_error: "Errore nel salvataggio.",
+cp_admin_info_title: "Informazioni compagnia",
+cp_admin_tel: "Telefono",
+cp_admin_email_label: "Email compagnia",
+cp_admin_sito: "Sito web",
+cp_admin_info_save: "Salva informazioni",
+cp_admin_info_saved: "Informazioni salvate ✔",
 home_tagline: "Segnapunti per il tiro con l'arco 3D",
 home_register_btn: "Registrati", home_login_link: "Hai gi\u00e0 un account?", home_login_link_word: "Accedi",
 home_install_btn: "Installa l'app sul telefono",
@@ -1046,6 +1074,7 @@ compagnie_empty_msg: "No scores here yet \u2014 be the first to add one.", compa
 compagnie_new_percorso: "+ New course", compagnie_new_risultato: "+ New score",
 compagnie_no_dati: "Full details not yet added for this club.", compagnie_no_percorsi: "This club hasn't added any courses yet.",
 compagnie_nome_percorso: "Course name", compagnie_num_piazzole: "Number of targets", compagnie_piazzole_word: "targets",
+cp_admin_section: "Field management (admin)", cp_admin_claim_btn: "🔑 Request admin of this club", cp_admin_claim_pending: "Request sent — awaiting approval.", cp_admin_claim_done: "You are the admin of this club.", cp_admin_map_title: "Field location", cp_admin_map_hint: "Tap the map to pin the location, then save.", cp_admin_map_locate: "📍 Use my location", cp_admin_map_save: "Save location", cp_admin_map_saved: "Location saved ✔", cp_admin_map_error: "Save error.", cp_admin_info_title: "Club info", cp_admin_tel: "Phone", cp_admin_email_label: "Club email", cp_admin_sito: "Website", cp_admin_info_save: "Save info", cp_admin_info_saved: "Info saved ✔",
 compagnie_pick_luogo: "Choose the field\u2026", compagnie_pick_provincia: "Choose the province\u2026", compagnie_pick_regione: "Choose the region\u2026", compagnie_provincia_non_specificata: "Province not specified",
 compagnie_provincia: "Province", compagnie_punteggi_word: "scores recorded", compagnie_punteggio: "Score", compagnie_regione: "Region",
 compagnie_salva: "Save", compagnie_title: "Clubs", compagnie_tutti: "All", country_uk: "United Kingdom", country_turkey: "Turkey", country_russia: "Russia", country_spain: "Spain", country_netherlands: "Netherlands", country_sweden: "Sweden", federation_none_yet: "No federation configured yet for this country.",
@@ -1315,6 +1344,7 @@ compagnie_empty_msg: "Aucun score ici pour l'instant \u2014 soyez le premier \u0
 compagnie_new_percorso: "+ Nouveau parcours", compagnie_new_risultato: "+ Nouveau score",
 compagnie_no_dati: "D\u00e9tails complets pas encore ajout\u00e9s pour ce club.", compagnie_no_percorsi: "Ce club n'a pas encore de parcours.",
 compagnie_nome_percorso: "Nom du parcours", compagnie_num_piazzole: "Nombre de cibles", compagnie_piazzole_word: "cibles",
+cp_admin_section: "Gestion du terrain (admin)", cp_admin_claim_btn: "🔑 Demander l'administration de ce club", cp_admin_claim_pending: "Demande envoyée — en attente d'approbation.", cp_admin_claim_done: "Vous êtes administrateur de ce club.", cp_admin_map_title: "Position du terrain", cp_admin_map_hint: "Touchez la carte pour placer l'épingle, puis sauvegardez.", cp_admin_map_locate: "📍 Utiliser ma position", cp_admin_map_save: "Sauvegarder", cp_admin_map_saved: "Position sauvegardée ✔", cp_admin_map_error: "Erreur de sauvegarde.", cp_admin_info_title: "Infos du club", cp_admin_tel: "Téléphone", cp_admin_email_label: "Email du club", cp_admin_sito: "Site web", cp_admin_info_save: "Sauvegarder", cp_admin_info_saved: "Infos sauvegardées ✔",
 compagnie_pick_luogo: "Choisissez le terrain\u2026", compagnie_pick_provincia: "Choisissez la province\u2026", compagnie_pick_regione: "Choisissez la r\u00e9gion\u2026", compagnie_provincia_non_specificata: "Province non pr\u00e9cis\u00e9e",
 compagnie_provincia: "Province", compagnie_punteggi_word: "scores enregistr\u00e9s", compagnie_punteggio: "Score", compagnie_regione: "R\u00e9gion",
 compagnie_salva: "Enregistrer", compagnie_title: "Clubs", compagnie_tutti: "Tous", country_uk: "Royaume-Uni", country_turkey: "Turquie", country_russia: "Russie", country_spain: "Espagne", country_netherlands: "Pays-Bas", country_sweden: "Su\u00e8de", federation_none_yet: "Aucune f\u00e9d\u00e9ration configur\u00e9e pour ce pays pour le moment.",
@@ -1584,6 +1614,7 @@ compagnie_empty_msg: "Hier gibt es noch keine Ergebnisse \u2014 sei der Erste.",
 compagnie_new_percorso: "+ Neuer Parcours", compagnie_new_risultato: "+ Neues Ergebnis",
 compagnie_no_dati: "F\u00fcr diesen Verein wurden noch keine vollst\u00e4ndigen Daten hinzugef\u00fcgt.", compagnie_no_percorsi: "Dieser Verein hat noch keine Parcours angelegt.",
 compagnie_nome_percorso: "Name des Parcours", compagnie_num_piazzole: "Anzahl der Ziele", compagnie_piazzole_word: "Ziele",
+cp_admin_section: "Feldverwaltung (Admin)", cp_admin_claim_btn: "🔑 Admin dieses Vereins beantragen", cp_admin_claim_pending: "Anfrage gesendet — warte auf Genehmigung.", cp_admin_claim_done: "Sie sind Admin dieses Vereins.", cp_admin_map_title: "Feldstandort", cp_admin_map_hint: "Karte antippen zum Pinnen, dann speichern.", cp_admin_map_locate: "📍 Meinen Standort verwenden", cp_admin_map_save: "Standort speichern", cp_admin_map_saved: "Standort gespeichert ✔", cp_admin_map_error: "Speicherfehler.", cp_admin_info_title: "Vereinsinfo", cp_admin_tel: "Telefon", cp_admin_email_label: "Vereins-E-Mail", cp_admin_sito: "Webseite", cp_admin_info_save: "Info speichern", cp_admin_info_saved: "Info gespeichert ✔",
 compagnie_pick_luogo: "W\u00e4hle den Platz\u2026", compagnie_pick_provincia: "W\u00e4hle die Provinz\u2026", compagnie_pick_regione: "W\u00e4hle die Region\u2026", compagnie_provincia_non_specificata: "Provinz nicht angegeben",
 compagnie_provincia: "Provinz", compagnie_punteggi_word: "erfasste Ergebnisse", compagnie_punteggio: "Ergebnis", compagnie_regione: "Region",
 compagnie_salva: "Speichern", compagnie_title: "Vereine", compagnie_tutti: "Alle", country_uk: "Vereinigtes K\u00f6nigreich", country_turkey: "T\u00fcrkei", country_russia: "Russland", country_spain: "Spanien", country_netherlands: "Niederlande", country_sweden: "Schweden", federation_none_yet: "F\u00fcr dieses Land ist noch kein Verband konfiguriert.",
@@ -1893,6 +1924,7 @@ compagnie_nome_percorso: "Parkur ad\u0131", compagnie_num_piazzole: "Hedef say\u
 compagnie_arciere: "Ok\u00e7u ad\u0131", compagnie_punteggio: "Puan", compagnie_data: "Tarih", compagnie_arco: "Kullan\u0131lan yay",
 compagnie_empty_msg: "Burada hen\u00fcz puan yok \u2014 ilkini sen kaydet.", compagnie_classifica_empty: "Bu filtre i\u00e7in puan yok.",
 compagnie_piazzole_word: "hedef", compagnie_punteggi_word: "kaydedilen puan", compagnie_tutti: "T\u00fcm\u00fc",
+cp_admin_section: "Saha yönetimi (admin)", cp_admin_claim_btn: "🔑 Bu kulübün yöneticisi ol", cp_admin_claim_pending: "Gönderildi.", cp_admin_claim_done: "Yöneticisiniz.", cp_admin_map_title: "Konum", cp_admin_map_hint: "Haritaya dokunun.", cp_admin_map_locate: "📍 Konumumu kullan", cp_admin_map_save: "Kaydet", cp_admin_map_saved: "Kaydedildi ✔", cp_admin_map_error: "Hata.", cp_admin_info_title: "Kulüp bilgileri", cp_admin_tel: "Telefon", cp_admin_email_label: "E-posta", cp_admin_sito: "Web sitesi", cp_admin_info_save: "Kaydet", cp_admin_info_saved: "Kaydedildi ✔",
 home_tagline: "3D okculuk i\u00e7in say\u0131 kaydedici",
 home_register_btn: "Kay\u0131t ol", home_login_link: "Zaten hesab\u0131n var m\u0131?", home_login_link_word: "Giri\u015f yap",
 home_install_btn: "Uygulamay\u0131 telefona kur",
@@ -2176,6 +2208,7 @@ compagnie_nome_percorso: "Название маршрута", compagnie_num_piaz
 compagnie_arciere: "Имя стрелка", compagnie_punteggio: "Результат", compagnie_data: "Дата", compagnie_arco: "Использованный лук",
 compagnie_empty_msg: "Здесь пока нет результатов — станьте первым.", compagnie_classifica_empty: "Нет результатов по этому фильтру.",
 compagnie_piazzole_word: "мишеней", compagnie_punteggi_word: "записанных результатов", compagnie_tutti: "Все",
+cp_admin_section: "Управление полем (admin)", cp_admin_claim_btn: "🔑 Запросить администрирование клуба", cp_admin_claim_pending: "Запрос отправлен — ожидайте подтверждения.", cp_admin_claim_done: "Вы администратор этого клуба.", cp_admin_map_title: "Расположение поля", cp_admin_map_hint: "Нажмите на карту, затем сохраните.", cp_admin_map_locate: "📍 Использовать моё местоположение", cp_admin_map_save: "Сохранить местоположение", cp_admin_map_saved: "Местоположение сохранено ✔", cp_admin_map_error: "Ошибка сохранения.", cp_admin_info_title: "Инфо о клубе", cp_admin_tel: "Телефон", cp_admin_email_label: "Email клуба", cp_admin_sito: "Сайт", cp_admin_info_save: "Сохранить", cp_admin_info_saved: "Инфо сохранено ✔",
 home_tagline: "Судейство для 3D-стрельбы из лука",
 home_register_btn: "Зарегистрироваться", home_login_link: "Уже есть аккаунт?", home_login_link_word: "Войти",
 home_install_btn: "Установить приложение на телефон",
@@ -2458,7 +2491,9 @@ compagnie_new_percorso: "+ Nuevo recorrido", compagnie_new_risultato: "+ Nuevo r
 compagnie_nome_percorso: "Nombre del recorrido", compagnie_num_piazzole: "N\u00famero de dianas", compagnie_salva: "Guardar", compagnie_annulla: "Cancelar",
 compagnie_arciere: "Nombre del arquero", compagnie_punteggio: "Puntuaci\u00f3n", compagnie_data: "Fecha", compagnie_arco: "Arco usado",
 compagnie_empty_msg: "A\u00fan no hay ninguna puntuaci\u00f3n aqu\u00ed \u2014 s\u00e9 el primero en registrarla.", compagnie_classifica_empty: "No hay puntuaciones para este filtro.",
+cp_admin_section: "Gestión del campo (admin)", cp_admin_claim_btn: "🔑 Solicitar administración de este club", cp_admin_claim_pending: "Solicitud enviada — esperando aprobación.", cp_admin_claim_done: "Eres administrador de este club.", cp_admin_map_title: "Ubicación del campo", cp_admin_map_hint: "Toca el mapa para fijar la posición y luego guarda.", cp_admin_map_locate: "📍 Usar mi ubicación", cp_admin_map_save: "Guardar ubicación", cp_admin_map_saved: "Ubicación guardada ✔", cp_admin_map_error: "Error al guardar.", cp_admin_info_title: "Info del club", cp_admin_tel: "Teléfono", cp_admin_email_label: "Email del club", cp_admin_sito: "Sitio web", cp_admin_info_save: "Guardar info", cp_admin_info_saved: "Info guardada ✔",
 compagnie_piazzole_word: "dianas", compagnie_punteggi_word: "puntuaciones registradas", compagnie_tutti: "Todos",
+cp_admin_section: "Gestión del campo (admin)", cp_admin_claim_btn: "🔑 Solicitar administración de este club", cp_admin_claim_pending: "Solicitud enviada — esperando aprobación.", cp_admin_claim_done: "Eres administrador de este club.", cp_admin_map_title: "Ubicación del campo", cp_admin_map_hint: "Toca el mapa para fijar la posición y luego guarda.", cp_admin_map_locate: "📍 Usar mi ubicación", cp_admin_map_save: "Guardar ubicación", cp_admin_map_saved: "Ubicación guardada ✔", cp_admin_map_error: "Error al guardar.", cp_admin_info_title: "Info del club", cp_admin_tel: "Teléfono", cp_admin_email_label: "Email del club", cp_admin_sito: "Sitio web", cp_admin_info_save: "Guardar info", cp_admin_info_saved: "Info guardada ✔",
 home_tagline: "Marcador para el tiro con arco 3D",
 home_register_btn: "Registrarse", home_login_link: "\u00bfYa tienes una cuenta?", home_login_link_word: "Iniciar sesi\u00f3n",
 home_install_btn: "Instalar la app en el tel\u00e9fono",
@@ -2737,6 +2772,7 @@ compagnie_title: "Klubbar", compagnie_regione: "Region", compagnie_provincia: "P
 compagnie_pick_regione: "V\u00e4lj region\u2026", compagnie_pick_provincia: "V\u00e4lj provins\u2026", compagnie_pick_luogo: "V\u00e4lj bana\u2026", compagnie_provincia_non_specificata: "Provins ej angiven",
 compagnie_no_percorsi: "Denna klubb har \u00e4nnu inte laddat upp n\u00e5gra rundor.",
 compagnie_no_dati: "Fullst\u00e4ndiga uppgifter \u00e4nnu inte uppladdade f\u00f6r denna klubb.",
+cp_admin_section: "Fälthantering (admin)", cp_admin_claim_btn: "🔑 Begär administration", cp_admin_claim_pending: "Begäran skickad.", cp_admin_claim_done: "Du är admin.", cp_admin_map_title: "Fältets plats", cp_admin_map_hint: "Tryck på kartan.", cp_admin_map_locate: "📍 Använd min plats", cp_admin_map_save: "Spara", cp_admin_map_saved: "Sparat ✔", cp_admin_map_error: "Fel.", cp_admin_info_title: "Klubbinfo", cp_admin_tel: "Telefon", cp_admin_email_label: "E-post", cp_admin_sito: "Webbplats", cp_admin_info_save: "Spara", cp_admin_info_saved: "Sparat ✔",
 compagnie_new_percorso: "+ Ny runda", compagnie_new_risultato: "+ Nytt resultat", compagnie_classifica: "Resultat",
 compagnie_nome_percorso: "Rundans namn", compagnie_num_piazzole: "Antal m\u00e5l", compagnie_salva: "Spara", compagnie_annulla: "Avbryt",
 compagnie_arciere: "Sk\u00e4ttens namn", compagnie_punteggio: "Po\u00e4ng", compagnie_data: "Datum", compagnie_arco: "Anv\u00e4nd b\u00e5ge",
@@ -3024,7 +3060,9 @@ compagnie_new_percorso: "+ Nieuwe ronde", compagnie_new_risultato: "+ Nieuw resu
 compagnie_nome_percorso: "Naam van de ronde", compagnie_num_piazzole: "Aantal doelen", compagnie_salva: "Opslaan", compagnie_annulla: "Annuleren",
 compagnie_arciere: "Naam boogschutter", compagnie_punteggio: "Score", compagnie_data: "Datum", compagnie_arco: "Gebruikte boog",
 compagnie_empty_msg: "Hier nog geen score \u2014 wees de eerste die er een registreert.", compagnie_classifica_empty: "Geen scores voor dit filter.",
+cp_admin_section: "Veldbeheer (admin)", cp_admin_claim_btn: "🔑 Beheer van deze club aanvragen", cp_admin_claim_pending: "Verzoek verzonden — wacht op goedkeuring.", cp_admin_claim_done: "U bent beheerder van deze club.", cp_admin_map_title: "Locatie van het veld", cp_admin_map_hint: "Tik op de kaart om de pin te plaatsen en sla op.", cp_admin_map_locate: "📍 Mijn locatie gebruiken", cp_admin_map_save: "Locatie opslaan", cp_admin_map_saved: "Locatie opgeslagen ✔", cp_admin_map_error: "Fout bij opslaan.", cp_admin_info_title: "Clubinfo", cp_admin_tel: "Telefoon", cp_admin_email_label: "Club e-mail", cp_admin_sito: "Website", cp_admin_info_save: "Info opslaan", cp_admin_info_saved: "Info opgeslagen ✔",
 compagnie_piazzole_word: "doelen", compagnie_punteggi_word: "geregistreerde scores", compagnie_tutti: "Alle",
+cp_admin_section: "Veldbeheer (admin)", cp_admin_claim_btn: "🔑 Beheer van deze club aanvragen", cp_admin_claim_pending: "Verzoek verzonden — wacht op goedkeuring.", cp_admin_claim_done: "U bent beheerder van deze club.", cp_admin_map_title: "Locatie van het veld", cp_admin_map_hint: "Tik op de kaart om de pin te plaatsen en sla op.", cp_admin_map_locate: "📍 Mijn locatie gebruiken", cp_admin_map_save: "Locatie opslaan", cp_admin_map_saved: "Locatie opgeslagen ✔", cp_admin_map_error: "Fout bij opslaan.", cp_admin_info_title: "Clubinfo", cp_admin_tel: "Telefoon", cp_admin_email_label: "Club e-mail", cp_admin_sito: "Website", cp_admin_info_save: "Info opslaan", cp_admin_info_saved: "Info opgeslagen ✔",
 home_tagline: "Scorebord voor 3D-boogschieten",
 home_register_btn: "Registreren", home_login_link: "Heb je al een account?", home_login_link_word: "Inloggen",
 home_install_btn: "Installeer de app op je telefoon",
@@ -3999,6 +4037,64 @@ var COMPAGNIE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Lon
 var COMPAGNIE_NOMI_PROVINCIA = { BI:"Biella", NO:"Novara", AL:"Alessandria", TO:"Torino", CN:"Cuneo", VA:"Varese", VC:"Vercelli", VB:"Verbano-Cusio-Ossola", GE:"Genova", SV:"Savona", SO:"Sondrio", BS:"Brescia", MB:"Monza e della Brianza", MI:"Milano", CO:"Como", BG:"Bergamo", MN:"Mantova", PV:"Pavia", VI:"Vicenza", PD:"Padova", TV:"Treviso", VE:"Venezia", VR:"Verona", TN:"Trento", PN:"Pordenone", GO:"Gorizia", RA:"Ravenna", PC:"Piacenza", BO:"Bologna", RE:"Reggio Emilia", MO:"Modena", FC:"Forl\u00ec-Cesena", PR:"Parma", FE:"Ferrara", AR:"Arezzo", FI:"Firenze", GR:"Grosseto", LI:"Livorno", PT:"Pistoia", SI:"Siena", PI:"Pisa", RM:"Roma", VT:"Viterbo", SA:"Salerno", BA:"Bari", TA:"Taranto", PZ:"Potenza", CS:"Cosenza", SU:"Sud Sardegna" };
 // COMPAGNIE ora caricato da compagnie-data.js (vedi <script src> in cima al file)
 var COMPAGNIE_REGIONI = ["Piemonte", "Valle d'Aosta", "Liguria", "Lombardia", "Veneto", "Trentino-Alto Adige", "Friuli-Venezia Giulia", "Emilia-Romagna", "Toscana", "Marche", "Umbria", "Lazio", "Abruzzo", "Molise", "Campania", "Puglia", "Basilicata", "Calabria", "Sicilia", "Sardegna"];
+
+// ── ADMIN COMPAGNIE ──────────────────────────────────────────────────────────
+var compagnieAdminCache = null; // { codice: { adminUid, lat, lng, tel, email, sito } }
+
+function loadCompagnieAdmin(cb){
+if(compagnieAdminCache){ cb(compagnieAdminCache); return; }
+if(!db){ cb({}); return; }
+db.collection("compagnie_admin").get().then(function(snap){
+var map = {};
+snap.forEach(function(doc){ map[doc.id] = doc.data(); });
+compagnieAdminCache = map;
+cb(map);
+}).catch(function(){ cb({}); });
+}
+
+function isAdminCompagnia(codice, cb){
+if(!currentUser){ cb(false); return; }
+loadCompagnieAdmin(function(map){
+var d = map[codice];
+cb(d && d.adminUid === currentUser.uid);
+});
+}
+
+function saveCompagniaPos(codice, lat, lng, onDone, onErr){
+if(!db || !currentUser) return;
+db.collection("compagnie_admin").doc(codice).set({ lat:lat, lng:lng }, { merge:true })
+.then(function(){
+// Aggiorna cache locale
+if(!compagnieAdminCache) compagnieAdminCache = {};
+if(!compagnieAdminCache[codice]) compagnieAdminCache[codice] = {};
+compagnieAdminCache[codice].lat = lat;
+compagnieAdminCache[codice].lng = lng;
+onDone();
+}).catch(onErr);
+}
+
+function saveCompagniaInfo(codice, info, onDone, onErr){
+if(!db || !currentUser) return;
+db.collection("compagnie_admin").doc(codice).set(info, { merge:true })
+.then(function(){
+if(!compagnieAdminCache) compagnieAdminCache = {};
+if(!compagnieAdminCache[codice]) compagnieAdminCache[codice] = {};
+Object.assign(compagnieAdminCache[codice], info);
+onDone();
+}).catch(onErr);
+}
+
+function requestAdminCompagnia(codice, onDone){
+if(!db || !currentUser) return;
+db.collection("compagnie_admin_requests").doc(codice + "_" + currentUser.uid).set({
+codice: codice,
+richiedenteUid: currentUser.uid,
+richiedenteName: selfName || currentUser.email || "?",
+stato: "pending",
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}).then(onDone).catch(onDone);
+}
+
 
 function initCompagnieData(){
 if(!state.compagnieData){ state.compagnieData = {}; }
@@ -5566,6 +5662,131 @@ infoCard.appendChild(el('<div class="cp-info-row placeholder">'+icon("pin",16)+'
 infoCard.appendChild(el('<div class="cp-info-row placeholder">'+t("compagnie_no_dati")+'</div>'));
 }
 wrap.appendChild(infoCard);
+
+// ── SEZIONE ADMIN COMPAGNIA ─────────────────────────────────────────────
+(function(codice){
+loadCompagnieAdmin(function(adminMap){
+var isAdmin = currentUser && adminMap[codice] && adminMap[codice].adminUid === currentUser.uid;
+var isAppAdmin = isAdmin || (currentUser && currentUser.email === ADMIN_EMAIL);
+var hasPending = false; // controlliamo Firestore solo se serve
+
+if(!isAppAdmin && !isAdmin){
+// Mostra pulsante "richiedi admin" per chi non è ancora admin
+if(currentUser){
+var claimCard = el('<div class="card" style="margin-bottom:10px;"></div>');
+var claimBtn = el('<button class="btn btn-ghost btn-block" style="font-size:0.88rem;">'+t("cp_admin_claim_btn")+'</button>');
+var claimStatus = el('<div style="font-size:0.8rem;color:var(--muted);margin-top:6px;min-height:16px;"></div>');
+claimBtn.addEventListener("click", function(){
+claimBtn.disabled = true;
+requestAdminCompagnia(codice, function(){
+claimStatus.textContent = t("cp_admin_claim_pending");
+});
+});
+claimCard.appendChild(claimBtn);
+claimCard.appendChild(claimStatus);
+wrap.appendChild(claimCard);
+}
+return;
+}
+
+// Admin: mostra sezione gestione
+var adminCard = el('<div class="card" style="margin-bottom:14px;border:2px solid var(--accent);"></div>');
+adminCard.appendChild(el('<h2 class="section-title" style="color:var(--accent);">🔑 '+t("cp_admin_section")+'</h2>'));
+
+// ── Mappa posizione campo ────────────────────────────────────────────────
+adminCard.appendChild(el('<div style="font-weight:700;margin-bottom:4px;">'+t("cp_admin_map_title")+'</div>'));
+adminCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:6px;">'+t("cp_admin_map_hint")+'</div>'));
+var admMapId = "cp-admin-map-"+codice;
+var admMapDiv = el('<div id="'+admMapId+'" style="height:220px;border-radius:10px;border:1px solid var(--line);margin-bottom:6px;z-index:0;"></div>');
+adminCard.appendChild(admMapDiv);
+
+var admLat = adminMap[codice] && adminMap[codice].lat ? adminMap[codice].lat : null;
+var admLng = adminMap[codice] && adminMap[codice].lng ? adminMap[codice].lng : null;
+var admMap = null, admMarker = null;
+
+setTimeout(function(){
+if(typeof L === "undefined") return;
+var startLat = admLat || 45.9, startLng = admLng || 8.2, startZoom = admLat ? 15 : 8;
+admMap = L.map(admMapId, { zoomControl: true }).setView([startLat, startLng], startZoom);
+L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+{ attribution:"© OSM © CARTO", maxZoom:19, subdomains:"abcd" }).addTo(admMap);
+if(admLat && admLng){
+admMarker = L.marker([admLat, admLng]).addTo(admMap);
+}
+admMap.on("click", function(e){
+admLat = e.latlng.lat; admLng = e.latlng.lng;
+if(admMarker) admMarker.setLatLng(e.latlng);
+else admMarker = L.marker(e.latlng).addTo(admMap);
+});
+setTimeout(function(){ admMap.invalidateSize(); }, 300);
+setTimeout(function(){ admMap.invalidateSize(); }, 800);
+}, 0);
+
+var admLocBtn = el('<button class="btn btn-ghost btn-block" style="margin-bottom:6px;font-size:0.85rem;">'+t("cp_admin_map_locate")+'</button>');
+admLocBtn.addEventListener("click", function(){
+if(!navigator.geolocation){ return; }
+admLocBtn.textContent = "⏳…"; admLocBtn.disabled = true;
+navigator.geolocation.getCurrentPosition(function(pos){
+admLat = pos.coords.latitude; admLng = pos.coords.longitude;
+admLocBtn.textContent = t("cp_admin_map_locate"); admLocBtn.disabled = false;
+if(admMap){
+admMap.setView([admLat,admLng],15);
+if(admMarker) admMarker.setLatLng([admLat,admLng]);
+else admMarker = L.marker([admLat,admLng]).addTo(admMap);
+}
+}, function(){ admLocBtn.disabled=false; admLocBtn.textContent=t("cp_admin_map_locate"); }, { enableHighAccuracy:true, timeout:10000 });
+});
+adminCard.appendChild(admLocBtn);
+
+var mapSaveBtn = el('<button class="btn btn-primary btn-block" style="margin-bottom:4px;">'+t("cp_admin_map_save")+'</button>');
+var mapSaveStatus = el('<div style="font-size:0.8rem;margin-bottom:12px;min-height:16px;"></div>');
+mapSaveBtn.addEventListener("click", function(){
+if(!admLat || !admLng){ return; }
+mapSaveBtn.disabled = true;
+saveCompagniaPos(codice, admLat, admLng, function(){
+mapSaveStatus.style.color = "var(--accent)";
+mapSaveStatus.textContent = t("cp_admin_map_saved");
+mapSaveBtn.disabled = false;
+}, function(){
+mapSaveStatus.style.color = "var(--danger)";
+mapSaveStatus.textContent = t("cp_admin_map_error");
+mapSaveBtn.disabled = false;
+});
+});
+adminCard.appendChild(mapSaveBtn);
+adminCard.appendChild(mapSaveStatus);
+
+// ── Info compagnia (tel, email, sito) ───────────────────────────────────
+adminCard.appendChild(el('<div style="font-weight:700;margin-bottom:8px;">'+t("cp_admin_info_title")+'</div>'));
+var savedInfo = adminMap[codice] || {};
+var telInp = el('<input type="tel" class="input-field" placeholder="'+t("cp_admin_tel")+'" value="'+(savedInfo.tel||"")+'" style="margin-bottom:8px;">');
+var emailInp = el('<input type="email" class="input-field" placeholder="'+t("cp_admin_email_label")+'" value="'+(savedInfo.emailComp||"")+'" style="margin-bottom:8px;">');
+var sitoInp = el('<input type="text" class="input-field" placeholder="'+t("cp_admin_sito")+'" value="'+(savedInfo.sito||"")+'" style="margin-bottom:8px;">');
+adminCard.appendChild(telInp);
+adminCard.appendChild(emailInp);
+adminCard.appendChild(sitoInp);
+
+var infoSaveBtn = el('<button class="btn btn-primary btn-block" style="margin-bottom:4px;">'+t("cp_admin_info_save")+'</button>');
+var infoSaveStatus = el('<div style="font-size:0.8rem;margin-bottom:4px;min-height:16px;"></div>');
+infoSaveBtn.addEventListener("click", function(){
+infoSaveBtn.disabled = true;
+saveCompagniaInfo(codice, { tel:telInp.value.trim(), emailComp:emailInp.value.trim(), sito:sitoInp.value.trim() }, function(){
+infoSaveStatus.style.color = "var(--accent)";
+infoSaveStatus.textContent = t("cp_admin_info_saved");
+infoSaveBtn.disabled = false;
+}, function(){
+infoSaveStatus.style.color = "var(--danger)";
+infoSaveStatus.textContent = t("cp_admin_map_error");
+infoSaveBtn.disabled = false;
+});
+});
+adminCard.appendChild(infoSaveBtn);
+adminCard.appendChild(infoSaveStatus);
+
+wrap.appendChild(adminCard);
+});
+})(state.compagniaAttiva);
+// ── FINE SEZIONE ADMIN ───────────────────────────────────────────────────
 
 if(compagnia.completa){
 var cd = ensureCompagniaData(state.compagniaAttiva);
