@@ -6596,16 +6596,56 @@ var otLat = null, otLng = null, otMap = null, otMarker = null;
 setTimeout(function(){
 if(typeof L === "undefined") return;
 otMap = L.map("ot-create-map", { zoomControl: true }).setView([45.9, 8.2], 8);
-// Prova CartoDB (non bloccato da Brave), fallback OSM
 var tileUrl = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
 var tileAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>';
 L.tileLayer(tileUrl, { attribution: tileAttr, maxZoom: 19, subdomains: "abcd" }).addTo(otMap);
+
+// Icona campo tiro (verde, diversa dal pin utente)
+var campIcon = L.divIcon({
+className: "",
+html: '<div style="background:var(--accent);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.4);">🏹</div>',
+iconSize: [28,28], iconAnchor: [14,14], popupAnchor: [0,-14]
+});
+
+// Carica compagnie vicine via Nominatim geocoding
+if(typeof COMPAGNIE !== "undefined"){
+var campiDaGeocod = [];
+Object.keys(COMPAGNIE).forEach(function(cod){
+var c = COMPAGNIE[cod];
+if(c.luogo) campiDaGeocod.push({ cod: cod, nome: c.nome, luogo: c.luogo, query: c.luogo + ", Italia" });
+});
+// Geocodifico a batch di 3 con delay per rispettare rate-limit Nominatim (1 req/sec)
+var geoIdx = 0;
+function geocodNext(){
+if(geoIdx >= campiDaGeocod.length || !otMap) return;
+var item = campiDaGeocod[geoIdx++];
+fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&q="+encodeURIComponent(item.query), {
+headers: { "Accept-Language": "it", "User-Agent": "ArcTrail3D/1.0" }
+}).then(function(r){ return r.json(); }).then(function(res){
+if(res && res[0] && otMap){
+var lat = parseFloat(res[0].lat), lng = parseFloat(res[0].lon);
+var m = L.marker([lat,lng], { icon: campIcon }).addTo(otMap);
+(function(mlat,mlng,mnome,mluogo){
+m.on("click", function(){
+otLat = mlat; otLng = mlng;
+if(otMarker) otMarker.setLatLng([mlat,mlng]);
+else otMarker = L.marker([mlat,mlng]).addTo(otMap);
+otMap.setView([mlat,mlng], 15);
+});
+m.bindTooltip("<b>"+mnome+"</b><br><small>"+mluogo+"</small><br><i style='font-size:0.8em'>Tocca per selezionare</i>", { direction:"top", opacity:0.95 });
+})(lat, lng, item.nome, item.luogo);
+}
+setTimeout(geocodNext, 1200); // rispetta 1 req/sec Nominatim
+}).catch(function(){ setTimeout(geocodNext, 1200); });
+}
+setTimeout(geocodNext, 500);
+}
+
 otMap.on("click", function(e){
 otLat = e.latlng.lat; otLng = e.latlng.lng;
 if(otMarker) otMarker.setLatLng(e.latlng);
 else otMarker = L.marker(e.latlng).addTo(otMap);
 });
-// Fix layout: doppio invalidateSize con delay crescente
 setTimeout(function(){ otMap.invalidateSize(); }, 300);
 setTimeout(function(){ otMap.invalidateSize(); }, 800);
 }, 0);
