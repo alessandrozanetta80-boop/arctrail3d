@@ -6883,6 +6883,31 @@ fieldSearchInp.addEventListener("focus", function(){ if(fieldSearchInp.value) re
 
 var otLat = null, otLng = null;
 
+// Data
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_date_label")+'</label>'));
+var dateInp = el('<input type="date" class="input-field" style="margin-bottom:12px;">');
+var today = new Date(); dateInp.value = today.toISOString().slice(0,10);
+card.appendChild(dateInp);
+
+// Ora
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_time_label")+'</label>'));
+var timeInp = el('<input type="time" class="input-field" style="margin-bottom:12px;">');
+card.appendChild(timeInp);
+
+// Posti
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_spots_label")+'</label>'));
+var spotsWrap = el('<div style="display:flex;gap:10px;margin-bottom:12px;"></div>');
+var spotsVal = 3;
+[1,2,3,4].forEach(function(n){
+var btn = el('<button style="flex:1;padding:10px 0;border-radius:10px;border:2px solid '+(n===3?'var(--accent)':'var(--line)')+';background:'+(n===3?'var(--accent)':'transparent')+';color:'+(n===3?'#fff':'var(--cream)')+';font-weight:700;font-size:1rem;cursor:pointer;">'+n+'</button>');
+btn.addEventListener("click", function(){
+spotsVal = n;
+spotsWrap.querySelectorAll("button").forEach(function(b,i){ b.style.borderColor=(i+1===n?'var(--accent)':'var(--line)'); b.style.background=(i+1===n?'var(--accent)':'transparent'); b.style.color=(i+1===n?'#fff':'var(--cream)'); });
+});
+spotsWrap.appendChild(btn);
+});
+card.appendChild(spotsWrap);
+
 // Note
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_note_label")+'</label>'));
 var noteInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("ot_note_placeholder"))+'" rows="2" style="margin-bottom:16px;resize:none;"></textarea>');
