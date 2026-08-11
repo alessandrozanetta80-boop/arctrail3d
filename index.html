@@ -46,6 +46,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js" defer></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLs=" crossorigin=""></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
@@ -465,7 +467,7 @@ email: data.email || user.email, federazioni: data.federazioni || [], arco: data
 }
 authState = data.approved ? "ready" : "pendingApproval";
 }
-if(authState === "ready"){ startIncomingSessionsListener(); loadOpenTrainings(); }
+if(authState === "ready"){ startIncomingSessionsListener(); loadOpenTrainings(); startNotificationsListener(); }
 save();
 render();
 }).catch(function(){
@@ -624,6 +626,14 @@ train_arrows_title: "Quante frecce per piazzola?", train_arrows_hint: "Da 1 a 3 
 train_shared_title: "Sessione condivisa", train_shared_hint: "Hai invitato arcieri online: i punteggi si sincronizzano in tempo reale sui loro telefoni. Serve connessione internet.",
 train_double_confirm_label: "Richiedi doppia conferma dei punteggi",
 train_double_confirm_hint: "Ogni punteggio resta \"in attesa\" finch\u00e9 un altro partecipante della sessione non lo conferma dal proprio telefono. Se disattivata, i punteggi si registrano subito, senza conferma.",
+ot_map_label: "Posizione sul campo (opzionale)", ot_map_hint: "Tocca la mappa per segna il punto esatto", ot_map_locate: "📍 Usa la mia posizione", ot_msg_btn: "💬 Scrivi all'organizzatore", ot_msg_title: "Messaggio a {name}", ot_msg_placeholder: "Scrivi un messaggio…", ot_msg_send: "Invia", ot_msg_sent: "Inviato!", ot_msg_error: "Errore. Riprova.", ot_msg_notif_title: "Nuovo messaggio", ot_msg_notif_body: "{name}: {text}", ot_directions_btn: "🗺 Indicazioni stradali",
+ot_invite_label: "Invita arcieri (opzionale)",
+ot_invite_placeholder: "Cerca per username…",
+ot_invite_added: "Invitati:",
+ot_notif_invite_title: "Invito allenamento",
+ot_notif_invite_body: "{name} ti ha invitato ad allenarti il {date}{time} — {field}",
+ot_notif_join_title: "Nuovo partecipante",
+ot_notif_join_body: "{name} si è unito al tuo allenamento del {date} — {field}",
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
 ot_join_btn: "Unisciti",
@@ -1097,6 +1107,8 @@ notif_token_error: "Couldn't get the token. Please try again.", notif_enabled: "
 notif_save_error: "Error saving: {err}", notif_generic_error: "Error: {err}", notif_not_configured: "Notifications not configured yet (server key missing).",
 train_shared_title: "Shared session", train_shared_hint: "You've invited archers online: scores sync in real time on their phones. Requires an internet connection.",
 train_double_confirm_label: "Require double confirmation of scores", train_double_confirm_hint: "Each score stays \"pending\" until another participant in the session confirms it from their own phone. If off, scores are recorded immediately, with no confirmation.",
+ot_map_label: "Location on the field (optional)", ot_map_hint: "Tap the map to pin the exact spot", ot_map_locate: "📍 Use my location", ot_msg_btn: "💬 Message the organiser", ot_msg_title: "Message to {name}", ot_msg_placeholder: "Write a message…", ot_msg_send: "Send", ot_msg_sent: "Sent!", ot_msg_error: "Error. Try again.", ot_msg_notif_title: "New message", ot_msg_notif_body: "{name}: {text}", ot_directions_btn: "🗺 Get directions",
+ot_invite_label: "Invite archers (optional)", ot_invite_placeholder: "Search by username…", ot_invite_added: "Invited:", ot_notif_invite_title: "Training invite", ot_notif_invite_body: "{name} invited you to train on {date}{time} — {field}", ot_notif_join_title: "New participant", ot_notif_join_body: "{name} joined your training on {date} — {field}",
 ot_section_title: "Open trainings", ot_section_hint: "Join others training today, or announce yours.", ot_join_btn: "Join", ot_joined_label: "You're in ✔", ot_leave_btn: "Cancel", ot_full_label: "Full", ot_create_btn: "+ Announce training", ot_create_title: "Announce open training", ot_field_label: "Field / course", ot_field_placeholder: "E.g. Red course Vignone", ot_date_label: "Date", ot_time_label: "Time", ot_spots_label: "Available spots (excl. you)", ot_note_label: "Notes (optional)", ot_note_placeholder: "E.g. we bring FIARC targets…", ot_save_btn: "Publish", ot_cancel_btn: "Cancel", ot_by: "by {name}", ot_spots_left: "{n} spot(s) left", ot_no_trainings: "No open trainings right now. Be the first!", ot_delete_btn: "Delete", ot_confirm_delete: "Delete this training?",
 session_banner_title: "Shared session active", session_banner_body: "{name} started a shared training session.", session_banner_btn: "Follow session",
 session_follow_title: "Live session", session_follow_owner: "Started by {name}", session_no_data: "No scores entered yet.",
@@ -1364,6 +1376,8 @@ notif_token_error: "Impossible d'obtenir le jeton. R\u00e9essayez.", notif_enabl
 notif_save_error: "Erreur lors de l'enregistrement\u00a0: {err}", notif_generic_error: "Erreur\u00a0: {err}", notif_not_configured: "Notifications pas encore configur\u00e9es (cl\u00e9 serveur manquante).",
 train_shared_title: "Session partag\u00e9e", train_shared_hint: "Vous avez invit\u00e9 des archers en ligne\u00a0: les scores se synchronisent en temps r\u00e9el sur leurs t\u00e9l\u00e9phones. Connexion internet requise.",
 train_double_confirm_label: "Exiger une double confirmation des scores", train_double_confirm_hint: "Chaque score reste \u00ab\u00a0en attente\u00a0\u00bb jusqu'\u00e0 ce qu'un autre participant de la session le confirme depuis son propre t\u00e9l\u00e9phone. Si d\u00e9sactiv\u00e9, les scores sont enregistr\u00e9s imm\u00e9diatement, sans confirmation.",
+ot_map_label: "Position sur le terrain (optionnel)", ot_map_hint: "Touchez la carte pour marquer le point exact", ot_map_locate: "📍 Utiliser ma position", ot_msg_btn: "💬 Écrire à l'organisateur", ot_msg_title: "Message à {name}", ot_msg_placeholder: "Écrire un message…", ot_msg_send: "Envoyer", ot_msg_sent: "Envoyé !", ot_msg_error: "Erreur. Réessayez.", ot_msg_notif_title: "Nouveau message", ot_msg_notif_body: "{name} : {text}", ot_directions_btn: "🗺 Itinéraire",
+ot_invite_label: "Inviter des archers (optionnel)", ot_invite_placeholder: "Recherche par nom d'utilisateur…", ot_invite_added: "Invités :", ot_notif_invite_title: "Invitation entraînement", ot_notif_invite_body: "{name} vous invite à vous entraîner le {date}{time} — {field}", ot_notif_join_title: "Nouveau participant", ot_notif_join_body: "{name} a rejoint votre entraînement du {date} — {field}",
 ot_section_title: "Entra\u00eenements ouverts", ot_section_hint: "Rejoignez quelqu'un qui s'entra\u00eene aujourd'hui, ou annoncez le v\u00f4tre.", ot_join_btn: "Rejoindre", ot_joined_label: "Inscrit \u2714", ot_leave_btn: "Annuler", ot_full_label: "Complet", ot_create_btn: "+ Annoncer un entra\u00eenement", ot_create_title: "Annoncer un entra\u00eenement ouvert", ot_field_label: "Terrain / parcours", ot_field_placeholder: "Ex. Parcours rouge Vignone", ot_date_label: "Date", ot_time_label: "Heure", ot_spots_label: "Places disponibles (hors vous)", ot_note_label: "Notes (facultatif)", ot_note_placeholder: "Ex. on apporte le mat\u00e9riel FIARC\u2026", ot_save_btn: "Publier", ot_cancel_btn: "Annuler", ot_by: "par {name}", ot_spots_left: "{n} place(s) libre(s)", ot_no_trainings: "Aucun entra\u00eenement ouvert. Soyez le premier\u00a0!", ot_delete_btn: "Supprimer", ot_confirm_delete: "Supprimer cet entra\u00eenement\u00a0?",
 session_banner_title: "Session partag\u00e9e active", session_banner_body: "{name} a d\u00e9marr\u00e9 un entra\u00eenement partag\u00e9.", session_banner_btn: "Suivre la session",
 session_follow_title: "Session en direct", session_follow_owner: "D\u00e9marr\u00e9e par {name}", session_no_data: "Aucun score saisi pour l'instant.",
@@ -1631,6 +1645,8 @@ notif_token_error: "Token konnte nicht abgerufen werden. Bitte erneut versuchen.
 notif_save_error: "Fehler beim Speichern: {err}", notif_generic_error: "Fehler: {err}", notif_not_configured: "Benachrichtigungen noch nicht konfiguriert (Server-Schl\u00fcssel fehlt).",
 train_shared_title: "Geteilte Sitzung", train_shared_hint: "Du hast Bogensch\u00fctzen online eingeladen: Die Punktzahlen werden in Echtzeit auf ihren Telefonen synchronisiert. Internetverbindung erforderlich.",
 train_double_confirm_label: "Doppelte Best\u00e4tigung der Punktzahlen verlangen", train_double_confirm_hint: "Jeder Punktestand bleibt \u201eausstehend\u201c, bis ihn ein anderer Teilnehmer der Sitzung von seinem eigenen Telefon aus best\u00e4tigt. Ist die Option deaktiviert, werden Punktzahlen sofort ohne Best\u00e4tigung gespeichert.",
+ot_map_label: "Position auf dem Feld (optional)", ot_map_hint: "Tippen Sie auf die Karte, um den genauen Punkt zu markieren", ot_map_locate: "📍 Meinen Standort verwenden", ot_msg_btn: "💬 Nachricht an Organisator", ot_msg_title: "Nachricht an {name}", ot_msg_placeholder: "Nachricht schreiben…", ot_msg_send: "Senden", ot_msg_sent: "Gesendet!", ot_msg_error: "Fehler. Erneut versuchen.", ot_msg_notif_title: "Neue Nachricht", ot_msg_notif_body: "{name}: {text}", ot_directions_btn: "🗺 Wegbeschreibung",
+ot_invite_label: "Bogensportler einladen (optional)", ot_invite_placeholder: "Nach Benutzername suchen…", ot_invite_added: "Eingeladen:", ot_notif_invite_title: "Training-Einladung", ot_notif_invite_body: "{name} lädt dich am {date}{time} ein — {field}", ot_notif_join_title: "Neuer Teilnehmer", ot_notif_join_body: "{name} hat sich deinem Training vom {date} angeschlossen — {field}",
 ot_section_title: "Offene Trainings", ot_section_hint: "Schließ dich an oder kündige dein Training an.", ot_join_btn: "Teilnehmen", ot_joined_label: "Dabei ✔", ot_leave_btn: "Absagen", ot_full_label: "Voll", ot_create_btn: "+ Training ankündigen", ot_create_title: "Offenes Training ankündigen", ot_field_label: "Feld / Parcours", ot_field_placeholder: "z.B. Roter Parcours Vignone", ot_date_label: "Datum", ot_time_label: "Uhrzeit", ot_spots_label: "Freie Plätze (ohne dich)", ot_note_label: "Notizen (optional)", ot_note_placeholder: "z.B. wir bringen FIARC-Material…", ot_save_btn: "Veröffentlichen", ot_cancel_btn: "Abbrechen", ot_by: "von {name}", ot_spots_left: "{n} Platz/Plätze frei", ot_no_trainings: "Kein offenes Training gerade. Sei der Erste!", ot_delete_btn: "Löschen", ot_confirm_delete: "Dieses Training löschen?",
 session_banner_title: "Geteilte Sitzung aktiv", session_banner_body: "{name} hat ein gemeinsames Training gestartet.", session_banner_btn: "Sitzung folgen",
 session_follow_title: "Live-Sitzung", session_follow_owner: "Gestartet von {name}", session_no_data: "Noch keine Punktzahlen eingetragen.",
@@ -1727,6 +1743,8 @@ train_arrows_title: "Hedef ba\u015f\u0131na ka\u00e7 ok?", train_arrows_hint: "1
 train_shared_title: "Ortak oturum", train_shared_hint: "\u00c7evrimi\u00e7i ok\u00e7ular davet ettin: puanlar telefonlar\u0131nda ger\u00e7ek zamanl\u0131 senkronize olur. \u0130nternet ba\u011flant\u0131s\u0131 gerekir.",
 train_double_confirm_label: "Puanlar i\u00e7in \u00e7ift onay iste",
 train_double_confirm_hint: "Her puan, oturumdaki ba\u015fka bir kat\u0131l\u0131mc\u0131 kendi telefonundan onaylayana kadar \u201cbeklemede\u201d kal\u0131r. Kapal\u0131ysa puanlar onaysız hemen kaydedilir.",
+ot_map_label: "Alandaki konum (isteğe bağlı)", ot_map_hint: "Tam noktayı işaretlemek için haritaya dokunun", ot_map_locate: "📍 Konumumu kullan", ot_msg_btn: "💬 Organizatöre mesaj", ot_msg_title: "{name}'e mesaj", ot_msg_placeholder: "Mesaj yaz…", ot_msg_send: "Gönder", ot_msg_sent: "Gönderildi!", ot_msg_error: "Hata. Tekrar deneyin.", ot_msg_notif_title: "Yeni mesaj", ot_msg_notif_body: "{name}: {text}", ot_directions_btn: "🗺 Yol tarifi",
+ot_invite_label: "Okcu davet et (isteğe bağlı)", ot_invite_placeholder: "Kullanıcı adı ile ara…", ot_invite_added: "Davet edildi:", ot_notif_invite_title: "Antrenman daveti", ot_notif_invite_body: "{name} sizi {date}{time} antrenmanına davet etti — {field}", ot_notif_join_title: "Yeni katılımcı", ot_notif_join_body: "{name} antrenmanınıza katıldı — {field}",
 ot_section_title: "Açık antrenmanlar", ot_section_hint: "Bugün antrenmana katıl veya kendi antrenmanını duyur.", ot_join_btn: "Katıl", ot_joined_label: "Kayıtlısın ✔", ot_leave_btn: "Vazgeç", ot_full_label: "Dolu", ot_create_btn: "+ Antrenman duyur", ot_create_title: "Açık antrenman duyur", ot_field_label: "Alan / Parkur", ot_field_placeholder: "Ör. Kırmızı parkur Vignone", ot_date_label: "Tarih", ot_time_label: "Saat", ot_spots_label: "Boş yer (sen hariç)", ot_note_label: "Not (isteğe bağlı)", ot_note_placeholder: "Ör. FIARC malzemeleri getiriyoruz…", ot_save_btn: "Yayınla", ot_cancel_btn: "İptal", ot_by: "{name} tarafından", ot_spots_left: "{n} yer kaldı", ot_no_trainings: "şu an açık antrenman yok. İlk sen ol!", ot_delete_btn: "Sil", ot_confirm_delete: "Bu antrenmanı sil?",
 session_banner_title: "Ortak oturum aktif",
 session_banner_body: "{name} ortak bir antrenman ba\u015flatt\u0131.",
@@ -2008,6 +2026,8 @@ train_arrows_title: "Сколько стрел на мишень?", train_arrows
 train_shared_title: "Совместная сессия", train_shared_hint: "Вы пригласили стрелков онлайн: очки синхронизируются в реальном времени на их телефонах. Требуется интернет.",
 train_double_confirm_label: "Требовать двойное подтверждение очков",
 train_double_confirm_hint: "Каждый результат остаётся «в ожидании», пока другой участник сессии не подтвердит его со своего телефона. Если отключено, очки записываются сразу, без подтверждения.",
+ot_map_label: "Местоположение (необязательно)", ot_map_hint: "Нажмите на карту, чтобы отметить точку", ot_map_locate: "📍 Использовать моё местоположение", ot_msg_btn: "💬 Написать организатору", ot_msg_title: "Сообщение {name}", ot_msg_placeholder: "Написать сообщение…", ot_msg_send: "Отправить", ot_msg_sent: "Отправлено!", ot_msg_error: "Ошибка. Повторите.", ot_msg_notif_title: "Новое сообщение", ot_msg_notif_body: "{name}: {text}", ot_directions_btn: "🗺 Маршрут",
+ot_invite_label: "Пригласить лучников (необязательно)", ot_invite_placeholder: "Поиск по имени пользователя…", ot_invite_added: "Приглашены:", ot_notif_invite_title: "Приглашение на тренировку", ot_notif_invite_body: "{name} приглашает вас {date}{time} — {field}", ot_notif_join_title: "Новый участник", ot_notif_join_body: "{name} присоединился к вашей тренировке — {field}",
 ot_section_title: "Открытые тренировки", ot_section_hint: "Присоединяйтесь к тренировке или объявите свою.", ot_join_btn: "Присоединиться", ot_joined_label: "Записан ✔", ot_leave_btn: "Отменить", ot_full_label: "Мест нет", ot_create_btn: "+ Объявить тренировку", ot_create_title: "Объявить открытую тренировку", ot_field_label: "Поле / маршрут", ot_field_placeholder: "Напр. Красный маршрут Vignone", ot_date_label: "Дата", ot_time_label: "Время", ot_spots_label: "Свободных мест (кроме вас)", ot_note_label: "Примечание (необязательно)", ot_note_placeholder: "Напр. принесём материалы FIARC…", ot_save_btn: "Опубликовать", ot_cancel_btn: "Отмена", ot_by: "орг. {name}", ot_spots_left: "свободно {n} место/мест", ot_no_trainings: "Нет открытых тренировок. Будьте первым!", ot_delete_btn: "Удалить", ot_confirm_delete: "Удалить эту тренировку?",
 session_banner_title: "Совместная сессия активна",
 session_banner_body: "{name} начал(а) совместную тренировку.",
@@ -2289,6 +2309,8 @@ train_arrows_title: "\u00bfCu\u00e1ntas flechas por diana?", train_arrows_hint: 
 train_shared_title: "Sesi\u00f3n compartida", train_shared_hint: "Has invitado a arqueros online: las puntuaciones se sincronizan en tiempo real en sus tel\u00e9fonos. Se necesita conexi\u00f3n a internet.",
 train_double_confirm_label: "Requerir doble confirmaci\u00f3n de las puntuaciones",
 train_double_confirm_hint: "Cada puntuaci\u00f3n queda \"pendiente\" hasta que otro participante de la sesi\u00f3n la confirme desde su tel\u00e9fono. Si est\u00e1 desactivada, las puntuaciones se registran al instante, sin confirmaci\u00f3n.",
+ot_map_label: "Ubicación en el campo (opcional)", ot_map_hint: "Toca el mapa para marcar el punto exacto", ot_map_locate: "📍 Usar mi ubicación", ot_msg_btn: "💬 Escribir al organizador", ot_msg_title: "Mensaje a {name}", ot_msg_placeholder: "Escribe un mensaje…", ot_msg_send: "Enviar", ot_msg_sent: "¡Enviado!", ot_msg_error: "Error. Inténtalo de nuevo.", ot_msg_notif_title: "Nuevo mensaje", ot_msg_notif_body: "{name}: {text}", ot_directions_btn: "🗺 Cómo llegar",
+ot_invite_label: "Invitar arqueros (opcional)", ot_invite_placeholder: "Buscar por nombre de usuario…", ot_invite_added: "Invitados:", ot_notif_invite_title: "Invitación entrenamiento", ot_notif_invite_body: "{name} te invita a entrenar el {date}{time} — {field}", ot_notif_join_title: "Nuevo participante", ot_notif_join_body: "{name} se unió a tu entrenamiento del {date} — {field}",
 ot_section_title: "Entrenamientos abiertos", ot_section_hint: "\u00danete a alguien que entrena hoy, o anuncia el tuyo.", ot_join_btn: "Unirme", ot_joined_label: "Apuntado \u2714", ot_leave_btn: "Cancelar", ot_full_label: "Completo", ot_create_btn: "+ Anunciar entrenamiento", ot_create_title: "Anunciar entrenamiento abierto", ot_field_label: "Campo / recorrido", ot_field_placeholder: "Ej. Recorrido rojo Vignone", ot_date_label: "Fecha", ot_time_label: "Hora", ot_spots_label: "Plazas disponibles (sin contar contigo)", ot_note_label: "Notas (opcional)", ot_note_placeholder: "Ej. llevamos material FIARC\u2026", ot_save_btn: "Publicar", ot_cancel_btn: "Cancelar", ot_by: "organizado por {name}", ot_spots_left: "{n} plaza(s) libre(s)", ot_no_trainings: "Sin entrenamientos abiertos. \u00a1S\u00e9 el primero!", ot_delete_btn: "Eliminar", ot_confirm_delete: "\u00bfEliminar este entrenamiento?",
 session_banner_title: "Sesi\u00f3n compartida activa",
 session_banner_body: "{name} ha iniciado un entrenamiento compartido.",
@@ -2570,6 +2592,8 @@ train_arrows_title: "Hur m\u00e5nga pilar per m\u00e5l?", train_arrows_hint: "Fr
 train_shared_title: "Delad session", train_shared_hint: "Du har bjudit in sk\u00e4ttar online: po\u00e4ngen synkas i realtid p\u00e5 deras telefoner. Internetanslutning kr\u00e4vs.",
 train_double_confirm_label: "Kr\u00e4v dubbel bekr\u00e4ftelse av po\u00e4ng",
 train_double_confirm_hint: "Varje po\u00e4ng f\u00f6rblir \"v\u00e4ntande\" tills en annan deltagare i sessionen bekr\u00e4ftar den fr\u00e5n sin egen telefon. Om avst\u00e4ngd registreras po\u00e4ngen direkt, utan bekr\u00e4ftelse.",
+ot_map_label: "Plats på fältet (valfritt)", ot_map_hint: "Tryck på kartan för att markera den exakta platsen", ot_map_locate: "📍 Använd min plats", ot_msg_btn: "💬 Skriv till arrangören", ot_msg_title: "Meddelande till {name}", ot_msg_placeholder: "Skriv ett meddelande…", ot_msg_send: "Skicka", ot_msg_sent: "Skickat!", ot_msg_error: "Fel. Försök igen.", ot_msg_notif_title: "Nytt meddelande", ot_msg_notif_body: "{name}: {text}", ot_directions_btn: "🗺 Vägbeskrivning",
+ot_invite_label: "Bjud in bågskyttar (valfritt)", ot_invite_placeholder: "Sök på användarnamn…", ot_invite_added: "Inbjudna:", ot_notif_invite_title: "Träningsinbjudan", ot_notif_invite_body: "{name} bjuder in dig {date}{time} — {field}", ot_notif_join_title: "Ny deltagare", ot_notif_join_body: "{name} går med i din träning {date} — {field}",
 ot_section_title: "Öppna träningar", ot_section_hint: "Anslut till någon som tränar idag, eller lägg upp din.", ot_join_btn: "Gå med", ot_joined_label: "Anmäld ✔", ot_leave_btn: "Avboka", ot_full_label: "Fullt", ot_create_btn: "+ Annonsera träning", ot_create_title: "Annonsera öppen träning", ot_field_label: "Bana / fält", ot_field_placeholder: "T.ex. Röd bana Vignone", ot_date_label: "Datum", ot_time_label: "Tid", ot_spots_label: "Lediga platser (exkl. dig)", ot_note_label: "Anteckningar (valfritt)", ot_note_placeholder: "T.ex. vi tar med FIARC-material…", ot_save_btn: "Publicera", ot_cancel_btn: "Avbryt", ot_by: "av {name}", ot_spots_left: "{n} plats/platser kvar", ot_no_trainings: "Inga öppna träningar just nu. Var den första!", ot_delete_btn: "Ta bort", ot_confirm_delete: "Ta bort denna träning?",
 session_banner_title: "Delad session aktiv",
 session_banner_body: "{name} har startat en delad tr\u00e4ning.",
@@ -2851,6 +2875,8 @@ train_arrows_title: "Hoeveel pijlen per doel?", train_arrows_hint: "Van 1 tot 3 
 train_shared_title: "Gedeelde sessie", train_shared_hint: "Je hebt boogschutters online uitgenodigd: de scores worden in realtime gesynchroniseerd op hun telefoons. Internetverbinding vereist.",
 train_double_confirm_label: "Dubbele bevestiging van scores vereisen",
 train_double_confirm_hint: "Elke score blijft \"in afwachting\" totdat een andere deelnemer van de sessie deze vanaf zijn eigen telefoon bevestigt. Indien uitgeschakeld worden scores direct geregistreerd, zonder bevestiging.",
+ot_map_label: "Locatie op het veld (optioneel)", ot_map_hint: "Tik op de kaart om het exacte punt te markeren", ot_map_locate: "📍 Mijn locatie gebruiken", ot_msg_btn: "💬 Bericht aan organisator", ot_msg_title: "Bericht aan {name}", ot_msg_placeholder: "Schrijf een bericht…", ot_msg_send: "Verzenden", ot_msg_sent: "Verzonden!", ot_msg_error: "Fout. Probeer opnieuw.", ot_msg_notif_title: "Nieuw bericht", ot_msg_notif_body: "{name}: {text}", ot_directions_btn: "🗺 Route",
+ot_invite_label: "Boogschutters uitnodigen (optioneel)", ot_invite_placeholder: "Zoeken op gebruikersnaam…", ot_invite_added: "Uitgenodigd:", ot_notif_invite_title: "Trainingsuitnodiging", ot_notif_invite_body: "{name} nodigt u uit {date}{time} — {field}", ot_notif_join_title: "Nieuwe deelnemer", ot_notif_join_body: "{name} heeft zich aangesloten bij uw training {date} — {field}",
 ot_section_title: "Open trainingen", ot_section_hint: "Sluit aan bij iemand die vandaag traint, of kondig je eigen training aan.", ot_join_btn: "Doe mee", ot_joined_label: "Ingeschreven ✔", ot_leave_btn: "Afmelden", ot_full_label: "Vol", ot_create_btn: "+ Training aankondigen", ot_create_title: "Open training aankondigen", ot_field_label: "Veld / parcours", ot_field_placeholder: "Bijv. Rode baan Vignone", ot_date_label: "Datum", ot_time_label: "Tijd", ot_spots_label: "Beschikbare plaatsen (excl. jou)", ot_note_label: "Notities (optioneel)", ot_note_placeholder: "Bijv. we brengen FIARC-materiaal…", ot_save_btn: "Publiceren", ot_cancel_btn: "Annuleren", ot_by: "door {name}", ot_spots_left: "{n} plek(ken) vrij", ot_no_trainings: "Geen open trainingen nu. Wees de eerste!", ot_delete_btn: "Verwijderen", ot_confirm_delete: "Deze training verwijderen?",
 session_banner_title: "Gedeelde sessie actief",
 session_banner_body: "{name} is een gedeelde training gestart.",
@@ -3643,6 +3669,7 @@ case "admin": app.appendChild(adminScreen()); break;
 case "session-follow": app.appendChild(sessionFollowScreen()); break;
 case "open-training-create": app.appendChild(openTrainingCreateScreen()); break;
 case "field-report": app.appendChild(fieldReportScreen()); break;
+case "ot-chat": app.appendChild(otChatScreen()); break;
 case "diario": app.appendChild(diarioScreen()); break;
 case "round": app.appendChild(roundScreen()); break;
 case "summary": app.appendChild(summaryScreen()); break;
@@ -5132,8 +5159,10 @@ var taken = 1 + (ot.participantUids||[]).length;
 var full = taken >= total;
 var spotsLeft = total - taken;
 
+var isInvited = myUid && (ot.invitedUids||[]).indexOf(myUid) !== -1;
 var otRow = el(
 '<div style="padding:10px 0;border-bottom:1px solid var(--line);">'+
+(isInvited&&!joined?'<div style="font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:4px;">⭐ '+t("ot_invite_label").replace(" (opzionale)","").replace(" (optional)","").replace(" (optionnel)","").replace(" (optional)","").replace(" (isteğe bağlı)","").replace(" (необязательно)","").replace(" (opcional)","").replace(" (valfritt)","").replace(" (optioneel)","")+' ← tu</div>':'')+
 '<div style="font-weight:700;font-size:0.95rem;">'+escapeHtml(ot.field||"?")+'</div>'+
 '<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">'+escapeHtml(ot.date||"")+(ot.time?" · "+escapeHtml(ot.time):"")+'</div>'+
 '<div style="font-size:0.82rem;color:var(--muted);">'+t("ot_by",{name:escapeHtml(ot.ownerName||"?")})+'</div>'+
@@ -5153,7 +5182,11 @@ var ref = db.collection("open_trainings").doc(otId);
 if(isJoined){
 ref.update({ participantUids: firebase.firestore.FieldValue.arrayRemove(currentUser.uid), participants: firebase.firestore.FieldValue.arrayRemove({uid:currentUser.uid,name:selfName||currentUser.displayName||currentUser.email||"?"}) }).then(function(){ loadOpenTrainings(); }).catch(function(){});
 } else {
-ref.update({ participantUids: firebase.firestore.FieldValue.arrayUnion(currentUser.uid), participants: firebase.firestore.FieldValue.arrayUnion({uid:currentUser.uid,name:selfName||currentUser.displayName||currentUser.email||"?"}) }).then(function(){ loadOpenTrainings(); }).catch(function(){});
+var joinerName2 = selfName||currentUser.displayName||currentUser.email||"?";
+ref.update({ participantUids: firebase.firestore.FieldValue.arrayUnion(currentUser.uid), participants: firebase.firestore.FieldValue.arrayUnion({uid:currentUser.uid,name:joinerName2}) }).then(function(){
+ref.get().then(function(doc2){ if(doc2.exists){ var d2=doc2.data(); sendPushViaFirestore(d2.ownerUid, t("ot_notif_join_title"), t("ot_notif_join_body",{name:joinerName2,date:d2.date||"",field:d2.field||""})); } }).catch(function(){});
+loadOpenTrainings();
+}).catch(function(){});
 }
 });
 })(ot.id, joined);
@@ -5170,6 +5203,44 @@ db.collection("open_trainings").doc(otId).delete().then(function(){ loadOpenTrai
 })(ot.id);
 otRow.appendChild(delBtn);
 }
+
+// Pulsanti extra: mappa mini + indicazioni + messaggio
+var extraBtns = el('<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;"></div>');
+
+if(ot.lat && ot.lng){
+// Mappa mini inline con Leaflet
+var miniMapId = "ot-minimap-"+ot.id;
+var miniMapDiv = el('<div id="'+miniMapId+'" style="width:100%;height:160px;border-radius:10px;border:1px solid var(--line);margin-top:6px;z-index:0;"></div>');
+otRow.appendChild(miniMapDiv);
+(function(lat,lng,mapId){
+setTimeout(function(){
+if(typeof L === "undefined") return;
+var mm = L.map(mapId, { zoomControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false }).setView([lat,lng],15);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{ attribution:"© OSM", maxZoom:19 }).addTo(mm);
+L.marker([lat,lng]).addTo(mm);
+setTimeout(function(){ mm.invalidateSize(); },100);
+},0);
+})(ot.lat, ot.lng, miniMapId);
+
+var dirBtn = el('<button style="flex:1;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:0.82rem;cursor:pointer;">'+t("ot_directions_btn")+'</button>');
+(function(lat,lng){ dirBtn.addEventListener("click",function(){ window.open("https://www.google.com/maps/dir/?api=1&destination="+lat+","+lng,"_blank"); }); })(ot.lat,ot.lng);
+extraBtns.appendChild(dirBtn);
+}
+
+if(!isOwner && currentUser){
+var msgBtn = el('<button style="flex:1;padding:6px 10px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:0.82rem;cursor:pointer;font-weight:700;">'+t("ot_msg_btn")+'</button>');
+(function(otId, ownerName){
+msgBtn.addEventListener("click", function(){
+state.otChatId = otId;
+state.otChatOwnerName = ownerName;
+state.screen = "ot-chat";
+save(); render();
+});
+})(ot.id, ot.ownerName||"?");
+extraBtns.appendChild(msgBtn);
+}
+
+otRow.appendChild(extraBtns);
 otCard.appendChild(otRow);
 });
 }
@@ -6351,6 +6422,87 @@ return wrap;
 }
 
 
+// ── CHAT ALLENAMENTO APERTO ─────────────────────────────────────────────────
+function otChatScreen(){
+var otId = state.otChatId;
+var ownerName = state.otChatOwnerName || "?";
+var wrap = el('<div></div>');
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("ot_msg_title",{name:escapeHtml(ownerName)})+'</h2>'));
+
+var msgList = el('<div id="ot-chat-msgs" style="min-height:120px;max-height:300px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>');
+card.appendChild(msgList);
+
+function loadOtMsgs(){
+if(!db) return;
+db.collection("open_trainings").doc(otId).collection("messages")
+.orderBy("createdAt","asc").limit(50)
+.onSnapshot(function(snap){
+msgList.innerHTML = "";
+snap.forEach(function(doc){
+var d = doc.data();
+var isMine = currentUser && d.senderUid === currentUser.uid;
+var bubble = el(
+'<div style="display:flex;flex-direction:column;align-items:'+(isMine?"flex-end":"flex-start")+';">'+
+'<div style="font-size:0.72rem;color:var(--muted);margin-bottom:2px;">'+escapeHtml(d.senderName||"?")+'</div>'+
+'<div style="max-width:80%;background:'+(isMine?"var(--accent)":"var(--bg-panel-2)")+';color:'+(isMine?"#fff":"var(--cream)")+';border-radius:12px;padding:8px 12px;font-size:0.9rem;">'+escapeHtml(d.text||"")+'</div>'+
+'</div>'
+);
+msgList.appendChild(bubble);
+});
+msgList.scrollTop = msgList.scrollHeight;
+}, function(){});
+}
+setTimeout(loadOtMsgs, 0);
+
+var inputRow = el('<div style="display:flex;gap:8px;align-items:flex-end;"></div>');
+var textInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("ot_msg_placeholder"))+'" rows="2" style="flex:1;resize:none;"></textarea>');
+var sendBtn = el('<button class="btn btn-primary" style="padding:10px 16px;">'+t("ot_msg_send")+'</button>');
+inputRow.appendChild(textInp);
+inputRow.appendChild(sendBtn);
+card.appendChild(inputRow);
+
+var statusEl = el('<div style="font-size:0.8rem;margin-top:6px;min-height:18px;"></div>');
+card.appendChild(statusEl);
+
+sendBtn.addEventListener("click", function(){
+var txt = textInp.value.trim();
+if(!txt || !db || !currentUser) return;
+sendBtn.disabled = true;
+var senderName = selfName || currentUser.displayName || currentUser.email || "?";
+db.collection("open_trainings").doc(otId).collection("messages").add({
+senderUid: currentUser.uid,
+senderName: senderName,
+text: txt,
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}).then(function(){
+textInp.value = "";
+sendBtn.disabled = false;
+// Notifica push al proprietario (se non sono io il proprietario)
+db.collection("open_trainings").doc(otId).get().then(function(doc){
+if(doc.exists && doc.data().ownerUid !== currentUser.uid){
+sendPushViaFirestore(doc.data().ownerUid,
+t("ot_msg_notif_title"),
+t("ot_msg_notif_body",{name:senderName, text:txt.substring(0,60)})
+);
+}
+}).catch(function(){});
+}).catch(function(){
+sendBtn.disabled = false;
+statusEl.style.color = "var(--danger)";
+statusEl.textContent = t("ot_msg_error");
+});
+});
+
+var backBtn = el('<button class="btn btn-block" style="background:var(--bg-panel-2);margin-top:10px;">← '+t("ot_cancel_btn")+'</button>');
+backBtn.addEventListener("click", function(){ state.screen="menu"; save(); render(); });
+card.appendChild(backBtn);
+
+wrap.appendChild(card);
+return wrap;
+}
+
+
 // ── ALLENAMENTI APERTI ──────────────────────────────────────────────────────
 var openTrainings = [];
 var OT_MAX_AGE_MS = 24 * 60 * 60 * 1000; // spariscono dopo 24h dalla data/ora
@@ -6378,6 +6530,48 @@ render();
 }).catch(function(){ openTrainings = []; });
 }
 
+// ── PUSH NOTIFICATIONS via Firestore (senza Cloud Functions) ────────────────
+// Scrive un doc in notifications/{uid}/items/{id}
+// Il listener startNotificationsListener() lo intercetta e mostra la push locale
+function sendPushViaFirestore(toUid, title, body){
+if(!db || !toUid) return;
+db.collection("notifications").doc(toUid).collection("items").add({
+title: title,
+body: body,
+read: false,
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}).catch(function(){});
+}
+
+var notificationsListenerStarted = false;
+function startNotificationsListener(){
+if(notificationsListenerStarted || !db || !currentUser) return;
+notificationsListenerStarted = true;
+var myNotifsRef = db.collection("notifications").doc(currentUser.uid).collection("items")
+.where("read","==",false).orderBy("createdAt","desc").limit(10);
+myNotifsRef.onSnapshot(function(snap){
+snap.docChanges().forEach(function(change){
+if(change.type !== "added") return;
+var d = change.doc.data();
+// Mostra notifica push locale se il browser/SW lo supporta
+if(Notification && Notification.permission === "granted"){
+navigator.serviceWorker.getRegistration().then(function(reg){
+if(reg){
+reg.showNotification(d.title||"ArcTrail 3D", { body: d.body||"", icon: "/icon-192.png", badge: "/icon-192.png" });
+} else {
+new Notification(d.title||"ArcTrail 3D", { body: d.body||"", icon: "/icon-192.png" });
+}
+}).catch(function(){
+try{ new Notification(d.title||"ArcTrail 3D", { body: d.body||"", icon: "/icon-192.png" }); }catch(e){}
+});
+}
+// Marca come letta dopo 3s
+setTimeout(function(){ change.doc.ref.update({read:true}).catch(function(){}); }, 3000);
+});
+}, function(){});
+}
+
+
 function openTrainingCreateScreen(){
 var wrap = el('<div></div>');
 var card = el('<div class="card"></div>');
@@ -6387,6 +6581,44 @@ card.appendChild(el('<h2 class="section-title">'+t("ot_create_title")+'</h2>'));
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_field_label")+'</label>'));
 var fieldInp = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("ot_field_placeholder"))+'" style="margin-bottom:12px;">');
 card.appendChild(fieldInp);
+
+// Mappa OpenStreetMap per posizione campo
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_map_label")+'</label>'));
+card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px;">'+t("ot_map_hint")+'</div>'));
+var mapContainer = el('<div id="ot-create-map" style="height:220px;border-radius:12px;border:1px solid var(--line);margin-bottom:6px;z-index:0;"></div>');
+card.appendChild(mapContainer);
+var locateBtn = el('<button type="button" class="btn btn-ghost btn-block" style="margin-bottom:12px;font-size:0.85rem;">'+t("ot_map_locate")+'</button>');
+card.appendChild(locateBtn);
+
+var otLat = null, otLng = null, otMap = null, otMarker = null;
+
+setTimeout(function(){
+if(typeof L === "undefined") return;
+otMap = L.map("ot-create-map", { zoomControl: true }).setView([45.9, 8.2], 8);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+maxZoom: 19
+}).addTo(otMap);
+otMap.on("click", function(e){
+otLat = e.latlng.lat; otLng = e.latlng.lng;
+if(otMarker) otMarker.setLatLng(e.latlng);
+else otMarker = L.marker(e.latlng).addTo(otMap);
+});
+// fix Leaflet in contenitori nascosti
+setTimeout(function(){ otMap.invalidateSize(); }, 100);
+}, 0);
+
+locateBtn.addEventListener("click", function(){
+if(!navigator.geolocation){ return; }
+navigator.geolocation.getCurrentPosition(function(pos){
+otLat = pos.coords.latitude; otLng = pos.coords.longitude;
+if(otMap){
+otMap.setView([otLat, otLng], 15);
+if(otMarker) otMarker.setLatLng([otLat, otLng]);
+else otMarker = L.marker([otLat, otLng]).addTo(otMap);
+}
+}, function(){});
+});
 
 // Data
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_date_label")+'</label>'));
@@ -6418,6 +6650,57 @@ card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:
 var noteInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("ot_note_placeholder"))+'" rows="2" style="margin-bottom:16px;resize:none;"></textarea>');
 card.appendChild(noteInp);
 
+// Inviti nominativi
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_invite_label")+'</label>'));
+var inviteWrap = el('<div style="margin-bottom:16px;"></div>');
+var inviteSearch = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("ot_invite_placeholder"))+'" style="margin-bottom:6px;">');
+var inviteResults = el('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;"></div>');
+var inviteChips = el('<div style="display:flex;flex-wrap:wrap;gap:6px;"></div>');
+inviteWrap.appendChild(inviteSearch);
+inviteWrap.appendChild(inviteResults);
+inviteWrap.appendChild(inviteChips);
+card.appendChild(inviteWrap);
+
+var invitedUsers = []; // [{uid, username, nomeCognome}]
+
+function renderInviteChips(){
+inviteChips.innerHTML = "";
+if(invitedUsers.length === 0) return;
+var lbl = el('<span style="font-size:0.8rem;color:var(--muted);">'+t("ot_invite_added")+'</span>');
+inviteChips.appendChild(lbl);
+invitedUsers.forEach(function(u, idx){
+var chip = el('<span style="display:inline-flex;align-items:center;gap:4px;background:var(--accent);color:#fff;border-radius:999px;padding:3px 10px;font-size:0.82rem;">@'+escapeHtml(u.username)+'<button style="background:none;border:none;color:#fff;cursor:pointer;font-size:1rem;padding:0;line-height:1;">×</button></span>');
+chip.querySelector("button").addEventListener("click", function(){ invitedUsers.splice(idx,1); renderInviteChips(); });
+inviteChips.appendChild(chip);
+});
+}
+
+var approvedUsersForInvite = null;
+function loadApprovedUsersForInvite(cb){
+if(approvedUsersForInvite){ cb(approvedUsersForInvite); return; }
+if(!db){ cb([]); return; }
+db.collection("users").where("approved","==",true).get().then(function(snap){
+var list = [];
+snap.forEach(function(doc){ var d=doc.data(); if(d.username && doc.id !== (currentUser&&currentUser.uid)){ list.push({uid:doc.id,username:d.username,nomeCognome:d.nomeCognome||""}); } });
+approvedUsersForInvite = list; cb(list);
+}).catch(function(){ cb([]); });
+}
+
+inviteSearch.addEventListener("input", function(){
+var q = inviteSearch.value.trim().toLowerCase();
+inviteResults.innerHTML = "";
+if(!q || q.length < 2) return;
+loadApprovedUsersForInvite(function(list){
+var matches = list.filter(function(u){ return u.username.toLowerCase().indexOf(q) !== -1 && !invitedUsers.find(function(i){ return i.uid===u.uid; }); }).slice(0,5);
+if(matches.length === 0){ inviteResults.appendChild(el('<span style="font-size:0.8rem;color:var(--muted);">'+t("search_username_empty")+'</span>')); return; }
+matches.forEach(function(u){
+var chip = el('<button style="background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:8px;padding:4px 10px;font-size:0.82rem;cursor:pointer;">@'+escapeHtml(u.username)+(u.nomeCognome?" · "+escapeHtml(u.nomeCognome):"")+'</button>');
+chip.addEventListener("click", function(){ invitedUsers.push(u); inviteSearch.value=""; inviteResults.innerHTML=""; renderInviteChips(); });
+inviteResults.appendChild(chip);
+});
+});
+});
+
 // Pulsanti
 var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-bottom:10px;">'+t("ot_save_btn")+'</button>');
 saveBtn.addEventListener("click", function(){
@@ -6425,6 +6708,7 @@ if(!fieldInp.value.trim()){ fieldInp.focus(); return; }
 if(!dateInp.value){ dateInp.focus(); return; }
 if(!db || !currentUser) return;
 var datetime = new Date(dateInp.value + (timeInp.value ? "T"+timeInp.value : "T00:00")).getTime();
+var invitedUids = invitedUsers.map(function(u){ return u.uid; });
 db.collection("open_trainings").add({
 ownerUid: currentUser.uid,
 ownerName: selfName || currentUser.displayName || currentUser.email || "?",
@@ -6434,11 +6718,23 @@ time: timeInp.value,
 datetime: datetime,
 spots: spotsVal,
 note: noteInp.value.trim(),
+invitedUids: invitedUids,
+lat: otLat,
+lng: otLng,
 participantUids: [],
 participants: [],
 status: "active",
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }).then(function(){
+// Manda notifica push a ogni invitato
+var myName = selfName || (currentUser && (currentUser.displayName||currentUser.email)) || "?";
+var timeStr = timeInp.value ? " alle "+timeInp.value : "";
+invitedUsers.forEach(function(u){
+sendPushViaFirestore(u.uid,
+t("ot_notif_invite_title"),
+t("ot_notif_invite_body",{name:myName, date:dateInp.value, time:timeStr, field:fieldInp.value.trim()})
+);
+});
 state.screen = "menu";
 save(); loadOpenTrainings(); render();
 }).catch(function(err){ alert(err && err.message ? err.message : "Errore"); });
