@@ -5039,7 +5039,9 @@ escapeHtml(fedNome)+'<span style="color:var(--muted);font-weight:400;">&middot;<
 
 (incomingSessions||[]).forEach(function(sess){
 var sessBanner = el(
-'<div class="resume-banner" style="border-color:var(--accent);"><div style="font-weight:800;">'+t("session_banner_title")+'</div>'+
+'<div class="resume-banner" style="border-color:var(--accent);position:relative;">'+
+'<button id="dismissBtn_'+sess.id+'" style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1;padding:0;">&#x2715;</button>'+
+'<div style="font-weight:800;">'+t("session_banner_title")+'</div>'+
 '<div style="font-size:0.85rem;margin-top:4px;">'+t("session_banner_body",{name:escapeHtml(sess.ownerName||"?")})+'</div>'+
 '<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="followBtn_'+sess.id+'">'+t("session_banner_btn")+'</button></div></div>'
 );
@@ -5051,6 +5053,11 @@ stopFollowingSession();
 state.followSessionId = sess.id;
 state.screen = "session-follow";
 save(); render();
+});
+var dis = document.getElementById("dismissBtn_"+sess.id);
+if(dis) dis.addEventListener("click", function(){
+dismissedSessions[sess.id] = true;
+render();
 });
 },0);
 });
@@ -5660,6 +5667,17 @@ var sessListWrap = el('<div id="adminSessListWrap"><div style="font-size:0.85rem
 sessCard.appendChild(sessListWrap);
 wrap.appendChild(sessCard);
 
+var closeAllBtn = el('<button class="btn" style="width:100%;margin-bottom:10px;background:var(--danger);color:#fff;font-size:0.85rem;">&#128465; Chiudi tutte le sessioni attive</button>');
+closeAllBtn.addEventListener("click", function(){
+if(!confirm("Chiudere TUTTE le sessioni attive?")) return;
+db.collection("sessions").where("status","==","active").get().then(function(snap){
+var batch = db.batch();
+snap.forEach(function(doc){ batch.update(doc.ref, { status:"closed", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); });
+return batch.commit();
+}).then(function(){ incomingSessions = []; dismissedSessions = {}; loadSessions(); render(); }).catch(function(err){ alert("Errore: "+(err&&err.message?err.message:err)); });
+});
+sessCard.appendChild(closeAllBtn);
+
 function loadSessions(){
 db.collection("sessions").where("status","==","active").get().then(function(snap){
 sessListWrap.innerHTML = "";
@@ -5679,9 +5697,21 @@ var row = el(
 '</div>'
 );
 sessListWrap.appendChild(row);
+var closeBtn = el('<button style="margin-top:4px;background:var(--danger);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:0.8rem;cursor:pointer;">Chiudi sessione</button>');
+(function(docRef, docId){
+closeBtn.addEventListener("click", function(){
+docRef.update({status:"closed", updatedAt: firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
+incomingSessions = incomingSessions.filter(function(s){ return s.id !== docId; });
+dismissedSessions[docId] = true;
+loadSessions(); render();
+}).catch(function(){});
+});
+})(doc.ref, doc.id);
+row.appendChild(closeBtn);
+sessListWrap.appendChild(row);
 });
 }).catch(function(err){
-sessListWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
+sessListWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err&&err.message?err.message:"Errore")+'</div>';
 });
 }
 setTimeout(loadSessions, 0);
@@ -6152,7 +6182,9 @@ db.collection("sessions").doc(state.sessionId).update({ status:"closed", updated
 }
 
 var incomingSessions = [];
+var dismissedSessions = {};
 var sessionsListenerStarted = false;
+var SESSION_MAX_AGE_MS = 8 * 60 * 60 * 1000;
 function startIncomingSessionsListener(){
 if(sessionsListenerStarted || DEV_MODE || !db || !currentUser) return;
 sessionsListenerStarted = true;
@@ -6161,9 +6193,17 @@ db.collection("sessions")
 .where("status", "==", "active")
 .onSnapshot(function(snap){
 var list = [];
+var now = Date.now();
 snap.forEach(function(doc){
 var d = doc.data();
-if(d.ownerUid !== currentUser.uid){ d.id = doc.id; list.push(d); }
+if(d.ownerUid === currentUser.uid) return;
+if(dismissedSessions[doc.id]) return;
+var age = d.createdAt && d.createdAt.toMillis ? (now - d.createdAt.toMillis()) : 0;
+if(age > SESSION_MAX_AGE_MS){
+doc.ref.update({ status:"closed", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(function(){});
+return;
+}
+d.id = doc.id; list.push(d);
 });
 incomingSessions = list;
 render();
