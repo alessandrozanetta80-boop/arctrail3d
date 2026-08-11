@@ -6618,7 +6618,7 @@ card.appendChild(status);
 
 var sendBtn = el('<button class="btn btn-danger btn-block" style="margin-bottom:10px;">'+t("fr_report_send")+'</button>');
 sendBtn.addEventListener("click", function(){
-if(!fieldInp.value.trim()){ fieldInp.focus(); return; }
+if(!fieldInp.value.trim()){ fieldSearchInp.focus(); return; }
 if(!descInp.value.trim()){ descInp.focus(); return; }
 if(!db || !currentUser){ status.textContent = t("fr_report_error"); return; }
 sendBtn.disabled = true;
@@ -6807,11 +6807,79 @@ var wrap = el('<div></div>');
 var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("ot_create_title")+'</h2>'));
 
-// Campo testo libero — precompilato se arriva da "Allena qui"
+// Selezione campo
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_field_label")+'</label>'));
-var fieldInp = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("ot_field_placeholder"))+'" style="margin-bottom:12px;">');
-if(state.otPrecompile && state.otPrecompile.field){ fieldInp.value = state.otPrecompile.field; state.otPrecompile = null; }
+
+var fieldSelectedDiv = el('<div style="display:none;background:var(--accent);color:#fff;border-radius:10px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"></div>');
+var fieldSelectedName = el('<span style="font-weight:700;font-size:0.95rem;"></span>');
+var fieldClearBtn = el('<button style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;">×</button>');
+fieldSelectedDiv.appendChild(fieldSelectedName);
+fieldSelectedDiv.appendChild(fieldClearBtn);
+fieldSelectedDiv.style.display = "none";
+card.appendChild(fieldSelectedDiv);
+
+var fieldSearchInp = el('<input type="text" class="input-field" placeholder="🔍 '+escapeHtml(t("campi_filter_placeholder"))+'" style="margin-bottom:6px;">');
+card.appendChild(fieldSearchInp);
+var fieldListDiv = el('<div style="max-height:200px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;display:none;"></div>');
+card.appendChild(fieldListDiv);
+
+// Campo testo libero nascosto (valore reale)
+var fieldInp = el('<input type="text" style="display:none;">');
 card.appendChild(fieldInp);
+
+// Precompilato da "Allena qui"
+if(state.otPrecompile && state.otPrecompile.field){
+fieldInp.value = state.otPrecompile.field;
+fieldSelectedName.textContent = state.otPrecompile.field;
+fieldSelectedDiv.style.display = "flex";
+fieldSearchInp.style.display = "none";
+fieldListDiv.style.display = "none";
+state.otPrecompile = null;
+}
+
+fieldClearBtn.addEventListener("click", function(){
+fieldInp.value = "";
+fieldSelectedDiv.style.display = "none";
+fieldSearchInp.style.display = "";
+fieldSearchInp.value = "";
+fieldListDiv.style.display = "none";
+fieldSearchInp.focus();
+});
+
+function renderFieldList(q){
+fieldListDiv.innerHTML = "";
+if(!q || q.length < 1){ fieldListDiv.style.display = "none"; return; }
+var matches = [];
+if(typeof COMPAGNIE !== "undefined"){
+Object.keys(COMPAGNIE).forEach(function(cod){
+var c = COMPAGNIE[cod];
+if(!compagniaFederazioneOk(cod)) return;
+var label = c.nome + (c.luogo ? " — " + c.luogo : "");
+if(label.toLowerCase().indexOf(q.toLowerCase()) !== -1) matches.push({ label:label, cod:cod });
+});
+}
+if(matches.length === 0){
+fieldListDiv.appendChild(el('<div style="padding:10px;font-size:0.85rem;color:var(--muted);">'+t("search_username_empty")+'</div>'));
+fieldListDiv.style.display = "block";
+return;
+}
+matches.slice(0,30).forEach(function(m){
+var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:0.88rem;cursor:pointer;">'+escapeHtml(m.label)+'</div>');
+row.addEventListener("click", function(){
+fieldInp.value = m.label;
+fieldSelectedName.textContent = m.label;
+fieldSelectedDiv.style.display = "flex";
+fieldSearchInp.style.display = "none";
+fieldListDiv.style.display = "none";
+fieldSearchInp.value = "";
+});
+fieldListDiv.appendChild(row);
+});
+fieldListDiv.style.display = "block";
+}
+
+fieldSearchInp.addEventListener("input", function(){ renderFieldList(fieldSearchInp.value.trim()); });
+fieldSearchInp.addEventListener("focus", function(){ if(fieldSearchInp.value) renderFieldList(fieldSearchInp.value); });
 
 var otLat = null, otLng = null;
 
