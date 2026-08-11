@@ -6967,9 +6967,10 @@ inviteResults.appendChild(chip);
 // Pulsanti
 var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-bottom:10px;">'+t("ot_save_btn")+'</button>');
 saveBtn.addEventListener("click", function(){
-if(!fieldInp.value.trim()){ fieldInp.focus(); return; }
-if(!dateInp.value){ dateInp.focus(); return; }
+if(!fieldInp.value.trim()){ fieldSearchInp.style.border="2px solid var(--danger)"; fieldSearchInp.focus(); return; }
+if(!dateInp.value){ dateInp.style.border="2px solid var(--danger)"; dateInp.focus(); return; }
 if(!db || !currentUser) return;
+saveBtn.disabled = true;
 var datetime = new Date(dateInp.value + (timeInp.value ? "T"+timeInp.value : "T00:00")).getTime();
 var invitedUids = invitedUsers.map(function(u){ return u.uid; });
 db.collection("open_trainings").add({
@@ -6998,9 +6999,10 @@ t("ot_notif_invite_title"),
 t("ot_notif_invite_body",{name:myName, date:dateInp.value, time:timeStr, field:fieldInp.value.trim()})
 );
 });
+saveBtn.disabled = false;
 state.screen = "menu";
 save(); loadOpenTrainings(); render();
-}).catch(function(err){ alert(err && err.message ? err.message : "Errore"); });
+}).catch(function(err){ console.error("OT save error:", err); alert("Errore salvataggio: " + (err && err.message ? err.message : JSON.stringify(err))); saveBtn.disabled = false; });
 });
 card.appendChild(saveBtn);
 
