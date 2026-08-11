@@ -46,8 +46,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js" defer></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin=""/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin=""></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBNik3D5AIwZjsHeCLAZzSly_jARI1j-IY&libraries=places&language=it" defer></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
@@ -5304,19 +5303,20 @@ otRow.appendChild(delBtn);
 var extraBtns = el('<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;"></div>');
 
 if(ot.lat && ot.lng){
-// Mappa mini inline con Leaflet
 var miniMapId = "ot-minimap-"+ot.id;
-var miniMapDiv = el('<div id="'+miniMapId+'" style="width:100%;height:160px;border-radius:10px;border:1px solid var(--line);margin-top:6px;z-index:0;"></div>');
+var miniMapDiv = el('<div id="'+miniMapId+'" style="width:100%;height:160px;border-radius:10px;border:1px solid var(--line);margin-top:6px;overflow:hidden;"></div>');
 otRow.appendChild(miniMapDiv);
 (function(lat,lng,mapId){
 setTimeout(function(){
-if(typeof L === "undefined") return;
-var mm = L.map(mapId, { zoomControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false }).setView([lat,lng],15);
-L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{ attribution:"© OSM © CARTO", maxZoom:19, subdomains:"abcd" }).addTo(mm);
-L.marker([lat,lng]).addTo(mm);
-setTimeout(function(){ mm.invalidateSize(); }, 300);
-setTimeout(function(){ mm.invalidateSize(); }, 800);
-},0);
+if(typeof google === "undefined" || !google.maps) return;
+var mm = new google.maps.Map(document.getElementById(mapId), {
+center:{lat:lat,lng:lng}, zoom:15,
+mapTypeId:"satellite",
+disableDefaultUI:true,
+gestureHandling:"none"
+});
+new google.maps.Marker({ position:{lat:lat,lng:lng}, map:mm });
+},300);
 })(ot.lat, ot.lng, miniMapId);
 
 var dirBtn = el('<button style="flex:1;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:0.82rem;cursor:pointer;">'+t("ot_directions_btn")+'</button>');
@@ -5704,23 +5704,39 @@ var admLat = adminMap[codice] && adminMap[codice].lat ? adminMap[codice].lat : n
 var admLng = adminMap[codice] && adminMap[codice].lng ? adminMap[codice].lng : null;
 var admMap = null, admMarker = null;
 
+// Ricerca indirizzo per la mappa admin
+var admAddrInp = el('<input type="text" class="input-field" placeholder="🔍 Cerca indirizzo campo..." style="margin-bottom:6px;">');
+adminCard.appendChild(admAddrInp);
+
 setTimeout(function(){
-if(typeof L === "undefined") return;
-var startLat = admLat || 45.9, startLng = admLng || 8.2, startZoom = admLat ? 15 : 8;
-admMap = L.map(admMapId, { zoomControl: true }).setView([startLat, startLng], startZoom);
-L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-{ attribution:"© OSM © CARTO", maxZoom:19, subdomains:"abcd" }).addTo(admMap);
-if(admLat && admLng){
-admMarker = L.marker([admLat, admLng]).addTo(admMap);
-}
-admMap.on("click", function(e){
-admLat = e.latlng.lat; admLng = e.latlng.lng;
-if(admMarker) admMarker.setLatLng(e.latlng);
-else admMarker = L.marker(e.latlng).addTo(admMap);
+if(typeof google === "undefined" || !google.maps) return;
+var startLat = admLat || 45.9, startLng = admLng || 8.2, startZoom = admLat ? 16 : 8;
+admMap = new google.maps.Map(document.getElementById(admMapId), {
+center:{lat:startLat, lng:startLng}, zoom:startZoom,
+mapTypeId:"satellite",
+mapTypeControl:false, streetViewControl:false, fullscreenControl:false
 });
-setTimeout(function(){ admMap.invalidateSize(); }, 300);
-setTimeout(function(){ admMap.invalidateSize(); }, 800);
-}, 0);
+if(admLat && admLng){
+admMarker = new google.maps.Marker({ position:{lat:admLat,lng:admLng}, map:admMap, animation:google.maps.Animation.DROP });
+}
+admMap.addListener("click", function(e){
+admLat = e.latLng.lat(); admLng = e.latLng.lng();
+if(admMarker) admMarker.setPosition(e.latLng);
+else admMarker = new google.maps.Marker({ position:e.latLng, map:admMap, animation:google.maps.Animation.DROP });
+});
+// Autocomplete indirizzo
+var admAc = new google.maps.places.Autocomplete(admAddrInp, { types:["geocode","establishment"] });
+admAc.bindTo("bounds", admMap);
+admAc.addListener("place_changed", function(){
+var place = admAc.getPlace();
+if(!place.geometry) return;
+admMap.setCenter(place.geometry.location);
+admMap.setZoom(18);
+admLat = place.geometry.location.lat(); admLng = place.geometry.location.lng();
+if(admMarker) admMarker.setPosition(place.geometry.location);
+else admMarker = new google.maps.Marker({ position:place.geometry.location, map:admMap, animation:google.maps.Animation.DROP });
+});
+}, 300);
 
 var admLocBtn = el('<button class="btn btn-ghost btn-block" style="margin-bottom:6px;font-size:0.85rem;">'+t("cp_admin_map_locate")+'</button>');
 admLocBtn.addEventListener("click", function(){
@@ -5730,9 +5746,10 @@ navigator.geolocation.getCurrentPosition(function(pos){
 admLat = pos.coords.latitude; admLng = pos.coords.longitude;
 admLocBtn.textContent = t("cp_admin_map_locate"); admLocBtn.disabled = false;
 if(admMap){
-admMap.setView([admLat,admLng],15);
-if(admMarker) admMarker.setLatLng([admLat,admLng]);
-else admMarker = L.marker([admLat,admLng]).addTo(admMap);
+var ll = new google.maps.LatLng(admLat, admLng);
+admMap.setCenter(ll); admMap.setZoom(17);
+if(admMarker) admMarker.setPosition(ll);
+else admMarker = new google.maps.Marker({ position:ll, map:admMap, animation:google.maps.Animation.DROP });
 }
 }, function(){ admLocBtn.disabled=false; admLocBtn.textContent=t("cp_admin_map_locate"); }, { enableHighAccuracy:true, timeout:10000 });
 });
@@ -6804,10 +6821,14 @@ card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:
 var fieldInp = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("ot_field_placeholder"))+'" style="margin-bottom:12px;">');
 card.appendChild(fieldInp);
 
-// Mappa OpenStreetMap per posizione campo
+// Mappa Google Maps per posizione campo
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_map_label")+'</label>'));
-card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px;">'+t("ot_map_hint")+'</div>'));
-var mapContainer = el('<div id="ot-create-map" style="height:220px;border-radius:12px;border:1px solid var(--line);margin-bottom:6px;z-index:0;"></div>');
+
+// Barra ricerca indirizzo
+var addrInp = el('<input type="text" class="input-field" placeholder="🔍 Cerca indirizzo o nome campo..." style="margin-bottom:6px;">');
+card.appendChild(addrInp);
+
+var mapContainer = el('<div id="ot-create-map" style="height:240px;border-radius:12px;border:1px solid var(--line);margin-bottom:6px;overflow:hidden;"></div>');
 card.appendChild(mapContainer);
 var locateBtn = el('<button type="button" class="btn btn-ghost btn-block" style="margin-bottom:12px;font-size:0.85rem;">'+t("ot_map_locate")+'</button>');
 card.appendChild(locateBtn);
@@ -6815,65 +6836,80 @@ card.appendChild(locateBtn);
 var otLat = null, otLng = null, otMap = null, otMarker = null;
 
 setTimeout(function(){
-if(typeof L === "undefined") return;
-otMap = L.map("ot-create-map", { zoomControl: true }).setView([45.9, 8.2], 8);
-var tileUrl = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
-var tileAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>';
-L.tileLayer(tileUrl, { attribution: tileAttr, maxZoom: 19, subdomains: "abcd" }).addTo(otMap);
-
-// Icona campo tiro (verde, diversa dal pin utente)
-var campIcon = L.divIcon({
-className: "",
-html: '<div style="background:var(--accent);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.4);">🏹</div>',
-iconSize: [28,28], iconAnchor: [14,14], popupAnchor: [0,-14]
+if(typeof google === "undefined" || !google.maps) return;
+otMap = new google.maps.Map(document.getElementById("ot-create-map"), {
+center:{lat:45.9, lng:8.2}, zoom:8,
+mapTypeId:"satellite",
+mapTypeControl:false,
+streetViewControl:false,
+fullscreenControl:false
 });
 
-// Carica compagnie vicine via Nominatim geocoding
+// Marker compagnie dal database locale
 if(typeof COMPAGNIE !== "undefined"){
-var campiDaGeocod = [];
+var geocoder = new google.maps.Geocoder();
+var campiList = [];
 Object.keys(COMPAGNIE).forEach(function(cod){
 var c = COMPAGNIE[cod];
-if(c.luogo) campiDaGeocod.push({ cod: cod, nome: c.nome, luogo: c.luogo, query: c.luogo + ", Italia" });
+if(c.luogo) campiList.push({ cod:cod, nome:c.nome, luogo:c.luogo });
 });
-// Geocodifico a batch di 3 con delay per rispettare rate-limit Nominatim (1 req/sec)
-var geoIdx = 0;
-function geocodNext(){
-if(geoIdx >= campiDaGeocod.length || !otMap) return;
-var item = campiDaGeocod[geoIdx++];
-fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&q="+encodeURIComponent(item.query), {
-headers: { "Accept-Language": "it", "User-Agent": "ArcTrail3D/1.0" }
-}).then(function(r){ return r.json(); }).then(function(res){
-if(res && res[0] && otMap){
-var lat = parseFloat(res[0].lat), lng = parseFloat(res[0].lon);
-var m = L.marker([lat,lng], { icon: campIcon }).addTo(otMap);
-(function(mlat,mlng,mnome,mluogo){
-m.on("click", function(){
+var gi = 0;
+function geocodGMaps(){
+if(gi >= campiList.length || !otMap) return;
+var item = campiList[gi++];
+geocoder.geocode({ address: item.luogo+", Italia", region:"IT" }, function(res, status){
+if(status === "OK" && otMap){
+var pos = res[0].geometry.location;
+var m = new google.maps.Marker({
+position: pos,
+map: otMap,
+title: item.nome,
+icon: { path: google.maps.SymbolPath.CIRCLE, scale:10, fillColor:"#2E7D32", fillOpacity:1, strokeColor:"#fff", strokeWeight:2 }
+});
+var iw = new google.mInfoWindow({ content: "<b>"+item.nome+"</b><br><small>"+item.luogo+"</small>" });
+(function(mlat,mlng,minfo){
+m.addListener("click", function(){
 otLat = mlat; otLng = mlng;
-if(otMarker) otMarker.setLatLng([mlat,mlng]);
-else otMarker = L.marker([mlat,mlng]).addTo(otMap);
-otMap.setView([mlat,mlng], 15);
+if(otMarker) otMarker.setPosition({lat:mlat,lng:mlng});
+else otMarker = new google.maps.Marker({ position:{lat:mlat,lng:mlng}, map:otMap, animation:google.maps.Animation.DROP });
+minfo.open(otMap, m);
 });
-m.bindTooltip("<b>"+mnome+"</b><br><small>"+mluogo+"</small><br><i style='font-size:0.8em'>Tocca per selezionare</i>", { direction:"top", opacity:0.95 });
-})(lat, lng, item.nome, item.luogo);
+})(pos.lat(), pos.lng(), iw);
 }
-setTimeout(geocodNext, 1200); // rispetta 1 req/sec Nominatim
-}).catch(function(){ setTimeout(geocodNext, 1200); });
+setTimeout(geocodGMaps, 300);
+});
 }
-setTimeout(geocodNext, 500);
+setTimeout(geocodGMaps, 500);
 }
 
-otMap.on("click", function(e){
-otLat = e.latlng.lat; otLng = e.latlng.lng;
-if(otMarker) otMarker.setLatLng(e.latlng);
-else otMarker = L.marker(e.latlng).addTo(otMap);
+// Tocca mappa per posizionare pin
+otMap.addListener("click", function(e){
+otLat = e.latLng.lat(); otLng = e.latLng.lng();
+if(otMarker) otMarker.setPosition(e.latLng);
+else otMarker = new google.maps.Marker({ position:e.latLng, map:otMap, animation:google.maps.Animation.DROP });
 });
-setTimeout(function(){ otMap.invalidateSize(); }, 300);
-setTimeout(function(){ otMap.invalidateSize(); }, 800);
-}, 0);
+
+// Autocomplete indirizzo
+var ac = new google.maps.places.Autocomplete(addrInp, { types:["geocode","establishment"], componentRestrictions:{country:"it"} });
+ac.bindTo("bounds", otMap);
+ac.addListener("place_changed", function(){
+var place = ac.getPlace();
+if(!place.geometry) return;
+otMap.setCenter(place.geometry.location);
+otMap.setZoom(17);
+otLat = place.geometry.location.lat(); otLng = place.geometry.location.lng();
+if(otMarker) otMarker.setPosition(place.geometry.location);
+else otMarker = new google.maps.Marker({ position:place.geometry.location, map:otMap, animation:google.maps.Animation.DROP });
+});
+}, 300);
+
+// Pulsante nascosto per selezione marker campo
+var hiddenSelectBtn = el('<button id="ot-select-camp" style="display:none;"></button>');
+card.appendChild(hiddenSelectBtn);
 
 locateBtn.addEventListener("click", function(){
 if(!navigator.geolocation){
-locateBtn.textContent = "⚠️ Geolocalizzazione non disponibile su questo browser";
+locateBtn.textContent = "⚠️ Non disponibile";
 return;
 }
 locateBtn.textContent = "⏳ Ricerca posizione…";
@@ -6883,15 +6919,16 @@ otLat = pos.coords.latitude; otLng = pos.coords.longitude;
 locateBtn.textContent = "✅ Posizione trovata";
 locateBtn.disabled = false;
 if(otMap){
-otMap.setView([otLat, otLng], 15);
-if(otMarker) otMarker.setLatLng([otLat, otLng]);
-else otMarker = L.marker([otLat, otLng]).addTo(otMap);
+var latlng = new google.maps.LatLng(otLat, otLng);
+otMap.setCenter(latlng); otMap.setZoom(17);
+if(otMarker) otMarker.setPosition(latlng);
+else otMarker = new google.maps.Marker({ position:latlng, map:otMap, animation:google.maps.Animation.DROP });
 }
-}, function(err){
+}, function(){
 locateBtn.disabled = false;
-locateBtn.textContent = "⚠️ Permesso negato — abilita la posizione nelle impostazioni";
+locateBtn.textContent = "⚠️ Permesso negato";
 setTimeout(function(){ locateBtn.textContent = t("ot_map_locate"); }, 3000);
-}, { enableHighAccuracy: true, timeout: 10000 });
+}, { enableHighAccuracy:true, timeout:10000 });
 });
 
 // Data
