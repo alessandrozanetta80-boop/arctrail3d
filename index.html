@@ -6885,15 +6885,15 @@ var otLat = null, otLng = null;
 
 // Data
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_date_label")+'</label>'));
-var dateInp = el('<input type="date" class="input-field" style="margin-bottom:12px;">');
+var dateInp = el('<input type="date" class="input-field" style="margin-bottom:12px;width:184px;">');
 var today = new Date(); dateInp.value = today.toISOString().slice(0,10);
 card.appendChild(dateInp);
 
 // Ora — due tendine (niente orologio nativo illeggibile)
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_time_label")+'</label>'));
-var timeRow = el('<div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;"></div>');
-var hSel = el('<select class="input-field" style="flex:1;"></select>');
-var mSel = el('<select class="input-field" style="flex:1;"></select>');
+var timeRow = el('<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;"></div>');
+var hSel = el('<select class="input-field" style="width:88px;flex:none;text-align:center;"></select>');
+var mSel = el('<select class="input-field" style="width:88px;flex:none;text-align:center;"></select>');
 hSel.appendChild(el('<option value="">--</option>'));
 for(var hh=0; hh<24; hh++){
 var hv = (hh<10?"0":"")+hh;
@@ -6993,17 +6993,16 @@ if(!dateInp.value){ setStatus("Inserisci la data", "var(--danger)"); dateInp.foc
 if(!db){ setStatus("Database non disponibile", "var(--danger)"); return; }
 if(!currentUser){ setStatus("Devi essere loggato", "var(--danger)"); return; }
 saveBtn.disabled = true;
-setStatus("Salvataggio in corso…");
-var saveTimeout = setTimeout(function(){
-saveBtn.disabled = false;
-setStatus("Nessuna risposta dal server. Controlla connessione o regole Firestore.", "var(--danger)");
-}, 12000);
+setStatus("Salvataggio in corso\u2026");
 var datetime = new Date(dateInp.value + (timeInp.value ? "T"+timeInp.value : "T00:00")).getTime();
 var invitedUids = invitedUsers.map(function(u){ return u.uid; });
-db.collection("open_trainings").add({
+var myName = selfName || (currentUser && (currentUser.displayName||currentUser.email)) || "?";
+var fieldVal = fieldInp.value.trim();
+
+var otDoc = {
 ownerUid: currentUser.uid,
-ownerName: selfName || currentUser.displayName || currentUser.email || "?",
-field: fieldInp.value.trim(),
+ownerName: myName,
+field: fieldVal,
 date: dateInp.value,
 time: timeInp.value,
 datetime: datetime,
@@ -7016,33 +7015,39 @@ participantUids: [],
 participants: [],
 status: "active",
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
-}).then(function(){
-clearTimeout(saveTimeout);
-setStatus("Pubblicato!", "var(--accent)");
-// Manda notifica push a ogni invitato
-var myName = selfName || (currentUser && (currentUser.displayName||currentUser.email)) || "?";
+};
+
+// Scrittura non bloccante: Firestore mette in coda e sincronizza da solo.
+// Non aspettiamo l'ack del server, altrimenti su rete lenta il form resta bloccato.
+var newRef = db.collection("open_trainings").doc();
+newRef.set(otDoc).then(function(){
+// Sincronizzato davvero col server
+}).catch(function(err){
+console.error("OT save error:", err);
+});
+
+// Aggiungo subito alla lista locale cos\u00ec compare senza attendere il server
+var localCopy = {};
+for(var k in otDoc){ if(otDoc.hasOwnProperty(k)) localCopy[k] = otDoc[k]; }
+localCopy.id = newRef.id;
+localCopy.createdAt = null;
+openTrainings.unshift(localCopy);
+
+// Notifiche agli invitati
 var timeStr = timeInp.value ? " alle "+timeInp.value : "";
 invitedUsers.forEach(function(u){
 sendPushViaFirestore(u.uid,
 t("ot_notif_invite_title"),
-t("ot_notif_invite_body",{name:myName, date:dateInp.value, time:timeStr, field:fieldInp.value.trim()})
+t("ot_notif_invite_body",{name:myName, date:dateInp.value, time:timeStr, field:fieldVal})
 );
 });
+
+setStatus("Pubblicato!", "var(--accent)");
 saveBtn.disabled = false;
 state.screen = "menu";
-save(); loadOpenTrainings(); render();
-}).catch(function(err){
-clearTimeout(saveTimeout);
-console.error("OT save error:", err);
-saveBtn.disabled = false;
-setStatus("Errore: " + (err && err.code ? err.code : "") + " " + (err && err.message ? err.message : ""), "var(--danger)");
-var errDiv = document.getElementById("ot-save-err");
-if(!errDiv){
-errDiv = el('<div id="ot-save-err" style="color:var(--danger);font-size:0.85rem;margin-top:8px;padding:8px;background:rgba(255,0,0,0.1);border-radius:8px;"></div>');
-saveBtn.parentNode.insertBefore(errDiv, saveBtn.nextSibling);
-}
-errDiv.textContent = "Errore: " + (err && err.message ? err.message : (err && err.code ? err.code : JSON.stringify(err)));
-});
+save(); render();
+// Ricarico dal server in background per allineare
+setTimeout(function(){ loadOpenTrainings(); }, 3000);
 });
 card.appendChild(saveBtn);
 
