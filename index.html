@@ -751,6 +751,11 @@ club_reports_hide_closed: "Nascondi le risolte",
 club_reports_clear: "Elimina le segnalazioni risolte",
 club_reports_clear_confirm: "Confermi? Le segnalazioni risolte vengono cancellate per sempre.",
 club_reports_none_closed: "Non c'\u00e8 nessuna segnalazione risolta da eliminare.",
+notif_center_delete_read: "Elimina le notifiche lette",
+notif_center_delete_all: "Elimina tutte le notifiche",
+notif_center_delete_confirm: "Confermi? Le notifiche vengono cancellate per sempre.",
+notif_delete_one: "Elimina",
+msg_delete_mine: "Elimina il mio messaggio",
 // === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
@@ -3784,6 +3789,22 @@ var p = ICON_PATHS[name] || "";
 return '<svg viewBox="0 0 24 24" width="'+(size||20)+'" height="'+(size||20)+'" fill="none" stroke="currentColor" stroke-width="'+(strokeWidth||1.6)+'" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;">'+p+'</svg>';
 }
 
+// La barra in basso resta visibile ovunque: da una sotto-schermata si cambiava
+// sezione solo passando dal pulsante Menu.
+function appendTabBarTo(app){
+if(state.screen === "round" || state.screen === "summary"){ app.style.paddingBottom = ""; return; }
+var wideBar = (typeof window.matchMedia === "function") && window.matchMedia("(min-width: 760px)").matches;
+var bar = tabBar(wideBar);
+if(wideBar){
+app.style.paddingBottom = "";
+if(app.children.length > 1){ app.insertBefore(bar, app.children[1]); }
+else { app.appendChild(bar); }
+} else {
+app.appendChild(bar);
+app.style.paddingBottom = "92px";
+}
+}
+
 function render(){
 var app = document.getElementById("app");
 app.innerHTML = "";
@@ -3808,7 +3829,7 @@ if(!state.country || !state.federation || state.screen === "setup"){ app.appendC
 // altrimenti la barra resta senza comando di ritorno e non si esce piu'.
 if(homeOverride && state.screen !== "round" && state.screen !== "summary"){ homeOverride = false; }
 app.appendChild(header());
-if(homeOverride && (state.screen === "round" || state.screen === "summary")){ app.appendChild(menuScreen()); return; }
+if(homeOverride && (state.screen === "round" || state.screen === "summary")){ app.appendChild(menuScreen()); appendTabBarTo(app); return; }
 switch(state.screen){
 case "registration": app.appendChild(registrationScreen()); break;
 case "menu": app.appendChild(menuScreen()); break;
@@ -3833,6 +3854,7 @@ case "round": app.appendChild(roundScreen()); break;
 case "summary": app.appendChild(summaryScreen()); break;
 default: app.appendChild(registrationScreen());
 }
+if(currentUser && authState === "ready"){ appendTabBarTo(app); }
 }
 
 // ---------- AUTENTICAZIONE ----------
@@ -4160,6 +4182,9 @@ var COMPAGNIE_REGIONI = ["Piemonte", "Valle d'Aosta", "Liguria", "Lombardia", "V
 
 // ── ADMIN COMPAGNIE ──────────────────────────────────────────────────────────
 var compagnieAdminCache = null; // { codice: { adminUid, lat, lng, tel, email, sito } }
+// Vale solo per la sessione: se restasse in state, il referente si ritroverebbe
+// per sempre davanti la schermata di registrazione dopo averla aperta una volta.
+var clubShowAll = false;
 
 function loadCompagnieAdmin(cb){
 if(compagnieAdminCache){ cb(compagnieAdminCache); return; }
@@ -5523,7 +5548,7 @@ var key = tb[0], on = (state.tab === key);
 var b = el('<button style="flex:1;background:none;border:none;padding:'+(wide?'8px 2px':'7px 2px 9px')+';cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:'+(on?"var(--accent)":"var(--muted)")+';">'+
 '<span style="display:flex;align-items:center;justify-content:center;width:46px;height:29px;border-radius:15px;background:'+(on?"var(--bg-panel-2)":"transparent")+';border:1px solid '+(on?"var(--accent)":"transparent")+';">'+icon(tb[1],21,(on?2:1.6))+'</span>'+
 '<span style="font-size:0.64rem;font-weight:'+(on?"800":"600")+';line-height:1.1;text-align:center;">'+tb[2]+'</span></button>');
-b.addEventListener("click", function(){ state.tab = key; save(); render(); window.scrollTo(0,0); });
+b.addEventListener("click", function(){ state.tab = key; state.screen = "menu"; homeOverride = false; clubShowAll = false; save(); render(); window.scrollTo(0,0); });
 bar.appendChild(b);
 });
 return bar;
@@ -5531,9 +5556,7 @@ return bar;
 
 
 function menuScreen(){
-var wide = (typeof window.matchMedia === "function") && window.matchMedia("(min-width: 760px)").matches;
-var wrap = el('<div style="'+(wide ? '' : 'padding-bottom:92px;')+'"></div>');
-if(wide){ wrap.appendChild(tabBar(true)); }
+var wrap = el('<div></div>');
 // Il percorso resta "in corso" anche se apri Storico o Diario: prima dipendeva
 // dalla schermata aperta, quindi il banner spariva e il percorso era irraggiungibile.
 var hasActiveRound = (state.roundActive === true) || (state.screen === "round");
@@ -5652,7 +5675,7 @@ var mineClubs = myAdminClubCodes();
 if(mineClubs === null){
 wrap.appendChild(el('<div class="card"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>'));
 }
-else if(mineClubs.length && !state.clubShowAll){
+else if(mineClubs.length && !clubShowAll){
 if(mineClubs.indexOf(state.clubSpaceCode) === -1) state.clubSpaceCode = mineClubs[0];
 if(mineClubs.length > 1){
 var pickCard = el('<div class="card" style="margin-bottom:14px;"></div>');
@@ -5669,13 +5692,13 @@ wrap.appendChild(pickCard);
 wrap.appendChild(el('<div class="card" style="margin-bottom:14px;border-top-color:var(--gold);"><div style="font-size:0.82rem;color:var(--muted);line-height:1.45;">'+t("club_only_space_hint")+'</div></div>'));
 wrap.appendChild(clubSpaceScreen(true));
 var seeAllBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t("club_see_all")+'</button>');
-seeAllBtn.addEventListener("click", function(){ state.clubShowAll = true; save(); render(); });
+seeAllBtn.addEventListener("click", function(){ clubShowAll = true; save(); render(); });
 wrap.appendChild(seeAllBtn);
 }
 else {
 if(mineClubs.length){
 var backSpaceBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:14px;">'+t("club_back_to_space")+'</button>');
-backSpaceBtn.addEventListener("click", function(){ state.clubShowAll = false; save(); render(); });
+backSpaceBtn.addEventListener("click", function(){ clubShowAll = false; save(); render(); });
 wrap.appendChild(backSpaceBtn);
 }
 // Registrazione: la richiesta parte dall'app ma va confermata via email
@@ -5759,8 +5782,6 @@ setCard.appendChild(logoutBtn2);
 }
 wrap.appendChild(setCard);
 }
-
-if(!wide){ wrap.appendChild(tabBar(false)); }
 
 setTimeout(function(){
 var resumeBtn = document.getElementById("resumeBtn");
@@ -7313,6 +7334,15 @@ var bubble = el(
 '<div style="max-width:80%;background:'+(isMine?"var(--accent)":"var(--bg-panel-2)")+';color:'+(isMine?"#fff":"var(--cream)")+';border-radius:12px;padding:8px 12px;font-size:0.9rem;">'+escapeHtml(d.text||"")+'</div>'+
 '</div>'
 );
+// I propri messaggi si possono cancellare, come le notifiche
+if(isMine){
+var delMsg = el('<button title="'+t("msg_delete_mine")+'" style="align-self:flex-end;background:none;border:none;color:var(--muted);font-size:0.7rem;cursor:pointer;padding:2px 0;">'+t("notif_delete_one")+'</button>');
+delMsg.addEventListener("click", function(){
+delMsg.disabled = true;
+doc.ref.delete().catch(function(e){ console.error("msg delete:", e); delMsg.disabled = false; });
+});
+bubble.appendChild(delMsg);
+}
 msgList.appendChild(bubble);
 });
 msgList.scrollTop = msgList.scrollHeight;
@@ -7492,6 +7522,15 @@ render();
 }, function(err){ console.error("notifiche:", err); });
 }
 
+// Cancellazione definitiva: il listener aggiorna la lista da solo
+function deleteNotifications(items){
+if(!db || !currentUser || !items.length) return;
+var base = db.collection("notifications").doc(currentUser.uid).collection("items");
+var batch = db.batch();
+items.forEach(function(x){ batch.delete(base.doc(x.id)); });
+batch.commit().catch(function(e){ console.error("notif delete:", e); });
+}
+
 // Segna come lette tutte quelle ancora da leggere
 function markAllNotificationsRead(cb){
 if(!db || !currentUser){ if(cb) cb(); return; }
@@ -7521,8 +7560,16 @@ var dt = n.createdAt.toDate();
 quando = dt.toLocaleDateString(locale) + " " + dt.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 }
 var nonLetta = (n.read !== true);
-var row = el('<div style="border:1px solid '+(nonLetta?'var(--accent)':'var(--line)')+';background:'+(nonLetta?'var(--bg-panel-2)':'transparent')+';border-radius:10px;padding:10px 12px;margin-bottom:8px;"></div>');
-row.appendChild(el('<div style="font-size:0.9rem;font-weight:'+(nonLetta?'800':'600')+';">'+escapeHtml(n.title||"ArcTrail 3D")+'</div>'));
+var row = el('<div style="border:1px solid '+(nonLetta?'var(--accent)':'var(--line)')+';background:'+(nonLetta?'var(--bg-panel-2)':'transparent')+';border-radius:10px;padding:10px 12px;margin-bottom:8px;position:relative;"></div>');
+// Ogni notifica, letta o no, si puo' buttare via
+var delOne = el('<button title="'+t("notif_delete_one")+'" style="position:absolute;top:6px;right:8px;background:none;border:none;color:var(--muted);font-size:1.05rem;line-height:1;cursor:pointer;padding:2px 4px;">&times;</button>');
+delOne.addEventListener("click", function(){
+delOne.disabled = true;
+db.collection("notifications").doc(currentUser.uid).collection("items").doc(n.id).delete()
+.catch(function(e){ console.error("notif delete:", e); delOne.disabled = false; });
+});
+row.appendChild(delOne);
+row.appendChild(el('<div style="font-size:0.9rem;font-weight:'+(nonLetta?'800':'600')+';padding-right:22px;">'+escapeHtml(n.title||"ArcTrail 3D")+'</div>'));
 if(n.body){ row.appendChild(el('<div style="font-size:0.85rem;line-height:1.4;margin-top:2px;">'+escapeHtml(n.body)+'</div>')); }
 if(quando){ row.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:4px;">'+quando+'</div>')); }
 card.appendChild(row);
@@ -7535,6 +7582,19 @@ markAllNotificationsRead(function(){ render(); });
 });
 card.appendChild(readBtn);
 }
+var lette = myNotifications.filter(function(x){ return x.read === true; });
+if(lette.length){
+var delReadBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;">'+t("notif_center_delete_read")+' ('+lette.length+')</button>');
+card.appendChild(delReadBtn);
+armDoubleConfirm(delReadBtn, t("notif_center_delete_confirm"), function(){
+deleteNotifications(lette);
+});
+}
+var delAllBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;color:var(--danger);border-color:var(--danger);">'+t("notif_center_delete_all")+'</button>');
+card.appendChild(delAllBtn);
+armDoubleConfirm(delAllBtn, t("notif_center_delete_confirm"), function(){
+deleteNotifications(myNotifications.slice());
+});
 }
 wrap.appendChild(card);
 
