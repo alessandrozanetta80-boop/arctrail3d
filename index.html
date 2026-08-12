@@ -756,6 +756,11 @@ notif_center_delete_all: "Elimina tutte le notifiche",
 notif_center_delete_confirm: "Confermi? Le notifiche vengono cancellate per sempre.",
 notif_delete_one: "Elimina",
 msg_delete_mine: "Elimina il mio messaggio",
+market_opening: "Apro il mercatino\u2026",
+hist_delete_one: "Elimina questo giro",
+hist_delete_confirm: "Confermi? Il giro viene cancellato da questo dispositivo e dal backup.",
+hist_deleted: "Giro eliminato.",
+pg_beta_note: "In prova: per ora \u00e8 riservato alle compagnie e ai collaudatori.",
 // === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
@@ -3445,6 +3450,22 @@ return false;
 function loadHistory(){ try{ var raw = localStorage.getItem(HISTORY_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
 function saveHistoryList(list){ try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); }catch(e){} }
 
+// Cancella un singolo giro: dal dispositivo E dalla copia nel cloud, altrimenti
+// il primo "ripristina dal cloud" lo farebbe tornare indietro.
+// Il riepilogo permanente (record e medie) NON viene toccato: e' il conteggio
+// di quello che hai davvero tirato, non l'elenco dei giri.
+function deleteHistoryRound(idx){
+var hist = loadHistory();
+var h = hist[idx];
+if(!h) return;
+hist.splice(idx, 1);
+saveHistoryList(hist);
+try{
+var ref = cloudHistoryRef();
+if(ref && h.date){ ref.doc(roundDocId(h.date)).delete().catch(function(){}); }
+}catch(e){}
+}
+
 // ---------- RIEPILOGO PERMANENTE ----------
 // Lo storico viene tagliato a HISTORY_MAX giri: questo riepilogo no, cos\u00ec record e totali
 // restano corretti anche quando i giri pi\u00f9 vecchi spariscono dallo storico.
@@ -5627,10 +5648,15 @@ save(); render();
 });
 menuCard.appendChild(garaBtn);
 
-if(["fiarc","fitarco","ffta","swissarchery","faas","oebsv","dfbv","fftl","efaa","archerygb","nfas","turkey","russia","spain","sweden","nhb"].indexOf(state.federation||"fiarc") !== -1){
+// Prepara gara serve a chi organizza, non al singolo arciere: per ora resta
+// alle compagnie (referenti) e ai collaudatori.
+var pgClubs = myAdminClubCodes();
+var pgAllowed = IS_BETA_TESTER || (pgClubs && pgClubs.length > 0);
+if(pgAllowed && ["fiarc","fitarco","ffta","swissarchery","faas","oebsv","dfbv","fftl","efaa","archerygb","nfas","turkey","russia","spain","sweden","nhb"].indexOf(state.federation||"fiarc") !== -1){
 var pgBtn = el('<button class="btn menu-btn prepara btn-block"><span class="menu-icon">'+icon("clipboard",24)+'</span><span class="menu-txt">'+t("pg_menu_btn_label")+'<span class="menu-sub">'+t("pg_menu_btn_sub")+'</span></span></button>');
 pgBtn.addEventListener("click", function(){ state.pgScreen = "pick"; state.screen = "prepara-gara"; save(); render(); });
 menuCard.appendChild(pgBtn);
+menuCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:-4px;margin-bottom:6px;">'+t("pg_beta_note")+'</div>'));
 }
 wrap.appendChild(menuCard);
 
@@ -5652,10 +5678,13 @@ else if(state.tab === "mercatino"){
 var mktCard = el('<div class="card"></div>');
 mktCard.appendChild(el('<h2 class="section-title">'+t("market_btn_label")+'</h2>'));
 if(IS_BETA_TESTER){
-mktCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">'+t("market_btn_sub")+'</div>'));
-var marketBtn = el('<button class="btn btn-primary btn-block">'+icon("cart",18)+' '+t("market_btn_label")+'</button>');
-marketBtn.addEventListener("click", function(){ window.location.href = "marketplace.html"; });
-mktCard.appendChild(marketBtn);
+// Si apre da solo: premere "Mercatino" due volte non aveva senso.
+// La scheda torna su "Tira" PRIMA di uscire, altrimenti al ritorno dal
+// mercatino si ripartirebbe subito verso il mercatino, in cerchio.
+mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+icon("cart",34)+'</div>'));
+mktCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);text-align:center;">'+t("market_opening")+'</div>'));
+state.tab = "tira"; save();
+setTimeout(function(){ window.location.href = "marketplace.html"; }, 80);
 } else {
 mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+icon("cart",34)+'</div>'));
 mktCard.appendChild(el('<div style="font-size:0.88rem;line-height:1.45;text-align:center;color:var(--muted);">'+t("market_locked_body")+'</div>'));
@@ -6258,20 +6287,14 @@ locCard.appendChild(el('<h2 class="section-title">'+t("campi_title")+'</h2>'));
 var locBtn = el('<button class="btn btn-primary btn-block">'+icon("pin",18)+' '+t("campi_btn")+'</button>');
 locBtn.addEventListener("click", function(){
 locBtn.innerHTML = t("campi_searching");
-apriMaps("campo tiro con arco 3D");
+apriMaps("tiro con l'arco campo 3D");
 setTimeout(function(){ locBtn.innerHTML = icon("pin",18)+' '+t("campi_btn"); }, 2500);
 });
 locCard.appendChild(locBtn);
 locCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:8px 0 14px;">'+t("campi_hint")+'</div>'));
 
-var clubBtn = el('<button class="btn btn-ghost btn-block">'+icon("emblem",18)+' '+t("campi_btn_clubs")+'</button>');
-clubBtn.addEventListener("click", function(){
-clubBtn.innerHTML = t("campi_searching");
-apriMaps("compagnia arcieri tiro con l'arco");
-setTimeout(function(){ clubBtn.innerHTML = icon("emblem",18)+' '+t("campi_btn_clubs"); }, 2500);
-});
-locCard.appendChild(clubBtn);
-locCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:8px;">'+t("campi_hint_clubs")+'</div>'));
+// Le due ricerche separate (campi / compagnie) davano quasi sempre gli stessi
+// risultati: in Italia il campo e' della compagnia. Ne resta una sola.
 wrap.appendChild(locCard);
 
 // Scorciatoie: annunciare un allenamento e segnalare un problema.
@@ -6951,7 +6974,7 @@ var d = new Date(h.date);
 var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 var winner = h.results.length ? h.results[0] : null;
 var mLabel = h.modeKey ? modeLabel(h.modeKey) : (h.modeLabel || modeLabel("training"));
-var row = el('<div class="timeline-row" style="cursor:pointer;"></div>');
+var row = el('<div class="timeline-row" style="cursor:pointer;position:relative;padding-right:26px;"></div>');
 row.appendChild(el('<div class="timeline-icon">'+icon("target",16)+'</div>'));
 var content = el('<div class="timeline-content"></div>');
 content.appendChild(el('<span class="timeline-meta">'+dateStr+' &middot; '+escapeHtml(mLabel)+' &middot; '+h.format+' '+t("targets_word")+'</span>'));
@@ -6962,6 +6985,25 @@ state.historyIndex = hIdx;
 state.screen = "history-detail";
 save(); render();
 });
+var delRound = el('<button title="'+t("hist_delete_one")+'" style="position:absolute;top:50%;right:2px;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:1.05rem;line-height:1;cursor:pointer;padding:4px 6px;">&times;</button>');
+delRound.addEventListener("click", function(ev){
+ev.stopPropagation();
+if(delRound.dataset.armed === "1"){
+deleteHistoryRound(hIdx);
+render();
+return;
+}
+delRound.dataset.armed = "1";
+delRound.style.color = "var(--danger)";
+delRound.innerHTML = "&#10003;";
+setTimeout(function(){
+if(!delRound.parentNode) return;
+delRound.dataset.armed = "";
+delRound.style.color = "var(--muted)";
+delRound.innerHTML = "&times;";
+}, 3000);
+});
+row.appendChild(delRound);
 histList.appendChild(row);
 });
 histCard.appendChild(histList);
@@ -7059,6 +7101,13 @@ setTimeout(function(){ shareBtn.innerHTML = icon("share",16)+' '+t("share_btn");
 }
 });
 wrap.appendChild(shareBtn);
+
+var delRoundBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;color:var(--danger);border-color:var(--danger);">'+t("hist_delete_one")+'</button>');
+wrap.appendChild(delRoundBtn);
+armDoubleConfirm(delRoundBtn, t("hist_delete_confirm"), function(){
+deleteHistoryRound(state.historyIndex);
+state.screen = "history"; save(); render();
+});
 
 var backBtn = el('<button class="btn btn-primary btn-block no-print" style="margin-top:10px;">'+t("back_to_history_btn")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen = "history"; save(); render(); });
