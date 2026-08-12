@@ -563,6 +563,7 @@ render();
 var STORAGE_KEY = "arctrail3d_state_v3";
 var HISTORY_KEY = "arctrail3d_storico_v1";
 var LIFETIME_KEY = "arctrail3d_lifetime_v1"; // riepilogo permanente: non viene mai cancellato dal taglio dello storico
+var DELETED_KEY = "arctrail3d_storico_cancellati_v1"; // elenco dei giri cancellati apposta: impedisce che tornino dal cloud
 var HISTORY_MAX = 150;
 
 var state = { screen:"menu", pendingArchers:[] };
@@ -3538,20 +3539,66 @@ return false;
 function loadHistory(){ try{ var raw = localStorage.getItem(HISTORY_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
 function saveHistoryList(list){ try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); }catch(e){} }
 
-// Cancella un singolo giro: dal dispositivo E dalla copia nel cloud, altrimenti
-// il primo "ripristina dal cloud" lo farebbe tornare indietro.
+// ---------- CANCELLAZIONE DEI GIRI (con "lapide") ----------
+// Cancellare un giro non basta a farlo sparire: se un altro dispositivo ha ancora
+// la copia vecchia in memoria, al primo salvataggio sul cloud la rimanda su e il giro
+// riappare nel diario. Per questo al posto del giro cancellato resta sul cloud un
+// documento minimo con deleted:true (la "lapide"), e l'elenco delle lapidi e' tenuto
+// anche in locale: nessun dispositivo puo' piu' resuscitare un giro cancellato.
 // Il riepilogo permanente (record e medie) NON viene toccato: e' il conteggio
 // di quello che hai davvero tirato, non l'elenco dei giri.
+function loadDeletedRounds(){
+try{ var raw = localStorage.getItem(DELETED_KEY); var o = raw ? JSON.parse(raw) : {}; return (o && typeof o === "object") ? o : {}; }catch(e){ return {}; }
+}
+function saveDeletedRounds(o){ try{ localStorage.setItem(DELETED_KEY, JSON.stringify(o)); }catch(e){} }
+
+// Segna come cancellati uno o piu' giri (in locale subito, sul cloud in un'unica scrittura).
+function markRoundsDeleted(dates){
+var del = loadDeletedRounds();
+var ids = [];
+(dates || []).forEach(function(d){
+if(!d) return;
+var id = roundDocId(d);
+del[id] = d;
+ids.push(id);
+});
+if(!ids.length) return;
+saveDeletedRounds(del);
+try{
+var ref = cloudHistoryRef();
+if(!ref) return; // offline o non loggato: la lapide locale parte al prossimo salvataggio
+var batch = db.batch();
+ids.slice(0, 400).forEach(function(id){
+batch.set(ref.doc(id), { date: del[id], deleted: true, deletedAt: firebase.firestore.FieldValue.serverTimestamp() });
+});
+batch.commit().catch(function(err){ cloudSyncState.lastError = describeFirebaseError(err); });
+}catch(e){ cloudSyncState.lastError = describeFirebaseError(e); }
+}
+function markRoundDeleted(dateISO){ markRoundsDeleted([dateISO]); }
+
+// Toglie da questo dispositivo i giri cancellati altrove. Restituisce quanti ne ha tolti.
+function purgeDeletedFromLocal(goneMap){
+if(!goneMap) return 0;
+var hist = loadHistory();
+var out = hist.filter(function(h){ return !(h && h.date && goneMap[roundDocId(h.date)] === true); });
+var removed = hist.length - out.length;
+if(!removed) return 0;
+saveHistoryList(out);
+try{
+if(state && state.screen !== "round" && state.screen !== "summary"){
+setTimeout(function(){ try{ render(); }catch(e){} }, 0);
+}
+}catch(e){}
+return removed;
+}
+
 function deleteHistoryRound(idx){
 var hist = loadHistory();
 var h = hist[idx];
 if(!h) return;
 hist.splice(idx, 1);
 saveHistoryList(hist);
-try{
-var ref = cloudHistoryRef();
-if(ref && h.date){ ref.doc(roundDocId(h.date)).delete().catch(function(){}); }
-}catch(e){}
+if(h.date) markRoundDeleted(h.date);
 }
 
 // ---------- RIEPILOGO PERMANENTE ----------
@@ -3679,6 +3726,7 @@ if(!ref || !roundEntry) return;
 try{
 ref.doc(roundDocId(roundEntry.date)).set({
 date: roundEntry.date,
+deleted: false,
 format: roundEntry.format || null,
 modeKey: roundEntry.modeKey || null,
 modeLabel: roundEntry.modeLabel || "",
@@ -3698,16 +3746,43 @@ if(!ref){ if(cb) cb(null, 0); return; }
 var hist = loadHistory();
 if(!hist.length){ if(cb) cb(null, 0); return; }
 ref.get().then(function(snap){
-var have = {};
-snap.forEach(function(d){ have[d.id] = true; });
-var todo = hist.filter(function(h){ return h && h.date && !have[roundDocId(h.date)]; });
-if(!todo.length){ if(cb) cb(null, 0); return; }
+var have = {}, gone = {};
+snap.forEach(function(d){
+have[d.id] = true;
+var dd = d.data();
+if(dd && dd.deleted === true) gone[d.id] = true;
+});
+// lapidi note a questo dispositivo + lapidi trovate sul cloud
+var del = loadDeletedRounds();
+var k;
+for(k in gone){ if(!del[k]) del[k] = true; }
+for(k in del){ gone[k] = true; }
+saveDeletedRounds(del);
+// se un altro dispositivo ha cancellato dei giri, spariscono anche da qui
+purgeDeletedFromLocal(gone);
+var local = loadHistory();
+var todo = local.filter(function(h){
+if(!h || !h.date) return false;
+var id = roundDocId(h.date);
+return !have[id] && !gone[id];
+});
+// lapidi locali non ancora arrivate sul cloud (cancellazioni fatte offline)
+var tomb = [];
+for(k in del){ if(!have[k]) tomb.push(k); }
+if(!todo.length && !tomb.length){ if(cb) cb(null, 0); return; }
 var batch = db.batch();
 todo.slice(0, 400).forEach(function(h){
 batch.set(ref.doc(roundDocId(h.date)), {
-date: h.date, format: h.format || null, modeKey: h.modeKey || null,
+date: h.date, deleted: false, format: h.format || null, modeKey: h.modeKey || null,
 modeLabel: h.modeLabel || "", results: packResults(h.results),
 savedAt: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true });
+});
+tomb.slice(0, 200).forEach(function(id){
+batch.set(ref.doc(id), {
+date: (typeof del[id] === "string" ? del[id] : null),
+deleted: true,
+deletedAt: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true });
 });
 return batch.commit().then(function(){ if(cb) cb(null, todo.length); });
@@ -3721,15 +3796,29 @@ if(cb) cb(err, 0);
 function restoreHistoryFromCloud(cb){
 var ref = cloudHistoryRef();
 if(!ref){ if(cb) cb(null, 0); return; }
-ref.orderBy("date", "desc").limit(HISTORY_MAX).get().then(function(snap){
+ref.orderBy("date", "desc").limit(HISTORY_MAX * 2).get().then(function(snap){
+// prima le lapidi: cio' che e' stato cancellato non deve rientrare, e va tolto
+// anche da questo dispositivo se ce l'ha ancora
+var del = loadDeletedRounds();
+var gone = {}, k;
+for(k in del){ gone[k] = true; }
+snap.forEach(function(doc){
+var dd = doc.data();
+if(dd && dd.deleted === true){
+gone[doc.id] = true;
+if(!del[doc.id]) del[doc.id] = dd.date || true;
+}
+});
+saveDeletedRounds(del);
+purgeDeletedFromLocal(gone);
 var local = loadHistory();
 var haveLocal = {};
 local.forEach(function(h){ if(h && h.date) haveLocal[roundDocId(h.date)] = true; });
 var added = 0;
 snap.forEach(function(doc){
-if(haveLocal[doc.id]) return;
+if(haveLocal[doc.id] || gone[doc.id]) return;
 var d = doc.data();
-if(!d || !d.date) return;
+if(!d || !d.date || d.deleted === true) return;
 local.push({ date:d.date, format:d.format, modeKey:d.modeKey, modeLabel:d.modeLabel, results:unpackResults(d.results) });
 added++;
 });
@@ -7162,6 +7251,10 @@ histCard.appendChild(histList);
 var clearHistBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("history_clear")+'</button>');
 histCard.appendChild(clearHistBtn);
 armDoubleConfirm(clearHistBtn, t("clear_confirm"), function(){
+// come per il singolo giro: si cancella dal dispositivo E dal cloud, altrimenti
+// il primo ripristino li rimetterebbe tutti dentro
+var all = loadHistory();
+markRoundsDeleted(all.map(function(h){ return h && h.date; }));
 saveHistoryList([]);
 render();
 });
