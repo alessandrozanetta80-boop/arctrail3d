@@ -667,6 +667,22 @@ profile_club_hint: "Serve per vedere gli allenamenti riservati al tuo campo.",
 profile_club_none: "Nessuna compagnia",
 profile_club_search: "Cerca la tua compagnia…",
 profile_club_change: "Cambia",
+fr_report_btn_short: "Segnala",
+fr_report_sub: "La segnalazione arriva alla compagnia che gestisce il campo, non a un servizio esterno.",
+fr_field_search: "Cerca il campo…",
+fr_type_label: "Che tipo di problema è",
+fr_type_target: "Bersaglio o sagoma",
+fr_type_stake: "Picchetto o segnaletica",
+fr_type_path: "Sentiero o sicurezza",
+fr_type_other: "Altro",
+fr_piazzola_label: "Piazzola interessata",
+fr_piazzola_none: "Non indicata",
+fr_report_open_btn: "Segnala un problema su un percorso",
+campi_btn_clubs: "Cerca compagnie vicino a te",
+campi_hint_clubs: "Apre Google Maps con le associazioni di tiro con l\'arco nei dintorni.",
+campi_announce_btn: "Annuncia un allenamento",
+train_add_target_btn: "Continua: aggiungi una piazzola",
+train_free_hint: "In allenamento decidi tu quante piazzole fare, e puoi aggiungerne altre anche a giro iniziato.",
 // === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
@@ -3166,12 +3182,12 @@ var ZONES_3_NFAS = [ {key:"innerkill",labelKey:"zone_nfas_innerkill",cls:"perfec
 var RADII_3_NFAS = [24,70,140];
 var GAME_MODES = {
 training: {
-key:"training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_3, radii:RADII_3,
 scoring:{ 1: SS_SP_SAG(15,10,5) }
 },
 fitarco_training: {
-key:"fitarco_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"fitarco_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
@@ -3205,7 +3221,7 @@ zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 ffta_training: {
-key:"ffta_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"ffta_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_4_FFTA, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
@@ -3215,7 +3231,7 @@ zones:ZONES_4_FFTA, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 swissarchery_training: {
-key:"swissarchery_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"swissarchery_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
@@ -3225,7 +3241,7 @@ zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 turkey_training: {
-key:"turkey_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"turkey_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
@@ -3235,7 +3251,7 @@ zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 russia_training: {
-key:"russia_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"russia_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
@@ -3245,7 +3261,7 @@ zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 spain_training: {
-key:"spain_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"spain_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
@@ -3255,7 +3271,7 @@ zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 sweden_training: {
-key:"sweden_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"sweden_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
@@ -3265,7 +3281,7 @@ zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 ifaa_training: {
-key:"ifaa_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"ifaa_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_2_IFAA, radii:RADII_2,
 scoring:{ 1: { spot:20, lowarea:18 } }
 },
@@ -3275,7 +3291,7 @@ zones:ZONES_2_IFAA, radii:RADII_2,
 scoring:{ 1: { spot:20, lowarea:18 }, 2: { spot:16, lowarea:14 } }
 },
 archerygb_training: {
-key:"archerygb_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"archerygb_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
@@ -3285,7 +3301,7 @@ zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
 nfas_training: {
-key:"nfas_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:28, formats:[14],
+key:"nfas_training", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
 zones:ZONES_3_NFAS, radii:RADII_3_NFAS,
 scoring:{ 1: { innerkill:24, kill:20, wound:16 } }
 },
@@ -3671,6 +3687,7 @@ return '<img src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="width:'+size+'px;h
 }
 
 var ICON_PATHS = {
+warn: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
 cart: '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.5 12h11L21 7H6"/>',
 
 bow: '<path d="M6 3c-2 5-2 16 0 21"/><path d="M6 3c6 2 12 8 12 9s-6 7-12 9"/><path d="M4 12h15"/><path d="M15 8l4 4-4 4"/>',
@@ -4654,8 +4671,9 @@ save(); render();
 h.appendChild(homeBtn);
 // Pulsante segnalazione percorso: visibile solo durante il round
 if(duranteGiro && currentUser){
-var reportBtn = el('<button class="home-btn no-print" style="margin-left:8px;background:var(--danger);font-size:0.75rem;padding:5px 10px;" title="'+t("fr_report_btn")+'">⚠️</button>');
+var reportBtn = el('<button class="home-btn no-print" style="margin-left:8px;background:transparent;border:1px solid var(--danger);color:var(--danger);font-size:0.72rem;font-weight:700;padding:5px 10px;display:inline-flex;align-items:center;gap:5px;" title="'+t("fr_report_title")+'">'+icon("warn",14)+t("fr_report_btn_short")+'</button>');
 reportBtn.addEventListener("click", function(){
+state.frFrom = state.screen;
 state.screen = "field-report"; save(); render();
 });
 h.appendChild(reportBtn);
@@ -5593,6 +5611,7 @@ card1.appendChild(el('<h2 class="section-title">'+t("train_setup_title")+'</h2>'
 var numInput = el('<input type="number" id="formatInput" min="'+mode.minFormat+'" max="'+mode.maxFormat+'" value="'+(state.pendingFormat||14)+'">');
 card1.appendChild(numInput);
 card1.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:6px;">'+t("train_setup_hint",{max:mode.maxFormat})+'</div>'));
+card1.appendChild(el('<div style="font-size:0.7rem;color:var(--gold);margin-top:4px;">'+t("train_free_hint")+'</div>'));
 wrap.appendChild(card1);
 
 var isFiarcTraining = (trainKey === "training");
@@ -5710,7 +5729,7 @@ selCard.appendChild(el('<h2 class="section-title">'+t("compagnie_title")+'</h2>'
 var regRow = el('<div class="cp-select-row"><label>'+t("compagnie_regione")+'</label><select id="cpSelRegione"></select></div>');
 var regSel = regRow.querySelector("select");
 regSel.appendChild(el('<option value="">'+t("compagnie_pick_regione")+'</option>'));
-COMPAGNIE_REGIONI.forEach(function(r){
+COMPAGNIE_REGIONI.slice().sort(function(x,y){ return x.localeCompare(y,"it"); }).forEach(function(r){
 var opt = el('<option value="'+r+'">'+r+'</option>');
 if(state.compagniaRegione === r) opt.setAttribute("selected","selected");
 regSel.appendChild(opt);
@@ -5735,7 +5754,10 @@ state.compagniaProvincia = "\u2014";
 var provRow = el('<div class="cp-select-row"><label>'+t("compagnie_provincia")+'</label><select id="cpSelProvincia"></select></div>');
 var provSel = provRow.querySelector("select");
 provSel.appendChild(el('<option value="">'+t("compagnie_pick_provincia")+'</option>'));
-provinceKeys.sort().forEach(function(p){
+provinceKeys.sort(function(x,y){
+var lx = COMPAGNIE_NOMI_PROVINCIA[x]||x, ly = COMPAGNIE_NOMI_PROVINCIA[y]||y;
+return lx.localeCompare(ly,"it");
+}).forEach(function(p){
 var label = (COMPAGNIE_NOMI_PROVINCIA[p]||p) + " (" + p + ")";
 var opt = el('<option value="'+p+'">'+label+'</option>');
 if(state.compagniaProvincia === p) opt.setAttribute("selected","selected");
@@ -6074,82 +6096,59 @@ return card;
 }
 
 // ---------- CAMPI VICINO A TE ----------
+// L'elenco completo dei campi nel database e' stato tolto: era una lista lunghissima
+// e senza ordine geografico, quindi inutile. Restano due ricerche su Google Maps
+// (link esterno, gratuito) e le scorciatoie utili.
 function campiScreen(){
 var wrap = el('<div></div>');
 
-// ── Pulsante Google Maps esterno (rimane) ────────────────────────────────
-var locCard = el('<div class="card" style="margin-bottom:14px;"></div>');
-locCard.appendChild(el('<h2 class="section-title">'+t("campi_title")+'</h2>'));
-var locBtn = el('<button class="btn btn-primary btn-block">'+icon("pin",18)+' '+t("campi_btn")+'</button>');
-locCard.appendChild(locBtn);
-locCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:8px;">'+t("campi_hint")+'</div>'));
-wrap.appendChild(locCard);
-locBtn.addEventListener("click", function(){
-var openMaps = function(coords){
+function apriMaps(query){
+var openIt = function(coords){
 var url = coords
-? "https://www.google.com/maps/search/campo+tiro+con+arco+3D/@"+coords.latitude+","+coords.longitude+",12z"
-: "https://www.google.com/maps/search/campo+tiro+con+arco+3D";
+? "https://www.google.com/maps/search/"+encodeURIComponent(query)+"/@"+coords.latitude+","+coords.longitude+",12z"
+: "https://www.google.com/maps/search/"+encodeURIComponent(query);
 var a = document.createElement("a"); a.href=url; a.target="_blank"; a.rel="noopener";
 document.body.appendChild(a); a.click(); document.body.removeChild(a);
 };
 if(navigator.geolocation){
+navigator.geolocation.getCurrentPosition(function(pos){ openIt(pos.coords); }, function(){ openIt(null); }, { timeout:8000 });
+} else { openIt(null); }
+}
+
+var locCard = el('<div class="card" style="margin-bottom:14px;"></div>');
+locCard.appendChild(el('<h2 class="section-title">'+t("campi_title")+'</h2>'));
+
+var locBtn = el('<button class="btn btn-primary btn-block">'+icon("pin",18)+' '+t("campi_btn")+'</button>');
+locBtn.addEventListener("click", function(){
 locBtn.innerHTML = t("campi_searching");
-navigator.geolocation.getCurrentPosition(function(pos){
-openMaps(pos.coords); locBtn.innerHTML = icon("pin",18)+' '+t("campi_btn");
-}, function(){ openMaps(null); locBtn.innerHTML = icon("pin",18)+' '+t("campi_btn"); }, { timeout:8000 });
-} else { openMaps(null); }
+apriMaps("campo tiro con arco 3D");
+setTimeout(function(){ locBtn.innerHTML = icon("pin",18)+' '+t("campi_btn"); }, 2500);
 });
+locCard.appendChild(locBtn);
+locCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:8px 0 14px;">'+t("campi_hint")+'</div>'));
 
-// ── Lista campi dal database con "Allena qui" ────────────────────────────
-if(typeof COMPAGNIE !== "undefined"){
-var listCard = el('<div class="card"></div>');
-listCard.appendChild(el('<h2 class="section-title">'+t("campi_list_title")+'</h2>'));
-
-var filterInp = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("campi_filter_placeholder"))+'" style="margin-bottom:10px;">');
-listCard.appendChild(filterInp);
-
-var listWrap = el('<div></div>');
-listCard.appendChild(listWrap);
-wrap.appendChild(listCard);
-
-// Costruisco lista piatta di tutti i campi
-var tuttiCampi = [];
-Object.keys(COMPAGNIE).forEach(function(cod){
-var c = COMPAGNIE[cod];
-if(compagniaFederazioneOk(cod)) tuttiCampi.push({ cod:cod, nome:c.nome, luogo:c.luogo||"", regione:c.regione||"" });
+var clubBtn = el('<button class="btn btn-ghost btn-block">'+icon("emblem",18)+' '+t("campi_btn_clubs")+'</button>');
+clubBtn.addEventListener("click", function(){
+clubBtn.innerHTML = t("campi_searching");
+apriMaps("compagnia arcieri tiro con l'arco");
+setTimeout(function(){ clubBtn.innerHTML = icon("emblem",18)+' '+t("campi_btn_clubs"); }, 2500);
 });
-tuttiCampi.sort(function(a,b){ return a.luogo.localeCompare(b.luogo); });
+locCard.appendChild(clubBtn);
+locCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:8px;">'+t("campi_hint_clubs")+'</div>'));
+wrap.appendChild(locCard);
 
-function renderCampi(q){
-listWrap.innerHTML = "";
-var filtered = q ? tuttiCampi.filter(function(c){ return (c.nome+c.luogo).toLowerCase().indexOf(q.toLowerCase()) !== -1; }) : tuttiCampi;
-if(filtered.length === 0){
-listWrap.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("search_username_empty")+'</div>'));
-return;
-}
-filtered.slice(0,50).forEach(function(c){
-var row = el('<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);gap:10px;"></div>');
-var info = el('<div><div style="font-weight:700;font-size:0.9rem;">'+escapeHtml(c.nome)+'</div><div style="font-size:0.78rem;color:var(--muted);">'+escapeHtml(c.luogo)+(c.regione?' · '+escapeHtml(c.regione):'')+'</div></div>');
-var trainBtn = el('<button style="white-space:nowrap;padding:6px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;flex-shrink:0;">'+t("campi_train_here")+'</button>');
-(function(campo){
-trainBtn.addEventListener("click", function(){
-// Precompila form allenamento con nome campo
-state.otPrecompile = { field: campo.nome + (campo.luogo ? " — " + campo.luogo : ""), cod: campo.cod };
-state.screen = "open-training-create";
-save(); render();
-});
-})(c);
-row.appendChild(info);
-row.appendChild(trainBtn);
-listWrap.appendChild(row);
-});
-if(filtered.length > 50){
-listWrap.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-top:6px;">Mostra i primi 50 risultati. Usa il filtro per affinare.</div>'));
-}
-}
+// Scorciatoie: annunciare un allenamento e segnalare un problema.
+// La scelta del campo avviene dentro i rispettivi moduli, che hanno gia' la ricerca.
+if(currentUser){
+var actCard = el('<div class="card"></div>');
+var annBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("bow",24)+'</span><span class="menu-txt">'+t("campi_announce_btn")+'<span class="menu-sub">'+t("ot_section_hint")+'</span></span></button>');
+annBtn.addEventListener("click", function(){ state.screen = "open-training-create"; save(); render(); });
+actCard.appendChild(annBtn);
 
-renderCampi("");
-filterInp.addEventListener("input", function(){ renderCampi(filterInp.value.trim()); });
+var repBtn = el('<button class="btn btn-ghost btn-block menu-btn" style="border-color:color-mix(in srgb, var(--danger) 45%, transparent);"><span class="menu-icon" style="color:var(--danger);">'+icon("warn",24)+'</span><span class="menu-txt">'+t("fr_report_open_btn")+'<span class="menu-sub">'+t("fr_report_sub")+'</span></span></button>');
+repBtn.addEventListener("click", function(){ state.frFrom = "menu"; state.screen = "field-report"; save(); render(); });
+actCard.appendChild(repBtn);
+wrap.appendChild(actCard);
 }
 
 return wrap;
@@ -6734,29 +6733,110 @@ db.collection("sessions").doc(state.sessionId).update({ status:"closed", updated
 function fieldReportScreen(){
 var wrap = el('<div></div>');
 var card = el('<div class="card"></div>');
-card.appendChild(el('<h2 class="section-title">'+t("fr_report_title")+'</h2>'));
 
+// Intestazione: cosa stai facendo e dove finisce la segnalazione
+var head = el('<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;"></div>');
+head.appendChild(el('<span style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:color-mix(in srgb, var(--danger) 18%, transparent);border:1px solid color-mix(in srgb, var(--danger) 45%, transparent);color:var(--danger);display:flex;align-items:center;justify-content:center;">'+icon("warn",20)+'</span>'));
+head.appendChild(el('<div><div style="font-weight:800;font-size:1.05rem;color:var(--cream);line-height:1.25;">'+t("fr_report_title")+'</div><div style="font-size:0.78rem;color:var(--muted);margin-top:3px;">'+t("fr_report_sub")+'</div></div>'));
+card.appendChild(head);
+
+// ── Campo: stessa selezione da elenco usata per gli allenamenti ────────────
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_report_field")+'</label>'));
-var fieldInp = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("fr_report_field_ph"))+'" style="margin-bottom:12px;">');
-card.appendChild(fieldInp);
+var frCod = null, frLabel = "";
+// Precompilo con la compagnia dell'utente: quasi sempre e' il campo dove sta tirando
+if(state.profile && state.profile.compagnia){ frCod = state.profile.compagnia; frLabel = state.profile.compagniaNome || state.profile.compagnia; }
 
+var selDiv = el('<div style="background:var(--accent);color:#fff;border-radius:10px;padding:10px 14px;margin-bottom:8px;justify-content:space-between;align-items:center;"></div>');
+var selName = el('<span style="font-weight:700;font-size:0.92rem;"></span>');
+var selClear = el('<button style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
+selDiv.appendChild(selName); selDiv.appendChild(selClear);
+var searchInp = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("fr_field_search"))+'" style="margin-bottom:6px;">');
+var listDiv = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;display:none;"></div>');
+card.appendChild(selDiv); card.appendChild(searchInp); card.appendChild(listDiv);
+
+function refreshField(){
+if(frCod){ selDiv.style.display = "flex"; selName.textContent = frLabel; searchInp.style.display = "none"; }
+else { selDiv.style.display = "none"; searchInp.style.display = ""; }
+listDiv.style.display = "none";
+}
+selClear.addEventListener("click", function(){ frCod = null; frLabel = ""; refreshField(); });
+searchInp.addEventListener("input", function(){
+var q = searchInp.value.trim().toLowerCase();
+listDiv.innerHTML = "";
+if(!q || typeof COMPAGNIE === "undefined"){ listDiv.style.display = "none"; return; }
+var found = 0;
+Object.keys(COMPAGNIE).forEach(function(cod){
+if(found >= 30) return;
+var c = COMPAGNIE[cod];
+var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "");
+if(label.toLowerCase().indexOf(q) === -1) return;
+found++;
+var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:0.88rem;cursor:pointer;">'+escapeHtml(label)+'</div>');
+row.addEventListener("click", function(){ frCod = cod; frLabel = label; searchInp.value = ""; refreshField(); });
+listDiv.appendChild(row);
+});
+listDiv.style.display = found ? "block" : "none";
+});
+refreshField();
+
+// ── Tipo di problema ──────────────────────────────────────────────────────
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px;">'+t("fr_type_label")+'</label>'));
+var tipo = "target";
+var tipoWrap = el('<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;"></div>');
+var tipoBtns = {};
+[["target",t("fr_type_target")],["stake",t("fr_type_stake")],["path",t("fr_type_path")],["other",t("fr_type_other")]].forEach(function(pair){
+var k = pair[0];
+var b = el('<button style="padding:12px 8px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:0.82rem;font-weight:700;cursor:pointer;line-height:1.25;">'+pair[1]+'</button>');
+tipoBtns[k] = b;
+b.addEventListener("click", function(){ tipo = k; refreshTipo(); });
+tipoWrap.appendChild(b);
+});
+function refreshTipo(){
+Object.keys(tipoBtns).forEach(function(k){
+var on = (k === tipo);
+tipoBtns[k].style.background = on ? "var(--accent)" : "var(--bg-panel-2)";
+tipoBtns[k].style.color = on ? "#fff" : "var(--cream)";
+tipoBtns[k].style.borderColor = on ? "var(--accent)" : "var(--line)";
+});
+}
+card.appendChild(tipoWrap);
+refreshTipo();
+
+// ── Piazzola: precompilata con quella dove sei se il giro e' in corso ──────
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_piazzola_label")+'</label>'));
+var pzSel = el('<select class="input-field" style="margin-bottom:16px;width:160px;"></select>');
+pzSel.appendChild(el('<option value="">'+t("fr_piazzola_none")+'</option>'));
+for(var pz=1; pz<=40; pz++){ pzSel.appendChild(el('<option value="'+pz+'">'+pz+'</option>')); }
+if(state.roundActive && state.target){ pzSel.value = String(state.target); }
+card.appendChild(pzSel);
+
+// ── Descrizione ───────────────────────────────────────────────────────────
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_report_desc")+'</label>'));
 var descInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("fr_report_desc_ph"))+'" rows="4" style="margin-bottom:16px;resize:none;"></textarea>');
 card.appendChild(descInp);
 
-var status = el('<div style="font-size:0.85rem;margin-bottom:10px;min-height:20px;"></div>');
+var status = el('<div style="font-size:0.85rem;margin-bottom:10px;min-height:20px;text-align:center;"></div>');
 card.appendChild(status);
+
+var backTo = state.frFrom || "menu";
 
 var sendBtn = el('<button class="btn btn-danger btn-block" style="margin-bottom:10px;">'+t("fr_report_send")+'</button>');
 sendBtn.addEventListener("click", function(){
-if(!fieldInp.value.trim()){ fieldSearchInp.focus(); return; }
-if(!descInp.value.trim()){ descInp.focus(); return; }
+status.style.color = "var(--danger)";
+if(!frCod){ status.textContent = t("fr_report_field"); searchInp.focus(); return; }
+if(!descInp.value.trim()){ status.textContent = t("fr_report_desc"); descInp.focus(); return; }
 if(!db || !currentUser){ status.textContent = t("fr_report_error"); return; }
 sendBtn.disabled = true;
+status.style.color = "var(--muted)";
+status.textContent = t("fr_report_send") + "\u2026";
+try{
 db.collection("field_reports").add({
 reporterUid: currentUser.uid,
 reporterName: myDisplayName(),
-field: fieldInp.value.trim(),
+field: frLabel,
+clubCode: frCod,
+type: tipo,
+piazzola: pzSel.value ? parseInt(pzSel.value,10) : null,
 description: descInp.value.trim(),
 federation: state.federation || null,
 country: state.country || null,
@@ -6765,17 +6845,24 @@ createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }).then(function(){
 status.style.color = "var(--accent)";
 status.textContent = t("fr_report_sent");
-setTimeout(function(){ state.screen = "round"; save(); render(); }, 1800);
-}).catch(function(){
+setTimeout(function(){ state.screen = backTo; save(); render(); }, 1600);
+}).catch(function(err){
+console.error("field report:", err);
 sendBtn.disabled = false;
 status.style.color = "var(--danger)";
 status.textContent = t("fr_report_error");
 });
+}catch(e){
+console.error("field report:", e);
+sendBtn.disabled = false;
+status.style.color = "var(--danger)";
+status.textContent = "Errore: " + (e && e.message ? e.message : e);
+}
 });
 card.appendChild(sendBtn);
 
 var cancelBtn = el('<button class="btn btn-block" style="background:var(--bg-panel-2);">'+t("fr_report_cancel")+'</button>');
-cancelBtn.addEventListener("click", function(){ state.screen = "round"; save(); render(); });
+cancelBtn.addEventListener("click", function(){ state.screen = backTo; save(); render(); });
 card.appendChild(cancelBtn);
 
 wrap.appendChild(card);
@@ -7721,6 +7808,18 @@ wrap.appendChild(card);
 var nextBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.08rem;">'+(isLast ? t("view_final_btn") : t("next_target_btn"))+'</button>');
 nextBtn.addEventListener("click", advanceToNextTarget);
 wrap.appendChild(nextBtn);
+
+// In allenamento il numero di piazzole lo decide l'arciere: se arriva in fondo
+// e vuole continuare, ne aggiunge una al volo senza chiudere il giro.
+var modeQui = GAME_MODES[state.mode] || GAME_MODES.training;
+if(isLast && modeQui.freeFormat){
+var addBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">+ '+t("train_add_target_btn")+'</button>');
+addBtn.addEventListener("click", function(){
+state.format = (state.format||1) + 1;
+advanceToNextTarget();
+});
+wrap.appendChild(addBtn);
+}
 
 var undoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("undo_btn")+'</button>');
 undoBtn.addEventListener("click", undoLastShot);
