@@ -7002,7 +7002,16 @@ t("ot_notif_invite_body",{name:myName, date:dateInp.value, time:timeStr, field:f
 saveBtn.disabled = false;
 state.screen = "menu";
 save(); loadOpenTrainings(); render();
-}).catch(function(err){ console.error("OT save error:", err); alert("Errore salvataggio: " + (err && err.message ? err.message : JSON.stringify(err))); saveBtn.disabled = false; });
+}).catch(function(err){
+console.error("OT save error:", err);
+saveBtn.disabled = false;
+var errDiv = document.getElementById("ot-save-err");
+if(!errDiv){
+errDiv = el('<div id="ot-save-err" style="color:var(--danger);font-size:0.85rem;margin-top:8px;padding:8px;background:rgba(255,0,0,0.1);border-radius:8px;"></div>');
+saveBtn.parentNode.insertBefore(errDiv, saveBtn.nextSibling);
+}
+errDiv.textContent = "Errore: " + (err && err.message ? err.message : (err && err.code ? err.code : JSON.stringify(err)));
+});
 });
 card.appendChild(saveBtn);
 
