@@ -7027,7 +7027,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-12-store";
+var BUILD_STAMP = "2026-08-12-store-delete";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -8122,7 +8122,7 @@ return Promise.all(ps);
 
 function wipeAccountData(uid){
 var jobs = [];
-// Giri salvati sul cloud
+// Giri salvati sul cloud (comprese le "lapidi" dei giri gia' cancellati)
 jobs.push(deleteQueryDocs(db.collection("users").doc(uid).collection("storico").limit(400)));
 // Notifiche ricevute
 jobs.push(deleteQueryDocs(db.collection("notifications").doc(uid).collection("items").limit(400)));
@@ -8136,7 +8136,7 @@ return doc.ref.delete().catch(function(){});
 });
 return Promise.all(ps);
 }).catch(function(){}));
-// Allenamenti aperti pubblicati
+// Allenamenti aperti pubblicati da me
 jobs.push(db.collection("open_trainings").where("ownerUid","==",uid).limit(60).get().then(function(snap){
 var ps = [];
 snap.forEach(function(doc){
@@ -8146,15 +8146,54 @@ return doc.ref.delete().catch(function(){});
 });
 return Promise.all(ps);
 }).catch(function(){}));
+// Allenamenti aperti ALTRUI a cui partecipo: mi tolgo dall'elenco, altrimenti
+// il mio nome resta li' per sempre. Si rilegge e si riscrive l'array intero
+// (arrayRemove su oggetti non combacia se un campo e' cambiato).
+jobs.push(db.collection("open_trainings").where("participantUids","array-contains",uid).limit(60).get().then(function(snap){
+var ps = [];
+snap.forEach(function(doc){
+var d = doc.data() || {};
+if(d.ownerUid === uid) return; // gia' cancellato sopra
+var uids = (d.participantUids||[]).filter(function(u){ return u !== uid; });
+var arr  = (d.participants||[]).filter(function(p){ return p && p.uid !== uid; });
+ps.push(doc.ref.update({ participantUids: uids, participants: arr, updatedAt: Date.now() }).catch(function(){}));
+});
+return Promise.all(ps);
+}).catch(function(){}));
 // Segnalazioni percorso
 jobs.push(deleteQueryDocs(db.collection("field_reports").where("reporterUid","==",uid).limit(100)));
-// Richieste di gestione compagnia
-jobs.push(deleteQueryDocs(db.collection("compagnie_admin_requests").where("richiedenteUid","==",uid).limit(20)));
-// Annunci del Mercatino: il nome del campo proprietario cambia a seconda di
-// come e' stato scritto l'annuncio, quindi si prova con tutti e tre.
-["uid","sellerUid","ownerUid"].forEach(function(campo){
+// Richieste di gestione compagnia (il campo e' richiedenteUid; gli altri due
+// nomi coprono eventuali documenti vecchi)
+["richiedenteUid","requesterUid","uid"].forEach(function(campo){
+jobs.push(deleteQueryDocs(db.collection("compagnie_admin_requests").where(campo,"==",uid).limit(20)));
+});
+// Sessioni di tiro condivise che ho aperto
+jobs.push(deleteQueryDocs(db.collection("sessions").where("ownerUid","==",uid).limit(60)));
+// Mercatino: annunci (il campo usato dalle regole e' sellerUid; gli altri due
+// coprono eventuali annunci scritti da versioni precedenti)
+["sellerUid","uid","ownerUid"].forEach(function(campo){
 jobs.push(deleteQueryDocs(db.collection("market_listings").where(campo,"==",uid).limit(100)));
 });
+// Mercatino: trattative, prima i messaggi poi la conversazione
+jobs.push(db.collection("market_conversations").where("participants","array-contains",uid).limit(60).get().then(function(snap){
+var ps = [];
+snap.forEach(function(doc){
+ps.push(deleteQueryDocs(doc.ref.collection("messages").limit(200)).then(function(){
+return doc.ref.delete().catch(function(){});
+}));
+});
+return Promise.all(ps);
+}).catch(function(){}));
+// Mercatino: recensioni che HO SCRITTO io (quelle ricevute non sono mie)
+jobs.push(deleteQueryDocs(db.collection("market_reviews").where("fromUid","==",uid).limit(100)));
+// Foto degli annunci caricate su Storage in market/{uid}/
+try{
+if(firebase.storage){
+jobs.push(firebase.storage().ref("market/"+uid).listAll().then(function(res){
+return Promise.all((res.items||[]).map(function(it){ return it.delete().catch(function(){}); }));
+}).catch(function(){}));
+}
+}catch(e){}
 return Promise.all(jobs);
 }
 
