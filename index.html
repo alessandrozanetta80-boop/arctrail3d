@@ -741,6 +741,16 @@ notif_self_report_body: "La tua segnalazione su {field} \u00e8 arrivata al refer
 notif_self_report_body_noadmin: "La tua segnalazione su {field} \u00e8 registrata: comparir\u00e0 appena la compagnia avr\u00e0 un referente.",
 notif_self_invite_title: "Inviti inviati",
 notif_self_invite_body: "Hai invitato {n} arcieri all'allenamento del {date}.",
+notif_center_title: "Notifiche",
+notif_center_sub: "Compaiono qui anche se non hai attivato le notifiche del telefono.",
+notif_center_empty: "Nessuna notifica.",
+notif_center_markall: "Segna tutte come lette",
+notif_center_clear: "Elimina le notifiche lette",
+club_reports_show_closed: "Mostra anche le risolte",
+club_reports_hide_closed: "Nascondi le risolte",
+club_reports_clear: "Elimina le segnalazioni risolte",
+club_reports_clear_confirm: "Confermi? Le segnalazioni risolte vengono cancellate per sempre.",
+club_reports_none_closed: "Non c'\u00e8 nessuna segnalazione risolta da eliminare.",
 // === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
@@ -3745,6 +3755,7 @@ return '<img src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="width:'+size+'px;h
 }
 
 var ICON_PATHS = {
+bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
 warn: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
 cart: '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.5 12h11L21 7H6"/>',
 
@@ -3815,6 +3826,7 @@ case "admin": app.appendChild(adminScreen()); break;
 case "session-follow": app.appendChild(sessionFollowScreen()); break;
 case "open-training-create": app.appendChild(openTrainingCreateScreen()); break;
 case "field-report": app.appendChild(fieldReportScreen()); break;
+case "notifiche": app.appendChild(notificationsScreen()); break;
 case "ot-chat": app.appendChild(otChatScreen()); break;
 case "diario": app.appendChild(journalScreen()); break;
 case "round": app.appendChild(roundScreen()); break;
@@ -4735,8 +4747,18 @@ var h = el(
 '<div class="headtxt"><span class="brand-title">ArcTrail 3D</span></div>'+
 '</header>'
 );
+// Campanella: le notifiche si leggono sempre qui dentro, anche se il telefono
+// non ha il permesso per quelle di sistema.
+if(currentUser && authState === "ready" && state.screen !== "notifiche"){
+var bellBtn = el('<button class="home-btn no-print" title="'+t("notif_center_title")+'" style="margin-left:auto;position:relative;padding:6px 9px;display:inline-flex;align-items:center;">'+icon("bell",18)+'</button>');
+if(notifUnreadCount > 0){
+bellBtn.appendChild(el('<span style="position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--danger);color:#fff;font-size:0.62rem;font-weight:800;display:flex;align-items:center;justify-content:center;">'+(notifUnreadCount > 9 ? "9+" : notifUnreadCount)+'</span>'));
+}
+bellBtn.addEventListener("click", function(){ state.screen = "notifiche"; save(); render(); });
+h.appendChild(bellBtn);
+}
 if(showHome){
-var homeBtn = el('<button class="home-btn no-print" style="margin-left:auto;">'+t("nav_menu")+'</button>');
+var homeBtn = el('<button class="home-btn no-print" style="margin-left:8px;">'+t("nav_menu")+'</button>');
 homeBtn.addEventListener("click", function(){
 if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; timerRunning = false; timerRemaining = null; timerTargetKey = null; }
 if(state.screen === "session-follow"){ stopFollowingSession(); state.followSessionId = null; }
@@ -4759,7 +4781,7 @@ h.appendChild(reportBtn);
 // Nel menu, al posto del titolo, la nazione e la federazione attive: toccandole
 // si apre la scelta. E' l'unico punto da imparare per cambiarle.
 if((state.screen === "menu" || mostraMenu) && state.country && state.federation){
-var fedBtn = el('<button class="home-btn small no-print" style="margin-left:auto;"></button>');
+var fedBtn = el('<button class="home-btn small no-print" style="margin-left:8px;"></button>');
 fedBtn.textContent = t("setup_change_btn");
 fedBtn.addEventListener("click", function(){
 setupCountry = state.country;
@@ -5518,7 +5540,9 @@ var hasActiveRound = (state.roundActive === true) || (state.screen === "round");
 if(!state.tab || state.tab === "community") state.tab = "tira";
 
 // ── Cose urgenti: sempre in cima, in qualunque sezione ────────────────────
-if(hasActiveRound){
+// Il banner del percorso in corso ha senso solo dove si tira: nello spazio
+// compagnia o nel mercatino e' fuori posto.
+if(hasActiveRound && state.tab === "tira"){
 wrap.appendChild(el(
 '<div class="resume-banner">'+t("resume_banner", { mode: escapeHtml(modeLabel(state.mode)), n: state.format })+
 '<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="resumeBtn">'+t("resume_btn")+'</button></div></div>'
@@ -6368,11 +6392,13 @@ var tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
 return tb - ta;
 });
 repList.innerHTML = "";
-if(arr.length === 0){
+// Le risolte restano nascoste: la lista deve mostrare il lavoro da fare.
+var chiuse = arr.filter(function(x){ return x.status === "closed"; });
+var mostra = state.clubShowClosed ? arr : arr.filter(function(x){ return x.status !== "closed"; });
+if(mostra.length === 0){
 repList.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("club_reports_empty")+'</div>'));
-return;
 }
-arr.forEach(function(r){
+mostra.forEach(function(r){
 var chiuso = (r.status === "closed");
 var row = el('<div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;'+(chiuso?'opacity:.55;':'')+'"></div>');
 var testa = el('<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px;"></div>');
@@ -6393,6 +6419,23 @@ row.appendChild(okBtn);
 }
 repList.appendChild(row);
 });
+
+// ── Pulizia: le segnalazioni risolte non servono piu' a nessuno ───────────
+if(chiuse.length){
+var toggleBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t(state.clubShowClosed ? "club_reports_hide_closed" : "club_reports_show_closed")+' ('+chiuse.length+')</button>');
+toggleBtn.addEventListener("click", function(){ state.clubShowClosed = !state.clubShowClosed; save(); caricaSegnalazioni(); });
+repList.appendChild(toggleBtn);
+
+var pulisciBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;color:var(--danger);border-color:var(--danger);">'+t("club_reports_clear")+' ('+chiuse.length+')</button>');
+repList.appendChild(pulisciBtn);
+armDoubleConfirm(pulisciBtn, t("club_reports_clear_confirm"), function(){
+var batch = db.batch();
+chiuse.forEach(function(x){ batch.delete(db.collection("field_reports").doc(x.id)); });
+batch.commit().then(caricaSegnalazioni).catch(function(e){
+repList.appendChild(el('<div style="font-size:0.82rem;color:var(--danger);margin-top:6px;">'+escapeHtml(e && e.message ? e.message : "Errore")+'</div>'));
+});
+});
+}
 }).catch(function(err){
 repList.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
 });
@@ -7180,13 +7223,18 @@ createdAt: firebase.firestore.FieldValue.serverTimestamp()
 loadCompagnieAdmin(function(adminMap){
 var adm = adminMap[frCod] || {};
 var adminUid = adm.adminUid;
-if(adminUid && adminUid !== currentUser.uid){
+// Il referente riceve SEMPRE il contenuto della segnalazione, anche quando
+// e' lui stesso ad averla scritta: e' il messaggio che gli serve avere sotto mano.
+if(adminUid){
 sendPushViaFirestore(adminUid, t("fr_notif_title"),
 t("fr_notif_body", { name: myDisplayName(), desc: descInp.value.trim().slice(0,90) }));
 }
-// Copia a chi segnala: serve a sapere che la segnalazione e' partita davvero
+// A chi segnala va la conferma, ma solo se non e' gia' lui il referente:
+// altrimenti riceverebbe due notifiche per la stessa cosa.
+if(adminUid !== currentUser.uid){
 sendPushViaFirestore(currentUser.uid, t("notif_self_report_title"),
 t(adminUid ? "notif_self_report_body" : "notif_self_report_body_noadmin", { field: frLabel }));
+}
 status.style.color = adminUid ? "var(--accent)" : "var(--gold)";
 status.textContent = adminUid ? t("fr_sent_to",{name:frLabel}) : t("fr_no_admin_warn");
 
@@ -7386,35 +7434,114 @@ createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }
 
 var notificationsListenerStarted = false;
+var myNotifications = [];      // ultime notifiche ricevute, per il centro notifiche
+var notifUnreadCount = 0;
+
+function notifShownIds(){
+try{ return JSON.parse(localStorage.getItem("at3d_notif_shown") || "[]"); }catch(e){ return []; }
+}
+function markNotifShown(id){
+try{
+var l = notifShownIds();
+if(l.indexOf(id) !== -1) return;
+l.push(id);
+if(l.length > 120) l = l.slice(-120);
+localStorage.setItem("at3d_notif_shown", JSON.stringify(l));
+}catch(e){}
+}
+
+function showLocalNotification(d){
+if(typeof Notification === "undefined" || Notification.permission !== "granted") return;
+var opts = { body: d.body || "", icon: "/icon-192.png", badge: "/icon-192.png" };
+if(navigator.serviceWorker && navigator.serviceWorker.getRegistration){
+navigator.serviceWorker.getRegistration().then(function(reg){
+if(reg){ reg.showNotification(d.title || "ArcTrail 3D", opts); }
+else { try{ new Notification(d.title || "ArcTrail 3D", opts); }catch(e){} }
+}).catch(function(){
+try{ new Notification(d.title || "ArcTrail 3D", opts); }catch(e){}
+});
+} else {
+try{ new Notification(d.title || "ArcTrail 3D", opts); }catch(e){}
+}
+}
+
 function startNotificationsListener(){
 if(notificationsListenerStarted || !db || !currentUser) return;
 notificationsListenerStarted = true;
 // Niente where+orderBy insieme: Firestore chiederebbe un indice composito che
 // non esiste, la query fallisce in silenzio e NESSUNA notifica arriva mai.
-// Ordino soltanto e scarto le gia' lette lato client.
-var myNotifsRef = db.collection("notifications").doc(currentUser.uid).collection("items")
-.orderBy("createdAt","desc").limit(15);
-myNotifsRef.onSnapshot(function(snap){
-snap.docChanges().forEach(function(change){
-if(change.type !== "added") return;
-var d = change.doc.data();
-if(d.read === true) return;
-// Mostra notifica push locale se il browser/SW lo supporta
-if(Notification && Notification.permission === "granted"){
-navigator.serviceWorker.getRegistration().then(function(reg){
-if(reg){
-reg.showNotification(d.title||"ArcTrail 3D", { body: d.body||"", icon: "/icon-192.png", badge: "/icon-192.png" });
+var ref = db.collection("notifications").doc(currentUser.uid).collection("items")
+.orderBy("createdAt","desc").limit(40);
+ref.onSnapshot(function(snap){
+var arr = [], nuove = [];
+snap.forEach(function(doc){
+var d = doc.data() || {};
+d.id = doc.id;
+arr.push(d);
+if(d.read !== true && notifShownIds().indexOf(doc.id) === -1) nuove.push(d);
+});
+myNotifications = arr;
+var unread = arr.filter(function(x){ return x.read !== true; }).length;
+// La notifica di sistema si mostra una volta sola per documento: la lettura
+// resta in mano all'utente nel centro notifiche, non si azzera da sola.
+nuove.forEach(function(d){ showLocalNotification(d); markNotifShown(d.id); });
+if(unread !== notifUnreadCount || nuove.length){
+notifUnreadCount = unread;
+render();
+}
+}, function(err){ console.error("notifiche:", err); });
+}
+
+// Segna come lette tutte quelle ancora da leggere
+function markAllNotificationsRead(cb){
+if(!db || !currentUser){ if(cb) cb(); return; }
+var daFare = myNotifications.filter(function(x){ return x.read !== true; });
+if(!daFare.length){ if(cb) cb(); return; }
+var base = db.collection("notifications").doc(currentUser.uid).collection("items");
+var batch = db.batch();
+daFare.forEach(function(x){ batch.update(base.doc(x.id), { read:true }); });
+batch.commit().then(function(){ if(cb) cb(); }).catch(function(e){ console.error("notif read:", e); if(cb) cb(); });
+}
+
+// ---------- CENTRO NOTIFICHE ----------
+function notificationsScreen(){
+var wrap = el('<div style="padding-bottom:20px;"></div>');
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("notif_center_title")+'</h2>'));
+card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:12px;">'+t("notif_center_sub")+'</div>'));
+
+if(!myNotifications.length){
+card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("notif_center_empty")+'</div>'));
 } else {
-new Notification(d.title||"ArcTrail 3D", { body: d.body||"", icon: "/icon-192.png" });
+var locale = (LANG_META[state.lang]||LANG_META.it).locale;
+myNotifications.forEach(function(n){
+var quando = "";
+if(n.createdAt && n.createdAt.toDate){
+var dt = n.createdAt.toDate();
+quando = dt.toLocaleDateString(locale) + " " + dt.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 }
-}).catch(function(){
-try{ new Notification(d.title||"ArcTrail 3D", { body: d.body||"", icon: "/icon-192.png" }); }catch(e){}
+var nonLetta = (n.read !== true);
+var row = el('<div style="border:1px solid '+(nonLetta?'var(--accent)':'var(--line)')+';background:'+(nonLetta?'var(--bg-panel-2)':'transparent')+';border-radius:10px;padding:10px 12px;margin-bottom:8px;"></div>');
+row.appendChild(el('<div style="font-size:0.9rem;font-weight:'+(nonLetta?'800':'600')+';">'+escapeHtml(n.title||"ArcTrail 3D")+'</div>'));
+if(n.body){ row.appendChild(el('<div style="font-size:0.85rem;line-height:1.4;margin-top:2px;">'+escapeHtml(n.body)+'</div>')); }
+if(quando){ row.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:4px;">'+quando+'</div>')); }
+card.appendChild(row);
 });
+if(notifUnreadCount > 0){
+var readBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:6px;">'+t("notif_center_markall")+'</button>');
+readBtn.addEventListener("click", function(){
+readBtn.disabled = true;
+markAllNotificationsRead(function(){ render(); });
+});
+card.appendChild(readBtn);
 }
-// Marca come letta dopo 3s
-setTimeout(function(){ change.doc.ref.update({read:true}).catch(function(){}); }, 3000);
-});
-}, function(){});
+}
+wrap.appendChild(card);
+
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
+backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
+wrap.appendChild(backBtn);
+return wrap;
 }
 
 
