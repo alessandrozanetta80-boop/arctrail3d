@@ -528,6 +528,12 @@ var loadedState = JSON.parse(localStorage.getItem(STORAGE_KEY));
 if(loadedState){ state = loadedState; }
 }catch(e){}
 state.percorsi = state.percorsi || []; // percorsi gara salvati (Prepara Gara)
+// Riaprire l'app = ripartire dalla home, come fanno le altre app.
+// Restano lingua, profilo, storico e il giro in corso (che si riprende dal
+// banner nella scheda Tira): si azzera solo il punto in cui si era rimasti.
+// Serve anche a non rientrare nel Mercatino, che si aprirebbe da solo.
+state.screen = "menu";
+state.tab = "tira";
 var homeOverride = false;
 var splashDismissed = false;
 var pending = null;
@@ -8744,6 +8750,22 @@ swReloaded = true;
 window.location.reload();
 });
 }
+// Rientro dopo una lunga pausa: l'app si ricarica da sola, cosi' riparte pulita
+// e prende anche l'eventuale versione nuova. Non lo fa mai durante un giro.
+var appHiddenAt = 0;
+document.addEventListener("visibilitychange", function(){
+if(document.hidden){ appHiddenAt = Date.now(); return; }
+if(!appHiddenAt) return;
+var fermo = Date.now() - appHiddenAt;
+appHiddenAt = 0;
+if(state.roundActive === true || state.screen === "round" || state.screen === "summary") return;
+if(fermo < 20 * 60 * 1000) return;
+if(!DEV_MODE && navigator.serviceWorker && navigator.serviceWorker.getRegistration){
+navigator.serviceWorker.getRegistration().then(function(reg){ if(reg) reg.update(); }).catch(function(){});
+}
+window.location.reload();
+});
+
 // Tasto indietro fisico di Android e gesto di scorrimento laterale.
 // Si aggancia alla cronologia del browser: premere indietro riporta al menu
 // invece di chiudere l'app, e da una schermata gia' al menu esce davvero.
