@@ -732,6 +732,15 @@ journal_title: "Il mio diario",
 journal_sub: "I tuoi progressi e tutti i giri salvati su questo dispositivo.",
 journal_tab_trend: "Andamento",
 journal_tab_rounds: "Giri salvati",
+club_only_space_hint: "Sei il referente di questa compagnia. Da qui gestisci il tuo spazio e le segnalazioni ricevute.",
+club_see_all: "Vedi tutte le compagnie",
+club_back_to_space: "Torna al mio spazio compagnia",
+club_pick_space: "Compagnia da gestire",
+notif_self_report_title: "Segnalazione inviata",
+notif_self_report_body: "La tua segnalazione su {field} \u00e8 arrivata al referente.",
+notif_self_report_body_noadmin: "La tua segnalazione su {field} \u00e8 registrata: comparir\u00e0 appena la compagnia avr\u00e0 un referente.",
+notif_self_invite_title: "Inviti inviati",
+notif_self_invite_body: "Hai invitato {n} arcieri all'allenamento del {date}.",
 // === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
@@ -4159,6 +4168,23 @@ cb(d && d.adminUid === currentUser.uid);
 });
 }
 
+// Codici delle compagnie di cui l'utente e' referente.
+// null = cache non ancora caricata (il chiamante mostra "attendere"),
+// [] = non e' referente di nessuna.
+function myAdminClubCodes(){
+if(!currentUser || !db) return [];
+if(!compagnieAdminCache){
+loadCompagnieAdmin(function(){ render(); });
+return null;
+}
+var out = [];
+Object.keys(compagnieAdminCache).forEach(function(c){
+var d = compagnieAdminCache[c];
+if(d && d.adminUid === currentUser.uid) out.push(c);
+});
+return out;
+}
+
 function saveCompagniaPos(codice, lat, lng, onDone, onErr){
 if(!db || !currentUser) return;
 db.collection("compagnie_admin").doc(codice).set({ lat:lat, lng:lng }, { merge:true })
@@ -5461,8 +5487,8 @@ function tabBar(wide){
 // Su telefono e' fissa in fondo; su schermo largo diventa una barra in cima,
 // perche' in fondo a una pagina alta nel browser non la si vede.
 var base = wide
-? 'position:static;border-bottom:1px solid var(--line);margin-bottom:16px;border-radius:12px;background:var(--bg-panel);'
-: 'position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;border-top:1px solid var(--line);background:var(--bg-panel);padding-bottom:env(safe-area-inset-bottom);';
+? 'position:static;border:1px solid var(--line);margin-bottom:16px;border-radius:14px;background:var(--bg-panel);box-shadow:0 2px 12px rgba(0,0,0,0.20);'
+: 'position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;border-top:2px solid var(--accent);background:var(--bg-panel);box-shadow:0 -10px 26px rgba(0,0,0,0.45);padding-bottom:env(safe-area-inset-bottom);';
 var bar = el('<div style="z-index:60;display:flex;'+base+'"></div>');
 [["campi","mappin",t("nav_fields")],
  ["tira","bow",t("nav_shoot")],
@@ -5470,7 +5496,11 @@ var bar = el('<div style="z-index:60;display:flex;'+base+'"></div>');
  ["mercatino","cart",t("nav_market")],
  ["profilo","users",t("nav_profile")]].forEach(function(tb){
 var key = tb[0], on = (state.tab === key);
-var b = el('<button style="flex:1;background:none;border:none;padding:'+(wide?'12px 2px':'8px 2px 10px')+';cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:'+(on?"var(--accent)":"var(--muted)")+';border-'+(wide?'bottom':'top')+':2px solid '+(on?"var(--accent)":"transparent")+';">'+icon(tb[1],20)+'<span style="font-size:0.62rem;font-weight:700;line-height:1.1;text-align:center;">'+tb[2]+'</span></button>');
+// La voce attiva ha una pastiglia piena: sul telefono, al sole, il solo
+// cambio di colore del testo non si vede.
+var b = el('<button style="flex:1;background:none;border:none;padding:'+(wide?'8px 2px':'7px 2px 9px')+';cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:'+(on?"var(--accent)":"var(--muted)")+';">'+
+'<span style="display:flex;align-items:center;justify-content:center;width:46px;height:29px;border-radius:15px;background:'+(on?"var(--bg-panel-2)":"transparent")+';border:1px solid '+(on?"var(--accent)":"transparent")+';">'+icon(tb[1],21,(on?2:1.6))+'</span>'+
+'<span style="font-size:0.64rem;font-weight:'+(on?"800":"600")+';line-height:1.1;text-align:center;">'+tb[2]+'</span></button>');
 b.addEventListener("click", function(){ state.tab = key; save(); render(); window.scrollTo(0,0); });
 bar.appendChild(b);
 });
@@ -5480,7 +5510,7 @@ return bar;
 
 function menuScreen(){
 var wide = (typeof window.matchMedia === "function") && window.matchMedia("(min-width: 760px)").matches;
-var wrap = el('<div style="'+(wide ? '' : 'padding-bottom:78px;')+'"></div>');
+var wrap = el('<div style="'+(wide ? '' : 'padding-bottom:92px;')+'"></div>');
 if(wide){ wrap.appendChild(tabBar(true)); }
 // Il percorso resta "in corso" anche se apri Storico o Diario: prima dipendeva
 // dalla schermata aperta, quindi il banner spariva e il percorso era irraggiungibile.
@@ -5557,14 +5587,11 @@ menuCard.appendChild(pgBtn);
 }
 wrap.appendChild(menuCard);
 
-var secondaryRow = el('<div class="row"></div>');
+// "Arcieri salvati" rimosso: la stessa lista si modifica all'avvio di ogni
+// giro nella schermata Arcieri, quindi era una seconda porta sulla stessa cosa.
 var histBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("chart",16)+' '+t("journal_title")+'</button>');
 histBtn.addEventListener("click", function(){ state.screen = "diario"; save(); render(); });
-var editBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("users",16)+' '+t("menu_edit_archers")+'</button>');
-editBtn.addEventListener("click", function(){ ensureSelfArcher(); state.registrationNext = "menu"; state.screen = "registration"; save(); render(); });
-secondaryRow.appendChild(histBtn);
-secondaryRow.appendChild(editBtn);
-wrap.appendChild(secondaryRow);
+wrap.appendChild(histBtn);
 
 if(hasActiveRound){
 var resetBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("reset_full_btn")+'</button>');
@@ -5595,6 +5622,38 @@ wrap.appendChild(campiScreen());
 
 // ═════════════════════ SEZIONE: COMPAGNIE ═════════════════════
 else if(state.tab === "compagnie"){
+var mineClubs = myAdminClubCodes();
+// Chi gestisce gia' una compagnia non deve piu' vedere la schermata di
+// registrazione: entra direttamente nel suo spazio.
+if(mineClubs === null){
+wrap.appendChild(el('<div class="card"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>'));
+}
+else if(mineClubs.length && !state.clubShowAll){
+if(mineClubs.indexOf(state.clubSpaceCode) === -1) state.clubSpaceCode = mineClubs[0];
+if(mineClubs.length > 1){
+var pickCard = el('<div class="card" style="margin-bottom:14px;"></div>');
+pickCard.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:6px;">'+t("club_pick_space")+'</label>'));
+var pickSel = el('<select style="width:100%;font-size:0.95rem;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);"></select>');
+mineClubs.forEach(function(c){
+var nmC = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[c]) ? COMPAGNIE[c].nome : c;
+pickSel.appendChild(el('<option value="'+c+'"'+(c === state.clubSpaceCode ? ' selected' : '')+'>'+escapeHtml(nmC)+'</option>'));
+});
+pickSel.addEventListener("change", function(){ state.clubSpaceCode = pickSel.value; save(); render(); });
+pickCard.appendChild(pickSel);
+wrap.appendChild(pickCard);
+}
+wrap.appendChild(el('<div class="card" style="margin-bottom:14px;border-top-color:var(--gold);"><div style="font-size:0.82rem;color:var(--muted);line-height:1.45;">'+t("club_only_space_hint")+'</div></div>'));
+wrap.appendChild(clubSpaceScreen(true));
+var seeAllBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t("club_see_all")+'</button>');
+seeAllBtn.addEventListener("click", function(){ state.clubShowAll = true; save(); render(); });
+wrap.appendChild(seeAllBtn);
+}
+else {
+if(mineClubs.length){
+var backSpaceBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:14px;">'+t("club_back_to_space")+'</button>');
+backSpaceBtn.addEventListener("click", function(){ state.clubShowAll = false; save(); render(); });
+wrap.appendChild(backSpaceBtn);
+}
 // Registrazione: la richiesta parte dall'app ma va confermata via email
 // da un indirizzo ufficiale, altrimenti chiunque potrebbe intestarsi una compagnia.
 var regCard = el('<div class="card" style="margin-bottom:14px;border-top-color:var(--gold);"></div>');
@@ -5624,6 +5683,7 @@ wrap.appendChild(spaceBtn);
 }
 
 wrap.appendChild(compagnieScreen());
+}
 }
 
 // ══════════════════════ SEZIONE: PROFILO ══════════════════════
@@ -6189,7 +6249,7 @@ return wrap;
 // ---------- SPAZIO COMPAGNIA ----------
 // Pannello per il referente di una compagnia: dati di contatto e segnalazioni ricevute.
 // Ci si arriva dalla scheda Profilo; il codice compagnia e' quello del profilo utente.
-function clubSpaceScreen(){
+function clubSpaceScreen(embedded){
 var wrap = el('<div style="padding-bottom:20px;"></div>');
 var codice = state.clubSpaceCode || myClubCode();
 
@@ -6340,9 +6400,11 @@ repList.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escap
 caricaSegnalazioni();
 });
 
+if(!embedded){
 var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen = "menu"; state.tab = "profilo"; save(); render(); });
 wrap.appendChild(backBtn);
+}
 
 return wrap;
 }
@@ -6620,14 +6682,14 @@ var wrap = el('<div></div>');
 var hist = loadHistory();
 
 var mine = [];
-hist.forEach(function(h){
+hist.forEach(function(h, hIdx){
 var res = h.results || [];
 var anyMine = res.some(isMyResult);
 res.forEach(function(r){
 // Se in un giro nessun risultato \u00e8 riconoscibile ed \u00e8 un giro da solo,
 // \u00e8 quasi certamente dell'utente: giri vecchi salvati prima di questa modifica.
 if(isMyResult(r) || (!anyMine && res.length === 1)){
-mine.push({ date: h.date, modeLabel: h.modeLabel, modeKey: h.modeKey, format: h.format, total: r.total, perTarget: r.perTarget||[], pos: (res.indexOf(r)+1), tot: res.length });
+mine.push({ hi: hIdx, date: h.date, modeLabel: h.modeLabel, modeKey: h.modeKey, format: h.format, total: r.total, perTarget: r.perTarget||[], pos: (res.indexOf(r)+1), tot: res.length });
 }
 });
 });
@@ -6683,7 +6745,13 @@ mine.slice(0,15).forEach(function(m){
 var d = new Date(m.date);
 var dStr = isNaN(d.getTime()) ? "" : d.toLocaleDateString(state.lang||'it', {day:'2-digit', month:'short', year:'numeric'});
 var isBest = (m.total === bestTotal);
-var row = el('<div style="background:var(--bg-panel-2);border:1px solid '+(isBest?'var(--gold)':'var(--line)')+';border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;"></div>');
+// La riga apre il dettaglio del giro, come faceva lo Storico prima della fusione
+var row = el('<div style="background:var(--bg-panel-2);border:1px solid '+(isBest?'var(--gold)':'var(--line)')+';border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;"></div>');
+row.addEventListener("click", function(){
+state.historyIndex = m.hi;
+state.screen = "history-detail";
+save(); render();
+});
 row.innerHTML =
 '<div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:0.9rem;color:var(--cream);">'+escapeHtml(m.modeLabel||"")+(isBest?' <span style="color:var(--gold);">'+t("diario_record_badge")+'</span>':'')+'</div>'+
 '<div style="font-size:0.72rem;color:var(--muted);margin-top:2px;">'+dStr+' \u00b7 '+m.format+' '+t("diario_targets_word")+(m.tot>1?' \u00b7 '+t("diario_position",{pos:m.pos, tot:m.tot}):'')+'</div></div>'+
@@ -7116,6 +7184,9 @@ if(adminUid && adminUid !== currentUser.uid){
 sendPushViaFirestore(adminUid, t("fr_notif_title"),
 t("fr_notif_body", { name: myDisplayName(), desc: descInp.value.trim().slice(0,90) }));
 }
+// Copia a chi segnala: serve a sapere che la segnalazione e' partita davvero
+sendPushViaFirestore(currentUser.uid, t("notif_self_report_title"),
+t(adminUid ? "notif_self_report_body" : "notif_self_report_body_noadmin", { field: frLabel }));
 status.style.color = adminUid ? "var(--accent)" : "var(--gold)";
 status.textContent = adminUid ? t("fr_sent_to",{name:frLabel}) : t("fr_no_admin_warn");
 
@@ -7318,12 +7389,16 @@ var notificationsListenerStarted = false;
 function startNotificationsListener(){
 if(notificationsListenerStarted || !db || !currentUser) return;
 notificationsListenerStarted = true;
+// Niente where+orderBy insieme: Firestore chiederebbe un indice composito che
+// non esiste, la query fallisce in silenzio e NESSUNA notifica arriva mai.
+// Ordino soltanto e scarto le gia' lette lato client.
 var myNotifsRef = db.collection("notifications").doc(currentUser.uid).collection("items")
-.where("read","==",false).orderBy("createdAt","desc").limit(10);
+.orderBy("createdAt","desc").limit(15);
 myNotifsRef.onSnapshot(function(snap){
 snap.docChanges().forEach(function(change){
 if(change.type !== "added") return;
 var d = change.doc.data();
+if(d.read === true) return;
 // Mostra notifica push locale se il browser/SW lo supporta
 if(Notification && Notification.permission === "granted"){
 navigator.serviceWorker.getRegistration().then(function(reg){
@@ -7622,6 +7697,11 @@ t("ot_notif_invite_title"),
 t("ot_notif_invite_body",{name:myName, date:dateInp.value, time:timeStr, field:fieldVal})
 );
 });
+// Copia a chi invita: conferma che gli inviti sono partiti
+if(invitedUsers.length && currentUser){
+sendPushViaFirestore(currentUser.uid, t("notif_self_invite_title"),
+t("notif_self_invite_body",{ n: invitedUsers.length, date: dateInp.value }));
+}
 
 setStatus("Pubblicato!", "var(--accent)");
 saveBtn.disabled = false;
