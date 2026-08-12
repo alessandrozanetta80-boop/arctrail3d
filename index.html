@@ -461,7 +461,8 @@ IS_BETA_TESTER = (data.betaTester === true);
 if(!state.profile && data.nomeCognome){
 state.profile = {
 nomeCognome: data.nomeCognome, username: data.username || "",
-email: data.email || user.email, federazioni: data.federazioni || [], arco: data.arco || null, privacy: true
+email: data.email || user.email, federazioni: data.federazioni || [], arco: data.arco || null, privacy: true,
+compagnia: data.compagnia || null, compagniaNome: data.compagniaNome || ""
 };
 }
 authState = data.approved ? "ready" : "pendingApproval";
@@ -645,6 +646,28 @@ ot_notif_invite_title: "Invito allenamento",
 ot_notif_invite_body: "{name} ti ha invitato ad allenarti il {date}{time} — {field}",
 ot_notif_join_title: "Nuovo partecipante",
 ot_notif_join_body: "{name} si è unito al tuo allenamento del {date} — {field}",
+// === NUOVE CHIAVI — DA TRADURRE (design in prova, 12/08) ===
+nav_shoot: "Tira",
+nav_community: "Community",
+nav_fields: "Campi",
+nav_profile: "Profilo",
+settings_title: "Impostazioni",
+ot_vis_label: "Chi lo vede",
+ot_vis_club: "Solo la mia compagnia",
+ot_vis_all: "Aperto a tutti",
+ot_vis_hint_club: "Lo vedono solo gli arcieri della tua compagnia.",
+ot_vis_hint_all: "Lo vedono tutti gli arcieri: usalo per i campi a pagamento o quando accetti visitatori.",
+ot_group_club: "Nella tua compagnia",
+ot_group_open: "Aperti a tutti",
+ot_no_club_warn: "Imposta la tua compagnia nel profilo per pubblicare un allenamento riservato.",
+ot_see_all: "Vedi tutti gli allenamenti",
+ot_badge_open: "Aperto a tutti",
+profile_club_title: "La mia compagnia",
+profile_club_hint: "Serve per vedere gli allenamenti riservati al tuo campo.",
+profile_club_none: "Nessuna compagnia",
+profile_club_search: "Cerca la tua compagnia…",
+profile_club_change: "Cambia",
+// === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
 ot_join_btn: "Unisciti",
@@ -4098,7 +4121,7 @@ if(!db || !currentUser) return;
 db.collection("compagnie_admin_requests").doc(codice + "_" + currentUser.uid).set({
 codice: codice,
 richiedenteUid: currentUser.uid,
-richiedenteName: selfName || currentUser.email || "?",
+richiedenteName: myDisplayName(),
 stato: "pending",
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }).then(onDone).catch(onDone);
@@ -4412,6 +4435,49 @@ fedWrap.appendChild(row);
 });
 card.appendChild(fedWrap);
 
+// Compagnia di appartenenza: serve per filtrare gli allenamenti riservati
+card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_club_title")+'</h2>'));
+card.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;">'+t("profile_club_hint")+'</div>'));
+var clubCod = profile.compagnia || null;
+var clubNome = profile.compagniaNome || "";
+var clubSelDiv = el('<div style="background:var(--accent);color:#fff;border-radius:10px;padding:10px 14px;margin-bottom:8px;justify-content:space-between;align-items:center;"></div>');
+var clubSelName = el('<span style="font-weight:700;font-size:0.92rem;"></span>');
+var clubClear = el('<button style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
+clubSelDiv.appendChild(clubSelName); clubSelDiv.appendChild(clubClear);
+var clubSearch = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("profile_club_search"))+'" style="margin-bottom:6px;">');
+var clubList = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;display:none;"></div>');
+card.appendChild(clubSelDiv); card.appendChild(clubSearch); card.appendChild(clubList);
+function refreshClub(){
+if(clubCod){
+clubSelDiv.style.display = "flex";
+clubSelName.textContent = clubNome || clubCod;
+clubSearch.style.display = "none";
+} else {
+clubSelDiv.style.display = "none";
+clubSearch.style.display = "";
+}
+clubList.style.display = "none";
+}
+clubClear.addEventListener("click", function(){ clubCod = null; clubNome = ""; refreshClub(); if(savedMsg) savedMsg.textContent = ""; });
+clubSearch.addEventListener("input", function(){
+var q = clubSearch.value.trim().toLowerCase();
+clubList.innerHTML = "";
+if(!q || typeof COMPAGNIE === "undefined"){ clubList.style.display = "none"; return; }
+var found = 0;
+Object.keys(COMPAGNIE).forEach(function(cod){
+if(found >= 30) return;
+var c = COMPAGNIE[cod];
+var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "");
+if(label.toLowerCase().indexOf(q) === -1) return;
+found++;
+var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:0.88rem;cursor:pointer;">'+escapeHtml(label)+'</div>');
+row.addEventListener("click", function(){ clubCod = cod; clubNome = label; clubSearch.value=""; refreshClub(); if(savedMsg) savedMsg.textContent = ""; });
+clubList.appendChild(row);
+});
+clubList.style.display = found ? "block" : "none";
+});
+refreshClub();
+
 card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_arco")+'</h2>'));
 var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
 var arcoSel = profile.arco || null;
@@ -4482,13 +4548,15 @@ federazioni.push({ code: code, tessera: tesseraInput ? tesseraInput.value.trim()
 });
 state.profile = {
 nomeCognome: nomeCognome, username: username, email: profile.email,
-federazioni: federazioni, arco: arcoSel, privacy: true
+federazioni: federazioni, arco: arcoSel, privacy: true,
+compagnia: clubCod, compagniaNome: clubNome
 };
 state.theme = themeSel;
 save();
 if(!DEV_MODE && currentUser && db){
 db.collection("users").doc(currentUser.uid).update({
-nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel
+nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel,
+compagnia: clubCod, compagniaNome: clubNome
 }).catch(function(){});
 }
 savedMsg.textContent = t("profile_edit_saved_msg");
@@ -5188,74 +5256,9 @@ d.appendChild(saveStatus);
 return d;
 }
 
-function menuScreen(){
-var wrap = el('<div></div>');
-// Il percorso resta "in corso" anche se apri Storico o Diario: prima dipendeva
-// dalla schermata aperta, quindi il banner spariva e il percorso era irraggiungibile.
-var hasActiveRound = (state.roundActive === true) || (state.screen === "round");
 
-wrap.appendChild(langSwitcher());
-
-if(hasActiveRound){
-wrap.appendChild(el(
-'<div class="resume-banner">'+t("resume_banner", { mode: escapeHtml(modeLabel(state.mode)), n: state.format })+
-'<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="resumeBtn">'+t("resume_btn")+'</button></div></div>'
-));
-}
-
-// Federazione e nazione attive: indicazione, non comando. Si cambia dalla barra in alto.
-if(state.country && state.federation){
-var fedFlag = "", fedPaese = state.country, fedNome = state.federation.toUpperCase();
-for(var ci=0; ci<COUNTRY_LIST.length; ci++){ if(COUNTRY_LIST[ci].code === state.country){ fedFlag = COUNTRY_LIST[ci].flag; fedPaese = t(COUNTRY_LIST[ci].key); break; } }
-var fedsQui = COUNTRY_FEDERATIONS[state.country] || [];
-for(var fi=0; fi<fedsQui.length; fi++){ if(fedsQui[fi].code === state.federation){ fedNome = fedsQui[fi].label; break; } }
-wrap.appendChild(el(
-'<div style="display:flex;justify-content:center;margin-bottom:16px;">'+
-'<span style="display:inline-flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:0.9rem;font-weight:700;color:var(--cream);">'+
-'<span style="font-size:1.25em;line-height:1;">'+fedFlag+'</span>'+
-escapeHtml(fedNome)+'<span style="color:var(--muted);font-weight:400;">&middot;</span>'+
-'<span style="color:var(--muted);font-weight:600;">'+escapeHtml(fedPaese)+'</span></span></div>'
-));
-}
-
-(incomingSessions||[]).forEach(function(sess){
-var sessBanner = el(
-'<div class="resume-banner" style="border-color:var(--accent);position:relative;">'+
-'<button id="dismissBtn_'+sess.id+'" style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1;padding:0;">&#x2715;</button>'+
-'<div style="font-weight:800;">'+t("session_banner_title")+'</div>'+
-'<div style="font-size:0.85rem;margin-top:4px;">'+t("session_banner_body",{name:escapeHtml(sess.ownerName||"?")})+'</div>'+
-'<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="followBtn_'+sess.id+'">'+t("session_banner_btn")+'</button></div></div>'
-);
-wrap.appendChild(sessBanner);
-setTimeout(function(){
-var btn = document.getElementById("followBtn_"+sess.id);
-if(btn) btn.addEventListener("click", function(){
-stopFollowingSession();
-state.followSessionId = sess.id;
-state.screen = "session-follow";
-save(); render();
-});
-var dis = document.getElementById("dismissBtn_"+sess.id);
-if(dis) dis.addEventListener("click", function(){
-dismissedSessions[sess.id] = true;
-render();
-});
-},0);
-});
-
-var menuCard = el('<div class="card"></div>');
-menuCard.appendChild(el('<h2 class="section-title">'+t("menu_title")+'</h2>'));
-
-// ── SEZIONE ALLENAMENTI APERTI ────────────────────────────────────────────
-if(openTrainings.length > 0 || currentUser){
-var otCard = el('<div class="card" style="margin-bottom:14px;"></div>');
-var otHeader = el('<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div><div style="font-weight:800;font-size:1rem;">'+t("ot_section_title")+'</div><div style="font-size:0.8rem;color:var(--muted);margin-top:2px;">'+t("ot_section_hint")+'</div></div></div>');
-otCard.appendChild(otHeader);
-
-if(openTrainings.length === 0){
-otCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">'+t("ot_no_trainings")+'</div>'));
-} else {
-openTrainings.forEach(function(ot){
+// ---------- ALLENAMENTI APERTI: riga singola e sezione ----------
+function otRowEl(ot){
 var myUid = currentUser && currentUser.uid;
 var isOwner = ot.ownerUid === myUid;
 var joined = myUid && (ot.participantUids||[]).indexOf(myUid) !== -1;
@@ -5268,6 +5271,7 @@ var isInvited = myUid && (ot.invitedUids||[]).indexOf(myUid) !== -1;
 var otRow = el(
 '<div style="padding:10px 0;border-bottom:1px solid var(--line);">'+
 (isInvited&&!joined?'<div style="font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:4px;">⭐ '+t("ot_invite_label").replace(" (opzionale)","").replace(" (optional)","").replace(" (optionnel)","").replace(" (optional)","").replace(" (isteğe bağlı)","").replace(" (необязательно)","").replace(" (opcional)","").replace(" (valfritt)","").replace(" (optioneel)","")+' ← tu</div>':'')+
+(ot.visibility === "all" ? '<div style="display:inline-block;font-size:0.68rem;font-weight:700;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:2px 8px;margin-bottom:4px;">'+t("ot_badge_open")+'</div>' : '')+
 '<div style="font-weight:700;font-size:0.95rem;">'+escapeHtml(ot.field||"?")+'</div>'+
 '<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">'+escapeHtml(ot.date||"")+(ot.time?" · "+escapeHtml(ot.time):"")+'</div>'+
 '<div style="font-size:0.82rem;color:var(--muted);">'+t("ot_by",{name:escapeHtml(ot.ownerName||"?")})+'</div>'+
@@ -5285,9 +5289,9 @@ actionBtn.addEventListener("click", function(){
 if(!db || !currentUser) return;
 var ref = db.collection("open_trainings").doc(otId);
 if(isJoined){
-ref.update({ participantUids: firebase.firestore.FieldValue.arrayRemove(currentUser.uid), participants: firebase.firestore.FieldValue.arrayRemove({uid:currentUser.uid,name:selfName||currentUser.displayName||currentUser.email||"?"}) }).then(function(){ loadOpenTrainings(); }).catch(function(){});
+ref.update({ participantUids: firebase.firestore.FieldValue.arrayRemove(currentUser.uid), participants: firebase.firestore.FieldValue.arrayRemove({uid:currentUser.uid,name:myDisplayName()}) }).then(function(){ loadOpenTrainings(); }).catch(function(){});
 } else {
-var joinerName2 = selfName||currentUser.displayName||currentUser.email||"?";
+var joinerName2 = myDisplayName();
 ref.update({ participantUids: firebase.firestore.FieldValue.arrayUnion(currentUser.uid), participants: firebase.firestore.FieldValue.arrayUnion({uid:currentUser.uid,name:joinerName2}) }).then(function(){
 ref.get().then(function(doc2){ if(doc2.exists){ var d2=doc2.data(); sendPushViaFirestore(d2.ownerUid, t("ot_notif_join_title"), t("ot_notif_join_body",{name:joinerName2,date:d2.date||"",field:d2.field||""})); } }).catch(function(){});
 loadOpenTrainings();
@@ -5334,8 +5338,46 @@ extraBtns.appendChild(msgBtn);
 }
 
 otRow.appendChild(extraBtns);
-otCard.appendChild(otRow);
+return otRow;
+}
+
+// compact = true -> versione ridotta per la scheda "Tira" (max 2, con "vedi tutti")
+function otSectionCard(compact){
+var otCard = el('<div class="card" style="margin-bottom:14px;"></div>');
+otCard.appendChild(el('<div><div style="font-weight:800;font-size:1rem;">'+t("ot_section_title")+'</div><div style="font-size:0.8rem;color:var(--muted);margin-top:2px;margin-bottom:8px;">'+t("ot_section_hint")+'</div></div>'));
+
+var mio = myClubCode();
+var gruppoClub = [], gruppoOpen = [];
+(openTrainings||[]).forEach(function(ot){
+if(ot.visibility === "all") gruppoOpen.push(ot);
+else if(mio && ot.clubCode === mio) gruppoClub.push(ot);
+else gruppoOpen.push(ot);
 });
+
+if(compact){
+var tutti = gruppoClub.concat(gruppoOpen);
+if(tutti.length === 0){
+otCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">'+t("ot_no_trainings")+'</div>'));
+} else {
+tutti.slice(0,2).forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
+if(tutti.length > 2){
+var allBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;">'+t("ot_see_all")+' ('+tutti.length+')</button>');
+allBtn.addEventListener("click", function(){ state.tab = "community"; save(); render(); });
+otCard.appendChild(allBtn);
+}
+}
+} else {
+if(gruppoClub.length === 0 && gruppoOpen.length === 0){
+otCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">'+t("ot_no_trainings")+'</div>'));
+}
+if(gruppoClub.length){
+otCard.appendChild(el('<div style="font-size:0.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 2px;">'+t("ot_group_club")+'</div>'));
+gruppoClub.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
+}
+if(gruppoOpen.length){
+otCard.appendChild(el('<div style="font-size:0.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 2px;">'+t("ot_group_open")+'</div>'));
+gruppoOpen.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
+}
 }
 
 if(currentUser){
@@ -5343,8 +5385,67 @@ var createBtn = el('<button class="btn btn-primary btn-block" style="margin-top:
 createBtn.addEventListener("click", function(){ state.screen="open-training-create"; save(); render(); });
 otCard.appendChild(createBtn);
 }
-menuCard.insertBefore(otCard, menuCard.firstChild);
+return otCard;
 }
+
+// ---------- BARRA DI NAVIGAZIONE IN BASSO ----------
+function tabBar(){
+var bar = el('<div style="position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--bg-panel);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);"></div>');
+[["tira","bow",t("nav_shoot")],["community","users",t("nav_community")],["campi","mappin",t("nav_fields")],["profilo","emblem",t("nav_profile")]].forEach(function(tb){
+var key = tb[0], on = (state.tab === key);
+var b = el('<button style="flex:1;background:none;border:none;padding:8px 2px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:'+(on?"var(--accent)":"var(--muted)")+';border-top:2px solid '+(on?"var(--accent)":"transparent")+';margin-top:-1px;">'+icon(tb[1],20)+'<span style="font-size:0.68rem;font-weight:700;">'+tb[2]+'</span></button>');
+b.addEventListener("click", function(){ state.tab = key; save(); render(); window.scrollTo(0,0); });
+bar.appendChild(b);
+});
+return bar;
+}
+
+function menuScreen(){
+var wrap = el('<div style="padding-bottom:78px;"></div>');
+// Il percorso resta "in corso" anche se apri Storico o Diario: prima dipendeva
+// dalla schermata aperta, quindi il banner spariva e il percorso era irraggiungibile.
+var hasActiveRound = (state.roundActive === true) || (state.screen === "round");
+if(!state.tab) state.tab = "tira";
+
+// ── Cose urgenti: sempre in cima, in qualunque sezione ────────────────────
+if(hasActiveRound){
+wrap.appendChild(el(
+'<div class="resume-banner">'+t("resume_banner", { mode: escapeHtml(modeLabel(state.mode)), n: state.format })+
+'<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="resumeBtn">'+t("resume_btn")+'</button></div></div>'
+));
+}
+
+(incomingSessions||[]).forEach(function(sess){
+var sessBanner = el(
+'<div class="resume-banner" style="border-color:var(--accent);position:relative;">'+
+'<button id="dismissBtn_'+sess.id+'" style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1;padding:0;">&#x2715;</button>'+
+'<div style="font-weight:800;">'+t("session_banner_title")+'</div>'+
+'<div style="font-size:0.85rem;margin-top:4px;">'+t("session_banner_body",{name:escapeHtml(sess.ownerName||"?")})+'</div>'+
+'<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="followBtn_'+sess.id+'">'+t("session_banner_btn")+'</button></div></div>'
+);
+wrap.appendChild(sessBanner);
+setTimeout(function(){
+var btn = document.getElementById("followBtn_"+sess.id);
+if(btn) btn.addEventListener("click", function(){
+stopFollowingSession();
+state.followSessionId = sess.id;
+state.screen = "session-follow";
+save(); render();
+});
+var dis = document.getElementById("dismissBtn_"+sess.id);
+if(dis) dis.addEventListener("click", function(){
+dismissedSessions[sess.id] = true;
+render();
+});
+},0);
+});
+
+// ══════════════════════ SEZIONE: TIRA ══════════════════════
+if(state.tab === "tira"){
+wrap.appendChild(otSectionCard(true));
+
+var menuCard = el('<div class="card"></div>');
+menuCard.appendChild(el('<h2 class="section-title">'+t("menu_title")+'</h2>'));
 
 var trainBtn = el('<button class="btn menu-btn training btn-block"><span class="menu-icon">'+icon("bow",24)+'</span><span class="menu-txt">'+t("menu_train_label")+'<span class="menu-sub">'+t("menu_train_sub")+'</span></span></button>');
 trainBtn.addEventListener("click", function(){
@@ -5374,33 +5475,7 @@ var pgBtn = el('<button class="btn menu-btn prepara btn-block"><span class="menu
 pgBtn.addEventListener("click", function(){ state.pgScreen = "pick"; state.screen = "prepara-gara"; save(); render(); });
 menuCard.appendChild(pgBtn);
 }
-
-var campiBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("mappin",24)+'</span><span class="menu-txt">'+t("menu_campi_label")+'<span class="menu-sub">'+t("menu_campi_sub")+'</span></span></button>');
-campiBtn.addEventListener("click", function(){ state.screen = "campi"; save(); render(); });
-menuCard.appendChild(campiBtn);
-
-var compagnieBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("emblem",24)+'</span><span class="menu-txt">'+t("menu_compagnie_label")+'<span class="menu-sub">'+t("menu_compagnie_sub")+'</span></span></button>');
-compagnieBtn.addEventListener("click", function(){ state.screen = "compagnie"; save(); render(); });
-menuCard.appendChild(compagnieBtn);
-
 wrap.appendChild(menuCard);
-
-if(IS_BETA_TESTER){
-var betaCard = el('<div class="card" style="border-top-color:var(--bark);"></div>');
-betaCard.appendChild(el('<h2 class="section-title">'+t("beta_section_title")+' <span style="background:var(--bark);color:#fff;padding:2px 8px;border-radius:4px;font-size:0.9em;margin-left:6px;">BETA</span></h2>'));
-betaCard.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);margin-bottom:10px;">'+t("beta_section_hint")+'</div>'));
-var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("chart",24)+'</span><span class="menu-txt">'+t("diario_btn_label")+'<span class="menu-sub">'+t("diario_btn_sub")+'</span></span></button>');
-diarioBtn.addEventListener("click", function(){ state.screen = "diario"; save(); render(); });
-betaCard.appendChild(diarioBtn);
-
-// Il mercatino e' un file a se': si apre come pagina, cosi' non appesantisce
-// il segnapunti e non puo' romperlo.
-var marketBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("cart",24)+'</span><span class="menu-txt">'+t("market_btn_label")+'<span class="menu-sub">'+t("market_btn_sub")+'</span></span></button>');
-marketBtn.addEventListener("click", function(){ window.location.href = "marketplace.html"; });
-betaCard.appendChild(marketBtn);
-
-wrap.appendChild(betaCard);
-}
 
 var secondaryRow = el('<div class="row"></div>');
 var histBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("scroll",16)+' '+t("menu_history")+'</button>');
@@ -5411,33 +5486,89 @@ secondaryRow.appendChild(histBtn);
 secondaryRow.appendChild(editBtn);
 wrap.appendChild(secondaryRow);
 
-var infoBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("info",16)+' '+t("menu_info")+'</button>');
-infoBtn.addEventListener("click", function(){ state.screen = "info"; save(); render(); });
-wrap.appendChild(infoBtn);
-
-var profileBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("users",16)+' '+t("menu_profile")+'</button>');
-profileBtn.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
-wrap.appendChild(profileBtn);
-
-if(currentUser && currentUser.email === ADMIN_EMAIL){
-var adminBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("users",16)+' '+t("menu_admin")+'</button>');
-adminBtn.addEventListener("click", function(){ state.screen = "admin"; save(); render(); });
-wrap.appendChild(adminBtn);
-}
-
-if(currentUser){
-var logoutBtn2 = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t("logout_word")+' ('+escapeHtml(currentUser.email)+')</button>');
-logoutBtn2.addEventListener("click", function(){
-auth.signOut().then(function(){ authState = "needLogin"; currentUser = null; render(); });
-});
-wrap.appendChild(logoutBtn2);
-}
-
 if(hasActiveRound){
 var resetBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("reset_full_btn")+'</button>');
 wrap.appendChild(resetBtn);
 armDoubleConfirm(resetBtn, t("reset_confirm"), hardResetAll);
 }
+}
+
+// ══════════════════════ SEZIONE: COMMUNITY ══════════════════════
+else if(state.tab === "community"){
+wrap.appendChild(otSectionCard(false));
+
+if(IS_BETA_TESTER){
+var betaCard = el('<div class="card" style="border-top-color:var(--bark);"></div>');
+betaCard.appendChild(el('<h2 class="section-title">'+t("beta_section_title")+' <span style="background:var(--bark);color:#fff;padding:2px 8px;border-radius:4px;font-size:0.9em;margin-left:6px;">BETA</span></h2>'));
+betaCard.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);margin-bottom:10px;">'+t("beta_section_hint")+'</div>'));
+// Il mercatino e' un file a se': si apre come pagina, cosi' non appesantisce
+// il segnapunti e non puo' romperlo.
+var marketBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("cart",24)+'</span><span class="menu-txt">'+t("market_btn_label")+'<span class="menu-sub">'+t("market_btn_sub")+'</span></span></button>');
+marketBtn.addEventListener("click", function(){ window.location.href = "marketplace.html"; });
+betaCard.appendChild(marketBtn);
+wrap.appendChild(betaCard);
+}
+}
+
+// ══════════════════════ SEZIONE: CAMPI ══════════════════════
+else if(state.tab === "campi"){
+wrap.appendChild(campiScreen());
+var compagnieCard = el('<div class="card" style="margin-top:14px;"></div>');
+var compagnieBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("emblem",24)+'</span><span class="menu-txt">'+t("menu_compagnie_label")+'<span class="menu-sub">'+t("menu_compagnie_sub")+'</span></span></button>');
+compagnieBtn.addEventListener("click", function(){ state.screen = "compagnie"; save(); render(); });
+compagnieCard.appendChild(compagnieBtn);
+wrap.appendChild(compagnieCard);
+}
+
+// ══════════════════════ SEZIONE: PROFILO ══════════════════════
+else {
+var profCard = el('<div class="card"></div>');
+profCard.appendChild(el('<h2 class="section-title">'+t("nav_profile")+'</h2>'));
+
+var profileBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("users",24)+'</span><span class="menu-txt">'+t("menu_profile")+'<span class="menu-sub">'+((state.profile && state.profile.compagniaNome) ? escapeHtml(state.profile.compagniaNome) : t("profile_club_none"))+'</span></span></button>');
+profileBtn.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
+profCard.appendChild(profileBtn);
+
+if(IS_BETA_TESTER){
+var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("chart",24)+'</span><span class="menu-txt">'+t("diario_btn_label")+'<span class="menu-sub">'+t("diario_btn_sub")+'</span></span></button>');
+diarioBtn.addEventListener("click", function(){ state.screen = "diario"; save(); render(); });
+profCard.appendChild(diarioBtn);
+}
+wrap.appendChild(profCard);
+
+// Impostazioni: lingua e federazione. Stanno qui perche' si toccano due volte l'anno.
+var setCard = el('<div class="card"></div>');
+setCard.appendChild(el('<h2 class="section-title">'+t("settings_title")+'</h2>'));
+setCard.appendChild(langSwitcher());
+if(state.country && state.federation){
+var fedFlag = "", fedPaese = state.country, fedNome = state.federation.toUpperCase();
+for(var ci=0; ci<COUNTRY_LIST.length; ci++){ if(COUNTRY_LIST[ci].code === state.country){ fedFlag = COUNTRY_LIST[ci].flag; fedPaese = t(COUNTRY_LIST[ci].key); break; } }
+var fedsQui = COUNTRY_FEDERATIONS[state.country] || [];
+for(var fi=0; fi<fedsQui.length; fi++){ if(fedsQui[fi].code === state.federation){ fedNome = fedsQui[fi].label; break; } }
+var fedRow = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:8px;"><span style="font-size:1.15em;margin-right:6px;">'+fedFlag+'</span>'+escapeHtml(fedNome)+' <span style="color:var(--muted);">&middot; '+escapeHtml(fedPaese)+'</span></button>');
+fedRow.addEventListener("click", function(){ setupCountry = state.country; state.screen = "setup"; save(); render(); });
+setCard.appendChild(fedRow);
+}
+var infoBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("info",16)+' '+t("menu_info")+'</button>');
+infoBtn.addEventListener("click", function(){ state.screen = "info"; save(); render(); });
+setCard.appendChild(infoBtn);
+
+if(currentUser && currentUser.email === ADMIN_EMAIL){
+var adminBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("users",16)+' '+t("menu_admin")+'</button>');
+adminBtn.addEventListener("click", function(){ state.screen = "admin"; save(); render(); });
+setCard.appendChild(adminBtn);
+}
+if(currentUser){
+var logoutBtn2 = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t("logout_word")+' ('+escapeHtml(currentUser.email)+')</button>');
+logoutBtn2.addEventListener("click", function(){
+auth.signOut().then(function(){ authState = "needLogin"; currentUser = null; render(); });
+});
+setCard.appendChild(logoutBtn2);
+}
+wrap.appendChild(setCard);
+}
+
+wrap.appendChild(tabBar());
 
 setTimeout(function(){
 var resumeBtn = document.getElementById("resumeBtn");
@@ -6003,7 +6134,7 @@ var trainBtn = el('<button style="white-space:nowrap;padding:6px 12px;border-rad
 (function(campo){
 trainBtn.addEventListener("click", function(){
 // Precompila form allenamento con nome campo
-state.otPrecompile = { field: campo.nome + (campo.luogo ? " — " + campo.luogo : "") };
+state.otPrecompile = { field: campo.nome + (campo.luogo ? " — " + campo.luogo : ""), cod: campo.cod };
 state.screen = "open-training-create";
 save(); render();
 });
@@ -6624,7 +6755,7 @@ if(!db || !currentUser){ status.textContent = t("fr_report_error"); return; }
 sendBtn.disabled = true;
 db.collection("field_reports").add({
 reporterUid: currentUser.uid,
-reporterName: selfName || currentUser.displayName || currentUser.email || "?",
+reporterName: myDisplayName(),
 field: fieldInp.value.trim(),
 description: descInp.value.trim(),
 federation: state.federation || null,
@@ -6699,7 +6830,7 @@ sendBtn.addEventListener("click", function(){
 var txt = textInp.value.trim();
 if(!txt || !db || !currentUser) return;
 sendBtn.disabled = true;
-var senderName = selfName || currentUser.displayName || currentUser.email || "?";
+var senderName = myDisplayName();
 db.collection("open_trainings").doc(otId).collection("messages").add({
 senderUid: currentUser.uid,
 senderName: senderName,
@@ -6736,6 +6867,20 @@ return wrap;
 // ── ALLENAMENTI APERTI ──────────────────────────────────────────────────────
 var openTrainings = [];
 var OT_MAX_AGE_MS = 24 * 60 * 60 * 1000; // spariscono dopo 24h dalla data/ora
+var OT_WINDOW_MS = 7 * 24 * 60 * 60 * 1000; // si mostrano solo i prossimi 7 giorni
+
+// Nome da mostrare per l'utente corrente. Prima era la variabile locale selfName,
+// che pero' esiste solo dentro altre funzioni: usarla altrove faceva ReferenceError.
+function myDisplayName(){
+return (state.profile && (state.profile.username || state.profile.nomeCognome))
+|| (currentUser && (currentUser.displayName || currentUser.email))
+|| "?";
+}
+
+// Codice della compagnia di appartenenza dell'utente (o null)
+function myClubCode(){
+return (state.profile && state.profile.compagnia) || null;
+}
 
 function loadOpenTrainings(){
 if(!db) return;
@@ -6752,9 +6897,20 @@ if(d.datetime && d.datetime < Date.now() - OT_MAX_AGE_MS){
 doc.ref.update({status:"closed"}).catch(function(){});
 return;
 }
+// Finestra: solo i prossimi 7 giorni, altrimenti la lista si riempie di annunci lontani
+if(d.datetime && d.datetime > Date.now() + OT_WINDOW_MS) return;
+// Visibilita': "club" lo vede solo chi e' della stessa compagnia
+// (l'organizzatore e gli invitati lo vedono sempre)
+var myUid = currentUser && currentUser.uid;
+var mine = d.ownerUid === myUid;
+var invited = myUid && (d.invitedUids||[]).indexOf(myUid) !== -1;
+if(d.visibility === "club" && !mine && !invited){
+if(!myClubCode() || d.clubCode !== myClubCode()) return;
+}
 list.push(d);
 });
-list.sort(function(a,b){ return (b.datetime||0) - (a.datetime||0); });
+// Prima quello che sta per succedere, non quello piu' lontano nel tempo
+list.sort(function(a,b){ return (a.datetime||0) - (b.datetime||0); });
 openTrainings = list;
 render();
 }).catch(function(err){ console.error("loadOpenTrainings:", err); openTrainings = []; });
@@ -6830,6 +6986,7 @@ card.appendChild(fieldInp);
 // Precompilato da "Allena qui"
 if(state.otPrecompile && state.otPrecompile.field){
 fieldInp.value = state.otPrecompile.field;
+if(state.otPrecompile.cod) fieldInp.setAttribute("data-cod", state.otPrecompile.cod);
 fieldSelectedName.textContent = state.otPrecompile.field;
 fieldSelectedDiv.style.display = "flex";
 fieldSearchInp.style.display = "none";
@@ -6839,6 +6996,7 @@ state.otPrecompile = null;
 
 fieldClearBtn.addEventListener("click", function(){
 fieldInp.value = "";
+fieldInp.removeAttribute("data-cod");
 fieldSelectedDiv.style.display = "none";
 fieldSearchInp.style.display = "";
 fieldSearchInp.value = "";
@@ -6867,6 +7025,7 @@ matches.slice(0,30).forEach(function(m){
 var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:0.88rem;cursor:pointer;">'+escapeHtml(m.label)+'</div>');
 row.addEventListener("click", function(){
 fieldInp.value = m.label;
+fieldInp.setAttribute("data-cod", m.cod);
 fieldSelectedName.textContent = m.label;
 fieldSelectedDiv.style.display = "flex";
 fieldSearchInp.style.display = "none";
@@ -6928,6 +7087,40 @@ card.appendChild(spotsWrap);
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_note_label")+'</label>'));
 var noteInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("ot_note_placeholder"))+'" rows="2" style="margin-bottom:16px;resize:none;"></textarea>');
 card.appendChild(noteInp);
+
+// Visibilita': riservato alla compagnia oppure aperto a tutti.
+// E' chi pubblica a deciderlo, cosi' la lista di chi legge resta corta.
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_vis_label")+'</label>'));
+var visVal = myClubCode() ? "club" : "all";
+var visWrap = el('<div style="margin-bottom:6px;"></div>');
+var visRow = el('<div style="display:flex;gap:8px;margin-bottom:6px;"></div>');
+var visHint = el('<div style="font-size:0.75rem;color:var(--muted);margin-bottom:16px;"></div>');
+var visBtns = {};
+[["club", t("ot_vis_club")], ["all", t("ot_vis_all")]].forEach(function(pair){
+var k = pair[0];
+var b = el('<button style="flex:1;padding:10px 6px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:0.82rem;font-weight:700;cursor:pointer;">'+pair[1]+'</button>');
+visBtns[k] = b;
+b.addEventListener("click", function(){
+if(k === "club" && !myClubCode()){ visHint.style.color = "var(--danger)"; visHint.textContent = t("ot_no_club_warn"); return; }
+visVal = k; refreshVis();
+});
+visRow.appendChild(b);
+});
+function refreshVis(){
+Object.keys(visBtns).forEach(function(k){
+var on = (k === visVal);
+visBtns[k].style.background = on ? "var(--accent)" : "var(--bg-panel-2)";
+visBtns[k].style.color = on ? "#fff" : "var(--cream)";
+visBtns[k].style.borderColor = on ? "var(--accent)" : "var(--line)";
+});
+visHint.style.color = "var(--muted)";
+visHint.textContent = (visVal === "club") ? t("ot_vis_hint_club") : t("ot_vis_hint_all");
+if(!myClubCode()){ visHint.style.color = "var(--gold)"; visHint.textContent = t("ot_no_club_warn"); }
+}
+visWrap.appendChild(visRow);
+visWrap.appendChild(visHint);
+card.appendChild(visWrap);
+refreshVis();
 
 // Inviti nominativi
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_invite_label")+'</label>'));
@@ -6997,7 +7190,7 @@ setStatus("Salvataggio in corso\u2026");
 try{
 var datetime = new Date(dateInp.value + (timeInp.value ? "T"+timeInp.value : "T00:00")).getTime();
 var invitedUids = invitedUsers.map(function(u){ return u.uid; });
-var myName = (state.profile && (state.profile.username || state.profile.nomeCognome)) || (currentUser && (currentUser.displayName||currentUser.email)) || "?";
+var myName = myDisplayName();
 var fieldVal = fieldInp.value.trim();
 
 var otDoc = {
@@ -7009,6 +7202,8 @@ time: timeInp.value,
 datetime: datetime,
 spots: spotsVal,
 note: noteInp.value.trim(),
+visibility: visVal,
+clubCode: fieldInp.getAttribute("data-cod") || null,
 invitedUids: invitedUids,
 lat: otLat,
 lng: otLng,
