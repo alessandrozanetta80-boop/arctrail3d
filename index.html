@@ -726,6 +726,12 @@ fr_email_hint: "Il referente riceve subito la notifica nell'app. Se vuoi lasciar
 fr_email_none: "Questa compagnia non ha ancora indicato una email nel suo spazio.",
 fr_mail_subject: "Segnalazione sul percorso — {field}",
 fr_report_close: "Chiudi",
+nav_market: "Mercatino",
+market_locked_body: "Il mercatino è in prova con un gruppo ristretto di arcieri. Appena è pronto lo apriamo a tutti.",
+journal_title: "Il mio diario",
+journal_sub: "I tuoi progressi e tutti i giri salvati su questo dispositivo.",
+journal_tab_trend: "Andamento",
+journal_tab_rounds: "Giri salvati",
 // === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
@@ -3793,7 +3799,7 @@ case "campi": app.appendChild(campiScreen()); break;
 case "compagnie": app.appendChild(compagnieScreen()); break;
 case "club-space": app.appendChild(clubSpaceScreen()); break;
 case "profile-edit": app.appendChild(profileEditScreen()); break;
-case "history": app.appendChild(historyScreen()); break;
+case "history": app.appendChild(journalScreen()); break;
 case "history-detail": app.appendChild(historyDetailScreen()); break;
 case "info": app.appendChild(infoScreen()); break;
 case "admin": app.appendChild(adminScreen()); break;
@@ -3801,7 +3807,7 @@ case "session-follow": app.appendChild(sessionFollowScreen()); break;
 case "open-training-create": app.appendChild(openTrainingCreateScreen()); break;
 case "field-report": app.appendChild(fieldReportScreen()); break;
 case "ot-chat": app.appendChild(otChatScreen()); break;
-case "diario": app.appendChild(diarioScreen()); break;
+case "diario": app.appendChild(journalScreen()); break;
 case "round": app.appendChild(roundScreen()); break;
 case "summary": app.appendChild(summaryScreen()); break;
 default: app.appendChild(registrationScreen());
@@ -5424,7 +5430,7 @@ otCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-b
 tutti.slice(0,2).forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 if(tutti.length > 2){
 var allBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;">'+t("ot_see_all")+' ('+tutti.length+')</button>');
-allBtn.addEventListener("click", function(){ state.tab = "community"; save(); render(); });
+allBtn.addEventListener("click", function(){ state.tab = "tira"; save(); render(); });
 otCard.appendChild(allBtn);
 }
 }
@@ -5451,23 +5457,35 @@ return otCard;
 }
 
 // ---------- BARRA DI NAVIGAZIONE IN BASSO ----------
-function tabBar(){
-var bar = el('<div style="position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--bg-panel);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);"></div>');
-[["tira","bow",t("nav_shoot")],["community","globe",t("nav_community")],["campi","mappin",t("nav_fields")],["compagnie","emblem",t("nav_clubs")],["profilo","users",t("nav_profile")]].forEach(function(tb){
+function tabBar(wide){
+// Su telefono e' fissa in fondo; su schermo largo diventa una barra in cima,
+// perche' in fondo a una pagina alta nel browser non la si vede.
+var base = wide
+? 'position:static;border-bottom:1px solid var(--line);margin-bottom:16px;border-radius:12px;background:var(--bg-panel);'
+: 'position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;border-top:1px solid var(--line);background:var(--bg-panel);padding-bottom:env(safe-area-inset-bottom);';
+var bar = el('<div style="z-index:60;display:flex;'+base+'"></div>');
+[["campi","mappin",t("nav_fields")],
+ ["tira","bow",t("nav_shoot")],
+ ["compagnie","emblem",t("nav_clubs")],
+ ["mercatino","cart",t("nav_market")],
+ ["profilo","users",t("nav_profile")]].forEach(function(tb){
 var key = tb[0], on = (state.tab === key);
-var b = el('<button style="flex:1;background:none;border:none;padding:8px 2px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:'+(on?"var(--accent)":"var(--muted)")+';border-top:2px solid '+(on?"var(--accent)":"transparent")+';margin-top:-1px;">'+icon(tb[1],20)+'<span style="font-size:0.62rem;font-weight:700;line-height:1.1;text-align:center;">'+tb[2]+'</span></button>');
+var b = el('<button style="flex:1;background:none;border:none;padding:'+(wide?'12px 2px':'8px 2px 10px')+';cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:'+(on?"var(--accent)":"var(--muted)")+';border-'+(wide?'bottom':'top')+':2px solid '+(on?"var(--accent)":"transparent")+';">'+icon(tb[1],20)+'<span style="font-size:0.62rem;font-weight:700;line-height:1.1;text-align:center;">'+tb[2]+'</span></button>');
 b.addEventListener("click", function(){ state.tab = key; save(); render(); window.scrollTo(0,0); });
 bar.appendChild(b);
 });
 return bar;
 }
 
+
 function menuScreen(){
-var wrap = el('<div style="padding-bottom:78px;"></div>');
+var wide = (typeof window.matchMedia === "function") && window.matchMedia("(min-width: 760px)").matches;
+var wrap = el('<div style="'+(wide ? '' : 'padding-bottom:78px;')+'"></div>');
+if(wide){ wrap.appendChild(tabBar(true)); }
 // Il percorso resta "in corso" anche se apri Storico o Diario: prima dipendeva
 // dalla schermata aperta, quindi il banner spariva e il percorso era irraggiungibile.
 var hasActiveRound = (state.roundActive === true) || (state.screen === "round");
-if(!state.tab) state.tab = "tira";
+if(!state.tab || state.tab === "community") state.tab = "tira";
 
 // ── Cose urgenti: sempre in cima, in qualunque sezione ────────────────────
 if(hasActiveRound){
@@ -5504,7 +5522,7 @@ render();
 
 // ══════════════════════ SEZIONE: TIRA ══════════════════════
 if(state.tab === "tira"){
-wrap.appendChild(otSectionCard(true));
+wrap.appendChild(otSectionCard(false));
 
 var menuCard = el('<div class="card"></div>');
 menuCard.appendChild(el('<h2 class="section-title">'+t("menu_title")+'</h2>'));
@@ -5540,8 +5558,8 @@ menuCard.appendChild(pgBtn);
 wrap.appendChild(menuCard);
 
 var secondaryRow = el('<div class="row"></div>');
-var histBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("scroll",16)+' '+t("menu_history")+'</button>');
-histBtn.addEventListener("click", function(){ state.screen = "history"; save(); render(); });
+var histBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("chart",16)+' '+t("journal_title")+'</button>');
+histBtn.addEventListener("click", function(){ state.screen = "diario"; save(); render(); });
 var editBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("users",16)+' '+t("menu_edit_archers")+'</button>');
 editBtn.addEventListener("click", function(){ ensureSelfArcher(); state.registrationNext = "menu"; state.screen = "registration"; save(); render(); });
 secondaryRow.appendChild(histBtn);
@@ -5555,23 +5573,21 @@ armDoubleConfirm(resetBtn, t("reset_confirm"), hardResetAll);
 }
 }
 
-// ══════════════════════ SEZIONE: COMMUNITY ══════════════════════
-else if(state.tab === "community"){
-wrap.appendChild(otSectionCard(false));
-
+// ══════════════════════ SEZIONE: MERCATINO ══════════════════════
+else if(state.tab === "mercatino"){
+var mktCard = el('<div class="card"></div>');
+mktCard.appendChild(el('<h2 class="section-title">'+t("market_btn_label")+'</h2>'));
 if(IS_BETA_TESTER){
-var betaCard = el('<div class="card" style="border-top-color:var(--bark);"></div>');
-betaCard.appendChild(el('<h2 class="section-title">'+t("beta_section_title")+' <span style="background:var(--bark);color:#fff;padding:2px 8px;border-radius:4px;font-size:0.9em;margin-left:6px;">BETA</span></h2>'));
-betaCard.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);margin-bottom:10px;">'+t("beta_section_hint")+'</div>'));
-// Il mercatino e' un file a se': si apre come pagina, cosi' non appesantisce
-// il segnapunti e non puo' romperlo.
-var marketBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("cart",24)+'</span><span class="menu-txt">'+t("market_btn_label")+'<span class="menu-sub">'+t("market_btn_sub")+'</span></span></button>');
+mktCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">'+t("market_btn_sub")+'</div>'));
+var marketBtn = el('<button class="btn btn-primary btn-block">'+icon("cart",18)+' '+t("market_btn_label")+'</button>');
 marketBtn.addEventListener("click", function(){ window.location.href = "marketplace.html"; });
-betaCard.appendChild(marketBtn);
-wrap.appendChild(betaCard);
+mktCard.appendChild(marketBtn);
+} else {
+mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+icon("cart",34)+'</div>'));
+mktCard.appendChild(el('<div style="font-size:0.88rem;line-height:1.45;text-align:center;color:var(--muted);">'+t("market_locked_body")+'</div>'));
 }
+wrap.appendChild(mktCard);
 }
-
 // ══════════════════════ SEZIONE: CAMPI ══════════════════════
 else if(state.tab === "campi"){
 wrap.appendChild(campiScreen());
@@ -5623,11 +5639,9 @@ var clubSpaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span cl
 clubSpaceBtn.addEventListener("click", function(){ state.clubSpaceCode = myClubCode(); state.screen = "club-space"; save(); render(); });
 profCard.appendChild(clubSpaceBtn);
 
-if(IS_BETA_TESTER){
-var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("chart",24)+'</span><span class="menu-txt">'+t("diario_btn_label")+'<span class="menu-sub">'+t("diario_btn_sub")+'</span></span></button>');
+var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("chart",24)+'</span><span class="menu-txt">'+t("journal_title")+'<span class="menu-sub">'+t("journal_sub")+'</span></span></button>');
 diarioBtn.addEventListener("click", function(){ state.screen = "diario"; save(); render(); });
 profCard.appendChild(diarioBtn);
-}
 wrap.appendChild(profCard);
 
 // Impostazioni: lingua e federazione. Stanno qui perche' si toccano due volte l'anno.
@@ -5662,7 +5676,7 @@ setCard.appendChild(logoutBtn2);
 wrap.appendChild(setCard);
 }
 
-wrap.appendChild(tabBar());
+if(!wide){ wrap.appendChild(tabBar(false)); }
 
 setTimeout(function(){
 var resumeBtn = document.getElementById("resumeBtn");
@@ -6579,6 +6593,28 @@ return wrap;
 
 // ---------- STORICO ----------
 // ---------- DIARIO (beta) ----------
+// ---------- DIARIO: andamento + giri salvati (schermate fuse) ----------
+function journalScreen(){
+var wrap = el('<div></div>');
+if(!state.journalTab) state.journalTab = "trend";
+
+var head = el('<div class="card" style="margin-bottom:14px;"></div>');
+head.appendChild(el('<h2 class="section-title">'+t("journal_title")+'</h2>'));
+head.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:12px;">'+t("journal_sub")+'</div>'));
+var seg = el('<div style="display:flex;gap:8px;"></div>');
+[["trend",t("journal_tab_trend")],["rounds",t("journal_tab_rounds")]].forEach(function(pair){
+var k = pair[0], on = (state.journalTab === k);
+var b = el('<button style="flex:1;padding:10px 6px;border-radius:10px;border:1px solid '+(on?"var(--accent)":"var(--line)")+';background:'+(on?"var(--accent)":"var(--bg-panel-2)")+';color:'+(on?"#fff":"var(--cream)")+';font-size:0.84rem;font-weight:700;cursor:pointer;">'+pair[1]+'</button>');
+b.addEventListener("click", function(){ state.journalTab = k; save(); render(); });
+seg.appendChild(b);
+});
+head.appendChild(seg);
+wrap.appendChild(head);
+
+wrap.appendChild(state.journalTab === "rounds" ? historyScreen() : diarioScreen());
+return wrap;
+}
+
 function diarioScreen(){
 var wrap = el('<div></div>');
 var hist = loadHistory();
@@ -6597,7 +6633,7 @@ mine.push({ date: h.date, modeLabel: h.modeLabel, modeKey: h.modeKey, format: h.
 });
 
 var head = el('<div class="card"></div>');
-head.appendChild(el('<h2 class="section-title">'+t("diario_btn_label")+' <span style="background:var(--bark);color:#fff;padding:2px 8px;border-radius:4px;font-size:0.9em;margin-left:6px;">BETA</span></h2>'));
+
 
 if(mine.length === 0){
 head.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);line-height:1.5;">'+t("diario_empty")+'</div>'));
@@ -6741,7 +6777,7 @@ function historyScreen(){
 var wrap = el('<div></div>');
 var hist = loadHistory();
 var histCard = el('<div class="card"></div>');
-histCard.appendChild(el('<h2 class="section-title">'+t("history_title")+'</h2>'));
+
 if(!hist.length){
 var emptyCard = el('<div class="empty-state-card"></div>');
 emptyCard.appendChild(el('<div class="empty-state-icon">'+icon("empty",20)+'</div>'));
