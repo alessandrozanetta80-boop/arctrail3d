@@ -81,8 +81,15 @@ position:sticky; top:0; z-index:50; margin-top:env(safe-area-inset-top);
 background:transparent; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
 header.top .logo{ width:52px; height:52px; flex:0 0 auto; }
 header.top .logo svg{ width:100%; height:100%; display:block; }
-header.top .headtxt{ flex:1; min-width:0; overflow:hidden; }
-header.top .brand-title{ font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:0.95rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; }
+header.top .headtxt{ flex:1; min-width:0; overflow:hidden; padding-right:6px; }
+/* Il titolo finiva sotto la busta: l'ultima lettera veniva tagliata. Ora ha uno
+spazio suo, e su schermi stretti si rimpiccioliscono logo e distanze. */
+@media (max-width:400px){
+header.top{ gap:8px; }
+header.top .logo{ width:44px; height:44px; }
+header.top .headtxt{ padding-right:4px; }
+}
+header.top .brand-title{ font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:clamp(0.8rem,3.2vw,0.95rem); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; overflow:hidden; text-overflow:ellipsis; }
 header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent); }
 header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
 .home-btn{ background:var(--bark); border:none; color:#fff; border-radius:999px;
@@ -297,6 +304,38 @@ background:radial-gradient(circle, rgba(159,203,42,0.20), transparent 70%); z-in
 @media (max-width:420px){
 .chip-group{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .chip{ flex:none; min-width:0; }
+}
+/* ---------- LETTURA DA COMPUTER ----------
+Sul telefono non cambia nulla. Da 760px in su la colonna si allarga, perche'
+a 520px su un monitor l'app e' una striscia in mezzo al vuoto. Le schermate
+operative (percorso, riepilogo, moduli, chat) restano strette: un modulo largo
+900px e' peggio, non meglio. */
+@media (min-width:760px){
+#app{ max-width:900px; padding:20px 26px 44px; }
+#app.narrow{ max-width:620px; }
+header.top{ height:72px; margin-bottom:20px; }
+header.top .logo{ width:56px; height:56px; }
+header.top h1{ font-size:1.2rem; }
+header.top .sub{ font-size:0.76rem; }
+.card{ padding:20px 22px; }
+.editorial-body{ max-width:520px; }
+}
+/* Sopra i 1080px le schede del menu si dispongono su due colonne: una sola
+colonna lunghissima costringe a scorrere per vedere cose che ci starebbero. */
+@media (min-width:1080px){
+#app{ max-width:1060px; }
+#app:not(.narrow) .menu-cols{ column-count:2; column-gap:20px; }
+#app:not(.narrow) .menu-cols .card,
+#app:not(.narrow) .menu-cols .btn,
+#app:not(.narrow) .menu-cols .resume-banner,
+#app:not(.narrow) .menu-cols .rules-panel,
+#app:not(.narrow) .menu-cols .session-banner{ break-inside:avoid; -webkit-column-break-inside:avoid; }
+}
+/* Col mouse serve un ritorno visivo: sul telefono basta il :active del dito. */
+@media (hover:hover) and (pointer:fine){
+.btn:hover:not(:disabled){ filter:brightness(1.07); border-color:var(--accent); }
+.chip:hover{ border-color:var(--accent); }
+.card{ transition:box-shadow .15s ease; }
 }
 @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } .leaf-particle{ animation:none !important; display:none; } .splash-logo,.splash-title,.splash-tag,.splash-wrap .btn{ animation:none !important; opacity:1 !important; transform:none !important; } .progress-fill::after{ animation:none !important; display:none; } }
 @media print{
@@ -795,10 +834,17 @@ dm_open_btn: "\u2709 Scrivi",
 // Notifica all'admin quando qualcuno prova a registrarsi
 notif_new_signup_title: "Nuova richiesta di registrazione",
 notif_new_signup_body: "{name} (@{username}) ha chiesto l'accesso con {email}. Va approvato nel pannello Accessi.",
+// Partecipazione agli allenamenti aperti (resa esplicita 12/08)
+ot_participants: "Chi c'è",
+ot_join_hint: "Premi qui sotto per confermare che vieni: l'organizzatore riceve un avviso.",
+ot_joined_hint: "Sei nell'elenco. L'organizzatore ti vede fra i partecipanti.",
+ot_join_saving: "Attendi…",
+ot_join_error: "Non è riuscito. Riprova fra un attimo.",
+ot_notif_where: "Aprilo nella scheda Tira e premi «Partecipo» per confermare.",
 // === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
-ot_join_btn: "Unisciti",
+ot_join_btn: "✔ Partecipo",
 ot_joined_label: "Sei iscritto ✔",
 ot_leave_btn: "Annulla iscrizione",
 ot_full_label: "Al completo",
@@ -3869,9 +3915,18 @@ app.style.paddingBottom = "92px";
 }
 }
 
+// Schermate che su computer restano a colonna stretta: si tira col pollice,
+// e un modulo o una chat larghi tutto lo schermo si leggono peggio.
+var NARROW_SCREENS = {
+"round":1, "summary":1, "registration":1, "setup":1, "profile-registration":1,
+"profile-edit":1, "training-setup":1, "gara-setup":1, "open-training-create":1,
+"field-report":1, "dm-chat":1, "ot-chat":1, "session-follow":1, "info":1
+};
+
 function render(){
 var app = document.getElementById("app");
 app.innerHTML = "";
+app.classList.toggle("narrow", !state.lang || authState !== "ready" || !!NARROW_SCREENS[state.screen]);
 if(typeof syncNavGuard === "function") syncNavGuard();
 if(state.lang){ document.documentElement.lang = state.lang; }
 document.body.classList.toggle("theme-satura", state.theme === "satura");
@@ -5479,6 +5534,37 @@ return d;
 
 
 // ---------- ALLENAMENTI APERTI: riga singola e sezione ----------
+// Iscrizione / annullamento a un allenamento aperto.
+// Prima si usava arrayRemove su un oggetto {uid,name}: se il nome mostrato
+// cambiava anche di una lettera l'oggetto non combaciava piu' e l'annullamento
+// falliva in silenzio. Ora si rilegge il documento e si riscrive l'elenco.
+function otSetJoin(otId, join, btn, errEl){
+if(!db || !currentUser) return;
+var oldLabel = btn.textContent;
+btn.disabled = true; btn.textContent = t("ot_join_saving");
+if(errEl){ errEl.style.display = "none"; errEl.textContent = ""; }
+var ref = db.collection("open_trainings").doc(otId);
+var myName = myDisplayName();
+ref.get().then(function(snap){
+if(!snap.exists) throw new Error("allenamento non trovato");
+var d = snap.data() || {};
+var uids = (d.participantUids||[]).filter(function(u){ return u !== currentUser.uid; });
+var arr = (d.participants||[]).filter(function(p){ return p && p.uid !== currentUser.uid; });
+if(join){ uids.push(currentUser.uid); arr.push({ uid: currentUser.uid, name: myName }); }
+return ref.update({ participantUids: uids, participants: arr, updatedAt: Date.now() }).then(function(){
+if(join && d.ownerUid){
+sendPushViaFirestore(d.ownerUid, t("ot_notif_join_title"),
+t("ot_notif_join_body", { name: myName, date: d.date||"", field: d.field||"" }));
+}
+loadOpenTrainings();
+});
+}).catch(function(e){
+btn.disabled = false; btn.textContent = oldLabel;
+if(errEl){ errEl.textContent = t("ot_join_error"); errEl.style.display = "block"; }
+console.error("OT join error:", e);
+});
+}
+
 function otRowEl(ot){
 var myUid = currentUser && currentUser.uid;
 var isOwner = ot.ownerUid === myUid;
@@ -5498,30 +5584,37 @@ var otRow = el(
 '<div style="font-size:0.82rem;color:var(--muted);">'+t("ot_by",{name:escapeHtml(ot.ownerName||"?")})+'</div>'+
 (ot.note?'<div style="font-size:0.82rem;color:var(--cream);margin-top:2px;">'+escapeHtml(ot.note)+'</div>':'')+
 '<div style="font-size:0.82rem;margin-top:4px;color:'+(full&&!joined?'var(--danger)':'var(--accent)')+';">'+
-(joined?t("ot_joined_label"):full?t("ot_full_label"):t("ot_spots_left",{n:spotsLeft}))+
+(full&&!joined?t("ot_full_label"):t("ot_spots_left",{n:spotsLeft}))+
 '</div></div>'
 );
 
+// Chi partecipa: senza vedere nessun nome non si capiva che ci si
+// potesse aggiungere. L'organizzatore c'e' sempre.
+var chiCe = [escapeHtml(ot.ownerName||"?")];
+(ot.participants||[]).forEach(function(p){ if(p && p.name) chiCe.push(escapeHtml(p.name)); });
+otRow.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-top:4px;">'+t("ot_participants")+' ('+taken+'/'+total+'): '+chiCe.join(", ")+'</div>'));
+
 if(!isOwner && currentUser){
-var actionBtn = el('<button style="margin-top:6px;padding:6px 14px;border-radius:8px;border:none;cursor:pointer;font-size:0.85rem;font-weight:700;background:'+(joined?"var(--bg-panel-2)":"var(--accent)")+'";color:'+(joined?"var(--cream)":"#fff")+';>'+(joined?t("ot_leave_btn"):full?t("ot_full_label"):t("ot_join_btn"))+'</button>');
-if(!full || joined){
-(function(otId, isJoined){
-actionBtn.addEventListener("click", function(){
-if(!db || !currentUser) return;
-var ref = db.collection("open_trainings").doc(otId);
-if(isJoined){
-ref.update({ participantUids: firebase.firestore.FieldValue.arrayRemove(currentUser.uid), participants: firebase.firestore.FieldValue.arrayRemove({uid:currentUser.uid,name:myDisplayName()}) }).then(function(){ loadOpenTrainings(); }).catch(function(){});
+// Pulsante di conferma a tutta larghezza, con la spiegazione sopra:
+// il vecchio pulsantino accanto al testo non veniva trovato dai tester.
+var actionBox = el('<div style="margin-top:10px;"></div>');
+var actErr = el('<div style="font-size:0.78rem;color:var(--danger);margin-top:6px;display:none;"></div>');
+if(joined){
+actionBox.appendChild(el('<div style="border-radius:10px;padding:10px 12px;font-weight:800;font-size:0.9rem;background:color-mix(in srgb, var(--success) 16%, var(--bg-panel));border:1px solid color-mix(in srgb, var(--success) 55%, transparent);color:var(--cream);">'+t("ot_joined_label")+'</div>'));
+actionBox.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-top:4px;">'+t("ot_joined_hint")+'</div>'));
+var leaveBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;">'+t("ot_leave_btn")+'</button>');
+(function(otId){ leaveBtn.addEventListener("click", function(){ otSetJoin(otId, false, leaveBtn, actErr); }); })(ot.id);
+actionBox.appendChild(leaveBtn);
+} else if(full){
+actionBox.appendChild(el('<button class="btn btn-block btn-sm" disabled>'+t("ot_full_label")+'</button>'));
 } else {
-var joinerName2 = myDisplayName();
-ref.update({ participantUids: firebase.firestore.FieldValue.arrayUnion(currentUser.uid), participants: firebase.firestore.FieldValue.arrayUnion({uid:currentUser.uid,name:joinerName2}) }).then(function(){
-ref.get().then(function(doc2){ if(doc2.exists){ var d2=doc2.data(); sendPushViaFirestore(d2.ownerUid, t("ot_notif_join_title"), t("ot_notif_join_body",{name:joinerName2,date:d2.date||"",field:d2.field||""})); } }).catch(function(){});
-loadOpenTrainings();
-}).catch(function(){});
+actionBox.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px;">'+t("ot_join_hint")+'</div>'));
+var joinBtn = el('<button class="btn btn-primary btn-block">'+t("ot_join_btn")+'</button>');
+(function(otId){ joinBtn.addEventListener("click", function(){ otSetJoin(otId, true, joinBtn, actErr); }); })(ot.id);
+actionBox.appendChild(joinBtn);
 }
-});
-})(ot.id, joined);
-}
-otRow.appendChild(actionBtn);
+actionBox.appendChild(actErr);
+otRow.appendChild(actionBox);
 }
 if(isOwner){
 var delBtn = el('<button style="margin-top:6px;padding:4px 10px;border-radius:8px;border:none;cursor:pointer;font-size:0.8rem;background:var(--danger);color:#fff;">'+t("ot_delete_btn")+'</button>');
@@ -5614,7 +5707,7 @@ function tabBar(wide){
 // Su telefono e' fissa in fondo; su schermo largo diventa una barra in cima,
 // perche' in fondo a una pagina alta nel browser non la si vede.
 var base = wide
-? 'position:static;border:1px solid var(--line);margin-bottom:16px;border-radius:14px;background:var(--bg-panel);box-shadow:0 2px 12px rgba(0,0,0,0.20);'
+? 'position:sticky;top:74px;border:1px solid var(--line);margin-bottom:18px;border-radius:14px;background:var(--bg-panel);box-shadow:0 2px 12px rgba(0,0,0,0.20);'
 : 'position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;border-top:2px solid var(--accent);background:var(--bg-panel);box-shadow:0 -10px 26px rgba(0,0,0,0.45);padding-bottom:env(safe-area-inset-bottom);';
 var bar = el('<div style="z-index:60;display:flex;'+base+'"></div>');
 [["campi","mappin",t("nav_fields")],
@@ -5636,7 +5729,7 @@ return bar;
 
 
 function menuScreen(){
-var wrap = el('<div></div>');
+var wrap = el('<div class="menu-cols"></div>');
 // Il percorso resta "in corso" anche se apri Storico o Diario: prima dipendeva
 // dalla schermata aperta, quindi il banner spariva e il percorso era irraggiungibile.
 var hasActiveRound = (state.roundActive === true) || (state.screen === "round");
@@ -8298,7 +8391,7 @@ var timeStr = timeInp.value ? " alle "+timeInp.value : "";
 invitedUsers.forEach(function(u){
 sendPushViaFirestore(u.uid,
 t("ot_notif_invite_title"),
-t("ot_notif_invite_body",{name:myName, date:dateInp.value, time:timeStr, field:fieldVal})
+t("ot_notif_invite_body",{name:myName, date:dateInp.value, time:timeStr, field:fieldVal})+" "+t("ot_notif_where")
 );
 });
 // Copia a chi invita: conferma che gli inviti sono partiti
@@ -9127,6 +9220,23 @@ navigator.serviceWorker.getRegistration().then(function(reg){ if(reg) reg.update
 }
 window.location.reload();
 });
+
+// Ridimensionando la finestra del browser si passa da telefono a computer:
+// la barra e le colonne si decidono al momento del disegno, quindi senza questo
+// il layout restava quello di partenza finche' non si cambiava schermata.
+// Non ridisegna mai durante un giro, per non perdere quello che si sta scrivendo.
+if(typeof window.matchMedia === "function"){
+["(min-width: 760px)", "(min-width: 1080px)"].forEach(function(q){
+var mq = window.matchMedia(q);
+var onChange = function(){
+if(state.screen === "round" || state.screen === "summary") return;
+if(document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+render();
+};
+if(mq.addEventListener) mq.addEventListener("change", onChange);
+else if(mq.addListener) mq.addListener(onChange);
+});
+}
 
 // Tasto indietro fisico di Android e gesto di scorrimento laterale.
 // Si aggancia alla cronologia del browser: premere indietro riporta al menu
