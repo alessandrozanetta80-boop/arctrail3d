@@ -471,8 +471,12 @@ if(authState === "ready"){
 startIncomingSessionsListener();
 loadOpenTrainings();
 startNotificationsListener();
+startDirectChatsListener();
 // Admin app: assegna automaticamente 01VERB se non ancora assegnato
 if(currentUser && currentUser.email === ADMIN_EMAIL && db){
+// L'app dell'admin lascia scritto il proprio uid: serve a chi si registra per
+// avvisarlo, visto che nessun altro puo' cercare l'admin nella collezione users.
+db.collection("app_config").doc("admin").set({ uid: currentUser.uid, email: currentUser.email }, { merge:true }).catch(function(){});
 db.collection("compagnie_admin").doc("01VERB").get().then(function(doc){
 if(!doc.exists || !doc.data().adminUid){
 db.collection("compagnie_admin").doc("01VERB").set({ adminUid: currentUser.uid }, { merge: true })
@@ -621,6 +625,7 @@ diario_by_mode_title: "Per disciplina",
 diario_by_mode_hint: "Ogni disciplina ha un punteggio massimo diverso: qui i numeri sono confrontabili.",
 nav_back: "\u2190 Indietro",
 nav_menu: "\u2190 Menu",
+cancel_btn: "Chiudi",
 reg_done_btn: "Fatto",
 setup_where_title: "Dove tiri?",
 setup_pick_fed: "Scegli la federazione",
@@ -767,6 +772,29 @@ hist_delete_one: "Elimina questo giro",
 hist_delete_confirm: "Confermi? Il giro viene cancellato da questo dispositivo e dal backup.",
 hist_deleted: "Giro eliminato.",
 pg_beta_note: "In prova: per ora \u00e8 riservato alle compagnie e ai collaudatori.",
+// Chat diretta tra due arcieri
+dm_title: "Messaggi",
+dm_sub: "Scrivi in privato a un altro arciere iscritto ad ArcTrail 3D.",
+dm_search_label: "Cerca un arciere",
+dm_search_placeholder: "Cerca per username\u2026",
+dm_search_empty: "Nessun arciere con questo username.",
+dm_list_title: "Le tue conversazioni",
+dm_empty: "Non hai ancora nessuna conversazione: cerca un arciere qui sopra e scrivigli.",
+dm_chat_with: "Chat con {name}",
+dm_placeholder: "Scrivi un messaggio\u2026",
+dm_send: "Invia",
+dm_error: "Messaggio non inviato, riprova.",
+dm_no_messages: "Nessun messaggio: scrivi tu per primo.",
+dm_delete_chat: "Elimina conversazione",
+dm_delete_chat_confirm: "Confermi? La conversazione viene cancellata per entrambi.",
+dm_back: "\u2190 Messaggi",
+dm_new_badge: "nuovo",
+dm_notif_title: "Nuovo messaggio",
+dm_notif_body: "{name}: {text}",
+dm_open_btn: "\u2709 Scrivi",
+// Notifica all'admin quando qualcuno prova a registrarsi
+notif_new_signup_title: "Nuova richiesta di registrazione",
+notif_new_signup_body: "{name} (@{username}) ha chiesto l'accesso con {email}. Va approvato nel pannello Accessi.",
 // === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
@@ -1063,6 +1091,7 @@ diario_by_mode_title: "By discipline",
 diario_by_mode_hint: "Each discipline has a different maximum score: here the numbers are comparable.",
 nav_back: "\u2190 Back",
 nav_menu: "\u2190 Menu",
+cancel_btn: "Close",
 reg_done_btn: "Done",
 setup_where_title: "Where do you shoot?",
 setup_pick_fed: "Choose your federation",
@@ -1334,6 +1363,7 @@ diario_by_mode_title: "Par discipline",
 diario_by_mode_hint: "Chaque discipline a un score maximum diff\u00e9rent : ici les chiffres sont comparables.",
 nav_back: "\u2190 Retour",
 nav_menu: "\u2190 Menu",
+cancel_btn: "Fermer",
 reg_done_btn: "Termin\u00e9",
 setup_where_title: "O\u00f9 tirez-vous\u00a0?",
 setup_pick_fed: "Choisissez la f\u00e9d\u00e9ration",
@@ -1605,6 +1635,7 @@ diario_by_mode_title: "Nach Disziplin",
 diario_by_mode_hint: "Jede Disziplin hat eine andere H\u00f6chstpunktzahl: hier sind die Zahlen vergleichbar.",
 nav_back: "\u2190 Zur\u00fcck",
 nav_menu: "\u2190 Men\u00fc",
+cancel_btn: "Schließen",
 reg_done_btn: "Fertig",
 setup_where_title: "Wo schie\u00dft du?",
 setup_pick_fed: "W\u00e4hle den Verband",
@@ -1876,6 +1907,7 @@ diario_by_mode_title: "Disipline g\u00f6re",
 diario_by_mode_hint: "Her disiplinin azami puan\u0131 farkl\u0131d\u0131r: burada say\u0131lar kar\u015f\u0131la\u015ft\u0131r\u0131labilir.",
 nav_back: "\u2190 Geri",
 nav_menu: "\u2190 Men\u00fc",
+cancel_btn: "Kapat",
 reg_done_btn: "Tamam",
 setup_where_title: "Nerede at\u0131\u015f yap\u0131yorsun?",
 setup_pick_fed: "Federasyonu se\u00e7",
@@ -2161,6 +2193,7 @@ diario_by_mode_title: "\u041f\u043e \u0434\u0438\u0441\u0446\u0438\u043f\u043b\u
 diario_by_mode_hint: "\u0423 \u043a\u0430\u0436\u0434\u043e\u0439 \u0434\u0438\u0441\u0446\u0438\u043f\u043b\u0438\u043d\u044b \u0441\u0432\u043e\u0439 \u043c\u0430\u043a\u0441\u0438\u043c\u0443\u043c \u043e\u0447\u043a\u043e\u0432: \u0437\u0434\u0435\u0441\u044c \u0446\u0438\u0444\u0440\u044b \u0441\u043e\u043f\u043e\u0441\u0442\u0430\u0432\u0438\u043c\u044b.",
 nav_back: "\u2190 \u041d\u0430\u0437\u0430\u0434",
 nav_menu: "\u2190 \u041c\u0435\u043d\u044e",
+cancel_btn: "Закрыть",
 reg_done_btn: "\u0413\u043e\u0442\u043e\u0432\u043e",
 setup_where_title: "\u0413\u0434\u0435 \u0432\u044b \u0441\u0442\u0440\u0435\u043b\u044f\u0435\u0442\u0435?",
 setup_pick_fed: "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0444\u0435\u0434\u0435\u0440\u0430\u0446\u0438\u044e",
@@ -2447,6 +2480,7 @@ diario_by_mode_title: "Por disciplina",
 diario_by_mode_hint: "Cada disciplina tiene una puntuaci\u00f3n m\u00e1xima distinta: aqu\u00ed los n\u00fameros son comparables.",
 nav_back: "\u2190 Atr\u00e1s",
 nav_menu: "\u2190 Men\u00fa",
+cancel_btn: "Cerrar",
 reg_done_btn: "Hecho",
 setup_where_title: "\u00bfD\u00f3nde tiras?",
 setup_pick_fed: "Elige la federaci\u00f3n",
@@ -2733,6 +2767,7 @@ diario_by_mode_title: "Per disciplin",
 diario_by_mode_hint: "Varje disciplin har olika maxpo\u00e4ng: h\u00e4r \u00e4r siffrorna j\u00e4mf\u00f6rbara.",
 nav_back: "\u2190 Tillbaka",
 nav_menu: "\u2190 Meny",
+cancel_btn: "Stäng",
 reg_done_btn: "Klar",
 setup_where_title: "Var skjuter du?",
 setup_pick_fed: "V\u00e4lj f\u00f6rbund",
@@ -3018,6 +3053,7 @@ diario_by_mode_title: "Per discipline",
 diario_by_mode_hint: "Elke discipline heeft een andere maximumscore: hier zijn de cijfers vergelijkbaar.",
 nav_back: "\u2190 Terug",
 nav_menu: "\u2190 Menu",
+cancel_btn: "Sluiten",
 reg_done_btn: "Klaar",
 setup_where_title: "Waar schiet je?",
 setup_pick_fed: "Kies de federatie",
@@ -3788,6 +3824,7 @@ return '<img src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="width:'+size+'px;h
 
 var ICON_PATHS = {
 bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+mail: '<rect x="3" y="5" width="18" height="14" rx="2.2"/><path d="M3.6 6.6 12 13l8.4-6.4"/>',
 warn: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
 cart: '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.5 12h11L21 7H6"/>',
 
@@ -3875,6 +3912,8 @@ case "session-follow": app.appendChild(sessionFollowScreen()); break;
 case "open-training-create": app.appendChild(openTrainingCreateScreen()); break;
 case "field-report": app.appendChild(fieldReportScreen()); break;
 case "notifiche": app.appendChild(notificationsScreen()); break;
+case "messaggi": app.appendChild(messagesScreen()); break;
+case "dm-chat": app.appendChild(dmChatScreen()); break;
 case "ot-chat": app.appendChild(otChatScreen()); break;
 case "diario": app.appendChild(journalScreen()); break;
 case "round": app.appendChild(roundScreen()); break;
@@ -4490,6 +4529,7 @@ db.collection("users").doc(result.user.uid).set({
 email: email, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true
 }).then(function(){
+notifyAdminNewSignup({ nomeCognome: nomeCognome, username: username, email: email });
 authState = "pendingApproval";
 save(); render();
 });
@@ -4801,13 +4841,26 @@ var h = el(
 );
 // Campanella: le notifiche si leggono sempre qui dentro, anche se il telefono
 // non ha il permesso per quelle di sistema.
-if(currentUser && authState === "ready" && state.screen !== "notifiche"){
-var bellBtn = el('<button class="home-btn no-print" title="'+t("notif_center_title")+'" style="margin-left:auto;position:relative;padding:6px 9px;display:inline-flex;align-items:center;">'+icon("bell",18)+'</button>');
+if(currentUser && authState === "ready"){
+var actions = el('<div style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;"></div>');
+// Busta: messaggi privati tra arcieri
+if(state.screen !== "messaggi" && state.screen !== "dm-chat"){
+var mailBtn = el('<button class="home-btn no-print" title="'+t("dm_title")+'" style="position:relative;padding:6px 9px;display:inline-flex;align-items:center;">'+icon("mail",18)+'</button>');
+if(dmUnreadCount > 0){
+mailBtn.appendChild(el('<span style="position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--danger);color:#fff;font-size:0.62rem;font-weight:800;display:flex;align-items:center;justify-content:center;">'+(dmUnreadCount > 9 ? "9+" : dmUnreadCount)+'</span>'));
+}
+mailBtn.addEventListener("click", function(){ state.screen = "messaggi"; save(); render(); });
+actions.appendChild(mailBtn);
+}
+if(state.screen !== "notifiche"){
+var bellBtn = el('<button class="home-btn no-print" title="'+t("notif_center_title")+'" style="position:relative;padding:6px 9px;display:inline-flex;align-items:center;">'+icon("bell",18)+'</button>');
 if(notifUnreadCount > 0){
 bellBtn.appendChild(el('<span style="position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--danger);color:#fff;font-size:0.62rem;font-weight:800;display:flex;align-items:center;justify-content:center;">'+(notifUnreadCount > 9 ? "9+" : notifUnreadCount)+'</span>'));
 }
 bellBtn.addEventListener("click", function(){ state.screen = "notifiche"; save(); render(); });
-h.appendChild(bellBtn);
+actions.appendChild(bellBtn);
+}
+if(actions.childNodes.length) h.appendChild(actions);
 }
 if(showHome){
 var homeBtn = el('<button class="home-btn no-print" style="margin-left:8px;">'+t("nav_menu")+'</button>');
@@ -7596,6 +7649,315 @@ var batch = db.batch();
 daFare.forEach(function(x){ batch.update(base.doc(x.id), { read:true }); });
 batch.commit().then(function(){ if(cb) cb(); }).catch(function(e){ console.error("notif read:", e); if(cb) cb(); });
 }
+
+
+// ── AVVISO ALL'ADMIN: QUALCUNO PROVA A REGISTRARSI ──────────────────────────
+// L'uid dell'admin viene letto da app_config/admin (lo scrive l'app dell'admin
+// al login). Da li' si riusa il meccanismo gia' esistente: il documento in
+// notifications/{adminUid}/items compare nel centro notifiche e, se la Cloud
+// Function e' attiva, diventa anche una push vera ad app chiusa.
+function notifyAdminNewSignup(info){
+if(!db) return;
+db.collection("app_config").doc("admin").get().then(function(doc){
+var adminUid = doc.exists ? (doc.data().uid || null) : null;
+if(!adminUid) return;
+sendPushViaFirestore(adminUid,
+t("notif_new_signup_title"),
+t("notif_new_signup_body", { name: info.nomeCognome || "?", username: info.username || "?", email: info.email || "?" })
+);
+}).catch(function(e){ console.error("avviso registrazione:", e); });
+}
+
+
+// ── CHAT DIRETTA TRA DUE ARCIERI ────────────────────────────────────────────
+// direct_chats/{uidA__uidB} (uid ordinati, cosi' la coppia ha sempre un solo
+// documento) con members[2], memberNames{}, ultimo messaggio e readBy{}.
+// I messaggi stanno nella sottocollezione messages.
+// Come sempre in questo progetto: mai where+orderBy insieme (indice composito),
+// l'ordinamento si fa lato client.
+var myDirectChats = [];
+var dmUnreadCount = 0;
+var directChatsListenerStarted = false;
+var dmMsgUnsub = null;
+var archersDirectory = null;
+
+function dmChatId(a, b){ return [a, b].sort().join("__"); }
+function dmMillis(ts){ return (ts && ts.toMillis) ? ts.toMillis() : 0; }
+
+function dmOther(chat){
+var meUid = currentUser ? currentUser.uid : null;
+var members = chat.members || [];
+var otherUid = null;
+for(var i=0;i<members.length;i++){ if(members[i] !== meUid){ otherUid = members[i]; break; } }
+if(!otherUid) otherUid = meUid;
+return { uid: otherUid, name: (chat.memberNames && chat.memberNames[otherUid]) || "?" };
+}
+
+function dmIsUnread(chat){
+if(!currentUser || !chat.lastAt) return false;
+if(chat.lastSenderUid === currentUser.uid) return false;
+var letto = chat.readBy ? chat.readBy[currentUser.uid] : null;
+return dmMillis(chat.lastAt) > dmMillis(letto);
+}
+
+function startDirectChatsListener(){
+if(directChatsListenerStarted || !db || !currentUser) return;
+directChatsListenerStarted = true;
+db.collection("direct_chats").where("members","array-contains",currentUser.uid).limit(60)
+.onSnapshot(function(snap){
+var arr = [];
+snap.forEach(function(doc){ var d = doc.data() || {}; d.id = doc.id; arr.push(d); });
+arr.sort(function(a,b){ return dmMillis(b.lastAt) - dmMillis(a.lastAt); });
+myDirectChats = arr;
+var n = 0;
+arr.forEach(function(c){ if(dmIsUnread(c)) n++; });
+var cambiato = (n !== dmUnreadCount);
+dmUnreadCount = n;
+// Non ridisegnare mentre si sta scrivendo: si perderebbe il cursore.
+var att = document.activeElement;
+var staScrivendo = att && (att.tagName === "INPUT" || att.tagName === "TEXTAREA");
+if(cambiato || (state.screen === "messaggi" && !staScrivendo)) render();
+}, function(err){ console.error("chat dirette:", err); });
+}
+
+// Elenco arcieri approvati, per scegliere con chi parlare
+function loadArchersDirectory(cb){
+if(archersDirectory){ cb(archersDirectory); return; }
+if(!db){ cb([]); return; }
+db.collection("users").where("approved","==",true).get().then(function(snap){
+var list = [];
+snap.forEach(function(doc){
+var d = doc.data();
+if(d.username && doc.id !== (currentUser && currentUser.uid)){
+list.push({ uid: doc.id, username: d.username, nomeCognome: d.nomeCognome || "" });
+}
+});
+list.sort(function(a,b){ return a.username.toLowerCase().localeCompare(b.username.toLowerCase()); });
+archersDirectory = list; cb(list);
+}).catch(function(e){ console.error("elenco arcieri:", e); cb([]); });
+}
+
+function stopDmMessages(){
+if(dmMsgUnsub){ try{ dmMsgUnsub(); }catch(e){} dmMsgUnsub = null; }
+}
+
+function openDirectChat(uidOther, nameOther){
+stopDmMessages();
+state.dmUid = uidOther;
+state.dmName = nameOther || "?";
+state.screen = "dm-chat";
+save(); render();
+}
+
+// Segna letta la conversazione. Solo se il documento esiste gia': un set con
+// merge su un doc mai creato lo farebbe nascere senza members, quindi fuori
+// dalle regole e invisibile al listener.
+function dmMarkRead(chatId){
+if(!db || !currentUser || !chatId) return;
+var esiste = myDirectChats.some(function(c){ return c.id === chatId; });
+if(!esiste) return;
+var patch = { readBy: {} };
+patch.readBy[currentUser.uid] = firebase.firestore.FieldValue.serverTimestamp();
+db.collection("direct_chats").doc(chatId).set(patch, { merge:true }).catch(function(){});
+}
+
+function deleteDirectChat(chatId, cb){
+if(!db || !chatId){ if(cb) cb(); return; }
+var ref = db.collection("direct_chats").doc(chatId);
+ref.collection("messages").limit(300).get().then(function(snap){
+if(snap.empty) return null;
+var batch = db.batch();
+snap.forEach(function(d){ batch.delete(d.ref); });
+return batch.commit();
+}).then(function(){
+return ref.delete();
+}).then(function(){ if(cb) cb(); }).catch(function(e){ console.error("dm delete:", e); if(cb) cb(); });
+}
+
+// ---------- ELENCO MESSAGGI ----------
+function messagesScreen(){
+stopDmMessages();
+var wrap = el('<div style="padding-bottom:20px;"></div>');
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("dm_title")+'</h2>'));
+card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:12px;">'+t("dm_sub")+'</div>'));
+
+// Cerca un arciere
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("dm_search_label")+'</label>'));
+var searchInp = el('<input type="text" class="input-field" placeholder="\ud83d\udd0d '+escapeHtml(t("dm_search_placeholder"))+'" style="margin-bottom:6px;">');
+card.appendChild(searchInp);
+var results = el('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"></div>');
+card.appendChild(results);
+searchInp.addEventListener("input", function(){
+var q = searchInp.value.trim().toLowerCase();
+results.innerHTML = "";
+if(q.length < 2) return;
+loadArchersDirectory(function(list){
+var matches = list.filter(function(u){
+return u.username.toLowerCase().indexOf(q) !== -1 || (u.nomeCognome||"").toLowerCase().indexOf(q) !== -1;
+}).slice(0,6);
+if(!matches.length){
+results.appendChild(el('<span style="font-size:0.8rem;color:var(--muted);">'+t("dm_search_empty")+'</span>'));
+return;
+}
+matches.forEach(function(u){
+var chip = el('<button style="background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:8px;padding:5px 10px;font-size:0.82rem;cursor:pointer;">@'+escapeHtml(u.username)+(u.nomeCognome?" \u00b7 "+escapeHtml(u.nomeCognome):"")+'</button>');
+chip.addEventListener("click", function(){ openDirectChat(u.uid, u.username); });
+results.appendChild(chip);
+});
+});
+});
+
+// Conversazioni gia' aperte
+card.appendChild(el('<h3 style="font-size:0.9rem;font-weight:800;margin:0 0 8px;">'+t("dm_list_title")+'</h3>'));
+if(!myDirectChats.length){
+card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("dm_empty")+'</div>'));
+} else {
+var locale = (LANG_META[state.lang]||LANG_META.it).locale;
+myDirectChats.forEach(function(c){
+var altro = dmOther(c);
+var nuovo = dmIsUnread(c);
+var quando = "";
+if(c.lastAt && c.lastAt.toDate){
+var dt = c.lastAt.toDate();
+var oggi = (new Date()).toDateString() === dt.toDateString();
+quando = oggi ? dt.toLocaleTimeString(locale,{hour:"2-digit",minute:"2-digit"}) : dt.toLocaleDateString(locale);
+}
+var row = el('<button style="width:100%;text-align:left;background:'+(nuovo?"var(--bg-panel-2)":"transparent")+';border:1px solid '+(nuovo?"var(--accent)":"var(--line)")+';border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;color:var(--cream);"></button>');
+row.appendChild(el('<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">'+
+'<span style="font-weight:'+(nuovo?"800":"700")+';font-size:0.92rem;">@'+escapeHtml(altro.name)+(nuovo?' <span style="font-size:0.66rem;background:var(--danger);color:#fff;border-radius:999px;padding:1px 6px;vertical-align:middle;">'+t("dm_new_badge")+'</span>':'')+'</span>'+
+'<span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;">'+quando+'</span></div>'));
+if(c.lastText){
+var prefisso = (c.lastSenderUid === (currentUser&&currentUser.uid)) ? "\u2192 " : "";
+row.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+prefisso+escapeHtml(c.lastText)+'</div>'));
+}
+row.addEventListener("click", function(){ openDirectChat(altro.uid, altro.name); });
+card.appendChild(row);
+});
+}
+wrap.appendChild(card);
+
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
+backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
+wrap.appendChild(backBtn);
+return wrap;
+}
+
+// ---------- CONVERSAZIONE ----------
+function dmChatScreen(){
+var otherUid = state.dmUid;
+var otherName = state.dmName || "?";
+var wrap = el('<div style="padding-bottom:20px;"></div>');
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("dm_chat_with",{name:escapeHtml(otherName)})+'</h2>'));
+
+if(!otherUid || !currentUser || !db){
+card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("dm_empty")+'</div>'));
+wrap.appendChild(card);
+return wrap;
+}
+var chatId = dmChatId(currentUser.uid, otherUid);
+
+var msgList = el('<div style="min-height:140px;max-height:320px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>');
+card.appendChild(msgList);
+
+stopDmMessages();
+setTimeout(function(){
+dmMsgUnsub = db.collection("direct_chats").doc(chatId).collection("messages")
+.orderBy("createdAt","asc").limit(80)
+.onSnapshot(function(snap){
+msgList.innerHTML = "";
+if(snap.empty){
+msgList.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("dm_no_messages")+'</div>'));
+}
+snap.forEach(function(doc){
+var d = doc.data() || {};
+var isMine = d.senderUid === currentUser.uid;
+var bubble = el('<div style="display:flex;flex-direction:column;align-items:'+(isMine?"flex-end":"flex-start")+';"></div>');
+bubble.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-bottom:2px;">'+escapeHtml(isMine?myDisplayName():(d.senderName||otherName))+'</div>'));
+bubble.appendChild(el('<div style="max-width:82%;background:'+(isMine?"var(--accent)":"var(--bg-panel-2)")+';color:'+(isMine?"#fff":"var(--cream)")+';border-radius:12px;padding:8px 12px;font-size:0.9rem;white-space:pre-wrap;word-break:break-word;">'+escapeHtml(d.text||"")+'</div>'));
+// Ogni messaggio proprio si puo' cancellare, come nelle altre chat dell'app
+if(isMine){
+var delMsg = el('<button title="'+t("msg_delete_mine")+'" style="align-self:flex-end;background:none;border:none;color:var(--muted);font-size:0.7rem;cursor:pointer;padding:2px 0;">'+t("notif_delete_one")+'</button>');
+delMsg.addEventListener("click", function(){
+delMsg.disabled = true;
+doc.ref.delete().catch(function(e){ console.error("dm msg delete:", e); delMsg.disabled = false; });
+});
+bubble.appendChild(delMsg);
+}
+msgList.appendChild(bubble);
+});
+msgList.scrollTop = msgList.scrollHeight;
+dmMarkRead(chatId);
+}, function(err){ console.error("dm messaggi:", err); });
+}, 0);
+
+var inputRow = el('<div style="display:flex;gap:8px;align-items:flex-end;"></div>');
+var textInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("dm_placeholder"))+'" rows="2" style="flex:1;resize:none;"></textarea>');
+var sendBtn = el('<button class="btn btn-primary" style="padding:10px 16px;">'+t("dm_send")+'</button>');
+inputRow.appendChild(textInp);
+inputRow.appendChild(sendBtn);
+card.appendChild(inputRow);
+
+var statusEl = el('<div style="font-size:0.8rem;margin-top:6px;min-height:18px;"></div>');
+card.appendChild(statusEl);
+
+sendBtn.addEventListener("click", function(){
+var txt = textInp.value.trim();
+if(!txt) return;
+sendBtn.disabled = true;
+statusEl.textContent = "";
+var myName = myDisplayName();
+var names = {};
+names[currentUser.uid] = myName;
+names[otherUid] = otherName;
+var chatRef = db.collection("direct_chats").doc(chatId);
+var testata = {
+members: [currentUser.uid, otherUid].sort(),
+memberNames: names,
+lastText: txt.substring(0,120),
+lastSenderUid: currentUser.uid,
+lastAt: firebase.firestore.FieldValue.serverTimestamp()
+};
+testata.readBy = {};
+testata.readBy[currentUser.uid] = firebase.firestore.FieldValue.serverTimestamp();
+chatRef.set(testata, { merge:true }).then(function(){
+return chatRef.collection("messages").add({
+senderUid: currentUser.uid,
+senderName: myName,
+text: txt,
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+});
+}).then(function(){
+textInp.value = "";
+sendBtn.disabled = false;
+sendPushViaFirestore(otherUid, t("dm_notif_title"), t("dm_notif_body",{ name: myName, text: txt.substring(0,60) }));
+}).catch(function(e){
+console.error("dm send:", e);
+sendBtn.disabled = false;
+statusEl.style.color = "var(--danger)";
+statusEl.textContent = t("dm_error");
+});
+});
+
+var delChatBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;color:var(--danger);border-color:var(--danger);">'+t("dm_delete_chat")+'</button>');
+card.appendChild(delChatBtn);
+armDoubleConfirm(delChatBtn, t("dm_delete_chat_confirm"), function(){
+delChatBtn.disabled = true;
+deleteDirectChat(chatId, function(){
+stopDmMessages();
+state.screen = "messaggi"; save(); render();
+});
+});
+
+wrap.appendChild(card);
+
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("dm_back")+'</button>');
+backBtn.addEventListener("click", function(){ stopDmMessages(); state.screen = "messaggi"; save(); render(); });
+wrap.appendChild(backBtn);
+return wrap;
+}
+
 
 // ---------- CENTRO NOTIFICHE ----------
 function notificationsScreen(){
