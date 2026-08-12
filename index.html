@@ -475,7 +475,8 @@ startNotificationsListener();
 if(currentUser && currentUser.email === ADMIN_EMAIL && db){
 db.collection("compagnie_admin").doc("01VERB").get().then(function(doc){
 if(!doc.exists || !doc.data().adminUid){
-db.collection("compagnie_admin").doc("01VERB").set({ adminUid: currentUser.uid }, { merge: true }).catch(function(){});
+db.collection("compagnie_admin").doc("01VERB").set({ adminUid: currentUser.uid }, { merge: true })
+.then(function(){ compagnieAdminCache = null; }).catch(function(){});
 }
 }).catch(function(){});
 }
@@ -683,6 +684,34 @@ campi_hint_clubs: "Apre Google Maps con le associazioni di tiro con l\'arco nei 
 campi_announce_btn: "Annuncia un allenamento",
 train_add_target_btn: "Continua: aggiungi una piazzola",
 train_free_hint: "In allenamento decidi tu quante piazzole fare, e puoi aggiungerne altre anche a giro iniziato.",
+club_space_title: "Spazio compagnia",
+club_space_sub: "I dati che gli arcieri vedono e dove arrivano le segnalazioni sul percorso.",
+club_space_open: "Spazio compagnia",
+club_space_claim: "Chiedi di gestire la tua compagnia",
+club_space_claim_hint: "La richiesta viene approvata a mano da ArcTrail 3D: ti scriviamo appena è attiva.",
+club_space_claim_sent: "Richiesta inviata. Ti avvisiamo appena viene approvata.",
+club_space_need_club: "Prima imposta la tua compagnia nel profilo.",
+club_contacts_title: "Dati di riferimento",
+club_contacts_hint: "Compaiono agli arcieri nella scheda della compagnia.",
+club_ref_name: "Nome del referente",
+club_addr: "Indirizzo del campo",
+club_notes: "Note per gli arcieri (accesso, quote, orari…)",
+club_save: "Salva i dati",
+club_saved: "Dati salvati",
+club_reports_title: "Segnalazioni sul percorso",
+club_reports_empty: "Nessuna segnalazione aperta.",
+club_report_resolve: "Segna come risolta",
+club_report_resolved: "Risolta",
+club_report_by: "da {name}",
+club_piazzola_word: "piazzola",
+fr_sent_to: "Segnalazione inviata a {name}.",
+fr_no_admin_warn: "Questa compagnia non ha ancora un referente su ArcTrail 3D: la segnalazione resta registrata e sarà visibile appena qualcuno prende in gestione il campo.",
+fr_notif_title: "Nuova segnalazione sul percorso",
+fr_notif_body: "{name}: {desc}",
+admin_club_requests_title: "Richieste gestione compagnia",
+admin_club_requests_empty: "Nessuna richiesta in attesa.",
+admin_club_approve: "Approva",
+admin_club_reject: "Rifiuta",
 // === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
@@ -3748,6 +3777,7 @@ case "gara-setup": app.appendChild(garaSetupScreen()); break;
 case "prepara-gara": app.appendChild(preparaGaraScreen()); break;
 case "campi": app.appendChild(campiScreen()); break;
 case "compagnie": app.appendChild(compagnieScreen()); break;
+case "club-space": app.appendChild(clubSpaceScreen()); break;
 case "profile-edit": app.appendChild(profileEditScreen()); break;
 case "history": app.appendChild(historyScreen()); break;
 case "history-detail": app.appendChild(historyDetailScreen()); break;
@@ -5547,6 +5577,10 @@ var profileBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span clas
 profileBtn.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
 profCard.appendChild(profileBtn);
 
+var clubSpaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("emblem",24)+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
+clubSpaceBtn.addEventListener("click", function(){ state.clubSpaceCode = myClubCode(); state.screen = "club-space"; save(); render(); });
+profCard.appendChild(clubSpaceBtn);
+
 if(IS_BETA_TESTER){
 var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("chart",24)+'</span><span class="menu-txt">'+t("diario_btn_label")+'<span class="menu-sub">'+t("diario_btn_sub")+'</span></span></button>');
 diarioBtn.addEventListener("click", function(){ state.screen = "diario"; save(); render(); });
@@ -5838,69 +5872,11 @@ wrap.appendChild(claimCard);
 return;
 }
 
-// Admin: mostra sezione gestione
+// Admin: scorciatoia allo spazio compagnia (i dati si modificano li')
 var adminCard = el('<div class="card" style="margin-bottom:14px;border:2px solid var(--accent);"></div>');
-adminCard.appendChild(el('<h2 class="section-title" style="color:var(--accent);">🔑 '+t("cp_admin_section")+'</h2>'));
-
-// ── Mappa posizione campo ────────────────────────────────────────────────
-adminCard.appendChild(el('<div style="font-weight:700;margin-bottom:4px;">'+t("cp_admin_map_title")+'</div>'));
-adminCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:6px;">'+t("cp_admin_map_hint")+'</div>'));
-var admMapId = "cp-admin-map-"+codice;
-var admMapDiv = el('<div id="'+admMapId+'" style="height:220px;border-radius:10px;border:1px solid var(--line);margin-bottom:6px;z-index:0;"></div>');
-adminCard.appendChild(admMapDiv);
-
-var admLat = adminMap[codice] && adminMap[codice].lat ? adminMap[codice].lat : null;
-var admLng = adminMap[codice] && adminMap[codice].lng ? adminMap[codice].lng : null;
-var admMap = null, admMarker = null;
-
-
-
-
-var mapSaveBtn = el('<button class="btn btn-primary btn-block" style="margin-bottom:4px;">'+t("cp_admin_map_save")+'</button>');
-var mapSaveStatus = el('<div style="font-size:0.8rem;margin-bottom:12px;min-height:16px;"></div>');
-mapSaveBtn.addEventListener("click", function(){
-if(!admLat || !admLng){ return; }
-mapSaveBtn.disabled = true;
-saveCompagniaPos(codice, admLat, admLng, function(){
-mapSaveStatus.style.color = "var(--accent)";
-mapSaveStatus.textContent = t("cp_admin_map_saved");
-mapSaveBtn.disabled = false;
-}, function(){
-mapSaveStatus.style.color = "var(--danger)";
-mapSaveStatus.textContent = t("cp_admin_map_error");
-mapSaveBtn.disabled = false;
-});
-});
-adminCard.appendChild(mapSaveBtn);
-adminCard.appendChild(mapSaveStatus);
-
-// ── Info compagnia (tel, email, sito) ───────────────────────────────────
-adminCard.appendChild(el('<div style="font-weight:700;margin-bottom:8px;">'+t("cp_admin_info_title")+'</div>'));
-var savedInfo = adminMap[codice] || {};
-var telInp = el('<input type="tel" class="input-field" placeholder="'+t("cp_admin_tel")+'" value="'+(savedInfo.tel||"")+'" style="margin-bottom:8px;">');
-var emailInp = el('<input type="email" class="input-field" placeholder="'+t("cp_admin_email_label")+'" value="'+(savedInfo.emailComp||"")+'" style="margin-bottom:8px;">');
-var sitoInp = el('<input type="text" class="input-field" placeholder="'+t("cp_admin_sito")+'" value="'+(savedInfo.sito||"")+'" style="margin-bottom:8px;">');
-adminCard.appendChild(telInp);
-adminCard.appendChild(emailInp);
-adminCard.appendChild(sitoInp);
-
-var infoSaveBtn = el('<button class="btn btn-primary btn-block" style="margin-bottom:4px;">'+t("cp_admin_info_save")+'</button>');
-var infoSaveStatus = el('<div style="font-size:0.8rem;margin-bottom:4px;min-height:16px;"></div>');
-infoSaveBtn.addEventListener("click", function(){
-infoSaveBtn.disabled = true;
-saveCompagniaInfo(codice, { tel:telInp.value.trim(), emailComp:emailInp.value.trim(), sito:sitoInp.value.trim() }, function(){
-infoSaveStatus.style.color = "var(--accent)";
-infoSaveStatus.textContent = t("cp_admin_info_saved");
-infoSaveBtn.disabled = false;
-}, function(){
-infoSaveStatus.style.color = "var(--danger)";
-infoSaveStatus.textContent = t("cp_admin_map_error");
-infoSaveBtn.disabled = false;
-});
-});
-adminCard.appendChild(infoSaveBtn);
-adminCard.appendChild(infoSaveStatus);
-
+var openSpace = el('<button class="btn btn-primary btn-block">'+t("club_space_open")+'</button>');
+openSpace.addEventListener("click", function(){ state.clubSpaceCode = codice; state.screen = "club-space"; save(); render(); });
+adminCard.appendChild(openSpace);
 wrap.appendChild(adminCard);
 });
 })(state.compagniaAttiva);
@@ -6154,6 +6130,167 @@ wrap.appendChild(actCard);
 return wrap;
 }
 
+// ---------- SPAZIO COMPAGNIA ----------
+// Pannello per il referente di una compagnia: dati di contatto e segnalazioni ricevute.
+// Ci si arriva dalla scheda Profilo; il codice compagnia e' quello del profilo utente.
+function clubSpaceScreen(){
+var wrap = el('<div style="padding-bottom:20px;"></div>');
+var codice = state.clubSpaceCode || myClubCode();
+
+if(!codice){
+var noCard = el('<div class="card"></div>');
+noCard.appendChild(el('<h2 class="section-title">'+t("club_space_title")+'</h2>'));
+noCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">'+t("club_space_need_club")+'</div>'));
+var goProf = el('<button class="btn btn-primary btn-block">'+t("menu_profile")+'</button>');
+goProf.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
+noCard.appendChild(goProf);
+wrap.appendChild(noCard);
+return wrap;
+}
+
+var nomeComp = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[codice])
+? COMPAGNIE[codice].nome + (COMPAGNIE[codice].luogo ? " \u2014 " + COMPAGNIE[codice].luogo : "")
+: codice;
+
+var head = el('<div class="card"></div>');
+head.appendChild(el('<h2 class="section-title">'+t("club_space_title")+'</h2>'));
+head.appendChild(el('<div style="font-weight:800;font-size:1rem;color:var(--gold);">'+escapeHtml(nomeComp)+'</div>'));
+head.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-top:3px;">'+t("club_space_sub")+'</div>'));
+wrap.appendChild(head);
+
+var body = el('<div></div>');
+wrap.appendChild(body);
+
+loadCompagnieAdmin(function(adminMap){
+var info = adminMap[codice] || {};
+var isAdmin = currentUser && info.adminUid === currentUser.uid;
+body.innerHTML = "";
+
+// ── Chi non e' referente: puo' solo chiedere di diventarlo ────────────────
+if(!isAdmin){
+var claimCard = el('<div class="card"></div>');
+claimCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">'+t("club_space_claim_hint")+'</div>'));
+var claimBtn = el('<button class="btn btn-primary btn-block">'+t("club_space_claim")+'</button>');
+var claimMsg = el('<div style="font-size:0.82rem;color:var(--accent);margin-top:8px;min-height:16px;text-align:center;"></div>');
+claimBtn.addEventListener("click", function(){
+claimBtn.disabled = true;
+requestAdminCompagnia(codice, function(){ claimMsg.textContent = t("club_space_claim_sent"); });
+});
+claimCard.appendChild(claimBtn);
+claimCard.appendChild(claimMsg);
+body.appendChild(claimCard);
+return;
+}
+
+// ── Dati di riferimento ──────────────────────────────────────────────────
+var infoCard = el('<div class="card"></div>');
+infoCard.appendChild(el('<h2 class="section-title">'+t("club_contacts_title")+'</h2>'));
+infoCard.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);margin-bottom:12px;">'+t("club_contacts_hint")+'</div>'));
+
+function campo(label, tipo, valore, ph){
+infoCard.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">'+label+'</label>'));
+var inp = el('<input type="'+tipo+'" class="input-field" placeholder="'+escapeHtml(ph||label)+'" value="'+escapeHtml(valore||"")+'" style="margin-bottom:12px;">');
+infoCard.appendChild(inp);
+return inp;
+}
+var refInp   = campo(t("club_ref_name"), "text", info.referente, "Es. Mario Rossi");
+var emailInp = campo(t("cp_admin_email_label"), "email", info.emailComp, "info@compagnia.it");
+var telInp   = campo(t("cp_admin_tel"), "tel", info.tel, "+39 333 1234567");
+var sitoInp  = campo(t("cp_admin_sito"), "text", info.sito, "www.compagnia.it");
+var addrInp  = campo(t("club_addr"), "text", info.indirizzo, "Via A. Alberti, Vignone (VB)");
+
+infoCard.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("club_notes")+'</label>'));
+var noteInp = el('<textarea class="input-field" rows="3" style="margin-bottom:14px;resize:none;"></textarea>');
+noteInp.value = info.note || "";
+infoCard.appendChild(noteInp);
+
+var saveBtn = el('<button class="btn btn-primary btn-block">'+t("club_save")+'</button>');
+var saveMsg = el('<div style="font-size:0.82rem;margin-top:8px;min-height:16px;text-align:center;"></div>');
+saveBtn.addEventListener("click", function(){
+saveBtn.disabled = true;
+saveMsg.style.color = "var(--muted)";
+saveMsg.textContent = t("pg_saving");
+saveCompagniaInfo(codice, {
+referente: refInp.value.trim(),
+emailComp: emailInp.value.trim(),
+tel: telInp.value.trim(),
+sito: sitoInp.value.trim(),
+indirizzo: addrInp.value.trim(),
+note: noteInp.value.trim()
+}, function(){
+saveBtn.disabled = false;
+saveMsg.style.color = "var(--accent)";
+saveMsg.textContent = t("club_saved");
+}, function(err){
+saveBtn.disabled = false;
+saveMsg.style.color = "var(--danger)";
+saveMsg.textContent = (err && err.message) ? err.message : t("cp_admin_map_error");
+});
+});
+infoCard.appendChild(saveBtn);
+infoCard.appendChild(saveMsg);
+body.appendChild(infoCard);
+
+// ── Segnalazioni ricevute ────────────────────────────────────────────────
+var repCard = el('<div class="card"></div>');
+repCard.appendChild(el('<h2 class="section-title">'+t("club_reports_title")+'</h2>'));
+var repList = el('<div><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
+repCard.appendChild(repList);
+body.appendChild(repCard);
+
+var TIPI = { target: t("fr_type_target"), stake: t("fr_type_stake"), path: t("fr_type_path"), other: t("fr_type_other") };
+
+function caricaSegnalazioni(){
+if(!db){ repList.innerHTML = ""; return; }
+// Niente orderBy insieme al where: eviterebbe un indice composto. Ordino qui.
+db.collection("field_reports").where("clubCode","==",codice).limit(80).get().then(function(snap){
+var arr = [];
+snap.forEach(function(d){ var x = d.data(); x.id = d.id; arr.push(x); });
+arr.sort(function(a,b){
+var ta = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+var tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+return tb - ta;
+});
+repList.innerHTML = "";
+if(arr.length === 0){
+repList.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("club_reports_empty")+'</div>'));
+return;
+}
+arr.forEach(function(r){
+var chiuso = (r.status === "closed");
+var row = el('<div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;'+(chiuso?'opacity:.55;':'')+'"></div>');
+var testa = el('<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px;"></div>');
+testa.appendChild(el('<span style="font-size:0.72rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.03em;">'+(TIPI[r.type]||TIPI.other)+(r.piazzola ? ' \u00b7 '+t("club_piazzola_word")+' '+r.piazzola : '')+'</span>'));
+if(chiuso){ testa.appendChild(el('<span style="font-size:0.7rem;font-weight:700;color:var(--accent);">'+t("club_report_resolved")+'</span>')); }
+row.appendChild(testa);
+row.appendChild(el('<div style="font-size:0.9rem;line-height:1.35;">'+escapeHtml(r.description||"")+'</div>'));
+row.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">'+t("club_report_by",{name:escapeHtml(r.reporterName||"?")})+'</div>'));
+if(!chiuso){
+var okBtn = el('<button class="btn btn-ghost btn-sm btn-block" style="margin-top:8px;">'+t("club_report_resolve")+'</button>');
+okBtn.addEventListener("click", function(){
+okBtn.disabled = true;
+db.collection("field_reports").doc(r.id).update({ status:"closed" })
+.then(caricaSegnalazioni)
+.catch(function(){ okBtn.disabled = false; });
+});
+row.appendChild(okBtn);
+}
+repList.appendChild(row);
+});
+}).catch(function(err){
+repList.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
+});
+}
+caricaSegnalazioni();
+});
+
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
+backBtn.addEventListener("click", function(){ state.screen = "menu"; state.tab = "profilo"; save(); render(); });
+wrap.appendChild(backBtn);
+
+return wrap;
+}
+
 // ---------- AMMINISTRAZIONE ACCESSI ----------
 function adminScreen(){
 var wrap = el('<div></div>');
@@ -6208,6 +6345,56 @@ listWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+esca
 });
 }
 setTimeout(loadList, 0);
+
+// ── Richieste di gestione compagnia ───────────────────────────────────────
+// Venivano scritte su compagnie_admin_requests ma nessuno le leggeva:
+// senza questo pannello nessuna compagnia poteva essere attivata.
+var reqCard = el('<div class="card" style="margin-top:14px;"></div>');
+reqCard.appendChild(el('<h2 class="section-title">'+t("admin_club_requests_title")+'</h2>'));
+var reqWrap = el('<div><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
+reqCard.appendChild(reqWrap);
+wrap.appendChild(reqCard);
+
+function loadClubRequests(){
+if(!db) return;
+db.collection("compagnie_admin_requests").where("stato","==","pending").limit(50).get().then(function(snap){
+reqWrap.innerHTML = "";
+if(snap.empty){
+reqWrap.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("admin_club_requests_empty")+'</div>'));
+return;
+}
+snap.forEach(function(doc){
+var r = doc.data();
+var nomeComp = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[r.codice]) ? COMPAGNIE[r.codice].nome : r.codice;
+var row = el('<div style="border-bottom:1px solid var(--line);padding:10px 0;"></div>');
+row.appendChild(el('<div style="font-size:0.9rem;font-weight:700;">'+escapeHtml(nomeComp)+' <span style="color:var(--muted);font-weight:600;font-size:0.78rem;">('+escapeHtml(r.codice||"")+')</span></div>'));
+row.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:6px;">'+escapeHtml(r.richiedenteName||"?")+'</div>'));
+var btnRow = el('<div class="row"></div>');
+var ok = el('<button class="btn btn-primary btn-sm btn-block">'+t("admin_club_approve")+'</button>');
+ok.addEventListener("click", function(){
+ok.disabled = true;
+db.collection("compagnie_admin").doc(r.codice).set({ adminUid: r.richiedenteUid }, { merge:true })
+.then(function(){ return doc.ref.update({ stato:"approved" }); })
+.then(function(){
+compagnieAdminCache = null; // la cache va rifatta, e' cambiato un referente
+sendPushViaFirestore(r.richiedenteUid, t("club_space_title"), nomeComp);
+loadClubRequests();
+}).catch(function(){ ok.disabled = false; });
+});
+var no = el('<button class="btn btn-ghost btn-sm btn-block">'+t("admin_club_reject")+'</button>');
+no.addEventListener("click", function(){
+no.disabled = true;
+doc.ref.update({ stato:"rejected" }).then(loadClubRequests).catch(function(){ no.disabled = false; });
+});
+btnRow.appendChild(ok); btnRow.appendChild(no);
+row.appendChild(btnRow);
+reqWrap.appendChild(row);
+});
+}).catch(function(err){
+reqWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
+});
+}
+setTimeout(loadClubRequests, 0);
 
 var sessCard = el('<div class="card" style="margin-top:14px;"></div>');
 sessCard.appendChild(el('<h2 class="section-title">'+t("admin_sessions_title")+'</h2>'));
@@ -6843,9 +7030,17 @@ country: state.country || null,
 status: "open",
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }).then(function(){
-status.style.color = "var(--accent)";
-status.textContent = t("fr_report_sent");
-setTimeout(function(){ state.screen = backTo; save(); render(); }, 1600);
+// Avvisa il referente della compagnia con la notifica gia' in uso nell'app
+loadCompagnieAdmin(function(adminMap){
+var adminUid = adminMap[frCod] && adminMap[frCod].adminUid;
+if(adminUid && adminUid !== currentUser.uid){
+sendPushViaFirestore(adminUid, t("fr_notif_title"),
+t("fr_notif_body", { name: myDisplayName(), desc: descInp.value.trim().slice(0,90) }));
+}
+status.style.color = adminUid ? "var(--accent)" : "var(--gold)";
+status.textContent = adminUid ? t("fr_sent_to",{name:frLabel}) : t("fr_no_admin_warn");
+setTimeout(function(){ state.screen = backTo; save(); render(); }, adminUid ? 1800 : 4200);
+});
 }).catch(function(err){
 console.error("field report:", err);
 sendBtn.disabled = false;
