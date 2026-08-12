@@ -1,1 +1,174 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Eliminare l'account — ArcTrail 3D</title>
+<meta name="description" content="Come eliminare il tuo account ArcTrail 3D e tutti i dati collegati.">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="/logo.jpg">
+<style>
+:root{
+  --ink:#10201D; --teal:#116E62; --amber:#C25E18;
+  --paper:#F7F6F3; --card:#FFFFFF; --line:#E3E1DA; --muted:#5C6B67;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px; line-height:1.65;
+}
+header{background:var(--ink); color:#fff; padding:18px 20px}
+.hwrap{max-width:720px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+.brand{font-weight:800; letter-spacing:.02em; font-size:17px}
+.brand span{color:#7FD4C4}
+.back{margin-left:auto; color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.35);
+  padding:7px 13px; border-radius:999px; font-size:14px; font-weight:600}
+.back:hover{background:rgba(255,255,255,.12)}
+main{max-width:720px; margin:0 auto; padding:26px 20px 64px}
+h1{font-size:27px; line-height:1.25; margin:8px 0 6px; letter-spacing:-.01em}
+.dateline{color:var(--muted); font-size:14px; margin:0 0 26px}
+h2{font-size:19px; margin:34px 0 10px; padding-top:20px; border-top:1px solid var(--line)}
+h3{font-size:16px; margin:20px 0 6px}
+p,li{margin:0 0 12px}
+ul{padding-left:20px}
+a{color:var(--teal)}
+.way{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin:18px 0}
+.way h2{margin:0 0 8px; padding:0; border:0; font-size:19px}
+.tag{display:inline-block; background:#E6F1EE; color:var(--teal); font-size:13px; font-weight:700;
+  padding:4px 10px; border-radius:999px; margin-bottom:10px; letter-spacing:.02em; text-transform:uppercase}
+.tag.alt{background:#FBEDE1; color:#8A4413}
+ol.steps{padding-left:20px; margin:0}
+ol.steps li{margin-bottom:8px}
+label{display:block; font-weight:700; font-size:15px; margin:16px 0 6px}
+input[type=email]{width:100%; padding:13px 14px; font-size:16px; border:1px solid var(--line);
+  border-radius:10px; background:#fff; color:var(--ink); font-family:inherit}
+input[type=email]:focus{outline:2px solid var(--teal); outline-offset:1px; border-color:var(--teal)}
+button{width:100%; margin-top:14px; background:var(--amber); color:#fff; border:0; border-radius:10px;
+  padding:14px 18px; font-size:16px; font-weight:700; font-family:inherit; cursor:pointer}
+button:hover{background:#A94F13}
+button:disabled{background:#C9C6BF; cursor:not-allowed}
+.hint{font-size:14px; color:var(--muted); margin-top:10px}
+.msg{margin-top:12px; font-size:15px; font-weight:600; color:var(--teal); min-height:22px}
+.cols{display:grid; gap:16px; margin:16px 0}
+.col{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px}
+.col h3{margin-top:0}
+.col ul{margin-bottom:0}
+footer{border-top:1px solid var(--line); margin-top:44px; padding-top:18px; color:var(--muted); font-size:14px}
+footer a{margin-right:16px}
+@media (min-width:760px){ h1{font-size:32px} .cols{grid-template-columns:1fr 1fr} }
+</style>
+</head>
+<body>
 
+<header>
+  <div class="hwrap">
+    <div class="brand">ArcTrail<span> 3D</span></div>
+    <a class="back" href="https://arctrail3d.com">Torna all'app</a>
+  </div>
+</header>
+
+<main>
+  <h1>Eliminare il tuo account</h1>
+  <p class="dateline">ArcTrail 3D — aggiornato il 12 agosto 2026</p>
+
+  <p>Puoi chiudere il tuo account ArcTrail 3D quando vuoi, in due modi. In entrambi i casi vengono eliminati l'account e i dati collegati, senza costi e senza doverci spiegare il motivo.</p>
+
+  <div class="way">
+    <span class="tag">Modo più rapido</span>
+    <h2>Dall'app</h2>
+    <ol class="steps">
+      <li>Apri ArcTrail 3D ed entra con il tuo account.</li>
+      <li>Vai nella scheda <strong>Profilo</strong>.</li>
+      <li>Scorri in fondo e tocca <strong>Elimina account</strong>.</li>
+      <li>Conferma scrivendo la parola richiesta: la cancellazione parte subito.</li>
+    </ol>
+    <p class="hint">Ti verrà chiesto di reinserire la password: serve a essere sicuri che sia davvero tu.</p>
+  </div>
+
+  <div class="way">
+    <span class="tag alt">Se non riesci ad accedere</span>
+    <h2>Con una richiesta via email</h2>
+    <p>Scrivi qui l'indirizzo email con cui ti sei registrato: prepariamo il messaggio già compilato, tu devi solo inviarlo dalla tua casella di posta.</p>
+    <label for="mail">Email del tuo account</label>
+    <input type="email" id="mail" placeholder="nome@esempio.it" autocomplete="email" inputmode="email">
+    <button id="go" type="button">Prepara la richiesta di eliminazione</button>
+    <p class="msg" id="msg" role="status" aria-live="polite"></p>
+    <p class="hint">La richiesta va inviata dallo stesso indirizzo dell'account: è l'unico modo che abbiamo per verificare che sia tuo. Se non si apre il programma di posta, scrivi tu a <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a> indicando l'email del tuo account e la parola "eliminazione".</p>
+  </div>
+
+  <h2>Cosa viene eliminato</h2>
+  <div class="cols">
+    <div class="col">
+      <h3>Cancellato</h3>
+      <ul>
+        <li>Le credenziali di accesso e il profilo: nome, compagnia, federazione, classe di arco.</li>
+        <li>Tutti i giri salvati, le statistiche e le note del diario.</li>
+        <li>Gli annunci del Mercatino e le relative foto.</li>
+        <li>Le conversazioni e i messaggi inviati dalla tua copia dell'app.</li>
+        <li>Gli allenamenti aperti che hai pubblicato e le tue adesioni.</li>
+        <li>Le segnalazioni percorso e le notifiche ricevute.</li>
+        <li>Il token usato per recapitarti le notifiche push.</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Cosa può restare</h3>
+      <ul>
+        <li>I messaggi che hai già inviato ad altri utenti restano nella loro copia della conversazione, senza collegamento al tuo account.</li>
+        <li>Le recensioni lasciate ad altri venditori restano in forma anonima, per non falsare le valutazioni.</li>
+        <li>Registri tecnici dei fornitori, conservati per periodi brevi a fini di sicurezza.</li>
+        <li>Quanto dobbiamo conservare per obbligo di legge o per gestire una segnalazione di abuso già aperta.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>In quanto tempo</h2>
+  <p>L'eliminazione dall'app è immediata. Le richieste via email vengono eseguite entro 30 giorni dalla ricezione, di norma molto prima. Riceverai una conferma quando è fatto.</p>
+  <p><strong>L'operazione non è reversibile:</strong> i giri e lo storico non si possono recuperare. Se vuoi conservarli, esportali o annotali prima di procedere.</p>
+
+  <h2>Domande</h2>
+  <p>Scrivi a <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a>. Il trattamento dei tuoi dati è descritto nell'<a href="/privacy.html">Informativa sulla privacy</a>.</p>
+
+  <footer>
+    <a href="/">App</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/termini.html">Termini d'uso</a>
+    <p>ArcTrail 3D — info@arctrail3d.com</p>
+  </footer>
+</main>
+
+<script>
+(function(){
+  var input = document.getElementById('mail');
+  var btn   = document.getElementById('go');
+  var msg   = document.getElementById('msg');
+
+  function valid(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); }
+
+  btn.addEventListener('click', function(){
+    var v = input.value.trim();
+    if(!valid(v)){
+      msg.style.color = '#B3261E';
+      msg.textContent = 'Controlla l\u2019indirizzo email: manca qualcosa.';
+      input.focus();
+      return;
+    }
+    var subject = 'Richiesta di eliminazione account ArcTrail 3D';
+    var body =
+      'Chiedo l\u2019eliminazione del mio account ArcTrail 3D e di tutti i dati collegati.\n\n' +
+      'Email dell\u2019account: ' + v + '\n\n' +
+      'Confermo di essere il titolare di questo account.\n';
+    msg.style.color = '';
+    msg.textContent = 'Messaggio pronto: controlla il programma di posta e invialo.';
+    window.location.href = 'mailto:info@arctrail3d.com'
+      + '?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(body);
+  });
+
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') btn.click(); });
+})();
+</script>
+
+</body>
+</html>

@@ -497,6 +497,7 @@ authState = "pendingApproval";
 } else {
 var data = doc.data();
 IS_BETA_TESTER = (data.betaTester === true);
+blockedUsers = data.blockedUsers || {};
 if(!state.profile && data.nomeCognome){
 state.profile = {
 nomeCognome: data.nomeCognome, username: data.username || "",
@@ -842,6 +843,51 @@ ot_joined_hint: "Sei nell'elenco. L'organizzatore ti vede fra i partecipanti.",
 ot_join_saving: "Attendi…",
 ot_join_error: "Non è riuscito. Riprova fra un attimo.",
 ot_notif_where: "Aprilo nella scheda Tira e premi «Partecipo» per confermare.",
+// Blocco, segnalazioni ed eliminazione account (12/08 — requisiti degli store)
+blk_block_btn: "Blocca",
+blk_unblock_btn: "Sblocca",
+blk_block_confirm: "Confermi il blocco?",
+blk_blocked_note: "Hai bloccato questa persona: non vedi più i suoi messaggi e non puoi scriverle. Puoi sbloccarla dal tuo profilo.",
+blk_list_title: "Persone bloccate",
+blk_list_sub: "Non vedi i loro messaggi e i loro allenamenti.",
+blk_list_empty: "Non hai bloccato nessuno.",
+blk_list_hint: "Chi blocchi non riceve alcun avviso.",
+rep_btn: "Segnala",
+rep_title: "Segnala un abuso",
+rep_sub: "Dicci cosa non va: la segnalazione arriva a chi gestisce l’app e viene esaminata entro pochi giorni.",
+rep_reason_offense: "Insulti o molestie",
+rep_reason_spam: "Spam o truffa",
+rep_reason_sexual: "Contenuti sessuali",
+rep_reason_illegal: "Contenuti illegali o pericolosi",
+rep_reason_other: "Altro",
+rep_note_label: "Racconta in breve cosa è successo (facoltativo)",
+rep_send: "Invia segnalazione",
+rep_sent: "Segnalazione inviata. Grazie.",
+rep_error: "Non è riuscita. Riprova, oppure scrivi a info@arctrail3d.com.",
+rep_pick_reason: "Scegli prima un motivo.",
+rep_also_block: "Blocca anche questa persona",
+rep_notif_body: "{who} ha segnalato {what}. Motivo: {why}. {note}",
+rep_deleted_account: "Un utente ha eliminato il proprio account: {who} ({mail}).",
+acc_delete_btn: "Elimina account",
+acc_delete_title: "Elimina il tuo account",
+acc_delete_warn: "L’operazione è definitiva. Giri, diario, annunci e conversazioni vengono cancellati e non si possono recuperare.",
+acc_delete_what: "Vengono eliminati il profilo, i giri salvati con le statistiche, gli annunci del Mercatino con le foto, le conversazioni, gli allenamenti che hai pubblicato, le segnalazioni e le notifiche.",
+acc_delete_keep: "Restano solo i messaggi già ricevuti da altre persone, senza più collegamento al tuo account.",
+acc_delete_pwd: "La tua password",
+acc_delete_pwd_hint: "Serve a essere sicuri che sia davvero tu. Se sei entrato con il link via email, lascia vuoto.",
+acc_delete_word_label: "Scrivi ELIMINA per confermare",
+acc_delete_word: "ELIMINA",
+acc_delete_do: "Elimina definitivamente",
+acc_delete_cancel: "Lascia stare",
+acc_delete_working: "Sto cancellando i tuoi dati…",
+acc_delete_done: "Account eliminato. Grazie di aver tirato con noi.",
+acc_delete_need_word: "Scrivi ELIMINA nel campo per confermare.",
+acc_delete_bad_pwd: "Password non corretta.",
+acc_delete_relogin: "Per sicurezza devi rientrare: esci, rifai l’accesso e ripeti l’eliminazione.",
+acc_delete_error: "Non sono riuscito a completare l’eliminazione. Riprova, oppure scrivi a info@arctrail3d.com.",
+legal_privacy: "Informativa privacy",
+legal_terms: "Termini d’uso",
+profile_terms: "Ho letto e accetto i termini d’uso.",
 // === FINE CHIAVI DA TRADURRE ===
 ot_section_title: "Allenamenti aperti",
 ot_section_hint: "Unisciti a chi si allena oggi, o annuncia il tuo.",
@@ -4009,7 +4055,8 @@ app.style.paddingBottom = "92px";
 var NARROW_SCREENS = {
 "round":1, "summary":1, "registration":1, "setup":1, "profile-registration":1,
 "profile-edit":1, "training-setup":1, "gara-setup":1, "open-training-create":1,
-"field-report":1, "dm-chat":1, "ot-chat":1, "session-follow":1, "info":1
+"field-report":1, "dm-chat":1, "ot-chat":1, "session-follow":1, "info":1,
+"account-delete":1, "blocked-users":1
 };
 
 function render(){
@@ -4051,6 +4098,8 @@ case "profile-edit": app.appendChild(profileEditScreen()); break;
 case "history": app.appendChild(journalScreen()); break;
 case "history-detail": app.appendChild(historyDetailScreen()); break;
 case "info": app.appendChild(infoScreen()); break;
+case "blocked-users": app.appendChild(blockedUsersScreen()); break;
+case "account-delete": app.appendChild(accountDeleteScreen()); break;
 case "admin": app.appendChild(adminScreen()); break;
 case "session-follow": app.appendChild(sessionFollowScreen()); break;
 case "open-training-create": app.appendChild(openTrainingCreateScreen()); break;
@@ -4614,6 +4663,9 @@ card.appendChild(bowRow);
 
 var privacyRow = el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:16px 0 6px;"><input type="checkbox" id="pfPrivacy" style="width:auto;margin-top:2px;"><span>'+t("profile_privacy")+'</span></label>');
 card.appendChild(privacyRow);
+var termsRow = el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:0 0 6px;"><input type="checkbox" id="pfTerms" style="width:auto;margin-top:2px;"><span>'+t("profile_terms")+'</span></label>');
+card.appendChild(termsRow);
+card.appendChild(el('<div style="font-size:0.76rem;margin:0 0 8px;"><a href="/privacy.html" target="_blank" rel="noopener" style="color:var(--accent);">'+t("legal_privacy")+'</a> &middot; <a href="/termini.html" target="_blank" rel="noopener" style="color:var(--accent);">'+t("legal_terms")+'</a></div>'));
 
 var errorMsg = el('<div style="color:var(--danger);font-size:0.8rem;margin:6px 0;min-height:1.2em;"></div>');
 card.appendChild(errorMsg);
@@ -4626,6 +4678,7 @@ var email = document.getElementById("pfEmail").value.trim();
 var password = document.getElementById("pfPassword").value;
 var passwordConfirm = document.getElementById("pfPasswordConfirm").value;
 var privacy = document.getElementById("pfPrivacy").checked;
+var terms = document.getElementById("pfTerms").checked;
 var federazioni = [];
 Array.prototype.forEach.call(fedWrap.querySelectorAll('input[type=checkbox][data-fed]'), function(cb){
 if(cb.checked){
@@ -4634,7 +4687,7 @@ var tesseraInput = fedWrap.querySelector('input[data-tessera-fed="'+code+'"]');
 federazioni.push({ code: code, tessera: tesseraInput ? tesseraInput.value.trim() : "" });
 }
 });
-if(!nomeCognome || !username || !email || !arcoSel || !privacy || federazioni.length === 0){
+if(!nomeCognome || !username || !email || !arcoSel || !privacy || !terms || federazioni.length === 0){
 errorMsg.textContent = t("profile_error");
 return;
 }
@@ -4656,7 +4709,7 @@ submitBtn.disabled = true;
 if(currentUser){
 db.collection("users").doc(currentUser.uid).set({
 email: currentUser.email,
-nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true
+nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true, terms: true
 }, { merge: true }).then(function(){
 onAuthReady(currentUser);
 }).catch(function(err){
@@ -4671,7 +4724,7 @@ currentUser = result.user;
 try{ result.user.sendEmailVerification(); }catch(e){}
 db.collection("users").doc(result.user.uid).set({
 email: email, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true
+nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true, terms: true
 }).then(function(){
 notifyAdminNewSignup({ nomeCognome: nomeCognome, username: username, email: email });
 authState = "pendingApproval";
@@ -5729,14 +5782,15 @@ extraBtns.appendChild(dirBtn);
 
 if(!isOwner && currentUser){
 var msgBtn = el('<button style="flex:1;padding:6px 10px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:0.82rem;cursor:pointer;font-weight:700;">'+t("ot_msg_btn")+'</button>');
-(function(otId, ownerName){
+(function(otId, ownerName, ownerUid){
 msgBtn.addEventListener("click", function(){
 state.otChatId = otId;
 state.otChatOwnerName = ownerName;
+state.otChatOwnerUid = ownerUid || null;   // serve per poter bloccare e segnalare
 state.screen = "ot-chat";
 save(); render();
 });
-})(ot.id, ot.ownerName||"?");
+})(ot.id, ot.ownerName||"?", ot.ownerUid);
 extraBtns.appendChild(msgBtn);
 }
 
@@ -6019,6 +6073,11 @@ profCard.appendChild(clubSpaceBtn);
 var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("chart",24)+'</span><span class="menu-txt">'+t("journal_title")+'<span class="menu-sub">'+t("journal_sub")+'</span></span></button>');
 diarioBtn.addEventListener("click", function(){ state.screen = "diario"; save(); render(); });
 profCard.appendChild(diarioBtn);
+if(currentUser){
+var blockedBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("users",24)+'</span><span class="menu-txt">'+t("blk_list_title")+'<span class="menu-sub">'+t("blk_list_sub")+'</span></span></button>');
+blockedBtn.addEventListener("click", function(){ state.screen = "blocked-users"; save(); render(); });
+profCard.appendChild(blockedBtn);
+}
 wrap.appendChild(profCard);
 
 // Impostazioni: lingua e federazione. Stanno qui perche' si toccano due volte l'anno.
@@ -6043,12 +6102,21 @@ var adminBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-
 adminBtn.addEventListener("click", function(){ state.screen = "admin"; save(); render(); });
 setCard.appendChild(adminBtn);
 }
+// Privacy e termini: devono essere raggiungibili dall'app, non solo dallo store
+var legalRow = el('<div style="display:flex;gap:8px;margin-top:10px;"></div>');
+legalRow.appendChild(el('<a class="btn btn-ghost btn-sm" href="/privacy.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_privacy")+'</a>'));
+legalRow.appendChild(el('<a class="btn btn-ghost btn-sm" href="/termini.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_terms")+'</a>'));
+setCard.appendChild(legalRow);
+
 if(currentUser){
 var logoutBtn2 = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t("logout_word")+' ('+escapeHtml(currentUser.email)+')</button>');
 logoutBtn2.addEventListener("click", function(){
 auth.signOut().then(function(){ authState = "needLogin"; currentUser = null; render(); });
 });
 setCard.appendChild(logoutBtn2);
+var delAccBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:14px;color:var(--danger);border-color:var(--danger);">'+t("acc_delete_btn")+'</button>');
+delAccBtn.addEventListener("click", function(){ state.screen = "account-delete"; save(); render(); });
+setCard.appendChild(delAccBtn);
 }
 wrap.appendChild(setCard);
 }
@@ -6959,7 +7027,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-03-a";
+var BUILD_STAMP = "2026-08-12-store";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -6974,6 +7042,10 @@ contactCard.appendChild(el('<div style="font-size:0.85rem;line-height:1.6;">'+t(
 var mailSubject = encodeURIComponent("ArcTrail 3D - segnalazione");
 var mailBtn = el('<a href="mailto:'+CONTACT_EMAIL+'?subject='+mailSubject+'" class="btn btn-primary btn-block" style="margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">'+t("contact_button")+'</a>');
 contactCard.appendChild(mailBtn);
+var legalRow2 = el('<div style="display:flex;gap:8px;margin-top:10px;"></div>');
+legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/privacy.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_privacy")+'</a>'));
+legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/termini.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_terms")+'</a>'));
+contactCard.appendChild(legalRow2);
 wrap.appendChild(contactCard);
 
 wrap.appendChild(el('<div style="font-size:0.68rem;color:var(--muted);text-align:center;margin-top:16px;">Versione file: '+BUILD_STAMP+'</div>'));
@@ -7609,6 +7681,7 @@ var ownerName = state.otChatOwnerName || "?";
 var wrap = el('<div></div>');
 var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("ot_msg_title",{name:escapeHtml(ownerName)})+'</h2>'));
+card.appendChild(moderationBar({ uid: state.otChatOwnerUid || null, name: ownerName, what: t("ot_msg_title",{name:ownerName}) }, function(){ render(); }));
 
 var msgList = el('<div id="ot-chat-msgs" style="min-height:120px;max-height:300px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>');
 card.appendChild(msgList);
@@ -7621,6 +7694,7 @@ db.collection("open_trainings").doc(otId).collection("messages")
 msgList.innerHTML = "";
 snap.forEach(function(doc){
 var d = doc.data();
+if(isUserBlocked(d.senderUid)) return;   // messaggi di chi hai bloccato: non li vedi
 var isMine = currentUser && d.senderUid === currentUser.uid;
 var bubble = el(
 '<div style="display:flex;flex-direction:column;align-items:'+(isMine?"flex-end":"flex-start")+';">'+
@@ -7730,6 +7804,7 @@ if(d.datetime && d.datetime > Date.now() + OT_WINDOW_MS) return;
 // Visibilita': "club" lo vede solo chi e' della stessa compagnia
 // (l'organizzatore e gli invitati lo vedono sempre)
 var myUid = currentUser && currentUser.uid;
+if(isUserBlocked(d.ownerUid)) return;
 var mine = d.ownerUid === myUid;
 var invited = myUid && (d.invitedUids||[]).indexOf(myUid) !== -1;
 if(d.visibility === "club" && !mine && !invited){
@@ -7855,6 +7930,323 @@ t("notif_new_signup_body", { name: info.nomeCognome || "?", username: info.usern
 }
 
 
+// ── BLOCCO UTENTI, SEGNALAZIONI, ELIMINAZIONE ACCOUNT ───────────────────
+// Requisiti di Google Play per le app con contenuti scritti dagli utenti: si
+// deve poter bloccare una persona, segnalare un contenuto e cancellare il
+// proprio account dall'app.
+// I bloccati stanno in users/{uid}.blockedUsers come mappa uid->nome: le regole
+// permettono a ognuno di scrivere il proprio documento, e la mappa evita la
+// trappola nota di arrayRemove sugli oggetti (basta un campo diverso e non
+// combacia piu'). Il filtro e' lato client: nasconde chi hai bloccato.
+var blockedUsers = {};
+
+function isUserBlocked(uid){
+return !!(uid && blockedUsers && blockedUsers[uid]);
+}
+
+function setUserBlocked(uid, name, blocca, cb){
+if(!db || !currentUser || !uid){ if(cb) cb(new Error("no-db")); return; }
+var patch = {};
+patch["blockedUsers."+uid] = blocca ? (name || "?") : firebase.firestore.FieldValue.delete();
+db.collection("users").doc(currentUser.uid).update(patch).then(function(){
+if(blocca){ blockedUsers[uid] = (name || "?"); } else { delete blockedUsers[uid]; }
+archersDirectory = null;   // l'elenco arcieri e' in cache: va rifatto
+if(cb) cb(null);
+}).catch(function(e){ console.error("blocco utente:", e); if(cb) cb(e); });
+}
+
+// La segnalazione viaggia sul meccanismo delle notifiche gia' esistente: arriva
+// nel centro notifiche dell'admin (e come push, se la Cloud Function e' attiva).
+// Cosi' non serve una collezione nuova ne' una modifica alle regole Firestore.
+function sendAbuseReport(ctx, motivo, nota, cb){
+if(!db || !currentUser){ if(cb) cb(new Error("no-db")); return; }
+var testo = t("rep_notif_body", {
+who: myDisplayName(),
+what: ctx.what || "?",
+why: motivo,
+note: nota ? ("\u00ab"+nota+"\u00bb") : ""
+});
+db.collection("app_config").doc("admin").get().then(function(doc){
+var adminUid = doc.exists ? (doc.data().uid || null) : null;
+if(!adminUid){ if(cb) cb(new Error("no-admin")); return; }
+sendPushViaFirestore(adminUid, t("rep_title"), testo);
+// Copia a chi segnala: e' la prova che la segnalazione e' partita
+sendPushViaFirestore(currentUser.uid, t("rep_title"), t("rep_sent"));
+if(cb) cb(null);
+}).catch(function(e){ console.error("segnalazione:", e); if(cb) cb(e); });
+}
+
+// Barra "Segnala / Blocca" da appendere in cima a una conversazione.
+// ctx = { uid, name, what }. uid assente = solo segnalazione.
+function moderationBar(ctx, onChange){
+var box = el('<div style="margin:-2px 0 12px;"></div>');
+var row = el('<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"></div>');
+
+var repBtn = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:0.76rem;">\u26a0 '+t("rep_btn")+'</button>');
+row.appendChild(repBtn);
+
+if(ctx.uid && currentUser && ctx.uid !== currentUser.uid){
+var bloccato = isUserBlocked(ctx.uid);
+var blkBtn = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:0.76rem;'+(bloccato?"":"color:var(--danger);border-color:var(--danger);")+'">'+(bloccato ? t("blk_unblock_btn") : t("blk_block_btn"))+'</button>');
+if(bloccato){
+blkBtn.addEventListener("click", function(){
+blkBtn.disabled = true;
+setUserBlocked(ctx.uid, ctx.name, false, function(){ if(onChange) onChange(); });
+});
+} else {
+armDoubleConfirm(blkBtn, t("blk_block_confirm"), function(){
+blkBtn.disabled = true;
+setUserBlocked(ctx.uid, ctx.name, true, function(){ if(onChange) onChange(); });
+});
+}
+row.appendChild(blkBtn);
+}
+box.appendChild(row);
+
+var panel = el('<div style="display:none;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg-panel-2);margin-top:8px;"></div>');
+panel.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:8px;">'+t("rep_sub")+'</div>'));
+
+var motivi = [t("rep_reason_offense"), t("rep_reason_spam"), t("rep_reason_sexual"), t("rep_reason_illegal"), t("rep_reason_other")];
+var scelto = null;
+var chipRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:8px;"></div>');
+motivi.forEach(function(m){
+var chip = el('<div class="chip" style="font-size:0.78rem;">'+escapeHtml(m)+'</div>');
+chip.addEventListener("click", function(){
+Array.prototype.forEach.call(chipRow.querySelectorAll(".chip"), function(c){ c.classList.remove("active"); });
+chip.classList.add("active");
+scelto = m;
+});
+chipRow.appendChild(chip);
+});
+panel.appendChild(chipRow);
+
+panel.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("rep_note_label")+'</label>'));
+var notaInp = el('<textarea class="input-field" rows="2" style="resize:none;"></textarea>');
+panel.appendChild(notaInp);
+
+var alsoBlock = null;
+if(ctx.uid && currentUser && ctx.uid !== currentUser.uid && !isUserBlocked(ctx.uid)){
+var alsoRow = el('<label style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--muted);margin:8px 0 0;"><input type="checkbox" style="width:auto;"><span>'+t("rep_also_block")+'</span></label>');
+alsoBlock = alsoRow.querySelector("input");
+panel.appendChild(alsoRow);
+}
+
+var statusEl = el('<div style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>');
+var sendBtn = el('<button class="btn btn-primary btn-block btn-sm" style="margin-top:8px;">'+t("rep_send")+'</button>');
+sendBtn.addEventListener("click", function(){
+if(!scelto){
+statusEl.style.color = "var(--danger)";
+statusEl.textContent = t("rep_pick_reason");
+return;
+}
+sendBtn.disabled = true;
+statusEl.style.color = "var(--muted)";
+statusEl.textContent = t("rep_send")+"\u2026";
+// Sempre try/catch e riabilitazione del pulsante: un'eccezione qui lo
+// lascerebbe bloccato per sempre.
+try{
+sendAbuseReport(ctx, scelto, notaInp.value.trim(), function(err){
+if(err){
+sendBtn.disabled = false;
+statusEl.style.color = "var(--danger)";
+statusEl.textContent = t("rep_error");
+return;
+}
+statusEl.style.color = "var(--accent)";
+statusEl.textContent = t("rep_sent");
+if(alsoBlock && alsoBlock.checked){
+setUserBlocked(ctx.uid, ctx.name, true, function(){ if(onChange) onChange(); });
+return;
+}
+setTimeout(function(){ panel.style.display = "none"; sendBtn.disabled = false; statusEl.textContent = ""; }, 1600);
+});
+}catch(e){
+console.error("segnalazione:", e);
+sendBtn.disabled = false;
+statusEl.style.color = "var(--danger)";
+statusEl.textContent = t("rep_error");
+}
+});
+panel.appendChild(sendBtn);
+panel.appendChild(statusEl);
+box.appendChild(panel);
+
+repBtn.addEventListener("click", function(){
+panel.style.display = (panel.style.display === "none") ? "block" : "none";
+});
+return box;
+}
+
+// ---------- PERSONE BLOCCATE ----------
+function blockedUsersScreen(){
+var wrap = el('<div></div>');
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("blk_list_title")+'</h2>'));
+card.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);line-height:1.5;margin-bottom:12px;">'+t("blk_list_sub")+' '+t("blk_list_hint")+'</div>'));
+
+var uids = Object.keys(blockedUsers || {});
+if(!uids.length){
+card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("blk_list_empty")+'</div>'));
+} else {
+uids.forEach(function(u){
+var riga = el('<div style="display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px;"></div>');
+riga.appendChild(el('<span style="flex:1;font-size:0.9rem;font-weight:700;">@'+escapeHtml(blockedUsers[u]||"?")+'</span>'));
+var sbl = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:0.78rem;">'+t("blk_unblock_btn")+'</button>');
+sbl.addEventListener("click", function(){
+sbl.disabled = true;
+setUserBlocked(u, blockedUsers[u], false, function(){ render(); });
+});
+riga.appendChild(sbl);
+card.appendChild(riga);
+});
+}
+wrap.appendChild(card);
+
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
+backBtn.addEventListener("click", function(){ state.screen = "menu"; state.tab = "profilo"; save(); render(); });
+wrap.appendChild(backBtn);
+return wrap;
+}
+
+// ---------- ELIMINAZIONE DELL'ACCOUNT ----------
+// Cancella prima i dati (finche' l'utente e' ancora autenticato: dopo la
+// cancellazione dell'account le regole non lo lascerebbero piu' scrivere),
+// poi il documento utente, infine l'account di autenticazione.
+function deleteQueryDocs(q){
+return q.get().then(function(snap){
+var ps = [];
+snap.forEach(function(doc){ ps.push(doc.ref.delete().catch(function(){})); });
+return Promise.all(ps);
+}).catch(function(){});
+}
+
+function wipeAccountData(uid){
+var jobs = [];
+// Giri salvati sul cloud
+jobs.push(deleteQueryDocs(db.collection("users").doc(uid).collection("storico").limit(400)));
+// Notifiche ricevute
+jobs.push(deleteQueryDocs(db.collection("notifications").doc(uid).collection("items").limit(400)));
+// Chat private: prima i messaggi, poi il documento della conversazione
+jobs.push(db.collection("direct_chats").where("members","array-contains",uid).limit(60).get().then(function(snap){
+var ps = [];
+snap.forEach(function(doc){
+ps.push(deleteQueryDocs(doc.ref.collection("messages").limit(200)).then(function(){
+return doc.ref.delete().catch(function(){});
+}));
+});
+return Promise.all(ps);
+}).catch(function(){}));
+// Allenamenti aperti pubblicati
+jobs.push(db.collection("open_trainings").where("ownerUid","==",uid).limit(60).get().then(function(snap){
+var ps = [];
+snap.forEach(function(doc){
+ps.push(deleteQueryDocs(doc.ref.collection("messages").limit(200)).then(function(){
+return doc.ref.delete().catch(function(){});
+}));
+});
+return Promise.all(ps);
+}).catch(function(){}));
+// Segnalazioni percorso
+jobs.push(deleteQueryDocs(db.collection("field_reports").where("reporterUid","==",uid).limit(100)));
+// Richieste di gestione compagnia
+jobs.push(deleteQueryDocs(db.collection("compagnie_admin_requests").where("richiedenteUid","==",uid).limit(20)));
+// Annunci del Mercatino: il nome del campo proprietario cambia a seconda di
+// come e' stato scritto l'annuncio, quindi si prova con tutti e tre.
+["uid","sellerUid","ownerUid"].forEach(function(campo){
+jobs.push(deleteQueryDocs(db.collection("market_listings").where(campo,"==",uid).limit(100)));
+});
+return Promise.all(jobs);
+}
+
+function accountDeleteScreen(){
+var wrap = el('<div></div>');
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("acc_delete_title")+'</h2>'));
+
+if(!currentUser || !db){
+card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("acc_delete_error")+'</div>'));
+wrap.appendChild(card);
+var b0 = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
+b0.addEventListener("click", function(){ state.screen = "menu"; state.tab = "profilo"; save(); render(); });
+wrap.appendChild(b0);
+return wrap;
+}
+
+card.appendChild(el('<div style="border:1px solid var(--danger);border-radius:12px;padding:12px 14px;font-size:0.86rem;line-height:1.55;color:var(--cream);margin-bottom:12px;">'+t("acc_delete_warn")+'</div>'));
+card.appendChild(el('<div style="font-size:0.84rem;color:var(--muted);line-height:1.55;margin-bottom:8px;">'+t("acc_delete_what")+'</div>'));
+card.appendChild(el('<div style="font-size:0.84rem;color:var(--muted);line-height:1.55;margin-bottom:14px;">'+t("acc_delete_keep")+'</div>'));
+
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("acc_delete_pwd")+'</label>'));
+var pwdInp = el('<input type="password" class="input-field" autocomplete="current-password">');
+card.appendChild(pwdInp);
+card.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);margin:4px 0 12px;">'+t("acc_delete_pwd_hint")+'</div>'));
+
+card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("acc_delete_word_label")+'</label>'));
+var wordInp = el('<input type="text" class="input-field" autocapitalize="characters" autocomplete="off">');
+card.appendChild(wordInp);
+
+var statusEl = el('<div style="font-size:0.85rem;margin:10px 0 0;min-height:20px;line-height:1.45;"></div>');
+card.appendChild(statusEl);
+
+var goBtn = el('<button class="btn btn-block" style="margin-top:10px;background:var(--danger);color:#fff;border:none;">'+t("acc_delete_do")+'</button>');
+goBtn.addEventListener("click", function(){
+if((wordInp.value||"").trim().toUpperCase() !== t("acc_delete_word")){
+statusEl.style.color = "var(--danger)";
+statusEl.textContent = t("acc_delete_need_word");
+return;
+}
+goBtn.disabled = true;
+statusEl.style.color = "var(--muted)";
+statusEl.textContent = t("acc_delete_working");
+
+var uid = currentUser.uid;
+var mail = currentUser.email || "";
+var nome = myDisplayName();
+
+var reauth = Promise.resolve();
+if(pwdInp.value){
+var cred = firebase.auth.EmailAuthProvider.credential(mail, pwdInp.value);
+reauth = currentUser.reauthenticateWithCredential(cred);
+}
+
+reauth.then(function(){
+// Avviso all'admin finche' si puo' ancora scrivere
+try{
+db.collection("app_config").doc("admin").get().then(function(doc){
+var adminUid = doc.exists ? (doc.data().uid || null) : null;
+if(adminUid) sendPushViaFirestore(adminUid, t("acc_delete_title"), t("rep_deleted_account", { who: nome, mail: mail }));
+}).catch(function(){});
+}catch(e){}
+return wipeAccountData(uid);
+}).then(function(){
+return db.collection("users").doc(uid).delete().catch(function(){});
+}).then(function(){
+return currentUser.delete();
+}).then(function(){
+try{ localStorage.clear(); }catch(e){}
+statusEl.style.color = "var(--accent)";
+statusEl.textContent = t("acc_delete_done");
+setTimeout(function(){ window.location.reload(); }, 1600);
+}).catch(function(err){
+goBtn.disabled = false;
+statusEl.style.color = "var(--danger)";
+var code = err && err.code ? err.code : "";
+if(code === "auth/wrong-password" || code === "auth/invalid-credential"){ statusEl.textContent = t("acc_delete_bad_pwd"); }
+else if(code === "auth/requires-recent-login"){ statusEl.textContent = t("acc_delete_relogin"); }
+else { statusEl.textContent = t("acc_delete_error"); }
+console.error("eliminazione account:", err);
+});
+});
+card.appendChild(goBtn);
+
+wrap.appendChild(card);
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("acc_delete_cancel")+'</button>');
+backBtn.addEventListener("click", function(){ state.screen = "menu"; state.tab = "profilo"; save(); render(); });
+wrap.appendChild(backBtn);
+return wrap;
+}
+
+
 // ── CHAT DIRETTA TRA DUE ARCIERI ────────────────────────────────────────────
 // direct_chats/{uidA__uidB} (uid ordinati, cosi' la coppia ha sempre un solo
 // documento) con members[2], memberNames{}, ultimo messaggio e readBy{}.
@@ -7914,7 +8306,7 @@ db.collection("users").where("approved","==",true).get().then(function(snap){
 var list = [];
 snap.forEach(function(doc){
 var d = doc.data();
-if(d.username && doc.id !== (currentUser && currentUser.uid)){
+if(d.username && doc.id !== (currentUser && currentUser.uid) && !isUserBlocked(doc.id)){
 list.push({ uid: doc.id, username: d.username, nomeCognome: d.nomeCognome || "" });
 }
 });
@@ -8002,6 +8394,7 @@ card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("dm_
 var locale = (LANG_META[state.lang]||LANG_META.it).locale;
 myDirectChats.forEach(function(c){
 var altro = dmOther(c);
+if(isUserBlocked(altro.uid)) return;
 var nuovo = dmIsUnread(c);
 var quando = "";
 if(c.lastAt && c.lastAt.toDate){
@@ -8043,6 +8436,18 @@ wrap.appendChild(card);
 return wrap;
 }
 var chatId = dmChatId(currentUser.uid, otherUid);
+
+// Segnalazione e blocco: obbligatori sugli store per i contenuti fra utenti
+card.appendChild(moderationBar({ uid: otherUid, name: otherName, what: t("dm_chat_with", { name: otherName }) }, function(){ render(); }));
+
+if(isUserBlocked(otherUid)){
+card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);line-height:1.5;">'+t("blk_blocked_note")+'</div>'));
+wrap.appendChild(card);
+var backBlocked = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("dm_back")+'</button>');
+backBlocked.addEventListener("click", function(){ stopDmMessages(); state.screen = "messaggi"; save(); render(); });
+wrap.appendChild(backBlocked);
+return wrap;
+}
 
 var msgList = el('<div style="min-height:140px;max-height:320px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>');
 card.appendChild(msgList);
