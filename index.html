@@ -6994,9 +6994,10 @@ if(!db){ setStatus("Database non disponibile", "var(--danger)"); return; }
 if(!currentUser){ setStatus("Devi essere loggato", "var(--danger)"); return; }
 saveBtn.disabled = true;
 setStatus("Salvataggio in corso\u2026");
+try{
 var datetime = new Date(dateInp.value + (timeInp.value ? "T"+timeInp.value : "T00:00")).getTime();
 var invitedUids = invitedUsers.map(function(u){ return u.uid; });
-var myName = selfName || (currentUser && (currentUser.displayName||currentUser.email)) || "?";
+var myName = (state.profile && (state.profile.username || state.profile.nomeCognome)) || (currentUser && (currentUser.displayName||currentUser.email)) || "?";
 var fieldVal = fieldInp.value.trim();
 
 var otDoc = {
@@ -7048,6 +7049,11 @@ state.screen = "menu";
 save(); render();
 // Ricarico dal server in background per allineare
 setTimeout(function(){ loadOpenTrainings(); }, 3000);
+}catch(e){
+console.error("OT publish error:", e);
+saveBtn.disabled = false;
+setStatus("Errore: " + (e && e.message ? e.message : e), "var(--danger)");
+}
 });
 card.appendChild(saveBtn);
 
