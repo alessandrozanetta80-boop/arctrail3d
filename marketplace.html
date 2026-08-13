@@ -455,18 +455,34 @@ body::before{opacity:.28}
       <div class="radio-row" id="fltCat">
         <button class="radio-pill on" data-fc="">Tutte</button>
         <button class="radio-pill" data-fc="arco">🏹 Archi</button>
-        <button class="radio-pill" data-fc="frecce">🪶 Frecce</button>
-        <button class="radio-pill" data-fc="mirino">🎯 Mirini &amp; Rest</button>
-        <button class="radio-pill" data-fc="stabilizzatori">Stabilizzatori</button>
-        <button class="radio-pill" data-fc="faretra">Faretre</button>
-        <button class="radio-pill" data-fc="corda">Corde</button>
+        <button class="radio-pill" data-fc="frecce">🪶 Frecce &amp; componenti</button>
+        <button class="radio-pill" data-fc="mirino">🎯 Mirini &amp; diottre</button>
+        <button class="radio-pill" data-fc="rest">Bottoni, rest &amp; clicker</button>
+        <button class="radio-pill" data-fc="stabilizzatori">Stabilizzazioni</button>
+        <button class="radio-pill" data-fc="sganci">Sganci meccanici</button>
+        <button class="radio-pill" data-fc="faretra">Faretre &amp; cinture</button>
+        <button class="radio-pill" data-fc="corda">Corde, cavi &amp; filati</button>
         <button class="radio-pill" data-fc="protezioni">Protezioni</button>
+        <button class="radio-pill" data-fc="borse">Borse &amp; valigie</button>
+        <button class="radio-pill" data-fc="attrezzatura">Attrezzatura &amp; messa a punto</button>
         <button class="radio-pill" data-fc="abbigliamento">Abbigliamento</button>
-        <button class="radio-pill" data-fc="bersagli">Bersagli 3D</button>
+        <button class="radio-pill" data-fc="bersagli">Bersagli 3D &amp; campo</button>
         <button class="radio-pill" data-fc="altro">Altro</button>
       </div>
     </div>
     <div class="fdivider"></div>
+    <div class="filter-sec" id="fltMkSec" style="display:none">
+      <div class="filter-sec-title">Marca</div>
+      <select class="fselect" id="fltMk"><option value="">Tutte le marche</option></select>
+      <div class="fdivider"></div>
+    </div>
+    <div class="filter-sec" id="fltSgSec" style="display:none">
+      <div class="filter-sec-title">Tipo sgancio</div>
+      <div class="radio-row" id="fltSgT"><button class="radio-pill on" data-fsg="">Tutti</button><button class="radio-pill" data-fsg="pressione">A pressione</button><button class="radio-pill" data-fsg="rotazione">A rotazione</button><button class="radio-pill" data-fsg="incremento">A incremento</button><button class="radio-pill" data-fsg="accessorio">Accessori sgancio</button></div>
+      <div class="filter-sec-title mt12">Mano</div>
+      <div class="radio-row" id="fltSgMano"><button class="radio-pill on" data-fsm="">Entrambe</button><button class="radio-pill" data-fsm="dx">Destra</button><button class="radio-pill" data-fsm="sx">Sinistra</button></div>
+      <div class="fdivider"></div>
+    </div>
     <div class="filter-sec" id="fltArcoSec" style="display:none">
       <div class="filter-sec-title">Tipo arco</div>
       <div class="radio-row" id="fltArcoT"><button class="radio-pill on" data-fat="">Tutti</button><button class="radio-pill" data-fat="compound">Compound</button><button class="radio-pill" data-fat="ricurvo">Ricurvo</button><button class="radio-pill" data-fat="barebow">Barebow</button><button class="radio-pill" data-fat="longbow">Longbow</button><button class="radio-pill" data-fat="storico">Storico</button></div>
@@ -537,28 +553,47 @@ body::before{opacity:.28}
     <div class="fgroup mt12"><label class="flabel">Categoria</label>
       <select class="fselect" id="fCat">
         <option value="">— seleziona —</option>
-        <option value="arco">🏹 Archi</option><option value="frecce">🪶 Frecce</option>
-        <option value="mirino">🎯 Mirini &amp; Rest</option><option value="stabilizzatori">Stabilizzatori</option>
-        <option value="faretra">Faretre</option><option value="corda">Corde &amp; accessori corda</option>
-        <option value="protezioni">Protezioni</option><option value="abbigliamento">Abbigliamento tecnico</option>
-        <option value="bersagli">Bersagli 3D &amp; accessori campo</option><option value="altro">Altro</option>
+        <option value="arco">🏹 Archi</option>
+        <option value="frecce">🪶 Frecce &amp; componenti</option>
+        <option value="mirino">🎯 Mirini &amp; diottre</option>
+        <option value="rest">Bottoni, rest &amp; clicker</option>
+        <option value="stabilizzatori">Stabilizzazioni</option>
+        <option value="sganci">Sganci meccanici</option>
+        <option value="faretra">Faretre &amp; cinture</option>
+        <option value="corda">Corde, cavi &amp; filati</option>
+        <option value="protezioni">Protezioni (patelle, guantini, parabracci)</option>
+        <option value="borse">Borse, zaini &amp; valigie</option>
+        <option value="attrezzatura">Attrezzatura &amp; messa a punto</option>
+        <option value="abbigliamento">Abbigliamento tecnico</option>
+        <option value="bersagli">Bersagli 3D &amp; accessori campo</option>
+        <option value="altro">Altro</option>
       </select>
+    </div>
+    <div id="fMkG" class="fgroup mt12" style="display:none"><label class="flabel">Marca</label>
+      <select class="fselect" id="fMarca"><option value="">— seleziona —</option></select>
+    </div>
+    <div id="fMkAltroG" class="fgroup mt12" style="display:none"><label class="flabel">Altro marchio</label>
+      <input class="finput" type="text" id="fMarcaAltro" placeholder="NOME DEL MARCHIO" maxlength="40" style="text-transform:uppercase">
+    </div>
+    <div id="fSgSec" style="display:none">
+      <div class="fgroup mt12"><label class="flabel">Tipo sgancio</label>
+        <select class="fselect" id="fSgT"><option value="">— seleziona —</option><option value="pressione">A pressione (polso / pollice)</option><option value="rotazione">A rotazione (hinge / backtension)</option><option value="incremento">A incremento (resistance)</option><option value="accessorio">Accessorio sgancio (cordino, D-loop, ricambi)</option></select>
+      </div>
+      <div style="display:flex;gap:10px" class="mt12">
+        <div class="fgroup" style="flex:1"><label class="flabel">Dita</label>
+          <select class="fselect" id="fSgD"><option value="">—</option><option value="3">3 dita</option><option value="4">4 dita</option><option value="pollice">A pollice</option></select>
+        </div>
+        <div class="fgroup" style="flex:1"><label class="flabel">Materiale</label>
+          <select class="fselect" id="fSgMat"><option value="">—</option><option value="alluminio">Alluminio</option><option value="ottone">Ottone</option><option value="acciaio">Acciaio</option></select>
+        </div>
+      </div>
+      <div class="fgroup mt12"><label class="flabel">Mano</label>
+        <div class="radio-row"><button class="radio-pill on" data-sgm="dx">Destra</button><button class="radio-pill" data-sgm="sx">Sinistra</button></div>
+      </div>
     </div>
     <div id="fArcoSec" style="display:none">
       <div class="fgroup mt12"><label class="flabel">Tipo arco</label>
         <select class="fselect" id="fArcoT"><option value="">— seleziona —</option><option value="compound">Compound</option><option value="ricurvo">Ricurvo / Olimpico</option><option value="barebow">Barebow / Nudo</option><option value="longbow">Longbow</option><option value="storico">Storico</option></select>
-      </div>
-      <div class="fgroup mt12"><label class="flabel">Marca</label>
-        <select class="fselect" id="fMarcaA">
-          <option value="">— seleziona —</option>
-          <option>BEAR ARCHERY</option><option>BEARPAW</option><option>BORDER</option>
-          <option>BOWTECH</option><option>ELITE ARCHERY</option><option>GILLO</option>
-          <option>GREAT PLAINS</option><option>HOYT</option><option>INNO</option>
-          <option>MATHEWS</option><option>OBSESSION</option><option>PRIME ARCHERY</option>
-          <option>PSE ARCHERY</option><option>SAMICK</option><option>SEBASTIEN FLUTE</option>
-          <option>SF ARCHERY</option><option>UUKHA</option><option>WIN&amp;WIN</option>
-          <option value="altro">ALTRO (specifica nella descrizione)</option>
-        </select>
       </div>
       <div style="display:flex;gap:10px" class="mt12">
         <div class="fgroup" style="flex:1"><label class="flabel">Libraggio (lb)</label><input class="finput" type="number" id="fLb" placeholder="es. 40" min="10" max="120"></div>
@@ -569,15 +604,6 @@ body::before{opacity:.28}
       </div>
     </div>
     <div id="fFrSec" style="display:none">
-      <div class="fgroup mt12"><label class="flabel">Marca frecce</label>
-        <select class="fselect" id="fMarcaF">
-          <option value="">— seleziona —</option>
-          <option>AVALON</option><option>BEARPAW</option><option>BLACK EAGLE</option>
-          <option>CARBON EXPRESS</option><option>EASTON</option><option>GOLD TIP</option>
-          <option>NIJORA</option><option>SKYLON</option><option>VICTORY ARCHERY</option>
-          <option value="altro">ALTRO</option>
-        </select>
-      </div>
       <div style="display:flex;gap:10px" class="mt12">
         <div class="fgroup" style="flex:1"><label class="flabel">Spine</label><input class="finput" type="number" id="fSpi" placeholder="es. 400"></div>
         <div class="fgroup" style="flex:1"><label class="flabel">Quantità</label><input class="finput" type="number" id="fQty" placeholder="es. 12" min="1"></div>
@@ -690,13 +716,44 @@ var FC={apiKey:"AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",authDomain:"arctrail3d.
 firebase.initializeApp(FC);
 var auth=firebase.auth(),db=firebase.firestore(),stg=firebase.storage();
 var cu=null,isVerArch=false,allAds=[],myFavs=new Set(),savedS=[],editId=null,fPhs=["","","",""],curAd=null,curConvId=null,curConv=null,detPhs=[],detIdx=0,selStars=0,revTgtUid=null,revAdId=null,revCache={},phTargetIdx=null;
-var F={cat:"",fat:"",fm:"",ffm:"",lbMn:"",lbMx:"",dwMn:"",dwMx:"",spMn:"",spMx:"",prMn:"",prMx:"",co:"",sh:"",cerco:false};
+var F={cat:"",fat:"",fm:"",ffm:"",mk:"",sg:"",sgm:"",lbMn:"",lbMx:"",dwMn:"",dwMx:"",spMn:"",spMx:"",prMn:"",prMx:"",co:"",sh:"",cerco:false};
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function euro(v){return "€ "+Number(v||0).toLocaleString("it-IT");}
 function tms(ts){if(!ts)return 0;return ts.toDate?ts.toDate().getTime():new Date(ts).getTime();}
 function ago(ts){if(!ts)return"";var t=tms(ts);if(!t)return"";var df=Math.floor((Date.now()-t)/1000);if(df<60)return"ora";if(df<3600)return Math.floor(df/60)+"min fa";if(df<86400)return Math.floor(df/3600)+"h fa";if(df<86400*30)return Math.floor(df/86400)+"g fa";return Math.floor(df/86400/30)+"mesi fa";}
 function ini(n){return(n||"?").split(" ").map(function(w){return w[0]||"";}).join("").toUpperCase().slice(0,2)||"?";}
-var CM={arco:"🏹 Archi",frecce:"🪶 Frecce",mirino:"🎯 Mirini & Rest",stabilizzatori:"Stabilizzatori",faretra:"Faretre",corda:"Corde",protezioni:"Protezioni",abbigliamento:"Abbigliamento",bersagli:"Bersagli 3D",altro:"Altro"};
+var CM={arco:"🏹 Archi",frecce:"🪶 Frecce",mirino:"🎯 Mirini & diottre",rest:"Bottoni, rest & clicker",stabilizzatori:"Stabilizzazioni",sganci:"Sganci meccanici",faretra:"Faretre & cinture",corda:"Corde & filati",protezioni:"Protezioni",borse:"Borse & valigie",attrezzatura:"Attrezzatura",abbigliamento:"Abbigliamento",bersagli:"Bersagli 3D",altro:"Altro"};
+/* ══ MARCHI PER CATEGORIA ══════════════════════════════════════════════════
+   Elenco chiuso: il testo libero fa nascere "hoyt", "Hoyt", "HOYT ", tre
+   marche diverse per la ricerca. Chi non trova la sua sceglie ALTRO e la
+   scrive a mano, e quel campo va comunque in maiuscolo.
+   Fonte dell'elenco: catalogo Rivolta Archery, piu' i marchi che nell'usato
+   italiano girano parecchio ma che loro non trattano. */
+var BR={
+arco:["BEAR","BEARPAW","BLACK WIDOW","BODNIK","BOOSTER","BORDER","BOWTECH","BUCK TRAIL","CORE","DARTON","DECUT","DIAMOND","ELITE","EXE","FIVICS - SOMA","FRED BEAR","GILLO","GREAT PLAINS","HOYT","KAISER","KAP","KINETIC","KROSSEN","MATHEWS","MISSION","MK KOREA","MYBO","OAK RIDGE","OLD MOUNTAIN","PRIME","PSE","RAGIM","SAMICK","SANLIDA","SEBASTIEN FLUTE","SF ARCHERY","SHOCQ","SPIGARELLI","STARK ARCHERY","TOPOINT","UUKHA","W&W","WHITE FEATHER","WIAWIS","WILD MOUNTAIN","WINNERS"],
+frecce:["AVALON","BEARPAW","BIG ARCHERY","BIG TRADITION","BLACK EAGLE","BOHNING","BUCK TRAIL","CARBON EXPRESS","CROSS-X","EASTON","GOLD TIP","MAXIMAL","NIJORA","RIVOLTA ARCHERY","ROSE CITY","SKYLON","VICTORY ARCHERY","WHITE FEATHER"],
+mirino:["ARC SYSTEME","AVALON","AXCEL","BEITER","BOWFINGER","CARTEL","CBE","DECUT","FIVICS - SOMA","HOYT","SANLIDA","SHIBUYA","SHREWD","SPIGARELLI","SURE-LOC","TOPOINT","TRUGLO","W&W","WINNERS"],
+rest:["AAE","ARC SYSTEME","AVALON","BEITER","CARTEL","DECUT","HAMSKEA","HOYT","QAD","SANLIDA","SHIBUYA","SPIGARELLI","TOPOINT","TRUGLO","W&W","WINNERS"],
+stabilizzatori:["APEX GEAR","ARCTEC","AVALON","AXCEL","B-STINGER","BEITER","BOOSTER","CARTEL","CONQUEST","DOINKER","EXE","FIVICS - SOMA","FUSE","HOYT","MATHEWS","SHREWD","SPIGARELLI","STARK ARCHERY","W&W","WIAWIS","WINNERS"],
+sganci:["AVALON","B3","BOOSTER","CARTER","DECUT","FIREFOX","MAXIMAL","SANLIDA","SCOTT","STANISLAWSKI","T.R.U.BALL","TOPOINT","TRU-FIRE","ULTRAVIEW"],
+faretra:["AURORA","AVALON","BEARPAW","BOOSTER","BUCK TRAIL","CARTEL","EASTON","ELEVATION","FIVICS - SOMA","HOYT","MAXIMAL","W&W","WILD MOUNTAIN","WINNERS"],
+corda:["ANGEL","AVALON","BCY","BROWNELL","CARTEL","FLEX ARCHERY","RIVOLTA ARCHERY","W&W","WINNERS"],
+protezioni:["AVALON","BEARPAW","BUCK TRAIL","CARTEL","FIVICS - SOMA","JVD","KRUGER","SPIGARELLI","W&W","WILD MOUNTAIN","WINNERS"],
+borse:["AURORA","AVALON","BOOSTER","CARTEL","EASTON","FIVICS - SOMA","HOYT","LEGEND","MATHEWS","W&W","WINNERS"],
+attrezzatura:["ARIZONA","ARROW-FIX","AVALON","BEITER","BITZENBURGER","BOHNING","BONDHUS","BOWMASTER","CARTEL","DECUT","EASTON","JVD","LAST CHANCE","W&W"],
+abbigliamento:["AVALON","BEARPAW","BUCK TRAIL","CARTEL","DEERHUNTER","FIVICS - SOMA","HOYT","MATHEWS","W&W","WINNERS"],
+bersagli:["ARCHERY TARGETS","AVALON","BIGSHOT TARGETS","BLOCK","BULLDOG TARGETS","DELTA MCKENZIE","EGERTEC","ELEVEN","FIELDLOGIC","JVD","RINEHART","SRT"],
+altro:[]
+};
+/* "Altro" e la ricerca per marca senza categoria pescano da tutti gli elenchi */
+(function(){var seen={},all=[];Object.keys(BR).forEach(function(k){BR[k].forEach(function(m){if(!seen[m]){seen[m]=1;all.push(m);}});});all.sort();BR.altro=all;BR.__all=all;})();
+function fillBrands(sel,cat,firstLabel,withAltro){
+  var list=(cat&&BR[cat])?BR[cat]:BR.__all;
+  var h='<option value="">'+firstLabel+'</option>';
+  list.forEach(function(m){h+='<option>'+esc(m)+'</option>';});
+  if(withAltro)h+='<option value="altro">ALTRO (scrivi il marchio)</option>';
+  sel.innerHTML=h;
+}
 var KM={nuovo:"Nuovo",ottimo:"Ottimo",buono:"Buono",usato:"Usato"};
 var KC={nuovo:"nuovo",ottimo:"ottimo",buono:"buono",usato:"usato"};
 function stars(n){var s="";for(var i=1;i<=5;i++)s+=(i<=n?"★":"☆");return s;}
@@ -768,6 +825,9 @@ function matchF(a){
   if(F.fat&&a.arcoTipo!==F.fat)return false;
   if(F.fm&&a.mano!==F.fm)return false;
   if(F.ffm&&a.frMat!==F.ffm)return false;
+  if(F.mk&&a.marca!==F.mk)return false;
+  if(F.sg&&a.sgTipo!==F.sg)return false;
+  if(F.sgm&&a.mano!==F.sgm)return false;
   if(F.lbMn&&parseFloat(a.lb)<parseFloat(F.lbMn))return false;
   if(F.lbMx&&parseFloat(a.lb)>parseFloat(F.lbMx))return false;
   if(F.dwMn&&parseFloat(a.draw)<parseFloat(F.dwMn))return false;
@@ -783,13 +843,13 @@ function matchF(a){
   if(q&&!(a.title||"").toLowerCase().includes(q)&&!(a.description||"").toLowerCase().includes(q))return false;
   return true;
 }
-function hasAF(){return F.cat||F.fat||F.fm||F.ffm||F.lbMn||F.lbMx||F.dwMn||F.dwMx||F.spMn||F.spMx||F.prMn||F.prMx||F.co||F.sh||document.getElementById("sInput").value.trim();}
+function hasAF(){return F.cat||F.fat||F.fm||F.ffm||F.mk||F.sg||F.sgm||F.lbMn||F.lbMx||F.dwMn||F.dwMx||F.spMn||F.spMx||F.prMn||F.prMx||F.co||F.sh||document.getElementById("sInput").value.trim();}
 function renderAds(){
   var fl=allAds.filter(matchF);
   var hid=allAds.length-fl.length;
   document.getElementById("rCount").textContent=fl.length+" annunci"+(hid>0?" · "+hid+" nascosti dai filtri":"");
   document.getElementById("btnClrFlt").style.display=(hasAF()||F.cerco)?"inline-block":"none";
-  document.getElementById("fltDot").classList.toggle("show",!!(F.cat||F.fat||F.fm||F.ffm||F.lbMn||F.lbMx||F.dwMn||F.dwMx||F.spMn||F.spMx||F.prMn||F.prMx||F.co||F.sh));
+  document.getElementById("fltDot").classList.toggle("show",!!(F.cat||F.fat||F.fm||F.ffm||F.mk||F.sg||F.sgm||F.lbMn||F.lbMx||F.dwMn||F.dwMx||F.spMn||F.spMx||F.prMn||F.prMx||F.co||F.sh));
   var c=document.getElementById("lstCont");
   if(!fl.length){
     var tot=allAds.length;
@@ -863,6 +923,9 @@ function openDet(id){
   if(a.category)sp.push(["Categoria",CM[a.category]||a.category]);
   if(a.arcoTipo)sp.push(["Tipo arco",{compound:"Compound",ricurvo:"Ricurvo / Olimpico",barebow:"Barebow / Nudo",longbow:"Longbow",storico:"Storico"}[a.arcoTipo]||a.arcoTipo]);
   if(a.marca)sp.push(["Marca",a.marca]);
+  if(a.sgTipo)sp.push(["Tipo sgancio",{pressione:"A pressione",rotazione:"A rotazione",incremento:"A incremento",accessorio:"Accessorio"}[a.sgTipo]||a.sgTipo]);
+  if(a.sgDita)sp.push(["Dita",a.sgDita==="pollice"?"A pollice":a.sgDita]);
+  if(a.sgMat)sp.push(["Materiale",a.sgMat]);
   if(a.lb)sp.push(["Libraggio",a.lb+" lb"]);
   if(a.draw)sp.push(["Allungo",a.draw+'"']);
   if(a.mano)sp.push(["Mano",a.mano==="dx"?"Destra":"Sinistra"]);
@@ -973,7 +1036,7 @@ function rndPh(){
 function rmPh(e,i){e.stopPropagation();fPhs[i]="";rndPh();}
 
 /* ══ FORM ══ */
-function openNewAd(){editId=null;fPhs=["","","",""];document.getElementById("formTB").textContent="Nuovo annuncio";["fTit","fLoc","fDesc"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fCat").value="";document.getElementById("fPr").value="";document.getElementById("fBu").value="";["fLb","fDrw","fSpi","fQty"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fArcoT").value="";document.getElementById("fMarcaA").value="";document.getElementById("fMarcaF").value="";document.getElementById("fShp").checked=false;document.getElementById("fAccOff").checked=true;document.getElementById("btnDel").style.display="none";document.getElementById("btnSave").textContent="Pubblica annuncio";document.getElementById("fErr").style.display="none";setADT("vendo");setCondU("ottimo");updCatS();rndPh();openOv("ovForm");}
+function openNewAd(){editId=null;pendingMarca="";fPhs=["","","",""];document.getElementById("formTB").textContent="Nuovo annuncio";["fTit","fLoc","fDesc"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fCat").value="";document.getElementById("fPr").value="";document.getElementById("fBu").value="";["fLb","fDrw","fSpi","fQty"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fArcoT").value="";document.getElementById("fMarcaAltro").value="";["fSgT","fSgD","fSgMat"].forEach(function(id){document.getElementById(id).value="";});setSgMano("dx");document.getElementById("fShp").checked=false;document.getElementById("fAccOff").checked=true;document.getElementById("btnDel").style.display="none";document.getElementById("btnSave").textContent="Pubblica annuncio";document.getElementById("fErr").style.display="none";setADT("vendo");setCondU("ottimo");updCatS();rndPh();openOv("ovForm");}
 function openEditAd(id){
   var a=allAds.find(function(x){return x.id===id;});if(!a)return;
   editId=id;fPhs=(a.photos||[]).concat(["","","",""]).slice(0,4);
@@ -985,8 +1048,9 @@ function openEditAd(id){
   document.getElementById("fLb").value=a.lb||"";document.getElementById("fDrw").value=a.draw||"";
   document.getElementById("fSpi").value=a.spine||"";document.getElementById("fQty").value=a.qty||"";
   document.getElementById("fArcoT").value=a.arcoTipo||"";
-  document.getElementById("fMarcaA").value=(a.category==="arco"?a.marca:"")||"";
-  document.getElementById("fMarcaF").value=(a.category==="frecce"?a.marca:"")||"";
+  document.getElementById("fSgT").value=a.sgTipo||"";document.getElementById("fSgD").value=a.sgDita||"";document.getElementById("fSgMat").value=a.sgMat||"";
+  setSgMano(a.mano||"dx");
+  pendingMarca=a.marca||"";
   document.getElementById("btnDel").style.display="block";document.getElementById("btnSave").textContent="Salva modifiche";
   document.getElementById("fErr").style.display="none";
   setADT(a.type||"vendo");setCondU(a.condition||"ottimo");
@@ -1007,7 +1071,33 @@ document.querySelectorAll("[data-ff]").forEach(function(b){b.addEventListener("c
 function getMano(){return(document.querySelector("[data-mf].on")||{dataset:{mf:"dx"}}).dataset.mf;}
 function getFrMat(){return(document.querySelector("[data-ff].on")||{dataset:{ff:"carbonio"}}).dataset.ff;}
 document.getElementById("fCat").addEventListener("change",updCatS);
-function updCatS(){var c=document.getElementById("fCat").value;document.getElementById("fArcoSec").style.display=c==="arco"?"block":"none";document.getElementById("fFrSec").style.display=c==="frecce"?"block":"none";}
+document.querySelectorAll("[data-sgm]").forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll("[data-sgm]").forEach(function(x){x.classList.remove("on");});b.classList.add("on");});});
+function setSgMano(v){document.querySelectorAll("[data-sgm]").forEach(function(b){b.classList.toggle("on",b.dataset.sgm===v);});}
+function getSgMano(){return(document.querySelector("[data-sgm].on")||{dataset:{sgm:"dx"}}).dataset.sgm;}
+var pendingMarca="";
+document.getElementById("fMarca").addEventListener("change",function(){
+  document.getElementById("fMkAltroG").style.display=(this.value==="altro")?"block":"none";
+});
+function updCatS(){
+  var c=document.getElementById("fCat").value;
+  document.getElementById("fArcoSec").style.display=c==="arco"?"block":"none";
+  document.getElementById("fFrSec").style.display=c==="frecce"?"block":"none";
+  document.getElementById("fSgSec").style.display=c==="sganci"?"block":"none";
+  var mg=document.getElementById("fMkG"),sel=document.getElementById("fMarca");
+  mg.style.display=c?"block":"none";
+  if(c){
+    fillBrands(sel,c,"— seleziona —",true);
+    // Se sto modificando un annuncio la marca gia' scelta va ripescata qui:
+    // l'elenco esiste solo dopo che si conosce la categoria.
+    var want=pendingMarca;pendingMarca="";
+    if(want){
+      var found=false;
+      for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===want||sel.options[i].text===want){sel.selectedIndex=i;found=true;break;}}
+      if(!found){sel.value="altro";document.getElementById("fMarcaAltro").value=want;}
+    }
+  }
+  document.getElementById("fMkAltroG").style.display=(c&&sel.value==="altro")?"block":"none";
+}
 document.getElementById("btnSave").addEventListener("click",function(){
   var type=getADT(),title=document.getElementById("fTit").value.trim(),cat=document.getElementById("fCat").value,price=parseFloat(document.getElementById("fPr").value),budget=parseFloat(document.getElementById("fBu").value),loc=document.getElementById("fLoc").value.trim(),desc=document.getElementById("fDesc").value.trim(),ship=document.getElementById("fShp").checked,acc=document.getElementById("fAccOff").checked,er=document.getElementById("fErr");
   er.style.display="none";
@@ -1017,8 +1107,12 @@ document.getElementById("btnSave").addEventListener("click",function(){
   var payload={type:type,title:title,category:cat,location:loc,description:desc,photos:fPhs.filter(function(p){return p&&p!=="__uploading__";}),sellerUid:cu.uid,sellerEmail:cu.email,sellerName:cu.displayName||cu.email.split("@")[0],sellerVerified:isVerArch,status:"active",updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(type==="vendo"){payload.price=price;payload.shipping=ship;payload.accOffers=acc;payload.condition=getCond();}
   else if(budget>0)payload.budget=budget;
-  if(cat==="arco"){payload.arcoTipo=document.getElementById("fArcoT").value;payload.marca=document.getElementById("fMarcaA").value;var lb=document.getElementById("fLb").value,drw=document.getElementById("fDrw").value;if(lb)payload.lb=parseFloat(lb);if(drw)payload.draw=parseFloat(drw);payload.mano=getMano();}
-  if(cat==="frecce"){payload.marca=document.getElementById("fMarcaF").value;payload.frMat=getFrMat();var sp=document.getElementById("fSpi").value,qt=document.getElementById("fQty").value;if(sp)payload.spine=parseFloat(sp);if(qt)payload.qty=parseFloat(qt);}
+  var mkSel=document.getElementById("fMarca").value;
+  if(mkSel==="altro")mkSel=document.getElementById("fMarcaAltro").value.trim().toUpperCase();
+  if(mkSel)payload.marca=mkSel;
+  if(cat==="arco"){payload.arcoTipo=document.getElementById("fArcoT").value;var lb=document.getElementById("fLb").value,drw=document.getElementById("fDrw").value;if(lb)payload.lb=parseFloat(lb);if(drw)payload.draw=parseFloat(drw);payload.mano=getMano();}
+  if(cat==="frecce"){payload.frMat=getFrMat();var sp=document.getElementById("fSpi").value,qt=document.getElementById("fQty").value;if(sp)payload.spine=parseFloat(sp);if(qt)payload.qty=parseFloat(qt);}
+  if(cat==="sganci"){payload.sgTipo=document.getElementById("fSgT").value;payload.sgDita=document.getElementById("fSgD").value;payload.sgMat=document.getElementById("fSgMat").value;payload.mano=getSgMano();}
   var btn=document.getElementById("btnSave");btn.disabled=true;btn.textContent="Salvataggio…";
   var pr;
   if(editId){pr=db.collection("market_listings").doc(editId).update(payload);}
@@ -1120,13 +1214,16 @@ function doRep(id,reason){db.collection("market_reports").add({adId:id,reason:re
 document.getElementById("chipFlt").addEventListener("click",function(){openOv("ovFlt");});
 document.getElementById("btnCFlt").addEventListener("click",function(){closeOv("ovFlt");});
 document.getElementById("chipCerco").addEventListener("click",function(){F.cerco=!F.cerco;this.classList.toggle("on",F.cerco);renderAds();});
-document.querySelectorAll("[data-fc]").forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll("[data-fc]").forEach(function(x){x.classList.remove("on");});b.classList.add("on");var c=b.dataset.fc;document.getElementById("fltArcoSec").style.display=c==="arco"?"block":"none";document.getElementById("fltFrSec").style.display=c==="frecce"?"block":"none";});});
-["[data-fat]","[data-fm]","[data-ffm]","[data-fco]","[data-fsh]"].forEach(function(sel){document.querySelectorAll(sel).forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll(sel).forEach(function(x){x.classList.remove("on");});b.classList.add("on");});});});
+document.querySelectorAll("[data-fc]").forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll("[data-fc]").forEach(function(x){x.classList.remove("on");});b.classList.add("on");var c=b.dataset.fc;document.getElementById("fltArcoSec").style.display=c==="arco"?"block":"none";document.getElementById("fltFrSec").style.display=c==="frecce"?"block":"none";document.getElementById("fltSgSec").style.display=c==="sganci"?"block":"none";document.getElementById("fltMkSec").style.display=c?"block":"none";if(c)fillBrands(document.getElementById("fltMk"),c,"Tutte le marche",false);});});
+["[data-fat]","[data-fm]","[data-ffm]","[data-fsg]","[data-fsm]","[data-fco]","[data-fsh]"].forEach(function(sel){document.querySelectorAll(sel).forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll(sel).forEach(function(x){x.classList.remove("on");});b.classList.add("on");});});});
 document.getElementById("btnAppFlt").addEventListener("click",function(){
   F.cat=(document.querySelector("[data-fc].on")||{dataset:{fc:""}}).dataset.fc;
   F.fat=(document.querySelector("[data-fat].on")||{dataset:{fat:""}}).dataset.fat||"";
   F.fm=(document.querySelector("[data-fm].on")||{dataset:{fm:""}}).dataset.fm||"";
   F.ffm=(document.querySelector("[data-ffm].on")||{dataset:{ffm:""}}).dataset.ffm||"";
+  F.sg=(document.querySelector("[data-fsg].on")||{dataset:{fsg:""}}).dataset.fsg||"";
+  F.sgm=(document.querySelector("[data-fsm].on")||{dataset:{fsm:""}}).dataset.fsm||"";
+  F.mk=document.getElementById("fltMk").value||"";
   F.co=(document.querySelector("[data-fco].on")||{dataset:{fco:""}}).dataset.fco||"";
   F.sh=(document.querySelector("[data-fsh].on")||{dataset:{fsh:""}}).dataset.fsh||"";
   F.lbMn=document.getElementById("fLbMn").value;F.lbMx=document.getElementById("fLbMx").value;
@@ -1137,13 +1234,16 @@ document.getElementById("btnAppFlt").addEventListener("click",function(){
 });
 function resetFilterUI(){
   ["fLbMn","fLbMx","fDwMn","fDwMx","fSpMn","fSpMx","fPrMn","fPrMx"].forEach(function(id){document.getElementById(id).value="";});
-  ["[data-fc]","[data-fat]","[data-fm]","[data-ffm]","[data-fco]","[data-fsh]"].forEach(function(sel){
+  document.getElementById("fltMk").innerHTML='<option value="">Tutte le marche</option>';
+  ["[data-fc]","[data-fat]","[data-fm]","[data-ffm]","[data-fsg]","[data-fsm]","[data-fco]","[data-fsh]"].forEach(function(sel){
     var btns=document.querySelectorAll(sel);btns.forEach(function(b,i){b.classList.toggle("on",i===0);});
   });
   document.getElementById("fltArcoSec").style.display="none";
   document.getElementById("fltFrSec").style.display="none";
+  document.getElementById("fltSgSec").style.display="none";
+  document.getElementById("fltMkSec").style.display="none";
   document.getElementById("chipCerco").classList.remove("on");
-  F={cat:"",fat:"",fm:"",ffm:"",lbMn:"",lbMx:"",dwMn:"",dwMx:"",spMn:"",spMx:"",prMn:"",prMx:"",co:"",sh:"",cerco:false};
+  F={cat:"",fat:"",fm:"",ffm:"",mk:"",sg:"",sgm:"",lbMn:"",lbMx:"",dwMn:"",dwMx:"",spMn:"",spMx:"",prMn:"",prMx:"",co:"",sh:"",cerco:false};
 }
 document.getElementById("btnRstFlt").addEventListener("click",function(){resetFilterUI();closeOv("ovFlt");renderAds();});
 document.getElementById("btnClrFlt").addEventListener("click",function(){document.getElementById("sInput").value="";resetFilterUI();renderAds();});
