@@ -176,6 +176,7 @@ section.active{display:block}
 .photo-slot.busy{border-style:solid;border-color:var(--accent)}
 .ph-prog{position:absolute;inset:0;background:rgba(15,20,18,.78);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:3;font-size:11px;font-weight:700;color:var(--accent);}
 .ph-prog .ring{width:20px;height:20px;border:2.5px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+.cap-note{margin:16px 4px 4px;padding:12px 14px;background:rgba(203,163,92,.14);border:1px solid rgba(203,163,92,.4);border-radius:var(--r-m);font-size:12.5px;line-height:1.5;color:var(--muted);text-align:center;}
 .load-err{margin:20px 16px;padding:14px;background:rgba(226,61,46,.08);border:1px solid rgba(226,61,46,.35);border-radius:var(--r-m);font-size:13px;line-height:1.6;color:var(--cream);}
 .load-err b{color:var(--danger);display:block;margin-bottom:4px}
 .load-err code{font-size:11.5px;background:var(--bg-p2);padding:2px 6px;border-radius:4px;word-break:break-all;}
@@ -324,7 +325,7 @@ body::before{opacity:.28}
 
   /* annunci su due colonne */
   .listings{padding:10px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
-  .listings .empty,.listings .load-err{grid-column:1/-1}
+  .listings .empty,.listings .load-err,.listings .cap-note{grid-column:1/-1}
   .lcard{margin-bottom:0;grid-template-columns:100px 1fr;padding:14px}
   .lthumb{width:100px;height:100px}
   .ltitle{font-size:15.5px}
@@ -947,6 +948,10 @@ var FC={apiKey:"AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",authDomain:"arctrail3d.
 firebase.initializeApp(FC);
 var auth=firebase.auth(),db=firebase.firestore(),stg=firebase.storage();
 var cu=null,isVerArch=false,allAds=[],myFavs=new Set(),savedS=[],editId=null,fPhs=["","","",""],curAd=null,curConvId=null,curConv=null,detPhs=[],detIdx=0,selStars=0,revTgtUid=null,revAdId=null,revCache={},phTargetIdx=null;
+/* origPhs = foto che l'annuncio aveva aprendo il modulo; upPhs = foto caricate
+   ORA e non ancora salvate. Servono per capire quali file su Storage sono
+   rimasti orfani quando si salva, si annulla o si elimina. */
+var origPhs=[],upPhs=[];
 var F={cat:"",fat:"",fm:"",ffm:"",mk:"",sg:"",sgm:"",lbMn:"",lbMx:"",dwMn:"",dwMx:"",spMn:"",spMx:"",prMn:"",prMx:"",co:"",sh:"",cerco:false};
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function euro(v){return "€ "+Number(v||0).toLocaleString("it-IT");}
@@ -991,7 +996,7 @@ function stars(n){var s="";for(var i=1;i<=5;i++)s+=(i<=n?"★":"☆");return s;}
 var tT;function toast(m){var e=document.getElementById("toast");clearTimeout(tT);e.textContent=m;e.classList.add("show");tT=setTimeout(function(){e.classList.remove("show");},2800);}
 function showS(id){document.querySelectorAll("section").forEach(function(s){s.classList.remove("active");});var s=document.getElementById(id);if(s)s.classList.add("active");}
 function openOv(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden";}
-function closeOv(id){document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
+function closeOv(id){if(id==="ovForm")cleanupForm();document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
 function openFS(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden";}
 function closeFS(id){document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
 ["ovFlt","ovDet","ovForm","ovOff","ovRev","ovAct"].forEach(function(id){document.getElementById(id).addEventListener("click",function(e){if(e.target===this)closeOv(id);});});
@@ -1030,11 +1035,18 @@ document.getElementById("uav").addEventListener("click",function(){
 
 /* ══ LISTINGS — nessun orderBy sul server: ordino lato client (niente indici da creare) ══ */
 function applySnap(docs){
+  adsCapped=docs.length>=ADS_LIMIT;
+  if(adsCapped)console.warn("[Mercatino] tetto di "+ADS_LIMIT+" annunci raggiunto: gli annunci oltre il limite non compaiono nelle ricerche. Serve la ricerca lato server.");
   allAds=docs.map(function(d){return Object.assign({id:d.id},d.data());});
   allAds.sort(function(a,b){return tms(b.createdAt)-tms(a.createdAt);});
   renderAds();
 }
-function adsQuery(){return db.collection("market_listings").where("status","==","active").limit(200);}
+/* Il Mercatino scarica gli annunci e poi cerca/filtra/ordina lato client:
+   oltre ADS_LIMIT annunci attivi i piu' vecchi smetterebbero di comparire
+   SENZA nessun errore. adsCapped e' la spia: quando si accende e' ora di
+   passare alla ricerca lato server (indici compositi o servizio esterno). */
+var ADS_LIMIT=200,adsCapped=false;
+function adsQuery(){return db.collection("market_listings").where("status","==","active").limit(ADS_LIMIT);}
 var adsUnsub=null;
 function loadAds(){
   if(adsUnsub){adsUnsub();adsUnsub=null;}
@@ -1110,6 +1122,7 @@ function renderAds(){
       +(a.sellerVerified?'<div style="margin-top:5px"><span class="bv">✓ Arciere</span></div>':'')
       +'</div></div>';
   }).join("");
+  if(adsCapped)c.insertAdjacentHTML("beforeend",'<div class="cap-note">Stai vedendo i '+ADS_LIMIT+' annunci piu\u2019 recenti. Ce ne sono altri: usa la ricerca o i filtri per trovarli.</div>');
   c.querySelectorAll("[data-id]").forEach(function(el){el.addEventListener("click",function(){openDet(el.dataset.id);});});
 }
 
@@ -1193,9 +1206,11 @@ document.getElementById("btnDetMore").addEventListener("click",function(){
     {l:"Modifica annuncio",fn:function(){closeOv("ovDet");openEditAd(curAd.id);}},
     {l:"Metti in pausa",fn:function(){db.collection("market_listings").doc(curAd.id).update({status:"paused"});closeOv("ovDet");toast("Annuncio in pausa");}},
     {l:"Segna come venduto",fn:function(){db.collection("market_listings").doc(curAd.id).update({status:"sold"});closeOv("ovDet");toast("Segnato come venduto");}},
-    {l:"Elimina annuncio",red:true,fn:function(){if(confirm("Eliminare definitivamente?"))db.collection("market_listings").doc(curAd.id).update({status:"deleted"}).then(function(){closeOv("ovDet");toast("Eliminato");});}}
+    {l:"Elimina annuncio",red:true,fn:function(){if(!confirm("Eliminare definitivamente l'annuncio e le sue foto?"))return;var id=curAd.id,phs=(curAd.photos||[]).slice();hardDelAd(id,phs,function(){closeOv("ovDet");toast("Annuncio eliminato");refreshAds();});}}
   ]);}else{openAS("",[{l:"Segnala annuncio",red:true,fn:function(){reportAd(curAd.id);}}]);}
 });
+/* Miniatura di un annuncio cancellato: al posto dell'immagine rotta l'arco. */
+function phFallback(img){var d=document.createElement("div");d.className="chat-ctx-th";d.textContent="🏹";if(img.parentNode)img.parentNode.replaceChild(d,img);}
 function rdDots(){document.getElementById("detDts").innerHTML=detPhs.map(function(_,i){return'<div class="det-dot'+(i===detIdx?" on":"")+'"></div>';}).join("");}
 function syncPh(){document.getElementById("detPh").querySelectorAll("img").forEach(function(img,i){img.classList.toggle("on",i===detIdx);});rdDots();}
 document.getElementById("detNL").addEventListener("click",function(){if(!detPhs.length)return;detIdx=(detIdx-1+detPhs.length)%detPhs.length;syncPh();});
@@ -1249,7 +1264,7 @@ document.getElementById("phFile").addEventListener("change",function(){
     var task=ref.put(blob,{contentType:"image/jpeg"});
     task.on("state_changed",function(s){setSlotProgress(i,Math.round(s.bytesTransferred/s.totalBytes*100));},
       function(err){console.error(err);fPhs[i]="";rndPh();toast("Caricamento fallito: "+(err.code||err.message));},
-      function(){task.snapshot.ref.getDownloadURL().then(function(url){fPhs[i]=url;rndPh();toast("Foto caricata ✓");});});
+      function(){task.snapshot.ref.getDownloadURL().then(function(url){fPhs[i]=url;upPhs.push(url);rndPh();toast("Foto caricata ✓");});});
   }).catch(function(err){fPhs[i]="";rndPh();toast(err.message);});
 });
 function pickPhoto(i){
@@ -1266,13 +1281,56 @@ function rndPh(){
     return'<div class="photo-slot" data-i="'+i+'" onclick="pickPhoto('+i+')">+</div>';
   }).join("");
 }
-function rmPh(e,i){e.stopPropagation();fPhs[i]="";rndPh();}
+function rmPh(e,i){
+  e.stopPropagation();
+  var u=fPhs[i];fPhs[i]="";rndPh();
+  var k=upPhs.indexOf(u);
+  if(u&&k>=0){upPhs.splice(k,1);delPhotos([u]);}   /* caricata ora e mai salvata: via subito */
+}
+
+/* ══ PULIZIA FOTO SU STORAGE ══
+   Ogni foto non piu' usata va cancellata, altrimenti i JPEG restano nel
+   bucket per sempre e si pagano. Si toccano SOLO i file nostri: le foto
+   inserite come link esterno non sono nostre e vanno lasciate stare.
+   Gli errori si ignorano: un file gia' sparito non deve bloccare niente. */
+function isOurPhoto(u){return typeof u==="string" && (u.indexOf("firebasestorage.googleapis.com")>=0 || u.indexOf("gs://")===0);}
+function delPhotos(urls){
+  (urls||[]).forEach(function(u){
+    if(!isOurPhoto(u))return;
+    try{stg.refFromURL(u).delete().catch(function(){});}catch(e){}
+  });
+}
+/* Cancellazione VERA dell'annuncio: prima il documento (se le regole dicono
+   di no ci si ferma qui e le foto restano al loro posto), poi le foto. */
+function hardDelAd(id,photos,ok,ko){
+  return db.collection("market_listings").doc(id).delete().then(function(){
+    delPhotos(photos||[]);
+    if(ok)ok();
+  }).catch(function(e){
+    if(ko)ko(e); else toast("Errore: "+(e.code||e.message));
+  });
+}
+/* Salvataggio riuscito: butta le foto rimosse dall'annuncio e quelle caricate
+   e poi scartate. Azzera lo stato cosi' la chiusura del modulo non ricancella. */
+function reconcilePhotos(kept){
+  kept=kept||[];
+  var orfane=origPhs.concat(upPhs).filter(function(u){return u&&kept.indexOf(u)<0;});
+  upPhs=[];origPhs=kept.slice();
+  delPhotos(orfane);
+}
+/* Modulo chiuso senza salvare: le foto caricate in questa sessione non le
+   usera' mai nessuno. */
+function cleanupForm(){
+  var orfane=upPhs.filter(function(u){return u&&origPhs.indexOf(u)<0;});
+  upPhs=[];
+  delPhotos(orfane);
+}
 
 /* ══ FORM ══ */
-function openNewAd(){editId=null;pendingMarca="";fPhs=["","","",""];document.getElementById("formTB").textContent="Nuovo annuncio";["fTit","fLoc","fDesc"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fCat").value="";document.getElementById("fPr").value="";document.getElementById("fBu").value="";["fLb","fDrw","fSpi","fQty"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fArcoT").value="";document.getElementById("fMarcaAltro").value="";["fSgT","fSgD","fSgMat"].forEach(function(id){document.getElementById(id).value="";});setSgMano("dx");document.getElementById("fShp").checked=false;document.getElementById("fAccOff").checked=true;document.getElementById("btnDel").style.display="none";document.getElementById("btnSave").textContent="Pubblica annuncio";document.getElementById("fErr").style.display="none";setADT("vendo");setCondU("ottimo");updCatS();rndPh();openOv("ovForm");}
+function openNewAd(){editId=null;pendingMarca="";fPhs=["","","",""];origPhs=[];upPhs=[];document.getElementById("formTB").textContent="Nuovo annuncio";["fTit","fLoc","fDesc"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fCat").value="";document.getElementById("fPr").value="";document.getElementById("fBu").value="";["fLb","fDrw","fSpi","fQty"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("fArcoT").value="";document.getElementById("fMarcaAltro").value="";["fSgT","fSgD","fSgMat"].forEach(function(id){document.getElementById(id).value="";});setSgMano("dx");document.getElementById("fShp").checked=false;document.getElementById("fAccOff").checked=true;document.getElementById("btnDel").style.display="none";document.getElementById("btnSave").textContent="Pubblica annuncio";document.getElementById("fErr").style.display="none";setADT("vendo");setCondU("ottimo");updCatS();rndPh();openOv("ovForm");}
 function openEditAd(id){
   var a=allAds.find(function(x){return x.id===id;});if(!a)return;
-  editId=id;fPhs=(a.photos||[]).concat(["","","",""]).slice(0,4);
+  editId=id;fPhs=(a.photos||[]).concat(["","","",""]).slice(0,4);origPhs=(a.photos||[]).slice();upPhs=[];
   document.getElementById("formTB").textContent="Modifica annuncio";
   document.getElementById("fTit").value=a.title||"";document.getElementById("fCat").value=a.category||"";
   document.getElementById("fPr").value=a.price||"";document.getElementById("fBu").value=a.budget||"";
@@ -1350,15 +1408,23 @@ document.getElementById("btnSave").addEventListener("click",function(){
   var pr;
   if(editId){pr=db.collection("market_listings").doc(editId).update(payload);}
   else{payload.createdAt=firebase.firestore.FieldValue.serverTimestamp();pr=db.collection("market_listings").add(payload);}
-  pr.then(function(){closeOv("ovForm");toast(editId?"Annuncio aggiornato ✓":"Annuncio pubblicato ✓");document.getElementById("sInput").value="";resetFilterUI();refreshAds();btn.disabled=false;btn.textContent=editId?"Salva modifiche":"Pubblica annuncio";})
+  pr.then(function(){reconcilePhotos(payload.photos);closeOv("ovForm");toast(editId?"Annuncio aggiornato ✓":"Annuncio pubblicato ✓");document.getElementById("sInput").value="";resetFilterUI();refreshAds();btn.disabled=false;btn.textContent=editId?"Salva modifiche":"Pubblica annuncio";})
     .catch(function(e){er.textContent="Errore ("+(e.code||"")+"): "+e.message;er.style.display="block";btn.disabled=false;btn.textContent=editId?"Salva modifiche":"Pubblica annuncio";});
 });
-document.getElementById("btnDel").addEventListener("click",function(){if(!editId||!confirm("Eliminare definitivamente?"))return;db.collection("market_listings").doc(editId).update({status:"deleted"}).then(function(){closeOv("ovForm");toast("Eliminato");});});
+document.getElementById("btnDel").addEventListener("click",function(){
+  if(!editId||!confirm("Eliminare definitivamente l'annuncio e le sue foto?"))return;
+  var id=editId,phs=origPhs.concat(upPhs,fPhs.filter(function(p){return p&&p!=="__uploading__";}));
+  var b=this;b.disabled=true;
+  hardDelAd(id,phs,function(){
+    upPhs=[];origPhs=[];b.disabled=false;
+    closeOv("ovForm");toast("Annuncio eliminato");refreshAds();
+  },function(e){b.disabled=false;toast("Errore: "+(e.code||e.message));});
+});
 
 /* ══ I MIEI ANNUNCI ══ */
 function openMyAds(){
   db.collection("market_listings").where("sellerUid","==",cu.uid).limit(100).get().then(function(snap){
-    var mine=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());}).filter(function(a){return a.status!=="deleted";});
+    var mine=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());}).filter(function(a){if(a.status==="deleted"){hardDelAd(a.id,a.photos||[],null,function(){});return false;}return true;});
     mine.sort(function(a,b){return tms(b.createdAt)-tms(a.createdAt);});
     var el=document.getElementById("myList");
     if(!mine.length){el.innerHTML='<div class="empty"><p>Nessun annuncio</p><p class="empty-sub">Premi "Nuovo annuncio" per iniziare a vendere.</p></div>';}
@@ -1532,7 +1598,7 @@ function openChat(cid,conv){
   var other="Utente";
   if(conv.participantNames)Object.keys(conv.participantNames).forEach(function(k){if(k!==cu.uid)other=conv.participantNames[k];});
   document.getElementById("msgTBT").textContent=other;
-  var th=conv.adPhoto?'<img class="chat-ctx-th" src="'+esc(conv.adPhoto)+'" alt="">':'<div class="chat-ctx-th">🏹</div>';
+  var th=conv.adPhoto?'<img class="chat-ctx-th" src="'+esc(conv.adPhoto)+'" alt="" onerror="phFallback(this)">':'<div class="chat-ctx-th">🏹</div>';
   document.getElementById("chatCtx").innerHTML=th+'<span class="t">'+esc(conv.adTitle||"")+'</span>'+(conv.adPrice?'<span class="p">'+euro(conv.adPrice)+'</span>':'');
   var u={};u["unreadBy."+cu.uid]=false;db.collection("market_conversations").doc(cid).update(u).catch(function(){});
   if(chUnsub){chUnsub();chUnsub=null;}
