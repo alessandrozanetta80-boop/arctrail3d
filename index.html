@@ -450,6 +450,187 @@ width:100%; padding:12px; border-radius:10px; border:1px solid var(--line); back
 .pf-tessera.show{ display:block; }
 .pf-tessera label{ font-size:0.68rem; color:var(--muted); font-weight:700; margin-bottom:4px; display:block; text-transform:uppercase; letter-spacing:.05em; }
 .pf-tessera input{ width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.85rem; }
+
+/* ══════════════════ RIFINITURA DA COMPUTER (agosto 2026) ══════════════════
+   Tutto quello che segue vive dentro @media (min-width:900px): sul telefono
+   e sul tablet in verticale non cambia una virgola.
+   Serve a dare al desktop una forma sua, invece della colonna del telefono
+   lasciata in mezzo allo schermo.
+   Per tornare indietro basta cancellare fino a "FINE RIFINITURA". */
+@media (min-width:900px){
+
+/* ── 1. Il foglio ────────────────────────────────────────────────────────
+   Una fascia chiara sotto la colonna: senza, i riquadri bianchi galleggiano
+   nel vuoto e mezzo schermo sembra abbandonato. */
+body{
+  background:
+    linear-gradient(90deg,
+      rgba(255,255,255,0) calc(50% - 610px),
+      rgba(255,255,255,0.55) calc(50% - 545px),
+      rgba(255,255,255,0.55) calc(50% + 545px),
+      rgba(255,255,255,0) calc(50% + 610px)),
+    radial-gradient(ellipse 1100px 620px at 10% -10%, rgba(82,127,24,0.15), transparent 62%),
+    radial-gradient(ellipse 900px 560px at 105% 8%, rgba(154,111,28,0.11), transparent 58%),
+    radial-gradient(ellipse 1000px 700px at 50% 116%, rgba(200,85,26,0.10), transparent 62%),
+    linear-gradient(180deg,#F7F6F2 0%,#EDEBE3 100%);
+}
+html{ scroll-behavior:smooth; }
+#app{ max-width:1060px; padding:20px 34px 76px; }
+#app.narrow{ max-width:660px; }
+
+/* ── 2. La testata: un'insegna, non una barra grigia ─────────────────── */
+header.top{
+  min-height:88px; padding:15px 24px; gap:18px; border-radius:20px;
+  background:linear-gradient(135deg,#1C2C21 0%,#132018 55%,#182620 100%);
+  border:1px solid rgba(203,163,92,0.20);
+  box-shadow:0 18px 40px -28px rgba(20,35,25,0.75), inset 0 1px 0 rgba(255,255,255,0.05);
+  margin-bottom:10px; position:relative; isolation:isolate;
+}
+header.top::after{
+  content:""; position:absolute; inset:0; border-radius:20px; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(520px 150px at 14% -60%, rgba(96,169,102,0.20), transparent 70%),
+    radial-gradient(420px 130px at 92% 150%, rgba(232,114,47,0.14), transparent 70%);
+}
+header.top .logo{ width:56px; height:56px; }
+header.top .brand-title{ font-size:1.18rem; font-weight:600; letter-spacing:0.16em; color:#CBA35C; }
+/* I tre bottoni arancioni in fila erano la cosa piu' pesante della pagina:
+   ora sono pastiglie di vetro sul verde scuro, e resta arancione solo il
+   comando vero e proprio ("Cambia"). */
+header.top .home-btn{
+  height:38px; border-radius:12px;
+  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15); color:#E4EBE4;
+  transition:background .16s ease, border-color .16s ease, transform .16s ease;
+}
+header.top .home-btn:hover{
+  background:rgba(96,169,102,0.22); border-color:rgba(96,169,102,0.55);
+  color:#fff; transform:translateY(-1px);
+}
+header.top .home-btn.small{
+  background:var(--bark); border-color:transparent; color:#fff; font-weight:700;
+  box-shadow:0 8px 18px -10px rgba(200,85,26,0.9);
+}
+header.top .home-btn.small:hover{ background:#D96124; border-color:transparent; }
+
+/* ── 3. La barra delle sezioni, in coppia con la testata ─────────────── */
+.tabbar-wide{
+  padding:6px 6px 5px;
+  background:linear-gradient(135deg,#1C2C21 0%,#132018 55%,#182620 100%) !important;
+  border:1px solid rgba(203,163,92,0.20) !important;
+  border-radius:18px !important;
+  box-shadow:0 18px 40px -28px rgba(20,35,25,0.75) !important;
+  margin-bottom:24px !important; top:14px !important;
+}
+.tabbar-wide button{ border-radius:14px !important; transition:background .16s ease; }
+.tabbar-wide button:hover{ background:rgba(255,255,255,0.07) !important; }
+.tabbar-wide button > span:first-child{ transition:transform .16s ease; }
+.tabbar-wide button:hover > span:first-child{ transform:translateY(-1px); }
+
+/* ── 4. I riquadri ───────────────────────────────────────────────────── */
+.card{
+  border-radius:18px; padding:22px 24px; margin-bottom:18px;
+  border:1px solid #E4E1D7;
+  border-top:2px solid color-mix(in srgb, var(--gold) 42%, transparent);
+  box-shadow:0 1px 2px rgba(30,45,34,0.05), 0 22px 44px -32px rgba(30,45,34,0.55);
+  transition:box-shadow .18s ease;
+}
+.card:hover{ box-shadow:0 1px 2px rgba(30,45,34,0.06), 0 26px 52px -30px rgba(30,45,34,0.6); }
+h2.section-title{
+  display:flex; align-items:center; gap:12px;
+  font-size:0.72rem; letter-spacing:0.18em; margin-bottom:16px;
+}
+h2.section-title::after{
+  content:""; flex:1 1 auto; height:1px;
+  background:linear-gradient(90deg, var(--line), transparent);
+}
+
+/* ── 5. I comandi diventano schede affiancate ────────────────────────────
+   In colonna, uno sotto l'altro, sprecavano mezzo schermo. La griglia si
+   applica solo ai riquadri di soli pulsanti: dove ci sono campi da
+   compilare resta tutto incolonnato. */
+.menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:14px; align-items:stretch;
+}
+.menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)) > h2.section-title,
+.menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)) > div{
+  grid-column:1 / -1; margin-bottom:0;
+}
+.menu-cols .card > .menu-btn{
+  flex-direction:column; align-items:flex-start; justify-content:flex-start;
+  gap:14px; padding:22px 20px; min-height:150px; margin-bottom:0;
+  border-radius:16px; text-align:left;
+  transition:transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s ease, border-color .18s ease;
+}
+.menu-cols .card > .menu-btn .menu-icon{
+  width:48px; height:48px; border-radius:15px;
+  display:inline-flex; align-items:center; justify-content:center;
+  background:color-mix(in srgb, currentColor 13%, transparent);
+  border:1px solid color-mix(in srgb, currentColor 30%, transparent);
+}
+.menu-cols .card > .menu-btn .menu-txt{ font-size:1.12rem; line-height:1.2; }
+.menu-cols .card > .menu-btn .menu-sub{ font-size:0.78rem; line-height:1.5; margin-top:7px; font-weight:400; }
+.menu-cols .card > .menu-btn:hover{
+  transform:translateY(-3px); box-shadow:0 20px 34px -22px rgba(30,45,34,0.55);
+  border-color:color-mix(in srgb, currentColor 62%, transparent);
+}
+
+/* ── 6. Bottoni ──────────────────────────────────────────────────────────
+   Il verde pieno largo quanto la pagina era la cosa piu' triste della
+   schermata: ora e' un comando di misura normale. */
+.btn{
+  border-radius:12px;
+  transition:transform .16s cubic-bezier(.2,.8,.2,1), box-shadow .16s ease,
+             background .16s ease, border-color .16s ease, color .16s ease;
+}
+.btn:not(:disabled):hover{ filter:none; }
+.btn-primary{
+  background:linear-gradient(180deg,#3C6D42 0%,#2C5230 100%);
+  box-shadow:0 1px 2px rgba(30,45,34,0.14), 0 14px 26px -18px rgba(44,82,48,0.95);
+}
+.btn-primary:hover{
+  background:linear-gradient(180deg,#457B4C 0%,#325C37 100%); transform:translateY(-1px);
+  box-shadow:0 2px 4px rgba(30,45,34,0.14), 0 18px 30px -18px rgba(44,82,48,0.95);
+}
+.menu-cols .card > .btn.btn-primary.btn-block{ max-width:380px; }
+.menu-cols > .btn.btn-ghost.btn-block{ max-width:340px; margin:0 auto; display:flex; }
+.btn-ghost{ background:rgba(255,255,255,0.55); color:var(--muted); }
+.btn-ghost:hover{
+  background:#fff; border-color:var(--accent-soft); color:var(--accent);
+  transform:translateY(-1px); box-shadow:0 10px 22px -16px rgba(30,45,34,0.7);
+}
+
+/* ── 7. Campi di testo: erano tutti diversi tra loro ─────────────────────
+   email, telefono e note non ereditavano niente e restavano piccoli
+   accanto ai campi normali. */
+input[type=text], input[type=number], input[type=email], input[type=tel],
+input[type=password], input[type=search], input[type=date], input[type=time], textarea{
+  width:100%; padding:13px 14px; border-radius:10px; border:1px solid var(--line);
+  background:#fff; color:var(--cream); font-size:1rem; font-family:inherit;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+input[type=text]:hover, input[type=number]:hover, input[type=email]:hover, input[type=tel]:hover{ border-color:#CFCABC; }
+input[type=text]:focus, input[type=number]:focus, input[type=email]:focus, input[type=tel]:focus,
+input[type=password]:focus, textarea:focus{
+  outline:none; border-color:var(--accent-soft);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--accent-soft) 18%, transparent);
+}
+
+/* ── 8. Respiro e dettagli ───────────────────────────────────────────── */
+.footer-note{ margin-top:28px; font-size:0.74rem; }
+.empty-hint{ font-size:0.88rem; padding:14px 0; }
+.archer-row, .timeline-row, .cp-class-row{ transition:border-color .15s ease, background .15s ease; }
+.archer-row:hover, .cp-class-row:hover{ border-color:#D8D3C4; }
+.stat-box{ padding:14px 8px; border-radius:14px; }
+.stat-box .stat-num{ font-size:1.7rem; }
+.piazz-card{ border-radius:18px; box-shadow:0 1px 2px rgba(30,45,34,0.05), 0 16px 32px -26px rgba(30,45,34,0.5); }
+table.score-table{ font-size:0.9rem; }
+table.score-table th{ letter-spacing:.09em; }
+table.score-table tbody tr{ transition:background .15s ease; }
+table.score-table tbody tr:hover{ background:rgba(49,91,53,0.045); }
+
+}
+/* ══════════════════ FINE RIFINITURA ══════════════════ */
 </style>
 </head>
 <body>
@@ -7429,7 +7610,7 @@ function tabBar(wide){
 var base = wide
 ? 'position:sticky;top:14px;border:1px solid var(--navbar-line);margin-bottom:18px;border-radius:16px;background:var(--navbar-bg);box-shadow:0 3px 14px var(--navbar-shadow);'
 : 'position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;border-top:2px solid var(--navbar-on);background:var(--navbar-bg);box-shadow:0 -10px 26px var(--navbar-shadow);padding-bottom:env(safe-area-inset-bottom);';
-var bar = el('<div style="z-index:60;display:flex;'+base+'"></div>');
+var bar = el('<div class="tabbar'+(wide?' tabbar-wide':'')+'" style="z-index:60;display:flex;'+base+'"></div>');
 [["campi","navfield",t("nav_fields")],
  ["tira","navshoot",t("nav_shoot")],
  ["compagnie","navclub",t("nav_clubs")],
