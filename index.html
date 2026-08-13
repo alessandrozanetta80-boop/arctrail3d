@@ -7709,7 +7709,8 @@ if(pgAllowed && ["fiarc","fitarco","ffta","swissarchery","faas","oebsv","dfbv","
 var pgBtn = el('<button class="btn menu-btn prepara btn-block"><span class="menu-icon">'+icon("clipboard",24)+'</span><span class="menu-txt">'+t("pg_menu_btn_label")+'<span class="menu-sub">'+t("pg_menu_btn_sub")+'</span></span></button>');
 pgBtn.addEventListener("click", function(){ state.pgScreen = "pick"; state.screen = "prepara-gara"; save(); render(); });
 menuCard.appendChild(pgBtn);
-menuCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:-4px;margin-bottom:6px;">'+t("pg_beta_note")+'</div>'));
+// Nota "in prova" rimossa: il pulsante lo vedono gia' solo referenti e
+// collaudatori, quindi la scritta diceva loro una cosa che sanno.
 }
 wrap.appendChild(menuCard);
 
@@ -8785,7 +8786,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-13-verde-bosco";
+var BUILD_STAMP = "2026-08-13-verde-bosco-b";
 
 function infoScreen(){
 var wrap = el('<div></div>');
