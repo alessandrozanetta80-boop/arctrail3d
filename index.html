@@ -370,14 +370,28 @@ body.theme-elegante .menu-btn.gara{ background:color-mix(in srgb, #C1571F 12%, v
 body.theme-elegante .menu-btn.prepara{ background:color-mix(in srgb, #B98A3A 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, #B98A3A 55%, transparent); color:#9A6F1C; box-shadow:0 1px 3px rgba(30,40,34,0.08); }
 body.theme-elegante .menu-btn .menu-txt{ color:var(--cream); }
 .menu-btn::after{ display:none; }
-/* La testata diventa un'insegna scura: non e' piu' appiccicata in alto,
-tanto da computer e' la barra delle sezioni a restare a vista. */
+/* BARRA UNICA (13/08): la barra delle 5 sezioni non e' piu' un secondo
+blocco scuro sotto la testata, ma vive DENTRO la testata (vedi
+appendTabBarTo). Due mattoni neri sovrapposti prendevano un terzo dello
+schermo prima ancora di iniziare a leggere. Ora e' una sola insegna, ed
+essendo l'unica va tenuta a vista: sticky. */
 header.top{
-position:static; height:auto; min-height:78px; padding:12px 20px; gap:16px;
+position:sticky; top:12px; z-index:70;
+height:auto; min-height:0; padding:9px 14px 9px 16px; gap:14px;
+flex-wrap:wrap; row-gap:6px;
 background:var(--navbar-bg); border:1px solid var(--navbar-line); border-radius:18px;
 box-shadow:0 3px 14px var(--navbar-shadow); backdrop-filter:none; -webkit-backdrop-filter:none;
-margin-top:0; margin-bottom:14px;
+margin-top:0; margin-bottom:18px;
 }
+/* il titolo non deve piu' mangiarsi la riga: lo spazio va alle sezioni */
+header.top .headtxt{ flex:0 0 auto; padding-right:0; }
+header.top .logo{ width:44px; height:44px; }
+.tabbar-wide{ flex:1 1 420px; flex-wrap:wrap; justify-content:center; gap:3px; }
+/* Colonna stretta (moduli, chat, percorso): le sezioni scendono su una riga
+loro, ma restano dentro la stessa insegna. I comandi di destra restano su
+in alto grazie a order. */
+#app.narrow header.top .head-actions, #app.narrow header.top > .home-btn{ order:1; }
+#app.narrow header.top .tabbar-wide{ order:2; flex-basis:100%; }
 header.top .brand-title{ color:#CBA35C; }
 header.top h1{ color:#60A966; }
 header.top .sub{ color:#A3ADA4; }
@@ -480,11 +494,11 @@ html{ scroll-behavior:smooth; }
 
 /* ── 2. La testata: un'insegna, non una barra grigia ─────────────────── */
 header.top{
-  min-height:88px; padding:15px 24px; gap:18px; border-radius:20px;
+  min-height:0; padding:10px 16px 10px 18px; gap:16px; border-radius:20px;
   background:linear-gradient(135deg,#1C2C21 0%,#132018 55%,#182620 100%);
   border:1px solid rgba(203,163,92,0.20);
   box-shadow:0 18px 40px -28px rgba(20,35,25,0.75), inset 0 1px 0 rgba(255,255,255,0.05);
-  margin-bottom:10px; position:relative; isolation:isolate;
+  margin-bottom:22px; position:sticky; top:12px; z-index:70; isolation:isolate;
 }
 header.top::after{
   content:""; position:absolute; inset:0; border-radius:20px; z-index:-1; pointer-events:none;
@@ -492,13 +506,13 @@ header.top::after{
     radial-gradient(520px 150px at 14% -60%, rgba(96,169,102,0.20), transparent 70%),
     radial-gradient(420px 130px at 92% 150%, rgba(232,114,47,0.14), transparent 70%);
 }
-header.top .logo{ width:56px; height:56px; }
-header.top .brand-title{ font-size:1.18rem; font-weight:600; letter-spacing:0.16em; color:#CBA35C; }
+header.top .logo{ width:46px; height:46px; }
+header.top .brand-title{ font-size:1.1rem; font-weight:600; letter-spacing:0.16em; color:#CBA35C; }
 /* I tre bottoni arancioni in fila erano la cosa piu' pesante della pagina:
    ora sono pastiglie di vetro sul verde scuro, e resta arancione solo il
    comando vero e proprio ("Cambia"). */
 header.top .home-btn{
-  height:38px; border-radius:12px;
+  height:36px; border-radius:11px;
   background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15); color:#E4EBE4;
   transition:background .16s ease, border-color .16s ease, transform .16s ease;
 }
@@ -512,19 +526,15 @@ header.top .home-btn.small{
 }
 header.top .home-btn.small:hover{ background:#D96124; border-color:transparent; }
 
-/* ── 3. La barra delle sezioni, in coppia con la testata ─────────────── */
+/* ── 3. Le sezioni: non piu' una barra a se', ma il centro della testata ── */
 .tabbar-wide{
-  padding:6px 6px 5px;
-  background:linear-gradient(135deg,#1C2C21 0%,#132018 55%,#182620 100%) !important;
-  border:1px solid rgba(203,163,92,0.20) !important;
-  border-radius:18px !important;
-  box-shadow:0 18px 40px -28px rgba(20,35,25,0.75) !important;
-  margin-bottom:24px !important; top:14px !important;
+  padding:0 !important; margin:0 !important; border:none !important;
+  background:none !important; box-shadow:none !important; border-radius:0 !important;
 }
-.tabbar-wide button{ border-radius:14px !important; transition:background .16s ease; }
-.tabbar-wide button:hover{ background:rgba(255,255,255,0.07) !important; }
-.tabbar-wide button > span:first-child{ transition:transform .16s ease; }
-.tabbar-wide button:hover > span:first-child{ transform:translateY(-1px); }
+.tabbar-wide button{ transition:background .16s ease, border-color .16s ease; }
+.tabbar-wide button:not(.on):hover{ background:rgba(255,255,255,0.07) !important; }
+.tabbar-wide button > svg{ transition:transform .16s ease; }
+.tabbar-wide button:hover > svg{ transform:translateY(-1px); }
 
 /* ── 4. I riquadri ───────────────────────────────────────────────────── */
 .card{
@@ -631,6 +641,13 @@ table.score-table tbody tr:hover{ background:rgba(49,91,53,0.045); }
 
 }
 /* ══════════════════ FINE RIFINITURA ══════════════════ */
+/* Sotto i 1040px la riga unica non ci sta: logo, titolo e comandi restano
+   in alto, le 5 sezioni prendono una riga tutta loro dentro la stessa
+   insegna scura. Deve stare dopo il blocco qui sopra per avere la meglio. */
+@media (min-width:760px) and (max-width:1039px){
+header.top .head-actions, header.top > .home-btn{ order:1; }
+header.top .tabbar-wide{ order:2; flex-basis:100%; }
+}
 </style>
 </head>
 <body>
@@ -5800,7 +5817,14 @@ var wideBar = (typeof window.matchMedia === "function") && window.matchMedia("(m
 var bar = tabBar(wideBar);
 if(wideBar){
 app.style.paddingBottom = "";
-if(app.children.length > 1){ app.insertBefore(bar, app.children[1]); }
+// Barra unica: le sezioni entrano nella testata, subito dopo il titolo.
+var head = app.querySelector("header.top");
+if(head){
+var txt = head.querySelector(".headtxt");
+if(txt && txt.nextSibling){ head.insertBefore(bar, txt.nextSibling); }
+else { head.appendChild(bar); }
+}
+else if(app.children.length > 1){ app.insertBefore(bar, app.children[1]); }
 else { app.appendChild(bar); }
 } else {
 app.appendChild(bar);
@@ -6797,7 +6821,7 @@ var h = el(
 // Campanella: le notifiche si leggono sempre qui dentro, anche se il telefono
 // non ha il permesso per quelle di sistema.
 if(currentUser && authState === "ready"){
-var actions = el('<div style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;"></div>');
+var actions = el('<div class="head-actions" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;"></div>');
 // Busta: messaggi privati tra arcieri
 if(state.screen !== "messaggi" && state.screen !== "dm-chat"){
 var mailBtn = el('<button class="home-btn no-print" title="'+t("dm_title")+'" style="position:relative;padding:6px 9px;display:inline-flex;align-items:center;">'+icon("mail",18)+'</button>');
@@ -7607,8 +7631,12 @@ return otCard;
 function tabBar(wide){
 // Su telefono e' fissa in fondo; su schermo largo diventa una barra in cima,
 // perche' in fondo a una pagina alta nel browser non la si vede.
+// Da 760px in su non ha piu' un fondo suo: e' dentro la testata, che il
+// fondo scuro ce l'ha gia'.
+// niente stile in linea per il caso largo: le misure stanno in .tabbar-wide,
+// altrimenti lo stile in linea vince sulle media query e la riga non va a capo.
 var base = wide
-? 'position:sticky;top:14px;border:1px solid var(--navbar-line);margin-bottom:18px;border-radius:16px;background:var(--navbar-bg);box-shadow:0 3px 14px var(--navbar-shadow);'
+? ''
 : 'position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;border-top:2px solid var(--navbar-on);background:var(--navbar-bg);box-shadow:0 -10px 26px var(--navbar-shadow);padding-bottom:env(safe-area-inset-bottom);';
 var bar = el('<div class="tabbar'+(wide?' tabbar-wide':'')+'" style="z-index:60;display:flex;'+base+'"></div>');
 [["campi","navfield",t("nav_fields")],
@@ -7619,9 +7647,18 @@ var bar = el('<div class="tabbar'+(wide?' tabbar-wide':'')+'" style="z-index:60;
 var key = tb[0], on = (state.tab === key);
 // La voce attiva ha una pastiglia piena: sul telefono, al sole, il solo
 // cambio di colore del testo non si vede.
-var b = el('<button style="flex:1;background:none;border:none;padding:'+(wide?'9px 2px':'7px 2px 9px')+';cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:'+(on?"var(--navbar-on)":"var(--navbar-fg)")+';">'+
+var b;
+if(wide){
+// In riga: icona e parola affiancate, e la pastiglia e' il pulsante intero.
+// In colonna, dentro una barra alta 40px, non ci starebbero.
+b = el('<button class="tabw'+(on?" on":"")+'" style="flex:0 1 auto;min-width:0;background:'+(on?"var(--navbar-pill)":"transparent")+';border:1px solid '+(on?"var(--navbar-on)":"transparent")+';border-radius:12px;padding:6px 11px;cursor:pointer;display:flex;align-items:center;gap:7px;color:'+(on?"var(--navbar-on)":"var(--navbar-fg)")+';">'+
+navIcon(tb[1],20,(on?1.9:1.5))+
+'<span style="font-size:0.79rem;font-weight:'+(on?"800":"600")+';line-height:1.1;white-space:nowrap;">'+tb[2]+'</span></button>');
+} else {
+b = el('<button style="flex:1;background:none;border:none;padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:'+(on?"var(--navbar-on)":"var(--navbar-fg)")+';">'+
 '<span style="display:flex;align-items:center;justify-content:center;width:46px;height:29px;border-radius:15px;background:'+(on?"var(--navbar-pill)":"transparent")+';border:1px solid '+(on?"var(--navbar-on)":"transparent")+';">'+navIcon(tb[1],21,(on?1.9:1.5))+'</span>'+
 '<span style="font-size:0.64rem;font-weight:'+(on?"800":"600")+';line-height:1.1;text-align:center;">'+tb[2]+'</span></button>');
+}
 b.addEventListener("click", function(){ state.tab = key; state.screen = "menu"; homeOverride = false; clubShowAll = false; save(); render(); window.scrollTo(0,0); });
 bar.appendChild(b);
 });
@@ -8786,7 +8823,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-13-verde-bosco-b";
+var BUILD_STAMP = "2026-08-13-barra-unica";
 
 function infoScreen(){
 var wrap = el('<div></div>');
