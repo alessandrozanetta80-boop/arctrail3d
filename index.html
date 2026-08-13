@@ -8568,7 +8568,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-13-notifiche2";
+var BUILD_STAMP = "2026-08-13-wipe-sessioni";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -9721,9 +9721,9 @@ var jobs = [];
 jobs.push(deleteQueryDocs(db.collection("users").doc(uid).collection("storico").limit(400)));
 // Notifiche ricevute
 jobs.push(deleteQueryDocs(db.collection("notifications").doc(uid).collection("items").limit(400)));
-// Contatore anti-abuso delle notifiche (lo scrive la Cloud Function, non il
-// client: qui si prova a cancellarlo, se le regole non lo permettono amen).
-jobs.push(db.collection("rate_limits").doc(uid).delete().catch(function(){}));
+// rate_limits/{uid} NON si cancella: lo scrive solo la Cloud Function e le
+// regole sono chiuse al client, quindi la delete fallirebbe sempre. Contiene
+// due soli numeri, nessun dato personale.
 // Chat private: prima i messaggi, poi il documento della conversazione
 jobs.push(db.collection("direct_chats").where("members","array-contains",uid).limit(60).get().then(function(snap){
 var ps = [];
@@ -9765,8 +9765,18 @@ jobs.push(deleteQueryDocs(db.collection("field_reports").where("reporterUid","==
 ["richiedenteUid","requesterUid","uid"].forEach(function(campo){
 jobs.push(deleteQueryDocs(db.collection("compagnie_admin_requests").where(campo,"==",uid).limit(20)));
 });
-// Sessioni di tiro condivise che ho aperto
-jobs.push(deleteQueryDocs(db.collection("sessions").where("ownerUid","==",uid).limit(60)));
+// Sessioni di tiro condivise che ho aperto. Le regole lasciano leggere solo
+// le sessioni in cui compaio fra i partecipanti: cercare per ownerUid faceva
+// rifiutare TUTTA la query (nessuna sessione veniva cancellata). Filtro qui.
+jobs.push(db.collection("sessions").where("participantUids","array-contains",uid).limit(60).get().then(function(snap){
+var ps = [];
+snap.forEach(function(doc){
+var d = doc.data() || {};
+if(d.ownerUid !== uid) return;   // sessioni altrui: non sono mie da cancellare
+ps.push(doc.ref.delete().catch(function(){}));
+});
+return Promise.all(ps);
+}).catch(function(){}));
 // Mercatino: annunci (il campo usato dalle regole e' sellerUid; gli altri due
 // coprono eventuali annunci scritti da versioni precedenti)
 ["sellerUid","uid","ownerUid"].forEach(function(campo){
