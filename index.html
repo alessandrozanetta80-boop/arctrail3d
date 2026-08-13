@@ -725,6 +725,75 @@ var ADMIN_EMAIL = "alessandro.zanetta80@gmail.com";
 var CONTACT_EMAIL = "info@arctrail3d.com";
 var IS_BETA_TESTER = false; // impostato da onAuthReady leggendo il campo betaTester in Firestore
 
+// ── REGISTRAZIONE ERRORI ───────────────────────────────────────
+// I catch dell'app riabilitano il pulsante ma non lasciano traccia: un errore
+// sul telefono di un collaudatore in mezzo al bosco non si scopre mai. Qui ogni
+// eccezione non gestita (e ogni promise andata male) finisce nella collezione
+// errors, che l'admin legge dal pannello Approvazioni.
+// Due freni obbligatori: mai due volte lo stesso errore nella stessa sessione e
+// mai piu' di ERR_MAX scritture, altrimenti un errore dentro render() che si
+// ripete a ogni ridisegno riempirebbe il database da solo.
+var ERR_MAX   = 12;
+var errSent   = 0;
+var errSeen   = {};
+var errQueue  = [];   // errori avvenuti prima del login: le regole vogliono un utente
+
+function errContext(){
+var scr = "?", lng = "?";
+try{ if(typeof state === "object" && state){ scr = state.screen || "?"; lng = state.lang || "?"; } }catch(e){}
+return {
+screen: scr,
+build: (typeof BUILD_STAMP === "string") ? BUILD_STAMP : "?",
+lang: lng,
+ua: String(navigator.userAgent || "").slice(0, 180),
+online: navigator.onLine !== false,
+at: Date.now()
+};
+}
+
+function logError(dove, err, extra){
+try{
+var msg = "";
+if(err && err.message) msg = String(err.message);
+else if(typeof err === "string") msg = err;
+else if(err){ try{ msg = JSON.stringify(err).slice(0, 200); }catch(e){ msg = String(err); } }
+msg = msg.slice(0, 300);
+var key = "k:" + String(dove || "?") + "|" + msg;
+if(errSeen[key]) return;
+errSeen[key] = true;
+if(errSent >= ERR_MAX) return;
+errSent++;
+var rec = errContext();
+rec.dove  = String(dove || "?").slice(0, 60);
+rec.msg   = msg || "errore senza messaggio";
+rec.stack = (err && err.stack) ? String(err.stack).slice(0, 700) : "";
+if(extra){ try{ rec.extra = String(extra).slice(0, 200); }catch(e){} }
+if(!db || !currentUser){ if(errQueue.length < 10) errQueue.push(rec); return; }
+rec.uid = currentUser.uid;
+db.collection("errors").add(rec).catch(function(){});
+}catch(ignored){}
+}
+
+// Chiamata da onAuthReady: svuota quello che era successo prima dell'accesso.
+function flushErrorQueue(){
+try{
+if(!db || !currentUser || !errQueue.length) return;
+var pend = errQueue; errQueue = [];
+pend.forEach(function(rec){
+rec.uid = currentUser.uid;
+db.collection("errors").add(rec).catch(function(){});
+});
+}catch(e){}
+}
+
+window.addEventListener("error", function(ev){
+if(!ev) return;
+logError("window", ev.error || ev.message, String(ev.filename || "") + ":" + (ev.lineno || 0));
+});
+window.addEventListener("unhandledrejection", function(ev){
+logError("promise", (ev && ev.reason) ? ev.reason : "rifiuto senza motivo");
+});
+
 // ── PROFILI PUBBLICI ──────────────────────────────────────────
 // users/{uid} contiene email e fcmToken: non puo' restare leggibile a chiunque
 // sia loggato. L'elenco arcieri (inviti, chat privata, ricerca in Prepara gara)
@@ -793,6 +862,7 @@ cb(list);
 
 function onAuthReady(user){
 currentUser = user;
+flushErrorQueue();
 db.collection("users").doc(user.uid).get().then(function(doc){
 if(!doc.exists){
 var pendingProfileRaw = null;
@@ -8343,8 +8413,69 @@ ppBtn.disabled = false;
 ppCard.appendChild(ppStatus);
 ppCard.appendChild(ppBtn);
 
+// ── Errori registrati ───────────────────────────────────────
+// Non si carica da sola: sono letture in piu' a ogni apertura del pannello.
+// Solo orderBy, nessun where: niente indice composito da creare.
+var erCard = el('<div class="card" style="margin-top:14px;"></div>');
+erCard.appendChild(el('<h2 class="section-title">Errori registrati</h2>'));
+erCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Ultimi 30 errori raccolti sui dispositivi. Ogni riga dice dove, in quale schermata e con quale versione del file.</div>'));
+var erList = el('<div style="font-size:0.78rem;line-height:1.5;"></div>');
+var erRow  = el('<div style="display:flex;gap:8px;margin-top:10px;"></div>');
+var erBtn  = el('<button class="btn btn-ghost btn-sm" style="flex:1;">Carica errori</button>');
+var erDel  = el('<button class="btn btn-ghost btn-sm" style="flex:1;">Svuota</button>');
+
+function erFmt(d){
+var when = d.at ? new Date(d.at) : null;
+var data = when ? (("0"+when.getDate()).slice(-2)+"/"+("0"+(when.getMonth()+1)).slice(-2)+" "+("0"+when.getHours()).slice(-2)+":"+("0"+when.getMinutes()).slice(-2)) : "?";
+var box = el('<div style="border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:8px;"></div>');
+box.appendChild(el('<div style="font-weight:700;color:var(--danger);word-break:break-word;">'+escapeHtml(d.msg || "?")+'</div>'));
+box.appendChild(el('<div style="color:var(--muted);">'+escapeHtml(data+" \u00b7 "+(d.dove||"?")+" \u00b7 schermata "+(d.screen||"?")+" \u00b7 "+(d.build||"?"))+'</div>'));
+if(d.extra) box.appendChild(el('<div style="color:var(--muted);word-break:break-all;">'+escapeHtml(String(d.extra))+'</div>'));
+if(d.stack){
+var det = el('<details style="margin-top:4px;"><summary style="cursor:pointer;color:var(--muted);">dettaglio</summary></details>');
+det.appendChild(el('<div style="white-space:pre-wrap;word-break:break-all;color:var(--muted);font-size:0.72rem;margin-top:4px;">'+escapeHtml(String(d.stack))+'</div>'));
+box.appendChild(det);
+}
+if(d.ua) box.appendChild(el('<div style="color:var(--muted);font-size:0.7rem;margin-top:4px;word-break:break-all;">'+escapeHtml(String(d.ua))+'</div>'));
+return box;
+}
+
+erBtn.addEventListener("click", function(){
+erBtn.disabled = true;
+erList.innerHTML = '<div style="color:var(--muted);">Lettura\u2026</div>';
+db.collection("errors").orderBy("at","desc").limit(30).get().then(function(snap){
+erList.innerHTML = "";
+if(snap.empty){ erList.appendChild(el('<div style="color:var(--muted);">Nessun errore registrato.</div>')); }
+else { snap.forEach(function(doc){ erList.appendChild(erFmt(doc.data() || {})); }); }
+erBtn.disabled = false;
+}).catch(function(e){
+erList.innerHTML = '<div style="color:var(--danger);">'+escapeHtml((e && e.message) ? e.message : "Errore")+'</div>';
+erBtn.disabled = false;
+});
+});
+
+erDel.addEventListener("click", function(){
+if(!window.confirm("Cancellare tutti gli errori registrati?")) return;
+erDel.disabled = true;
+db.collection("errors").limit(400).get().then(function(snap){
+var b = db.batch();
+snap.forEach(function(doc){ b.delete(doc.ref); });
+return b.commit();
+}).then(function(){
+erList.innerHTML = '<div style="color:var(--muted);">Svuotato.</div>';
+erDel.disabled = false;
+}).catch(function(e){
+erList.innerHTML = '<div style="color:var(--danger);">'+escapeHtml((e && e.message) ? e.message : "Errore")+'</div>';
+erDel.disabled = false;
+});
+});
+
+erRow.appendChild(erBtn); erRow.appendChild(erDel);
+erCard.appendChild(erList); erCard.appendChild(erRow);
+
 wrap.appendChild(card);
 wrap.appendChild(ppCard);
+wrap.appendChild(erCard);
 
 function loadList(){
 db.collection("users").get().then(function(snap){
@@ -8568,7 +8699,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-13-wipe-sessioni";
+var BUILD_STAMP = "2026-08-13-log-errori";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -9724,6 +9855,13 @@ jobs.push(deleteQueryDocs(db.collection("notifications").doc(uid).collection("it
 // rate_limits/{uid} NON si cancella: lo scrive solo la Cloud Function e le
 // regole sono chiuse al client, quindi la delete fallirebbe sempre. Contiene
 // due soli numeri, nessun dato personale.
+// Errori registrati da questo utente: portano il suo uid, quindi vanno via
+// insieme all'account.
+jobs.push(db.collection("errors").where("uid","==",uid).limit(200).get().then(function(snap){
+var ps = [];
+snap.forEach(function(doc){ ps.push(doc.ref.delete().catch(function(){})); });
+return Promise.all(ps);
+}).catch(function(){}));
 // Chat private: prima i messaggi, poi il documento della conversazione
 jobs.push(db.collection("direct_chats").where("members","array-contains",uid).limit(60).get().then(function(snap){
 var ps = [];
