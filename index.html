@@ -46,6 +46,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js" defer></script>
 
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -695,7 +696,10 @@ appId: "1:185889526349:web:0af3b386332664387c8204",
 measurementId: "G-V6ML7HEGGJ"
 };
 var firebaseReady = true;
-var auth, db, messaging, messagingInitError = "";
+var auth, db, messaging, fns, messagingInitError = "";
+// Regione delle Cloud Functions: DEVE combaciare con quella del deploy,
+// altrimenti la chiamata parte verso us-central1 e torna "not-found".
+var FUNCTIONS_REGION = "europe-west1";
 var VAPID_KEY = "BAf1VFe0FFTgirK8pyQ3rDhKxRfO9NuGwEKhFNKERRGZf-1B2--YCTzowswIo-qN0kyztUbRVVEYcKwzJmQe64M"; // Firebase Console -> Impostazioni progetto -> Cloud Messaging -> Web Push certificates
 if(DEV_MODE){
 firebaseReady = false;
@@ -706,6 +710,7 @@ auth = firebase.auth();
 db = firebase.firestore();
 try{ db.enablePersistence({ synchronizeTabs:true }).catch(function(){}); }catch(e){}
 try{ if(firebase.messaging){ messaging = firebase.messaging(); } }catch(e){ messagingInitError = e && e.message ? e.message : String(e); }
+try{ if(firebase.functions){ fns = firebase.app().functions(FUNCTIONS_REGION); } }catch(e){ fns = null; }
 } catch(initErr){
 firebaseReady = false;
 }
@@ -8561,7 +8566,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-13-pulizia";
+var BUILD_STAMP = "2026-08-13-notifiche";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -9353,10 +9358,38 @@ render();
 }).catch(function(err){ console.error("loadOpenTrainings:", err); openTrainings = []; });
 }
 
-// ── PUSH NOTIFICATIONS via Firestore (senza Cloud Functions) ────────────────
-// Scrive un doc in notifications/{uid}/items/{id}
-// Il listener startNotificationsListener() lo intercetta e mostra la push locale
+// ── PUSH NOTIFICATIONS via Cloud Function ───────────────────────────────────
+// PRIMA: il telefono scriveva da solo in notifications/{uid}/items. Chiunque
+// fosse loggato poteva quindi mandare una notifica a chiunque altro, dalla
+// console del browser, firmandosi con il nome di un altro.
+// ADESSO: si chiama la callable "sendNotification". Il documento lo scrive il
+// server con l'Admin SDK, che ignora le regole Firestore; nelle regole il
+// "create" dal client e' chiuso. Il trigger onDocumentCreated gia' esistente
+// scatta come prima e manda la push vera: quella parte non e' stata toccata.
+//
+// Il RIPIEGO sulla scrittura diretta serve solo durante la migrazione, finche'
+// le nuove firestore.rules non sono applicate: se la funzione non e' ancora
+// deployata le notifiche continuano ad arrivare invece di sparire in silenzio.
+// Applicate le regole, il ripiego fallisce da solo e resta valida solo la
+// strada del server. E' voluto: non va tolto prima, non serve toglierlo dopo.
 function sendPushViaFirestore(toUid, title, body){
+if(!toUid) return;
+if(fns){
+fns.httpsCallable("sendNotification")({ toUid: toUid, title: String(title||""), body: String(body||"") })
+.catch(function(err){
+console.error("sendNotification:", err && err.code, err && err.message);
+// Se la funzione non c'e' ancora (deploy non fatto), si ripiega.
+if(err && (err.code === "functions/not-found" || err.code === "functions/internal" || err.code === "functions/unavailable")){
+legacyPushWrite(toUid, title, body);
+}
+});
+} else {
+legacyPushWrite(toUid, title, body);
+}
+}
+
+// Vecchia scrittura diretta: usata solo come ripiego (vedi sopra).
+function legacyPushWrite(toUid, title, body){
 if(!db || !toUid) return;
 db.collection("notifications").doc(toUid).collection("items").add({
 title: title,
@@ -9660,6 +9693,9 @@ var jobs = [];
 jobs.push(deleteQueryDocs(db.collection("users").doc(uid).collection("storico").limit(400)));
 // Notifiche ricevute
 jobs.push(deleteQueryDocs(db.collection("notifications").doc(uid).collection("items").limit(400)));
+// Contatore anti-abuso delle notifiche (lo scrive la Cloud Function, non il
+// client: qui si prova a cancellarlo, se le regole non lo permettono amen).
+jobs.push(db.collection("rate_limits").doc(uid).delete().catch(function(){}));
 // Chat private: prima i messaggi, poi il documento della conversazione
 jobs.push(db.collection("direct_chats").where("members","array-contains",uid).limit(60).get().then(function(snap){
 var ps = [];
