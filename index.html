@@ -720,6 +720,72 @@ var ADMIN_EMAIL = "alessandro.zanetta80@gmail.com";
 var CONTACT_EMAIL = "info@arctrail3d.com";
 var IS_BETA_TESTER = false; // impostato da onAuthReady leggendo il campo betaTester in Firestore
 
+// ── PROFILI PUBBLICI ──────────────────────────────────────────
+// users/{uid} contiene email e fcmToken: non puo' restare leggibile a chiunque
+// sia loggato. L'elenco arcieri (inviti, chat privata, ricerca in Prepara gara)
+// legge public_profiles/{uid}, che contiene SOLO nome mostrato e compagnia.
+// L'ESISTENZA del documento significa "utente approvato": niente campo
+// approved, niente where, quindi nessun rischio di where+orderBy.
+// Chi lo scrive: l'utente stesso al login e al salvataggio del profilo,
+// l'admin al momento dell'approvazione (e lo cancella alla revoca).
+var publicProfilesCache = null;
+
+function publicProfileData(d){
+d = d || {};
+return {
+username: d.username || "",
+nomeCognome: d.nomeCognome || "",
+compagnia: d.compagnia || null,
+compagniaNome: d.compagniaNome || "",
+updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+};
+}
+
+function writePublicProfile(uid, d){
+if(!db || !uid) return Promise.resolve();
+var data = publicProfileData(d);
+// Senza nome mostrato il documento non servirebbe a niente e sporcherebbe
+// l'elenco con una voce vuota.
+if(!data.username) return Promise.resolve();
+return db.collection("public_profiles").doc(uid).set(data, { merge:true });
+}
+
+function deletePublicProfile(uid){
+if(!db || !uid) return Promise.resolve();
+return db.collection("public_profiles").doc(uid).delete();
+}
+
+// Allinea il PROPRIO profilo pubblico. Silenziosa per scelta: se fallisce non
+// deve impedire il login ne' il salvataggio del profilo.
+function syncMyPublicProfile(d){
+if(!db || !currentUser) return;
+writePublicProfile(currentUser.uid, d).then(function(){
+publicProfilesCache = null;
+archersDirectory = null;
+}).catch(function(e){ console.error("profilo pubblico:", e); });
+}
+
+// Unico punto di lettura dell'elenco pubblico, con cache condivisa: prima le
+// stesse righe erano ripetute in quattro schermate diverse.
+function loadPublicProfiles(cb){
+if(publicProfilesCache){ cb(publicProfilesCache); return; }
+if(!db){ cb([]); return; }
+db.collection("public_profiles").get().then(function(snap){
+var list = [];
+snap.forEach(function(doc){
+var d = doc.data() || {};
+if(d.username){
+list.push({
+uid: doc.id, username: d.username, nomeCognome: d.nomeCognome || "",
+compagnia: d.compagnia || null, compagniaNome: d.compagniaNome || ""
+});
+}
+});
+publicProfilesCache = list;
+cb(list);
+}).catch(function(e){ console.error("elenco arcieri:", e); cb([]); });
+}
+
 function onAuthReady(user){
 currentUser = user;
 db.collection("users").doc(user.uid).get().then(function(doc){
@@ -761,6 +827,9 @@ compagnia: data.compagnia || null, compagniaNome: data.compagniaNome || ""
 };
 }
 authState = data.approved ? "ready" : "pendingApproval";
+// Il profilo pubblico si riallinea a ogni apertura: cosi' un cambio di nome
+// o di compagnia fatto altrove non lascia l'elenco arcieri indietro.
+if(data.approved) syncMyPublicProfile(data);
 }
 if(authState === "ready"){
 startIncomingSessionsListener();
@@ -6750,6 +6819,8 @@ if(!DEV_MODE && currentUser && db){
 db.collection("users").doc(currentUser.uid).update({
 nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel,
 compagnia: clubCod, compagniaNome: clubNome
+}).then(function(){
+syncMyPublicProfile({ username: username, nomeCognome: nomeCognome, compagnia: clubCod, compagniaNome: clubNome });
 }).catch(function(){});
 }
 savedMsg.textContent = t("profile_edit_saved_msg");
@@ -6970,19 +7041,7 @@ document.getElementById("addArcherBtn").addEventListener("click", addArcher);
 document.getElementById("archerInput").addEventListener("keydown", function(e){ if(e.key === "Enter") addArcher(); });
 
 if(searchResults){
-var approvedUsersCache = null;
-function loadApprovedUsers(cb){
-if(approvedUsersCache){ cb(approvedUsersCache); return; }
-db.collection("users").where("approved","==",true).get().then(function(snap){
-var list = [];
-snap.forEach(function(doc){
-var d = doc.data();
-if(d.username){ list.push({ uid: doc.id, username: d.username, nomeCognome: d.nomeCognome||"" }); }
-});
-approvedUsersCache = list;
-cb(list);
-}).catch(function(){ cb([]); });
-}
+function loadApprovedUsers(cb){ loadPublicProfiles(cb); }
 searchInput = document.getElementById("archerSearchInput");
 searchInput.addEventListener("input", function(){
 var q = searchInput.value.trim().toLowerCase();
@@ -7319,19 +7378,7 @@ var searchResults = el('<div style="margin-top:6px;display:flex;flex-wrap:wrap;g
 searchRow.appendChild(searchInput); searchRow.appendChild(searchResults);
 d.appendChild(searchRow);
 
-var approvedUsersCache = null;
-function loadApprovedUsers(cb){
-if(approvedUsersCache){ cb(approvedUsersCache); return; }
-db.collection("users").where("approved","==",true).get().then(function(snap){
-var list = [];
-snap.forEach(function(doc){
-var dd = doc.data();
-if(dd.username){ list.push({ uid: doc.id, username: dd.username, nomeCognome: dd.nomeCognome||"" }); }
-});
-approvedUsersCache = list;
-cb(list);
-}).catch(function(){ cb([]); });
-}
+function loadApprovedUsers(cb){ loadPublicProfiles(cb); }
 searchInput.addEventListener("input", function(){
 var q = searchInput.value.trim().toLowerCase();
 searchResults.innerHTML = "";
@@ -8633,14 +8680,71 @@ var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("admin_title")+'</h2>'));
 var listWrap = el('<div id="adminListWrap"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
 card.appendChild(listWrap);
+
+// ── Allineamento profili pubblici ──────────────────────────────────
+// Serve una volta sola, il giorno del passaggio: gli utenti approvati prima di
+// public_profiles non hanno il documento e sparirebbero dall'elenco arcieri
+// finche' non riaprono l'app. Va lanciato PRIMA di togliere allow list da
+// users nelle regole. Resta poi a disposizione come pulizia.
+// Testo in italiano e non con t(): lo vede solo l'admin, tradurlo in nove
+// lingue non avrebbe senso.
+var ppCard = el('<div class="card" style="margin-top:14px;"></div>');
+ppCard.appendChild(el('<h2 class="section-title">Profili pubblici</h2>'));
+ppCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Ricostruisce public_profiles a partire dagli utenti approvati. Da lanciare al passaggio alle nuove regole, poi solo se qualcuno non compare nell\'elenco arcieri.</div>'));
+var ppStatus = el('<div style="font-size:0.85rem;min-height:20px;margin-bottom:8px;"></div>');
+var ppBtn = el('<button class="btn btn-ghost btn-block btn-sm">Allinea profili pubblici</button>');
+ppBtn.addEventListener("click", function(){
+ppBtn.disabled = true;
+ppStatus.style.color = "var(--muted)";
+ppStatus.textContent = "Lettura utenti\u2026";
+db.collection("users").get().then(function(snap){
+var creati = 0, tolti = 0, saltati = 0;
+var batch = db.batch(), inBatch = 0;
+var commits = [];
+snap.forEach(function(doc){
+var d = doc.data() || {};
+var ref = db.collection("public_profiles").doc(doc.id);
+if(d.approved === true && d.username){
+batch.set(ref, publicProfileData(d), { merge:true });
+creati++;
+} else if(d.approved === true && !d.username){
+saltati++;
+return;
+} else {
+// Non approvato: se un documento pubblico esiste va tolto. delete su un
+// documento inesistente non da' errore, quindi si puo' fare alla cieca.
+batch.delete(ref);
+tolti++;
+}
+inBatch++;
+if(inBatch >= 400){ commits.push(batch.commit()); batch = db.batch(); inBatch = 0; }
+});
+if(inBatch > 0) commits.push(batch.commit());
+ppStatus.textContent = "Scrittura\u2026";
+return Promise.all(commits).then(function(){
+publicProfilesCache = null; archersDirectory = null;
+ppStatus.style.color = "var(--accent-soft)";
+ppStatus.textContent = "Fatto: " + creati + " pubblicati, " + tolti + " rimossi" + (saltati ? (", " + saltati + " senza nome utente saltati") : "") + ".";
+ppBtn.disabled = false;
+});
+}).catch(function(e){
+ppStatus.style.color = "var(--danger)";
+ppStatus.textContent = (e && e.message) ? e.message : "Errore";
+ppBtn.disabled = false;
+});
+});
+ppCard.appendChild(ppStatus);
+ppCard.appendChild(ppBtn);
+
 wrap.appendChild(card);
+wrap.appendChild(ppCard);
 
 function loadList(){
 db.collection("users").get().then(function(snap){
 var pending = [], approved = [];
 snap.forEach(function(doc){
 var d = doc.data();
-var row = { id: doc.id, email: d.email || "?", approved: !!d.approved, betaTester: d.betaTester === true };
+var row = { id: doc.id, email: d.email || "?", approved: !!d.approved, betaTester: d.betaTester === true, data: d };
 (row.approved ? approved : pending).push(row);
 });
 listWrap.innerHTML = "";
@@ -8653,7 +8757,11 @@ var rowEl = el('<div style="display:flex;align-items:center;justify-content:spac
 var btn = el('<button class="btn btn-primary btn-sm">'+t("admin_approve_btn")+'</button>');
 btn.addEventListener("click", function(){
 btn.disabled = true;
-db.collection("users").doc(row.id).update({approved:true}).then(loadList);
+db.collection("users").doc(row.id).update({approved:true}).then(function(){
+// L'approvazione e' il momento in cui l'arciere entra nell'elenco pubblico.
+return writePublicProfile(row.id, row.data);
+}).then(function(){ publicProfilesCache = null; archersDirectory = null; loadList(); })
+.catch(function(e){ btn.disabled = false; alert(e && e.message ? e.message : "Errore"); });
 });
 rowEl.appendChild(btn);
 listWrap.appendChild(rowEl);
@@ -8670,7 +8778,12 @@ rowEl.appendChild(betaBtn);
 var btn = el('<button class="btn btn-ghost btn-sm">'+t("admin_revoke_btn")+'</button>');
 btn.addEventListener("click", function(){
 btn.disabled = true;
-db.collection("users").doc(row.id).update({approved:false}).then(loadList);
+db.collection("users").doc(row.id).update({approved:false}).then(function(){
+// Revoca: fuori anche dall'elenco pubblico, altrimenti resterebbe
+// invitabile e contattabile.
+return deletePublicProfile(row.id);
+}).then(function(){ publicProfilesCache = null; archersDirectory = null; loadList(); })
+.catch(function(e){ btn.disabled = false; alert(e && e.message ? e.message : "Errore"); });
 });
 rowEl.appendChild(btn);
 listWrap.appendChild(rowEl);
@@ -8848,7 +8961,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-13-pg-chiuso";
+var BUILD_STAMP = "2026-08-13-public-profiles";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -10079,6 +10192,9 @@ if(adminUid) sendPushViaFirestore(adminUid, t("acc_delete_title"), t("rep_delete
 }catch(e){}
 return wipeAccountData(uid);
 }).then(function(){
+// Prima il profilo pubblico: dopo currentUser.delete() non si scrive piu'.
+return deletePublicProfile(uid).catch(function(){});
+}).then(function(){
 return db.collection("users").doc(uid).delete().catch(function(){});
 }).then(function(){
 return currentUser.delete();
@@ -10162,17 +10278,13 @@ if(cambiato || (state.screen === "messaggi" && !staScrivendo)) render();
 function loadArchersDirectory(cb){
 if(archersDirectory){ cb(archersDirectory); return; }
 if(!db){ cb([]); return; }
-db.collection("users").where("approved","==",true).get().then(function(snap){
-var list = [];
-snap.forEach(function(doc){
-var d = doc.data();
-if(d.username && doc.id !== (currentUser && currentUser.uid) && !isUserBlocked(doc.id)){
-list.push({ uid: doc.id, username: d.username, nomeCognome: d.nomeCognome || "" });
-}
+loadPublicProfiles(function(all){
+var list = all.filter(function(u){
+return u.uid !== (currentUser && currentUser.uid) && !isUserBlocked(u.uid);
 });
 list.sort(function(a,b){ return a.username.toLowerCase().localeCompare(b.username.toLowerCase()); });
 archersDirectory = list; cb(list);
-}).catch(function(e){ console.error("elenco arcieri:", e); cb([]); });
+});
 }
 
 function stopDmMessages(){
@@ -10662,15 +10774,10 @@ inviteChips.appendChild(chip);
 });
 }
 
-var approvedUsersForInvite = null;
 function loadApprovedUsersForInvite(cb){
-if(approvedUsersForInvite){ cb(approvedUsersForInvite); return; }
-if(!db){ cb([]); return; }
-db.collection("users").where("approved","==",true).get().then(function(snap){
-var list = [];
-snap.forEach(function(doc){ var d=doc.data(); if(d.username && doc.id !== (currentUser&&currentUser.uid)){ list.push({uid:doc.id,username:d.username,nomeCognome:d.nomeCognome||""}); } });
-approvedUsersForInvite = list; cb(list);
-}).catch(function(){ cb([]); });
+loadPublicProfiles(function(all){
+cb(all.filter(function(u){ return u.uid !== (currentUser && currentUser.uid); }));
+});
 }
 
 inviteSearch.addEventListener("input", function(){
