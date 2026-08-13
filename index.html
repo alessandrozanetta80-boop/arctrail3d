@@ -840,6 +840,7 @@ if(authState === "ready"){
 startIncomingSessionsListener();
 loadOpenTrainings();
 startNotificationsListener();
+refreshPushToken();
 startDirectChatsListener();
 // Admin app: assegna automaticamente 01VERB se non ancora assegnato
 if(currentUser && currentUser.email === ADMIN_EMAIL && db){
@@ -6318,6 +6319,7 @@ return messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg 
 }).then(function(token){
 if(!token){ statusEl.textContent = t("notif_token_error"); btnEl.disabled = false; return; }
 db.collection("users").doc(currentUser.uid).update({ fcmToken: token }).then(function(){
+pushRegisteredHere = true;
 statusEl.textContent = t("notif_enabled");
 statusEl.style.color = "var(--accent-soft)";
 }).catch(function(err){
@@ -8566,7 +8568,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-13-notifiche";
+var BUILD_STAMP = "2026-08-13-notifiche2";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -9416,8 +9418,34 @@ localStorage.setItem("at3d_notif_shown", JSON.stringify(l));
 }catch(e){}
 }
 
+// Vero quando le notifiche push VERE arrivano su QUESTO dispositivo (token
+// registrato). In quel caso l'app non deve mostrare anche la propria copia
+// locale, altrimenti se ne vedono due identiche: una la mostra il service
+// worker su comando del server, l'altra la mostrerebbe qui il listener.
+var pushRegisteredHere = false;
+
+// Rinfresca in silenzio il token di questo dispositivo a ogni apertura.
+// Non chiede niente all'utente: parte solo se il permesso e' gia' concesso.
+// Serve a due cose: sapere che qui la push vera arriva (e quindi tacere), e
+// tenere aggiornato users/{uid}.fcmToken, che il server usa per l'invio.
+function refreshPushToken(){
+if(!messaging || !db || !currentUser) return;
+if(typeof Notification === "undefined" || Notification.permission !== "granted") return;
+if(!navigator.serviceWorker) return;
+navigator.serviceWorker.getRegistration("firebase-messaging-sw.js").then(function(reg){
+if(!reg) return null;
+return messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+}).then(function(token){
+if(!token) return;
+pushRegisteredHere = true;
+return db.collection("users").doc(currentUser.uid).update({ fcmToken: token }).catch(function(){});
+}).catch(function(){});
+}
+
 function showLocalNotification(d){
 if(typeof Notification === "undefined" || Notification.permission !== "granted") return;
+// Il server ci manda gia' la push vera su questo dispositivo: tacere.
+if(pushRegisteredHere) return;
 var opts = { body: d.body || "", icon: "/icon-192.png", badge: "/icon-192.png" };
 if(navigator.serviceWorker && navigator.serviceWorker.getRegistration){
 navigator.serviceWorker.getRegistration().then(function(reg){
