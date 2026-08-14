@@ -744,6 +744,12 @@ var PENDING_PROFILE_KEY = "arctrail3d_pending_profile";
 var ADMIN_EMAIL = "alessandro.zanetta80@gmail.com";
 var CONTACT_EMAIL = "info@arctrail3d.com";
 var IS_BETA_TESTER = false; // impostato da onAuthReady leggendo il campo betaTester in Firestore
+// Utente premium: un solo interruttore, niente livelli. Lo accende SOLO l'admin
+// dal pannello Approvazioni (le regole vietano all'utente di scriverselo da se').
+// Oggi non sblocca ancora nulla: serve ad avere il campo pronto e assegnabile.
+// ATTENZIONE: quando i vantaggi varranno soldi veri, il controllo dovra' stare
+// in una Cloud Function, non qui: questo booleano vive nel telefono.
+var IS_PREMIUM = false;
 // Data di apertura delle registrazioni: da qui in avanti l'email va confermata
 // prima di entrare. Chi si era registrato PRIMA non viene toccato, altrimenti
 // l'apertura sbatterebbe fuori tutti quelli che sono gia' dentro.
@@ -941,6 +947,7 @@ if(newDoc.nomeCognome && !needsEmailVerification(user)) syncMyPublicProfile(newD
 } else {
 var data = doc.data();
 IS_BETA_TESTER = (data.betaTester === true);
+IS_PREMIUM = (data.premium === true);
 blockedUsers = data.blockedUsers || {};
 if(!state.profile && data.nomeCognome){
 state.profile = {
@@ -1438,12 +1445,12 @@ mode_battuta_desc:"Battuta ufficiale: 28 piazzole, 48 frecce totali \u2014 14 pi
 menu_info: "Info",
 disclaimer_text: "ArcTrail 3D \u00e8 un'app indipendente creata da appassionati per uso pratico durante allenamenti e gare. Non \u00e8 un prodotto ufficiale delle federazioni citate (FIARC, FITARCO, FFTA), n\u00e9 \u00e8 approvata o affiliata a esse. I nomi, i marchi e i regolamenti citati appartengono alle rispettive federazioni. In caso di dubbio sul punteggio ufficiale, fa sempre fede il regolamento pubblicato dalla federazione di riferimento.",
 contact_title: "Segnala un errore o una federazione mancante",
-contact_text: "Hai trovato un punteggio sbagliato? Manca la tua federazione o la tua nazione (es. Spagna, Slovenia\u2026)? Scrivici, ci fa piacere migliorare l'app insieme a chi la usa davvero.",
+contact_text: "Hai trovato un punteggio sbagliato? Manca la tua federazione o la tua nazione (es. Slovenia, Portogallo\u2026)? Scrivici, ci fa piacere migliorare l'app insieme a chi la usa davvero.",
 contact_button: "\u2709\ufe0f Scrivici",
 mode_ffta_training_label:"Allenamento", mode_ffta_training_tag:"1 freccia", mode_ffta_training_unit:"Freccia",
 mode_ffta_training_desc:"Allenamento libero secondo le zone FFTA: una sola freccia per piazzola, punteggi fissi. Scegli tu quante piazzole fare.",
-mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"gara \u00b7 2 frecce", mode_ffta_tir3d_unit:"Freccia",
-mode_ffta_tir3d_desc:"Tir sur Cibles 3D ufficiale FFTA: 24 piazzole, 2 frecce a piazzola dallo stesso piquet (stesso punteggio per entrambe le frecce).",
+mode_ffta_tir3d_label:"Tir sur cibles 3D", mode_ffta_tir3d_tag:"gara \u00b7 2 frecce", mode_ffta_tir3d_unit:"Freccia",
+mode_ffta_tir3d_desc:"Tir sur cibles 3D ufficiale FFTA: 24 piazzole, 2 frecce a piazzola dallo stesso piquet (stesso punteggio per entrambe le frecce).",
 mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"gara \u00b7 2 frecce", mode_fitarco3d_unit:"Freccia",
 mode_fitarco3d_desc:"Tiro 3D FITARCO: 24 sagome, 2 frecce a sagoma. A differenza della FIARC il punteggio non dipende dall'ordine delle frecce.",
 provisional_note:"\u26a0\ufe0f Dati non ancora confermati da un regolamento ufficiale certo: potrebbero cambiare.",
@@ -1842,7 +1849,7 @@ clear_confirm: "Tap again to confirm",
 targets_word: "targets",
 ordinal_1: "1st", ordinal_2: "2nd", ordinal_3: "3rd",
 logout_word: "Log out",
-zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
+zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Center", zone_ffta_superspot: "Kill", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Body",
 target_singular: "Target",
 
@@ -1894,12 +1901,12 @@ mode_battuta_desc:"Official Battuta: 28 targets, 48 arrows total \u2014 14 singl
 menu_info: "Info",
 disclaimer_text: "ArcTrail 3D is an independent app created by enthusiasts for practical use during training and competitions. It is not an official product of the federations mentioned (FIARC, FITARCO, FFTA), nor is it approved by or affiliated with them. The names, trademarks, and rules mentioned belong to their respective federations. In case of doubt about official scoring, the rulebook published by the relevant federation always prevails.",
 contact_title: "Report an error or a missing federation",
-contact_text: "Found a wrong score? Is your federation or country missing (e.g. Spain, Slovenia\u2026)? Get in touch, we're happy to improve the app together with the people who actually use it.",
+contact_text: "Found a wrong score? Is your federation or country missing (e.g. Slovenia, Portugal\u2026)? Get in touch, we're happy to improve the app together with the people who actually use it.",
 contact_button: "\u2709\ufe0f Contact us",
 mode_ffta_training_label:"Training", mode_ffta_training_tag:"1 arrow", mode_ffta_training_unit:"Arrow",
 mode_ffta_training_desc:"Free training using FFTA zones: a single arrow per target, fixed scoring. Choose how many targets to shoot.",
-mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"match \u00b7 2 arrows", mode_ffta_tir3d_unit:"Arrow",
-mode_ffta_tir3d_desc:"Official FFTA Tir sur Cibles 3D: 24 targets, 2 arrows per target from the same peg (both arrows score the same).",
+mode_ffta_tir3d_label:"Tir sur cibles 3D", mode_ffta_tir3d_tag:"match \u00b7 2 arrows", mode_ffta_tir3d_unit:"Arrow",
+mode_ffta_tir3d_desc:"Official FFTA Tir sur cibles 3D: 24 targets, 2 arrows per target from the same peg (both arrows score the same).",
 mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"match \u00b7 2 arrows", mode_fitarco3d_unit:"Arrow",
 mode_fitarco3d_desc:"FITARCO 3D: 24 targets, 2 arrows per target. Unlike FIARC, the score doesn't depend on arrow order.",
 provisional_note:"\u26a0\ufe0f Data not yet confirmed by a certain official rulebook: may change.",
@@ -2057,7 +2064,7 @@ profile_club_search: "Cherchez votre club\u2026",
 fr_report_btn_short: "Signaler",
 fr_report_sub: "Le signalement arrive au club qui g\u00e8re le terrain, pas \u00e0 un service ext\u00e9rieur.",
 fr_field_search: "Cherchez le terrain\u2026",
-fr_type_label: "De quel type de probl\u00e8me s'agit-il",
+fr_type_label: "De quel type de probl\u00e8me s’agit-il ?",
 fr_type_target: "Cible ou silhouette",
 fr_type_stake: "Piquet ou signalisation",
 fr_type_path: "Sentier ou s\u00e9curit\u00e9",
@@ -2068,14 +2075,14 @@ fr_report_open_btn: "Signaler un probl\u00e8me sur un parcours",
 
 campi_announce_btn: "Annoncer un entra\u00eenement",
 train_add_target_btn: "Continuer : ajouter une cible",
-train_free_hint: "\u00c0 l'entra\u00eenement, vous d\u00e9cidez du nombre de cibles, et vous pouvez en ajouter m\u00eame une fois le tour commenc\u00e9.",
+train_free_hint: "\u00c0 l’entra\u00eenement, vous d\u00e9cidez du nombre de cibles, et vous pouvez en ajouter m\u00eame une fois le tour commenc\u00e9.",
 club_space_title: "Espace club",
 club_space_sub: "Les informations que les archers voient et o\u00f9 arrivent les signalements sur le parcours.",
 club_space_open: "Espace club",
 club_space_claim: "Demander \u00e0 g\u00e9rer votre club",
-club_space_claim_hint: "La demande est valid\u00e9e \u00e0 la main par ArcTrail 3D : nous vous \u00e9crivons d\u00e8s qu'elle est active.",
-club_space_claim_sent: "Demande envoy\u00e9e. Nous vous pr\u00e9venons d\u00e8s qu'elle est approuv\u00e9e.",
-club_space_need_club: "Indiquez d'abord votre club dans le profil.",
+club_space_claim_hint: "La demande est valid\u00e9e \u00e0 la main par ArcTrail 3D : nous vous \u00e9crivons d\u00e8s qu’elle est active.",
+club_space_claim_sent: "Demande envoy\u00e9e. Nous vous pr\u00e9venons d\u00e8s qu’elle est approuv\u00e9e.",
+club_space_need_club: "Indiquez d’abord votre club dans le profil.",
 club_contacts_title: "Coordonn\u00e9es",
 club_contacts_hint: "Elles apparaissent aux archers sur la fiche du club.",
 club_ref_name: "Nom du responsable",
@@ -2090,7 +2097,7 @@ club_report_resolved: "R\u00e9solu",
 club_report_by: "par {name}",
 club_piazzola_word: "cible",
 fr_sent_to: "Signalement envoy\u00e9 \u00e0 {name}.",
-fr_no_admin_warn: "Ce club n'a pas encore de responsable sur ArcTrail 3D : le signalement est enregistr\u00e9 et sera visible d\u00e8s que quelqu'un prendra en charge le terrain.",
+fr_no_admin_warn: "Ce club n’a pas encore de responsable sur ArcTrail 3D : le signalement est enregistr\u00e9 et sera visible d\u00e8s que quelqu’un prendra en charge le terrain.",
 fr_notif_title: "Nouveau signalement sur le parcours",
 fr_notif_body: "{name} : {desc}",
 admin_club_requests_title: "Demandes de gestion de club",
@@ -2099,25 +2106,25 @@ admin_club_approve: "Approuver",
 admin_club_reject: "Refuser",
 nav_clubs: "Clubs",
 club_reg_title: "Enregistrez votre club",
-club_reg_hint: "Pour g\u00e9rer l'espace de votre club il faut deux \u00e9tapes, une ici et une par e-mail.",
+club_reg_hint: "Pour g\u00e9rer l’espace de votre club il faut deux \u00e9tapes, une ici et une par e-mail.",
 club_reg_s1: "Ci-dessous, choisissez votre club et appuyez sur \u00ab\u00a0Demander \u00e0 g\u00e9rer votre club\u00a0\u00bb.",
-club_reg_s2: "Envoyez un e-mail depuis une adresse officielle du club \u00e0 {mail}, en indiquant le nom et le code du club ainsi que votre nom et votre r\u00f4le. Cela confirme que vous \u00eates un repr\u00e9sentant autoris\u00e9 : sans cette confirmation la demande n'est pas approuv\u00e9e.",
-club_reg_s3: "D\u00e8s la v\u00e9rification vous recevez la notification et l'espace club s'ouvre.",
-club_reg_mail_btn: "\u00c9crire l'e-mail de confirmation",
+club_reg_s2: "Envoyez un e-mail depuis une adresse officielle du club \u00e0 {mail}, en indiquant le nom et le code du club ainsi que votre nom et votre r\u00f4le. Cela confirme que vous \u00eates un repr\u00e9sentant autoris\u00e9 : sans cette confirmation la demande n’est pas approuv\u00e9e.",
+club_reg_s3: "D\u00e8s la v\u00e9rification vous recevez la notification et l’espace club s’ouvre.",
+club_reg_mail_btn: "\u00c9crire l’e-mail de confirmation",
 club_reg_mail_subject: "Demande de gestion de club \u2014 ArcTrail 3D",
-club_reg_mail_body: "Bonjour,\nje demande \u00e0 g\u00e9rer l'espace de notre club sur ArcTrail 3D.\n\nClub : \nCode : \nNom et r\u00f4le : \nPseudo ArcTrail 3D : \n\nCordialement",
+club_reg_mail_body: "Bonjour,\nje demande \u00e0 g\u00e9rer l’espace de notre club sur ArcTrail 3D.\n\nClub : \nCode : \nNom et r\u00f4le : \nPseudo ArcTrail 3D : \n\nCordialement",
 fr_email_btn: "Envoyer aussi un e-mail au club",
-fr_email_hint: "Le responsable re\u00e7oit tout de suite la notification dans l'application. Si vous voulez une trace \u00e9crite vous pouvez aussi envoyer un e-mail depuis votre adresse.",
-fr_email_none: "Ce club n'a pas encore indiqu\u00e9 d'e-mail dans son espace.",
+fr_email_hint: "Le responsable re\u00e7oit tout de suite la notification dans l’application. Si vous voulez une trace \u00e9crite vous pouvez aussi envoyer un e-mail depuis votre adresse.",
+fr_email_none: "Ce club n’a pas encore indiqu\u00e9 d’e-mail dans son espace.",
 fr_mail_subject: "Signalement sur le parcours \u2014 {field}",
 fr_report_close: "Fermer",
 nav_market: "Marketplace",
-market_locked_body: "Le Marketplace est en test avec un petit groupe d'archers. D\u00e8s qu'il sera pr\u00eat nous l'ouvrirons \u00e0 tous.",
+market_locked_body: "Le Marketplace est en test avec un petit groupe d’archers. D\u00e8s qu’il sera pr\u00eat nous l’ouvrirons \u00e0 tous.",
 journal_title: "Mon carnet",
 journal_sub: "Vos progr\u00e8s et tous les tours enregistr\u00e9s sur cet appareil.",
 journal_tab_trend: "\u00c9volution",
 journal_tab_rounds: "Tours enregistr\u00e9s",
-club_only_space_hint: "Vous \u00eates le responsable de ce club. D'ici vous g\u00e9rez votre espace et les signalements re\u00e7us.",
+club_only_space_hint: "Vous \u00eates le responsable de ce club. D’ici vous g\u00e9rez votre espace et les signalements re\u00e7us.",
 club_see_all: "Voir tous les clubs",
 club_back_to_space: "Retour \u00e0 mon espace club",
 club_pick_space: "Club \u00e0 g\u00e9rer",
@@ -2125,9 +2132,9 @@ notif_self_report_title: "Signalement envoy\u00e9",
 notif_self_report_body: "Votre signalement sur {field} est arriv\u00e9 au responsable.",
 notif_self_report_body_noadmin: "Votre signalement sur {field} est enregistr\u00e9 : il appara\u00eetra d\u00e8s que le club aura un responsable.",
 notif_self_invite_title: "Invitations envoy\u00e9es",
-notif_self_invite_body: "Vous avez invit\u00e9 {n} archers \u00e0 l'entra\u00eenement du {date}.",
+notif_self_invite_body: "Vous avez invit\u00e9 {n} archers \u00e0 l’entra\u00eenement du {date}.",
 notif_center_title: "Notifications",
-notif_center_sub: "Elles apparaissent ici m\u00eame si vous n'avez pas activ\u00e9 les notifications du t\u00e9l\u00e9phone.",
+notif_center_sub: "Elles apparaissent ici m\u00eame si vous n’avez pas activ\u00e9 les notifications du t\u00e9l\u00e9phone.",
 notif_center_empty: "Aucune notification.",
 notif_center_markall: "Tout marquer comme lu",
 club_reports_show_closed: "Afficher aussi les r\u00e9solus",
@@ -2149,7 +2156,7 @@ dm_search_label: "Chercher un archer",
 dm_search_placeholder: "Chercher par pseudo\u2026",
 dm_search_empty: "Aucun archer avec ce pseudo.",
 dm_list_title: "Vos conversations",
-dm_empty: "Vous n'avez encore aucune conversation : cherchez un archer ci-dessus et \u00e9crivez-lui.",
+dm_empty: "Vous n’avez encore aucune conversation : cherchez un archer ci-dessus et \u00e9crivez-lui.",
 dm_chat_with: "Discussion avec {name}",
 dm_placeholder: "\u00c9crivez un message\u2026",
 dm_send: "Envoyer",
@@ -2161,59 +2168,59 @@ dm_back: "\u2190 Messages",
 dm_new_badge: "nouveau",
 dm_notif_title: "Nouveau message",
 dm_notif_body: "{name} : {text}",
-notif_new_signup_title: "Nouvelle demande d'inscription",
+notif_new_signup_title: "Nouvelle demande d’inscription",
 notif_new_signup_body: "{name} (@{username}) s’est inscrit avec {email}.",
 ot_participants: "Qui vient",
-ot_join_hint: "Appuyez ci-dessous pour confirmer votre venue : l'organisateur re\u00e7oit un avis.",
-ot_joined_hint: "Vous \u00eates sur la liste. L'organisateur vous voit parmi les participants.",
+ot_join_hint: "Appuyez ci-dessous pour confirmer votre venue : l’organisateur re\u00e7oit un avis.",
+ot_joined_hint: "Vous \u00eates sur la liste. L’organisateur vous voit parmi les participants.",
 ot_join_saving: "Patientez\u2026",
-ot_join_error: "\u00c7a n'a pas march\u00e9. R\u00e9essayez dans un instant.",
-ot_notif_where: "Ouvrez-le dans l'onglet Tirer et appuyez sur \u00ab\u00a0Rejoindre\u00a0\u00bb pour confirmer.",
+ot_join_error: "\u00c7a n’a pas march\u00e9. R\u00e9essayez dans un instant.",
+ot_notif_where: "Ouvrez-le dans l’onglet Tirer et appuyez sur \u00ab\u00a0Rejoindre\u00a0\u00bb pour confirmer.",
 blk_block_btn: "Bloquer",
 blk_unblock_btn: "D\u00e9bloquer",
 blk_block_confirm: "Confirmer le blocage\u00a0?",
 blk_blocked_note: "Vous avez bloqu\u00e9 cette personne : vous ne voyez plus ses messages et vous ne pouvez plus lui \u00e9crire. Vous pouvez la d\u00e9bloquer depuis votre profil.",
 blk_list_title: "Personnes bloqu\u00e9es",
 blk_list_sub: "Vous ne voyez ni leurs messages ni leurs entra\u00eenements.",
-blk_list_empty: "Vous n'avez bloqu\u00e9 personne.",
+blk_list_empty: "Vous n’avez bloqu\u00e9 personne.",
 blk_list_hint: "Les personnes bloqu\u00e9es ne re\u00e7oivent aucun avis.",
 rep_btn: "Signaler",
 rep_title: "Signaler un abus",
-rep_sub: "Dites-nous ce qui ne va pas : le signalement arrive \u00e0 ceux qui g\u00e8rent l'application et est examin\u00e9 en quelques jours.",
+rep_sub: "Dites-nous ce qui ne va pas : le signalement arrive \u00e0 ceux qui g\u00e8rent l’application et est examin\u00e9 en quelques jours.",
 rep_reason_offense: "Insultes ou harc\u00e8lement",
 rep_reason_spam: "Spam ou arnaque",
 rep_reason_sexual: "Contenus sexuels",
 rep_reason_illegal: "Contenus ill\u00e9gaux ou dangereux",
 rep_reason_other: "Autre",
-rep_note_label: "Racontez bri\u00e8vement ce qui s'est pass\u00e9 (facultatif)",
+rep_note_label: "Racontez bri\u00e8vement ce qui s’est pass\u00e9 (facultatif)",
 rep_send: "Envoyer le signalement",
 rep_sent: "Signalement envoy\u00e9. Merci.",
-rep_error: "\u00c7a n'a pas march\u00e9. R\u00e9essayez, ou \u00e9crivez \u00e0 info@arctrail3d.com.",
-rep_pick_reason: "Choisissez d'abord un motif.",
+rep_error: "\u00c7a n’a pas march\u00e9. R\u00e9essayez, ou \u00e9crivez \u00e0 info@arctrail3d.com.",
+rep_pick_reason: "Choisissez d’abord un motif.",
 rep_also_block: "Bloquer aussi cette personne",
 rep_notif_body: "{who} a signal\u00e9 {what}. Motif : {why}. {note}",
 rep_deleted_account: "Un utilisateur a supprim\u00e9 son compte : {who} ({mail}).",
 acc_delete_btn: "Supprimer le compte",
 acc_delete_title: "Supprimez votre compte",
-acc_delete_warn: "L'op\u00e9ration est d\u00e9finitive. Tours, carnet, annonces et conversations sont supprim\u00e9s et ne peuvent pas \u00eatre r\u00e9cup\u00e9r\u00e9s.",
+acc_delete_warn: "L’op\u00e9ration est d\u00e9finitive. Tours, carnet, annonces et conversations sont supprim\u00e9s et ne peuvent pas \u00eatre r\u00e9cup\u00e9r\u00e9s.",
 acc_delete_what: "Sont supprim\u00e9s le profil, les tours enregistr\u00e9s avec les statistiques, les annonces du Marketplace avec les photos, les conversations, les entra\u00eenements que vous avez publi\u00e9s, les signalements et les notifications.",
-acc_delete_keep: "Il ne reste que les messages d\u00e9j\u00e0 re\u00e7us par d'autres personnes, sans plus aucun lien avec votre compte.",
+acc_delete_keep: "Il ne reste que les messages d\u00e9j\u00e0 re\u00e7us par d’autres personnes, sans plus aucun lien avec votre compte.",
 acc_delete_pwd: "Votre mot de passe",
-acc_delete_pwd_hint: "Il sert \u00e0 v\u00e9rifier que c'est bien vous. Si vous vous \u00eates connect\u00e9 avec le lien par e-mail, laissez vide.",
+acc_delete_pwd_hint: "Il sert \u00e0 v\u00e9rifier que c’est bien vous. Si vous vous \u00eates connect\u00e9 avec le lien par e-mail, laissez vide.",
 acc_delete_word_label: "\u00c9crivez SUPPRIMER pour confirmer",
 acc_delete_word: "SUPPRIMER",
 acc_delete_do: "Supprimer d\u00e9finitivement",
 acc_delete_cancel: "Laisser tomber",
 acc_delete_working: "Suppression de vos donn\u00e9es\u2026",
-acc_delete_done: "Compte supprim\u00e9. Merci d'avoir tir\u00e9 avec nous.",
+acc_delete_done: "Compte supprim\u00e9. Merci d’avoir tir\u00e9 avec nous.",
 acc_delete_need_word: "\u00c9crivez SUPPRIMER dans le champ pour confirmer.",
 acc_delete_bad_pwd: "Mot de passe incorrect.",
 acc_delete_relogin: "Par s\u00e9curit\u00e9 vous devez vous reconnecter : d\u00e9connectez-vous, reconnectez-vous et recommencez la suppression.",
-acc_delete_error: "La suppression n'a pas pu \u00eatre termin\u00e9e. R\u00e9essayez, ou \u00e9crivez \u00e0 info@arctrail3d.com.",
+acc_delete_error: "La suppression n’a pas pu \u00eatre termin\u00e9e. R\u00e9essayez, ou \u00e9crivez \u00e0 info@arctrail3d.com.",
 legal_privacy: "Politique de confidentialit\u00e9",
-legal_terms: "Conditions d'utilisation",
-legal_about: "\u00c0 propos d'ArcTrail 3D",
-profile_terms: "J'ai lu et j'accepte les conditions d'utilisation.",
+legal_terms: "Conditions d’utilisation",
+legal_about: "\u00c0 propos d’ArcTrail 3D",
+profile_terms: "J’ai lu et j’accepte les conditions d’utilisation.",
 
 
 country_italy: "Italie",
@@ -2240,7 +2247,7 @@ menu_gara_sub: "g\u00e9rez les cibles sur le moment",
 
 
 market_btn_label: "Marketplace",
-diario_empty: "Aucun parcours enregistr\u00e9 pour l'instant. Terminez un entra\u00eenement ou une comp\u00e9tition : vous trouverez ensuite ici votre record, votre moyenne et votre tendance.",
+diario_empty: "Aucun parcours enregistr\u00e9 pour l’instant. Terminez un entra\u00eenement ou une comp\u00e9tition : vous trouverez ensuite ici votre record, votre moyenne et votre tendance.",
 diario_record: "Record",
 diario_media: "Moyenne",
 diario_on_rounds: "sur {n} parcours",
@@ -2250,7 +2257,7 @@ diario_targets_word: "cibles",
 diario_record_badge: "record",
 diario_position: "{pos}e sur {tot}",
 diario_cloud_title: "Sauvegarde",
-diario_cloud_hint: "Les parcours restent sur le t\u00e9l\u00e9phone. Avec la copie sur le cloud, vous les gardez en changeant d'appareil.",
+diario_cloud_hint: "Les parcours restent sur le t\u00e9l\u00e9phone. Avec la copie sur le cloud, vous les gardez en changeant d’appareil.",
 diario_cloud_backup: "Sauvegarder sur le cloud",
 diario_cloud_restore: "R\u00e9cup\u00e9rer du cloud",
 diario_cloud_working: "Patientez\u2026",
@@ -2280,7 +2287,7 @@ train_setup_hint: "De 1 \u00e0 {max} cibles, \u00e0 votre choix.",
 start_round_btn: "Commencer le parcours",
 rules_training_title: "Points d\u2019entra\u00eenement",
 train_arrows_title: "Combien de fl\u00e8ches par cible ?", train_arrows_hint: "De 1 \u00e0 3 fl\u00e8ches, \u00e0 votre choix. Vous pouvez toujours sauter les fl\u00e8ches que vous ne voulez pas tirer.",
-fr_report_btn: "\u26a0\ufe0f Signaler un probl\u00e8me", fr_report_title: "Signaler un probl\u00e8me sur le parcours", fr_report_field: "Terrain / parcours", fr_report_desc: "Description du probl\u00e8me", fr_report_desc_ph: "Ex. cible renvers\u00e9e au poste 7, arbre tomb\u00e9\u2026", fr_report_send: "Envoyer", fr_report_cancel: "Annuler", fr_report_error: "Erreur d'envoi. R\u00e9essayez.",
+fr_report_btn: "\u26a0\ufe0f Signaler un probl\u00e8me", fr_report_title: "Signaler un probl\u00e8me sur le parcours", fr_report_field: "Terrain / parcours", fr_report_desc: "Description du probl\u00e8me", fr_report_desc_ph: "Ex. cible renvers\u00e9e au poste 7, arbre tomb\u00e9\u2026", fr_report_send: "Envoyer", fr_report_cancel: "Annuler", fr_report_error: "Erreur d’envoi. R\u00e9essayez.",
 skip_remaining_btn: "Sauter les fl\u00e8ches restantes \u2192",
 gara_type_title: "Type de comp\u00e9tition",
 start_gara_btn: "Commencer la comp\u00e9tition",
@@ -2289,14 +2296,14 @@ campi_btn: "Rechercher des terrains \u00e0 proximit\u00e9",
 campi_hint: "Ouvre Google Maps avec les terrains de tir 3D \u00e0 proximit\u00e9 (n\u00e9cessite la g\u00e9olocalisation).",
 campi_searching: "Localisation\u2026",
 campi_filter_placeholder: "Filtrer par nom ou lieu…",
-history_empty: "Les parcours termin\u00e9s appara\u00eetront ici par ordre chronologique, avec le score et les piquets.", history_empty_title: "Aucun parcours pour l'instant", history_empty_cta: "Commencer le premier parcours", stats_rounds: "Parcours", stats_avg: "Moyenne", stats_best: "Record",
+history_empty: "Les parcours termin\u00e9s appara\u00eetront ici par ordre chronologique, avec le score et les piquets.", history_empty_title: "Aucun parcours pour l’instant", history_empty_cta: "Commencer le premier parcours", stats_rounds: "Parcours", stats_avg: "Moyenne", stats_best: "Record",
 history_clear: "Effacer l\u2019historique",
 clear_confirm: "Appuyez \u00e0 nouveau pour confirmer",
 targets_word: "cibles",
 ordinal_1: "1\u00e8re", ordinal_2: "2e", ordinal_3: "3e",
 logout_word: "D\u00e9connexion",
-zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
-zone_ffta_perfect: "Petit tu\u00e9", zone_ffta_superspot: "Tu\u00e9", zone_ffta_spot: "Vitale", zone_ffta_sagoma: "Corps",
+zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
+zone_ffta_perfect: "Petit tu\u00e9", zone_ffta_superspot: "Tu\u00e9", zone_ffta_spot: "Zone vitale", zone_ffta_sagoma: "Corps",
 target_singular: "Cible",
 
 finora: " \u00b7 jusqu\u2019ici : {list} pts",
@@ -2326,9 +2333,9 @@ th_total: "Total",
 th_vs_prev: "Vs pr\u00e9c\u00e9dent",
 detail_title: "Score par cible",
 back_to_menu_full: "Retour au menu",
-back_to_history_btn: "\u2190 Retour \u00e0 l'historique",
+back_to_history_btn: "\u2190 Retour \u00e0 l’historique",
 reset_round_btn: "R\u00e9initialisation totale (supprime ce parcours)",
-export_pdf_btn: "Exporter / imprimer en PDF", print_sign_archer: "Signature de l'archer", print_sign_judge: "Signature du juge",
+export_pdf_btn: "Exporter / imprimer en PDF", print_sign_archer: "Signature de l’archer", print_sign_judge: "Signature du juge",
 share_btn: "Partager le classement",
 copied_msg: "Copi\u00e9 dans le presse-papiers !",
 share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} cibles",
@@ -2345,16 +2352,16 @@ mode_tracciato_desc:"Tracciato officiel : 24 cibles, jusqu\u2019\u00e0 3 fl\u00e
 mode_battuta_label:"Battuta", mode_battuta_tag:"comp\u00e9tition \u00b7 groupe de 3", mode_battuta_unit:"Silhouette",
 mode_battuta_desc:"Battuta officielle : 28 cibles, 48 fl\u00e8ches au total \u2014 14 cibles simples et 4 mobiles (1 fl\u00e8che), 6 groupes de 3 (s\u2019arr\u00eate au premier tir manqu\u00e9) et 4 groupes chronom\u00e9tr\u00e9s de 3 (toujours cumul\u00e9s). Distances de 20 \u00e0 40 m selon le groupe. 10 fl\u00e8ches \u00e0 tirer obligatoirement \u00e0 genou, jamais sur les cibles chronom\u00e9tr\u00e9es.",
 menu_info: "Infos",
-disclaimer_text: "ArcTrail 3D est une application ind\u00e9pendante cr\u00e9\u00e9e par des passionn\u00e9s pour un usage pratique lors des entra\u00eenements et des comp\u00e9titions. Ce n'est pas un produit officiel des f\u00e9d\u00e9rations mentionn\u00e9es (FIARC, FITARCO, FFTA), et l'application n'est ni approuv\u00e9e ni affili\u00e9e \u00e0 celles-ci. Les noms, marques et r\u00e8glements mentionn\u00e9s appartiennent \u00e0 leurs f\u00e9d\u00e9rations respectives. En cas de doute sur le score officiel, le r\u00e8glement publi\u00e9 par la f\u00e9d\u00e9ration concern\u00e9e fait toujours foi.",
+disclaimer_text: "ArcTrail 3D est une application ind\u00e9pendante cr\u00e9\u00e9e par des passionn\u00e9s pour un usage pratique lors des entra\u00eenements et des comp\u00e9titions. Ce n’est pas un produit officiel des f\u00e9d\u00e9rations mentionn\u00e9es (FIARC, FITARCO, FFTA), et l’application n’est ni approuv\u00e9e ni affili\u00e9e \u00e0 celles-ci. Les noms, marques et r\u00e8glements mentionn\u00e9s appartiennent \u00e0 leurs f\u00e9d\u00e9rations respectives. En cas de doute sur le score officiel, le r\u00e8glement publi\u00e9 par la f\u00e9d\u00e9ration concern\u00e9e fait toujours foi.",
 contact_title: "Signaler une erreur ou une f\u00e9d\u00e9ration manquante",
-contact_text: "Un score erron\u00e9 ? Votre f\u00e9d\u00e9ration ou votre pays manque (Espagne, Slov\u00e9nie\u2026) ? \u00c9crivez-nous, nous serions ravis d'am\u00e9liorer l'appli avec ceux qui l'utilisent vraiment.",
+contact_text: "Un score erron\u00e9 ? Votre f\u00e9d\u00e9ration ou votre pays manque (Slov\u00e9nie, Portugal\u2026) ? \u00c9crivez-nous, nous serions ravis d’am\u00e9liorer l’appli avec ceux qui l’utilisent vraiment.",
 contact_button: "\u2709\ufe0f \u00c9crivez-nous",
 mode_ffta_training_label:"Entra\u00eenement", mode_ffta_training_tag:"1 fl\u00e8che", mode_ffta_training_unit:"Fl\u00e8che",
 mode_ffta_training_desc:"Entra\u00eenement libre selon les zones FFTA : une seule fl\u00e8che par cible, points fixes. Choisissez vous-m\u00eame le nombre de cibles.",
-mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_ffta_tir3d_unit:"Fl\u00e8che",
-mode_ffta_tir3d_desc:"Tir sur Cibles 3D officiel FFTA : 24 cibles, 2 fl\u00e8ches par cible depuis le m\u00eame piquet (m\u00eame bar\u00e8me pour les deux fl\u00e8ches).",
+mode_ffta_tir3d_label:"Tir sur cibles 3D", mode_ffta_tir3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_ffta_tir3d_unit:"Fl\u00e8che",
+mode_ffta_tir3d_desc:"Tir sur cibles 3D officiel FFTA : 24 cibles, 2 fl\u00e8ches par cible depuis le m\u00eame piquet (m\u00eame bar\u00e8me pour les deux fl\u00e8ches).",
 mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_fitarco3d_unit:"Fl\u00e8che",
-mode_fitarco3d_desc:"3D FITARCO : 24 cibles, 2 fl\u00e8ches par cible. Contrairement \u00e0 la FIARC, le score ne d\u00e9pend pas de l'ordre des fl\u00e8ches.",
+mode_fitarco3d_desc:"3D FITARCO : 24 cibles, 2 fl\u00e8ches par cible. Contrairement \u00e0 la FIARC, le score ne d\u00e9pend pas de l’ordre des fl\u00e8ches.",
 provisional_note:"\u26a0\ufe0f Donn\u00e9es pas encore confirm\u00e9es par un r\u00e8glement officiel certain : pourraient changer.",
 mode_swissarchery_training_label:"Entra\u00eenement", mode_swissarchery_training_tag:"1 fl\u00e8che", mode_swissarchery_training_unit:"Fl\u00e8che",
 mode_swissarchery_training_desc:"Entra\u00eenement libre selon les zones World Archery : une seule fl\u00e8che par cible, points fixes. Choisissez vous-m\u00eame le nombre de cibles.",
@@ -2382,48 +2389,48 @@ mode_ifaa_training_label:"Entra\u00eenement", mode_ifaa_training_tag:"1 fl\u00e8
 mode_ifaa_training_desc:"Entra\u00eenement libre selon les zones IFAA : une seule fl\u00e8che par cible, points fixes. Choisissez vous-m\u00eame le nombre de cibles.",
 mode_ifaa_3d_label:"IFAA 3-D Standard Round", mode_ifaa_3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_ifaa_3d_unit:"Fl\u00e8che",
 mode_ifaa_3d_desc:"IFAA 3-D Standard Round officiel : 28 cibles, 2 fl\u00e8ches par cible depuis deux piquets diff\u00e9rents (les deux fl\u00e8ches sont cumul\u00e9es).",
-zone_ifaa_spot: "Spot", zone_ifaa_lowarea: "Zone Basse",
+zone_ifaa_spot: "Spot", zone_ifaa_lowarea: "Zone basse",
 admin_approve_btn: "Approuver", admin_approved_title: "D\u00e9j\u00e0 approuv\u00e9s", admin_empty_pending: "Aucune demande en attente.",
-admin_loading: "Chargement\u2026", admin_pending_title: "En attente d'approbation", admin_revoke_btn: "R\u00e9voquer", admin_title: "Gestion des acc\u00e8s",
-compagnie_annulla: "Annuler", compagnie_arciere: "Nom de l'archer", compagnie_arco: "Arc utilis\u00e9", compagnie_classifica: "Classement",
+admin_loading: "Chargement\u2026", admin_pending_title: "En attente d’approbation", admin_revoke_btn: "R\u00e9voquer", admin_title: "Gestion des acc\u00e8s",
+compagnie_annulla: "Annuler", compagnie_arciere: "Nom de l’archer", compagnie_arco: "Arc utilis\u00e9", compagnie_classifica: "Classement",
 compagnie_classifica_empty: "Aucun score pour ce filtre.", compagnie_data: "Date",
-compagnie_empty_msg: "Aucun score ici pour l'instant \u2014 soyez le premier \u00e0 en ajouter un.", compagnie_luogo: "Lieu du terrain",
+compagnie_empty_msg: "Aucun score ici pour l’instant \u2014 soyez le premier \u00e0 en ajouter un.", compagnie_luogo: "Lieu du terrain",
 compagnie_new_percorso: "+ Nouveau parcours", compagnie_new_risultato: "+ Nouveau score",
-compagnie_no_dati: "D\u00e9tails complets pas encore ajout\u00e9s pour ce club.", compagnie_no_percorsi: "Ce club n'a pas encore de parcours.",
+compagnie_no_dati: "D\u00e9tails complets pas encore ajout\u00e9s pour ce club.", compagnie_no_percorsi: "Ce club n’a pas encore de parcours.",
 compagnie_nome_percorso: "Nom du parcours", compagnie_num_piazzole: "Nombre de cibles", compagnie_piazzole_word: "cibles",
-cp_admin_claim_btn: "🔑 Demander l'administration de ce club", cp_admin_claim_pending: "Demande envoyée — en attente d'approbation.", cp_admin_map_error: "Erreur de sauvegarde.", cp_admin_tel: "Téléphone", cp_admin_email_label: "Email du club", cp_admin_sito: "Site web", 
+cp_admin_claim_btn: "🔑 Demander l’administration de ce club", cp_admin_claim_pending: "Demande envoyée — en attente d’approbation.", cp_admin_map_error: "Erreur de sauvegarde.", cp_admin_tel: "Téléphone", cp_admin_email_label: "E-mail du club", cp_admin_sito: "Site web", 
 compagnie_pick_luogo: "Choisissez le terrain\u2026", compagnie_pick_provincia: "Choisissez la province\u2026", compagnie_pick_regione: "Choisissez la r\u00e9gion\u2026", compagnie_provincia_non_specificata: "Province non pr\u00e9cis\u00e9e",
 compagnie_provincia: "Province", compagnie_punteggi_word: "scores enregistr\u00e9s", compagnie_punteggio: "Score", compagnie_regione: "R\u00e9gion",
 compagnie_salva: "Enregistrer", compagnie_title: "Clubs", compagnie_tutti: "Tous", country_uk: "Royaume-Uni", country_turkey: "Turquie", country_russia: "Russie", country_spain: "Espagne", country_netherlands: "Pays-Bas", country_sweden: "Su\u00e8de", 
 home_dev_text: "Pour signaler un bug ou un problème : {email} — {sito}. Les données saisies à ce stade peuvent être supprimées ou réinitialisées.",
-home_dev_title: "\u26a0\ufe0f Application en cours de d\u00e9veloppement", home_install_btn: "Installer l'application sur le t\u00e9l\u00e9phone",
-home_install_generic_text: "Cherchez l'ic\u00f4ne d'installation dans la barre d'adresse (en haut), ou ouvrez le menu du navigateur (g\u00e9n\u00e9ralement les trois points en haut \u00e0 droite) et cherchez <b>\u00abInstaller l'application\u00bb</b>.",
-home_install_ios_text: "<b>Sur iPhone :</b> appuyez sur le bouton <b>Partager</b> en bas du navigateur (le carr\u00e9 avec une fl\u00e8che vers le haut), puis choisissez <b>\u00abSur l'\u00e9cran d'accueil\u00bb</b>. Une ic\u00f4ne appara\u00eetra comme pour toute autre application.",
-home_login_link: "Vous avez d\u00e9j\u00e0 un compte\u00a0?", home_login_link_word: "Se connecter", home_register_btn: "S'inscrire",
+home_dev_title: "\u26a0\ufe0f Application en cours de d\u00e9veloppement", home_install_btn: "Installer l’application sur le t\u00e9l\u00e9phone",
+home_install_generic_text: "Cherchez l’ic\u00f4ne d’installation dans la barre d’adresse (en haut), ou ouvrez le menu du navigateur (g\u00e9n\u00e9ralement les trois points en haut \u00e0 droite) et cherchez <b>\u00ab Installer l’application \u00bb</b>.",
+home_install_ios_text: "<b>Sur iPhone :</b> appuyez sur le bouton <b>Partager</b> en bas du navigateur (le carr\u00e9 avec une fl\u00e8che vers le haut), puis choisissez <b>\u00ab Sur l’\u00e9cran d’accueil \u00bb</b>. Une ic\u00f4ne appara\u00eetra comme pour toute autre application.",
+home_login_link: "Vous avez d\u00e9j\u00e0 un compte\u00a0?", home_login_link_word: "Se connecter", home_register_btn: "S’inscrire",
 login_forgot: "Mot de passe oubli\u00e9\u00a0?", login_password: "Mot de passe",
 login_reset_sent: "Nous vous avons envoy\u00e9 un e-mail pour r\u00e9initialiser votre mot de passe. Si vous ne le voyez pas, v\u00e9rifiez aussi vos courriers ind\u00e9sirables.",
 menu_admin: "Approbations", menu_compagnie_label: "Clubs", menu_profile: "Mon profil",
 mode_archerygb_3d_label:"3D Round", mode_archerygb_3d_tag:"comp\u00e9tition \u00b7 2 fl\u00e8ches", mode_archerygb_3d_unit:"Fl\u00e8che",
 mode_archerygb_3d_desc:"3D Round officiel Archery GB (norme World Archery)\u00a0: 24 cibles, 2 fl\u00e8ches par cible depuis le m\u00eame piquet, les deux fl\u00e8ches comptent.",
 mode_archerygb_training_label:"Entra\u00eenement", mode_archerygb_training_tag:"1 fl\u00e8che", mode_archerygb_training_unit:"Fl\u00e8che",
-mode_archerygb_training_desc:"Entra\u00eenement libre selon les zones World Archery\u00a0: une seule fl\u00e8che par cible, scores fixes.",
+mode_archerygb_training_desc:"Entra\u00eenement libre selon les zones World Archery\u00a0: une seule fl\u00e8che par cible, points fixes.",
 mode_nfas_training_label:"Entra\u00eenement", mode_nfas_training_tag:"1 fl\u00e8che", mode_nfas_training_unit:"Fl\u00e8che",
-mode_nfas_training_desc:"Entra\u00eenement libre selon les zones NFAS\u00a0: une seule fl\u00e8che par cible, scores fixes.",
-mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"comp\u00e9tition \u00b7 jusqu'\u00e0 3 fl\u00e8ches", mode_nfas_biggame_unit:"Fl\u00e8che",
-mode_nfas_biggame_desc:"Big Game Round officiel NFAS\u00a0: 28 cibles, jusqu'\u00e0 3 fl\u00e8ches (seul le premier impact compte), l'Inner Kill ne compte que sur la premi\u00e8re fl\u00e8che.",
-profile_arco: "Arc principal", profile_edit_email_note: "Pour changer votre e-mail de connexion, contactez l'assistance.",
+mode_nfas_training_desc:"Entra\u00eenement libre selon les zones NFAS\u00a0: une seule fl\u00e8che par cible, points fixes.",
+mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"comp\u00e9tition \u00b7 jusqu’\u00e0 3 fl\u00e8ches", mode_nfas_biggame_unit:"Fl\u00e8che",
+mode_nfas_biggame_desc:"Big Game Round officiel NFAS\u00a0: 28 cibles, jusqu’\u00e0 3 fl\u00e8ches (seul le premier impact compte), l’Inner Kill ne compte que sur la premi\u00e8re fl\u00e8che.",
+profile_arco: "Arc principal", profile_edit_email_note: "Pour changer votre e-mail de connexion, contactez l’assistance.",
 theme_section_title: "Apparence", theme_satura_label: "Vive", theme_elegante_label: "Douce", theme_light_label: "Claire",
 profile_edit_save: "Enregistrer les modifications", profile_edit_saved_msg: "Modifications enregistr\u00e9es.", profile_edit_title: "Votre profil",
-profile_email: "E-mail", profile_error: "Remplissez le nom, le pseudo, l'e-mail, au moins une f\u00e9d\u00e9ration, votre arc principal, et acceptez la politique de confidentialit\u00e9.",
-profile_error_email_in_use: "Cet e-mail est d\u00e9j\u00e0 enregistr\u00e9. Utilisez \u00abSe connecter\u00bb avec votre mot de passe.",
+profile_email: "E-mail", profile_error: "Remplissez le nom, le pseudo, l’e-mail, au moins une f\u00e9d\u00e9ration, votre arc principal, et acceptez la politique de confidentialit\u00e9.",
+profile_error_email_in_use: "Cet e-mail est d\u00e9j\u00e0 enregistr\u00e9. Utilisez \u00ab Se connecter \u00bb avec votre mot de passe.",
 profile_error_password_mismatch: "Les deux mots de passe ne correspondent pas.", profile_error_password_short: "Le mot de passe doit contenir au moins 6 caract\u00e8res.",
-profile_federazioni: "F\u00e9d\u00e9rations d'appartenance", profile_nome: "Nom complet",
+profile_federazioni: "F\u00e9d\u00e9rations d’appartenance", profile_nome: "Nom complet",
 profile_password: "Mot de passe (au moins 6 caract\u00e8res)", profile_password_confirm: "Confirmer le mot de passe",
-profile_privacy: "J'ai lu la politique de confidentialit\u00e9 et je consens au traitement de mes donn\u00e9es pour l'utilisation de l'application.",
+profile_privacy: "J’ai lu la politique de confidentialit\u00e9 et je consens au traitement de mes donn\u00e9es pour l’utilisation de l’application.",
 profile_submit: "Cr\u00e9er le profil et continuer", profile_tessera: "Num\u00e9ro de licence {fed}",
 pg_title: "Pr\u00e9parer la comp\u00e9tition",  pg_back_menu: "\u2190 Retour au menu", pg_choose_gara: "Choisissez la comp\u00e9tition",
 pg_my_saved_routes: "\uD83D\uDCCB Mes parcours enregistr\u00e9s", pg_saved_routes_title: "Mes parcours enregistr\u00e9s", pg_loading: "Chargement\u2026", pg_error_loading: "Erreur de chargement\u00a0: {err}", pg_use_route_btn: "Utiliser ce parcours",
-pg_load_error_generic: "erreur de chargement", pg_no_routes_saved: "Aucun parcours enregistr\u00e9 pour l'instant.", pg_no_name: "(sans nom)",
+pg_load_error_generic: "erreur de chargement", pg_no_routes_saved: "Aucun parcours enregistr\u00e9 pour l’instant.", pg_no_name: "(sans nom)",
 pg_route_summary: "{data}{compagnia}{iscritti} inscrits \u00b7 {squadre} \u00e9quipes", pg_piazzola_partenza: "Cible {n}", pg_squadra_n: "\u00c9quipe {n}",
 pg_section_route_data: "{gara} \u2014 donn\u00e9es du parcours", pg_field_route_name: "Nom du parcours", pg_field_date: "Date",
 pg_field_org: "Club organisateur", pg_field_num_piazzole: "Nombre de cibles", pg_btn_create_list: "Cr\u00e9er la liste des cibles",
@@ -2435,28 +2442,28 @@ pg_timed_toggle: "Cible chronom\u00e9tr\u00e9e", pg_mobile_toggle: "Cible mobile
 pg_knee_not_allowed_timed: "Tir \u00e0 genou non admis (chronom\u00e9tr\u00e9e)", pg_knee_not_allowed_gara: "Tir \u00e0 genou non admis dans cette comp\u00e9tition",
 pg_desc_placeholder: "Br\u00e8ve description (facultative)", pg_cancel: "Annuler", pg_save_piazzola: "Enregistrer la cible",
 pg_section_participants: "{gara} \u2014 inscrits et \u00e9quipes", pg_first_name_ph: "Pr\u00e9nom", pg_last_name_ph: "Nom", pg_add_btn: "Ajouter",
-pg_search_account_hint: "Ou recherchez un compte d\u00e9j\u00e0 inscrit (l'inscrit sera ainsi li\u00e9, utile pour les futures notifications)",
+pg_search_account_hint: "Ou recherchez un compte d\u00e9j\u00e0 inscrit (l’inscrit sera ainsi li\u00e9, utile pour les futures notifications)",
 pg_bulk_import_hint: "Ou collez une liste\u00a0: un bloc par \u00e9quipe s\u00e9par\u00e9 par une ligne vide ou un titre \u00ab\u00a0\u00c9quipe N\u00a0\u00bb, un nom (ou \u00ab\u00a0Nom, Pr\u00e9nom\u00a0\u00bb) par ligne.",
 pg_import_teams_btn: "Importer des \u00e9quipes D\u00c9J\u00c0 FORM\u00c9ES (conserve vos groupes)", pg_participants_count_label: "Inscrits\u00a0:", pg_not_linked: "(non li\u00e9)",
 pg_people_per_team: "Personnes par \u00e9quipe (max 5)", pg_auto_teams_btn: "Cr\u00e9er des \u00e9quipes AUTOMATIQUES (m\u00e9lang\u00e9es, pas par blocs A-Z)",
-pg_auto_teams_warning: "\u26a0\ufe0f Ignore les groupes d\u00e9j\u00e0 d\u00e9cid\u00e9s\u00a0: recalcule les \u00e9quipes \u00e0 z\u00e9ro (en m\u00e9langeant les noms entre les \u00e9quipes, ordre de tir alphab\u00e9tique seulement \u00e0 l'int\u00e9rieur de chacune).",
-pg_organizer_view_title: "Vue organisateur \u2014 qui part d'o\u00f9", 
-pg_save_route_btn: "Enregistrer le parcours", pg_saving: "Enregistrement en cours\u2026", pg_save_error_online: "Erreur lors de l'enregistrement en ligne ({err}). Enregistr\u00e9 uniquement sur cet appareil.",
-pg_retry: "r\u00e9essayer", pg_menu_btn_label: "Pr\u00e9parer la comp\u00e9tition", pg_menu_btn_sub: "pour les clubs\u00a0: cibles, inscrits et \u00e9quipes pr\u00eats \u00e0 l'avance",
+pg_auto_teams_warning: "\u26a0\ufe0f Ignore les groupes d\u00e9j\u00e0 d\u00e9cid\u00e9s\u00a0: recalcule les \u00e9quipes \u00e0 z\u00e9ro (en m\u00e9langeant les noms entre les \u00e9quipes, ordre de tir alphab\u00e9tique seulement \u00e0 l’int\u00e9rieur de chacune).",
+pg_organizer_view_title: "Vue organisateur \u2014 qui part d’o\u00f9", 
+pg_save_route_btn: "Enregistrer le parcours", pg_saving: "Enregistrement en cours\u2026", pg_save_error_online: "Erreur lors de l’enregistrement en ligne ({err}). Enregistr\u00e9 uniquement sur cet appareil.",
+pg_retry: "r\u00e9essayer", pg_menu_btn_label: "Pr\u00e9parer la comp\u00e9tition", pg_menu_btn_sub: "pour les clubs\u00a0: cibles, inscrits et \u00e9quipes pr\u00eats \u00e0 l’avance",
 gl_which_piazzola: "Quelle cible avez-vous devant vous\u00a0?", gl_singola: "Simple", gl_mobile: "Mobile", gl_branco: "Groupe (3 cibles)", gl_tempo: "Chronom\u00e9tr\u00e9e (3 cibles)",
-gl_1_arrow: "1 fl\u00e8che", gl_3_arrows_stop: "3 fl\u00e8ches, s'arr\u00eate au premier tir manqu\u00e9", gl_3_arrows_sum: "3 fl\u00e8ches, toujours additionn\u00e9es",
+gl_1_arrow: "1 fl\u00e8che", gl_3_arrows_stop: "3 fl\u00e8ches, s’arr\u00eate au premier tir manqu\u00e9", gl_3_arrows_sum: "3 fl\u00e8ches, toujours additionn\u00e9es",
 notif_section_title: "Notifications", notif_enable_btn: "\uD83D\uDD14 Activer les notifications sur cet appareil",
 notif_not_available: "Non disponible sur ce navigateur/appareil", notif_not_supported: "Ce navigateur ne prend pas en charge les notifications.",
-notif_requesting: "Demande d'autorisation en cours\u2026", notif_denied: "Autorisation refus\u00e9e\u00a0: vous pouvez la r\u00e9activer depuis les param\u00e8tres de votre navigateur pour ce site.",
-notif_token_error: "Impossible d'obtenir le jeton. R\u00e9essayez.", notif_enabled: "Notifications activ\u00e9es sur cet appareil.",
-notif_save_error: "Erreur lors de l'enregistrement\u00a0: {err}", notif_generic_error: "Erreur\u00a0: {err}", notif_not_configured: "Notifications pas encore configur\u00e9es (cl\u00e9 serveur manquante).",
+notif_requesting: "Demande d’autorisation en cours\u2026", notif_denied: "Autorisation refus\u00e9e\u00a0: vous pouvez la r\u00e9activer depuis les param\u00e8tres de votre navigateur pour ce site.",
+notif_token_error: "Impossible d’obtenir le jeton. R\u00e9essayez.", notif_enabled: "Notifications activ\u00e9es sur cet appareil.",
+notif_save_error: "Erreur lors de l’enregistrement\u00a0: {err}", notif_generic_error: "Erreur\u00a0: {err}", notif_not_configured: "Notifications pas encore configur\u00e9es (cl\u00e9 serveur manquante).",
 train_shared_title: "Session partag\u00e9e", train_shared_hint: "Vous avez invit\u00e9 des archers en ligne\u00a0: les scores se synchronisent en temps r\u00e9el sur leurs t\u00e9l\u00e9phones. Connexion internet requise.",
-train_double_confirm_label: "Exiger une double confirmation des scores", train_double_confirm_hint: "Chaque score reste \u00ab\u00a0en attente\u00a0\u00bb jusqu'\u00e0 ce qu'un autre participant de la session le confirme depuis son propre t\u00e9l\u00e9phone. Si d\u00e9sactiv\u00e9, les scores sont enregistr\u00e9s imm\u00e9diatement, sans confirmation.",
-ot_msg_btn: "💬 Écrire à l'organisateur", ot_msg_title: "Message à {name}", ot_msg_placeholder: "Écrire un message…", ot_msg_send: "Envoyer", ot_msg_error: "Erreur. Réessayez.", ot_msg_notif_title: "Nouveau message", ot_msg_notif_body: "{name} : {text}", ot_directions_btn: "🗺 Itinéraire",
-ot_invite_label: "Inviter des archers (optionnel)", ot_invite_placeholder: "Recherche par nom d'utilisateur…", ot_invite_added: "Invités :", ot_notif_invite_title: "Invitation entraînement", ot_notif_invite_body: "{name} vous invite à vous entraîner le {date}{time} — {field}", ot_notif_join_title: "Nouveau participant", ot_notif_join_body: "{name} a rejoint votre entraînement du {date} — {field}",
-ot_section_title: "Entra\u00eenements ouverts", ot_section_hint: "Rejoignez quelqu'un qui s'entra\u00eene aujourd'hui, ou annoncez le v\u00f4tre.", ot_join_btn: "Rejoindre", ot_joined_label: "Inscrit \u2714", ot_leave_btn: "Annuler", ot_full_label: "Complet", ot_create_btn: "+ Annoncer un entra\u00eenement", ot_create_title: "Annoncer un entra\u00eenement ouvert", ot_field_label: "Terrain / parcours", ot_date_label: "Date", ot_time_label: "Heure", ot_spots_label: "Places disponibles (hors vous)", ot_note_label: "Notes (facultatif)", ot_note_placeholder: "Ex. on apporte le mat\u00e9riel FIARC\u2026", ot_save_btn: "Publier", ot_cancel_btn: "Annuler", ot_by: "par {name}", ot_spots_left: "{n} place(s) libre(s)", ot_no_trainings: "Aucun entra\u00eenement ouvert. Soyez le premier\u00a0!", ot_delete_btn: "Supprimer", ot_confirm_delete: "Supprimer cet entra\u00eenement\u00a0?",
+train_double_confirm_label: "Exiger une double confirmation des scores", train_double_confirm_hint: "Chaque score reste \u00ab\u00a0en attente\u00a0\u00bb jusqu’\u00e0 ce qu’un autre participant de la session le confirme depuis son propre t\u00e9l\u00e9phone. Si d\u00e9sactiv\u00e9, les scores sont enregistr\u00e9s imm\u00e9diatement, sans confirmation.",
+ot_msg_btn: "💬 Écrire à l’organisateur", ot_msg_title: "Message à {name}", ot_msg_placeholder: "Écrire un message…", ot_msg_send: "Envoyer", ot_msg_error: "Erreur. Réessayez.", ot_msg_notif_title: "Nouveau message", ot_msg_notif_body: "{name} : {text}", ot_directions_btn: "🗺 Itinéraire",
+ot_invite_label: "Inviter des archers (optionnel)", ot_invite_placeholder: "Recherche par nom d’utilisateur…", ot_invite_added: "Invités :", ot_notif_invite_title: "Invitation entraînement", ot_notif_invite_body: "{name} vous invite à vous entraîner le {date}{time} — {field}", ot_notif_join_title: "Nouveau participant", ot_notif_join_body: "{name} a rejoint votre entraînement du {date} — {field}",
+ot_section_title: "Entra\u00eenements ouverts", ot_section_hint: "Rejoignez quelqu’un qui s’entra\u00eene aujourd’hui, ou annoncez le v\u00f4tre.", ot_join_btn: "Rejoindre", ot_joined_label: "Inscrit \u2714", ot_leave_btn: "Annuler", ot_full_label: "Complet", ot_create_btn: "+ Annoncer un entra\u00eenement", ot_create_title: "Annoncer un entra\u00eenement ouvert", ot_field_label: "Terrain / parcours", ot_date_label: "Date", ot_time_label: "Heure", ot_spots_label: "Places disponibles (hors vous)", ot_note_label: "Notes (facultatif)", ot_note_placeholder: "Ex. on apporte le mat\u00e9riel FIARC\u2026", ot_save_btn: "Publier", ot_cancel_btn: "Annuler", ot_by: "par {name}", ot_spots_left: "{n} place(s) libre(s)", ot_no_trainings: "Aucun entra\u00eenement ouvert. Soyez le premier\u00a0!", ot_delete_btn: "Supprimer", ot_confirm_delete: "Supprimer cet entra\u00eenement\u00a0?",
 session_banner_title: "Session partag\u00e9e active", session_banner_body: "{name} a d\u00e9marr\u00e9 un entra\u00eenement partag\u00e9.", session_banner_btn: "Suivre la session",
-session_follow_title: "Session en direct", session_follow_owner: "D\u00e9marr\u00e9e par {name}", session_no_data: "Aucun score saisi pour l'instant.",
+session_follow_title: "Session en direct", session_follow_owner: "D\u00e9marr\u00e9e par {name}", session_no_data: "Aucun score saisi pour l’instant.",
 session_pending_label: "En attente de confirmation", session_confirmed_label: "Confirm\u00e9", session_confirm_btn: "Confirmer ce score",
 session_closed_note: "Session ferm\u00e9e ou termin\u00e9e.",
 admin_sessions_title: "Sessions partag\u00e9es actives", admin_sessions_empty: "Aucune session partag\u00e9e active pour le moment.",
@@ -2748,7 +2755,7 @@ clear_confirm: "Zum Best\u00e4tigen erneut tippen",
 targets_word: "Ziele",
 ordinal_1: "1.", ordinal_2: "2.", ordinal_3: "3.",
 logout_word: "Abmelden",
-zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
+zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Kern", zone_ffta_superspot: "T\u00f6dlich", zone_ffta_spot: "Vital", zone_ffta_sagoma: "K\u00f6rper",
 target_singular: "Ziel",
 
@@ -2800,12 +2807,12 @@ mode_battuta_desc:"Offizielle Battuta: 28 Ziele, 48 Pfeile insgesamt \u2014 14 e
 menu_info: "Infos",
 disclaimer_text: "ArcTrail 3D ist eine unabh\u00e4ngige App, die von Enthusiasten f\u00fcr den praktischen Einsatz beim Training und bei Wettk\u00e4mpfen entwickelt wurde. Sie ist kein offizielles Produkt der genannten Verb\u00e4nde (FIARC, FITARCO, FFTA, SwissArchery) und wird von diesen weder genehmigt noch ist sie mit ihnen verbunden. Die genannten Namen, Marken und Reglemente geh\u00f6ren den jeweiligen Verb\u00e4nden. Im Zweifelsfall gilt immer das offiziell ver\u00f6ffentlichte Reglement des zust\u00e4ndigen Verbands.",
 contact_title: "Einen Fehler oder einen fehlenden Verband melden",
-contact_text: "Ein falscher Punktestand? Fehlt dein Verband oder dein Land (z.\u00a0B. Spanien, Slowenien\u2026)? Schreib uns, wir verbessern die App gerne gemeinsam mit den Leuten, die sie wirklich nutzen.",
+contact_text: "Ein falscher Punktestand? Fehlt dein Verband oder dein Land (z.\u00a0B. Slowenien, Portugal\u2026)? Schreib uns, wir verbessern die App gerne gemeinsam mit den Leuten, die sie wirklich nutzen.",
 contact_button: "\u2709\ufe0f Schreib uns",
 mode_ffta_training_label:"Training", mode_ffta_training_tag:"1 Pfeil", mode_ffta_training_unit:"Pfeil",
 mode_ffta_training_desc:"Freies Training nach FFTA-Zonen: ein einzelner Pfeil pro Ziel, feste Punktwerte. W\u00e4hle selbst, wie viele Ziele du schie\u00dfen willst.",
-mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"Wettkampf \u00b7 2 Pfeile", mode_ffta_tir3d_unit:"Pfeil",
-mode_ffta_tir3d_desc:"Offizielles FFTA Tir sur Cibles 3D: 24 Ziele, 2 Pfeile pro Ziel vom selben Pflock (beide Pfeile z\u00e4hlen gleich).",
+mode_ffta_tir3d_label:"Tir sur cibles 3D", mode_ffta_tir3d_tag:"Wettkampf \u00b7 2 Pfeile", mode_ffta_tir3d_unit:"Pfeil",
+mode_ffta_tir3d_desc:"Offizielles FFTA Tir sur cibles 3D: 24 Ziele, 2 Pfeile pro Ziel vom selben Pflock (beide Pfeile z\u00e4hlen gleich).",
 mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"Wettkampf \u00b7 2 Pfeile", mode_fitarco3d_unit:"Pfeil",
 mode_fitarco3d_desc:"FITARCO 3D: 24 Ziele, 2 Pfeile pro Ziel. Im Gegensatz zu FIARC h\u00e4ngt der Punktwert nicht von der Pfeilreihenfolge ab.",
 provisional_note:"\u26a0\ufe0f Noch nicht durch ein sicheres offizielles Reglement best\u00e4tigt: kann sich \u00e4ndern.",
@@ -3273,12 +3280,12 @@ mode_battuta_desc:"Resmi Battuta: 28 hedef, toplam 48 ok \u2014 14 tekli ve 4 ha
 menu_info: "Bilgi",
 disclaimer_text: "ArcTrail 3D, antrenman ve yar\u0131\u015fmalarda pratik kullan\u0131m i\u00e7in tutkunlar taraf\u0131ndan yap\u0131lm\u0131\u015f ba\u011f\u0131ms\u0131z bir uygulamad\u0131r. An\u0131lan federasyonlar\u0131n (FIARC, FITARCO, FFTA) resmi bir \u00fcr\u00fcn\u00fc de\u011fildir, onlarla ba\u011fl\u0131 veya onayl\u0131 da de\u011fildir. An\u0131lan isimler, markalar ve kurallar ilgili federasyonlara aittir. Resmi puan konusunda \u015f\u00fcphe varsa her zaman ilgili federasyonun yay\u0131mlad\u0131\u011f\u0131 kurallar ge\u00e7erlidir.",
 contact_title: "Bir hata veya eksik federasyon bildir",
-contact_text: "Yanl\u0131\u015f bir puan m\u0131 buldun? Federasyonun veya \u00fclken eksik mi (\u00f6r. \u0130spanya, Slovenya\u2026)? Bize yaz, uygulamay\u0131 ger\u00e7ek kullan\u0131c\u0131larla birlikte geli\u015ftirmekten memnuniyet duyar\u0131z.",
+contact_text: "Yanl\u0131\u015f bir puan m\u0131 buldun? Federasyonun veya \u00fclken eksik mi (\u00f6r. Slovenya, Portekiz\u2026)? Bize yaz, uygulamay\u0131 ger\u00e7ek kullan\u0131c\u0131larla birlikte geli\u015ftirmekten memnuniyet duyar\u0131z.",
 contact_button: "\u2709\ufe0f Bize yaz\u0131n",
 mode_ffta_training_label:"Antrenman", mode_ffta_training_tag:"1 ok", mode_ffta_training_unit:"Ok",
 mode_ffta_training_desc:"FFTA b\u00f6lgelerine g\u00f6re serbest antrenman: hedef ba\u015f\u0131na tek ok, sabit puanlar. Ka\u00e7 hedef yapaca\u011f\u0131n\u0131 sen se\u00e7.",
-mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"yar\u0131\u015fma \u00b7 2 ok", mode_ffta_tir3d_unit:"Ok",
-mode_ffta_tir3d_desc:"Resmi FFTA Tir sur Cibles 3D: 24 hedef, ayn\u0131 noktadan 2 ok (her ikisi de ayn\u0131 puan).",
+mode_ffta_tir3d_label:"Tir sur cibles 3D", mode_ffta_tir3d_tag:"yar\u0131\u015fma \u00b7 2 ok", mode_ffta_tir3d_unit:"Ok",
+mode_ffta_tir3d_desc:"Resmi FFTA Tir sur cibles 3D: 24 hedef, ayn\u0131 noktadan 2 ok (her ikisi de ayn\u0131 puan).",
 mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"yar\u0131\u015fma \u00b7 2 ok", mode_fitarco3d_unit:"Ok",
 mode_fitarco3d_desc:"FITARCO 3D at\u0131\u015f\u0131: 24 siluet, siluet ba\u015f\u0131na 2 ok. FIARC\u2019ten farkl\u0131 olarak puan oklar\u0131n s\u0131ras\u0131na ba\u011fl\u0131 de\u011fildir.",
 provisional_note:"\u26a0\ufe0f Veriler hen\u00fcz kesin bir resmi kural taraf\u0131ndan do\u011frulanmad\u0131: de\u011fi\u015febilir.",
@@ -3681,7 +3688,6 @@ campi_title: "Найти площадку для 3D-стрельбы",
 campi_btn: "Искать площадки рядом",
 campi_hint: "Открывает Google Карты с площадками для 3D-стрельбы из лука поблизости (требуется геолокация).",
 campi_searching: "Поиск местоположения…",
-campi_filter_placeholder: "Фильтр…",
 campi_filter_placeholder: "Фильтр по названию или месту…",
 history_empty: "Завершённые маршруты появятся здесь в хронологическом порядке, с очками и мишенями.", history_empty_title: "Пока нет маршрутов", history_empty_cta: "Начать первый маршрут", stats_rounds: "Соревнования", stats_avg: "Среднее", stats_best: "Рекорд",
 history_clear: "Очистить историю",
@@ -3741,12 +3747,12 @@ mode_battuta_desc:"Официальная Battuta: 28 мишеней, всего
 menu_info: "Инфо",
 disclaimer_text: "ArcTrail 3D — независимое приложение, созданное энтузиастами для практического использования на тренировках и соревнованиях. Это не официальный продукт упомянутых федераций (FIARC, FITARCO, FFTA) и не одобрено и не аффилировано с ними. Названия, торговые марки и регламенты принадлежат соответствующим федерациям. В случае сомнений в официальном результате всегда действует регламент, опубликованный соответствующей федерацией.",
 contact_title: "Сообщить об ошибке или отсутствующей федерации",
-contact_text: "Нашли неверный результат? Не хватает вашей федерации или страны (напр. Испания, Словения…)? Напишите нам, нам приятно улучшать приложение вместе с теми, кто им реально пользуется.",
+contact_text: "Нашли неверный результат? Не хватает вашей федерации или страны (напр. Словения, Португалия…)? Напишите нам, нам приятно улучшать приложение вместе с теми, кто им реально пользуется.",
 contact_button: "✉️ Написать нам",
 mode_ffta_training_label:"Тренировка", mode_ffta_training_tag:"1 стрела", mode_ffta_training_unit:"Стрела",
 mode_ffta_training_desc:"Свободная тренировка по зонам FFTA: одна стрела на мишень, фиксированные очки. Сколько мишеней пройти — решаете сами.",
-mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"соревнование · 2 стрелы", mode_ffta_tir3d_unit:"Стрела",
-mode_ffta_tir3d_desc:"Официальный FFTA Tir sur Cibles 3D: 24 мишени, 2 стрелы на мишень с одного колышка (одинаковый результат для обеих стрел).",
+mode_ffta_tir3d_label:"Tir sur cibles 3D", mode_ffta_tir3d_tag:"соревнование · 2 стрелы", mode_ffta_tir3d_unit:"Стрела",
+mode_ffta_tir3d_desc:"Официальный FFTA Tir sur cibles 3D: 24 мишени, 2 стрелы на мишень с одного колышка (одинаковый результат для обеих стрел).",
 mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"соревнование · 2 стрелы", mode_fitarco3d_unit:"Стрела",
 mode_fitarco3d_desc:"Стрельба 3D FITARCO: 24 силуэта, 2 стрелы на силуэт. В отличие от FIARC результат не зависит от порядка стрел.",
 provisional_note:"⚠️ Данные ещё не подтверждены официальным регламентом: могут измениться.",
@@ -4208,12 +4214,12 @@ mode_battuta_desc:"Battuta oficial: 28 dianas, 48 flechas en total \u2014 14 dia
 menu_info: "Info",
 disclaimer_text: "ArcTrail 3D es una aplicaci\u00f3n independiente creada por aficionados para uso pr\u00e1ctico durante entrenamientos y competiciones. No es un producto oficial de las federaciones mencionadas (FIARC, FITARCO, FFTA), ni est\u00e1 aprobada o afiliada a ellas. Los nombres, marcas y reglamentos mencionados pertenecen a sus respectivas federaciones. En caso de duda sobre la puntuaci\u00f3n oficial, siempre prevalece el reglamento publicado por la federaci\u00f3n correspondiente.",
 contact_title: "Informar de un error o una federaci\u00f3n que falta",
-contact_text: "\u00bfHas encontrado una puntuaci\u00f3n incorrecta? \u00bfFalta tu federaci\u00f3n o tu pa\u00eds (p. ej. Espa\u00f1a, Eslovenia\u2026)? Escr\u00edbenos, nos encanta mejorar la app junto a quienes realmente la usan.",
+contact_text: "\u00bfHas encontrado una puntuaci\u00f3n incorrecta? \u00bfFalta tu federaci\u00f3n o tu pa\u00eds (p. ej. Eslovenia, Portugal\u2026)? Escr\u00edbenos, nos encanta mejorar la app junto a quienes realmente la usan.",
 contact_button: "\u2709\ufe0f Escr\u00edbenos",
 mode_ffta_training_label:"Entrenamiento", mode_ffta_training_tag:"1 flecha", mode_ffta_training_unit:"Flecha",
 mode_ffta_training_desc:"Entrenamiento libre seg\u00fan las zonas FFTA: una sola flecha por diana, puntuaciones fijas. Elige cu\u00e1ntas dianas hacer.",
-mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"competici\u00f3n \u00b7 2 flechas", mode_ffta_tir3d_unit:"Flecha",
-mode_ffta_tir3d_desc:"Tir sur Cibles 3D oficial de la FFTA: 24 dianas, 2 flechas por diana desde el mismo piquete (misma puntuaci\u00f3n para ambas flechas).",
+mode_ffta_tir3d_label:"Tir sur cibles 3D", mode_ffta_tir3d_tag:"competici\u00f3n \u00b7 2 flechas", mode_ffta_tir3d_unit:"Flecha",
+mode_ffta_tir3d_desc:"Tir sur cibles 3D oficial de la FFTA: 24 dianas, 2 flechas por diana desde el mismo piquete (misma puntuaci\u00f3n para ambas flechas).",
 mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"competici\u00f3n \u00b7 2 flechas", mode_fitarco3d_unit:"Flecha",
 mode_fitarco3d_desc:"Tiro 3D FITARCO: 24 siluetas, 2 flechas por silueta. A diferencia de FIARC, la puntuaci\u00f3n no depende del orden de las flechas.",
 provisional_note:"\u26a0\ufe0f Datos a\u00fan no confirmados por un reglamento oficial certero: podr\u00edan cambiar.",
@@ -4273,7 +4279,6 @@ compagnie_arciere: "Nombre del arquero", compagnie_punteggio: "Puntuaci\u00f3n",
 compagnie_empty_msg: "A\u00fan no hay ninguna puntuaci\u00f3n aqu\u00ed \u2014 s\u00e9 el primero en registrarla.", compagnie_classifica_empty: "No hay puntuaciones para este filtro.",
 cp_admin_claim_btn: "🔑 Solicitar administración de este club", cp_admin_claim_pending: "Solicitud enviada — esperando aprobación.", cp_admin_map_error: "Error al guardar.", cp_admin_tel: "Teléfono", cp_admin_email_label: "Email del club", cp_admin_sito: "Sitio web", 
 compagnie_piazzole_word: "dianas", compagnie_punteggi_word: "puntuaciones registradas", compagnie_tutti: "Todos",
-cp_admin_claim_btn: "🔑 Solicitar administración de este club", cp_admin_claim_pending: "Solicitud enviada — esperando aprobación.", cp_admin_map_error: "Error al guardar.", cp_admin_tel: "Teléfono", cp_admin_email_label: "Email del club", cp_admin_sito: "Sitio web", 
 home_register_btn: "Registrarse", home_login_link: "\u00bfYa tienes una cuenta?", home_login_link_word: "Iniciar sesi\u00f3n",
 home_install_btn: "Instalar la app en el tel\u00e9fono",
 home_install_ios_text: "<b>En iPhone:</b> toca el bot\u00f3n <b>Compartir</b> en la parte inferior del navegador (el cuadrado con la flecha hacia arriba), luego elige <b>\u201cA\u00f1adir a pantalla de inicio\u201d</b>. Aparecer\u00e1 un icono como el de cualquier otra app.",
@@ -4676,12 +4681,12 @@ mode_battuta_desc:"Officiell Battuta: 28 m\u00e5l, 48 pilar totalt \u2014 14 enk
 menu_info: "Info",
 disclaimer_text: "ArcTrail 3D \u00e4r en oberoende app skapad av entusiaster f\u00f6r praktisk anv\u00e4ndning under tr\u00e4ning och t\u00e4vling. Det \u00e4r inte en officiell produkt fr\u00e5n de n\u00e4mnda f\u00f6rbunden (FIARC, FITARCO, FFTA), och \u00e4r varken godk\u00e4nd av eller ansluten till dem. Namn, varum\u00e4rken och regler som n\u00e4mns tillh\u00f6r respektive f\u00f6rbund. Vid tvivel om officiell po\u00e4ng g\u00e4ller alltid de regler som publicerats av det aktuella f\u00f6rbundet.",
 contact_title: "Rapportera ett fel eller ett saknat f\u00f6rbund",
-contact_text: "Hittade du en felaktig po\u00e4ng? Saknas ditt f\u00f6rbund eller ditt land (t.ex. Spanien, Slovenien\u2026)? Skriv till oss, vi blir gl\u00e4da av att f\u00f6rb\u00e4ttra appen tillsammans med de som verkligen anv\u00e4nder den.",
+contact_text: "Hittade du en felaktig po\u00e4ng? Saknas ditt f\u00f6rbund eller ditt land (t.ex. Slovenien, Portugal\u2026)? Skriv till oss, vi blir gl\u00e4da av att f\u00f6rb\u00e4ttra appen tillsammans med de som verkligen anv\u00e4nder den.",
 contact_button: "\u2709\ufe0f Skriv till oss",
 mode_ffta_training_label:"Tr\u00e4ning", mode_ffta_training_tag:"1 pil", mode_ffta_training_unit:"Pil",
 mode_ffta_training_desc:"Fri tr\u00e4ning enligt FFTA-zonerna: en pil per m\u00e5l, fasta po\u00e4ng. V\u00e4lj sj\u00e4lv hur m\u00e5nga m\u00e5l du vill g\u00f6ra.",
-mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"t\u00e4vling \u00b7 2 pilar", mode_ffta_tir3d_unit:"Pil",
-mode_ffta_tir3d_desc:"Officiell FFTA Tir sur Cibles 3D: 24 m\u00e5l, 2 pilar per m\u00e5l fr\u00e5n samma p\u00e5le (samma po\u00e4ng f\u00f6r b\u00e5da pilarna).",
+mode_ffta_tir3d_label:"Tir sur cibles 3D", mode_ffta_tir3d_tag:"t\u00e4vling \u00b7 2 pilar", mode_ffta_tir3d_unit:"Pil",
+mode_ffta_tir3d_desc:"Officiell FFTA Tir sur cibles 3D: 24 m\u00e5l, 2 pilar per m\u00e5l fr\u00e5n samma p\u00e5le (samma po\u00e4ng f\u00f6r b\u00e5da pilarna).",
 mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"t\u00e4vling \u00b7 2 pilar", mode_fitarco3d_unit:"Pil",
 mode_fitarco3d_desc:"FITARCO 3D-sk\u00e4tte: 24 silhuetter, 2 pilar per silhuett. Till skillnad fr\u00e5n FIARC beror po\u00e4ngen inte p\u00e5 pilarnas ordning.",
 provisional_note:"\u26a0\ufe0f Uppgifter \u00e4nnu inte bekr\u00e4ftade av ett s\u00e4kert officiellt regelverk: kan \u00e4ndras.",
@@ -5143,12 +5148,12 @@ mode_battuta_desc:"Officiele Battuta: 28 doelen, 48 pijlen in totaal \u2014 14 e
 menu_info: "Info",
 disclaimer_text: "ArcTrail 3D is een onafhankelijke app gemaakt door enthousiastelingen voor praktisch gebruik tijdens trainingen en wedstrijden. Het is geen officieel product van de genoemde bonden (FIARC, FITARCO, FFTA), en is er niet door goedgekeurd of mee verbonden. Namen, merken en reglementen die worden genoemd behoren toe aan hun respectievelijke bonden. Bij twijfel over de officiele score geldt altijd het reglement gepubliceerd door de betreffende bond.",
 contact_title: "Meld een fout of een ontbrekende bond",
-contact_text: "Heb je een verkeerde score gevonden? Mist je bond of je land (bijv. Spanje, Sloveni\u00eb\u2026)? Schrijf ons, we verbeteren de app graag samen met wie hem echt gebruikt.",
+contact_text: "Heb je een verkeerde score gevonden? Mist je bond of je land (bijv. Sloveni\u00eb, Portugal\u2026)? Schrijf ons, we verbeteren de app graag samen met wie hem echt gebruikt.",
 contact_button: "\u2709\ufe0f Schrijf ons",
 mode_ffta_training_label:"Training", mode_ffta_training_tag:"1 pijl", mode_ffta_training_unit:"Pijl",
 mode_ffta_training_desc:"Vrije training volgens de FFTA-zones: \u00e9\u00e9n pijl per doel, vaste scores. Kies zelf hoeveel doelen je wilt schieten.",
-mode_ffta_tir3d_label:"Tir sur Cibles 3D", mode_ffta_tir3d_tag:"wedstrijd \u00b7 2 pijlen", mode_ffta_tir3d_unit:"Pijl",
-mode_ffta_tir3d_desc:"Officiele FFTA Tir sur Cibles 3D: 24 doelen, 2 pijlen per doel vanaf dezelfde paal (dezelfde score voor beide pijlen).",
+mode_ffta_tir3d_label:"Tir sur cibles 3D", mode_ffta_tir3d_tag:"wedstrijd \u00b7 2 pijlen", mode_ffta_tir3d_unit:"Pijl",
+mode_ffta_tir3d_desc:"Officiele FFTA Tir sur cibles 3D: 24 doelen, 2 pijlen per doel vanaf dezelfde paal (dezelfde score voor beide pijlen).",
 mode_fitarco3d_label:"3D", mode_fitarco3d_tag:"wedstrijd \u00b7 2 pijlen", mode_fitarco3d_unit:"Pijl",
 mode_fitarco3d_desc:"FITARCO 3D-schieten: 24 silhouetten, 2 pijlen per silhouet. In tegenstelling tot FIARC hangt de score niet af van de volgorde van de pijlen.",
 provisional_note:"\u26a0\ufe0f Gegevens nog niet bevestigd door een zeker officieel reglement: kunnen veranderen.",
@@ -5208,7 +5213,6 @@ compagnie_arciere: "Naam boogschutter", compagnie_punteggio: "Score", compagnie_
 compagnie_empty_msg: "Hier nog geen score \u2014 wees de eerste die er een registreert.", compagnie_classifica_empty: "Geen scores voor dit filter.",
 cp_admin_claim_btn: "🔑 Beheer van deze club aanvragen", cp_admin_claim_pending: "Verzoek verzonden — wacht op goedkeuring.", cp_admin_map_error: "Fout bij opslaan.", cp_admin_tel: "Telefoon", cp_admin_email_label: "Club e-mail", cp_admin_sito: "Website", 
 compagnie_piazzole_word: "doelen", compagnie_punteggi_word: "geregistreerde scores", compagnie_tutti: "Alle",
-cp_admin_claim_btn: "🔑 Beheer van deze club aanvragen", cp_admin_claim_pending: "Verzoek verzonden — wacht op goedkeuring.", cp_admin_map_error: "Fout bij opslaan.", cp_admin_tel: "Telefoon", cp_admin_email_label: "Club e-mail", cp_admin_sito: "Website", 
 home_register_btn: "Registreren", home_login_link: "Heb je al een account?", home_login_link_word: "Inloggen",
 home_install_btn: "Installeer de app op je telefoon",
 home_install_ios_text: "<b>Op iPhone:</b> tik op de knop <b>Delen</b> onderaan de browser (het vierkant met de pijl omhoog), kies dan <b>\u201cZet op beginscherm\u201d</b>. Er verschijnt een icoon zoals bij elke andere app.",
@@ -8154,17 +8158,31 @@ modeCard.appendChild(modeGrid);
 
 var format = mode.formats[0];
 var unit = modeUnit(modeKey);
-var footerParts = [];
-Object.keys(mode.scoring).forEach(function(arrowNum){
-var s = mode.scoring[arrowNum];
-var zoneTxt = mode.zones.map(function(z){ return t(z.labelKey)+" "+s[z.key]; }).join(" &middot; ");
-var unitDisplay = (state.lang === "de") ? unit : unit.toLowerCase();
-footerParts.push(t("ordinal_"+arrowNum)+" "+unitDisplay+": "+zoneTxt);
+// Il tiro nullo vale per TUTTE le frecce, non solo per l'ultima: non puo' stare
+// su una riga staccata in fondo. Se il barème e' identico per tutte le frecce si
+// scrive una riga sola (inutile ripetere gli stessi numeri); se cambia da freccia
+// a freccia si tengono le righe separate e il nullo si ripete su ognuna.
+var arrowKeys = Object.keys(mode.scoring);
+function zoneLineFor(s){
+return mode.zones.map(function(z){ return t(z.labelKey)+" "+s[z.key]; }).join(" &middot; ") + " &middot; " + t("fuori_sagoma") + " 0";
+}
+var firstScoring = mode.scoring[arrowKeys[0]];
+var sameForAllArrows = arrowKeys.every(function(k){
+return mode.zones.every(function(z){ return mode.scoring[k][z.key] === firstScoring[z.key]; });
 });
+var footerParts = [];
+if(sameForAllArrows){
+footerParts.push(zoneLineFor(firstScoring));
+} else {
+arrowKeys.forEach(function(arrowNum){
+var unitDisplay = (state.lang === "de") ? unit : unit.toLowerCase();
+footerParts.push(t("ordinal_"+arrowNum)+" "+unitDisplay+": "+zoneLineFor(mode.scoring[arrowNum]));
+});
+}
 var provisionalHtml = mode.provisional ? '<br><br><b style="color:var(--danger);">'+t("provisional_note")+'</b>' : '';
 modeCard.appendChild(el(
 '<div class="rules-panel"><div class="rp-title">'+escapeHtml(modeLabel(modeKey))+' &middot; '+format+' '+t("targets_word")+'</div>'+
-modeDesc(modeKey)+'<br><br>'+footerParts.join("<br>")+'<br>'+t("fuori_sagoma")+' = 0.'+provisionalHtml+'</div>'
+modeDesc(modeKey)+'<br><br>'+footerParts.join("<br>")+provisionalHtml+'</div>'
 ));
 wrap.appendChild(modeCard);
 
@@ -8873,12 +8891,18 @@ wrap.appendChild(card);
 wrap.appendChild(ppCard);
 wrap.appendChild(erCard);
 
+// Note personali dell'admin (perche' uno e' premium, chi lo ha presentato, ecc.).
+// Vivono in admin_notes, non su users: cosi' l'interessato non le legge mai.
+var adminNotes = {};
 function loadList(){
-db.collection("users").get().then(function(snap){
+db.collection("admin_notes").get().then(function(ns){
+ns.forEach(function(d){ adminNotes[d.id] = (d.data() && d.data().nota) || ""; });
+}).catch(function(){ /* raccolta vuota o non ancora creata: nessun problema */ })
+.then(function(){ return db.collection("users").get(); }).then(function(snap){
 var pending = [], approved = [];
 snap.forEach(function(doc){
 var d = doc.data();
-var row = { id: doc.id, email: d.email || "?", approved: !!d.approved, betaTester: d.betaTester === true, data: d };
+var row = { id: doc.id, email: d.email || "?", approved: !!d.approved, betaTester: d.betaTester === true, premium: d.premium === true, data: d };
 (row.approved ? approved : pending).push(row);
 });
 listWrap.innerHTML = "";
@@ -8902,13 +8926,33 @@ listWrap.appendChild(rowEl);
 });
 listWrap.appendChild(el('<div style="font-weight:700;margin:16px 0 8px;">'+t("admin_approved_title")+' ('+approved.length+')</div>'));
 approved.forEach(function(row){
-var rowEl = el('<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;"><span style="font-size:0.9rem;word-break:break-all;flex:1;min-width:140px;">'+escapeHtml(row.email)+(row.betaTester?' <span style="background:var(--bark);color:#fff;padding:1px 6px;border-radius:4px;font-size:0.7rem;font-weight:700;">BETA</span>':'')+'</span></div>');
+var rowEl = el('<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;"><span style="font-size:0.9rem;word-break:break-all;flex:1;min-width:140px;">'+escapeHtml(row.email)+(row.betaTester?' <span style="background:var(--bark);color:#fff;padding:1px 6px;border-radius:4px;font-size:0.7rem;font-weight:700;">BETA</span>':'')+(row.premium?' <span style="background:var(--accent);color:var(--accent-ink);padding:1px 6px;border-radius:4px;font-size:0.7rem;font-weight:700;">PREMIUM</span>':'')+'</span></div>');
 var betaBtn = el('<button class="btn btn-ghost btn-sm" style="'+(row.betaTester?'border-color:var(--bark);color:var(--bark);':'')+'">Beta '+(row.betaTester?'ON':'OFF')+'</button>');
 betaBtn.addEventListener("click", function(){
 betaBtn.disabled = true;
 db.collection("users").doc(row.id).update({betaTester: !row.betaTester}).then(loadList);
 });
 rowEl.appendChild(betaBtn);
+// Premium: interruttore unico, visibile solo qui dentro (pannello admin).
+// L'utente non lo vede e non lo puo' scrivere: lo vietano le regole.
+var premBtn = el('<button class="btn btn-ghost btn-sm" style="'+(row.premium?'border-color:var(--accent-soft);color:var(--accent-soft);':'')+'">Premium '+(row.premium?'ON':'OFF')+'</button>');
+premBtn.addEventListener("click", function(){
+premBtn.disabled = true;
+db.collection("users").doc(row.id).update({premium: !row.premium})
+.then(loadList)
+.catch(function(e){ premBtn.disabled = false; alert(e && e.message ? e.message : "Errore"); });
+});
+rowEl.appendChild(premBtn);
+var noteInput = el('<input type="text" placeholder="Nota (solo admin)" style="flex-basis:100%;font-size:0.8rem;padding:6px 8px;">');
+noteInput.value = adminNotes[row.id] || "";
+noteInput.addEventListener("change", function(){
+var v = noteInput.value.trim();
+noteInput.disabled = true;
+db.collection("admin_notes").doc(row.id).set({ nota: v, at: firebase.firestore.FieldValue.serverTimestamp() })
+.then(function(){ adminNotes[row.id] = v; noteInput.disabled = false; })
+.catch(function(e){ noteInput.disabled = false; alert(e && e.message ? e.message : "Errore"); });
+});
+rowEl.appendChild(noteInput);
 var btn = el('<button class="btn btn-ghost btn-sm">'+t("admin_revoke_btn")+'</button>');
 btn.addEventListener("click", function(){
 btn.disabled = true;
@@ -9095,7 +9139,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-14-segnalazione-chat";
+var BUILD_STAMP = "2026-08-15-premium";
 
 function infoScreen(){
 var wrap = el('<div></div>');
