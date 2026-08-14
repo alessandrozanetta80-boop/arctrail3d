@@ -742,6 +742,9 @@ var currentUser = null;
 var PENDING_EMAIL_KEY = "arctrail3d_pending_email";
 var PENDING_PROFILE_KEY = "arctrail3d_pending_profile";
 var ADMIN_EMAIL = "alessandro.zanetta80@gmail.com";
+// Nome (non il cognome: sta solo dove e' obbligatorio, cioe' nelle pagine
+// legali) mostrato a chi apre la chat di segnalazione, cosi' sa a chi scrive.
+var ADMIN_NAME = "Alessandro";
 var CONTACT_EMAIL = "info@arctrail3d.com";
 var IS_BETA_TESTER = false; // impostato da onAuthReady leggendo il campo betaTester in Firestore
 // Utente premium: un solo interruttore, niente livelli. Lo accende SOLO l'admin
@@ -1082,6 +1085,8 @@ welcome_note_ack: "Ho capito: non mostrare più questo messaggio",
 report_admin_hint: "Hai trovato un problema o hai un’idea? Scrivi a chi sviluppa l’app: si apre una chat qui dentro.",
 report_admin_name: "Assistenza ArcTrail 3D",
 report_admin_err: "Non riesco ad aprire la chat con l’amministratore. Riprova più tardi.",
+dm_admin_sub: "{name} — amministratore di ArcTrail 3D",
+dm_real_name: "Nome e cognome: {name} (visibile solo all’amministratore)",
 
 
 country_italy: "Italia",
@@ -1589,6 +1594,8 @@ welcome_note_ack: "Got it: don’t show this message again",
 report_admin_hint: "Found a problem or have an idea? Write to the person who develops the app: it opens a chat right here.",
 report_admin_name: "ArcTrail 3D Support",
 report_admin_err: "I can’t open the chat with the administrator. Please try again later.",
+dm_admin_sub: "{name} — ArcTrail 3D administrator",
+dm_real_name: "Full name: {name} (visible to the administrator only)",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Shoot",
 nav_fields: "Fields",
@@ -2042,6 +2049,8 @@ welcome_note_ack: "J’ai compris : ne plus afficher ce message",
 report_admin_hint: "Vous avez trouvé un problème ou vous avez une idée ? Écrivez à celui qui développe l’application : une discussion s’ouvre ici même.",
 report_admin_name: "Assistance ArcTrail 3D",
 report_admin_err: "Impossible d’ouvrir la discussion avec l’administrateur. Réessayez plus tard.",
+dm_admin_sub: "{name} — administrateur d’ArcTrail 3D",
+dm_real_name: "Nom et prénom : {name} (visible uniquement par l’administrateur)",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Tirer",
 nav_fields: "Terrains",
@@ -2495,6 +2504,8 @@ welcome_note_ack: "Verstanden: diese Meldung nicht mehr anzeigen",
 report_admin_hint: "Ein Problem gefunden oder eine Idee? Schreib der Person, die die App entwickelt: der Chat öffnet sich hier drin.",
 report_admin_name: "ArcTrail 3D Support",
 report_admin_err: "Der Chat mit dem Administrator lässt sich nicht öffnen. Bitte später erneut versuchen.",
+dm_admin_sub: "{name} — Administrator von ArcTrail 3D",
+dm_real_name: "Vor- und Nachname: {name} (nur für den Administrator sichtbar)",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Schie\u00dfen",
 nav_fields: "Parcours",
@@ -2948,6 +2959,8 @@ welcome_note_ack: "Anladım: bu mesajı bir daha gösterme",
 report_admin_hint: "Bir sorun mu buldun ya da bir fikrin mi var? Uygulamayı geliştiren kişiye yaz: sohbet burada açılır.",
 report_admin_name: "ArcTrail 3D Destek",
 report_admin_err: "Yöneticiyle sohbet açılamıyor. Lütfen daha sonra tekrar dene.",
+dm_admin_sub: "{name} — ArcTrail 3D yöneticisi",
+dm_real_name: "Ad soyad: {name} (yalnızca yönetici görür)",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "At\u0131\u015f",
 nav_fields: "Alanlar",
@@ -3415,6 +3428,8 @@ welcome_note_ack: "Понятно: больше не показывать это
 report_admin_hint: "Нашли проблему или есть идея? Напишите разработчику приложения: чат откроется прямо здесь.",
 report_admin_name: "Поддержка ArcTrail 3D",
 report_admin_err: "Не удаётся открыть чат с администратором. Попробуйте позже.",
+dm_admin_sub: "{name} — администратор ArcTrail 3D",
+dm_real_name: "Имя и фамилия: {name} (видно только администратору)",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "\u0421\u0442\u0440\u0435\u043b\u044c\u0431\u0430",
 nav_fields: "\u041f\u043e\u043b\u044f",
@@ -3882,6 +3897,8 @@ welcome_note_ack: "Entendido: no volver a mostrar este mensaje",
 report_admin_hint: "¿Has encontrado un problema o tienes una idea? Escribe a quien desarrolla la aplicación: se abre un chat aquí mismo.",
 report_admin_name: "Soporte ArcTrail 3D",
 report_admin_err: "No puedo abrir el chat con el administrador. Inténtalo más tarde.",
+dm_admin_sub: "{name} — administrador de ArcTrail 3D",
+dm_real_name: "Nombre y apellidos: {name} (visible solo para el administrador)",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Tirar",
 nav_fields: "Campos",
@@ -4349,6 +4366,8 @@ welcome_note_ack: "Jag förstår: visa inte det här meddelandet igen",
 report_admin_hint: "Hittat ett problem eller har du en idé? Skriv till den som utvecklar appen: en chatt öppnas här inne.",
 report_admin_name: "ArcTrail 3D Support",
 report_admin_err: "Kan inte öppna chatten med administratören. Försök igen senare.",
+dm_admin_sub: "{name} — administratör för ArcTrail 3D",
+dm_real_name: "För- och efternamn: {name} (syns bara för administratören)",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Skjut",
 nav_fields: "Banor",
@@ -4816,6 +4835,8 @@ welcome_note_ack: "Begrepen: dit bericht niet meer tonen",
 report_admin_hint: "Een probleem gevonden of heb je een idee? Schrijf naar wie de app ontwikkelt: er opent hier een chat.",
 report_admin_name: "ArcTrail 3D Ondersteuning",
 report_admin_err: "Ik kan de chat met de beheerder niet openen. Probeer het later opnieuw.",
+dm_admin_sub: "{name} — beheerder van ArcTrail 3D",
+dm_real_name: "Voor- en achternaam: {name} (alleen zichtbaar voor de beheerder)",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Schieten",
 nav_fields: "Velden",
@@ -9139,7 +9160,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-15-premium";
+var BUILD_STAMP = "2026-08-15-adminchat";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -10549,14 +10570,49 @@ if(dmMsgUnsub){ try{ dmMsgUnsub(); }catch(e){} dmMsgUnsub = null; }
 // riusa la chat interna 1-a-1, cosi' il messaggio resta, si puo' rispondere e
 // la push parte da sola. L'uid dell'admin sta in app_config/admin, scritto
 // dall'app dell'admin al suo login: se non c'e' ancora, si avvisa e basta.
+// Uid dell'amministratore, letto una volta sola e tenuto da parte: lo usano
+// sia il pulsante di segnalazione sia la riga sotto il titolo della chat.
+var adminUidCache = null;
+function loadAdminUid(cb){
+if(adminUidCache){ cb(adminUidCache); return; }
+if(!db){ cb(null); return; }
+db.collection("app_config").doc("admin").get().then(function(doc){
+adminUidCache = doc.exists ? (doc.data().uid || null) : null;
+cb(adminUidCache);
+}).catch(function(e){ console.error("admin uid:", e); cb(null); });
+}
+
+// Riga sotto il titolo della conversazione: dice chi c'e' davvero dall'altra
+// parte, e cambia a seconda di chi guarda.
+// - Utente normale nella chat di segnalazione: il nome dell'amministratore.
+//   La sola scritta "Assistenza ArcTrail 3D" non dice a chi si sta scrivendo.
+// - Amministratore: nome e cognome di chi scrive, letti da users/{uid} (per
+//   regola li legge solo lui). Serve perche' chi ha spuntato "nascondi nome e
+//   cognome" nel profilo pubblico arriverebbe col solo nome utente, e su una
+//   segnalazione bisogna sapere chi e'.
+function fillDmSubtitle(box, otherUid){
+if(!box || !otherUid || !currentUser || !db) return;
+if(currentUser.email === ADMIN_EMAIL){
+db.collection("users").doc(otherUid).get().then(function(d){
+if(!d.exists) return;
+var u = d.data() || {};
+var nome = (u.nomeCognome || "").trim();
+if(nome) box.textContent = t("dm_real_name", { name: nome });
+}).catch(function(e){ console.error("nome mittente:", e); });
+return;
+}
+loadAdminUid(function(adminUid){
+if(adminUid && adminUid === otherUid) box.textContent = t("dm_admin_sub", { name: ADMIN_NAME });
+});
+}
+
 function openAdminChat(){
 if(!db || !currentUser) return;
-db.collection("app_config").doc("admin").get().then(function(doc){
-var adminUid = doc.exists ? (doc.data().uid || null) : null;
+loadAdminUid(function(adminUid){
 if(!adminUid){ alert(t("report_admin_err")); return; }
 if(adminUid === currentUser.uid){ state.screen = "messaggi"; save(); render(); return; }
 openDirectChat(adminUid, t("report_admin_name"));
-}).catch(function(e){ console.error("openAdminChat:", e); alert(t("report_admin_err")); });
+});
 }
 
 function openDirectChat(uidOther, nameOther){
@@ -10675,6 +10731,10 @@ card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("dm_
 wrap.appendChild(card);
 return wrap;
 }
+var dmSub = el('<div style="font-size:0.8rem;color:var(--muted);margin:-6px 0 12px;line-height:1.4;"></div>');
+card.appendChild(dmSub);
+fillDmSubtitle(dmSub, otherUid);
+
 var chatId = dmChatId(currentUser.uid, otherUid);
 
 // Segnalazione e blocco: obbligatori sugli store per i contenuti fra utenti
