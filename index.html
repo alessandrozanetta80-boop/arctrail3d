@@ -8,34 +8,44 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ArcTrail 3D">
 <meta name="mobile-web-app-capable" content="yes">
-<title>ArcTrail 3D – Scoring App for 3D Archery / Segnapunti Tiro con l'Arco 3D</title>
-<meta name="description" content="ArcTrail 3D: free scoring app for 3D archery, supporting multiple federations (FIARC, FITARCO, IFAA and more) in Italian, English, French and German. Track scores, rounds and live rankings on your phone. App gratuita per il punteggio del tiro con l'arco 3D, multi-federazione e multi-lingua.">
-<link rel="canonical" href="https://www.arctrail3d.com/">
+<title>ArcTrail 3D — Segnapunti per il tiro con l'arco 3D</title>
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="description" content="App gratuita per segnare i punteggi nel tiro con l'arco 3D: funziona anche senza rete sul percorso, tiene il diario degli allenamenti e conosce i regolamenti FIARC, FITARCO e World Archery. In 9 lingue.">
+<link rel="canonical" href="https://arctrail3d.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ArcTrail 3D">
-<meta property="og:title" content="ArcTrail 3D – Scoring App for 3D Archery">
-<meta property="og:description" content="Free scoring app for 3D archery, supporting multiple federations in Italian, English, French and German.">
-<meta property="og:url" content="https://www.arctrail3d.com/">
-<meta property="og:image" content="https://www.arctrail3d.com/logo.jpg">
+<meta property="og:title" content="ArcTrail 3D — Segnapunti per il tiro con l'arco 3D">
+<meta property="og:description" content="Segna i punteggi sul percorso anche senza rete, tieni il diario degli allenamenti e confrontati con gli altri arcieri. Gratis, in 9 lingue.">
+<meta property="og:url" content="https://arctrail3d.com/">
+<meta property="og:image" content="https://arctrail3d.com/logo.jpg">
+<meta property="og:image:alt" content="ArcTrail 3D">
 <meta property="og:locale" content="it_IT">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:locale:alternate" content="fr_FR">
 <meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="nl_NL">
+<meta property="og:locale:alternate" content="sv_SE">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta property="og:locale:alternate" content="ru_RU">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ArcTrail 3D – Scoring App for 3D Archery">
-<meta name="twitter:description" content="Free scoring app for 3D archery, supporting multiple federations in Italian, English, French and German.">
-<meta name="twitter:image" content="https://www.arctrail3d.com/logo.jpg">
+<meta name="twitter:title" content="ArcTrail 3D — Segnapunti per il tiro con l'arco 3D">
+<meta name="twitter:description" content="Segna i punteggi sul percorso anche senza rete, tieni il diario degli allenamenti e confrontati con gli altri arcieri. Gratis, in 9 lingue.">
+<meta name="twitter:image" content="https://arctrail3d.com/logo.jpg">
 <script type="application/ld+json">
 {
 "@context": "https://schema.org",
 "@type": "WebApplication",
 "name": "ArcTrail 3D",
 "alternateName": "ArcTrail3D",
-"description": "Free scoring app for 3D archery (tiro con l'arco 3D), supporting multiple federations (FIARC, FITARCO, IFAA and more) in Italian, English, French and German.",
-"url": "https://www.arctrail3d.com/",
+"description": "App gratuita per segnare i punteggi nel tiro con l'arco 3D. Funziona anche senza rete sul percorso, tiene il diario degli allenamenti e segue i regolamenti di FIARC, FITARCO e World Archery.",
+"url": "https://arctrail3d.com/",
 "applicationCategory": "SportsApplication",
-"operatingSystem": "Any (Web/PWA)",
-"inLanguage": ["it", "en", "fr", "de"],
+"operatingSystem": "Web, Android, iOS (PWA)",
+"browserRequirements": "Richiede JavaScript",
+"inLanguage": ["it","en","fr","de","es","nl","sv","tr","ru"],
+"image": "https://arctrail3d.com/logo.jpg",
+"author": { "@type": "Person", "name": "Alessandro Zanetta" },
 "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
 }
 </script>
@@ -652,6 +662,16 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
 </style>
 </head>
 <body>
+<noscript>
+<div style="max-width:720px;margin:0 auto;padding:32px 20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.65;color:#10201D">
+<h1 style="font-size:26px;margin:0 0 8px">ArcTrail 3D — segnapunti per il tiro con l'arco 3D</h1>
+<p>ArcTrail 3D è un'app gratuita per segnare i punteggi sui percorsi di tiro con l'arco 3D. Funziona anche senza copertura telefonica in mezzo al bosco, tiene il diario degli allenamenti e conosce i regolamenti di FIARC, FITARCO e World Archery. È disponibile in nove lingue.</p>
+<p>Per usarla serve JavaScript attivo nel browser.</p>
+<p><a href="/presentazione.html" style="color:#315B35;font-weight:700">Leggi la presentazione dell'app</a> &nbsp;·&nbsp;
+<a href="/privacy.html" style="color:#315B35">Privacy</a> &nbsp;·&nbsp;
+<a href="/termini.html" style="color:#315B35">Termini d'uso</a></p>
+</div>
+</noscript>
 <div id="app"></div>
 
 <script>
@@ -6185,7 +6205,7 @@ var PROFILE_FEDERATIONS = [
 ];
 var PROFILE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longbow", storico:"Storico" };
 var ADMIN_CONTACT_EMAIL = "info@arctrail3d.com";
-var ADMIN_SITE = "www.arctrail3d.com";
+var ADMIN_SITE = "arctrail3d.com";
 
 function welcomeScreen(){
 var wrap = el('<div class="splash-wrap"></div>');

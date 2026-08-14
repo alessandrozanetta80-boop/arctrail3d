@@ -1,0 +1,9 @@
+# ArcTrail 3D — arctrail3d.com
+# Il Marketplace e la pagina di eliminazione account non vanno indicizzati:
+# lo dicono i loro meta tag "noindex", quindi qui NON vanno bloccati
+# (se li bloccassimo, il crawler non potrebbe leggere il noindex).
+
+User-agent: *
+Allow: /
+
+Sitemap: https://arctrail3d.com/sitemap.xml
