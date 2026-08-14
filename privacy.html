@@ -9,7 +9,7 @@
 <link rel="icon" href="/logo.jpg">
 <style>
 :root{
-  --ink:#10201D; --teal:#116E62; --amber:#C25E18;
+  --ink:#10201D; --teal:#315B35; --amber:#C8551A;
   --paper:#F7F6F3; --card:#FFFFFF; --line:#E3E1DA; --muted:#5C6B67;
 }
 *{box-sizing:border-box}
@@ -22,7 +22,7 @@ body{
 header{background:var(--ink); color:#fff; padding:18px 20px}
 .hwrap{max-width:760px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
 .brand{font-weight:800; letter-spacing:.02em; font-size:17px}
-.brand span{color:#7FD4C4}
+.brand span{color:#7FCB8A}
 .back{margin-left:auto; color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.35);
   padding:7px 13px; border-radius:999px; font-size:14px; font-weight:600}
 .back:hover{background:rgba(255,255,255,.12)}
@@ -44,7 +44,7 @@ th{background:#EFEEE9; font-weight:700}
 .wrapper{overflow-x:auto}
 .cta{display:inline-block; background:var(--teal); color:#fff; text-decoration:none;
   font-weight:700; padding:12px 20px; border-radius:10px; margin-top:6px}
-.cta:hover{background:#0D5A50}
+.cta:hover{background:#244426}
 footer{border-top:1px solid var(--line); margin-top:44px; padding-top:18px; color:var(--muted); font-size:14px}
 footer a{margin-right:16px}
 @media (min-width:760px){ h1{font-size:32px} main{padding-top:34px} }
@@ -61,7 +61,7 @@ footer a{margin-right:16px}
 
 <main>
   <h1>Informativa sulla privacy</h1>
-  <p class="dateline">Ultimo aggiornamento: 12 agosto 2026</p>
+  <p class="dateline">Ultimo aggiornamento: 14 agosto 2026</p>
 
   <div class="lead">
     <p>ArcTrail 3D è un'app per segnare i punteggi nel tiro con l'arco 3D. Raccogliamo solo i dati che servono a farla funzionare: il tuo account, i tuoi giri e i contenuti che pubblichi. <strong>Non vendiamo i tuoi dati, non mostriamo pubblicità e non usiamo strumenti di tracciamento pubblicitario.</strong></p>
@@ -76,7 +76,8 @@ footer a{margin-right:16px}
   <h3>Dati che ci dai al momento della registrazione</h3>
   <ul>
     <li>Indirizzo email e password. La password è gestita e cifrata dal servizio di autenticazione: non è visibile al titolare.</li>
-    <li>Nome visualizzato, compagnia arcieristica di appartenenza, nazione, federazione e classe di arco.</li>
+    <li>Nome e cognome, obbligatori, e un nome utente. <strong>Dal tuo profilo puoi scegliere di nascondere nome e cognome agli altri utenti:</strong> in quel caso agli altri arcieri compare solo il nome utente, mentre nome e cognome restano registrati e visibili soltanto a te e al titolare. Fanno eccezione le gare: a chi organizza una gara a cui ti iscrivi vengono comunicati nome e cognome, perché le classifiche ufficiali si compilano con quelli.</li>
+    <li>Compagnia arcieristica di appartenenza, nazione, federazione, numero di tessera e classe di arco.</li>
   </ul>
 
   <h3>Contenuti che crei usando l'app</h3>
@@ -84,13 +85,14 @@ footer a{margin-right:16px}
     <li>Punteggi, giri di tiro, statistiche e note del diario.</li>
     <li>Allenamenti aperti pubblicati e adesioni.</li>
     <li>Segnalazioni sullo stato dei percorsi.</li>
-    <li>Annunci del Mercatino, con le relative foto, recensioni e valutazioni.</li>
-    <li>Messaggi inviati nelle chat private, nelle chat degli allenamenti e nelle conversazioni del Mercatino.</li>
+    <li>Annunci del Marketplace, con le relative foto, recensioni e valutazioni.</li>
+    <li>Messaggi inviati nelle chat private, nelle chat degli allenamenti e nelle conversazioni del Marketplace.</li>
   </ul>
 
   <h3>Dati tecnici</h3>
   <ul>
     <li>Il token del dispositivo necessario a recapitare le notifiche push, se le hai autorizzate.</li>
+    <li>Il registro degli errori dell'app: quando qualcosa non funziona, salviamo il messaggio di errore, il punto del programma in cui si è verificato, la schermata aperta, la versione dell'app, la lingua, lo stato della rete, il tipo di browser e di dispositivo e il tuo identificativo utente. Serve solo a correggere i difetti.</li>
     <li>Data e ora degli accessi e indirizzo IP, trattati dai fornitori tecnici per sicurezza e antiabuso.</li>
     <li>Dati salvati nella memoria locale del tuo dispositivo, che permettono all'app di funzionare anche senza rete. Restano sul dispositivo e si cancellano svuotando i dati del browser o disinstallando l'app.</li>
   </ul>
@@ -101,17 +103,18 @@ footer a{margin-right:16px}
   <table>
     <tr><th>Finalità</th><th>Base giuridica</th></tr>
     <tr><td>Creare e gestire il tuo account, salvare i giri e sincronizzarli fra i tuoi dispositivi</td><td>Esecuzione del servizio che hai richiesto (art. 6.1.b GDPR)</td></tr>
-    <tr><td>Far funzionare le sezioni sociali: compagnie, allenamenti aperti, chat, Mercatino</td><td>Esecuzione del servizio (art. 6.1.b GDPR)</td></tr>
+    <tr><td>Far funzionare le sezioni sociali: compagnie, allenamenti aperti, chat, Marketplace</td><td>Esecuzione del servizio (art. 6.1.b GDPR)</td></tr>
     <tr><td>Inviare notifiche push su messaggi, allenamenti e segnalazioni</td><td>Il tuo consenso, che puoi revocare in qualsiasi momento dalle impostazioni del dispositivo (art. 6.1.a GDPR)</td></tr>
     <tr><td>Verificare le richieste di gestione di una compagnia e approvare i nuovi utenti</td><td>Esecuzione del servizio e legittimo interesse a evitare account falsi (art. 6.1.b e 6.1.f GDPR)</td></tr>
+    <tr><td>Registrare gli errori tecnici dell'app per individuarli e correggerli</td><td>Legittimo interesse al corretto funzionamento del servizio (art. 6.1.f GDPR)</td></tr>
     <tr><td>Gestire segnalazioni di abuso e proteggere l'app da usi impropri</td><td>Legittimo interesse alla sicurezza del servizio (art. 6.1.f GDPR)</td></tr>
   </table>
   </div>
 
   <h2><span class="n">4</span>Cosa vedono gli altri utenti</h2>
-  <p>Sono visibili agli altri utenti registrati: il tuo nome visualizzato, la tua compagnia, gli annunci che pubblichi con le relative foto, gli allenamenti aperti che pubblichi e le recensioni che lasci.</p>
+  <p>Nell'elenco degli arcieri e nelle sezioni sociali dell'app sono visibili agli altri utenti registrati: il tuo nome utente, il tuo nome e cognome (salvo che tu abbia scelto di nasconderli, come spiegato al capitolo 2) e la tua compagnia. Sono inoltre visibili gli annunci che pubblichi con le relative foto, gli allenamenti aperti che pubblichi e le recensioni che lasci.</p>
   <p>I messaggi delle chat private sono visibili solo a te e al destinatario. I tuoi punteggi e le note del diario sono personali e non vengono mostrati agli altri utenti.</p>
-  <p>La tua email non viene mostrata nel profilo pubblico. Viene comunicata a un altro utente solo se sei tu a scriverla in un messaggio.</p>
+  <p>La tua email non viene mai mostrata agli altri utenti né inserita nel profilo pubblico. Viene comunicata a un altro utente solo se sei tu a scriverla in un messaggio.</p>
 
   <h2><span class="n">5</span>A chi comunichiamo i dati</h2>
   <p>Non vendiamo e non cediamo i tuoi dati a terzi per finalità commerciali. Li trattano per nostro conto solo i fornitori tecnici che rendono possibile il servizio:</p>
@@ -128,6 +131,7 @@ footer a{margin-right:16px}
     <li>I dati dell'account e i contenuti che hai creato restano finché il tuo account esiste.</li>
     <li>Quando elimini l'account, i dati vengono cancellati entro 30 giorni.</li>
     <li>I giri che cancelli singolarmente vengono rimossi subito dal cloud e dai tuoi dispositivi. Resta un riferimento tecnico minimo, senza punteggi, che serve solo a impedire che il giro cancellato ricompaia da un altro dispositivo.</li>
+    <li>Le registrazioni degli errori vengono svuotate periodicamente e comunque cancellate insieme all'account.</li>
     <li>I messaggi che hai inviato a un altro utente restano nella copia del destinatario, come avviene in qualsiasi servizio di messaggistica.</li>
   </ul>
 
@@ -138,7 +142,7 @@ footer a{margin-right:16px}
   <p>Per registrarsi a ArcTrail 3D bisogna avere almeno 16 anni. Gli arcieri più giovani possono usare l'app tramite l'account di un genitore o di chi ne fa le veci, che resta responsabile dei contenuti pubblicati.</p>
 
   <h2><span class="n">9</span>I tuoi diritti</h2>
-  <p>Puoi in ogni momento chiedere l'accesso ai tuoi dati, la loro rettifica o cancellazione, la limitazione del trattamento, la portabilità in un formato leggibile, e opporti a un trattamento fondato sul legittimo interesse. Molte di queste operazioni le fai da solo dall'app: modificando il profilo, cancellando i giri, gli annunci e i messaggi, o eliminando l'account.</p>
+  <p>Puoi in ogni momento chiedere l'accesso ai tuoi dati, la loro rettifica o cancellazione, la limitazione del trattamento, la portabilità in un formato leggibile, e opporti a un trattamento fondato sul legittimo interesse. Molte di queste operazioni le fai da solo dall'app: modificando il profilo, nascondendo nome e cognome, cancellando i giri, gli annunci e i messaggi, o eliminando l'account.</p>
   <p>Per esercitare gli altri diritti scrivi a <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a>: rispondiamo entro 30 giorni.</p>
   <p>Se ritieni che i tuoi dati siano trattati in modo scorretto puoi presentare reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">garanteprivacy.it</a>).</p>
 

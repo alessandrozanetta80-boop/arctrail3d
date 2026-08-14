@@ -56,7 +56,7 @@
 --bg:#0F1412; --bg-panel:#16201C; --bg-panel-2:#1A2620; --wood:#16201C; --wood-2:#1A2620;
 --accent:#315B35; --accent-ink:#FFFFFF; --accent-soft:#60A966; --bark:#E8722F; --gold:#CBA35C; --cream:#EDE6D6; --muted:#9AA39C;
 --danger:#E23D2E; --success:#4CAF50; --line:#2A362F;
---qss:#E8722F; --qspot:#5CA847; --qsag:#3E6FC2; --qzero:#464A42; --qperfect:#C1272D;
+--qss:#E8722F; --qspot:#6FBF3F; --qsag:#3E6FC2; --qzero:#464A42; --qperfect:#C1272D;
 --checkbox-border: rgba(237,230,214,0.4);
 --navbar-bg:var(--bg-panel); --navbar-line:var(--line); --navbar-fg:var(--muted);
 --navbar-on:var(--accent-soft); --navbar-pill:var(--bg-panel-2); --navbar-shadow:rgba(0,0,0,0.45);
@@ -335,7 +335,7 @@ sola, piu' larga. */
 /* ══════════════ VESTE CHIARA DA COMPUTER (dai 760px in su) ══════════════
 Sul telefono non cambia NULLA: il tema scelto nel Profilo resta quello.
 Da computer la pagina diventa chiara e le due barre (testata e navigazione)
-restano scure: e' lo stesso schema gia' deciso per il Mercatino, cosi' le
+restano scure: e' lo stesso schema gia' deciso per il Marketplace, cosi' le
 due meta' dell'app sembrano finalmente la stessa cosa.
 Per tornare indietro basta cancellare questo blocco fino alla riga
 "FINE VESTE CHIARA". */
@@ -804,11 +804,19 @@ logError("promise", (ev && ev.reason) ? ev.reason : "rifiuto senza motivo");
 // l'admin al momento dell'approvazione (e lo cancella alla revoca).
 var publicProfilesCache = null;
 
+// Chi sceglie di nascondere nome e cognome non deve solo vederli spariti
+// dall'interfaccia: public_profiles e' leggibile da QUALUNQUE utente
+// registrato, quindi il campo non va proprio scritto. Se c'era gia' lo si
+// cancella con FieldValue.delete(), altrimenti il merge lo lascerebbe li'
+// per sempre. Nome e cognome restano in users/{uid}, che legge solo
+// l'interessato (e l'admin). Le regole usano hasOnly, che ammette un
+// sottoinsieme: nessuna modifica a firestore.rules.
 function publicProfileData(d){
 d = d || {};
+var nascondi = (d.nomeNascosto === true);
 return {
 username: d.username || "",
-nomeCognome: d.nomeCognome || "",
+nomeCognome: nascondi ? firebase.firestore.FieldValue.delete() : (d.nomeCognome || ""),
 compagnia: d.compagnia || null,
 compagniaNome: d.compagniaNome || "",
 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -876,6 +884,7 @@ createdAt: firebase.firestore.FieldValue.serverTimestamp()
 };
 if(pendingProfile){
 newDoc.nomeCognome = pendingProfile.nomeCognome;
+newDoc.nomeNascosto = (pendingProfile.nomeNascosto === true);
 newDoc.username = pendingProfile.username;
 newDoc.federazioni = pendingProfile.federazioni;
 newDoc.arco = pendingProfile.arco;
@@ -884,7 +893,7 @@ newDoc.privacy = true;
 db.collection("users").doc(user.uid).set(newDoc);
 if(pendingProfile && pendingProfile.nomeCognome){
 state.profile = {
-nomeCognome: newDoc.nomeCognome || "", username: newDoc.username || "",
+nomeCognome: newDoc.nomeCognome || "", nomeNascosto: (newDoc.nomeNascosto === true), username: newDoc.username || "",
 email: user.email, federazioni: newDoc.federazioni || [], arco: newDoc.arco || null, privacy: true
 };
 }
@@ -896,7 +905,7 @@ IS_BETA_TESTER = (data.betaTester === true);
 blockedUsers = data.blockedUsers || {};
 if(!state.profile && data.nomeCognome){
 state.profile = {
-nomeCognome: data.nomeCognome, username: data.username || "",
+nomeCognome: data.nomeCognome, nomeNascosto: (data.nomeNascosto === true), username: data.username || "",
 email: data.email || user.email, federazioni: data.federazioni || [], arco: data.arco || null, privacy: true,
 compagnia: data.compagnia || null, compagniaNome: data.compagniaNome || ""
 };
@@ -976,7 +985,7 @@ state.percorsi = state.percorsi || []; // percorsi gara salvati (Prepara Gara)
 // Riaprire l'app = ripartire dalla home, come fanno le altre app.
 // Restano lingua, profilo, storico e il giro in corso (che si riprende dal
 // banner nella scheda Tira): si azzera solo il punto in cui si era rimasti.
-// Serve anche a non rientrare nel Mercatino, che si aprirebbe da solo.
+// Serve anche a non rientrare nel Marketplace, che si aprirebbe da solo.
 state.screen = "menu";
 state.tab = "tira";
 var homeOverride = false;
@@ -1029,7 +1038,7 @@ menu_gara_sub: "gestisci le piazzole sul momento",
 
 
 
-market_btn_label: "Mercatino",
+market_btn_label: "Marketplace",
 diario_empty: "Nessun giro registrato ancora. Completa un allenamento o una gara: da qui in poi troverai qui record, media e andamento.",
 diario_record: "Record",
 diario_media: "Media",
@@ -1159,8 +1168,8 @@ fr_email_hint: "Il referente riceve subito la notifica nell'app. Se vuoi lasciar
 fr_email_none: "Questa compagnia non ha ancora indicato una email nel suo spazio.",
 fr_mail_subject: "Segnalazione sul percorso — {field}",
 fr_report_close: "Chiudi",
-nav_market: "Mercatino",
-market_locked_body: "Il mercatino è in prova con un gruppo ristretto di arcieri. Appena è pronto lo apriamo a tutti.",
+nav_market: "Marketplace",
+market_locked_body: "Il Marketplace è in prova con un gruppo ristretto di arcieri. Appena è pronto lo apriamo a tutti.",
 journal_title: "Il mio diario",
 journal_sub: "I tuoi progressi e tutti i giri salvati su questo dispositivo.",
 journal_tab_trend: "Andamento",
@@ -1187,7 +1196,7 @@ notif_center_delete_all: "Elimina tutte le notifiche",
 notif_center_delete_confirm: "Confermi? Le notifiche vengono cancellate per sempre.",
 notif_delete_one: "Elimina",
 msg_delete_mine: "Elimina il mio messaggio",
-market_opening: "Apro il mercatino\u2026",
+market_opening: "Apro il Marketplace\u2026",
 hist_delete_one: "Elimina questo giro",
 hist_delete_confirm: "Confermi? Il giro viene cancellato da questo dispositivo e dal backup.",
 pg_locked_body: "Prepara gara \u00e8 in prova con un gruppo ristretto di compagnie. Sar\u00e0 aperto solo ai responsabili delle compagnie registrate.",
@@ -1248,7 +1257,7 @@ rep_deleted_account: "Un utente ha eliminato il proprio account: {who} ({mail}).
 acc_delete_btn: "Elimina account",
 acc_delete_title: "Elimina il tuo account",
 acc_delete_warn: "L’operazione è definitiva. Giri, diario, annunci e conversazioni vengono cancellati e non si possono recuperare.",
-acc_delete_what: "Vengono eliminati il profilo, i giri salvati con le statistiche, gli annunci del Mercatino con le foto, le conversazioni, gli allenamenti che hai pubblicato, le segnalazioni e le notifiche.",
+acc_delete_what: "Vengono eliminati il profilo, i giri salvati con le statistiche, gli annunci del Marketplace con le foto, le conversazioni, gli allenamenti che hai pubblicato, le segnalazioni e le notifiche.",
 acc_delete_keep: "Restano solo i messaggi già ricevuti da altre persone, senza più collegamento al tuo account.",
 acc_delete_pwd: "La tua password",
 acc_delete_pwd_hint: "Serve a essere sicuri che sia davvero tu. Se sei entrato con il link via email, lascia vuoto.",
@@ -1448,6 +1457,7 @@ home_dev_title: "\u26a0\ufe0f App in fase di sviluppo",
 home_dev_text: "Per segnalare errori o malfunzionamenti: {email} \u2014 {sito}. I dati inseriti in questa fase potrebbero essere cancellati o azzerati. Le registrazioni non vengono approvate automaticamente in questa fase: se non ti sei gi\u00e0 accordato direttamente con l'amministratore, la tua richiesta di accesso rester\u00e0 in attesa.",
 profile_title: "Crea il tuo profilo", 
 profile_nome: "Nome e cognome", profile_username: "Username", profile_username_hint: "(quello che vedono gli altri in classifica)",
+profile_hide_name: "Nascondi nome e cognome agli altri arcieri", profile_hide_name_note: "Negli elenchi e nelle chat comparirà solo il tuo nome utente. Nome e cognome restano visibili a chi organizza una gara a cui ti iscrivi, perché le classifiche ufficiali si compilano con quelli.",
 profile_email: "Email", profile_federazioni: "Federazioni di appartenenza", profile_tessera: "Numero tessera {fed}",
 profile_password: "Password (almeno 6 caratteri)", profile_password_confirm: "Conferma password",
 profile_error_password_short: "La password deve avere almeno 6 caratteri.", profile_error_password_mismatch: "Le due password non coincidono.",
@@ -1564,7 +1574,7 @@ fr_email_none: "This club has not entered an email in its space yet.",
 fr_mail_subject: "Course report \u2014 {field}",
 fr_report_close: "Close",
 nav_market: "Marketplace",
-market_locked_body: "The marketplace is being tested with a small group of archers. As soon as it is ready we will open it to everyone.",
+market_locked_body: "The Marketplace is being tested with a small group of archers. As soon as it is ready we will open it to everyone.",
 journal_title: "My journal",
 journal_sub: "Your progress and all the rounds saved on this device.",
 journal_tab_trend: "Trend",
@@ -1591,7 +1601,7 @@ notif_center_delete_all: "Delete all notifications",
 notif_center_delete_confirm: "Are you sure? The notifications are deleted for good.",
 notif_delete_one: "Delete",
 msg_delete_mine: "Delete my message",
-market_opening: "Opening the marketplace\u2026",
+market_opening: "Opening the Marketplace\u2026",
 hist_delete_one: "Delete this round",
 hist_delete_confirm: "Are you sure? The round is deleted from this device and from the backup.",
 pg_locked_body: "Competition setup is being tested with a small group of clubs. It will be open only to the managers of registered clubs.",
@@ -1913,6 +1923,7 @@ session_closed_note: "Session closed or ended.",
 admin_sessions_title: "Active shared sessions", admin_sessions_empty: "No shared session active at the moment.",
 admin_sessions_participants: "Participants", admin_sessions_double_confirm: "Double confirmation active", admin_sessions_single: "Double confirmation off",
 profile_title: "Create your profile", profile_username: "Username", profile_username_hint: "(what others see on the leaderboard)",
+profile_hide_name: "Hide my first and last name from other archers", profile_hide_name_note: "Only your username will appear in the lists and in the chats. Your first and last name stay visible to whoever organises a competition you sign up for, because official rankings are compiled with them.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 },
 fr: {
@@ -1992,8 +2003,8 @@ fr_email_hint: "Le responsable re\u00e7oit tout de suite la notification dans l'
 fr_email_none: "Ce club n'a pas encore indiqu\u00e9 d'e-mail dans son espace.",
 fr_mail_subject: "Signalement sur le parcours \u2014 {field}",
 fr_report_close: "Fermer",
-nav_market: "March\u00e9",
-market_locked_body: "Le march\u00e9 est en test avec un petit groupe d'archers. D\u00e8s qu'il sera pr\u00eat nous l'ouvrirons \u00e0 tous.",
+nav_market: "Marketplace",
+market_locked_body: "Le Marketplace est en test avec un petit groupe d'archers. D\u00e8s qu'il sera pr\u00eat nous l'ouvrirons \u00e0 tous.",
 journal_title: "Mon carnet",
 journal_sub: "Vos progr\u00e8s et tous les tours enregistr\u00e9s sur cet appareil.",
 journal_tab_trend: "\u00c9volution",
@@ -2020,7 +2031,7 @@ notif_center_delete_all: "Supprimer toutes les notifications",
 notif_center_delete_confirm: "Confirmer\u00a0? Les notifications sont supprim\u00e9es d\u00e9finitivement.",
 notif_delete_one: "Supprimer",
 msg_delete_mine: "Supprimer mon message",
-market_opening: "Ouverture du march\u00e9\u2026",
+market_opening: "Ouverture du Marketplace\u2026",
 hist_delete_one: "Supprimer ce tour",
 hist_delete_confirm: "Confirmer\u00a0? Le tour est supprim\u00e9 de cet appareil et de la sauvegarde.",
 pg_locked_body: "La pr\u00e9paration des concours est en test avec un petit groupe de clubs. Elle sera ouverte uniquement aux responsables des clubs enregistr\u00e9s.",
@@ -2077,7 +2088,7 @@ rep_deleted_account: "Un utilisateur a supprim\u00e9 son compte : {who} ({mail})
 acc_delete_btn: "Supprimer le compte",
 acc_delete_title: "Supprimez votre compte",
 acc_delete_warn: "L'op\u00e9ration est d\u00e9finitive. Tours, carnet, annonces et conversations sont supprim\u00e9s et ne peuvent pas \u00eatre r\u00e9cup\u00e9r\u00e9s.",
-acc_delete_what: "Sont supprim\u00e9s le profil, les tours enregistr\u00e9s avec les statistiques, les annonces du March\u00e9 avec les photos, les conversations, les entra\u00eenements que vous avez publi\u00e9s, les signalements et les notifications.",
+acc_delete_what: "Sont supprim\u00e9s le profil, les tours enregistr\u00e9s avec les statistiques, les annonces du Marketplace avec les photos, les conversations, les entra\u00eenements que vous avez publi\u00e9s, les signalements et les notifications.",
 acc_delete_keep: "Il ne reste que les messages d\u00e9j\u00e0 re\u00e7us par d'autres personnes, sans plus aucun lien avec votre compte.",
 acc_delete_pwd: "Votre mot de passe",
 acc_delete_pwd_hint: "Il sert \u00e0 v\u00e9rifier que c'est bien vous. Si vous vous \u00eates connect\u00e9 avec le lien par e-mail, laissez vide.",
@@ -2119,7 +2130,7 @@ menu_gara_sub: "g\u00e9rez les cibles sur le moment",
 
 
 
-market_btn_label: "March\u00e9",
+market_btn_label: "Marketplace",
 diario_empty: "Aucun parcours enregistr\u00e9 pour l'instant. Terminez un entra\u00eenement ou une comp\u00e9tition : vous trouverez ensuite ici votre record, votre moyenne et votre tendance.",
 diario_record: "Record",
 diario_media: "Moyenne",
@@ -2342,6 +2353,7 @@ session_closed_note: "Session ferm\u00e9e ou termin\u00e9e.",
 admin_sessions_title: "Sessions partag\u00e9es actives", admin_sessions_empty: "Aucune session partag\u00e9e active pour le moment.",
 admin_sessions_participants: "Participants", admin_sessions_double_confirm: "Double confirmation active", admin_sessions_single: "Double confirmation d\u00e9sactiv\u00e9e",
 profile_title: "Cr\u00e9ez votre profil", profile_username: "Pseudo", profile_username_hint: "(ce que les autres voient dans le classement)",
+profile_hide_name: "Masquer mes nom et pr\u00e9nom aux autres archers", profile_hide_name_note: "Dans les listes et les discussions, seul votre nom d\u2019utilisateur appara\u00eetra. Vos nom et pr\u00e9nom restent visibles pour qui organise une comp\u00e9tition \u00e0 laquelle vous vous inscrivez, car les classements officiels sont \u00e9tablis avec eux.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 },
 de: {
@@ -2421,8 +2433,8 @@ fr_email_hint: "Der Ansprechpartner bekommt die Benachrichtigung sofort in der A
 fr_email_none: "Dieser Verein hat in seinem Bereich noch keine E-Mail angegeben.",
 fr_mail_subject: "Meldung zum Parcours \u2014 {field}",
 fr_report_close: "Schlie\u00dfen",
-nav_market: "Marktplatz",
-market_locked_body: "Der Marktplatz wird mit einer kleinen Gruppe von Sch\u00fctzen getestet. Sobald er fertig ist, \u00f6ffnen wir ihn f\u00fcr alle.",
+nav_market: "Marketplace",
+market_locked_body: "Der Marketplace wird mit einer kleinen Gruppe von Sch\u00fctzen getestet. Sobald er fertig ist, \u00f6ffnen wir ihn f\u00fcr alle.",
 journal_title: "Mein Tagebuch",
 journal_sub: "Deine Fortschritte und alle auf diesem Ger\u00e4t gespeicherten Runden.",
 journal_tab_trend: "Verlauf",
@@ -2449,7 +2461,7 @@ notif_center_delete_all: "Alle Benachrichtigungen l\u00f6schen",
 notif_center_delete_confirm: "Best\u00e4tigen? Die Benachrichtigungen werden endg\u00fcltig gel\u00f6scht.",
 notif_delete_one: "L\u00f6schen",
 msg_delete_mine: "Meine Nachricht l\u00f6schen",
-market_opening: "Marktplatz wird ge\u00f6ffnet\u2026",
+market_opening: "Marketplace wird ge\u00f6ffnet\u2026",
 hist_delete_one: "Diese Runde l\u00f6schen",
 hist_delete_confirm: "Best\u00e4tigen? Die Runde wird von diesem Ger\u00e4t und aus dem Backup gel\u00f6scht.",
 pg_locked_body: "Die Wettkampfvorbereitung wird mit einer kleinen Gruppe von Vereinen getestet. Sie wird nur den Verantwortlichen der registrierten Vereine offenstehen.",
@@ -2506,7 +2518,7 @@ rep_deleted_account: "Ein Nutzer hat sein Konto gel\u00f6scht: {who} ({mail}).",
 acc_delete_btn: "Konto l\u00f6schen",
 acc_delete_title: "L\u00f6sche dein Konto",
 acc_delete_warn: "Der Vorgang ist endg\u00fcltig. Runden, Tagebuch, Anzeigen und Unterhaltungen werden gel\u00f6scht und lassen sich nicht wiederherstellen.",
-acc_delete_what: "Gel\u00f6scht werden das Profil, die gespeicherten Runden mit den Statistiken, die Marktplatz-Anzeigen mit den Fotos, die Unterhaltungen, die von dir ver\u00f6ffentlichten Trainings, die Meldungen und die Benachrichtigungen.",
+acc_delete_what: "Gel\u00f6scht werden das Profil, die gespeicherten Runden mit den Statistiken, die Marketplace-Anzeigen mit den Fotos, die Unterhaltungen, die von dir ver\u00f6ffentlichten Trainings, die Meldungen und die Benachrichtigungen.",
 acc_delete_keep: "Es bleiben nur die Nachrichten, die andere schon erhalten haben, ohne Verbindung zu deinem Konto.",
 acc_delete_pwd: "Dein Passwort",
 acc_delete_pwd_hint: "Damit stellen wir sicher, dass du es wirklich bist. Wenn du dich mit dem E-Mail-Link angemeldet hast, lass das Feld leer.",
@@ -2548,7 +2560,7 @@ menu_gara_sub: "verwalte die Ziele spontan",
 
 
 
-market_btn_label: "Marktplatz",
+market_btn_label: "Marketplace",
 diario_empty: "Noch keine Runde erfasst. Schlie\u00dfe ein Training oder einen Wettkampf ab \u2013 danach findest du hier Bestwert, Schnitt und Verlauf.",
 diario_record: "Bestwert",
 diario_media: "Schnitt",
@@ -2771,6 +2783,7 @@ session_closed_note: "Sitzung geschlossen oder beendet.",
 admin_sessions_title: "Aktive geteilte Sitzungen", admin_sessions_empty: "Derzeit keine aktive geteilte Sitzung.",
 admin_sessions_participants: "Teilnehmer", admin_sessions_double_confirm: "Doppelte Best\u00e4tigung aktiv", admin_sessions_single: "Doppelte Best\u00e4tigung deaktiviert",
 profile_title: "Erstelle dein Profil", profile_username: "Benutzername", profile_username_hint: "(was andere in der Rangliste sehen)",
+profile_hide_name: "Vor- und Nachnamen vor anderen Sch\u00fctzen verbergen", profile_hide_name_note: "In den Listen und Chats erscheint nur dein Benutzername. Vor- und Nachname bleiben f\u00fcr die Veranstalter eines Wettkampfs sichtbar, zu dem du dich anmeldest, denn die offiziellen Ranglisten werden damit erstellt.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 },
 tr: {
@@ -3178,6 +3191,7 @@ home_dev_title: "\u26a0\ufe0f Uygulama geli\u015ftirme a\u015famas\u0131nda",
 home_dev_text: "Hata veya sorun bildirmek i\u00e7in: {email} \u2014 {sito}. Bu a\u015famada girilen veriler silinebilir veya s\u0131f\u0131rlanabilir. Bu a\u015famada kay\u0131tlar otomatik onaylanmaz: y\u00f6neticiyle daha \u00f6nce anla\u015fmad\u0131ysan eri\u015fim iste\u011fin beklemede kal\u0131r.",
 profile_title: "Profilini olu\u015ftur", 
 profile_nome: "Ad ve soyad", profile_username: "Kullan\u0131c\u0131 ad\u0131", profile_username_hint: "(di\u011ferlerinin s\u0131ralamada g\u00f6rd\u00fc\u011f\u00fc isim)",
+profile_hide_name: "Ad ve soyad\u0131m\u0131 di\u011fer ok\u00e7ulardan gizle", profile_hide_name_note: "Listelerde ve sohbetlerde yaln\u0131zca kullan\u0131c\u0131 ad\u0131n g\u00f6r\u00fcn\u00fcr. Kayd\u0131n\u0131 yapt\u0131\u011f\u0131n bir yar\u0131\u015fmay\u0131 d\u00fczenleyenler ad ve soyad\u0131n\u0131 g\u00f6rmeye devam eder, \u00e7\u00fcnk\u00fc resm\u00ee s\u0131ralamalar bunlarla haz\u0131rlan\u0131r.",
 profile_email: "E-posta", profile_federazioni: "\u00dcye oldu\u011fun federasyonlar", profile_tessera: "{fed} lisans numaras\u0131",
 profile_password: "\u015eifre (en az 6 karakter)", profile_password_confirm: "\u015eifreyi onayla",
 profile_error_password_short: "\u015eifre en az 6 karakter olmal\u0131.", profile_error_password_mismatch: "\u0130ki \u015fifre e\u015fle\u015fmiyor.",
@@ -3622,6 +3636,7 @@ home_dev_title: "⚠️ Приложение в разработке",
 home_dev_text: "Чтобы сообщить об ошибках: {email} — {sito}. Данные, введённые на этом этапе, могут быть удалены или сброшены. На этом этапе регистрации не одобряются автоматически: если вы заранее не договорились с администратором, ваш запрос на доступ останется в ожидании.",
 profile_title: "Создайте свой профиль", 
 profile_nome: "Имя и фамилия", profile_username: "Имя пользователя", profile_username_hint: "(то, что видят остальные в рейтинге)",
+profile_hide_name: "\u0421\u043a\u0440\u044b\u0442\u044c \u0438\u043c\u044f \u0438 \u0444\u0430\u043c\u0438\u043b\u0438\u044e \u043e\u0442 \u0434\u0440\u0443\u0433\u0438\u0445 \u0441\u0442\u0440\u0435\u043b\u043a\u043e\u0432", profile_hide_name_note: "\u0412 \u0441\u043f\u0438\u0441\u043a\u0430\u0445 \u0438 \u0447\u0430\u0442\u0430\u0445 \u0431\u0443\u0434\u0435\u0442 \u0432\u0438\u0434\u043d\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u0438\u043c\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f. \u0418\u043c\u044f \u0438 \u0444\u0430\u043c\u0438\u043b\u0438\u044f \u043e\u0441\u0442\u0430\u044e\u0442\u0441\u044f \u0432\u0438\u0434\u043d\u044b \u043e\u0440\u0433\u0430\u043d\u0438\u0437\u0430\u0442\u043e\u0440\u0430\u043c \u0441\u043e\u0440\u0435\u0432\u043d\u043e\u0432\u0430\u043d\u0438\u044f, \u043d\u0430 \u043a\u043e\u0442\u043e\u0440\u043e\u0435 \u0432\u044b \u0437\u0430\u043f\u0438\u0441\u0430\u043b\u0438\u0441\u044c, \u043f\u043e\u0442\u043e\u043c\u0443 \u0447\u0442\u043e \u043e\u0444\u0438\u0446\u0438\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u0440\u043e\u0442\u043e\u043a\u043e\u043b\u044b \u0441\u043e\u0441\u0442\u0430\u0432\u043b\u044f\u044e\u0442\u0441\u044f \u043f\u043e \u043d\u0438\u043c.",
 profile_email: "Email", profile_federazioni: "Федерации, в которых вы состоите", profile_tessera: "Номер билета {fed}",
 profile_password: "Пароль (минимум 6 символов)", profile_password_confirm: "Подтвердите пароль",
 profile_error_password_short: "Пароль должен содержать минимум 6 символов.", profile_error_password_mismatch: "Пароли не совпадают.",
@@ -3737,8 +3752,8 @@ fr_email_hint: "El responsable recibe la notificaci\u00f3n en la aplicaci\u00f3n
 fr_email_none: "Este club todav\u00eda no ha indicado un email en su espacio.",
 fr_mail_subject: "Aviso sobre el recorrido \u2014 {field}",
 fr_report_close: "Cerrar",
-nav_market: "Mercadillo",
-market_locked_body: "El mercadillo est\u00e1 en pruebas con un grupo reducido de arqueros. En cuanto est\u00e9 listo lo abriremos a todos.",
+nav_market: "Marketplace",
+market_locked_body: "El Marketplace est\u00e1 en pruebas con un grupo reducido de arqueros. En cuanto est\u00e9 listo lo abriremos a todos.",
 journal_title: "Mi diario",
 journal_sub: "Tus progresos y todas las rondas guardadas en este dispositivo.",
 journal_tab_trend: "Evoluci\u00f3n",
@@ -3765,7 +3780,7 @@ notif_center_delete_all: "Eliminar todas las notificaciones",
 notif_center_delete_confirm: "\u00bfConfirmas? Las notificaciones se borran para siempre.",
 notif_delete_one: "Eliminar",
 msg_delete_mine: "Eliminar mi mensaje",
-market_opening: "Abriendo el mercadillo\u2026",
+market_opening: "Abriendo el Marketplace\u2026",
 hist_delete_one: "Eliminar esta ronda",
 hist_delete_confirm: "\u00bfConfirmas? La ronda se borra de este dispositivo y de la copia de seguridad.",
 pg_locked_body: "La preparaci\u00f3n de competiciones est\u00e1 en pruebas con un grupo reducido de clubes. Se abrir\u00e1 solo a los responsables de los clubes registrados.",
@@ -3822,7 +3837,7 @@ rep_deleted_account: "Un usuario ha eliminado su cuenta: {who} ({mail}).",
 acc_delete_btn: "Eliminar cuenta",
 acc_delete_title: "Elimina tu cuenta",
 acc_delete_warn: "La operaci\u00f3n es definitiva. Rondas, diario, anuncios y conversaciones se borran y no se pueden recuperar.",
-acc_delete_what: "Se eliminan el perfil, las rondas guardadas con las estad\u00edsticas, los anuncios del Mercadillo con las fotos, las conversaciones, los entrenamientos que has publicado, los avisos y las notificaciones.",
+acc_delete_what: "Se eliminan el perfil, las rondas guardadas con las estad\u00edsticas, los anuncios del Marketplace con las fotos, las conversaciones, los entrenamientos que has publicado, los avisos y las notificaciones.",
 acc_delete_keep: "Solo quedan los mensajes que ya han recibido otras personas, sin ninguna relaci\u00f3n con tu cuenta.",
 acc_delete_pwd: "Tu contrase\u00f1a",
 acc_delete_pwd_hint: "Sirve para asegurarnos de que eres t\u00fa de verdad. Si has entrado con el enlace por email, d\u00e9jalo vac\u00edo.",
@@ -3864,7 +3879,7 @@ menu_gara_sub: "gestiona las dianas sobre la marcha",
 
 
 
-market_btn_label: "Mercadillo",
+market_btn_label: "Marketplace",
 diario_empty: "A\u00fan no hay ninguna ronda registrada. Completa un entrenamiento o una competici\u00f3n: a partir de ah\u00ed ver\u00e1s aqu\u00ed tu r\u00e9cord, tu media y tu evoluci\u00f3n.",
 diario_record: "R\u00e9cord",
 diario_media: "Media",
@@ -4066,6 +4081,7 @@ home_dev_title: "\u26a0\ufe0f App en fase de desarrollo",
 home_dev_text: "Para informar de errores o fallos: {email} \u2014 {sito}. Los datos introducidos en esta fase podr\u00edan borrarse o reiniciarse. Los registros no se aprueban autom\u00e1ticamente en esta fase: si no te has puesto de acuerdo directamente con el administrador, tu solicitud de acceso quedar\u00e1 pendiente.",
 profile_title: "Crea tu perfil", 
 profile_nome: "Nombre y apellidos", profile_username: "Nombre de usuario", profile_username_hint: "(lo que ven los dem\u00e1s en la clasificaci\u00f3n)",
+profile_hide_name: "Ocultar mi nombre y apellidos a los dem\u00e1s arqueros", profile_hide_name_note: "En las listas y en los chats solo aparecer\u00e1 tu nombre de usuario. El nombre y los apellidos siguen siendo visibles para quien organiza una competici\u00f3n en la que te inscribes, porque las clasificaciones oficiales se elaboran con ellos.",
 profile_email: "Email", profile_federazioni: "Federaciones a las que perteneces", profile_tessera: "N\u00famero de licencia {fed}",
 profile_password: "Contrase\u00f1a (m\u00ednimo 6 caracteres)", profile_password_confirm: "Confirmar contrase\u00f1a",
 profile_error_password_short: "La contrase\u00f1a debe tener al menos 6 caracteres.", profile_error_password_mismatch: "Las dos contrase\u00f1as no coinciden.",
@@ -4181,8 +4197,8 @@ fr_email_hint: "Kontaktpersonen f\u00e5r notisen i appen direkt. Vill du ha det 
 fr_email_none: "Den h\u00e4r klubben har \u00e4nnu inte angett n\u00e5gon e-postadress p\u00e5 sin sida.",
 fr_mail_subject: "Rapport om banan \u2014 {field}",
 fr_report_close: "St\u00e4ng",
-nav_market: "Marknad",
-market_locked_body: "Marknaden testas med en liten grupp skyttar. S\u00e5 snart den \u00e4r klar \u00f6ppnar vi den f\u00f6r alla.",
+nav_market: "Marketplace",
+market_locked_body: "Marketplace testas med en liten grupp skyttar. S\u00e5 snart den \u00e4r klar \u00f6ppnar vi den f\u00f6r alla.",
 journal_title: "Min dagbok",
 journal_sub: "Dina framsteg och alla rundor som sparats p\u00e5 den h\u00e4r enheten.",
 journal_tab_trend: "Utveckling",
@@ -4209,7 +4225,7 @@ notif_center_delete_all: "Radera alla notiser",
 notif_center_delete_confirm: "Bekr\u00e4ftar du? Notiserna raderas f\u00f6r alltid.",
 notif_delete_one: "Radera",
 msg_delete_mine: "Radera mitt meddelande",
-market_opening: "\u00d6ppnar marknaden\u2026",
+market_opening: "\u00d6ppnar Marketplace\u2026",
 hist_delete_one: "Radera den h\u00e4r rundan",
 hist_delete_confirm: "Bekr\u00e4ftar du? Rundan raderas fr\u00e5n den h\u00e4r enheten och fr\u00e5n s\u00e4kerhetskopian.",
 pg_locked_body: "T\u00e4vlingsf\u00f6rberedelsen testas med en liten grupp klubbar. Den kommer bara att \u00f6ppnas f\u00f6r de ansvariga i registrerade klubbar.",
@@ -4266,7 +4282,7 @@ rep_deleted_account: "En anv\u00e4ndare har raderat sitt konto: {who} ({mail})."
 acc_delete_btn: "Radera konto",
 acc_delete_title: "Radera ditt konto",
 acc_delete_warn: "\u00c5tg\u00e4rden \u00e4r slutgiltig. Rundor, dagbok, annonser och konversationer raderas och g\u00e5r inte att f\u00e5 tillbaka.",
-acc_delete_what: "Profilen, de sparade rundorna med statistiken, annonserna p\u00e5 Marknaden med bilderna, konversationerna, tr\u00e4ningarna du lagt upp, rapporterna och notiserna raderas.",
+acc_delete_what: "Profilen, de sparade rundorna med statistiken, annonserna p\u00e5 Marketplace med bilderna, konversationerna, tr\u00e4ningarna du lagt upp, rapporterna och notiserna raderas.",
 acc_delete_keep: "Kvar blir bara meddelanden som andra redan tagit emot, utan koppling till ditt konto.",
 acc_delete_pwd: "Ditt l\u00f6senord",
 acc_delete_pwd_hint: "Beh\u00f6vs f\u00f6r att vara s\u00e4ker p\u00e5 att det verkligen \u00e4r du. Om du loggade in med l\u00e4nken via e-post l\u00e4mnar du f\u00e4ltet tomt.",
@@ -4308,7 +4324,7 @@ menu_gara_sub: "hantera m\u00e5len l\u00f6pande",
 
 
 
-market_btn_label: "Marknad",
+market_btn_label: "Marketplace",
 diario_empty: "Ingen runda registrerad \u00e4n. Genomf\u00f6r en tr\u00e4ning eller en t\u00e4vling \u2013 d\u00e4refter hittar du rekord, snitt och utveckling h\u00e4r.",
 diario_record: "Rekord",
 diario_media: "Snitt",
@@ -4509,6 +4525,7 @@ home_dev_title: "\u26a0\ufe0f Appen \u00e4r under utveckling",
 home_dev_text: "F\u00f6r att rapportera fel eller problem: {email} \u2014 {sito}. Data som matas in i detta skede kan raderas eller nollst\u00e4llas. Registreringar godk\u00e4nns inte automatiskt i detta skede: om du inte redan kommit \u00f6verens direkt med administrat\u00f6ren f\u00f6rblir din \u00e5tkomstbeg\u00e4ran v\u00e4ntande.",
 profile_title: "Skapa din profil", 
 profile_nome: "F\u00f6r- och efternamn", profile_username: "Anv\u00e4ndarnamn", profile_username_hint: "(det andra ser i resultatlistan)",
+profile_hide_name: "D\u00f6lj f\u00f6r- och efternamn f\u00f6r andra skyttar", profile_hide_name_note: "I listorna och i chattarna visas bara ditt anv\u00e4ndarnamn. F\u00f6r- och efternamn f\u00f6rblir synliga f\u00f6r den som arrangerar en t\u00e4vling du anm\u00e4ler dig till, eftersom de officiella resultatlistorna g\u00f6rs med dem.",
 profile_email: "E-post", profile_federazioni: "F\u00f6rbund du tillh\u00f6r", profile_tessera: "Licensnummer {fed}",
 profile_password: "L\u00f6senord (minst 6 tecken)", profile_password_confirm: "Bekr\u00e4fta l\u00f6senord",
 profile_error_password_short: "L\u00f6senordet m\u00e5ste vara minst 6 tecken.", profile_error_password_mismatch: "De tv\u00e5 l\u00f6senorden matchar inte.",
@@ -4624,8 +4641,8 @@ fr_email_hint: "De contactpersoon krijgt de melding meteen in de app. Wil je het
 fr_email_none: "Deze vereniging heeft nog geen e-mailadres in haar ruimte opgegeven.",
 fr_mail_subject: "Melding over het parcours \u2014 {field}",
 fr_report_close: "Sluiten",
-nav_market: "Marktplaats",
-market_locked_body: "De marktplaats wordt getest met een kleine groep boogschutters. Zodra ze klaar is openen we ze voor iedereen.",
+nav_market: "Marketplace",
+market_locked_body: "De Marketplace wordt getest met een kleine groep boogschutters. Zodra hij klaar is openen we hem voor iedereen.",
 journal_title: "Mijn dagboek",
 journal_sub: "Je vooruitgang en alle rondes die op dit apparaat zijn opgeslagen.",
 journal_tab_trend: "Verloop",
@@ -4652,7 +4669,7 @@ notif_center_delete_all: "Alle meldingen verwijderen",
 notif_center_delete_confirm: "Bevestig je? De meldingen worden definitief verwijderd.",
 notif_delete_one: "Verwijderen",
 msg_delete_mine: "Mijn bericht verwijderen",
-market_opening: "Marktplaats wordt geopend\u2026",
+market_opening: "Marketplace wordt geopend\u2026",
 hist_delete_one: "Deze ronde verwijderen",
 hist_delete_confirm: "Bevestig je? De ronde wordt van dit apparaat en uit de back-up verwijderd.",
 pg_locked_body: "De wedstrijdvoorbereiding wordt getest met een kleine groep verenigingen. Ze wordt alleen geopend voor de verantwoordelijken van geregistreerde verenigingen.",
@@ -4709,7 +4726,7 @@ rep_deleted_account: "Een gebruiker heeft zijn account verwijderd: {who} ({mail}
 acc_delete_btn: "Account verwijderen",
 acc_delete_title: "Verwijder je account",
 acc_delete_warn: "Deze stap is definitief. Rondes, dagboek, advertenties en gesprekken worden verwijderd en zijn niet meer terug te halen.",
-acc_delete_what: "Verwijderd worden het profiel, de opgeslagen rondes met de statistieken, de advertenties op de Marktplaats met de foto's, de gesprekken, de trainingen die je hebt geplaatst, de meldingen en de notificaties.",
+acc_delete_what: "Verwijderd worden het profiel, de opgeslagen rondes met de statistieken, de advertenties op de Marketplace met de foto's, de gesprekken, de trainingen die je hebt geplaatst, de meldingen en de notificaties.",
 acc_delete_keep: "Alleen de berichten die anderen al ontvangen hebben blijven staan, zonder nog verband met je account.",
 acc_delete_pwd: "Je wachtwoord",
 acc_delete_pwd_hint: "Nodig om zeker te weten dat jij het echt bent. Als je met de link per e-mail bent ingelogd, laat je het leeg.",
@@ -4751,7 +4768,7 @@ menu_gara_sub: "beheer de doelen ter plekke",
 
 
 
-market_btn_label: "Marktplaats",
+market_btn_label: "Marketplace",
 diario_empty: "Nog geen ronde geregistreerd. Voltooi een training of een wedstrijd \u2013 daarna vind je hier je record, gemiddelde en verloop.",
 diario_record: "Record",
 diario_media: "Gemiddelde",
@@ -4953,6 +4970,7 @@ home_dev_title: "\u26a0\ufe0f App in ontwikkeling",
 home_dev_text: "Om fouten of storingen te melden: {email} \u2014 {sito}. Gegevens die in deze fase worden ingevoerd, kunnen worden verwijderd of gereset. Registraties worden in deze fase niet automatisch goedgekeurd: als je nog geen directe afspraak hebt gemaakt met de beheerder, blijft je toegangsverzoek in afwachting.",
 profile_title: "Maak je profiel aan", 
 profile_nome: "Voor- en achternaam", profile_username: "Gebruikersnaam", profile_username_hint: "(wat anderen zien in het klassement)",
+profile_hide_name: "Voor- en achternaam verbergen voor andere boogschutters", profile_hide_name_note: "In de lijsten en in de gesprekken verschijnt alleen je gebruikersnaam. Voor- en achternaam blijven zichtbaar voor wie een wedstrijd organiseert waarvoor je je inschrijft, omdat de offici\u00eble uitslagen daarmee worden opgesteld.",
 profile_email: "E-mail", profile_federazioni: "Bonden waartoe je behoort", profile_tessera: "Lidmaatschapsnummer {fed}",
 profile_password: "Wachtwoord (minstens 6 tekens)", profile_password_confirm: "Bevestig wachtwoord",
 profile_error_password_short: "Het wachtwoord moet minstens 6 tekens bevatten.", profile_error_password_mismatch: "De twee wachtwoorden komen niet overeen.",
@@ -6234,6 +6252,10 @@ card.appendChild(goLoginLink);
 
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="pfNome"></div>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+' <span style="font-weight:400;color:var(--muted);">'+t("profile_username_hint")+'</span></label><input type="text" id="pfUsername"></div>'));
+// Nome e cognome restano obbligatori, ma si possono tenere per se': senza un
+// documento d'identita' nessuno puo' impedire i nomi finti, tanto vale dare
+// la scelta a chi ci tiene.
+card.appendChild(el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:-8px 0 16px;"><input type="checkbox" id="pfHideName" style="width:auto;margin-top:2px;"><span><b style="color:var(--cream);font-weight:700;">'+t("profile_hide_name")+'</b><span style="display:block;margin-top:3px;">'+t("profile_hide_name_note")+'</span></span></label>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_email")+'</label><input type="email" id="pfEmail"></div>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_password")+'</label><input type="password" id="pfPassword" autocomplete="new-password"></div>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_password_confirm")+'</label><input type="password" id="pfPasswordConfirm" autocomplete="new-password"></div>'));
@@ -6279,6 +6301,7 @@ card.appendChild(errorMsg);
 var submitBtn = el('<button class="btn btn-primary btn-block" style="margin-top:8px;">'+t("profile_submit")+'</button>');
 submitBtn.addEventListener("click", function(){
 var nomeCognome = document.getElementById("pfNome").value.trim();
+var nomeNascosto = document.getElementById("pfHideName").checked;
 var username = document.getElementById("pfUsername").value.trim();
 var email = document.getElementById("pfEmail").value.trim();
 var password = document.getElementById("pfPassword").value;
@@ -6302,7 +6325,7 @@ if(password.length < 6){ errorMsg.textContent = t("profile_error_password_short"
 if(password !== passwordConfirm){ errorMsg.textContent = t("profile_error_password_mismatch"); return; }
 }
 var profileData = {
-nomeCognome: nomeCognome, username: username, email: email,
+nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, email: email,
 federazioni: federazioni, arco: arcoSel, privacy: true
 };
 if(DEV_MODE){
@@ -6315,7 +6338,7 @@ submitBtn.disabled = true;
 if(currentUser){
 db.collection("users").doc(currentUser.uid).set({
 email: currentUser.email,
-nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true, terms: true
+nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, federazioni: federazioni, arco: arcoSel, privacy: true, terms: true
 }, { merge: true }).then(function(){
 onAuthReady(currentUser);
 }).catch(function(err){
@@ -6330,7 +6353,7 @@ currentUser = result.user;
 try{ result.user.sendEmailVerification(); }catch(e){}
 db.collection("users").doc(result.user.uid).set({
 email: email, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel, privacy: true, terms: true
+nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, federazioni: federazioni, arco: arcoSel, privacy: true, terms: true
 }).then(function(){
 notifyAdminNewSignup({ nomeCognome: nomeCognome, username: username, email: email });
 authState = "pendingApproval";
@@ -6416,6 +6439,7 @@ card.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:-10
 
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="peNome" value="'+escapeHtml(profile.nomeCognome||"")+'"></div>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+' <span style="font-weight:400;color:var(--muted);">'+t("profile_username_hint")+'</span></label><input type="text" id="peUsername" value="'+escapeHtml(profile.username||"")+'"></div>'));
+card.appendChild(el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:-8px 0 16px;"><input type="checkbox" id="peHideName"'+(profile.nomeNascosto?' checked':'')+' style="width:auto;margin-top:2px;"><span><b style="color:var(--cream);font-weight:700;">'+t("profile_hide_name")+'</b><span style="display:block;margin-top:3px;">'+t("profile_hide_name_note")+'</span></span></label>'));
 
 card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_federazioni")+'</h2>'));
 var fedWrap = el('<div></div>');
@@ -6538,6 +6562,7 @@ card.appendChild(savedMsg);
 var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-top:8px;">'+t("profile_edit_save")+'</button>');
 saveBtn.addEventListener("click", function(){
 var nomeCognome = document.getElementById("peNome").value.trim();
+var nomeNascosto = document.getElementById("peHideName").checked;
 var username = document.getElementById("peUsername").value.trim();
 var federazioni = [];
 Array.prototype.forEach.call(fedWrap.querySelectorAll('input[type=checkbox][data-fed]'), function(cb){
@@ -6548,7 +6573,7 @@ federazioni.push({ code: code, tessera: tesseraInput ? tesseraInput.value.trim()
 }
 });
 state.profile = {
-nomeCognome: nomeCognome, username: username, email: profile.email,
+nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, email: profile.email,
 federazioni: federazioni, arco: arcoSel, privacy: true,
 compagnia: clubCod, compagniaNome: clubNome
 };
@@ -6556,10 +6581,10 @@ state.theme = themeSel;
 save();
 if(!DEV_MODE && currentUser && db){
 db.collection("users").doc(currentUser.uid).update({
-nomeCognome: nomeCognome, username: username, federazioni: federazioni, arco: arcoSel,
+nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, federazioni: federazioni, arco: arcoSel,
 compagnia: clubCod, compagniaNome: clubNome
 }).then(function(){
-syncMyPublicProfile({ username: username, nomeCognome: nomeCognome, compagnia: clubCod, compagniaNome: clubNome });
+syncMyPublicProfile({ username: username, nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, compagnia: clubCod, compagniaNome: clubNome });
 }).catch(function(){});
 }
 savedMsg.textContent = t("profile_edit_saved_msg");
@@ -7383,7 +7408,7 @@ var bar = el('<div class="tabbar'+(wide?' tabbar-wide':'')+'" style="z-index:60;
 [["campi","navfield",t("nav_fields")],
  ["tira","navshoot",t("nav_shoot")],
  ["compagnie","navclub",t("nav_clubs")],
- ["mercatino","navmarket",t("nav_market")],
+ ["market","navmarket",t("nav_market")],
  ["profilo","navprofile",t("nav_profile")]].forEach(function(tb){
 var key = tb[0], on = (state.tab === key);
 // La voce attiva ha una pastiglia piena: sul telefono, al sole, il solo
@@ -7416,7 +7441,7 @@ if(!state.tab || state.tab === "community") state.tab = "tira";
 
 // ── Cose urgenti: sempre in cima, in qualunque sezione ────────────────────
 // Il banner del percorso in corso ha senso solo dove si tira: nello spazio
-// compagnia o nel mercatino e' fuori posto.
+// compagnia o nel marketplace e' fuori posto.
 if(hasActiveRound && state.tab === "tira"){
 wrap.appendChild(el(
 '<div class="resume-banner">'+t("resume_banner", { mode: escapeHtml(modeLabel(state.mode)), n: state.format })+
@@ -7489,7 +7514,7 @@ var pgBtn = el('<button class="btn menu-btn prepara btn-block"><span class="menu
 pgBtn.addEventListener("click", function(){ state.pgScreen = "pick"; state.screen = "prepara-gara"; save(); render(); });
 menuCard.appendChild(pgBtn);
 } else {
-// Stesso trattamento del Mercatino: invece di sparire senza spiegazione,
+// Stesso trattamento del Marketplace: invece di sparire senza spiegazione,
 // la funzione si mostra chiusa e dice a chi sara' aperta.
 var pgLock = el('<div style="margin-top:10px;padding:14px 12px;border:1px dashed var(--line);border-radius:14px;text-align:center;"></div>');
 pgLock.appendChild(el('<div style="color:var(--muted);opacity:0.75;line-height:1;">'+icon("clipboard",30)+'</div>'));
@@ -7513,14 +7538,14 @@ armDoubleConfirm(resetBtn, t("reset_confirm"), hardResetAll);
 }
 }
 
-// ══════════════════════ SEZIONE: MERCATINO ══════════════════════
-else if(state.tab === "mercatino"){
+// ═════════════════════ SEZIONE: MARKETPLACE ═════════════════════
+else if(state.tab === "market"){
 var mktCard = el('<div class="card"></div>');
 mktCard.appendChild(el('<h2 class="section-title">'+t("market_btn_label")+'</h2>'));
 if(IS_BETA_TESTER){
-// Si apre da solo: premere "Mercatino" due volte non aveva senso.
+// Si apre da solo: premere "Marketplace" due volte non aveva senso.
 // La scheda torna su "Tira" PRIMA di uscire, altrimenti al ritorno dal
-// mercatino si ripartirebbe subito verso il mercatino, in cerchio.
+// marketplace si ripartirebbe subito verso il marketplace, in cerchio.
 mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+icon("cart",34)+'</div>'));
 mktCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);text-align:center;">'+t("market_opening")+'</div>'));
 state.tab = "tira"; save();
@@ -9915,12 +9940,12 @@ ps.push(doc.ref.delete().catch(function(){}));
 });
 return Promise.all(ps);
 }).catch(function(){}));
-// Mercatino: annunci (il campo usato dalle regole e' sellerUid; gli altri due
+// Marketplace: annunci (il campo usato dalle regole e' sellerUid; gli altri due
 // coprono eventuali annunci scritti da versioni precedenti)
 ["sellerUid","uid","ownerUid"].forEach(function(campo){
 jobs.push(deleteQueryDocs(db.collection("market_listings").where(campo,"==",uid).limit(100)));
 });
-// Mercatino: trattative, prima i messaggi poi la conversazione
+// Marketplace: trattative, prima i messaggi poi la conversazione
 jobs.push(db.collection("market_conversations").where("participants","array-contains",uid).limit(60).get().then(function(snap){
 var ps = [];
 snap.forEach(function(doc){
@@ -9930,7 +9955,7 @@ return doc.ref.delete().catch(function(){});
 });
 return Promise.all(ps);
 }).catch(function(){}));
-// Mercatino: recensioni che HO SCRITTO io (quelle ricevute non sono mie)
+// Marketplace: recensioni che HO SCRITTO io (quelle ricevute non sono mie)
 jobs.push(deleteQueryDocs(db.collection("market_reviews").where("fromUid","==",uid).limit(100)));
 // Foto degli annunci caricate su Storage in market/{uid}/
 try{
