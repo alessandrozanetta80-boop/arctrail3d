@@ -1071,6 +1071,7 @@ welcome_note_p2: "Puoi già usarla per segnare i punteggi in allenamento e in ga
 welcome_note_p3: "Alcune parti sono nuove e qualcosa può non funzionare: se trovi un problema o hai un’idea, scrivimi. Leggo tutto e correggo il prima possibile.",
 welcome_note_report: "Scrivi una segnalazione",
 welcome_note_start: "Inizia",
+welcome_note_ack: "Ho capito: non mostrare più questo messaggio",
 
 
 country_italy: "Italia",
@@ -1574,6 +1575,7 @@ welcome_note_p2: "You can already use it to record your scores in training and i
 welcome_note_p3: "Some parts are new and something may not work: if you find a problem or have an idea, write to me. I read everything and fix things as soon as I can.",
 welcome_note_report: "Report a problem",
 welcome_note_start: "Start",
+welcome_note_ack: "Got it: don’t show this message again",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Shoot",
 nav_fields: "Fields",
@@ -2023,6 +2025,7 @@ welcome_note_p2: "Vous pouvez déjà l’utiliser pour noter vos scores à l’e
 welcome_note_p3: "Certaines parties sont nouvelles et quelque chose peut ne pas fonctionner : si vous trouvez un problème ou avez une idée, écrivez-moi. Je lis tout et je corrige dès que possible.",
 welcome_note_report: "Signaler un problème",
 welcome_note_start: "Commencer",
+welcome_note_ack: "J’ai compris : ne plus afficher ce message",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Tirer",
 nav_fields: "Terrains",
@@ -2472,6 +2475,7 @@ welcome_note_p2: "Du kannst sie schon jetzt für deine Ergebnisse im Training un
 welcome_note_p3: "Einige Teile sind neu und etwas kann noch nicht funktionieren: Wenn du ein Problem findest oder eine Idee hast, schreib mir. Ich lese alles und bessere so schnell wie möglich nach.",
 welcome_note_report: "Problem melden",
 welcome_note_start: "Los geht’s",
+welcome_note_ack: "Verstanden: diese Meldung nicht mehr anzeigen",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Schie\u00dfen",
 nav_fields: "Parcours",
@@ -2921,6 +2925,7 @@ welcome_note_p2: "Antrenmanda ve yarışmada puanlarını şimdiden kaydedebilir
 welcome_note_p3: "Bazı bölümler yeni ve bir şeyler çalışmayabilir: bir sorun bulursan ya da bir fikrin olursa bana yaz. Hepsini okuyorum ve en kısa sürede düzeltiyorum.",
 welcome_note_report: "Sorun bildir",
 welcome_note_start: "Başla",
+welcome_note_ack: "Anladım: bu mesajı bir daha gösterme",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "At\u0131\u015f",
 nav_fields: "Alanlar",
@@ -3384,6 +3389,7 @@ welcome_note_p2: "Уже сейчас можно записывать резул
 welcome_note_p3: "Некоторые части новые, и что-то может не работать: если найдёте проблему или появится идея, напишите мне. Я читаю всё и исправляю как можно быстрее.",
 welcome_note_report: "Сообщить о проблеме",
 welcome_note_start: "Начать",
+welcome_note_ack: "Понятно: больше не показывать это сообщение",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "\u0421\u0442\u0440\u0435\u043b\u044c\u0431\u0430",
 nav_fields: "\u041f\u043e\u043b\u044f",
@@ -3848,6 +3854,7 @@ welcome_note_p2: "Ya puedes usarla para anotar tus puntuaciones en entrenamiento
 welcome_note_p3: "Algunas partes son nuevas y algo puede fallar: si encuentras un problema o tienes una idea, escríbeme. Lo leo todo y lo corrijo lo antes posible.",
 welcome_note_report: "Informar de un problema",
 welcome_note_start: "Empezar",
+welcome_note_ack: "Entendido: no volver a mostrar este mensaje",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Tirar",
 nav_fields: "Campos",
@@ -4312,6 +4319,7 @@ welcome_note_p2: "Du kan redan använda den för att notera dina poäng på trä
 welcome_note_p3: "Vissa delar är nya och något kanske inte fungerar: hittar du ett problem eller har en idé, skriv till mig. Jag läser allt och rättar så fort jag kan.",
 welcome_note_report: "Rapportera ett problem",
 welcome_note_start: "Kom igång",
+welcome_note_ack: "Jag förstår: visa inte det här meddelandet igen",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Skjut",
 nav_fields: "Banor",
@@ -4775,6 +4783,7 @@ welcome_note_p2: "Je kunt hem nu al gebruiken om je scores bij te houden tijdens
 welcome_note_p3: "Sommige delen zijn nieuw en er kan iets niet werken: vind je een probleem of heb je een idee, schrijf me dan. Ik lees alles en los het zo snel mogelijk op.",
 welcome_note_report: "Een probleem melden",
 welcome_note_start: "Beginnen",
+welcome_note_ack: "Begrepen: dit bericht niet meer tonen",
 // --- chiavi aggiunte 12/08 (tradotte) ---
 nav_shoot: "Schieten",
 nav_fields: "Velden",
@@ -6014,11 +6023,15 @@ if(currentUser && authState === "ready"){ appendTabBarTo(app); }
 if(authState === "ready") maybeShowWelcomeNote();
 }
 
-// Avviso di benvenuto: compare una volta sola per dispositivo, alla prima
-// apertura dell'app aperta a tutti. Non e' un pannello di sistema, quindi
-// vive fuori da #app e non viene spazzato via dal prossimo render().
-var WELCOME_NOTE_KEY = "arctrail3d_welcome_v1";
+// Avviso di benvenuto: ricompare a OGNI apertura dell'app finche' l'utente
+// non spunta "Ho capito". Solo la spunta scrive la chiave in localStorage.
+// welcomeNoteDone e' la guardia di sessione: senza, tornerebbe a ogni render().
+// Non e' un pannello di sistema, quindi vive fuori da #app e non viene
+// spazzato via dal prossimo render().
+var WELCOME_NOTE_KEY = "arctrail3d_welcome_v2";
+var welcomeNoteDone = false;
 function maybeShowWelcomeNote(){
+if(welcomeNoteDone) return;
 if(document.getElementById("welcomeNote")) return;
 var seen = false;
 try{ seen = window.localStorage.getItem(WELCOME_NOTE_KEY) === "1"; }catch(e){}
@@ -6031,9 +6044,12 @@ box.appendChild(el('<p style="font-size:0.86rem;line-height:1.5;color:var(--mute
 });
 var reportBtn = el('<a class="btn btn-ghost btn-block" style="margin-top:4px;text-align:center;text-decoration:none;" href="mailto:'+CONTACT_EMAIL+'?subject='+encodeURIComponent("ArcTrail 3D - segnalazione")+'">'+escapeHtml(t("welcome_note_report"))+'</a>');
 box.appendChild(reportBtn);
+box.appendChild(el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:12px 0 0;cursor:pointer;"><input type="checkbox" id="welcomeNoteAck" style="width:auto;margin-top:2px;"><span>'+escapeHtml(t("welcome_note_ack"))+'</span></label>'));
 var okBtn = el('<button class="btn btn-primary btn-block" style="margin-top:10px;">'+escapeHtml(t("welcome_note_start"))+'</button>');
 okBtn.addEventListener("click", function(){
-try{ window.localStorage.setItem(WELCOME_NOTE_KEY, "1"); }catch(e){}
+var ack = document.getElementById("welcomeNoteAck");
+if(ack && ack.checked){ try{ window.localStorage.setItem(WELCOME_NOTE_KEY, "1"); }catch(e){} }
+welcomeNoteDone = true;
 if(ov.parentNode) ov.parentNode.removeChild(ov);
 });
 box.appendChild(okBtn);
@@ -9033,7 +9049,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-14-registrazioni-aperte";
+var BUILD_STAMP = "2026-08-14-avvisi-v2";
 
 function infoScreen(){
 var wrap = el('<div></div>');
