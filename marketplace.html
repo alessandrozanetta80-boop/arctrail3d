@@ -111,7 +111,6 @@ section.active{display:block}
 .lcond.ottimo{background:rgba(49,91,53,.18);color:var(--accent)}
 .lcond.buono{background:rgba(203,163,92,.18);color:var(--gold)}
 .lcond.usato{background:rgba(107,112,105,.14);color:var(--muted)}
-.bv{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:var(--accent);background:rgba(49,91,53,.12);padding:2px 7px;border-radius:var(--r-p);}
 .wanted-tag{position:absolute;top:8px;left:8px;background:rgba(203,163,92,.2);color:var(--gold);border-radius:var(--r-p);font-size:10px;font-weight:700;padding:3px 9px;letter-spacing:.04em;pointer-events:none;}
 .empty{text-align:center;padding:52px 24px}
 .empty p{font-size:15px;font-weight:600;color:var(--muted)}
@@ -184,6 +183,8 @@ section.active{display:block}
 .mkt-note p{margin:6px 0 0;color:var(--muted)}
 .mkt-note-x{position:absolute;top:6px;right:8px;width:28px;height:28px;border:0;background:transparent;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;border-radius:8px}
 .mkt-note-x:hover{background:rgba(0,0,0,.06)}
+.mkt-note-ack{display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:12.5px;color:var(--muted);cursor:pointer;}
+.mkt-note-ack input{width:auto;margin:0;flex-shrink:0;}
 .cap-note{margin:16px 4px 4px;padding:12px 14px;background:rgba(203,163,92,.14);border:1px solid rgba(203,163,92,.4);border-radius:var(--r-m);font-size:12.5px;line-height:1.5;color:var(--muted);text-align:center;}
 .load-err{margin:20px 16px;padding:14px;background:rgba(226,61,46,.08);border:1px solid rgba(226,61,46,.35);border-radius:var(--r-m);font-size:13px;line-height:1.6;color:var(--cream);}
 .load-err b{color:var(--danger);display:block;margin-bottom:4px}
@@ -287,7 +288,6 @@ body::before{opacity:.28}
 .lcond.ottimo{background:rgba(49,91,53,.12)}
 .lcond.buono{background:rgba(166,121,31,.14)}
 .lcond.usato{background:rgba(107,112,105,.12)}
-.bv{background:rgba(49,91,53,.10)}
 .wanted-tag{background:rgba(166,121,31,.16)}
 .bub-offer{background:rgba(166,121,31,.09);border-color:rgba(166,121,31,.28)}
 .chip.on{color:#FFFFFF}
@@ -688,6 +688,7 @@ body::before{opacity:.28}
     <b>Marketplace in prova</b>
     <p>Qui per ora si pubblicano solo annunci: prezzo, pagamento e consegna li accordate direttamente tra voi. L&rsquo;app non gestisce i pagamenti e non fa da intermediario.</p>
     <p>Chi pubblica in questo primo periodo entra tra i <b>Venditori Fondatori</b>: resta un riconoscimento sul profilo e condizioni agevolate sulle vendite, se un domani il Marketplace avr&agrave; dei costi.</p>
+    <label class="mkt-note-ack"><input type="checkbox" id="mktNoteAck">Ho capito: non mostrare pi&ugrave; questo messaggio</label>
   </div>
   <div class="listings" id="lstCont"></div>
 </section>
@@ -962,7 +963,7 @@ body::before{opacity:.28}
 var FC={apiKey:"AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",authDomain:"arctrail3d.firebaseapp.com",projectId:"arctrail3d",storageBucket:"arctrail3d.firebasestorage.app",messagingSenderId:"185889526349",appId:"1:185889526349:web:0af3b386332664387c8204"};
 firebase.initializeApp(FC);
 var auth=firebase.auth(),db=firebase.firestore(),stg=firebase.storage();
-var cu=null,isVerArch=false,allAds=[],myFavs=new Set(),savedS=[],editId=null,fPhs=["","","",""],curAd=null,curConvId=null,curConv=null,detPhs=[],detIdx=0,selStars=0,revTgtUid=null,revAdId=null,revCache={},phTargetIdx=null;
+var cu=null,allAds=[],myFavs=new Set(),savedS=[],editId=null,fPhs=["","","",""],curAd=null,curConvId=null,curConv=null,detPhs=[],detIdx=0,selStars=0,revTgtUid=null,revAdId=null,revCache={},phTargetIdx=null;
 /* origPhs = foto che l'annuncio aveva aprendo il modulo; upPhs = foto caricate
    ORA e non ancora salvate. Servono per capire quali file su Storage sono
    rimasti orfani quando si salva, si annulla o si elimina. */
@@ -1026,18 +1027,31 @@ auth.onAuthStateChanged(function(user){
     if(!doc.exists){showS("secDen");return;}
     var d=doc.data();
     if(d.approved!==true){showS("secDen");return;}
-    isVerArch=d.approved===true;enter();
+    enter();
   }).catch(function(){showS("secDen");});
 });
-var MKT_NOTE_KEY="arctrail3d_mkt_note_v1";
+// La nota torna a OGNI accesso al Marketplace finche' l'utente non spunta
+// "Ho capito": solo la spunta scrive la chiave. La × chiude e basta.
+// mktNoteDone e' la guardia di sessione (enter() puo' essere richiamata).
+var MKT_NOTE_KEY="arctrail3d_mkt_note_v2";
+var mktNoteDone=false,mktNoteReady=false;
 function initMktNote(){
   var n=document.getElementById("mktNote");if(!n)return;
+  if(mktNoteDone)return;
   var seen=false;try{seen=window.localStorage.getItem(MKT_NOTE_KEY)==="1";}catch(e){}
-  if(seen)return;
+  if(seen){mktNoteDone=true;return;}
   n.style.display="block";
+  if(mktNoteReady)return;
+  mktNoteReady=true;
+  var ack=document.getElementById("mktNoteAck");
+  function saveIfAck(){
+    if(ack&&ack.checked){try{window.localStorage.setItem(MKT_NOTE_KEY,"1");}catch(e){}}
+  }
   document.getElementById("mktNoteX").addEventListener("click",function(){
-    n.style.display="none";
-    try{window.localStorage.setItem(MKT_NOTE_KEY,"1");}catch(e){}
+    n.style.display="none";mktNoteDone=true;saveIfAck();
+  });
+  if(ack)ack.addEventListener("change",function(){
+    if(ack.checked){saveIfAck();n.style.display="none";mktNoteDone=true;}
   });
 }
 function enter(){
@@ -1148,7 +1162,6 @@ function renderAds(){
       +'<div class="lbody"><div class="ltitle">'+esc(a.title)+'</div>'
       +'<div class="lspecs">'+esc(a.location||"")+(a.location&&a.createdAt?" · ":"")+ago(a.createdAt)+(a.shipping?" · 📦":"")+'</div>'
       +'<div class="lfoot">'+co+pr+'</div>'
-      +(a.sellerVerified?'<div style="margin-top:5px"><span class="bv">✓ Arciere</span></div>':'')
       +'</div></div>';
   }).join("");
   if(adsCapped)c.insertAdjacentHTML("beforeend",'<div class="cap-note">Stai vedendo i '+ADS_LIMIT+' annunci piu\u2019 recenti. Ce ne sono altri: usa la ricerca o i filtri per trovarli.</div>');
@@ -1212,7 +1225,7 @@ function openDet(id){
   document.getElementById("detSpec").innerHTML=sp.map(function(s){return'<div class="spec-row"><dt>'+esc(s[0])+'</dt><dd>'+esc(String(s[1]))+'</dd></div>';}).join("");
   var im=cu&&a.sellerUid===cu.uid;
   var sellName=a.sellerName||a.sellerEmail||"Utente";
-  document.getElementById("detSell").innerHTML='<div class="seller-av">'+ini(sellName)+'</div><div><div class="seller-name">'+esc(sellName)+(a.sellerVerified?'<span class="bv" style="font-size:10px">✓ Arciere</span>':'')+'</div><div class="seller-meta" id="detSellMeta">…</div></div>'+(im?'':`<svg style="margin-left:auto;flex-shrink:0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`);
+  document.getElementById("detSell").innerHTML='<div class="seller-av">'+ini(sellName)+'</div><div><div class="seller-name">'+esc(sellName)+'</div><div class="seller-meta" id="detSellMeta">…</div></div>'+(im?'':`<svg style="margin-left:auto;flex-shrink:0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`);
   document.getElementById("detSell").onclick=im?null:function(){openPro(a.sellerUid,sellName);};
   var bar=document.getElementById("detBar");
   if(im){bar.innerHTML='<button class="btn btn-ghost" style="width:auto;padding:0 20px;flex:1;border-color:var(--bark);color:var(--bark)" onclick="openEditAd(\''+id+'\')">Modifica annuncio</button>';}
@@ -1424,7 +1437,7 @@ document.getElementById("btnSave").addEventListener("click",function(){
   if(fPhs.indexOf("__uploading__")>=0){er.textContent="Attendi la fine del caricamento delle foto.";er.style.display="block";return;}
   if(!title){er.textContent="Inserisci un titolo.";er.style.display="block";return;}
   if(type==="vendo"&&(!price||price<=0)){er.textContent="Inserisci il prezzo.";er.style.display="block";return;}
-  var payload={type:type,title:title,category:cat,location:loc,description:desc,photos:fPhs.filter(function(p){return p&&p!=="__uploading__";}),sellerUid:cu.uid,sellerEmail:cu.email,sellerName:cu.displayName||cu.email.split("@")[0],sellerVerified:isVerArch,status:"active",updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  var payload={type:type,title:title,category:cat,location:loc,description:desc,photos:fPhs.filter(function(p){return p&&p!=="__uploading__";}),sellerUid:cu.uid,sellerEmail:cu.email,sellerName:cu.displayName||cu.email.split("@")[0],status:"active",updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(type==="vendo"){payload.price=price;payload.shipping=ship;payload.accOffers=acc;payload.condition=getCond();}
   else if(budget>0)payload.budget=budget;
   var mkSel=document.getElementById("fMarca").value;
