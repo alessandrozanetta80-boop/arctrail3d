@@ -6633,11 +6633,12 @@ applyScroll(keepScroll[scrollKey()] || 0);
 // Rimettere un riquadro dove stava. Chiamabile anche da fuori: le chat si
 // riempiono dopo, quando risponde Firestore, e a quel punto il riquadro e'
 // ancora vuoto per noi.
-function restoreBox(node){
+// "ripiego" e' dove si va la prima volta, quando non c'e' ancora niente da
+// ricordare: per una chat e' il fondo, per un elenco e' l'inizio.
+function restoreBox(node, ripiego){
 if(!node) return;
-var k = node.getAttribute("data-scroll-key");
-var v = keepInner[k];
-if(v === undefined) return;
+var v = keepInner[node.getAttribute("data-scroll-key")];
+if(v === undefined) v = (ripiego === undefined) ? 0 : ripiego;
 node.scrollTop = (v === "end") ? node.scrollHeight : v;
 }
 
@@ -10067,7 +10068,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-continuita";
+var BUILD_STAMP = "2026-08-16-continuita-b";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -11658,7 +11659,7 @@ wrap.appendChild(backBlocked);
 return wrap;
 }
 
-var msgList = el('<div data-scroll-key="dm:msg" style="min-height:140px;max-height:320px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>');
+var msgList = el('<div data-scroll-key="dm:msg:'+chatId+'" style="min-height:140px;max-height:320px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>');
 card.appendChild(msgList);
 
 stopDmMessages();
@@ -11687,13 +11688,13 @@ bubble.appendChild(delMsg);
 }
 msgList.appendChild(bubble);
 });
-restoreBox(msgList);
+restoreBox(msgList, "end");
 dmMarkRead(chatId);
 }, function(err){ console.error("dm messaggi:", err); });
 }, 0);
 
 var inputRow = el('<div style="display:flex;gap:8px;align-items:flex-end;"></div>');
-var textInp = el('<textarea class="input-field" data-keep="dm:draft" placeholder="'+escapeHtml(t("dm_placeholder"))+'" rows="2" style="flex:1;resize:none;"></textarea>');
+var textInp = el('<textarea class="input-field" data-keep="dm:draft:'+chatId+'" placeholder="'+escapeHtml(t("dm_placeholder"))+'" rows="2" style="flex:1;resize:none;"></textarea>');
 var sendBtn = el('<button class="btn btn-primary" style="padding:10px 16px;">'+t("dm_send")+'</button>');
 inputRow.appendChild(textInp);
 inputRow.appendChild(sendBtn);
@@ -11730,7 +11731,7 @@ createdAt: firebase.firestore.FieldValue.serverTimestamp()
 });
 }).then(function(){
 textInp.value = "";
-forgetDraft("dm:draft");
+forgetDraft("dm:draft:"+chatId);
 sendBtn.disabled = false;
 sendPushViaFirestore(otherUid, t("dm_notif_title"), t("dm_notif_body",{ name: myName, text: txt.substring(0,60) }));
 }).catch(function(e){
