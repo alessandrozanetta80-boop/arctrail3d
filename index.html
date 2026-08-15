@@ -51,7 +51,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
@@ -62,55 +62,132 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 <style>
+/* ══════════════════════════════════════════════════════════════════════════
+   FONDAMENTA — revisione design 15/08/2026
+   Tre livelli: PALETTE (colori grezzi) · RUOLI (a cosa servono) · PONTE
+   (i vecchi nomi rimappati, cosi' le 12.000 righe sotto non si toccano).
+   Tutto dichiarato DENTRO body.theme-*, mai ereditato: una variabile che ne
+   cita un'altra si risolve sul nodo dove e' dichiarata, ed e' il motivo per
+   cui prima la barra restava nera col tema chiaro.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* I CINQUE COLORI DELLA TASTIERA — assoluti, fuori dai temi, ed e' il punto.
+   Sono l'unica cosa che non cambia passando da chiaro a scuro: e' un comando
+   di sicurezza che si usa a memoria muscolare, col guanto e il sole in faccia.
+   Croma spinto al massimo che la cifra bianca regge (+27/30/61/63% sui
+   valori di ieri, a parita' di luminanza). Schiarire invece no: sotto il velo
+   del riverbero un inchiostro scuro su fondo chiaro crolla a 2,5:1. */
 :root{
---bg:#0F1412; --bg-panel:#16201C; --bg-panel-2:#1A2620; --wood:#16201C; --wood-2:#1A2620;
---accent:#315B35; --accent-ink:#FFFFFF; --accent-soft:#60A966; --bark:#E8722F; --gold:#CBA35C; --cream:#EDE6D6; --muted:#9AA39C;
---danger:#E23D2E; --success:#4CAF50; --line:#2A362F;
---qss:#E8722F; --qspot:#6FBF3F; --qsag:#3E6FC2; --qzero:#464A42; --qperfect:#C1272D;
---checkbox-border: rgba(237,230,214,0.4);
-/* Mancavano due gradini: si saltava da #EDE6D6 a #9AA39C senza vie di mezzo,
-   e i bordi "fantasma" non si vedevano. */
---ink-2:#C7CFC5; --line-strong:#3B4A41;
---navbar-bg:var(--bg-panel); --navbar-line:var(--line); --navbar-fg:var(--muted);
---navbar-on:var(--accent-soft); --navbar-pill:var(--bg-panel-2); --navbar-shadow:rgba(0,0,0,0.45);
---navbar-green:#60A966;
-/* Inchiostro DENTRO la pastiglia della sezione scelta: sullo scuro la
-   pastiglia e' un riquadro scuro, quindi il glifo resta verde chiaro. */
---navbar-pill-ink:#60A966;
+--k-perfect:#CC1A20; --k-superspot:#DD4A00; --k-spot:#188F3D;
+--k-sagoma:#1668D6;  --k-zero:#63705F;
+--s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
+--r-s:10px; --r-m:14px; --r-l:20px; --tap:44px;
+--font-ui:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+--font-display:"Fraunces",Georgia,serif;
+--font-num:"Outfit",-apple-system,sans-serif;
+color-scheme:light dark;
 }
-/* ══════════════════ TEMA CHIARO — rifatto il 15/08/2026 ══════════════════
+@media (prefers-color-scheme:light){ html{ background:#ECEDE6; } }
+@media (prefers-color-scheme:dark){  html{ background:#0F1412; } }
+/* Il tema vive su <body>, ma barre di scorrimento e controlli di sistema li
+   disegna <html>: senza questo restavano del tema sbagliato. */
+html:has(body.theme-light){ color-scheme:light; background:#ECEDE6; }
+html:has(body.theme-dark){  color-scheme:dark;  background:#0F1412; }
+
+/* ═══════════ SCURO — sera, sede, macchina, batteria ═══════════
+   Non nero pieno: sull'OLED il nero assoluto fa aloni intorno al testo. */
+:root, body.theme-dark{
+--surface-0:#0F1412; --surface-1:#17211D; --surface-2:#1F2C26; --surface-3:#26352E;
+--text-1:#EDF0EA;    /* 16,2:1 */
+--text-2:#B6C0B8;    /*  9,9:1 */
+--text-3:#8D998F;    /*  6,3:1 — il minimo, solo per cose non essenziali */
+--text-on-fill:#FFFFFF;
+--border:#2D3B34; --border-strong:#5B6E60;   /* forte = 3,0:1, bersagli da toccare */
+--stroke:1px;
+--brand-fill:#2F6B37; --brand-text:#6FBF77;
+/* codice funzione: riempimenti uguali nei due temi, testi e fondi tenui no */
+--fn-training-fill:var(--k-spot);      --fn-training-text:#5FD46B;
+--fn-gara-fill:var(--k-superspot);     --fn-gara-text:#FF9A55;
+--fn-prepara-fill:#A87413;             --fn-prepara-text:#E3BC6E;
+--fn-training-soft:#16331F; --fn-gara-soft:#3A2612; --fn-prepara-soft:#332B15;
+--danger-fill:#A31E22; --danger-text:#F4756A;
+--success-fill:#2F6B37; --success-text:#6FBF77;
+/* FUOCO: blu, cioe' fuori dai colori del marchio, di proposito. Era --gold,
+   e sugli elementi gia' bordati d'oro spariva proprio dove serviva. */
+--focus:#7FB3FF;
+/* ELEVAZIONE: allo scuro l'ombra, al chiaro il bordo. Ora e' un token, cosi'
+   nessun componente deve piu' riscriverlo per tema. */
+--elev-1:0 2px 8px rgba(0,0,0,0.35);
+--elev-2:0 8px 24px -8px rgba(0,0,0,0.55);
+--elev-menu:0 16px 32px -12px rgba(0,0,0,0.70);
+--grana:0.42;
+--alone-1:rgba(90,140,30,0.16); --alone-2:rgba(96,169,102,0.11); --alone-3:rgba(232,114,47,0.08);
+/* ── ponte verso i vecchi nomi ── */
+--bg:var(--surface-0); --bg-panel:var(--surface-1); --bg-panel-2:var(--surface-2);
+--wood:var(--surface-1); --wood-2:var(--surface-2);
+--cream:var(--text-1); --ink-2:var(--text-2); --muted:var(--text-3);
+--line:var(--border); --line-strong:var(--border-strong);
+--accent:var(--brand-fill); --accent-soft:var(--brand-text); --accent-ink:#FFFFFF;
+--bark:var(--fn-gara-text); --gold:var(--fn-prepara-text);
+--danger:var(--danger-text); --success:var(--success-text);
+--checkbox-border:rgba(237,240,234,0.45);
+--navbar-bg:var(--surface-1); --navbar-line:var(--border); --navbar-fg:var(--text-3);
+--navbar-on:var(--brand-text); --navbar-pill:var(--surface-3);
+--navbar-pill-ink:var(--brand-text); --navbar-green:var(--brand-text);
+--navbar-shadow:rgba(0,0,0,0.45);
+/* i --q* disegnano anche le zone del bersaglio: restano i colori del bersaglio */
+--qss:#E8722F; --qspot:#6FBF3F; --qsag:#3E6FC2; --qperfect:#C1272D; --qzero:#464A42;
+}
+
+/* ═══════════ CHIARO — il tema da percorso ═══════════
    Al sole il vetro aggiunge un velo luminoso costante: sul fondo scuro quel
-   velo mangia il contrasto (nero su nero diventa grigio su grigio), sul fondo
-   chiaro invece lo alza. Il chiaro e' quindi il tema da percorso — ma regge
-   solo se rispetta tre regole:
-     1) contrasto sovradimensionato: testo principale sopra 12:1, non 4,5;
-     2) niente tinte sotto il 18%: al sole spariscono e il codice colore
-        (verde = allenamento, arancio = gara, oro = prepara) smette di guidare;
-     3) l'elevazione si fa con i BORDI, non con le ombre: un'ombra all'8% di
-        nero fuori non esiste, e i pulsanti sembrano disattivati.
-   Regola di colore, quella che risolve mezzo problema da sola:
-   UN colore per il riempimento, UNO per il testo. Un arancio abbastanza vivo
-   da fare da fondo non e' mai abbastanza scuro da fare da scritta. */
+   velo mangia il contrasto, sul chiaro lo alza. Tre regole:
+     1) contrasto sovradimensionato — testo principale sopra 15:1;
+     2) nessuna tinta sotto il 18%, sotto quella soglia il codice colore
+        sparisce e le tre sezioni diventano tre rettangoli bianchi;
+     3) l'elevazione col BORDO, non con l'ombra.
+   Regola di colore che risolve mezzo problema da sola: un colore per il
+   riempimento, uno per la scritta. */
 body.theme-light{
---bg:#ECEDE6; --bg-panel:#FFFFFF; --bg-panel-2:#F5F6F0; --wood:#FFFFFF; --wood-2:#F5F6F0;
---accent:#24602C; --accent-ink:#FFFFFF; --accent-soft:#24602C;
---bark:#BE530F;              /* 4,6:1 sia come fondo col bianco sopra, sia come scritta sul bianco */
---gold:#7A5610;              /* l'oro qui fa quasi sempre da scritta: 7,0:1 */
---cream:#12160F;             /* 18:1 */
---ink-2:#3A403A; --muted:#565D53;   /* era #6B7069, 5,1:1: troppo poco fuori */
---danger:#A81319; --success:#2E7D32;
---line:#D3D7CB; --line-strong:#B4BBAC;
---qzero:#9A9C93; --checkbox-border: rgba(18,22,15,0.45);
-/* Le --navbar-* vanno riscritte per esteso, non ereditate: nel :root sono
-   definite come var(--bg-panel) & co., e una variabile che ne cita un'altra
-   viene risolta SUL NODO DOVE E' DICHIARATA (html), non su body. Risultato:
-   col tema chiaro la barra in fondo restava nera lo stesso. */
---navbar-bg:#FFFFFF; --navbar-line:#D3D7CB; --navbar-fg:#565D53;
---navbar-on:#24602C; --navbar-pill:#24602C; --navbar-shadow:rgba(30,45,34,0.14);
---navbar-green:#24602C;
-/* Qui la pastiglia e' verde PIENA: dentro ci va il bianco, non il verde. */
---navbar-pill-ink:#FFFFFF;
 color-scheme:light;
+--surface-0:#ECEDE6; --surface-1:#FFFFFF; --surface-2:#F4F5EF; --surface-3:#E7E9E0;
+--text-1:#11150F;    /* 18,5:1 */
+--text-2:#333A32;    /* 11,7:1 */
+--text-3:#545B50;    /*  7,0:1 — era 5,1:1, troppo poco fuori */
+--text-on-fill:#FFFFFF;
+--border:#CED3C6; --border-strong:#7F8779;   /* 3,7:1 */
+--stroke:1.5px;                              /* fuori un filo da 1px non si vede */
+--brand-fill:#1F5A28; --brand-text:#1B5023;
+/* LA HOME SI GUARDA ALL'OMBRA, prima di uscire: e' l'unico punto dell'app
+   dove il vincolo del sole non c'e'. La voglia di aprire l'app nasce qui,
+   non nella tastiera, che si guarda di corsa con le mani occupate.
+   Testo su fondo tenue: 5,1 / 5,7 / 6,5. */
+--fn-training-fill:var(--k-spot);      --fn-training-text:#166B27;
+--fn-gara-fill:var(--k-superspot);     --fn-gara-text:#8F3D08;
+--fn-prepara-fill:#A87413;             --fn-prepara-text:#6B4B0B;
+--fn-training-soft:#CFE9C6; --fn-gara-soft:#FFDCB4; --fn-prepara-soft:#FCE6A8;
+--danger-fill:#9E1218; --danger-text:#9C121A;
+--success-fill:#26702C; --success-text:#1B5023;
+--focus:#1150C4;   /* 6,0:1 sulla tela */
+--elev-1:0 1px 2px rgba(30,45,34,0.06);
+--elev-2:0 1px 2px rgba(30,45,34,0.05), 0 12px 24px -20px rgba(30,45,34,0.35);
+--elev-menu:0 12px 28px -16px rgba(30,45,34,0.45);
+--grana:0.18;
+--alone-1:rgba(82,127,24,0.09); --alone-2:rgba(154,111,28,0.07); --alone-3:rgba(190,83,15,0.06);
+/* ── ponte ── */
+--bg:var(--surface-0); --bg-panel:var(--surface-1); --bg-panel-2:var(--surface-2);
+--wood:var(--surface-1); --wood-2:var(--surface-2);
+--cream:var(--text-1); --ink-2:var(--text-2); --muted:var(--text-3);
+--line:var(--border); --line-strong:var(--border-strong);
+--accent:var(--brand-fill); --accent-soft:var(--brand-text); --accent-ink:#FFFFFF;
+--bark:var(--fn-gara-text); --gold:var(--fn-prepara-text);
+--danger:var(--danger-text); --success:var(--success-text);
+--checkbox-border:rgba(17,21,15,0.45);
+--navbar-bg:#FFFFFF; --navbar-line:#CED3C6; --navbar-fg:#545B50;
+--navbar-on:var(--brand-fill); --navbar-pill:var(--brand-fill);
+--navbar-pill-ink:#FFFFFF; --navbar-green:var(--brand-fill);
+--navbar-shadow:rgba(30,45,34,0.14);
+--qss:#E8722F; --qspot:#6FBF3F; --qsag:#3E6FC2; --qperfect:#C1272D; --qzero:#9A9C93;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
@@ -309,12 +386,12 @@ input[type=text]:focus, input[type=number]:focus{ outline:2px solid var(--accent
 .partial-row .ptot{ font-weight:800; color:var(--gold); font-family:"Outfit",sans-serif; }
 .target-stage{ text-align:center; }
 .archer-turn{ font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
-.archer-name-big{ font-size:1.4rem; margin-bottom:6px; font-family:'Playfair Display',Georgia,serif; font-weight:900; letter-spacing:0.01em; }
+.archer-name-big{ font-size:1.4rem; margin-bottom:6px; font-family:'Fraunces',Georgia,serif; font-weight:900; letter-spacing:0.01em; }
 .arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:999px; margin-bottom:12px; }
 .mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:999px; margin-bottom:7px; text-transform:uppercase; letter-spacing:.05em; }
 .piazzola-hero{ margin-bottom:6px; }
 .piazzola-hero-lbl{ font-size:0.7rem; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin-bottom:0px; }
-.piazzola-num{ font-size:3.1rem; font-weight:700; color:var(--bark); font-family:"Playfair Display",Georgia,serif; line-height:1; position:relative; display:inline-block; }
+.piazzola-num{ font-size:3.1rem; font-weight:700; color:var(--bark); font-family:"Fraunces",Georgia,serif; line-height:1; position:relative; display:inline-block; }
 .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
 background:radial-gradient(circle, rgba(232,114,47,0.16), transparent 70%); z-index:-1; }
 .board{ position:relative; border-radius:16px; padding:12px;
@@ -326,7 +403,7 @@ background:var(--bg-panel-2); border:1px solid rgba(203,163,92,0.55); box-shadow
 .zoom-toolbar{ display:flex; justify-content:center; gap:8px; margin-top:10px; }
 .legend-row{ font-size:0.68rem; color:var(--muted); margin-top:8px; line-height:1.5; }
 .impact-readout{ margin-top:14px; background:var(--bg-panel-2); border:1px solid var(--gold); border-radius:12px; padding:14px; text-align:center; }
-.impact-readout .pts{ font-size:1.9rem; font-weight:900; color:var(--gold); font-family:'Playfair Display',Georgia,serif; }
+.impact-readout .pts{ font-size:1.9rem; font-weight:900; color:var(--gold); font-family:'Fraunces',Georgia,serif; }
 .impact-readout .lbl{ font-size:0.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:4px; }
 .impact-actions{ display:flex; gap:10px; margin-top:12px; }
 .impact-actions .btn{ flex:1; }
@@ -334,7 +411,7 @@ background:var(--bg-panel-2); border:1px solid rgba(203,163,92,0.55); box-shadow
 .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:92px; padding:8px 2px; gap:3px; position:relative; overflow:visible; border-radius:16px; line-height:1.15; box-shadow:0 3px 10px rgba(0,0,0,0.22); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease, background .12s ease; }
 .quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(1.15); }
 .quick-btn .quick-lbl{ font-size:clamp(0.5rem,2.4vw,0.64rem); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:normal; line-height:1.15; text-wrap:pretty; max-width:100%; }
-.quick-btn .quick-pts{ font-size:1.55rem; font-weight:900; font-family:"Playfair Display",Georgia,serif; color:#fff; }
+.quick-btn .quick-pts{ font-size:1.55rem; font-weight:900; font-family:"Fraunces",Georgia,serif; color:#fff; }
 body.theme-light .quick-btn .quick-pts{ color:inherit; }
 .quick-btn.superspot{ background:color-mix(in srgb, var(--qss) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qss) 60%, transparent); color:var(--qss); }
 .quick-btn.spot{ background:color-mix(in srgb, var(--qspot) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qspot) 60%, transparent); color:var(--qspot); }
@@ -358,7 +435,7 @@ body.theme-light .quick-btn.zero{ background:#5F645C; color:#FFFFFF; }
 .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
 .stats-row{ display:flex; gap:8px; margin-bottom:14px; }
 .stat-box{ flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 6px; }
-.stat-box .stat-num{ font-family:"Playfair Display",Georgia,serif; font-weight:900; font-size:1.5rem; color:var(--accent-soft); }
+.stat-box .stat-num{ font-family:"Fraunces",Georgia,serif; font-weight:900; font-size:1.5rem; color:var(--accent-soft); }
 .stat-box .stat-lbl{ font-size:0.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:2px; }
 @keyframes timerPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
 .timer-box{ margin:8px 0 20px; }
@@ -402,11 +479,11 @@ border:2px solid var(--bark); flex:0 0 auto; }
 .empty-hint{ color:var(--muted); font-size:0.85rem; text-align:center; padding:10px 0; }
 .empty-state-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-left:3px solid var(--accent-soft); border-radius:14px; padding:20px 18px; }
 .empty-state-icon{ width:40px; height:40px; border-radius:50%; background:rgba(96,169,102,0.20); color:var(--accent-soft); display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
-.empty-state-title{ font-family:'Playfair Display',Georgia,serif; font-weight:900; font-size:1.1rem; margin-bottom:8px; }
+.empty-state-title{ font-family:'Fraunces',Georgia,serif; font-weight:900; font-size:1.1rem; margin-bottom:8px; }
 .empty-state-body{ font-size:0.85rem; color:var(--muted); line-height:1.55; margin-bottom:16px; }
 .editorial-block{ text-align:center; padding:22px 10px; }
 .editorial-icon{ width:44px; height:44px; border-radius:50%; background:var(--qsag); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
-.editorial-title{ font-family:'Playfair Display',Georgia,serif; font-weight:900; font-size:1.05rem; line-height:1.45; margin-bottom:10px; }
+.editorial-title{ font-family:'Fraunces',Georgia,serif; font-weight:900; font-size:1.05rem; line-height:1.45; margin-bottom:10px; }
 .editorial-body{ font-size:0.84rem; color:var(--muted); line-height:1.6; max-width:360px; margin:0 auto; }
 .timeline-row{ display:flex; align-items:center; gap:12px; padding:10px 12px; background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:10px; margin-bottom:8px; }
 .timeline-icon{ width:30px; height:30px; border-radius:50%; background:rgba(96,169,102,0.20); color:var(--accent-soft); display:flex; align-items:center; justify-content:center; flex:none; }
@@ -462,108 +539,6 @@ sola, piu' larga. */
 #app{ max-width:960px; }
 }
 
-/* ══════════════ VESTE CHIARA DA COMPUTER (dai 760px in su) ══════════════
-Sul telefono non cambia NULLA: il tema scelto nel Profilo resta quello.
-Da computer la pagina diventa chiara e le due barre (testata e navigazione)
-restano scure: e' lo stesso schema gia' deciso per il Marketplace, cosi' le
-due meta' dell'app sembrano finalmente la stessa cosa.
-Per tornare indietro basta cancellare questo blocco fino alla riga
-"FINE VESTE CHIARA". */
-@media (min-width:760px){
-body.theme-dark, body.theme-light{
---bg:#ECEDE6; --bg-panel:#FFFFFF; --bg-panel-2:#F5F6F0; --wood:#FFFFFF; --wood-2:#F5F6F0;
---accent:#24602C; --accent-ink:#FFFFFF; --accent-soft:#24602C; --bark:#BE530F; --gold:#7A5610;
---cream:#12160F; --ink-2:#3A403A; --muted:#565D53; --danger:#A81319; --success:#2E7D32;
---line:#D3D7CB; --line-strong:#B4BBAC; --qzero:#9A9C93; --checkbox-border:rgba(18,22,15,0.40);
-/* L'insegna in cima ora e' chiara: barra bianca, marchio dentro un blocco
-   verde. Le pastiglie delle sezioni restano l'unico verde pieno. */
---navbar-bg:#FFFFFF; --navbar-line:#D3D7CB; --navbar-fg:#4F564C;
---navbar-on:#FFFFFF; --navbar-pill:#24602C; --navbar-shadow:rgba(30,45,34,0.10); --navbar-green:#24602C;
---navbar-pill-ink:#FFFFFF;
-}
-/* Stesso disegno dello sfondo del telefono, stessi tre colori dell'app
-(verde, oro, arancio), solo appoggiati sul chiaro invece che sullo scuro. */
-body{
-background:
-radial-gradient(ellipse 900px 500px at 8% -5%, rgba(82,127,24,0.13), transparent 60%),
-radial-gradient(ellipse 700px 500px at 105% 15%, rgba(154,111,28,0.10), transparent 55%),
-radial-gradient(ellipse 800px 600px at 50% 120%, rgba(190,83,15,0.09), transparent 60%),
-#ECEDE6;
-}
-body::before{ opacity:0.22; }
-/* Le ombre pensate per lo scuro, sul bianco diventano sporco. */
-.card{ box-shadow:0 2px 10px rgba(30,40,34,0.07); border-top-color:color-mix(in srgb, var(--gold) 45%, transparent); }
-.btn{ box-shadow:0 1px 3px rgba(30,40,34,0.10); }
-.quick-btn{ box-shadow:0 1px 3px rgba(30,40,34,0.10); }
-.board{ box-shadow:0 2px 10px rgba(30,40,34,0.08); }
-/* Da computer la pagina e' chiara per tutti e tre i temi, quindi le cifre
-avevano lo stesso problema di contrasto anche con Elegante e Satura. */
-.quick-btn{ border:1.5px solid rgba(18,22,15,0.10); }
-.quick-btn.superspot{ background:#BC4F0B; color:#FFFFFF; }
-.quick-btn.spot{ background:#2E7D32; color:#FFFFFF; }
-.quick-btn.sagoma{ background:#2E5FA8; color:#FFFFFF; }
-.quick-btn.perfect{ background:#A81319; color:#FFFFFF; }
-.quick-btn.zero{ background:#5F645C; color:#FFFFFF; }
-.quick-btn .quick-pts{ color:inherit; }
-/* Il timer fermo era un riquadro quasi bianco su pagina bianca: si leggeva
-   come disattivato. Ora ha un colore suo — ambra — che non e' nessuno dei
-   tre codici dell'app (verde allenamento, arancio gara, oro prepara) e che
-   al sole si distingue dal foglio. In corsa diventa verde pieno di tinta. */
-.timer-idle{ background:linear-gradient(135deg,#FDF2D9,#F9E9C4); border:1.5px solid rgba(138,98,16,0.55); }
-.timer-running{ background:#DDEBDA; border:1.5px solid #24602C; box-shadow:none; }
-.timer-running.timer-warn{ background:#F6E8C6; border-color:#8A6210; box-shadow:none; }
-.timer-running.timer-danger{ background:#F9DCDC; border-color:#A81319; box-shadow:none; }
-.timer-num{ color:#1B4C22; }
-.timer-num.timer-warn{ color:#6E4E0C; }
-.timer-num.timer-danger{ color:#8E0F14; }
-/* Da computer la pagina e' chiara per entrambi i temi: le schede seguono
-   le stesse regole del tema chiaro, non quelle dello scuro. */
-body.theme-dark .quick-btn .quick-pts{ color:inherit; }
-body.theme-dark .btn-standings{ background:color-mix(in srgb, var(--gold) 12%, var(--bg-panel)); border:1.5px solid color-mix(in srgb, var(--gold) 55%, transparent); color:var(--gold); box-shadow:none; }
-body.theme-dark .menu-btn.training{ background:#DDEBDA; border:1.5px solid rgba(36,96,44,0.42); color:#24602C; box-shadow:none; }
-body.theme-dark .menu-btn.gara{ background:#FBE2D0; border:1.5px solid rgba(190,83,15,0.45); color:#BE530F; box-shadow:none; }
-body.theme-dark .menu-btn.prepara{ background:#F6E8C6; border:1.5px solid rgba(176,126,18,0.50); color:#8A6210; box-shadow:none; }
-body.theme-dark .menu-btn.training .menu-icon{ background:#24602C; color:#FFFFFF; }
-body.theme-dark .menu-btn.gara .menu-icon{ background:#BE530F; color:#FFFFFF; }
-body.theme-dark .menu-btn.prepara .menu-icon{ background:#B07E12; color:#FFFFFF; }
-body.theme-dark .menu-btn .menu-txt{ color:var(--cream); }
-body.theme-dark .menu-btn .menu-sub{ color:#4B5248; opacity:1; font-weight:500; }
-.menu-btn::after{ display:none; }
-/* BARRA UNICA (13/08): la barra delle 5 sezioni non e' piu' un secondo
-blocco scuro sotto la testata, ma vive DENTRO la testata (vedi
-appendTabBarTo). Due mattoni neri sovrapposti prendevano un terzo dello
-schermo prima ancora di iniziare a leggere. Ora e' una sola insegna, ed
-essendo l'unica va tenuta a vista: sticky. */
-header.top{
-position:sticky; top:12px; z-index:70;
-height:auto; min-height:60px; padding:8px 12px 8px 8px; gap:16px;
-flex-wrap:wrap; row-gap:8px;
-background:var(--navbar-bg); border:1px solid var(--navbar-line); border-radius:16px;
-box-shadow:0 3px 14px var(--navbar-shadow); backdrop-filter:none; -webkit-backdrop-filter:none;
-margin-top:0; margin-bottom:16px; margin-left:0; margin-right:0;
-}
-/* Anche le sezioni sono bersagli: da tablet si toccano col dito. */
-.tabbar-wide > button{ min-height:44px; }
-/* il titolo non deve piu' mangiarsi la riga: lo spazio va alle sezioni */
-header.top .headtxt{ flex:0 0 auto; }
-.tabbar-wide{ flex:1 1 420px; flex-wrap:wrap; justify-content:center; gap:3px; }
-/* Colonna stretta (moduli, chat, percorso): le sezioni scendono su una riga
-loro, ma restano dentro la stessa insegna. I comandi di destra restano su
-in alto grazie a order. */
-#app.narrow header.top .head-actions{ order:1; }
-#app.narrow header.top .tabbar-wide{ order:2; flex-basis:100%; }
-/* Il marchio si tiene il verde pieno anche da computer, per entrambi i temi:
-   e' l'unico blocco di colore forte dell'insegna chiara. */
-header.top .brandblock{
-background:linear-gradient(140deg,#2A6B32 0%,#1D4F26 100%);
-padding:4px 16px 4px 4px; border-radius:16px;
-}
-header.top .brand-title{ color:#FFFFFF; }
-header.top h1{ color:#F3EEE1; }
-header.top .sub{ color:#C7D3C6; }
-header.top .icon-btn, header.top button:not(.home-btn){ color:#4F564C; }
-}
-/* ══════════════ FINE VESTE CHIARA ══════════════ */
 /* Col mouse serve un ritorno visivo: sul telefono basta il :active del dito. */
 @media (hover:hover) and (pointer:fine) and (min-width:760px){
 .btn:not(:disabled):hover{ filter:none; box-shadow:0 3px 12px rgba(30,40,34,0.14); }
@@ -850,98 +825,195 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
 .adm-act .btn{flex:1;min-width:96px;}
 @media(min-width:700px){.adm-dl{grid-template-columns:180px 1fr;}}
 @media(prefers-reduced-motion:reduce){.adm-chev{transition:none;}}
-/* ══════════════ RIFINITURA DEL TEMA CHIARO (15/08/2026) ══════════════
-   Tutto quello che segue vale solo con body.theme-light: lo scuro non lo
-   tocca nemmeno di striscio. Per tornare indietro basta cancellare fino a
-   "FINE RIFINITURA CHIARO". */
 
-/* Le tre macchie di colore sullo sfondo erano tarate sul nero: sul chiaro
-   sporcano e basta. Qui sono la meta'. */
-body.theme-light{
-background:
-radial-gradient(ellipse 900px 500px at 8% -5%, rgba(82,127,24,0.10), transparent 60%),
-radial-gradient(ellipse 700px 500px at 105% 15%, rgba(154,111,28,0.08), transparent 55%),
-radial-gradient(ellipse 800px 600px at 50% 120%, rgba(190,83,15,0.07), transparent 60%),
-var(--bg);
+/* ══════════════════════════════════════════════════════════════════════════
+   LIVELLO DI REVISIONE — 15/08/2026
+   Sta in fondo di proposito: vince per ordine di sorgente sulle regole
+   scritte sopra, senza doverle rincorrere una a una. Il prefisso body[class]
+   serve a battere le vecchie "body.theme-light .x" senza usare !important.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── TIPOGRAFIA ────────────────────────────────────────────────────────────
+   Playfair Display esce: faceva lo stesso mestiere di Fraunces, e undici
+   tagli scaricati da Google su una PWA che deve funzionare senza campo sono
+   undici occasioni di cadere su Georgia a percorso iniziato.
+   I NUMERI escono dal serif: un serif ad alto contrasto ha le aste sottili,
+   ed e' la prima cosa che sparisce col riverbero. Vanno in Outfit tabellare,
+   cosi' ogni cifra occupa la stessa larghezza e la classifica non balla
+   mentre i punteggi arrivano. */
+body[class] .quick-btn .quick-pts,
+body[class] .stat-box .stat-num,
+body[class] .impact-readout .pts,
+body[class] .total-col,
+body[class] .timer-num,
+body[class] .timer-dur,
+body[class] .partial-row .ptot,
+body[class] .piazzola-num,
+body[class] .big-target-num,
+body[class] table.score-table td{
+font-family:var(--font-num);
+font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1,"lnum" 1;
+letter-spacing:-0.01em;
 }
-body.theme-light::before{ opacity:0.22; }
+body[class] .piazzola-num, body[class] .big-target-num{ font-weight:800; }
+body[class] .archer-name-big,
+body[class] .empty-state-title,
+body[class] .editorial-title{ font-family:var(--font-display); font-weight:800; }
 
-/* Pagina #ECEDE6 contro riquadro bianco: prima ballavano il 6% di luminanza,
-   al sole erano la stessa cosa. L'ombra e' quasi solo un velo sotto. */
-body.theme-light .card{
-background:var(--bg-panel);
-border:1px solid var(--line);
-border-top:2px solid color-mix(in srgb, var(--gold) 45%, transparent);
-box-shadow:0 1px 2px rgba(30,45,34,0.05), 0 12px 24px -20px rgba(30,45,34,0.35);
+/* ── I CINQUE TASTI — l'elemento firma ────────────────────────────────────
+   Identici nei due temi. Bianco su ciascun fondo: 5,6 / 4,2 / 4,2 / 5,3 /
+   5,2 — sopra il 3:1 richiesto dal testo grande, che e' cio' che la cifra e'.
+   Lo zero resta grigio: e' l'assenza di punteggio, non deve fare festa. */
+body[class] .quick-grid{ gap:var(--s-2); margin:var(--s-4) 0 var(--s-3); }
+body[class] .quick-btn{
+height:96px; border-radius:var(--r-m);
+border:1.5px solid rgba(0,0,0,0.20); box-shadow:none; color:#FFFFFF;
 }
-/* Era troppo tenue per fare da titolo di sezione. */
-body.theme-light h2.section-title{ color:var(--ink-2); }
+body[class] .quick-btn .quick-pts{ color:#FFFFFF; font-weight:800; font-size:1.5rem; }
+body[class] .quick-btn .quick-lbl{ color:#FFFFFF; font-weight:800; font-size:0.62rem; }
+body[class] .quick-btn.perfect{   background:var(--k-perfect); }
+body[class] .quick-btn.superspot{ background:var(--k-superspot); }
+body[class] .quick-btn.spot{      background:var(--k-spot); }
+body[class] .quick-btn.sagoma{    background:var(--k-sagoma); }
+body[class] .quick-btn.zero{      background:var(--k-zero); }
+/* premuto: SCURISCE. brightness in su, al sole, spinge il colore verso il
+   bianco della pagina, cioe' verso la sparizione. */
+body[class] .quick-btn:active{ transform:scale(0.96) translateY(1px) !important; filter:brightness(0.86); }
 
-/* I "fantasma" (Il mio diario, Scrivi una segnalazione...) erano bianco su
-   bianco con un filo di bordo: si leggevano come disattivati. */
-body.theme-light .btn{ box-shadow:0 1px 2px rgba(30,45,34,0.08); }
-body.theme-light .btn-primary{ box-shadow:0 1px 2px rgba(30,45,34,0.10), 0 10px 20px -14px rgba(36,96,44,0.75); }
-body.theme-light .btn-ghost{ background:var(--bg-panel-2); border:1.5px solid var(--line-strong); color:var(--cream); }
-body.theme-light .btn-ghost .menu-sub{ color:var(--muted); }
-/* rosa su rosa: il testo spariva */
-body.theme-light .btn-ghost-danger{ color:var(--danger); border-width:1.5px; }
-body.theme-light .chip{ border:1.5px solid var(--line-strong); }
-body.theme-light .chip.active{ border-color:var(--accent); }
-body.theme-light input[type=text], body.theme-light input[type=number],
-body.theme-light input[type=email], body.theme-light input[type=tel],
-body.theme-light textarea, body.theme-light select{ border:1.5px solid var(--line-strong); }
-body.theme-light .rules-panel, body.theme-light .archer-row,
-body.theme-light .cp-class-row, body.theme-light .adm-row,
-body.theme-light .cp-percorso-card, body.theme-light .stat-box,
-body.theme-light .shot-pill, body.theme-light .piazz-card{ border-color:var(--line-strong); }
-body.theme-light .board{ border-color:color-mix(in srgb, var(--gold) 60%, transparent); box-shadow:0 1px 2px rgba(30,45,34,0.05); }
-body.theme-light .arrow-badge{ border-color:var(--line-strong); }
+/* ── LE TRE SEZIONI — una regola sola per entrambi i temi ─────────────────
+   Prima erano sei blocchi, tre per tema. I token contengono la differenza. */
+body[class] .menu-btn{ box-shadow:none; border:var(--stroke) solid transparent; border-radius:var(--r-m); }
+body[class] .menu-btn.training{ background:var(--fn-training-soft); border-color:var(--fn-training-fill); color:var(--fn-training-text); }
+body[class] .menu-btn.gara{     background:var(--fn-gara-soft);     border-color:var(--fn-gara-fill);     color:var(--fn-gara-text); }
+body[class] .menu-btn.prepara{  background:var(--fn-prepara-soft);  border-color:var(--fn-prepara-fill);  color:var(--fn-prepara-text); }
+body[class] .menu-btn.training .menu-icon{ background:var(--fn-training-fill); color:#FFFFFF; }
+body[class] .menu-btn.gara .menu-icon{     background:var(--fn-gara-fill);     color:#FFFFFF; }
+body[class] .menu-btn.prepara .menu-icon{  background:var(--fn-prepara-fill);  color:#FFFFFF; }
+body[class] .menu-btn .menu-txt{ color:var(--text-1); }
+body[class] .menu-btn .menu-sub{ color:var(--text-3); opacity:1; font-weight:500; }
+body[class] .menu-btn::after{ display:none; }   /* via il velo bianco in diagonale */
 
-/* Il marchio si tiene il verde pieno: e' l'unico blocco di colore forte
-   della testata, e da lontano basta quello per riconoscere l'app. */
-body.theme-light .brandblock{
-background:linear-gradient(140deg,#2A6B32 0%,#1D4F26 100%);
-padding:4px 14px 4px 4px; border-radius:16px;
+/* ── ELEVAZIONE UNIFICATA ─────────────────────────────────────────────────
+   IL FILETTO ORO stava in cima a OGNI scheda. L'oro significa "prepara
+   gara": messo ovunque smette di significare, ed e' rumore che compete col
+   segnale. Resta solo dove vuol dire qualcosa. */
+body[class] .card{
+background:var(--surface-1); border:var(--stroke) solid var(--border);
+border-top:var(--stroke) solid var(--border);
+border-radius:var(--r-l); box-shadow:var(--elev-2);
 }
+body[class] .card.is-prepara{ border-top:2px solid var(--fn-prepara-fill); }
+body[class] .btn{ box-shadow:var(--elev-1); border:var(--stroke) solid var(--border); }
+body[class] .btn-primary{ background:var(--brand-fill); color:#FFFFFF; border-color:transparent; }
+body[class] .btn-ghost{ background:var(--surface-2); border:var(--stroke) solid var(--border-strong); color:var(--text-1); }
+body[class] .btn-ghost .menu-sub{ color:var(--text-3); }
+body[class] .btn-danger{ background:var(--danger-fill); color:#FFFFFF; border-color:transparent; }
+body[class] .btn-ghost-danger{ background:transparent; border:var(--stroke) solid var(--danger-fill); color:var(--danger-text); }
+body[class] .btn-standings{ background:var(--fn-prepara-fill); color:#FFFFFF; border-color:transparent; box-shadow:var(--elev-1); }
+body[class] .bar-menu{ box-shadow:var(--elev-menu); border:var(--stroke) solid var(--border-strong); }
+body[class] .board{ box-shadow:var(--elev-1); border:var(--stroke) solid var(--border-strong); }
+body[class] .chip{ border:var(--stroke) solid var(--border-strong); }
+body[class] .chip.active{ background:var(--brand-fill); color:#FFFFFF; border-color:var(--brand-fill); }
+body[class] input[type=text], body[class] input[type=number], body[class] input[type=email],
+body[class] input[type=tel], body[class] textarea, body[class] select{
+border:var(--stroke) solid var(--border-strong); background:var(--surface-1); color:var(--text-1);
+}
+body[class] .rules-panel, body[class] .archer-row, body[class] .cp-class-row,
+body[class] .adm-row, body[class] .cp-percorso-card, body[class] .stat-box,
+body[class] .shot-pill, body[class] .piazz-card, body[class] .arrow-badge{
+border-color:var(--border-strong);
+}
+
+/* ── TESTATA: OPACA ───────────────────────────────────────────────────────
+   Aveva backdrop-filter:blur(14px). Il blur e' fra le operazioni piu' care
+   che si possano chiedere alla GPU di un Android di fascia media — che e' il
+   telefono della maggior parte degli arcieri — e al sole una barra
+   traslucida sopra contenuto che scorre e' poltiglia. Sopra il testo che
+   scorre serve un piano, non un vetro. */
+body[class] header.top{
+background:var(--navbar-bg); backdrop-filter:none; -webkit-backdrop-filter:none;
+border-bottom:var(--stroke) solid var(--navbar-line);
+}
+body.theme-light .brandblock{ background:linear-gradient(140deg,#2A6B32 0%,#1D4F26 100%); padding:4px 14px 4px 4px; border-radius:16px; }
 body.theme-light header.top .brand-title{ color:#FFFFFF; }
-body.theme-light header.top{ border-bottom-color:var(--line-strong); }
-/* Tre pastiglie arancioni in fila erano la cosa piu' pesante della testata.
-   Resta arancione solo il comando vero e proprio ("Cambia"). */
-body.theme-light header.top .home-btn{ background:#F3F4EE; border:1.5px solid var(--line-strong); color:var(--ink-2); }
-body.theme-light header.top .home-btn.small{ background:var(--bark); border-color:transparent; color:#FFFFFF; }
+/* Tre pastiglie arancioni in fila erano la cosa piu' pesante della testata:
+   resta colorato solo il comando vero e proprio. */
+body.theme-light header.top .home-btn{ background:var(--surface-2); border:var(--stroke) solid var(--border-strong); color:var(--text-2); }
+body.theme-light header.top .home-btn.small{ background:var(--fn-gara-fill); border-color:transparent; color:#FFFFFF; }
+body[class] header.top .home-btn.pericolo{ background:transparent; border:1.5px solid var(--danger-fill); color:var(--danger-text); }
 
-/* Barra in fondo: la pastiglia attiva era quasi bianca su bianco. Piena.
-   (La regola del 13/08 diceva gia' che al sole il solo cambio di colore
-   del testo non si vede: qui non si vedeva nemmeno la pastiglia.) */
-body.theme-light .tabbar:not(.tabbar-wide) > button.on > span:first-child{
-background:var(--accent) !important; border-color:var(--accent) !important; color:#FFFFFF !important;
+/* ── BARRA DELLE SEZIONI ─────────────────────────────────────────────────── */
+body[class] .tabbar-wide > button.on{ background:var(--navbar-pill); color:var(--navbar-pill-ink); }
+body[class] .tabbar-wide > button.on > span, body[class] .tabbar-wide > button.on > svg{ color:inherit; stroke:currentColor; }
+body[class] .tabbar:not(.tabbar-wide) > button.on{ color:var(--navbar-on); }
+body[class] .tabbar:not(.tabbar-wide) > button.on > span:first-child{
+background:var(--navbar-pill); border-color:var(--navbar-pill); color:var(--navbar-pill-ink);
 }
-body.theme-light .tabbar:not(.tabbar-wide) > button.on{ color:var(--accent) !important; }
-/* IL BUG DELLA VOCE INVISIBILE. Nella barra larga (dentro la testata) la
-   pastiglia E' il pulsante intero: pieno di verde. Questa regola pero' non
-   era ristretta alla barra in fondo, quindi imponeva verde su verde e la
-   sezione aperta era l'unica che non si leggeva. Ora la barra larga usa
-   l'inchiostro della pastiglia: bianco sul verde pieno. */
-.tabbar-wide > button.on{ color:var(--navbar-pill-ink) !important; }
-.tabbar-wide > button.on > span, .tabbar-wide > button.on > svg{ color:inherit; stroke:currentColor; }
 
-/* ── Il timer sul telefono ────────────────────────────────────────────
-   Era incollato al tema scuro: una finestra nera in mezzo alla pagina
-   chiara, con dentro le cifre nere che sparivano. */
-body.theme-light .timer-idle{
-background:linear-gradient(135deg,#FDF2D9,#F9E9C4);
-border:1.5px solid rgba(138,98,16,0.55); box-shadow:none;
+/* ── TIMER ────────────────────────────────────────────────────────────────
+   Il pulsare c'era SEMPRE, dal primo secondo, insieme al luccichio perenne
+   della barra di avanzamento. Due layer compositi accesi per quattro ore di
+   percorso sono una scelta di consumo, non di stile. Ora pulsa negli ultimi
+   secondi, quando il pulsare e' informazione. */
+body[class] .timer-idle{
+background:var(--fn-prepara-soft); border:var(--stroke) solid var(--fn-prepara-fill);
+border-radius:var(--r-l); box-shadow:none;
 }
-body.theme-light .timer-dur{ color:#3A2A05; }
-body.theme-light .timer-idle .btn-ghost{ background:#FFFDF6; border-color:rgba(138,98,16,0.45); color:#3A2A05; }
-body.theme-light .timer-running{ background:#DDEBDA; border:1.5px solid #24602C; box-shadow:none; }
-body.theme-light .timer-running.timer-warn{ background:#F6E8C6; border-color:#8A6210; box-shadow:none; }
-body.theme-light .timer-running.timer-danger{ background:#F9DCDC; border-color:#A81319; box-shadow:none; }
-body.theme-light .timer-running-label{ color:#3A403A; }
-body.theme-light .timer-num{ color:#1B4C22; }
-body.theme-light .timer-num.timer-warn{ color:#6E4E0C; }
-body.theme-light .timer-num.timer-danger{ color:#8E0F14; }
-/* ══════════════ FINE RIFINITURA CHIARO ══════════════ */
+body[class] .timer-dur{ color:var(--text-1); }
+body[class] .timer-idle .btn-ghost{ background:var(--surface-1); border-color:var(--fn-prepara-fill); color:var(--text-1); }
+body[class] .timer-running{
+background:var(--fn-training-soft); border:var(--stroke) solid var(--fn-training-fill);
+border-radius:var(--r-l); box-shadow:none;
+}
+body[class] .timer-running.timer-warn{ background:var(--fn-prepara-soft); border-color:var(--fn-prepara-fill); box-shadow:none; }
+body[class] .timer-running.timer-danger{ background:var(--fn-gara-soft); border-color:var(--danger-fill); box-shadow:none; }
+body[class] .timer-running-label{ color:var(--text-2); }
+body[class] .timer-num{ color:var(--fn-training-text); animation:none; }
+body[class] .timer-num.timer-warn{ color:var(--fn-prepara-text); }
+body[class] .timer-num.timer-danger{ color:var(--danger-text); animation:timerPulse 1s ease-in-out infinite; }
+body[class] .progress-fill::after{ animation:none; display:none; }
+
+/* ── FUOCO: visibile, uguale ovunque, mai lo stesso colore di altro ─────── */
+body[class] :where(button,a,input,select,textarea,[tabindex]):focus-visible{
+outline:3px solid var(--focus); outline-offset:2px;
+}
+
+/* ── ATMOSFERA pilotata da token ─────────────────────────────────────────── */
+body[class]{
+font-family:var(--font-ui);
+background:
+radial-gradient(ellipse 900px 500px at 8% -5%,  var(--alone-1), transparent 60%),
+radial-gradient(ellipse 700px 500px at 105% 15%, var(--alone-2), transparent 55%),
+radial-gradient(ellipse 800px 600px at 50% 120%, var(--alone-3), transparent 60%),
+var(--surface-0);
+}
+body[class]::before{ opacity:var(--grana); }
+@media (prefers-reduced-transparency:reduce){
+body[class]::before{ display:none; }
+body[class]{ background:var(--surface-0); }
+}
+
+/* ── MOVIMENTO ──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+*, *::before, *::after{
+animation-duration:0.01ms !important; animation-iteration-count:1 !important;
+transition-duration:0.01ms !important; scroll-behavior:auto !important;
+}
+.leaf-burst, .leaf-particle{ display:none !important; }
+}
+
+/* ── LARGHEZZA ≠ TEMA ─────────────────────────────────────────────────────
+   Il vecchio blocco "VESTE CHIARA" riscriveva body.theme-dark coi valori del
+   chiaro: chi sceglieva Scura e apriva l'app su un tablet vedeva Chiara. Un
+   interruttore che non interruttore e' peggio che non averlo. E' stato tolto.
+   Da qui il tema e' la scelta della persona, il breakpoint solo impianto. */
+@media (min-width:760px){
+#app{ max-width:900px; padding:var(--s-5) var(--s-6) var(--s-7); }
+#app.narrow{ max-width:620px; }
+body[class] .card{ padding:var(--s-5); }
+}
+@media (min-width:1080px){ #app{ max-width:960px; } }
+
 </style>
 </head>
 <body>
@@ -6326,6 +6398,11 @@ var THEME_BAR_COLOR = { light:"#ECEDE6", dark:"#16201C" };
 function normalizeTheme(th){
 if(th === "light") return "light";
 if(th === "dark" || th === "elegante" || th === "satura") return "dark";
+// Primo avvio: si segue il telefono invece di imporre una scelta. Chi un
+// tema lo ha gia' scelto non viene toccato: quel valore e' salvato in state.
+try{
+if(typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+}catch(e){}
 return "light";
 }
 function currentTheme(){
