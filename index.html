@@ -1591,6 +1591,13 @@ state.percorsi = state.percorsi || []; // percorsi gara salvati (Prepara Gara)
 // Serve anche a non rientrare nel Marketplace, che si aprirebbe da solo.
 state.screen = "menu";
 state.tab = "tira";
+// Un pannello e' un MODO, non un LUOGO: chi chiude l'app con la classifica
+// aperta non deve riaprire dentro la classifica.
+// E la striscia dell'annulla e' un RIMEDIO: deve stare vicino all'errore nel
+// tempo, non solo nello spazio. Un invito ad annullare una freccia di ieri
+// sera non e' un aiuto, e' una trappola.
+state.panel = null;
+state.lastShotInfo = null;
 var homeOverride = false;
 var pending = null;
 var zoomed = false;
@@ -1960,13 +1967,15 @@ target_singular: "Piazzola",
 finora: " \u00b7 finora: {list} pt",
 vale_prima: " \u00b7 vale la prima a segno",
 hdr_more: "Altro",
-timer_start: "Avvia timer", timer_reset: "Azzera", timer_remaining: "Tempo rimanente",
+timer_start: "Avvia timer", timer_reset: "Azzera", timer_resume: "Riprendi", timer_remaining: "Tempo rimanente",
 zero_label: "Nulla",
 quick_hint_target: "oppure segna il punto esatto sul bersaglio",
 fuori_sagoma: "fuori sagoma",
 zoom_btn: "Ingrandisci mira",
 zoom_btn_reduce: "Riduci mira",
 undo_btn: "Annulla ultima freccia",
+pista_ultimo_altrove: "{txt} ({p} {n})",
+target_inline: "piazzola",
 pista_sagoma_btn: "Sagoma",
 pista_classifica_btn: "Classifica",
 pista_ultimo: "Ultimo: {name}",
@@ -2432,13 +2441,15 @@ target_singular: "Target",
 finora: " \u00b7 so far: {list} pts",
 vale_prima: " \u00b7 only the first hit counts",
 hdr_more: "More",
-timer_start: "Start timer", timer_reset: "Reset", timer_remaining: "Time remaining",
+timer_start: "Start timer", timer_reset: "Reset", timer_resume: "Resume", timer_remaining: "Time remaining",
 zero_label: "Miss",
 quick_hint_target: "or mark the exact impact point on the target",
 fuori_sagoma: "miss",
 zoom_btn: "Zoom target",
 zoom_btn_reduce: "Zoom out",
 undo_btn: "Undo last arrow",
+pista_ultimo_altrove: "{txt} ({p} {n})",
+target_inline: "target",
 pista_sagoma_btn: "Target",
 pista_classifica_btn: "Standings",
 pista_ultimo: "Last: {name}",
@@ -2901,13 +2912,27 @@ target_singular: "Cible",
 finora: " \u00b7 jusqu\u2019ici : {list} pts",
 vale_prima: " \u00b7 seul le premier tir marquant compte",
 hdr_more: "Plus",
-timer_start: "D\u00e9marrer", timer_reset: "R\u00e9initialiser", timer_remaining: "Temps restant",
+timer_start: "D\u00e9marrer", timer_reset: "R\u00e9initialiser", timer_resume: "Reprendre", timer_remaining: "Temps restant",
 zero_label: "Nul",
 quick_hint_target: "ou marquez le point d\u2019impact exact sur la cible",
 fuori_sagoma: "hors cible",
 zoom_btn: "Zoomer sur la cible",
 zoom_btn_reduce: "D\u00e9zoomer",
 undo_btn: "Annuler la derni\u00e8re fl\u00e8che",
+pista_sagoma_btn: "Silhouette",
+pista_classifica_btn: "Classement",
+pista_ultimo: "Dernier : {name}",
+pista_ultimo_freccia: "{name} \u00b7 fl\u00e8che {n}",
+pista_ultimo_piazzola: "{name} \u00b7 cible termin\u00e9e",
+pista_annulla_freccia: "Annuler la fl\u00e8che",
+pista_annulla_breve: "Annuler",
+pista_chiudi: "Fermer",
+pista_tocca_a: "Au tour de {name}",
+pista_freccia_di: "Fl\u00e8che {n} sur {tot}",
+pista_per_piazzola: "Cible par cible",
+pista_sagoma_titolo: "Marquez le point d\u2019impact",
+pista_ultimo_altrove: "{txt} ({p} {n})",
+target_inline: "cible",
 interrupt_btn: "Terminer le parcours et voir le classement",
 detected_score: "Score d\u00e9tect\u00e9 ({unit} {n})",
 correct_point_btn: "Corriger le point",
@@ -3358,13 +3383,27 @@ target_singular: "Ziel",
 finora: " \u00b7 bisher: {list} Pkt",
 vale_prima: " \u00b7 nur der erste Treffer z\u00e4hlt",
 hdr_more: "Mehr",
-timer_start: "Timer starten", timer_reset: "Zur\u00fccksetzen", timer_remaining: "Verbleibende Zeit",
+timer_start: "Timer starten", timer_reset: "Zur\u00fccksetzen", timer_resume: "Fortsetzen", timer_remaining: "Verbleibende Zeit",
 zero_label: "Fehler",
 quick_hint_target: "oder markiere den genauen Treffpunkt auf dem Ziel",
 fuori_sagoma: "Fehlschuss",
 zoom_btn: "Ziel vergr\u00f6\u00dfern",
 zoom_btn_reduce: "Verkleinern",
 undo_btn: "Letzten Pfeil r\u00fcckg\u00e4ngig machen",
+pista_sagoma_btn: "Silhouette",
+pista_classifica_btn: "Rangliste",
+pista_ultimo: "Zuletzt: {name}",
+pista_ultimo_freccia: "{name} \u00b7 Pfeil {n}",
+pista_ultimo_piazzola: "{name} \u00b7 Ziel abgeschlossen",
+pista_annulla_freccia: "Pfeil zur\u00fccknehmen",
+pista_annulla_breve: "R\u00fcckg\u00e4ngig",
+pista_chiudi: "Schlie\u00dfen",
+pista_tocca_a: "{name} ist dran",
+pista_freccia_di: "Pfeil {n} von {tot}",
+pista_per_piazzola: "Ziel f\u00fcr Ziel",
+pista_sagoma_titolo: "Trefferpunkt markieren",
+pista_ultimo_altrove: "{txt} ({p} {n})",
+target_inline: "Ziel",
 interrupt_btn: "Parcours beenden und Rangliste ansehen",
 detected_score: "Erkannter Punktwert ({unit} {n})",
 correct_point_btn: "Punkt korrigieren",
@@ -3835,13 +3874,27 @@ target_singular: "Hedef",
 finora: " \u00b7 \u015fu ana kadar: {list} p",
 vale_prima: " \u00b7 sadece ilk isabet ge\u00e7erli",
 hdr_more: "Daha fazla",
-timer_start: "Zamanlay\u0131c\u0131y\u0131 ba\u015flat", timer_reset: "S\u0131f\u0131rla", timer_remaining: "Kalan s\u00fcre",
+timer_start: "Zamanlay\u0131c\u0131y\u0131 ba\u015flat", timer_reset: "S\u0131f\u0131rla", timer_resume: "Devam et", timer_remaining: "Kalan s\u00fcre",
 zero_label: "Isk\u0131",
 quick_hint_target: "veya hedef \u00fczerinde tam noktay\u0131 i\u015faretle",
 fuori_sagoma: "siluet d\u0131\u015f\u0131",
 zoom_btn: "Hedefi b\u00fcy\u00fct",
 zoom_btn_reduce: "K\u00fc\u00e7\u00fclt",
 undo_btn: "Son oku geri al",
+pista_sagoma_btn: "Siluet",
+pista_classifica_btn: "S\u0131ralama",
+pista_ultimo: "Son: {name}",
+pista_ultimo_freccia: "{name} \u00b7 {n}. ok",
+pista_ultimo_piazzola: "{name} \u00b7 hedef tamamland\u0131",
+pista_annulla_freccia: "Oku geri al",
+pista_annulla_breve: "Geri al",
+pista_chiudi: "Kapat",
+pista_tocca_a: "S\u0131ra {name}",
+pista_freccia_di: "Ok {n}/{tot}",
+pista_per_piazzola: "Hedef hedef",
+pista_sagoma_titolo: "Vuru\u015f noktas\u0131n\u0131 i\u015faretle",
+pista_ultimo_altrove: "{txt} ({p} {n})",
+target_inline: "hedef",
 interrupt_btn: "Parkuru bitir ve s\u0131ralamay\u0131 g\u00f6r",
 detected_score: "Alg\u0131lanan puan ({unit} {n})",
 correct_point_btn: "Noktay\u0131 d\u00fczelt",
@@ -4306,13 +4359,27 @@ target_singular: "Мишень",
 finora: " · пока что: {list} очк.",
 vale_prima: " · засчитывается только первое попадание",
 hdr_more: "Ещё",
-timer_start: "Запустить таймер", timer_reset: "Сбросить", timer_remaining: "Оставшееся время",
+timer_start: "Запустить таймер", timer_reset: "Сбросить", timer_resume: "Продолжить", timer_remaining: "Оставшееся время",
 zero_label: "Промах",
 quick_hint_target: "или отметьте точную точку на мишени",
 fuori_sagoma: "мимо силуэта",
 zoom_btn: "Увеличить прицел",
 zoom_btn_reduce: "Уменьшить",
 undo_btn: "Отменить последнюю стрелу",
+pista_sagoma_btn: "Силуэт",
+pista_classifica_btn: "Результаты",
+pista_ultimo: "Последний: {name}",
+pista_ultimo_freccia: "{name} \u00b7 стрела {n}",
+pista_ultimo_piazzola: "{name} \u00b7 мишень завершена",
+pista_annulla_freccia: "Отменить стрелу",
+pista_annulla_breve: "Отменить",
+pista_chiudi: "Закрыть",
+pista_tocca_a: "Очередь: {name}",
+pista_freccia_di: "Стрела {n} из {tot}",
+pista_per_piazzola: "По мишеням",
+pista_sagoma_titolo: "Отметьте точку попадания",
+pista_ultimo_altrove: "{txt} ({p} {n})",
+target_inline: "мишень",
 interrupt_btn: "Завершить маршрут и посмотреть результаты",
 detected_score: "Обнаруженный результат ({unit} {n})",
 correct_point_btn: "Исправить точку",
@@ -4777,13 +4844,27 @@ target_singular: "Diana",
 finora: " \u00b7 hasta ahora: {list} pts",
 vale_prima: " \u00b7 solo cuenta el primer impacto",
 hdr_more: "Más",
-timer_start: "Iniciar temporizador", timer_reset: "Reiniciar", timer_remaining: "Tiempo restante",
+timer_start: "Iniciar temporizador", timer_reset: "Reiniciar", timer_resume: "Reanudar", timer_remaining: "Tiempo restante",
 zero_label: "Nulo",
 quick_hint_target: "o marca el punto exacto en la diana",
 fuori_sagoma: "fuera de silueta",
 zoom_btn: "Ampliar mira",
 zoom_btn_reduce: "Reducir mira",
 undo_btn: "Deshacer \u00faltima flecha",
+pista_sagoma_btn: "Silueta",
+pista_classifica_btn: "Clasificaci\u00f3n",
+pista_ultimo: "\u00daltimo: {name}",
+pista_ultimo_freccia: "{name} \u00b7 flecha {n}",
+pista_ultimo_piazzola: "{name} \u00b7 diana completada",
+pista_annulla_freccia: "Deshacer flecha",
+pista_annulla_breve: "Deshacer",
+pista_chiudi: "Cerrar",
+pista_tocca_a: "Turno de {name}",
+pista_freccia_di: "Flecha {n} de {tot}",
+pista_per_piazzola: "Diana por diana",
+pista_sagoma_titolo: "Marca el punto de impacto",
+pista_ultimo_altrove: "{txt} ({p} {n})",
+target_inline: "diana",
 interrupt_btn: "Terminar recorrido y ver clasificaci\u00f3n",
 detected_score: "Puntuaci\u00f3n detectada ({unit} {n})",
 correct_point_btn: "Corregir punto",
@@ -5248,13 +5329,27 @@ target_singular: "M\u00e5l",
 finora: " \u00b7 hittills: {list} p",
 vale_prima: " \u00b7 endast f\u00f6rsta tr\u00e4ffen r\u00e4knas",
 hdr_more: "Mer",
-timer_start: "Starta timer", timer_reset: "Nollst\u00e4ll", timer_remaining: "\u00c5terst\u00e5ende tid",
+timer_start: "Starta timer", timer_reset: "Nollst\u00e4ll", timer_resume: "\u00c5teruppta", timer_remaining: "\u00c5terst\u00e5ende tid",
 zero_label: "Bom",
 quick_hint_target: "eller markera den exakta punkten p\u00e5 m\u00e5let",
 fuori_sagoma: "utanf\u00f6r silhuetten",
 zoom_btn: "F\u00f6rstora sikte",
 zoom_btn_reduce: "F\u00f6rminska",
 undo_btn: "\u00c5ngra senaste pilen",
+pista_sagoma_btn: "Silhuett",
+pista_classifica_btn: "Resultat",
+pista_ultimo: "Senast: {name}",
+pista_ultimo_freccia: "{name} \u00b7 pil {n}",
+pista_ultimo_piazzola: "{name} \u00b7 m\u00e5let klart",
+pista_annulla_freccia: "\u00c5ngra pil",
+pista_annulla_breve: "\u00c5ngra",
+pista_chiudi: "St\u00e4ng",
+pista_tocca_a: "{name}s tur",
+pista_freccia_di: "Pil {n} av {tot}",
+pista_per_piazzola: "M\u00e5l f\u00f6r m\u00e5l",
+pista_sagoma_titolo: "Markera tr\u00e4ffpunkten",
+pista_ultimo_altrove: "{txt} ({p} {n})",
+target_inline: "m\u00e5l",
 interrupt_btn: "Avsluta rundan och se resultatet",
 detected_score: "Uppt\u00e4ckt po\u00e4ng ({unit} {n})",
 correct_point_btn: "R\u00e4tta punkt",
@@ -5719,13 +5814,27 @@ target_singular: "Doel",
 finora: " \u00b7 tot nu toe: {list} pt",
 vale_prima: " \u00b7 alleen de eerste treffer telt",
 hdr_more: "Meer",
-timer_start: "Timer starten", timer_reset: "Resetten", timer_remaining: "Resterende tijd",
+timer_start: "Timer starten", timer_reset: "Resetten", timer_resume: "Hervatten", timer_remaining: "Resterende tijd",
 zero_label: "Mis",
 quick_hint_target: "of markeer het exacte punt op het doel",
 fuori_sagoma: "buiten het silhouet",
 zoom_btn: "Vizier vergroten",
 zoom_btn_reduce: "Verkleinen",
 undo_btn: "Laatste pijl ongedaan maken",
+pista_sagoma_btn: "Silhouet",
+pista_classifica_btn: "Klassement",
+pista_ultimo: "Laatste: {name}",
+pista_ultimo_freccia: "{name} \u00b7 pijl {n}",
+pista_ultimo_piazzola: "{name} \u00b7 doel voltooid",
+pista_annulla_freccia: "Pijl ongedaan maken",
+pista_annulla_breve: "Ongedaan",
+pista_chiudi: "Sluiten",
+pista_tocca_a: "{name} is aan de beurt",
+pista_freccia_di: "Pijl {n} van {tot}",
+pista_per_piazzola: "Doel voor doel",
+pista_sagoma_titolo: "Markeer het inslagpunt",
+pista_ultimo_altrove: "{txt} ({p} {n})",
+target_inline: "doel",
 interrupt_btn: "Ronde be\u00ebindigen en klassement bekijken",
 detected_score: "Gedetecteerde score ({unit} {n})",
 correct_point_btn: "Punt corrigeren",
@@ -7882,7 +7991,13 @@ state.screen = "field-report"; save(); render();
 }});
 }
 }
-if(currentUser && authState === "ready"){
+// DURANTE IL GIRO LA BARRA PORTA TRE COSE: marchio, uscita, segnalazione.
+// La schermata che ha tolto 95 interruzioni non puo' tenere in alto due porte
+// d'uscita con un pallino rosso addosso: un pallino non e' un'informazione,
+// e' una richiesta. I messaggi aspettano — a differenza della freccia appena
+// tirata, non scadono. (Con homeOverride si sta guardando il menu: li' tornano.)
+var inPercorso = (state.screen === "round" && !mostraMenu);
+if(currentUser && authState === "ready" && !inPercorso){
 if(state.screen !== "notifiche"){
 azioni.push({ id:"notifiche", glifo:"bell", testo:t("notif_center_title"), conta:notifUnreadCount,
 vai:function(){ state.screen = "notifiche"; save(); render(); }});
@@ -10263,7 +10378,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-pista-d";
+var BUILD_STAMP = "2026-08-17-pista-e";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -12498,6 +12613,22 @@ var inCorsa = timerRunning || timerRemaining !== null;
 chip.innerHTML = icon("clock",14) + '<span class="chip-num">' + fmtTime(inCorsa ? Math.max(0,timerRemaining) : timerDuration) + '</span>';
 tintaTimer();
 regola.innerHTML = "";
+// IN PAUSA: il conto e' fermo ma non perduto, e l'azzeramento vive qui —
+// un comando a parte, non lo stesso tocco che mette in pausa.
+if(inCorsa && !timerRunning){
+if(timerRemaining > 0){
+var ripr = el('<button type="button" class="btn btn-primary btn-sm">'+t("timer_resume")+'</button>');
+ripr.addEventListener("click", function(){ timerRunning = true; dipingiTimer(); avviaConto(); });
+regola.appendChild(ripr);
+}
+var azz = el('<button type="button" class="btn btn-ghost btn-sm">'+t("timer_reset")+'</button>');
+azz.addEventListener("click", function(){
+if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; }
+timerRunning = false; timerRemaining = null; timerAperto = false; dipingiTimer();
+});
+regola.appendChild(azz);
+return;
+}
 if(!inCorsa && timerAperto){
 var meno = el('<button type="button" class="btn btn-ghost btn-sm">\u2212</button>');
 var dur = el('<span class="timer-dur num">'+fmtTime(timerDuration)+'</span>');
@@ -12520,16 +12651,26 @@ if(timerRemaining <= 0){
 clearInterval(timerIntervalId); timerIntervalId = null;
 timerRemaining = 0; timerRunning = false;
 if(navigator.vibrate){ navigator.vibrate([80,60,80]); }
+// scaduto: il conto e' fermo, quindi deve comparire il comando per azzerarlo.
+dipingiTimer(); return;
 }
 var n = chip.querySelector(".chip-num");
 if(n){ n.textContent = fmtTime(Math.max(0,timerRemaining)); }
 tintaTimer();
 }, 1000);
 }
+// Un tocco solo distruggeva il conto, senza conferma e senza rimedio, nella
+// stessa schermata che dedica un'intera striscia a rendere annullabile un
+// punteggio. Adesso vale la stessa asimmetria: il tocco mette in pausa (non
+// si perde niente) e riprende; azzerare e' un comando a parte, a timer fermo.
 chip.addEventListener("click", function(){
-if(timerRunning || timerRemaining !== null){
+if(timerRunning){
 if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; }
-timerRunning = false; timerRemaining = null; timerAperto = false;
+timerRunning = false;
+} else if(timerRemaining > 0){
+timerRunning = true; dipingiTimer(); avviaConto(); return;
+} else if(timerRemaining === 0){
+timerRemaining = null; timerAperto = false;
 } else {
 timerAperto = !timerAperto;
 }
@@ -12600,6 +12741,12 @@ if(info.unit === "piazzola"){ testoUlt = t("pista_ultimo_piazzola",{name:escapeH
 else if(info.n){ testoUlt = t("pista_ultimo_freccia",{name:escapeHtml(info.name), n:info.n}); }
 // giri gia' in corso salvati da una versione precedente: il campo non c'e'
 else { testoUlt = t("pista_ultimo",{name:escapeHtml(info.name)}); }
+// Il rimedio resta valido anche dopo il cambio di piazzola — undoLastShot()
+// sa tornare indietro e ripristina l'ordine di quella piazzola — ma allora il
+// numero va DETTO: altrimenti la testata dice 14 e la striscia parla della 13.
+if(info.target && info.target !== state.target){
+testoUlt = t("pista_ultimo_altrove", { txt: testoUlt, p: t("target_inline"), n: info.target });
+}
 striscia.appendChild(el('<span>'+testoUlt+' <b class="num">'+info.score+'</b></span>'));
 // L'azione resta una sola perche' il rimedio e' uno solo: si toglie sempre
 // l'ultima freccia, anche quando la piazzola e' appena stata chiusa.
@@ -12643,7 +12790,7 @@ return wrap;
 function pannelloClassifica(){
 var p = el('<div class="pannello"></div>');
 var testa = el('<div class="pannello-testa"></div>');
-testa.appendChild(el('<span class="pannello-titolo">'+t("pista_classifica_btn")+' \u00b7 '+t("target_singular").toLowerCase()+' '+state.target+'</span>'));
+testa.appendChild(el('<span class="pannello-titolo">'+t("pista_classifica_btn")+' \u00b7 '+t("target_inline")+' '+state.target+'</span>'));
 var x = el('<button type="button" class="pannello-chiudi" aria-label="'+t("pista_chiudi")+'">\u00d7</button>');
 x.addEventListener("click", function(){ state.panel = null; save(); render(); });
 testa.appendChild(x);
@@ -12977,8 +13124,11 @@ var done = mode.stopAtFirstHit
 : (state.pendingArrows.length >= tac);
 
 // unit dice COSA e' il numero: qui e' una freccia, e n e' la quale.
+// target dice DOVE. Serve perche' chiudendo l'ultima piazzola si avanza
+// subito: senza il numero, la striscia resterebbe a schermo parlando di una
+// piazzola diversa da quella scritta in testata.
 state.lastShotInfo = { name: archer.name, score: score,
-unit: "freccia", n: state.pendingArrows.length };
+unit: "freccia", n: state.pendingArrows.length, target: state.target };
 
 if(done){
 var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
@@ -13014,7 +13164,7 @@ var earlyEntry = { arrows: state.pendingArrows.slice(), total: total };
 state.scores[archer.id].push(earlyEntry);
 syncShotToSession(archer, earlyEntry);
 // qui il numero e' la somma della piazzola, non una freccia: va detto.
-state.lastShotInfo = { name: archer.name, score: total, unit: "piazzola", n: null };
+state.lastShotInfo = { name: archer.name, score: total, unit: "piazzola", n: null, target: state.target };
 state.pendingArrows = [];
 state.arrowIndex = 0;
 if(state.archerIndex < state.archers.length - 1){
