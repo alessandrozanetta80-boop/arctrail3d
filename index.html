@@ -74,6 +74,9 @@
 --navbar-bg:var(--bg-panel); --navbar-line:var(--line); --navbar-fg:var(--muted);
 --navbar-on:var(--accent-soft); --navbar-pill:var(--bg-panel-2); --navbar-shadow:rgba(0,0,0,0.45);
 --navbar-green:#60A966;
+/* Inchiostro DENTRO la pastiglia della sezione scelta: sullo scuro la
+   pastiglia e' un riquadro scuro, quindi il glifo resta verde chiaro. */
+--navbar-pill-ink:#60A966;
 }
 /* ══════════════════ TEMA CHIARO — rifatto il 15/08/2026 ══════════════════
    Al sole il vetro aggiunge un velo luminoso costante: sul fondo scuro quel
@@ -105,6 +108,8 @@ body.theme-light{
 --navbar-bg:#FFFFFF; --navbar-line:#D3D7CB; --navbar-fg:#565D53;
 --navbar-on:#24602C; --navbar-pill:#24602C; --navbar-shadow:rgba(30,45,34,0.14);
 --navbar-green:#24602C;
+/* Qui la pastiglia e' verde PIENA: dentro ci va il bianco, non il verde. */
+--navbar-pill-ink:#FFFFFF;
 color-scheme:light;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -120,21 +125,42 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
 background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .display{ font-family:'Fraunces',Georgia,serif; font-weight:700; letter-spacing:0.03em; }
 #app{ max-width:520px; margin:0 auto; padding:18px 16px 32px; min-height:100dvh; position:relative; }
-header.top{ display:flex; align-items:center; gap:12px; height:64px; padding:0 4px; border-bottom:1px solid var(--line); margin-bottom:18px;
+/* Il marchio non si comprime e non si taglia MAI: se lo spazio non basta
+   sono i comandi ad andare a capo (flex-wrap), non il nome dell'app a
+   diventare "ARCTR...". Prima .brandblock poteva restringersi e .headtxt
+   tagliava con i puntini: sul telefono, durante un percorso, la testata
+   porta Menu + Segnala + busta + campanella e il titolo spariva. */
+header.top{ display:flex; align-items:center; gap:12px; min-height:64px; padding:6px 4px; border-bottom:1px solid var(--line); margin-bottom:18px;
+flex-wrap:wrap; row-gap:8px;
 position:sticky; top:0; z-index:50; margin-top:env(safe-area-inset-top);
 background:transparent; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
-header.top .brandblock{ display:flex; align-items:center; gap:12px; min-width:0; flex:0 1 auto; }
+header.top .brandblock{ display:flex; align-items:center; gap:12px; min-width:0; flex:0 0 auto; }
 header.top .logo{ width:52px; height:52px; flex:0 0 auto; }
 header.top .logo svg{ width:100%; height:100%; display:block; }
-header.top .headtxt{ flex:1 1 auto; min-width:0; overflow:hidden; padding-right:6px; }
-/* Il titolo finiva sotto la busta: l'ultima lettera veniva tagliata. Ora ha uno
-spazio suo, e su schermi stretti si rimpiccioliscono logo e distanze. */
+header.top .headtxt{ flex:0 0 auto; min-width:0; padding-right:6px; }
+header.top .head-actions{ flex:0 0 auto; }
+/* Sotto i 400px (iPhone mini, buona parte degli Android) i comandi si
+   stringono quel tanto che basta a tenere tutto su una riga sola: senza,
+   la testata andava a capo e si mangiava 50px di percorso. */
 @media (max-width:400px){
-header.top{ gap:8px; }
+header.top{ gap:6px; }
+header.top .brandblock{ gap:9px; }
 header.top .logo{ width:44px; height:44px; }
-header.top .headtxt{ padding-right:4px; }
+header.top .headtxt{ padding-right:0; }
+header.top .home-btn{ height:36px; padding:0 12px; }
+header.top .home-btn.small{ padding:0 10px; font-size:0.76rem; }
+header.top .head-actions{ gap:4px !important; }
+header.top .head-actions .home-btn{ padding:6px 7px !important; }
 }
-header.top .brand-title{ font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:clamp(0.8rem,3.2vw,0.95rem); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; overflow:hidden; text-overflow:ellipsis; }
+/* Durante il percorso la testata deve portare anche Menu e Segnala: li' il
+   nome scritto per esteso non ci sta in nessun modo su un telefono, e lo
+   stemma verde da solo basta a dire dove sei. Sopra i 760px torna intero. */
+@media (max-width:759px){
+header.top.round .headtxt{ display:none; }
+header.top.round .logo{ width:40px; height:40px; }
+header.top.round .brandblock{ padding-right:4px; }
+}
+header.top .brand-title{ font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:clamp(0.72rem,3.2vw,0.95rem); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
 header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-soft); }
 header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
 .home-btn{ background:var(--bark); border:none; color:#fff; border-radius:999px;
@@ -409,6 +435,7 @@ body.theme-dark, body.theme-light{
    verde. Le pastiglie delle sezioni restano l'unico verde pieno. */
 --navbar-bg:#FFFFFF; --navbar-line:#D3D7CB; --navbar-fg:#4F564C;
 --navbar-on:#FFFFFF; --navbar-pill:#24602C; --navbar-shadow:rgba(30,45,34,0.10); --navbar-green:#24602C;
+--navbar-pill-ink:#FFFFFF;
 }
 /* Stesso disegno dello sfondo del telefono, stessi tre colori dell'app
 (verde, oro, arancio), solo appoggiati sul chiaro invece che sullo scuro. */
@@ -434,7 +461,17 @@ avevano lo stesso problema di contrasto anche con Elegante e Satura. */
 .quick-btn.perfect{ background:#A81319; color:#FFFFFF; }
 .quick-btn.zero{ background:#5F645C; color:#FFFFFF; }
 .quick-btn .quick-pts{ color:inherit; }
-.timer-idle{ background:linear-gradient(135deg,#FFFFFF,#F8F7F3); }
+/* Il timer fermo era un riquadro quasi bianco su pagina bianca: si leggeva
+   come disattivato. Ora ha un colore suo — ambra — che non e' nessuno dei
+   tre codici dell'app (verde allenamento, arancio gara, oro prepara) e che
+   al sole si distingue dal foglio. In corsa diventa verde pieno di tinta. */
+.timer-idle{ background:linear-gradient(135deg,#FDF2D9,#F9E9C4); border:1.5px solid rgba(138,98,16,0.55); }
+.timer-running{ background:#DDEBDA; border:1.5px solid #24602C; box-shadow:none; }
+.timer-running.timer-warn{ background:#F6E8C6; border-color:#8A6210; box-shadow:none; }
+.timer-running.timer-danger{ background:#F9DCDC; border-color:#A81319; box-shadow:none; }
+.timer-num{ color:#1B4C22; }
+.timer-num.timer-warn{ color:#6E4E0C; }
+.timer-num.timer-danger{ color:#8E0F14; }
 /* Da computer la pagina e' chiara per entrambi i temi: le schede seguono
    le stesse regole del tema chiaro, non quelle dello scuro. */
 body.theme-dark .quick-btn .quick-pts{ color:inherit; }
@@ -729,6 +766,16 @@ table.score-table tbody tr:hover{ background:rgba(49,91,53,0.045); }
 header.top .head-actions, header.top > .home-btn{ order:1; }
 header.top .tabbar-wide{ order:2; flex-basis:100%; }
 }
+/* Sopra i 1040px la riga e' una sola e va letta da sinistra a destra:
+   marchio, sezioni, comandi. Senza questo comandava l'ordine del DOM e la
+   barra delle sezioni veniva appesa in coda: busta, campanella e "Cambia"
+   finivano in mezzo alle sezioni. */
+@media (min-width:1040px){
+header.top .brandblock{ order:0; }
+header.top .tabbar-wide{ order:1; }
+header.top .head-actions{ order:2; }
+header.top > .home-btn{ order:3; }
+}
 /* ── Pannello admin: elenco utenti ──────────────────────────────────────
    Solo l'admin vede questa roba: testi in italiano, niente t().          */
 .adm-tot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:2px 0 12px;}
@@ -827,10 +874,34 @@ body.theme-light header.top .home-btn.small{ background:var(--bark); border-colo
 /* Barra in fondo: la pastiglia attiva era quasi bianca su bianco. Piena.
    (La regola del 13/08 diceva gia' che al sole il solo cambio di colore
    del testo non si vede: qui non si vedeva nemmeno la pastiglia.) */
-body.theme-light .tabbar > button.on > span:first-child{
+body.theme-light .tabbar:not(.tabbar-wide) > button.on > span:first-child{
 background:var(--accent) !important; border-color:var(--accent) !important; color:#FFFFFF !important;
 }
-body.theme-light .tabbar > button.on{ color:var(--accent) !important; }
+body.theme-light .tabbar:not(.tabbar-wide) > button.on{ color:var(--accent) !important; }
+/* IL BUG DELLA VOCE INVISIBILE. Nella barra larga (dentro la testata) la
+   pastiglia E' il pulsante intero: pieno di verde. Questa regola pero' non
+   era ristretta alla barra in fondo, quindi imponeva verde su verde e la
+   sezione aperta era l'unica che non si leggeva. Ora la barra larga usa
+   l'inchiostro della pastiglia: bianco sul verde pieno. */
+.tabbar-wide > button.on{ color:var(--navbar-pill-ink) !important; }
+.tabbar-wide > button.on > span, .tabbar-wide > button.on > svg{ color:inherit; stroke:currentColor; }
+
+/* ── Il timer sul telefono ────────────────────────────────────────────
+   Era incollato al tema scuro: una finestra nera in mezzo alla pagina
+   chiara, con dentro le cifre nere che sparivano. */
+body.theme-light .timer-idle{
+background:linear-gradient(135deg,#FDF2D9,#F9E9C4);
+border:1.5px solid rgba(138,98,16,0.55); box-shadow:none;
+}
+body.theme-light .timer-dur{ color:#3A2A05; }
+body.theme-light .timer-idle .btn-ghost{ background:#FFFDF6; border-color:rgba(138,98,16,0.45); color:#3A2A05; }
+body.theme-light .timer-running{ background:#DDEBDA; border:1.5px solid #24602C; box-shadow:none; }
+body.theme-light .timer-running.timer-warn{ background:#F6E8C6; border-color:#8A6210; box-shadow:none; }
+body.theme-light .timer-running.timer-danger{ background:#F9DCDC; border-color:#A81319; box-shadow:none; }
+body.theme-light .timer-running-label{ color:#3A403A; }
+body.theme-light .timer-num{ color:#1B4C22; }
+body.theme-light .timer-num.timer-warn{ color:#6E4E0C; }
+body.theme-light .timer-num.timer-danger{ color:#8E0F14; }
 /* ══════════════ FINE RIFINITURA CHIARO ══════════════ */
 </style>
 </head>
@@ -7196,7 +7267,7 @@ var duranteGiro = (state.screen === "round" || state.screen === "summary");
 var mostraMenu = homeOverride && (state.screen === "round" || state.screen === "summary");
 var showHome = !mostraMenu && state.screen !== "menu";
 var h = el(
-'<header class="top">'+
+'<header class="top'+(duranteGiro ? ' round' : '')+'">'+
 '<div class="brandblock"><div class="logo">'+logoSVG(52)+'</div>'+
 '<div class="headtxt"><span class="brand-title">ArcTrail 3D</span></div></div>'+
 '</header>'
