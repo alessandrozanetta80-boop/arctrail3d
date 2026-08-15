@@ -1063,7 +1063,27 @@ html{ scrollbar-gutter:stable; }
    ═══════════════════════════════════════════════════════════════════════════ */
 body.schermo-percorso #app{ display:flex; flex-direction:column; }
 .pista{ flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
-.pista-spazio{ flex:1 1 auto; min-height:var(--s-3); }
+.pista-spazio{ flex:1 1 auto; min-height:var(--s-3); position:relative; overflow:hidden; }
+
+/* ── la filigrana: archi, non un bersaglio ──
+   Sta nello spazio che avanza, quindi non toglie niente a nessuno: quando
+   lo spazio si stringe (schermo basso, testo di sistema ingrandito) viene
+   ritagliata e sparisce da sola, senza una media query. Con un pannello
+   aperto non viene disegnata affatto, perche' .pista-spazio non c'e'.
+   Il centro e' FUORI dal riquadro: si vedono solo archi che escono dai
+   bordi. Un cerchio intero al centro dello schermo sembrerebbe una cosa da
+   toccare; un arco legge come texture, come le curve di livello di una
+   carta. Il colore arriva da --text-1, quindi funziona nei tre temi senza
+   una riga per tema. Non si muove: e' un fondale, non un cambio di stato. */
+.pista-spazio::before{
+content:""; position:absolute; inset:0; pointer-events:none;
+background:repeating-radial-gradient(circle at 78% 168%,
+transparent 0 26px,
+color-mix(in srgb, var(--text-1) 9%, transparent) 26px 27.5px);
+-webkit-mask-image:radial-gradient(circle at 78% 168%, #000 30%, transparent 78%);
+mask-image:radial-gradient(circle at 78% 168%, #000 30%, transparent 78%);
+}
+@media print{ .pista-spazio::before{ display:none; } }
 
 /* ── testata: il passo del giro, piccolo, dove serve ──
    La cifra della piazzola era l'elemento piu' grande dello schermo. E' l'unica
@@ -1934,6 +1954,9 @@ undo_btn: "Annulla ultima freccia",
 pista_sagoma_btn: "Sagoma",
 pista_classifica_btn: "Classifica",
 pista_ultimo: "Ultimo: {name}",
+pista_ultimo_freccia: "{name} \u00b7 {n}\u00aa freccia",
+pista_ultimo_piazzola: "{name} \u00b7 piazzola chiusa",
+pista_annulla_freccia: "Annulla freccia",
 pista_annulla_breve: "Annulla",
 pista_chiudi: "Chiudi",
 pista_tocca_a: "Tocca a {name}",
@@ -2403,6 +2426,9 @@ undo_btn: "Undo last arrow",
 pista_sagoma_btn: "Target",
 pista_classifica_btn: "Standings",
 pista_ultimo: "Last: {name}",
+pista_ultimo_freccia: "{name} \u00b7 arrow {n}",
+pista_ultimo_piazzola: "{name} \u00b7 target closed",
+pista_annulla_freccia: "Undo arrow",
 pista_annulla_breve: "Undo",
 pista_chiudi: "Close",
 pista_tocca_a: "{name}'s turn",
@@ -10221,7 +10247,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-pista-a";
+var BUILD_STAMP = "2026-08-16-pista-b";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -12543,10 +12569,25 @@ wrap.appendChild(scorciatoie);
 // ══════════════ LA STRISCIA DELL'ANNULLA ══════════════
 // Sostituisce la conferma: si segna e si va avanti, e il rimedio resta
 // visibile accanto al risultato invece che in fondo alla pagina.
+// L'UNITA' SI DICHIARA, NON SI FA INDOVINARE. Prima questo campo voleva
+// dire due cose diverse a seconda di chi lo scriveva: la freccia in
+// registerShot, il totale in finishTargetEarly. A schermo, chiusa una
+// piazzola da 15+10+5, il cerchio del turno diceva "30" e la striscia
+// "Ultimo: Anna 5" — due numeri per la stessa persona nello stesso istante,
+// risolvibili solo sapendo che uno e' un totale e l'altro un'ultima freccia.
+// Adesso la striscia dice quale delle due cose sta mostrando.
 if(state.lastShotInfo){
+var info = state.lastShotInfo;
 var striscia = el('<div class="striscia-annulla no-print"></div>');
-striscia.appendChild(el('<span>'+t("pista_ultimo",{name:escapeHtml(state.lastShotInfo.name)})+' <b class="num">'+state.lastShotInfo.score+'</b></span>'));
-var bAnn = el('<button type="button">'+icon("undo",16)+' '+t("pista_annulla_breve")+'</button>');
+var testoUlt;
+if(info.unit === "piazzola"){ testoUlt = t("pista_ultimo_piazzola",{name:escapeHtml(info.name)}); }
+else if(info.n){ testoUlt = t("pista_ultimo_freccia",{name:escapeHtml(info.name), n:info.n}); }
+// giri gia' in corso salvati da una versione precedente: il campo non c'e'
+else { testoUlt = t("pista_ultimo",{name:escapeHtml(info.name)}); }
+striscia.appendChild(el('<span>'+testoUlt+' <b class="num">'+info.score+'</b></span>'));
+// L'azione resta una sola perche' il rimedio e' uno solo: si toglie sempre
+// l'ultima freccia, anche quando la piazzola e' appena stata chiusa.
+var bAnn = el('<button type="button">'+icon("undo",16)+' '+t("pista_annulla_freccia")+'</button>');
 bAnn.addEventListener("click", undoLastShot);
 striscia.appendChild(bAnn);
 wrap.appendChild(striscia);
@@ -12919,7 +12960,9 @@ var done = mode.stopAtFirstHit
 ? (score === 0 || state.pendingArrows.length >= tac)
 : (state.pendingArrows.length >= tac);
 
-state.lastShotInfo = { name: archer.name, score: score };
+// unit dice COSA e' il numero: qui e' una freccia, e n e' la quale.
+state.lastShotInfo = { name: archer.name, score: score,
+unit: "freccia", n: state.pendingArrows.length };
 
 if(done){
 var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
@@ -12954,7 +12997,8 @@ var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
 var earlyEntry = { arrows: state.pendingArrows.slice(), total: total };
 state.scores[archer.id].push(earlyEntry);
 syncShotToSession(archer, earlyEntry);
-state.lastShotInfo = { name: archer.name, score: total };
+// qui il numero e' la somma della piazzola, non una freccia: va detto.
+state.lastShotInfo = { name: archer.name, score: total, unit: "piazzola", n: null };
 state.pendingArrows = [];
 state.arrowIndex = 0;
 if(state.archerIndex < state.archers.length - 1){
