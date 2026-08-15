@@ -339,13 +339,16 @@ flex-wrap:wrap; row-gap:8px;
 position:sticky; top:0; z-index:50; margin-top:env(safe-area-inset-top);
 background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
 header.top .brandblock{ display:flex; align-items:center; gap:12px; min-width:0; flex:0 0 auto; }
-header.top .logo{ width:var(--hit); height:var(--hit); flex:0 0 auto; border-radius:22%; overflow:hidden; }
+header.top .logo{ width:var(--hit); height:var(--hit); flex:0 0 auto; }
 /* Il marchio: una misura sola, che arriva da --mark. Dentro l'insegna la
    riscrive il contenitore, quindi non c'e' piu' niente da battere. */
+/* Il marchio. Nessun ritaglio: gli angoli tondi stanno nel canale alfa del
+   file, quindi non c'e' piu' niente da tagliare — ne' qui, ne' nello splash,
+   ne' nel profilo. Una misura sola, che arriva da --mark. */
 .brandmark{ width:var(--mark,44px); height:var(--mark,44px); display:block;
-border-radius:22%; object-fit:cover; }
-header.top .logo{ --mark:44px; }
-header.top .logo .brandmark{ border-radius:inherit; }
+border-radius:0; object-fit:contain; }
+header.top .logo{ --mark:var(--hit); overflow:visible; }
+header.top .logo .brandmark{ width:100%; height:100%; }
 header.top .headtxt{ flex:0 0 auto; min-width:0; }
 header.top .head-actions{ flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center; gap:8px; }
 
@@ -6308,7 +6311,16 @@ out += '</svg>';
 return out;
 }
 
-var LOGO_DATA_URI = "logo.jpg";
+// Il file vecchio era un quadrato scuro 300x300 appoggiato in alto a sinistra
+// di una tela 308x308: 0px di margine sopra e a sinistra, 8px sotto e a
+// destra. Fuori centro. Qualunque angolo arrotondato del CSS tagliava il
+// disegno in alto a sinistra e lasciava scoperta una lunetta bianca in basso
+// a destra: e' il "logo tagliato".
+// logo.webp e' lo stesso disegno ritagliato sul quadrato vero, centrato, con
+// gli angoli tondi nel CANALE ALFA. Cosi' il CSS non deve piu' tagliare
+// niente: il tondo e' gia' nel file, e su qualunque fondo (verde, chiaro,
+// scuro) resta pulito. Resta un rattoppo in attesa del marchio nuovo in SVG.
+var LOGO_DATA_URI = "logo.webp";
 function logoSVG(size){
 // La misura viaggia come variabile CSS, non come width/height in linea: cosi'
 // il foglio di stile puo' adattarla (telefono/computer/splash) senza dover
