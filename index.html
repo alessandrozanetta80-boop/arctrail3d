@@ -125,46 +125,90 @@ body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:
 background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .display{ font-family:'Fraunces',Georgia,serif; font-weight:700; letter-spacing:0.03em; }
 #app{ max-width:520px; margin:0 auto; padding:18px 16px 32px; min-height:100dvh; position:relative; }
-/* Il marchio non si comprime e non si taglia MAI: se lo spazio non basta
-   sono i comandi ad andare a capo (flex-wrap), non il nome dell'app a
-   diventare "ARCTR...". Prima .brandblock poteva restringersi e .headtxt
-   tagliava con i puntini: sul telefono, durante un percorso, la testata
-   porta Menu + Segnala + busta + campanella e il titolo spariva. */
-header.top{ display:flex; align-items:center; gap:12px; min-height:64px; padding:6px 4px; border-bottom:1px solid var(--line); margin-bottom:18px;
+/* ══════════════ LA BARRA IN ALTO ══════════════
+   Tre regole, e da queste discende tutto il resto. Non c'e' una soglia
+   per modello di telefono: se ne serve una, vuol dire che la regola e'
+   sbagliata.
+
+   1) SCALA 4 / 8 / 12 / 16. Nessun 6, nessun 7, nessun 9. Erano numeri
+      trovati limando per far stare una riga, e ogni telefono nuovo ne
+      chiedeva un altro.
+   2) BERSAGLIO 44px. Apple ne chiede 44, Material 48. Sul percorso si
+      tocca con la mano sudata, spesso col guanto: sotto quella misura si
+      sbaglia tasto. Vale anche — soprattutto — sui telefoni piccoli.
+   3) CAPIENZA 2 + TROPPO-PIENO. In vista al massimo due azioni; le altre
+      scendono nel menu dell'ultimo tasto. Quando non ci stanno si toglie
+      un'azione, non si stringe il marchio. E' per la regola mancante che
+      "ArcTrail 3D" finiva tagliato: c'erano quattro comandi in una barra
+      che ne regge due.
+
+   Il marchio non si comprime mai (flex:0 0 auto, niente puntini) e non
+   sparisce mai: e' il punto fermo della schermata. */
+header.top{ display:flex; align-items:center; gap:12px; min-height:60px;
+padding:8px 16px; margin-left:-16px; margin-right:-16px;
+border-bottom:1px solid var(--line); margin-bottom:16px;
 flex-wrap:wrap; row-gap:8px;
 position:sticky; top:0; z-index:50; margin-top:env(safe-area-inset-top);
-background:transparent; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
 header.top .brandblock{ display:flex; align-items:center; gap:12px; min-width:0; flex:0 0 auto; }
-header.top .logo{ width:52px; height:52px; flex:0 0 auto; }
-header.top .logo svg{ width:100%; height:100%; display:block; }
-header.top .headtxt{ flex:0 0 auto; min-width:0; padding-right:6px; }
-header.top .head-actions{ flex:0 0 auto; }
-/* Sotto i 400px (iPhone mini, buona parte degli Android) i comandi si
-   stringono quel tanto che basta a tenere tutto su una riga sola: senza,
-   la testata andava a capo e si mangiava 50px di percorso. */
-@media (max-width:400px){
-header.top{ gap:6px; }
-header.top .brandblock{ gap:9px; }
-header.top .logo{ width:44px; height:44px; }
-header.top .headtxt{ padding-right:0; }
-header.top .home-btn{ height:36px; padding:0 12px; }
-header.top .home-btn.small{ padding:0 10px; font-size:0.76rem; }
-header.top .head-actions{ gap:4px !important; }
-header.top .head-actions .home-btn{ padding:6px 7px !important; }
-}
-/* Durante il percorso la testata deve portare anche Menu e Segnala: li' il
-   nome scritto per esteso non ci sta in nessun modo su un telefono, e lo
-   stemma verde da solo basta a dire dove sei. Sopra i 760px torna intero. */
-@media (max-width:759px){
-header.top.round .headtxt{ display:none; }
-header.top.round .logo{ width:40px; height:40px; }
-header.top.round .brandblock{ padding-right:4px; }
-}
-header.top .brand-title{ font-family:'Fraunces',Georgia,serif; font-weight:400; font-size:clamp(0.72rem,3.2vw,0.95rem); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
+header.top .logo{ width:44px; height:44px; flex:0 0 auto; border-radius:22%; overflow:hidden; }
+/* logoSVG() non restituisce un <svg>: restituisce un <img src="logo.jpg">
+   con le misure scritte NELLO STILE IN LINEA, sempre 52px. La regola che
+   le adattava parlava di "svg" — che li' dentro non c'e' — quindi
+   un'immagine da 52 stava in una finestra da 44 e usciva dal blocco
+   verde. Lo stile in linea batte il foglio di stile: l'!important e' qui
+   l'unico modo di riprendersi la misura senza toccare logoSVG(), che
+   serve anche allo splash e al profilo. */
+header.top .logo svg, header.top .logo img{
+width:100% !important; height:100% !important; display:block;
+border-radius:inherit !important; object-fit:cover; }
+header.top .headtxt{ flex:0 0 auto; min-width:0; }
+header.top .head-actions{ flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center; gap:8px; }
+
+/* Il tasto della barra. Uno solo, sempre uguale, sempre 44x44. */
+.bar-btn{ width:44px; height:44px; flex:0 0 auto; padding:0; position:relative;
+display:inline-flex; align-items:center; justify-content:center;
+border-radius:12px; background:var(--bg-panel); border:1.5px solid var(--line-strong);
+color:var(--ink-2); cursor:pointer; font-family:inherit; }
+.bar-btn:active{ transform:scale(0.96); }
+.bar-btn.pericolo{ background:transparent; border-color:var(--danger); color:var(--danger); }
+header.top .home-btn{ position:relative; gap:8px; }
+/* "Segnala" deve restare rosso in tutti e due i temi. La pelle chiara del
+   tasto e' scritta come "body.theme-light header.top .home-btn", che pesa
+   piu' di "header.top .home-btn.pericolo": senza nominare anche i temi, la
+   variante di pericolo perdeva e il tasto tornava grigio come gli altri. */
+header.top .home-btn.pericolo,
+body.theme-light header.top .home-btn.pericolo,
+body.theme-dark header.top .home-btn.pericolo{
+background:transparent; border:1.5px solid var(--danger); color:var(--danger); }
+.bar-badge{ position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 4px;
+border-radius:10px; background:var(--danger); color:#fff; font-size:0.64rem; font-weight:800;
+display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
+.bar-dot{ position:absolute; top:4px; right:4px; width:10px; height:10px; border-radius:50%;
+background:var(--danger); border:2px solid var(--bg-panel); }
+
+/* Il troppo-pieno. Le voci qui dentro hanno la parola scritta: un menu
+   di soli glifi non lo legge nessuno. */
+.bar-more{ position:relative; flex:0 0 auto; }
+.bar-menu{ position:absolute; right:0; top:calc(100% + 8px); min-width:216px; padding:4px;
+background:var(--bg-panel); border:1.5px solid var(--line-strong); border-radius:12px;
+box-shadow:0 12px 28px -16px rgba(30,45,34,0.55); z-index:80; }
+.bar-menu[hidden]{ display:none; }
+.bar-menu-item{ display:flex; align-items:center; gap:12px; width:100%; min-height:44px;
+padding:0 12px; background:none; border:none; border-radius:8px; cursor:pointer;
+color:var(--cream); font-family:inherit; font-size:0.92rem; font-weight:600; text-align:left; }
+.bar-menu-item:active{ background:var(--bg-panel-2); }
+.bar-menu-item > svg{ flex:0 0 auto; color:var(--muted); }
+.bar-menu-count{ margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:10px;
+background:var(--danger); color:#fff; font-size:0.66rem; font-weight:800;
+display:flex; align-items:center; justify-content:center; }
+@media (hover:hover) and (pointer:fine){ .bar-menu-item:hover{ background:var(--bg-panel-2); } .bar-btn:hover{ border-color:var(--accent-soft); } }
+header.top .brand-title{ font-family:'Fraunces',Georgia,serif; font-weight:700; font-size:clamp(0.72rem,3.2vw,0.95rem); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
+header.top .brandblock{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-soft); }
 header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
 .home-btn{ background:var(--bark); border:none; color:#fff; border-radius:999px;
-height:40px; padding:0 16px; font-size:0.88rem; font-weight:700; cursor:pointer;
+height:44px; padding:0 16px; font-size:0.88rem; font-weight:700; cursor:pointer;
 display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; flex:0 0 auto;
 line-height:1; letter-spacing:0.01em; }
 .home-btn:active{ transform:scale(0.97); }
@@ -492,20 +536,21 @@ schermo prima ancora di iniziare a leggere. Ora e' una sola insegna, ed
 essendo l'unica va tenuta a vista: sticky. */
 header.top{
 position:sticky; top:12px; z-index:70;
-height:auto; min-height:0; padding:9px 14px 9px 16px; gap:14px;
-flex-wrap:wrap; row-gap:6px;
-background:var(--navbar-bg); border:1px solid var(--navbar-line); border-radius:18px;
+height:auto; min-height:60px; padding:8px 12px 8px 8px; gap:16px;
+flex-wrap:wrap; row-gap:8px;
+background:var(--navbar-bg); border:1px solid var(--navbar-line); border-radius:16px;
 box-shadow:0 3px 14px var(--navbar-shadow); backdrop-filter:none; -webkit-backdrop-filter:none;
-margin-top:0; margin-bottom:18px;
+margin-top:0; margin-bottom:16px; margin-left:0; margin-right:0;
 }
+/* Anche le sezioni sono bersagli: da tablet si toccano col dito. */
+.tabbar-wide > button{ min-height:44px; }
 /* il titolo non deve piu' mangiarsi la riga: lo spazio va alle sezioni */
-header.top .headtxt{ flex:0 0 auto; padding-right:0; }
-header.top .logo{ width:44px; height:44px; }
+header.top .headtxt{ flex:0 0 auto; }
 .tabbar-wide{ flex:1 1 420px; flex-wrap:wrap; justify-content:center; gap:3px; }
 /* Colonna stretta (moduli, chat, percorso): le sezioni scendono su una riga
 loro, ma restano dentro la stessa insegna. I comandi di destra restano su
 in alto grazie a order. */
-#app.narrow header.top .head-actions, #app.narrow header.top > .home-btn{ order:1; }
+#app.narrow header.top .head-actions{ order:1; }
 #app.narrow header.top .tabbar-wide{ order:2; flex-basis:100%; }
 /* Il marchio si tiene il verde pieno anche da computer, per entrambi i temi:
    e' l'unico blocco di colore forte dell'insegna chiara. */
@@ -513,7 +558,7 @@ header.top .brandblock{
 background:linear-gradient(140deg,#2A6B32 0%,#1D4F26 100%);
 padding:4px 16px 4px 4px; border-radius:16px;
 }
-header.top .brand-title{ color:#F3EEE1; }
+header.top .brand-title{ color:#FFFFFF; }
 header.top h1{ color:#F3EEE1; }
 header.top .sub{ color:#C7D3C6; }
 header.top .icon-btn, header.top button:not(.home-btn){ color:#4F564C; }
@@ -618,20 +663,19 @@ html{ scroll-behavior:smooth; }
    diverse. Ora e' chiara come tutto il resto, e il marchio si tiene il verde
    pieno — cosi' il presidio resta, ma non e' piu' la testata a gridare. */
 header.top{
-  min-height:0; padding:9px 14px 9px 9px; gap:16px; border-radius:20px;
+  min-height:60px; padding:8px 12px 8px 8px; gap:16px; border-radius:16px;
   background:linear-gradient(180deg,#FFFFFF 0%,#FBFBF7 100%);
   border:1px solid var(--line);
   box-shadow:0 1px 2px rgba(30,45,34,0.05), 0 18px 40px -32px rgba(30,45,34,0.45);
-  margin-bottom:22px; position:sticky; top:12px; z-index:70; isolation:isolate;
+  margin-bottom:20px; position:sticky; top:12px; z-index:70; isolation:isolate;
 }
 header.top::after{ display:none; }
-header.top .logo{ width:46px; height:46px; }
-header.top .brand-title{ font-size:1.1rem; font-weight:600; letter-spacing:0.16em; color:#F3EEE1; }
+header.top .brand-title{ font-size:1.1rem; font-weight:700; letter-spacing:0.13em; color:#FFFFFF; }
 /* I tre bottoni arancioni in fila erano la cosa piu' pesante della pagina:
    ora sono pastiglie di vetro sul verde scuro, e resta arancione solo il
    comando vero e proprio ("Cambia"). */
 header.top .home-btn{
-  height:36px; border-radius:11px;
+  height:44px; border-radius:12px;
   background:#F3F4EE; border:1.5px solid var(--line-strong); color:var(--ink-2);
   transition:background .16s ease, border-color .16s ease, transform .16s ease;
 }
@@ -759,22 +803,17 @@ table.score-table tbody tr:hover{ background:rgba(49,91,53,0.045); }
 
 }
 /* ══════════════════ FINE RIFINITURA ══════════════════ */
-/* Sotto i 1040px la riga unica non ci sta: logo, titolo e comandi restano
-   in alto, le 5 sezioni prendono una riga tutta loro dentro la stessa
-   insegna scura. Deve stare dopo il blocco qui sopra per avere la meglio. */
-@media (min-width:760px) and (max-width:1039px){
-header.top .head-actions, header.top > .home-btn{ order:1; }
-header.top .tabbar-wide{ order:2; flex-basis:100%; }
-}
-/* Sopra i 1040px la riga e' una sola e va letta da sinistra a destra:
-   marchio, sezioni, comandi. Senza questo comandava l'ordine del DOM e la
-   barra delle sezioni veniva appesa in coda: busta, campanella e "Cambia"
-   finivano in mezzo alle sezioni. */
-@media (min-width:1040px){
+/* Le 5 sezioni prendono una riga tutta loro dentro l'insegna. Prima
+   c'erano due casi — sotto e sopra i 1040px — e quindi due numeri da
+   azzeccare a ogni modifica. Ma #app e' largo al massimo 1060px: la riga
+   unica non ci sta mai davvero, perche' allargando la finestra cresce lo
+   schermo e non la colonna. Un caso solo: marchio e comandi in alto,
+   sezioni sotto, uguale da 760px in su.
+   Deve stare dopo i blocchi qui sopra per avere la meglio. */
+@media (min-width:760px){
 header.top .brandblock{ order:0; }
-header.top .tabbar-wide{ order:1; }
-header.top .head-actions{ order:2; }
-header.top > .home-btn{ order:3; }
+header.top .head-actions{ order:1; }
+header.top .tabbar-wide{ order:2; flex-basis:100%; }
 }
 /* ── Pannello admin: elenco utenti ──────────────────────────────────────
    Solo l'admin vede questa roba: testi in italiano, niente t().          */
@@ -864,7 +903,7 @@ body.theme-light .brandblock{
 background:linear-gradient(140deg,#2A6B32 0%,#1D4F26 100%);
 padding:4px 14px 4px 4px; border-radius:16px;
 }
-body.theme-light header.top .brand-title{ color:#F3EEE1; }
+body.theme-light header.top .brand-title{ color:#FFFFFF; }
 body.theme-light header.top{ border-bottom-color:var(--line-strong); }
 /* Tre pastiglie arancioni in fila erano la cosa piu' pesante della testata.
    Resta arancione solo il comando vero e proprio ("Cambia"). */
@@ -1649,6 +1688,7 @@ target_singular: "Piazzola",
 
 finora: " \u00b7 finora: {list} pt",
 vale_prima: " \u00b7 vale la prima a segno",
+hdr_more: "Altro",
 timer_start: "Avvia timer", timer_reset: "Azzera", timer_remaining: "Tempo rimanente",
 zero_label: "Nulla",
 quick_hint_target: "oppure segna il punto esatto sul bersaglio",
@@ -2108,6 +2148,7 @@ target_singular: "Target",
 
 finora: " \u00b7 so far: {list} pts",
 vale_prima: " \u00b7 only the first hit counts",
+hdr_more: "More",
 timer_start: "Start timer", timer_reset: "Reset", timer_remaining: "Time remaining",
 zero_label: "Miss",
 quick_hint_target: "or mark the exact impact point on the target",
@@ -2564,6 +2605,7 @@ target_singular: "Cible",
 
 finora: " \u00b7 jusqu\u2019ici : {list} pts",
 vale_prima: " \u00b7 seul le premier tir marquant compte",
+hdr_more: "Plus",
 timer_start: "D\u00e9marrer", timer_reset: "R\u00e9initialiser", timer_remaining: "Temps restant",
 zero_label: "Nul",
 quick_hint_target: "ou marquez le point d\u2019impact exact sur la cible",
@@ -3020,6 +3062,7 @@ target_singular: "Ziel",
 
 finora: " \u00b7 bisher: {list} Pkt",
 vale_prima: " \u00b7 nur der erste Treffer z\u00e4hlt",
+hdr_more: "Mehr",
 timer_start: "Timer starten", timer_reset: "Zur\u00fccksetzen", timer_remaining: "Verbleibende Zeit",
 zero_label: "Fehler",
 quick_hint_target: "oder markiere den genauen Treffpunkt auf dem Ziel",
@@ -3496,6 +3539,7 @@ target_singular: "Hedef",
 
 finora: " \u00b7 \u015fu ana kadar: {list} p",
 vale_prima: " \u00b7 sadece ilk isabet ge\u00e7erli",
+hdr_more: "Daha fazla",
 timer_start: "Zamanlay\u0131c\u0131y\u0131 ba\u015flat", timer_reset: "S\u0131f\u0131rla", timer_remaining: "Kalan s\u00fcre",
 zero_label: "Isk\u0131",
 quick_hint_target: "veya hedef \u00fczerinde tam noktay\u0131 i\u015faretle",
@@ -3966,6 +4010,7 @@ target_singular: "Мишень",
 
 finora: " · пока что: {list} очк.",
 vale_prima: " · засчитывается только первое попадание",
+hdr_more: "Ещё",
 timer_start: "Запустить таймер", timer_reset: "Сбросить", timer_remaining: "Оставшееся время",
 zero_label: "Промах",
 quick_hint_target: "или отметьте точную точку на мишени",
@@ -4436,6 +4481,7 @@ target_singular: "Diana",
 
 finora: " \u00b7 hasta ahora: {list} pts",
 vale_prima: " \u00b7 solo cuenta el primer impacto",
+hdr_more: "Más",
 timer_start: "Iniciar temporizador", timer_reset: "Reiniciar", timer_remaining: "Tiempo restante",
 zero_label: "Nulo",
 quick_hint_target: "o marca el punto exacto en la diana",
@@ -4906,6 +4952,7 @@ target_singular: "M\u00e5l",
 
 finora: " \u00b7 hittills: {list} p",
 vale_prima: " \u00b7 endast f\u00f6rsta tr\u00e4ffen r\u00e4knas",
+hdr_more: "Mer",
 timer_start: "Starta timer", timer_reset: "Nollst\u00e4ll", timer_remaining: "\u00c5terst\u00e5ende tid",
 zero_label: "Bom",
 quick_hint_target: "eller markera den exakta punkten p\u00e5 m\u00e5let",
@@ -5376,6 +5423,7 @@ target_singular: "Doel",
 
 finora: " \u00b7 tot nu toe: {list} pt",
 vale_prima: " \u00b7 alleen de eerste treffer telt",
+hdr_more: "Meer",
 timer_start: "Timer starten", timer_reset: "Resetten", timer_remaining: "Resterende tijd",
 zero_label: "Mis",
 quick_hint_target: "of markeer het exacte punt op het doel",
@@ -6167,6 +6215,8 @@ return '<img src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="width:'+size+'px;h
 }
 
 var ICON_PATHS = {
+home: '<path d="M4 11.4 12 4l8 7.4"/><path d="M6.4 10.2V20h11.2v-9.8"/><path d="M10 20v-5h4v5"/>',
+more: '<circle cx="12" cy="5" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.6" fill="currentColor" stroke="none"/>',
 bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
 mail: '<rect x="3" y="5" width="18" height="14" rx="2.2"/><path d="M3.6 6.6 12 13l8.4-6.4"/>',
 warn: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
@@ -7264,71 +7314,130 @@ return wrap;
 // Struttura sempre uguale: logo a sinistra, nome, comando a destra.
 function header(){
 var duranteGiro = (state.screen === "round" || state.screen === "summary");
-var mostraMenu = homeOverride && (state.screen === "round" || state.screen === "summary");
+var mostraMenu = homeOverride && duranteGiro;
 var showHome = !mostraMenu && state.screen !== "menu";
+var largo = (typeof window.matchMedia === "function") && window.matchMedia("(min-width: 760px)").matches;
+
 var h = el(
-'<header class="top'+(duranteGiro ? ' round' : '')+'">'+
+'<header class="top">'+
 '<div class="brandblock"><div class="logo">'+logoSVG(52)+'</div>'+
 '<div class="headtxt"><span class="brand-title">ArcTrail 3D</span></div></div>'+
 '</header>'
 );
-// Campanella: le notifiche si leggono sempre qui dentro, anche se il telefono
-// non ha il permesso per quelle di sistema.
-if(currentUser && authState === "ready"){
-var actions = el('<div class="head-actions" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;"></div>');
-// Busta: messaggi privati tra arcieri
-if(state.screen !== "messaggi" && state.screen !== "dm-chat"){
-var mailBtn = el('<button class="home-btn no-print" title="'+t("dm_title")+'" style="position:relative;padding:6px 9px;display:inline-flex;align-items:center;">'+icon("mail",18)+'</button>');
-if(dmUnreadCount > 0){
-mailBtn.appendChild(el('<span style="position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--danger);color:#fff;font-size:0.62rem;font-weight:800;display:flex;align-items:center;justify-content:center;">'+(dmUnreadCount > 9 ? "9+" : dmUnreadCount)+'</span>'));
-}
-mailBtn.addEventListener("click", function(){ state.screen = "messaggi"; save(); render(); });
-actions.appendChild(mailBtn);
-}
-if(state.screen !== "notifiche"){
-var bellBtn = el('<button class="home-btn no-print" title="'+t("notif_center_title")+'" style="position:relative;padding:6px 9px;display:inline-flex;align-items:center;">'+icon("bell",18)+'</button>');
-if(notifUnreadCount > 0){
-bellBtn.appendChild(el('<span style="position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--danger);color:#fff;font-size:0.62rem;font-weight:800;display:flex;align-items:center;justify-content:center;">'+(notifUnreadCount > 9 ? "9+" : notifUnreadCount)+'</span>'));
-}
-bellBtn.addEventListener("click", function(){ state.screen = "notifiche"; save(); render(); });
-actions.appendChild(bellBtn);
-}
-if(actions.childNodes.length) h.appendChild(actions);
-}
+
+// ── Le azioni, in ordine di importanza ────────────────────────────────
+// Sul telefono ne restano in vista DUE: le altre scendono nel
+// troppo-pieno. E' la regola che tiene in piedi la barra: prima erano
+// fino a quattro, e per farcele stare si rimpiccioliva il marchio finche'
+// non si tagliava. Si toglie un'azione, non si stringe il titolo.
+// L'ordine e' questo perche' e' quello dell'uso: prima si esce, poi si
+// segnala un guaio del percorso, poi si leggono le notifiche, poi i
+// messaggi; cambiare federazione si fa una volta nella vita.
+var azioni = [];
 if(showHome){
-var homeBtn = el('<button class="home-btn no-print" style="margin-left:8px;">'+t("nav_menu")+'</button>');
-homeBtn.addEventListener("click", function(){
+azioni.push({ id:"menu", glifo:"home", testo:t("nav_menu"), conParola:true, vai:function(){
 if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; timerRunning = false; timerRemaining = null; timerTargetKey = null; }
 if(state.screen === "session-follow"){ stopFollowingSession(); state.followSessionId = null; }
 if(duranteGiro){ homeOverride = true; }
 else { state.screen = "menu"; }
 save(); render();
-});
-h.appendChild(homeBtn);
-// Pulsante segnalazione percorso: visibile solo durante il round
+}});
 if(duranteGiro && currentUser){
-var reportBtn = el('<button class="home-btn no-print" style="margin-left:8px;background:transparent;border:1px solid var(--danger);color:var(--danger);font-size:0.72rem;font-weight:700;padding:5px 10px;display:inline-flex;align-items:center;gap:5px;" title="'+t("fr_report_title")+'">'+icon("warn",14)+t("fr_report_btn_short")+'</button>');
-reportBtn.addEventListener("click", function(){
+azioni.push({ id:"segnala", glifo:"warn", testo:t("fr_report_btn_short"), titolo:t("fr_report_title"),
+conParola:true, pericolo:true, vai:function(){
 state.frFrom = state.screen;
 state.screen = "field-report"; save(); render();
-});
-h.appendChild(reportBtn);
+}});
 }
 }
-
-// Nel menu, al posto del titolo, la nazione e la federazione attive: toccandole
-// si apre la scelta. E' l'unico punto da imparare per cambiarle.
+if(currentUser && authState === "ready"){
+if(state.screen !== "notifiche"){
+azioni.push({ id:"notifiche", glifo:"bell", testo:t("notif_center_title"), conta:notifUnreadCount,
+vai:function(){ state.screen = "notifiche"; save(); render(); }});
+}
+if(state.screen !== "messaggi" && state.screen !== "dm-chat"){
+azioni.push({ id:"messaggi", glifo:"mail", testo:t("dm_title"), conta:dmUnreadCount,
+vai:function(){ state.screen = "messaggi"; save(); render(); }});
+}
+}
+// Nazione e federazione attive: toccandole si apre la scelta. E' l'unico
+// punto da imparare per cambiarle.
 if((state.screen === "menu" || mostraMenu) && state.country && state.federation){
-var fedBtn = el('<button class="home-btn small no-print" style="margin-left:8px;"></button>');
-fedBtn.textContent = t("setup_change_btn");
-fedBtn.addEventListener("click", function(){
+azioni.push({ id:"cambia", glifo:"globe", testo:t("setup_change_btn"), conParola:true, forte:true, vai:function(){
 setupCountry = state.country;
 state.screen = "setup";
 save(); render();
-});
-h.appendChild(fedBtn);
+}});
 }
+
+var inVista = largo ? azioni : azioni.slice(0,2);
+var nascoste = largo ? [] : azioni.slice(2);
+if(nascoste.length === 1){ inVista = azioni; nascoste = []; }
+
+var barra = el('<div class="head-actions no-print"></div>');
+inVista.forEach(function(a){ barra.appendChild(tastoBarra(a, largo)); });
+if(nascoste.length) barra.appendChild(troppoPieno(nascoste));
+if(barra.childNodes.length) h.appendChild(barra);
 return h;
+}
+
+// Un solo tipo di tasto nella barra: 44x44, che e' il minimo su cui un
+// dito non sbaglia (Apple ne chiede 44, Material 48). Da computer i
+// comandi principali si tengono anche la parola: lo spazio c'e', e una
+// parola si legge sempre meglio di un glifo.
+function tastoBarra(a, largo){
+var conParola = largo && a.conParola;
+var classi = conParola
+? ("home-btn" + (a.forte ? " small" : "") + (a.pericolo ? " pericolo" : ""))
+: ("bar-btn" + (a.pericolo ? " pericolo" : ""));
+var b = el('<button type="button" class="'+classi+' no-print"></button>');
+b.setAttribute("title", a.titolo || a.testo);
+b.setAttribute("aria-label", a.titolo || a.testo);
+b.innerHTML = icon(a.glifo, conParola ? 17 : 20);
+if(conParola) b.appendChild(document.createTextNode(a.testo));
+if(a.conta > 0) b.appendChild(el('<span class="bar-badge">'+(a.conta > 9 ? "9+" : a.conta)+'</span>'));
+b.addEventListener("click", a.vai);
+return b;
+}
+
+// Il troppo-pieno sta sempre nello stesso posto: ultimo tasto a destra.
+// Se dentro c'e' qualcosa di non letto porta un pallino, altrimenti
+// nascondere la campanella nasconderebbe anche il segnale.
+function troppoPieno(azioni){
+var wrap = el('<div class="bar-more no-print"></div>');
+var b = el('<button type="button" class="bar-btn" aria-haspopup="menu" aria-expanded="false"></button>');
+b.setAttribute("title", t("hdr_more"));
+b.setAttribute("aria-label", t("hdr_more"));
+b.innerHTML = icon("more", 20);
+if(azioni.some(function(a){ return a.conta > 0; })) b.appendChild(el('<span class="bar-dot"></span>'));
+
+var menu = el('<div class="bar-menu" role="menu" hidden></div>');
+azioni.forEach(function(a){
+var v = el('<button type="button" class="bar-menu-item" role="menuitem"></button>');
+v.innerHTML = icon(a.glifo, 20);
+v.appendChild(el('<span>'+escapeHtml(a.testo)+'</span>'));
+if(a.conta > 0) v.appendChild(el('<span class="bar-menu-count">'+(a.conta > 9 ? "9+" : a.conta)+'</span>'));
+v.addEventListener("click", function(){ chiudi(); a.vai(); });
+menu.appendChild(v);
+});
+
+function fuori(e){ if(!wrap.contains(e.target)) chiudi(); }
+function daTastiera(e){ if(e.key === "Escape"){ chiudi(); b.focus(); } }
+function chiudi(){
+menu.hidden = true; b.setAttribute("aria-expanded","false");
+document.removeEventListener("click", fuori, true);
+document.removeEventListener("keydown", daTastiera);
+}
+b.addEventListener("click", function(e){
+e.stopPropagation();
+if(menu.hidden){
+menu.hidden = false; b.setAttribute("aria-expanded","true");
+document.addEventListener("click", fuori, true);
+document.addEventListener("keydown", daTastiera);
+} else { chiudi(); }
+});
+wrap.appendChild(b); wrap.appendChild(menu);
+return wrap;
 }
 
 function langSwitcher(){
