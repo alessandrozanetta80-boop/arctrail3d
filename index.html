@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F5F4F0">
+<meta name="theme-color" content="#ECEDE6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ArcTrail 3D">
@@ -68,15 +68,44 @@
 --danger:#E23D2E; --success:#4CAF50; --line:#2A362F;
 --qss:#E8722F; --qspot:#6FBF3F; --qsag:#3E6FC2; --qzero:#464A42; --qperfect:#C1272D;
 --checkbox-border: rgba(237,230,214,0.4);
+/* Mancavano due gradini: si saltava da #EDE6D6 a #9AA39C senza vie di mezzo,
+   e i bordi "fantasma" non si vedevano. */
+--ink-2:#C7CFC5; --line-strong:#3B4A41;
 --navbar-bg:var(--bg-panel); --navbar-line:var(--line); --navbar-fg:var(--muted);
 --navbar-on:var(--accent-soft); --navbar-pill:var(--bg-panel-2); --navbar-shadow:rgba(0,0,0,0.45);
 --navbar-green:#60A966;
 }
+/* ══════════════════ TEMA CHIARO — rifatto il 15/08/2026 ══════════════════
+   Al sole il vetro aggiunge un velo luminoso costante: sul fondo scuro quel
+   velo mangia il contrasto (nero su nero diventa grigio su grigio), sul fondo
+   chiaro invece lo alza. Il chiaro e' quindi il tema da percorso — ma regge
+   solo se rispetta tre regole:
+     1) contrasto sovradimensionato: testo principale sopra 12:1, non 4,5;
+     2) niente tinte sotto il 18%: al sole spariscono e il codice colore
+        (verde = allenamento, arancio = gara, oro = prepara) smette di guidare;
+     3) l'elevazione si fa con i BORDI, non con le ombre: un'ombra all'8% di
+        nero fuori non esiste, e i pulsanti sembrano disattivati.
+   Regola di colore, quella che risolve mezzo problema da sola:
+   UN colore per il riempimento, UNO per il testo. Un arancio abbastanza vivo
+   da fare da fondo non e' mai abbastanza scuro da fare da scritta. */
 body.theme-light{
---bg:#F5F4F0; --bg-panel:#FFFFFF; --bg-panel-2:#FAFAF7; --wood:#FFFFFF; --wood-2:#FAFAF7;
---accent:#315B35; --accent-ink:#FFFFFF; --accent-soft:#315B35; --bark:#D9601E; --gold:#A6791F; --cream:#1A1D1B; --muted:#6B7069;
---line:#E4E1D8; --qzero:#9A9C93; --checkbox-border: rgba(26,29,27,0.4);
---navbar-green:#315B35;
+--bg:#ECEDE6; --bg-panel:#FFFFFF; --bg-panel-2:#F5F6F0; --wood:#FFFFFF; --wood-2:#F5F6F0;
+--accent:#24602C; --accent-ink:#FFFFFF; --accent-soft:#24602C;
+--bark:#BE530F;              /* 4,6:1 sia come fondo col bianco sopra, sia come scritta sul bianco */
+--gold:#7A5610;              /* l'oro qui fa quasi sempre da scritta: 7,0:1 */
+--cream:#12160F;             /* 18:1 */
+--ink-2:#3A403A; --muted:#565D53;   /* era #6B7069, 5,1:1: troppo poco fuori */
+--danger:#A81319; --success:#2E7D32;
+--line:#D3D7CB; --line-strong:#B4BBAC;
+--qzero:#9A9C93; --checkbox-border: rgba(18,22,15,0.45);
+/* Le --navbar-* vanno riscritte per esteso, non ereditate: nel :root sono
+   definite come var(--bg-panel) & co., e una variabile che ne cita un'altra
+   viene risolta SUL NODO DOVE E' DICHIARATA (html), non su body. Risultato:
+   col tema chiaro la barra in fondo restava nera lo stesso. */
+--navbar-bg:#FFFFFF; --navbar-line:#D3D7CB; --navbar-fg:#565D53;
+--navbar-on:#24602C; --navbar-pill:#24602C; --navbar-shadow:rgba(30,45,34,0.14);
+--navbar-green:#24602C;
+color-scheme:light;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
@@ -94,9 +123,10 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 header.top{ display:flex; align-items:center; gap:12px; height:64px; padding:0 4px; border-bottom:1px solid var(--line); margin-bottom:18px;
 position:sticky; top:0; z-index:50; margin-top:env(safe-area-inset-top);
 background:transparent; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+header.top .brandblock{ display:flex; align-items:center; gap:12px; min-width:0; flex:0 1 auto; }
 header.top .logo{ width:52px; height:52px; flex:0 0 auto; }
 header.top .logo svg{ width:100%; height:100%; display:block; }
-header.top .headtxt{ flex:1; min-width:0; overflow:hidden; padding-right:6px; }
+header.top .headtxt{ flex:1 1 auto; min-width:0; overflow:hidden; padding-right:6px; }
 /* Il titolo finiva sotto la busta: l'ultima lettera veniva tagliata. Ora ha uno
 spazio suo, e su schermi stretti si rimpiccioliscono logo e distanze. */
 @media (max-width:400px){
@@ -129,26 +159,38 @@ h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.
 .btn-ghost-danger{ background:color-mix(in srgb, var(--danger) 14%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--danger) 55%, transparent); color:color-mix(in srgb, var(--danger) 55%, white); }
 .btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
 .btn-standings{ background:var(--gold); border-color:transparent; color:#231a09; font-weight:800; box-shadow:0 4px 14px rgba(203,163,92,0.35); }
-body.theme-elegante .btn-standings{ background:color-mix(in srgb, var(--gold) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--gold) 60%, transparent); color:var(--gold); box-shadow:none; }
+body.theme-dark .btn-standings{ background:color-mix(in srgb, var(--gold) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--gold) 60%, transparent); color:var(--gold); box-shadow:none; }
 body.theme-light .btn-standings{ background:color-mix(in srgb, var(--gold) 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--gold) 55%, transparent); color:var(--gold); box-shadow:0 1px 3px rgba(0,0,0,0.08); }
 .menu-btn{ padding:18px; font-size:1.05rem; justify-content:flex-start; text-align:left; margin-bottom:10px; position:relative; overflow:hidden; }
-.menu-btn .menu-icon{ font-size:1.4rem; position:relative; z-index:1; }
+/* L'icona dentro una pastiglia: quando al sole la tinta del fondo sbiadisce,
+   il quadretto pieno resta l'unico appiglio di colore. */
+.menu-btn .menu-icon{ font-size:1.4rem; position:relative; z-index:1;
+display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
+width:42px; height:42px; border-radius:13px;
+background:color-mix(in srgb, currentColor 16%, transparent); }
 .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; position:relative; z-index:1; }
 .menu-btn .menu-sub{ font-size:0.7rem; font-weight:400; opacity:0.85; margin-top:2px; }
 .menu-btn::after{ content:""; position:absolute; inset:0; background:linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 45%); pointer-events:none; }
 .menu-btn.training{ background:#2C5230; color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(44,82,48,0.35); }
 .menu-btn.gara{ background:#C1571F; color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(193,87,31,0.35); }
 .menu-btn.prepara{ background:#B98A3A; color:#231a09; border-color:transparent; box-shadow:0 4px 14px rgba(185,138,58,0.35); }
-body.theme-elegante .menu-btn.training{ background:color-mix(in srgb, #2C5230 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #2C5230 60%, transparent); color:#60A966; box-shadow:none; }
-body.theme-elegante .menu-btn.gara{ background:color-mix(in srgb, #C1571F 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #C1571F 60%, transparent); color:#E8722F; box-shadow:none; }
-body.theme-elegante .menu-btn.prepara{ background:color-mix(in srgb, #B98A3A 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #B98A3A 60%, transparent); color:#CBA35C; box-shadow:none; }
-body.theme-elegante .menu-btn .menu-txt{ color:#fff; }
-body.theme-elegante .menu-btn .menu-sub{ color:var(--muted); opacity:1; }
-body.theme-light .menu-btn.training{ background:color-mix(in srgb, #2C5230 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, #2C5230 55%, transparent); color:#315B35; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
-body.theme-light .menu-btn.gara{ background:color-mix(in srgb, #C1571F 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, #C1571F 55%, transparent); color:#D9601E; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
-body.theme-light .menu-btn.prepara{ background:color-mix(in srgb, #B98A3A 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, #B98A3A 55%, transparent); color:#A6791F; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+body.theme-dark .menu-btn.training{ background:color-mix(in srgb, #2C5230 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #2C5230 60%, transparent); color:#60A966; box-shadow:none; }
+body.theme-dark .menu-btn.gara{ background:color-mix(in srgb, #C1571F 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #C1571F 60%, transparent); color:#E8722F; box-shadow:none; }
+body.theme-dark .menu-btn.prepara{ background:color-mix(in srgb, #B98A3A 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #B98A3A 60%, transparent); color:#CBA35C; box-shadow:none; }
+body.theme-dark .menu-btn .menu-txt{ color:#fff; }
+body.theme-dark .menu-btn .menu-sub{ color:var(--muted); opacity:1; }
+/* Le tinte erano al 12%: #E6EAE6, #F8EBE4, #F7F1E7. Al sole tre rettangoli
+   bianchi identici. Portate al ~20% e affiancate da una pastiglia piena. */
+body.theme-light .menu-btn.training{ background:#DDEBDA; border:1.5px solid rgba(36,96,44,0.42); color:#24602C; box-shadow:none; }
+body.theme-light .menu-btn.gara{ background:#FBE2D0; border:1.5px solid rgba(190,83,15,0.45); color:#BE530F; box-shadow:none; }
+body.theme-light .menu-btn.prepara{ background:#F6E8C6; border:1.5px solid rgba(176,126,18,0.50); color:#8A6210; box-shadow:none; }
+body.theme-light .menu-btn.training .menu-icon{ background:#24602C; color:#FFFFFF; }
+body.theme-light .menu-btn.gara .menu-icon{ background:#BE530F; color:#FFFFFF; }
+body.theme-light .menu-btn.prepara .menu-icon{ background:#B07E12; color:#FFFFFF; }
 body.theme-light .menu-btn .menu-txt{ color:var(--cream); }
-body.theme-light .menu-btn .menu-sub{ color:var(--muted); opacity:1; }
+body.theme-light .menu-btn .menu-sub{ color:#4B5248; opacity:1; font-weight:500; }
+/* il velo bianco in diagonale, sul chiaro, sbiadisce e basta */
+body.theme-light .menu-btn::after{ display:none; }
 .row{ display:flex; gap:10px; }
 .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
 .chip{ flex:1 1 0; min-width:0; text-align:center; padding:12px 4px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; white-space:normal; overflow-wrap:break-word; line-height:1.2; transition:filter .12s ease, border-color .12s ease; }
@@ -224,27 +266,25 @@ background:var(--bg-panel-2); border:1px solid rgba(203,163,92,0.55); box-shadow
 .quick-btn .quick-lbl{ font-size:clamp(0.5rem,2.4vw,0.64rem); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:normal; line-height:1.15; text-wrap:pretty; max-width:100%; }
 .quick-btn .quick-pts{ font-size:1.55rem; font-weight:900; font-family:"Playfair Display",Georgia,serif; color:#fff; }
 body.theme-light .quick-btn .quick-pts{ color:inherit; }
-body.theme-light .quick-btn{ box-shadow:0 1px 3px rgba(0,0,0,0.08); }
 .quick-btn.superspot{ background:color-mix(in srgb, var(--qss) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qss) 60%, transparent); color:var(--qss); }
 .quick-btn.spot{ background:color-mix(in srgb, var(--qspot) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qspot) 60%, transparent); color:var(--qspot); }
 .quick-btn.sagoma{ background:color-mix(in srgb, var(--qsag) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qsag) 60%, transparent); color:var(--qsag); }
 .quick-btn.zero{ background:color-mix(in srgb, var(--qzero) 40%, var(--bg-panel)); border:1px solid var(--line); color:var(--muted); }
 .quick-btn.perfect{ background:color-mix(in srgb, var(--qperfect) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qperfect) 60%, transparent); color:var(--qperfect); }
-/* TEMA CHIARO: la cifra col colore pieno sul suo fondo chiaro arrivava a 1,9
-di contrasto sullo spot, che e' il tasto piu' premuto. Fondi identici, cambia
-solo l'inchiostro: scuro ma della stessa famiglia di colore, cosi' il colpo
-d'occhio dei cinque tasti resta quello. Sopra 5 su tutti e cinque.
-Il tema scuro NON si tocca. */
-body.theme-light .quick-btn.superspot{ border-color:color-mix(in srgb, var(--qss) 70%, transparent); color:#9C3F06; }
-body.theme-light .quick-btn.spot{ border-color:color-mix(in srgb, var(--qspot) 70%, transparent); color:#2A6E15; }
-body.theme-light .quick-btn.sagoma{ border-color:color-mix(in srgb, var(--qsag) 70%, transparent); color:#1F4C93; }
-body.theme-light .quick-btn.perfect{ border-color:color-mix(in srgb, var(--qperfect) 70%, transparent); color:#8E1116; }
-body.theme-light .quick-btn.zero{ border-color:#C9CBC4; color:#4A4F49; }
-body.theme-satura .quick-btn.superspot{ background:var(--qss); border:none; color:#fff; }
-body.theme-satura .quick-btn.spot{ background:var(--qspot); border:none; color:#fff; }
-body.theme-satura .quick-btn.sagoma{ background:var(--qsag); border:none; color:#fff; }
-body.theme-satura .quick-btn.zero{ background:var(--qzero); border:none; color:#fdfaf3; }
-body.theme-satura .quick-btn.perfect{ background:var(--qperfect); border:none; color:#fff; }
+/* TEMA CHIARO — i cinque tasti sono l'unica cosa che conta davvero al campo:
+   si premono col sole in faccia, di fretca, spesso con la mano sudata.
+   Prima erano fondi tinti col numero colorato sopra: una fila di rettangoli
+   quasi bianchi. Ora sono pieni, con la cifra bianca. Il colore lo si legge
+   da lontano, il numero da vicino.
+   I fondi NON usano le variabili --q*: quelle disegnano anche le zone del
+   bersaglio, che devono restare quelle che sono.
+   Contrasto del bianco su ciascun fondo: 4,9 / 5,2 / 5,9 / 7,2 / 5,6. */
+body.theme-light .quick-btn{ border:1.5px solid rgba(18,22,15,0.10); box-shadow:none; }
+body.theme-light .quick-btn.superspot{ background:#BC4F0B; color:#FFFFFF; }
+body.theme-light .quick-btn.spot{ background:#2E7D32; color:#FFFFFF; }
+body.theme-light .quick-btn.sagoma{ background:#2E5FA8; color:#FFFFFF; }
+body.theme-light .quick-btn.perfect{ background:#A81319; color:#FFFFFF; }
+body.theme-light .quick-btn.zero{ background:#5F645C; color:#FFFFFF; }
 .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
 .stats-row{ display:flex; gap:8px; margin-bottom:14px; }
 .stat-box{ flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 6px; }
@@ -360,13 +400,15 @@ due meta' dell'app sembrano finalmente la stessa cosa.
 Per tornare indietro basta cancellare questo blocco fino alla riga
 "FINE VESTE CHIARA". */
 @media (min-width:760px){
-body.theme-elegante, body.theme-satura, body.theme-light{
---bg:#F2F1EC; --bg-panel:#FFFFFF; --bg-panel-2:#F8F7F3; --wood:#FFFFFF; --wood-2:#F8F7F3;
---accent:#315B35; --accent-ink:#FFFFFF; --accent-soft:#315B35; --bark:#C8551A; --gold:#9A6F1C; --cream:#1A1D1B; --muted:#666C65;
---line:#E2DFD6; --qzero:#9A9C93; --checkbox-border:rgba(26,29,27,0.35);
-/* le barre scure hanno una tavolozza loro */
---navbar-bg:#152119; --navbar-line:#27342C; --navbar-fg:#A3ADA4;
---navbar-on:#60A966; --navbar-pill:#213028; --navbar-shadow:rgba(21,33,25,0.22); --navbar-green:#60A966;
+body.theme-dark, body.theme-light{
+--bg:#ECEDE6; --bg-panel:#FFFFFF; --bg-panel-2:#F5F6F0; --wood:#FFFFFF; --wood-2:#F5F6F0;
+--accent:#24602C; --accent-ink:#FFFFFF; --accent-soft:#24602C; --bark:#BE530F; --gold:#7A5610;
+--cream:#12160F; --ink-2:#3A403A; --muted:#565D53; --danger:#A81319; --success:#2E7D32;
+--line:#D3D7CB; --line-strong:#B4BBAC; --qzero:#9A9C93; --checkbox-border:rgba(18,22,15,0.40);
+/* L'insegna in cima ora e' chiara: barra bianca, marchio dentro un blocco
+   verde. Le pastiglie delle sezioni restano l'unico verde pieno. */
+--navbar-bg:#FFFFFF; --navbar-line:#D3D7CB; --navbar-fg:#4F564C;
+--navbar-on:#FFFFFF; --navbar-pill:#24602C; --navbar-shadow:rgba(30,45,34,0.10); --navbar-green:#24602C;
 }
 /* Stesso disegno dello sfondo del telefono, stessi tre colori dell'app
 (verde, oro, arancio), solo appoggiati sul chiaro invece che sullo scuro. */
@@ -374,8 +416,8 @@ body{
 background:
 radial-gradient(ellipse 900px 500px at 8% -5%, rgba(82,127,24,0.13), transparent 60%),
 radial-gradient(ellipse 700px 500px at 105% 15%, rgba(154,111,28,0.10), transparent 55%),
-radial-gradient(ellipse 800px 600px at 50% 120%, rgba(200,85,26,0.09), transparent 60%),
-#F2F1EC;
+radial-gradient(ellipse 800px 600px at 50% 120%, rgba(190,83,15,0.09), transparent 60%),
+#ECEDE6;
 }
 body::before{ opacity:0.22; }
 /* Le ombre pensate per lo scuro, sul bianco diventano sporco. */
@@ -385,18 +427,26 @@ body::before{ opacity:0.22; }
 .board{ box-shadow:0 2px 10px rgba(30,40,34,0.08); }
 /* Da computer la pagina e' chiara per tutti e tre i temi, quindi le cifre
 avevano lo stesso problema di contrasto anche con Elegante e Satura. */
-.quick-btn.superspot{ color:#9C3F06; }
-.quick-btn.spot{ color:#2A6E15; }
-.quick-btn.sagoma{ color:#1F4C93; }
-.quick-btn.perfect{ color:#8E1116; }
-.quick-btn.zero{ color:#4A4F49; }
+.quick-btn{ border:1.5px solid rgba(18,22,15,0.10); }
+.quick-btn.superspot{ background:#BC4F0B; color:#FFFFFF; }
+.quick-btn.spot{ background:#2E7D32; color:#FFFFFF; }
+.quick-btn.sagoma{ background:#2E5FA8; color:#FFFFFF; }
+.quick-btn.perfect{ background:#A81319; color:#FFFFFF; }
+.quick-btn.zero{ background:#5F645C; color:#FFFFFF; }
+.quick-btn .quick-pts{ color:inherit; }
 .timer-idle{ background:linear-gradient(135deg,#FFFFFF,#F8F7F3); }
-body.theme-elegante .quick-btn .quick-pts{ color:inherit; }
-body.theme-elegante .btn-standings{ background:color-mix(in srgb, var(--gold) 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--gold) 55%, transparent); color:var(--gold); box-shadow:0 1px 3px rgba(30,40,34,0.08); }
-body.theme-elegante .menu-btn.training{ background:color-mix(in srgb, #2C5230 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, #2C5230 55%, transparent); color:#315B35; box-shadow:0 1px 3px rgba(30,40,34,0.08); }
-body.theme-elegante .menu-btn.gara{ background:color-mix(in srgb, #C1571F 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, #C1571F 55%, transparent); color:#C8551A; box-shadow:0 1px 3px rgba(30,40,34,0.08); }
-body.theme-elegante .menu-btn.prepara{ background:color-mix(in srgb, #B98A3A 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, #B98A3A 55%, transparent); color:#9A6F1C; box-shadow:0 1px 3px rgba(30,40,34,0.08); }
-body.theme-elegante .menu-btn .menu-txt{ color:var(--cream); }
+/* Da computer la pagina e' chiara per entrambi i temi: le schede seguono
+   le stesse regole del tema chiaro, non quelle dello scuro. */
+body.theme-dark .quick-btn .quick-pts{ color:inherit; }
+body.theme-dark .btn-standings{ background:color-mix(in srgb, var(--gold) 12%, var(--bg-panel)); border:1.5px solid color-mix(in srgb, var(--gold) 55%, transparent); color:var(--gold); box-shadow:none; }
+body.theme-dark .menu-btn.training{ background:#DDEBDA; border:1.5px solid rgba(36,96,44,0.42); color:#24602C; box-shadow:none; }
+body.theme-dark .menu-btn.gara{ background:#FBE2D0; border:1.5px solid rgba(190,83,15,0.45); color:#BE530F; box-shadow:none; }
+body.theme-dark .menu-btn.prepara{ background:#F6E8C6; border:1.5px solid rgba(176,126,18,0.50); color:#8A6210; box-shadow:none; }
+body.theme-dark .menu-btn.training .menu-icon{ background:#24602C; color:#FFFFFF; }
+body.theme-dark .menu-btn.gara .menu-icon{ background:#BE530F; color:#FFFFFF; }
+body.theme-dark .menu-btn.prepara .menu-icon{ background:#B07E12; color:#FFFFFF; }
+body.theme-dark .menu-btn .menu-txt{ color:var(--cream); }
+body.theme-dark .menu-btn .menu-sub{ color:#4B5248; opacity:1; font-weight:500; }
 .menu-btn::after{ display:none; }
 /* BARRA UNICA (13/08): la barra delle 5 sezioni non e' piu' un secondo
 blocco scuro sotto la testata, ma vive DENTRO la testata (vedi
@@ -420,10 +470,16 @@ loro, ma restano dentro la stessa insegna. I comandi di destra restano su
 in alto grazie a order. */
 #app.narrow header.top .head-actions, #app.narrow header.top > .home-btn{ order:1; }
 #app.narrow header.top .tabbar-wide{ order:2; flex-basis:100%; }
-header.top .brand-title{ color:#CBA35C; }
-header.top h1{ color:#60A966; }
-header.top .sub{ color:#A3ADA4; }
-header.top .icon-btn, header.top button:not(.home-btn){ color:#C9D1CA; }
+/* Il marchio si tiene il verde pieno anche da computer, per entrambi i temi:
+   e' l'unico blocco di colore forte dell'insegna chiara. */
+header.top .brandblock{
+background:linear-gradient(140deg,#2A6B32 0%,#1D4F26 100%);
+padding:4px 16px 4px 4px; border-radius:16px;
+}
+header.top .brand-title{ color:#F3EEE1; }
+header.top h1{ color:#F3EEE1; }
+header.top .sub{ color:#C7D3C6; }
+header.top .icon-btn, header.top button:not(.home-btn){ color:#4F564C; }
 }
 /* ══════════════ FINE VESTE CHIARA ══════════════ */
 /* Col mouse serve un ritorno visivo: sul telefono basta il :active del dito. */
@@ -521,32 +577,29 @@ html{ scroll-behavior:smooth; }
 #app.narrow{ max-width:660px; }
 
 /* ── 2. La testata: un'insegna, non una barra grigia ─────────────────── */
+/* L'insegna era un blocco verde scuro sopra una pagina chiara: due meta'
+   diverse. Ora e' chiara come tutto il resto, e il marchio si tiene il verde
+   pieno — cosi' il presidio resta, ma non e' piu' la testata a gridare. */
 header.top{
-  min-height:0; padding:10px 16px 10px 18px; gap:16px; border-radius:20px;
-  background:linear-gradient(135deg,#1C2C21 0%,#132018 55%,#182620 100%);
-  border:1px solid rgba(203,163,92,0.20);
-  box-shadow:0 18px 40px -28px rgba(20,35,25,0.75), inset 0 1px 0 rgba(255,255,255,0.05);
+  min-height:0; padding:9px 14px 9px 9px; gap:16px; border-radius:20px;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FBFBF7 100%);
+  border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(30,45,34,0.05), 0 18px 40px -32px rgba(30,45,34,0.45);
   margin-bottom:22px; position:sticky; top:12px; z-index:70; isolation:isolate;
 }
-header.top::after{
-  content:""; position:absolute; inset:0; border-radius:20px; z-index:-1; pointer-events:none;
-  background:
-    radial-gradient(520px 150px at 14% -60%, rgba(96,169,102,0.20), transparent 70%),
-    radial-gradient(420px 130px at 92% 150%, rgba(232,114,47,0.14), transparent 70%);
-}
+header.top::after{ display:none; }
 header.top .logo{ width:46px; height:46px; }
-header.top .brand-title{ font-size:1.1rem; font-weight:600; letter-spacing:0.16em; color:#CBA35C; }
+header.top .brand-title{ font-size:1.1rem; font-weight:600; letter-spacing:0.16em; color:#F3EEE1; }
 /* I tre bottoni arancioni in fila erano la cosa piu' pesante della pagina:
    ora sono pastiglie di vetro sul verde scuro, e resta arancione solo il
    comando vero e proprio ("Cambia"). */
 header.top .home-btn{
   height:36px; border-radius:11px;
-  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15); color:#E4EBE4;
+  background:#F3F4EE; border:1.5px solid var(--line-strong); color:var(--ink-2);
   transition:background .16s ease, border-color .16s ease, transform .16s ease;
 }
 header.top .home-btn:hover{
-  background:rgba(96,169,102,0.22); border-color:rgba(96,169,102,0.55);
-  color:#fff; transform:translateY(-1px);
+  background:#E6EFE5; border-color:var(--accent); color:var(--accent); transform:translateY(-1px);
 }
 header.top .home-btn.small{
   background:var(--bark); border-color:transparent; color:#fff; font-weight:700;
@@ -560,7 +613,7 @@ header.top .home-btn.small:hover{ background:#D96124; border-color:transparent; 
   background:none !important; box-shadow:none !important; border-radius:0 !important;
 }
 .tabbar-wide button{ transition:background .16s ease, border-color .16s ease; }
-.tabbar-wide button:not(.on):hover{ background:rgba(255,255,255,0.07) !important; }
+.tabbar-wide button:not(.on):hover{ background:rgba(18,22,15,0.05) !important; }
 .tabbar-wide button > svg{ transition:transform .16s ease; }
 .tabbar-wide button:hover > svg{ transform:translateY(-1px); }
 
@@ -632,7 +685,7 @@ h2.section-title::after{
 }
 .menu-cols .card > .btn.btn-primary.btn-block{ max-width:380px; }
 .menu-cols > .btn.btn-ghost.btn-block{ max-width:340px; margin:0 auto; display:flex; }
-.btn-ghost{ background:rgba(255,255,255,0.55); color:var(--muted); }
+.btn-ghost{ background:var(--bg-panel-2); border:1.5px solid var(--line-strong); color:var(--cream); }
 .btn-ghost:hover{
   background:#fff; border-color:var(--accent-soft); color:var(--accent);
   transform:translateY(-1px); box-shadow:0 10px 22px -16px rgba(30,45,34,0.7);
@@ -711,6 +764,74 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
 .adm-act .btn{flex:1;min-width:96px;}
 @media(min-width:700px){.adm-dl{grid-template-columns:180px 1fr;}}
 @media(prefers-reduced-motion:reduce){.adm-chev{transition:none;}}
+/* ══════════════ RIFINITURA DEL TEMA CHIARO (15/08/2026) ══════════════
+   Tutto quello che segue vale solo con body.theme-light: lo scuro non lo
+   tocca nemmeno di striscio. Per tornare indietro basta cancellare fino a
+   "FINE RIFINITURA CHIARO". */
+
+/* Le tre macchie di colore sullo sfondo erano tarate sul nero: sul chiaro
+   sporcano e basta. Qui sono la meta'. */
+body.theme-light{
+background:
+radial-gradient(ellipse 900px 500px at 8% -5%, rgba(82,127,24,0.10), transparent 60%),
+radial-gradient(ellipse 700px 500px at 105% 15%, rgba(154,111,28,0.08), transparent 55%),
+radial-gradient(ellipse 800px 600px at 50% 120%, rgba(190,83,15,0.07), transparent 60%),
+var(--bg);
+}
+body.theme-light::before{ opacity:0.22; }
+
+/* Pagina #ECEDE6 contro riquadro bianco: prima ballavano il 6% di luminanza,
+   al sole erano la stessa cosa. L'ombra e' quasi solo un velo sotto. */
+body.theme-light .card{
+background:var(--bg-panel);
+border:1px solid var(--line);
+border-top:2px solid color-mix(in srgb, var(--gold) 45%, transparent);
+box-shadow:0 1px 2px rgba(30,45,34,0.05), 0 12px 24px -20px rgba(30,45,34,0.35);
+}
+/* Era troppo tenue per fare da titolo di sezione. */
+body.theme-light h2.section-title{ color:var(--ink-2); }
+
+/* I "fantasma" (Il mio diario, Scrivi una segnalazione...) erano bianco su
+   bianco con un filo di bordo: si leggevano come disattivati. */
+body.theme-light .btn{ box-shadow:0 1px 2px rgba(30,45,34,0.08); }
+body.theme-light .btn-primary{ box-shadow:0 1px 2px rgba(30,45,34,0.10), 0 10px 20px -14px rgba(36,96,44,0.75); }
+body.theme-light .btn-ghost{ background:var(--bg-panel-2); border:1.5px solid var(--line-strong); color:var(--cream); }
+body.theme-light .btn-ghost .menu-sub{ color:var(--muted); }
+/* rosa su rosa: il testo spariva */
+body.theme-light .btn-ghost-danger{ color:var(--danger); border-width:1.5px; }
+body.theme-light .chip{ border:1.5px solid var(--line-strong); }
+body.theme-light .chip.active{ border-color:var(--accent); }
+body.theme-light input[type=text], body.theme-light input[type=number],
+body.theme-light input[type=email], body.theme-light input[type=tel],
+body.theme-light textarea, body.theme-light select{ border:1.5px solid var(--line-strong); }
+body.theme-light .rules-panel, body.theme-light .archer-row,
+body.theme-light .cp-class-row, body.theme-light .adm-row,
+body.theme-light .cp-percorso-card, body.theme-light .stat-box,
+body.theme-light .shot-pill, body.theme-light .piazz-card{ border-color:var(--line-strong); }
+body.theme-light .board{ border-color:color-mix(in srgb, var(--gold) 60%, transparent); box-shadow:0 1px 2px rgba(30,45,34,0.05); }
+body.theme-light .arrow-badge{ border-color:var(--line-strong); }
+
+/* Il marchio si tiene il verde pieno: e' l'unico blocco di colore forte
+   della testata, e da lontano basta quello per riconoscere l'app. */
+body.theme-light .brandblock{
+background:linear-gradient(140deg,#2A6B32 0%,#1D4F26 100%);
+padding:4px 14px 4px 4px; border-radius:16px;
+}
+body.theme-light header.top .brand-title{ color:#F3EEE1; }
+body.theme-light header.top{ border-bottom-color:var(--line-strong); }
+/* Tre pastiglie arancioni in fila erano la cosa piu' pesante della testata.
+   Resta arancione solo il comando vero e proprio ("Cambia"). */
+body.theme-light header.top .home-btn{ background:#F3F4EE; border:1.5px solid var(--line-strong); color:var(--ink-2); }
+body.theme-light header.top .home-btn.small{ background:var(--bark); border-color:transparent; color:#FFFFFF; }
+
+/* Barra in fondo: la pastiglia attiva era quasi bianca su bianco. Piena.
+   (La regola del 13/08 diceva gia' che al sole il solo cambio di colore
+   del testo non si vede: qui non si vedeva nemmeno la pastiglia.) */
+body.theme-light .tabbar > button.on > span:first-child{
+background:var(--accent) !important; border-color:var(--accent) !important; color:#FFFFFF !important;
+}
+body.theme-light .tabbar > button.on{ color:var(--accent) !important; }
+/* ══════════════ FINE RIFINITURA CHIARO ══════════════ */
 </style>
 </head>
 <body>
@@ -1592,7 +1713,7 @@ profile_error_password_short: "La password deve avere almeno 6 caratteri.", prof
 profile_error_email_in_use: "Questa email \u00e8 gi\u00e0 registrata. Usa \u201cAccedi\u201d con la tua password.",
 login_password: "Password", login_forgot: "Password dimenticata?", login_reset_sent: "Ti abbiamo mandato un'email per reimpostare la password. Se non la vedi, controlla anche nella cartella spam.",
 profile_arco: "Arco principale", profile_privacy: "Ho letto l'informativa privacy e acconsento al trattamento dei miei dati per l'uso dell'app.",
-theme_section_title: "Aspetto", theme_satura_label: "Satura", theme_elegante_label: "Soft", theme_light_label: "Chiara",
+theme_section_title: "Aspetto", theme_dark_label: "Scura", theme_light_label: "Chiara",
 profile_submit: "Crea profilo e continua", profile_error: "Compila nome, username, email, almeno una federazione, l'arco principale e accetta la privacy.",
 pg_title: "Prepara gara",  pg_back_menu: "\u2190 Torna al menu", pg_choose_gara: "Scegli la gara",
 pg_my_saved_routes: "\uD83D\uDCCB I miei percorsi salvati", pg_saved_routes_title: "I miei percorsi salvati", pg_loading: "Caricamento\u2026", pg_error_loading: "Errore nel caricamento: {err}", pg_use_route_btn: "Usa questo percorso",
@@ -2027,7 +2148,7 @@ mode_nfas_training_desc:"Free training following NFAS zones: a single arrow per 
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"match \u00b7 up to 3 arrows", mode_nfas_biggame_unit:"Arrow",
 mode_nfas_biggame_desc:"Official NFAS Big Game Round: 28 targets, up to 3 arrows (only the first hit counts), the Inner Kill only counts on the first arrow.",
 profile_arco: "Main bow", profile_edit_email_note: "To change your login email, contact support.",
-theme_section_title: "Appearance", theme_satura_label: "Vivid", theme_elegante_label: "Soft", theme_light_label: "Light",
+theme_section_title: "Appearance", theme_dark_label: "Dark", theme_light_label: "Light",
 profile_edit_save: "Save changes", profile_edit_saved_msg: "Changes saved.", profile_edit_title: "Your profile",
 profile_email: "Email", profile_error: "Fill in name, username, email, at least one federation, your main bow, and accept the privacy policy.",
 profile_error_email_in_use: "This email is already registered. Use \u201cLog in\u201d with your password.",
@@ -2483,7 +2604,7 @@ mode_nfas_training_desc:"Entra\u00eenement libre selon les zones NFAS\u00a0: une
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"comp\u00e9tition \u00b7 jusqu’\u00e0 3 fl\u00e8ches", mode_nfas_biggame_unit:"Fl\u00e8che",
 mode_nfas_biggame_desc:"Big Game Round officiel NFAS\u00a0: 28 cibles, jusqu’\u00e0 3 fl\u00e8ches (seul le premier impact compte), l’Inner Kill ne compte que sur la premi\u00e8re fl\u00e8che.",
 profile_arco: "Arc principal", profile_edit_email_note: "Pour changer votre e-mail de connexion, contactez l’assistance.",
-theme_section_title: "Apparence", theme_satura_label: "Vive", theme_elegante_label: "Douce", theme_light_label: "Claire",
+theme_section_title: "Apparence", theme_dark_label: "Sombre", theme_light_label: "Claire",
 profile_edit_save: "Enregistrer les modifications", profile_edit_saved_msg: "Modifications enregistr\u00e9es.", profile_edit_title: "Votre profil",
 profile_email: "E-mail", profile_error: "Remplissez le nom, le pseudo, l’e-mail, au moins une f\u00e9d\u00e9ration, votre arc principal, et acceptez la politique de confidentialit\u00e9.",
 profile_error_email_in_use: "Cet e-mail est d\u00e9j\u00e0 enregistr\u00e9. Utilisez \u00ab Se connecter \u00bb avec votre mot de passe.",
@@ -2939,7 +3060,7 @@ mode_nfas_training_desc:"Freies Training nach NFAS-Zonen: ein einzelner Pfeil pr
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"Wettkampf \u00b7 bis zu 3 Pfeile", mode_nfas_biggame_unit:"Pfeil",
 mode_nfas_biggame_desc:"Offizielle NFAS Big Game Round: 28 Ziele, bis zu 3 Pfeile (nur der erste Treffer z\u00e4hlt), der Inner Kill z\u00e4hlt nur beim ersten Pfeil.",
 profile_arco: "Hauptbogen", profile_edit_email_note: "Um deine Anmelde-E-Mail zu \u00e4ndern, wende dich an den Support.",
-theme_section_title: "Erscheinungsbild", theme_satura_label: "Kr\u00e4ftig", theme_elegante_label: "Sanft", theme_light_label: "Hell",
+theme_section_title: "Erscheinungsbild", theme_dark_label: "Dunkel", theme_light_label: "Hell",
 profile_edit_save: "\u00c4nderungen speichern", profile_edit_saved_msg: "\u00c4nderungen gespeichert.", profile_edit_title: "Dein Profil",
 profile_email: "E-Mail", profile_error: "F\u00fclle Name, Benutzername, E-Mail, mindestens einen Verband und deinen Hauptbogen aus und akzeptiere die Datenschutzerkl\u00e4rung.",
 profile_error_email_in_use: "Diese E-Mail ist bereits registriert. Nutze \u201eAnmelden\u201c mit deinem Passwort.",
@@ -3430,7 +3551,7 @@ profile_error_password_short: "\u015eifre en az 6 karakter olmal\u0131.", profil
 profile_error_email_in_use: "Bu e-posta zaten kay\u0131tl\u0131. \u015eifrenle \u201cGiri\u015f yap\u201d\u2019\u0131 kullan.",
 login_password: "\u015eifre", login_forgot: "\u015eifreni mi unuttun?", login_reset_sent: "\u015eifreni s\u0131f\u0131rlamak i\u00e7in sana bir e-posta g\u00f6nderdik. G\u00f6rm\u00fcyorsan spam klas\u00f6r\u00fcn\u00fc de kontrol et.",
 profile_arco: "Ana yay", profile_privacy: "Gizlilik bildirimini okudum ve uygulaman\u0131n kullan\u0131m\u0131 i\u00e7in verilerimin i\u015flenmesini kabul ediyorum.",
-theme_section_title: "G\u00f6r\u00fcn\u00fcm", theme_satura_label: "Doygun", theme_elegante_label: "Soft", theme_light_label: "A\u00e7\u0131k",
+theme_section_title: "G\u00f6r\u00fcn\u00fcm", theme_dark_label: "Koyu", theme_light_label: "A\u00e7\u0131k",
 profile_submit: "Profili olu\u015ftur ve devam et", profile_error: "Ad, kullan\u0131c\u0131 ad\u0131, e-posta, en az bir federasyon, ana yay\u0131 doldur ve gizlili\u011fi kabul et.",
 pg_title: "Yar\u0131\u015fma Haz\u0131rla",  pg_back_menu: "\u2190 Men\u00fcye d\u00f6n", pg_choose_gara: "Yar\u0131\u015fmay\u0131 se\u00e7",
 pg_my_saved_routes: "\uD83D\uDCCB Kay\u0131tl\u0131 parkurlar\u0131m", pg_saved_routes_title: "Kay\u0131tl\u0131 parkurlar\u0131m", pg_loading: "Y\u00fckleniyor\u2026", pg_error_loading: "Y\u00fckleme hatas\u0131: {err}", pg_use_route_btn: "Bu parkuru kullan",
@@ -3900,7 +4021,7 @@ profile_error_password_short: "Пароль должен содержать ми
 profile_error_email_in_use: "Этот email уже зарегистрирован. Используйте «Войти» с вашим паролем.",
 login_password: "Пароль", login_forgot: "Забыли пароль?", login_reset_sent: "Мы отправили вам письмо для сброса пароля. Если не видите его, проверьте папку со спамом.",
 profile_arco: "Основной лук", profile_privacy: "Я прочитал(а) политику конфиденциальности и согласен(на) на обработку моих данных для использования приложения.",
-theme_section_title: "Внешний вид", theme_satura_label: "Насыщенная", theme_elegante_label: "Soft", theme_light_label: "Светлая",
+theme_section_title: "Внешний вид", theme_dark_label: "Тёмная", theme_light_label: "Светлая",
 profile_submit: "Создать профиль и продолжить", profile_error: "Заполните имя, имя пользователя, email, хотя бы одну федерацию, основной лук и примите политику конфиденциальности.",
 pg_title: "Подготовить соревнование",  pg_back_menu: "← В меню", pg_choose_gara: "Выберите соревнование",
 pg_my_saved_routes: "📋 Мои сохранённые маршруты", pg_saved_routes_title: "Мои сохранённые маршруты", pg_loading: "Загрузка…", pg_error_loading: "Ошибка загрузки: {err}", pg_use_route_btn: "Использовать этот маршрут",
@@ -4370,7 +4491,7 @@ profile_error_password_short: "La contrase\u00f1a debe tener al menos 6 caracter
 profile_error_email_in_use: "Este email ya est\u00e1 registrado. Usa \u201cIniciar sesi\u00f3n\u201d con tu contrase\u00f1a.",
 login_password: "Contrase\u00f1a", login_forgot: "\u00bfHas olvidado la contrase\u00f1a?", login_reset_sent: "Te hemos enviado un email para restablecer la contrase\u00f1a. Si no lo ves, revisa tambi\u00e9n la carpeta de spam.",
 profile_arco: "Arco principal", profile_privacy: "He le\u00eddo la pol\u00edtica de privacidad y acepto el tratamiento de mis datos para el uso de la app.",
-theme_section_title: "Aspecto", theme_satura_label: "Saturado", theme_elegante_label: "Soft", theme_light_label: "Claro",
+theme_section_title: "Aspecto", theme_dark_label: "Oscuro", theme_light_label: "Claro",
 profile_submit: "Crear perfil y continuar", profile_error: "Rellena el nombre, nombre de usuario, email, al menos una federaci\u00f3n, el arco principal y acepta la privacidad.",
 pg_title: "Preparar competici\u00f3n",  pg_back_menu: "\u2190 Volver al men\u00fa", pg_choose_gara: "Elige la competici\u00f3n",
 pg_my_saved_routes: "\uD83D\uDCCB Mis recorridos guardados", pg_saved_routes_title: "Mis recorridos guardados", pg_loading: "Cargando\u2026", pg_error_loading: "Error al cargar: {err}", pg_use_route_btn: "Usar este recorrido",
@@ -4840,7 +4961,7 @@ profile_error_password_short: "L\u00f6senordet m\u00e5ste vara minst 6 tecken.",
 profile_error_email_in_use: "Denna e-post \u00e4r redan registrerad. Anv\u00e4nd \u201dLogga in\u201d med ditt l\u00f6senord.",
 login_password: "L\u00f6senord", login_forgot: "Gl\u00f6mt l\u00f6senord?", login_reset_sent: "Vi har skickat ett e-postmeddelande f\u00f6r att \u00e5terst\u00e4lla l\u00f6senordet. Om du inte ser det, kolla \u00e4ven skr\u00e4pposten.",
 profile_arco: "Huvudb\u00e5ge", profile_privacy: "Jag har l\u00e4st integritetspolicyn och samtycker till behandling av mina uppgifter f\u00f6r anv\u00e4ndning av appen.",
-theme_section_title: "Utseende", theme_satura_label: "M\u00e4ttad", theme_elegante_label: "Soft", theme_light_label: "Ljust",
+theme_section_title: "Utseende", theme_dark_label: "M\u00f6rkt", theme_light_label: "Ljust",
 profile_submit: "Skapa profil och forts\u00e4tt", profile_error: "Fyll i namn, anv\u00e4ndarnamn, e-post, minst ett f\u00f6rbund, huvudb\u00e5ge och acceptera integritetspolicyn.",
 pg_title: "F\u00f6rbered t\u00e4vling",  pg_back_menu: "\u2190 Tillbaka till menyn", pg_choose_gara: "V\u00e4lj t\u00e4vling",
 pg_my_saved_routes: "\uD83D\uDCCB Mina sparade rundor", pg_saved_routes_title: "Mina sparade rundor", pg_loading: "L\u00e4ser in\u2026", pg_error_loading: "Fel vid inl\u00e4sning: {err}", pg_use_route_btn: "Anv\u00e4nd denna runda",
@@ -5310,7 +5431,7 @@ profile_error_password_short: "Het wachtwoord moet minstens 6 tekens bevatten.",
 profile_error_email_in_use: "Deze e-mail is al geregistreerd. Gebruik \u201cInloggen\u201d met je wachtwoord.",
 login_password: "Wachtwoord", login_forgot: "Wachtwoord vergeten?", login_reset_sent: "We hebben je een e-mail gestuurd om je wachtwoord te resetten. Zie je hem niet, controleer dan ook je spammap.",
 profile_arco: "Hoofdboog", profile_privacy: "Ik heb de privacyverklaring gelezen en ga akkoord met de verwerking van mijn gegevens voor het gebruik van de app.",
-theme_section_title: "Uiterlijk", theme_satura_label: "Verzadigd", theme_elegante_label: "Soft", theme_light_label: "Licht",
+theme_section_title: "Uiterlijk", theme_dark_label: "Donker", theme_light_label: "Licht",
 profile_submit: "Profiel aanmaken en doorgaan", profile_error: "Vul naam, gebruikersnaam, e-mail, minstens \u00e9\u00e9n bond, hoofdboog in en accepteer de privacyverklaring.",
 pg_title: "Wedstrijd voorbereiden",  pg_back_menu: "\u2190 Terug naar menu", pg_choose_gara: "Kies de wedstrijd",
 pg_my_saved_routes: "\uD83D\uDCCB Mijn opgeslagen rondes", pg_saved_routes_title: "Mijn opgeslagen rondes", pg_loading: "Laden\u2026", pg_error_loading: "Fout bij laden: {err}", pg_use_route_btn: "Deze ronde gebruiken",
@@ -6077,13 +6198,28 @@ var NARROW_SCREENS = {
 // riflette il cielo e il contrasto crolla. Chi un tema lo ha gia' scelto NON
 // viene toccato: la scelta e' in state, salvata.
 // Prima il predefinito era "elegante" ed era scritto in tre punti diversi.
-var THEME_BAR_COLOR = { light:"#F5F4F0", elegante:"#16201C", satura:"#16201C" };
-function currentTheme(){ return state.theme || "light"; }
+// Dal 15/08/2026 i temi sono DUE: "dark" (la vecchia Soft) e "light".
+// "satura" ed "elegante" restavano salvati addosso a chi li aveva scelti:
+// vengono ricondotti allo scuro una volta sola, e riscritti.
+var THEME_BAR_COLOR = { light:"#ECEDE6", dark:"#16201C" };
+function normalizeTheme(th){
+if(th === "light") return "light";
+if(th === "dark" || th === "elegante" || th === "satura") return "dark";
+return "light";
+}
+function currentTheme(){
+var raw = state.theme;
+if(raw && raw !== "light" && raw !== "dark"){
+state.theme = normalizeTheme(raw);
+try{ save(); }catch(e){}
+}
+return normalizeTheme(raw);
+}
 function applyTheme(th){
-th = th || "light";
-document.body.classList.toggle("theme-satura", th === "satura");
+th = normalizeTheme(th);
+document.body.classList.remove("theme-satura", "theme-elegante");
 document.body.classList.toggle("theme-light", th === "light");
-document.body.classList.toggle("theme-elegante", th === "elegante");
+document.body.classList.toggle("theme-dark", th === "dark");
 // La barra dell'indirizzo del browser deve seguire il tema, altrimenti resta
 // una striscia nera sopra l'app bianca.
 var m = document.querySelector('meta[name="theme-color"]');
@@ -6981,9 +7117,9 @@ card.appendChild(bowRow);
 card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("theme_section_title")+'</h2>'));
 var themeSel = currentTheme();
 var themeRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
-[["satura", t("theme_satura_label")], ["elegante", t("theme_elegante_label")], ["light", t("theme_light_label")]].forEach(function(pair){
+[["dark", t("theme_dark_label")], ["light", t("theme_light_label")]].forEach(function(pair){
 var k = pair[0], label = pair[1];
-var chip = el('<div class="chip" style="min-width:100px;">'+label+'</div>');
+var chip = el('<div class="chip" style="min-width:120px;">'+label+'</div>');
 if(k === themeSel) chip.classList.add("active");
 chip.addEventListener("click", function(){
 Array.prototype.forEach.call(themeRow.querySelectorAll(".chip"), function(c){ c.classList.remove("active"); });
@@ -7061,8 +7197,8 @@ var mostraMenu = homeOverride && (state.screen === "round" || state.screen === "
 var showHome = !mostraMenu && state.screen !== "menu";
 var h = el(
 '<header class="top">'+
-'<div class="logo">'+logoSVG(52)+'</div>'+
-'<div class="headtxt"><span class="brand-title">ArcTrail 3D</span></div>'+
+'<div class="brandblock"><div class="logo">'+logoSVG(52)+'</div>'+
+'<div class="headtxt"><span class="brand-title">ArcTrail 3D</span></div></div>'+
 '</header>'
 );
 // Campanella: le notifiche si leggono sempre qui dentro, anche se il telefono
@@ -7878,7 +8014,7 @@ b = el('<button class="tabw'+(on?" on":"")+'" style="flex:0 1 auto;min-width:0;b
 navIcon(tb[1],20,(on?1.9:1.5))+
 '<span style="font-size:0.79rem;font-weight:'+(on?"800":"600")+';line-height:1.1;white-space:nowrap;">'+tb[2]+'</span></button>');
 } else {
-b = el('<button style="flex:1;background:none;border:none;padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:'+(on?"var(--navbar-on)":"var(--navbar-fg)")+';">'+
+b = el('<button class="'+(on?"on":"")+'" style="flex:1;background:none;border:none;padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:'+(on?"var(--navbar-on)":"var(--navbar-fg)")+';">'+
 '<span style="display:flex;align-items:center;justify-content:center;width:46px;height:29px;border-radius:15px;background:'+(on?"var(--navbar-pill)":"transparent")+';border:1px solid '+(on?"var(--navbar-on)":"transparent")+';">'+navIcon(tb[1],21,(on?1.9:1.5))+'</span>'+
 '<span style="font-size:0.64rem;font-weight:'+(on?"800":"600")+';line-height:1.1;text-align:center;">'+tb[2]+'</span></button>');
 }
