@@ -1046,6 +1046,136 @@ html{ scrollbar-gutter:stable; }
 @media (prefers-reduced-motion:reduce){
 ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*){ animation:none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LA PISTA — la schermata del percorso, rifatta
+   ───────────────────────────────────────────────────────────────────────────
+   La regola che tiene in piedi tutto: QUESTA SCHERMATA NON SCORRE.
+   Il gesto che si ripete 288 volte in un percorso da 24 piazzole in quattro
+   non puo' stare in fondo a una pagina lunga: i tasti sono l'ultima cosa in
+   basso, e sopra di loro non c'e' niente da scorrere. Sagoma e classifica
+   diventano pannelli che occupano lo spazio centrale — quando sono aperti i
+   tasti restano dove sono, quindi la loro posizione e' un contratto.
+
+   Il respiro in mezzo (.pista-spazio) non e' decorazione: assorbe i nomi
+   lunghi, il quinto e sesto arciere e la riga in piu' delle modalita' a tre
+   frecce senza spostare niente. E' cio' che rende il contratto mantenibile.
+   ═══════════════════════════════════════════════════════════════════════════ */
+body.schermo-percorso #app{ display:flex; flex-direction:column; }
+.pista{ flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
+.pista-spazio{ flex:1 1 auto; min-height:var(--s-3); }
+
+/* ── testata: il passo del giro, piccolo, dove serve ──
+   La cifra della piazzola era l'elemento piu' grande dello schermo. E' l'unica
+   informazione che l'arciere gia' possiede: e' dipinta sul paletto davanti a
+   lui. Qui torna a essere quello che e', un contatore. */
+.pista-testa{ flex:0 0 auto; margin-bottom:var(--s-3); }
+.pista-passo-riga{ display:flex; align-items:center; justify-content:space-between;
+gap:var(--s-2); margin-bottom:var(--s-2); }
+.pista-passo{ font-size:var(--t-xs); font-weight:600; letter-spacing:.09em;
+text-transform:uppercase; color:var(--text-3); }
+.pista-testa .progress-track{ margin-bottom:0; }
+
+/* ── il timer: una pastiglia, non una scatola da 140px ──
+   Da fermo e' un comando che si apre. Mentre corre e' un numero che cambia
+   colore. In nessuno dei due casi merita il terzo migliore dello schermo. */
+.chip-timer{ display:inline-flex; align-items:center; gap:var(--s-1);
+min-height:32px; padding:0 var(--s-3); border-radius:var(--r-pill);
+background:var(--surface-2); border:1.5px solid var(--border-strong);
+color:var(--text-2); font-family:var(--font-ui); font-size:var(--t-xs);
+font-weight:700; cursor:pointer; flex:0 0 auto;
+transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
+.chip-timer .chip-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; }
+.chip-timer.corre{ background:var(--timer-run-bg); border-color:var(--timer-run-bd); color:var(--timer-run-fg); }
+.chip-timer.timer-warn{ background:var(--timer-warn-bg); border-color:var(--timer-warn-bd); color:var(--timer-warn-fg); }
+.chip-timer.timer-danger{ background:var(--timer-dgr-bg); border-color:var(--timer-dgr-bd); color:var(--timer-dgr-fg); }
+.timer-regola{ display:flex; align-items:center; gap:var(--s-2); margin-top:var(--s-2); }
+.timer-regola .timer-dur{ flex:1 1 auto; min-width:0; font-size:var(--t-lg); }
+
+/* ── la scena: chi tira adesso ──
+   Il dato variabile e sbagliabile e' questo, quindi e' il piu' grande. */
+.pista-scena{ flex:0 0 auto; text-align:left; margin-bottom:0; }
+.pista-arciere{ font-size:var(--t-2xl); line-height:1.05; color:var(--text-1);
+margin:0; text-wrap:balance; }
+.pista-freccia{ font-size:var(--t-sm); color:var(--text-3); margin-top:var(--s-1); }
+.pista-nota{ font-size:var(--t-xs); color:var(--danger-role); margin-top:var(--s-2); }
+
+/* ── i turni della piazzola: sostituiscono 95 schermate di passaggio ──
+   Il cerchio tratteggiato dice "poi tocca a Sara" senza fermare nessuno. */
+.pista-turni{ display:flex; gap:var(--s-2); margin-top:var(--s-3);
+padding-top:var(--s-3); border-top:1px solid var(--border); }
+.turno{ flex:1 1 0; min-width:0; display:flex; flex-direction:column;
+align-items:center; gap:var(--s-1); }
+.turno-badge{ width:var(--hit); height:var(--hit); border-radius:50%;
+display:flex; align-items:center; justify-content:center;
+font-family:var(--font-num); font-variant-numeric:tabular-nums;
+font-weight:800; font-size:var(--t-sm);
+background:var(--surface-2); border:1.5px solid var(--border); color:var(--text-3); }
+.turno-badge.fatto{ background:var(--gold-200); border-color:var(--gold-400); color:var(--gold-800); }
+.turno-badge.ora{ background:var(--surface-1); border:2.5px solid var(--brand); color:var(--brand); }
+.turno-badge.attesa{ border-style:dashed; }
+.turno-nome{ font-size:var(--t-xs); color:var(--text-3); max-width:100%;
+overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.turno.ora .turno-nome{ color:var(--text-1); font-weight:700; }
+
+/* ── le due scorciatoie ── */
+.pista-scorciatoie{ flex:0 0 auto; display:flex; gap:var(--s-2); margin-bottom:var(--s-2); }
+.pista-scorciatoie .btn{ flex:1 1 0; min-width:0; padding:var(--s-2) var(--s-2); font-size:var(--t-sm); }
+
+/* ── la striscia dell'annulla: il rimedio accanto all'errore ──
+   Prima l'annulla stava in fondo a 1150px di pagina, mentre l'errore era in
+   cima. Un controllo sta accanto alla cosa che controlla. */
+.striscia-annulla{ flex:0 0 auto; display:flex; align-items:center;
+justify-content:space-between; gap:var(--s-2); min-height:var(--hit);
+padding:0 var(--s-3); margin-bottom:var(--s-2);
+background:var(--gold-200); border:1px solid var(--gold-400);
+border-radius:var(--r-md); color:var(--gold-800);
+font-size:var(--t-sm); font-weight:600; }
+body.theme-dark .striscia-annulla{ background:color-mix(in srgb, var(--gold-400) 16%, var(--surface-1));
+border-color:var(--gold-400); color:var(--gold-400); }
+.striscia-annulla .num{ font-weight:800; }
+.striscia-annulla button{ display:inline-flex; align-items:center; gap:var(--s-1);
+min-height:36px; padding:0 var(--s-2); background:none; border:none;
+color:var(--clay); font-family:inherit; font-size:var(--t-sm); font-weight:700;
+cursor:pointer; border-radius:var(--r-sm); }
+
+/* ── la tastiera ──
+   Mai piu' di tre per riga: su un telefono da 390px un tasto passa da 54 a
+   ~90px di larghezza, ed e' per questo che l'etichetta puo' tornare dentro
+   la scala tipografica invece di scendere a 8px come faceva la riga unica. */
+.tastiera{ flex:0 0 auto; display:flex; flex-direction:column; gap:var(--s-2);
+padding-bottom:env(safe-area-inset-bottom); }
+.tastiera-riga{ display:grid; gap:var(--s-2); }
+.tastiera-riga[data-n="1"]{ grid-template-columns:1fr; }
+.tastiera-riga[data-n="2"]{ grid-template-columns:repeat(2,1fr); }
+.tastiera-riga[data-n="3"]{ grid-template-columns:repeat(3,1fr); }
+.tastiera .quick-btn{ height:auto; min-height:64px; gap:2px; }
+.tastiera .quick-btn .quick-lbl{ font-size:var(--t-xs); letter-spacing:.03em; }
+.tastiera .quick-btn .quick-pts{ font-size:var(--t-xl); }
+
+/* In orizzontale la tastiera si mangerebbe lo schermo: si abbassa. */
+@media (max-height:560px){
+.tastiera .quick-btn{ min-height:52px; }
+.tastiera .quick-btn .quick-pts{ font-size:var(--t-lg); }
+.pista-turni{ margin-top:var(--s-2); padding-top:var(--s-2); }
+}
+
+/* ── i pannelli: sagoma e classifica ──
+   Occupano lo spazio centrale, mai quello dei tasti. */
+.pannello{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column;
+background:var(--surface-1); border:1px solid var(--border);
+border-radius:var(--r-xl); padding:var(--s-3) var(--s-4) var(--s-4);
+margin-bottom:var(--s-2); box-shadow:var(--elev-2); overflow-y:auto; }
+.pannello-testa{ display:flex; align-items:center; gap:var(--s-2);
+margin-bottom:var(--s-3); flex:0 0 auto; }
+.pannello-titolo{ font-size:var(--t-md); font-weight:700; color:var(--text-1); }
+.pannello-chiudi{ margin-left:auto; width:36px; height:36px; flex:0 0 auto;
+display:inline-flex; align-items:center; justify-content:center;
+background:none; border:1.5px solid var(--border-strong); border-radius:var(--r-sm);
+color:var(--text-2); font-size:1.1rem; line-height:1; cursor:pointer; }
+.pannello .board{ margin-top:0; }
+.pannello .silhouette-wrap{ max-width:240px; }
+.pannello-sotto{ margin-top:auto; padding-top:var(--s-3); flex:0 0 auto; }
 </style>
 </head>
 <body>
@@ -1433,6 +1563,7 @@ var timerRunning = false;
 var timerTargetKey = null;
 var timerIntervalId = null;
 var timerDuration = 120;
+var timerAperto = false;  // la pastiglia del timer e' aperta sui comandi +/-
 
 // ---------- lingue ----------
 var LANG_META = {
@@ -1800,6 +1931,15 @@ fuori_sagoma: "fuori sagoma",
 zoom_btn: "Ingrandisci mira",
 zoom_btn_reduce: "Riduci mira",
 undo_btn: "Annulla ultima freccia",
+pista_sagoma_btn: "Sagoma",
+pista_classifica_btn: "Classifica",
+pista_ultimo: "Ultimo: {name}",
+pista_annulla_breve: "Annulla",
+pista_chiudi: "Chiudi",
+pista_tocca_a: "Tocca a {name}",
+pista_freccia_di: "Freccia {n} di {tot}",
+pista_per_piazzola: "Piazzola per piazzola",
+pista_sagoma_titolo: "Segna il punto d'impatto",
 interrupt_btn: "Termina percorso e vedi classifica",
 detected_score: "Punteggio rilevato ({unit} {n})",
 correct_point_btn: "Correggi punto",
@@ -2260,6 +2400,15 @@ fuori_sagoma: "miss",
 zoom_btn: "Zoom target",
 zoom_btn_reduce: "Zoom out",
 undo_btn: "Undo last arrow",
+pista_sagoma_btn: "Target",
+pista_classifica_btn: "Standings",
+pista_ultimo: "Last: {name}",
+pista_annulla_breve: "Undo",
+pista_chiudi: "Close",
+pista_tocca_a: "{name}'s turn",
+pista_freccia_di: "Arrow {n} of {tot}",
+pista_per_piazzola: "Target by target",
+pista_sagoma_titolo: "Mark the impact point",
 interrupt_btn: "End round and view results",
 detected_score: "Detected score ({unit} {n})",
 correct_point_btn: "Correct point",
@@ -6355,6 +6504,7 @@ clipboard: '<rect x="5" y="4" width="14" height="17" rx="1.5"/><rect x="8.5" y="
 mappin: '<path d="M12 21s7-6.8 7-12a7 7 0 0 0-14 0c0 5.2 7 12 7 12z"/><circle cx="12" cy="9" r="3.2"/><circle cx="12" cy="9" r="0.9" fill="currentColor" stroke="none"/>',
 emblem: '<path d="M12 2.5l7 2.5v6c0 5-3 8.3-7 10.5-4-2.2-7-5.5-7-10.5V5z"/><path d="M8.7 11l2.4 2.4L15.3 9"/>',
 clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.5l3.5 2"/>',
+undo: '<path d="M4 9h10a5.5 5.5 0 0 1 0 11h-6"/><path d="M8 4.5L3.5 9L8 13.5"/>',
 empty: '<circle cx="12" cy="12" r="8.5"/><path d="M6.5 6.5l11 11"/>',
 chart: '<path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="5" width="3" height="12"/>'
 };
@@ -6688,6 +6838,9 @@ function paintScreen(){
 var app = document.getElementById("app");
 app.innerHTML = "";
 app.classList.toggle("narrow", !state.lang || authState !== "ready" || !!NARROW_SCREENS[state.screen]);
+// La pista e' l'unica schermata che non scorre: #app diventa una colonna
+// flessibile perche' la tastiera possa stare in fondo senza posizione fissa.
+document.body.classList.toggle("schermo-percorso", state.screen === "round" && authState === "ready");
 if(typeof syncNavGuard === "function") syncNavGuard();
 if(state.lang){ document.documentElement.lang = state.lang; }
 applyTheme(currentTheme());
@@ -10068,7 +10221,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-continuita-b";
+var BUILD_STAMP = "2026-08-16-pista-a";
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -12204,6 +12357,8 @@ state.pendingArrows = [];
 state.liveBattutaTypes = {};
 state.awaitingStep = null;
 state.savedToHistory = false;
+state.panel = null;
+state.lastShotInfo = null;
 var trainKeyForFed = FEDERATIONS[state.federation || "fiarc"].trainingMode;
 if(modeKey === trainKeyForFed && hasInvitedArchers() && !DEV_MODE && db && currentUser){
 state.sessionId = createSharedSession(modeKey, !!state.doubleConfirm, archers);
@@ -12215,70 +12370,29 @@ save(); render();
 
 // ---------- ROUND ----------
 function roundScreen(){
+// L'unica sosta a tutto schermo che resta e' la fine del giro: le 95
+// interruzioni per "tocca al prossimo" sono state sostituite dalla fila dei
+// turni dentro la scena, che dice la stessa cosa senza fermare nessuno.
 if(state.awaitingStep === "target"){ return targetTransitionScreen(); }
-if(state.awaitingStep === "archer"){ return archerTransitionScreen(); }
+// Chi aveva un giro in corso salvato dalla versione precedente arriva qui con
+// una sosta "archer" che non esiste piu': la si consuma facendo quello che
+// faceva il tasto della vecchia schermata, cioe' passare all'arciere dopo.
+if(state.awaitingStep === "archer"){
+state.awaitingStep = null;
+if(state.archerIndex < state.archers.length - 1){ state.archerIndex += 1; }
+save();
+}
 pending = null;
 zoomed = false;
-var wrap = el('<div></div>');
+state.pendingArrows = state.pendingArrows || [];
+
 var mode = effectiveMode();
 var unit = modeUnit(state.mode);
 var totalTargets = state.format;
 var pct = Math.round(((state.target-1) / totalTargets) * 100);
+var wrap = el('<div class="pista"></div>');
 
-wrap.appendChild(el(
-'<div class="progress-wrap"><span style="font-size:0.75rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;">'+t("targets_word").charAt(0).toUpperCase()+t("targets_word").slice(1)+' '+state.target+' / '+totalTargets+'</span>'+
-'<span style="font-size:0.75rem;color:var(--gold);">'+pct+'%</span></div>'
-));
-wrap.appendChild(el('<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%;"></div></div>'));
-
-var standingsBtn = el('<button class="btn btn-standings btn-block" style="margin-bottom:14px;">'+icon("target",16)+' '+t("check_standings_btn")+'</button>');
-
-var leaderboardBox = el('<div class="card partial-card" style="display:none;margin-top:-8px;margin-bottom:14px;"></div>');
-var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
-var topTotal = ranked.length ? totalFor(ranked[0].id) : 0;
-ranked.forEach(function(a){
-var tot = totalFor(a.id);
-var isLeader = tot === topTotal && tot > 0;
-leaderboardBox.appendChild(el(
-'<div class="partial-row'+(isLeader?" leader":"")+'"><span class="pname">'+escapeHtml(a.name)+'</span><span class="ptot">'+tot+'</span></div>'
-));
-});
-// dettaglio piazzola per piazzola, dentro la stessa scheda a comparsa
-var piazzFlow = el('<div class="piazz-flow" style="margin-top:10px;"></div>');
-for(var pfi=0; pfi<state.target; pfi++){
-var pCard = el('<div class="piazz-card"></div>');
-pCard.appendChild(el('<div class="piazz-card-num">'+(pfi+1)+'</div>'));
-var rightWrap = el('<div class="piazz-card-right"></div>');
-// ogni piazzola mostra gli arcieri nell'ordine in cui hanno tirato in quella piazzola
-var ordineQui = orderForTarget(pfi + 1);
-if(!ordineQui || ordineQui.length !== state.archers.length) ordineQui = ranked;
-ordineQui.forEach(function(a){
-var entries = state.scores[a.id] || [];
-var ent = entries[pfi];
-var item = el('<div class="ring-item"></div>');
-if(ent){
-item.appendChild(el('<div class="ring-badge">'+ent.total+'</div>'));
-if(ent.arrows.length > 1){
-item.appendChild(el('<span style="font-size:0.58rem;color:var(--muted);">'+ent.arrows.join('+')+'</span>'));
-}
-} else {
-item.appendChild(el('<div class="ring-badge empty">&ndash;</div>'));
-}
-item.appendChild(el('<span class="ring-name">'+escapeHtml(a.name)+'</span>'));
-rightWrap.appendChild(item);
-});
-pCard.appendChild(rightWrap);
-piazzFlow.appendChild(pCard);
-}
-leaderboardBox.appendChild(piazzFlow);
-standingsBtn.addEventListener("click", function(){
-var isOpen = leaderboardBox.style.display !== "none";
-leaderboardBox.style.display = isOpen ? "none" : "block";
-});
-
-var currentArcher = state.archers[state.archerIndex];
-state.pendingArrows = state.pendingArrows || [];
-
+// ── battuta: prima si dichiara che piazzola e', poi si tira ──
 if(mode.key === "battuta" && state.pendingArrows.length === 0 && !(state.liveBattutaTypes && state.liveBattutaTypes[state.target])){
 var pickCard = el('<div class="card target-stage"></div>');
 pickCard.appendChild(el('<div class="mode-badge">'+escapeHtml(modeLabel(state.mode))+'</div>'));
@@ -12287,7 +12401,7 @@ pickHero.appendChild(el('<div class="piazzola-hero-lbl">'+t("target_singular")+'
 pickHero.appendChild(el('<div class="piazzola-num">'+state.target+'</div>'));
 pickCard.appendChild(pickHero);
 pickCard.appendChild(el('<div class="archer-turn">'+t("gl_which_piazzola")+'</div>'));
-var pickGrid = el('<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;"></div>');
+var pickGrid = el('<div class="onboard-stack" style="max-width:none;margin-top:14px;"></div>');
 var pickOpts = [
 {key:"singola", label:t("gl_singola"), sub:t("gl_1_arrow"), frecce:1},
 {key:"mobile", label:t("gl_mobile"), sub:t("gl_1_arrow"), frecce:1},
@@ -12308,160 +12422,334 @@ wrap.appendChild(pickCard);
 return wrap;
 }
 
+var currentArcher = state.archers[state.archerIndex];
 var arrowNumber = state.pendingArrows.length + 1;
+var totArrows = targetArrowCount(mode);
 var pts = mode.scoring[arrowNumber] || mode.scoring[mode.arrowsPerTarget] || mode.scoring[1];
 
-var card = el('<div class="card target-stage"></div>');
-card.appendChild(el('<div class="mode-badge">'+escapeHtml(modeLabel(state.mode))+'</div>'));
-var piazzolaHero = el('<div class="piazzola-hero"></div>');
-piazzolaHero.appendChild(el('<div class="piazzola-hero-lbl">'+t("target_singular")+'</div>'));
-piazzolaHero.appendChild(el('<div class="piazzola-num">'+state.target+'</div>'));
-card.appendChild(piazzolaHero);
-
-card.appendChild(el('<div class="archer-name-big display" style="margin-bottom:10px;">'+escapeHtml(currentArcher.name)+'</div>'));
-var badgeExtra = state.pendingArrows.length ? t("finora",{list:state.pendingArrows.join(', ')}) : '';
-var stopNote = mode.stopAtFirstHit ? t("vale_prima") : '';
-card.appendChild(el('<div class="arrow-badge">'+unit+' '+arrowNumber+' / '+targetArrowCount(mode)+badgeExtra+stopNote+'</div>'));
+// ══════════════ TESTATA: il passo del giro ══════════════
+var testa = el('<div class="pista-testa"></div>');
+var passoRiga = el('<div class="pista-passo-riga"></div>');
+passoRiga.appendChild(el('<span class="pista-passo">'+t("target_singular")+' '+state.target+' / '+totalTargets+'</span>'));
 
 var tKey = state.target + "_" + state.archerIndex;
 if(tKey !== timerTargetKey){
-timerTargetKey = tKey; timerRemaining = null; timerRunning = false;
+timerTargetKey = tKey; timerRemaining = null; timerRunning = false; timerAperto = false;
 if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; }
 }
-var timerBox = el('<div class="timer-box"></div>');
 function fmtTime(s){ var m = Math.floor(s/60), r = s%60; return m + ":" + (r<10?"0":"") + r; }
-function renderTimerBox(){
-timerBox.innerHTML = "";
-if(!timerRunning && timerRemaining === null){
-var row = el('<div class="timer-idle"></div>');
-var innerRow = el('<div class="timer-idle-row"></div>');
-var minus = el('<button type="button" class="btn btn-ghost btn-sm">\u2212</button>');
-var dur = el('<span class="timer-dur">'+fmtTime(timerDuration)+'</span>');
-var plus = el('<button type="button" class="btn btn-ghost btn-sm">+</button>');
-var startBtn = el('<button type="button" class="btn btn-primary timer-start-btn">'+icon("clock",14)+' '+t("timer_start")+'</button>');
-minus.addEventListener("click", function(){ if(timerDuration>15){ timerDuration -= 15; dur.textContent = fmtTime(timerDuration); } });
-plus.addEventListener("click", function(){ if(timerDuration<600){ timerDuration += 15; dur.textContent = fmtTime(timerDuration); } });
-startBtn.addEventListener("click", function(){
-timerRemaining = timerDuration; timerRunning = true; renderTimerBox();
-});
-innerRow.appendChild(minus); innerRow.appendChild(dur); innerRow.appendChild(plus);
-row.appendChild(innerRow); row.appendChild(startBtn);
-timerBox.appendChild(row);
-} else {
-var big = el('<div class="timer-running"></div>');
-var label = el('<div class="timer-running-label">'+t("timer_remaining")+'</div>');
-var num = el('<span class="timer-num">'+fmtTime(timerRemaining)+'</span>');
-var resetBtn = el('<button type="button" class="btn btn-primary timer-pause-btn">'+t("timer_reset")+'</button>');
-resetBtn.addEventListener("click", function(){
-if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; }
-timerRunning = false; timerRemaining = null; renderTimerBox();
-});
-big.appendChild(label); big.appendChild(num); big.appendChild(resetBtn);
-timerBox.appendChild(big);
-function updateTimerColors(){
-num.classList.toggle("timer-warn", timerRemaining <= 20 && timerRemaining > 10);
-num.classList.toggle("timer-danger", timerRemaining <= 10);
-big.classList.toggle("timer-warn", timerRemaining <= 20 && timerRemaining > 10);
-big.classList.toggle("timer-danger", timerRemaining <= 10);
+
+var chip = el('<button type="button" class="chip-timer"></button>');
+var regola = el('<div class="timer-regola"></div>');
+passoRiga.appendChild(chip);
+testa.appendChild(passoRiga);
+testa.appendChild(el('<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%;"></div></div>'));
+testa.appendChild(regola);
+
+function tintaTimer(){
+chip.classList.toggle("corre", timerRunning || timerRemaining !== null);
+chip.classList.toggle("timer-warn", timerRemaining !== null && timerRemaining <= 20 && timerRemaining > 10);
+chip.classList.toggle("timer-danger", timerRemaining !== null && timerRemaining <= 10);
 }
-updateTimerColors();
+function dipingiTimer(){
+var inCorsa = timerRunning || timerRemaining !== null;
+chip.innerHTML = icon("clock",14) + '<span class="chip-num">' + fmtTime(inCorsa ? Math.max(0,timerRemaining) : timerDuration) + '</span>';
+tintaTimer();
+regola.innerHTML = "";
+if(!inCorsa && timerAperto){
+var meno = el('<button type="button" class="btn btn-ghost btn-sm">\u2212</button>');
+var dur = el('<span class="timer-dur num">'+fmtTime(timerDuration)+'</span>');
+var piu = el('<button type="button" class="btn btn-ghost btn-sm">+</button>');
+var via = el('<button type="button" class="btn btn-primary btn-sm">'+t("timer_start")+'</button>');
+meno.addEventListener("click", function(){ if(timerDuration>15){ timerDuration -= 15; dur.textContent = fmtTime(timerDuration); } });
+piu.addEventListener("click", function(){ if(timerDuration<600){ timerDuration += 15; dur.textContent = fmtTime(timerDuration); } });
+via.addEventListener("click", function(){
+timerRemaining = timerDuration; timerRunning = true; timerAperto = false;
+dipingiTimer(); avviaConto();
+});
+regola.appendChild(meno); regola.appendChild(dur); regola.appendChild(piu); regola.appendChild(via);
+}
+}
+function avviaConto(){
 if(timerIntervalId){ clearInterval(timerIntervalId); }
 timerIntervalId = setInterval(function(){
 timerRemaining--;
 if(timerRemaining <= 0){
-clearInterval(timerIntervalId); timerIntervalId = null; timerRemaining = 0; timerRunning = false;
+clearInterval(timerIntervalId); timerIntervalId = null;
+timerRemaining = 0; timerRunning = false;
 if(navigator.vibrate){ navigator.vibrate([80,60,80]); }
 }
-num.textContent = fmtTime(Math.max(0,timerRemaining));
-updateTimerColors();
-if(!timerRunning){ renderTimerBox(); }
+var n = chip.querySelector(".chip-num");
+if(n){ n.textContent = fmtTime(Math.max(0,timerRemaining)); }
+tintaTimer();
 }, 1000);
 }
+chip.addEventListener("click", function(){
+if(timerRunning || timerRemaining !== null){
+if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; }
+timerRunning = false; timerRemaining = null; timerAperto = false;
+} else {
+timerAperto = !timerAperto;
 }
-renderTimerBox();
-card.appendChild(timerBox);
+dipingiTimer();
+});
+dipingiTimer();
+if(timerRunning && timerRemaining !== null){ avviaConto(); }
+wrap.appendChild(testa);
 
-var quickGrid = el('<div class="quick-grid"></div>');
-mode.zones.forEach(function(z){
-var qbtn = el('<button class="btn quick-btn '+z.cls+'"><span class="quick-lbl">'+t(z.labelKey)+'</span><span class="quick-pts">'+pts[z.key]+'</span></button>');
-qbtn.addEventListener("click", function(){
-if(navigator.vibrate){ navigator.vibrate(15); }
-if(z.key === "perfect" || z.key === "superspot"){ leafBurst(qbtn); }
-registerShot(pts[z.key]);
-});
-quickGrid.appendChild(qbtn);
-});
-var zeroBtn = el('<button class="btn quick-btn zero"><span class="quick-lbl">'+t("zero_label")+'</span><span class="quick-pts">0</span></button>');
-zeroBtn.addEventListener("click", function(){
-if(navigator.vibrate){ navigator.vibrate(15); }
-registerShot(0);
-});
-quickGrid.appendChild(zeroBtn);
-var totalBtns = quickGrid.children.length;
-quickGrid.style.gridTemplateColumns = "repeat(" + totalBtns + ", 1fr)";
-quickGrid.style.marginBottom = "18px";
-card.appendChild(quickGrid);
+// ══════════════ PANNELLI oppure SCENA ══════════════
+if(state.panel === "classifica"){
+wrap.appendChild(pannelloClassifica());
+} else if(state.panel === "sagoma"){
+wrap.appendChild(pannelloSagoma(mode, pts, unit, arrowNumber));
+} else {
+// ── la scena: chi tira adesso, e chi viene dopo ──
+var scena = el('<div class="card pista-scena"></div>');
+scena.appendChild(el('<div class="pista-arciere display">'+escapeHtml(currentArcher.name)+'</div>'));
+var sotto = t("pista_freccia_di",{n:arrowNumber, tot:totArrows});
+if(state.pendingArrows.length){ sotto += t("finora",{list:state.pendingArrows.join(', ')}); }
+if(mode.stopAtFirstHit){ sotto += t("vale_prima"); }
+scena.appendChild(el('<div class="pista-freccia">'+sotto+'</div>'));
+if(mode.provisional){ scena.appendChild(el('<div class="pista-nota">'+t("provisional_note")+'</div>')); }
 
-card.appendChild(el('<div class="quick-hint" style="margin-top:10px;">'+t("quick_hint_target")+'</div>'));
+var turni = el('<div class="pista-turni"></div>');
+state.archers.forEach(function(a, i){
+var entries = state.scores[a.id] || [];
+var ent = entries[state.target-1];
+var stato = ent ? "fatto" : (i === state.archerIndex ? "ora" : "attesa");
+var testo;
+if(ent){ testo = ent.total; }
+else if(stato === "ora" && state.pendingArrows.length){ testo = state.pendingArrows.reduce(function(s,x){ return s+x; },0); }
+else { testo = "\u2013"; }
+var t1 = el('<div class="turno'+(stato==="ora"?" ora":"")+'"></div>');
+t1.appendChild(el('<div class="turno-badge '+stato+'">'+testo+'</div>'));
+t1.appendChild(el('<span class="turno-nome">'+escapeHtml(a.name)+'</span>'));
+turni.appendChild(t1);
+});
+if(state.archers.length > 1){ scena.appendChild(turni); }
+wrap.appendChild(scena);
+
+wrap.appendChild(el('<div class="pista-spazio"></div>'));
+
+var scorciatoie = el('<div class="pista-scorciatoie no-print"></div>');
+var bSag = el('<button class="btn btn-ghost">'+icon("sight",16)+' '+t("pista_sagoma_btn")+'</button>');
+bSag.addEventListener("click", function(){ state.panel = "sagoma"; save(); render(); });
+var bCla = el('<button class="btn btn-standings">'+icon("target",16)+' '+t("pista_classifica_btn")+'</button>');
+bCla.addEventListener("click", function(){ state.panel = "classifica"; save(); render(); });
+scorciatoie.appendChild(bSag); scorciatoie.appendChild(bCla);
+wrap.appendChild(scorciatoie);
+}
+
+// ══════════════ LA STRISCIA DELL'ANNULLA ══════════════
+// Sostituisce la conferma: si segna e si va avanti, e il rimedio resta
+// visibile accanto al risultato invece che in fondo alla pagina.
+if(state.lastShotInfo){
+var striscia = el('<div class="striscia-annulla no-print"></div>');
+striscia.appendChild(el('<span>'+t("pista_ultimo",{name:escapeHtml(state.lastShotInfo.name)})+' <b class="num">'+state.lastShotInfo.score+'</b></span>'));
+var bAnn = el('<button type="button">'+icon("undo",16)+' '+t("pista_annulla_breve")+'</button>');
+bAnn.addEventListener("click", undoLastShot);
+striscia.appendChild(bAnn);
+wrap.appendChild(striscia);
+}
+
+// ══════════════ LA TASTIERA ══════════════
+var voci = mode.zones.map(function(z){
+return { cls:z.cls, label:t(z.labelKey), pts:pts[z.key], key:z.key };
+});
+voci.push({ cls:"zero", label:t("zero_label"), pts:0, key:null });
+
+var righe;
+if(voci.length <= 3){ righe = [voci]; }
+else if(voci.length === 4){ righe = [voci.slice(0,2), voci.slice(2)]; }
+else { righe = [voci.slice(0,3), voci.slice(3)]; }
+
+var tastiera = el('<div class="tastiera no-print"></div>');
+righe.forEach(function(riga){
+var r = el('<div class="tastiera-riga" data-n="'+riga.length+'"></div>');
+riga.forEach(function(v){
+var b = el('<button class="btn quick-btn '+v.cls+'"><span class="quick-lbl">'+v.label+'</span><span class="quick-pts">'+v.pts+'</span></button>');
+b.addEventListener("click", function(){
+if(navigator.vibrate){ navigator.vibrate(15); }
+if(v.key === "perfect" || v.key === "superspot"){ leafBurst(b); }
+registerShot(v.pts);
+});
+r.appendChild(b);
+});
+tastiera.appendChild(r);
+});
+wrap.appendChild(tastiera);
+
+return wrap;
+}
+
+// ---------- PANNELLO: la classifica ----------
+function pannelloClassifica(){
+var p = el('<div class="pannello"></div>');
+var testa = el('<div class="pannello-testa"></div>');
+testa.appendChild(el('<span class="pannello-titolo">'+t("pista_classifica_btn")+' \u00b7 '+t("target_singular").toLowerCase()+' '+state.target+'</span>'));
+var x = el('<button type="button" class="pannello-chiudi" aria-label="'+t("pista_chiudi")+'">\u00d7</button>');
+x.addEventListener("click", function(){ state.panel = null; save(); render(); });
+testa.appendChild(x);
+p.appendChild(testa);
+
+var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
+var topTotal = ranked.length ? totalFor(ranked[0].id) : 0;
+ranked.forEach(function(a){
+var tot = totalFor(a.id);
+var isLeader = tot === topTotal && tot > 0;
+p.appendChild(el('<div class="partial-row'+(isLeader?" leader":"")+'"><span class="pname">'+escapeHtml(a.name)+'</span><span class="ptot">'+tot+'</span></div>'));
+});
+
+p.appendChild(el('<div class="partial-title" style="margin-top:14px;">'+t("pista_per_piazzola")+'</div>'));
+var piazzFlow = el('<div class="piazz-flow"></div>');
+for(var pfi=0; pfi<state.target; pfi++){
+var pCard = el('<div class="piazz-card"></div>');
+pCard.appendChild(el('<div class="piazz-card-num">'+(pfi+1)+'</div>'));
+var rightWrap = el('<div class="piazz-card-right"></div>');
+var ordineQui = orderForTarget(pfi + 1);
+if(!ordineQui || ordineQui.length !== state.archers.length) ordineQui = ranked;
+ordineQui.forEach(function(a){
+var entries = state.scores[a.id] || [];
+var ent = entries[pfi];
+var item = el('<div class="ring-item"></div>');
+if(ent){
+item.appendChild(el('<div class="ring-badge">'+ent.total+'</div>'));
+if(ent.arrows.length > 1){
+item.appendChild(el('<span class="turno-nome">'+ent.arrows.join('+')+'</span>'));
+}
+} else {
+item.appendChild(el('<div class="ring-badge empty">&ndash;</div>'));
+}
+item.appendChild(el('<span class="ring-name">'+escapeHtml(a.name)+'</span>'));
+rightWrap.appendChild(item);
+});
+pCard.appendChild(rightWrap);
+piazzFlow.appendChild(pCard);
+}
+p.appendChild(piazzFlow);
+
+var sotto = el('<div class="pannello-sotto"></div>');
+var stop = el('<button class="btn btn-ghost-danger btn-block">'+t("interrupt_btn")+'</button>');
+armDoubleConfirm(stop, t("clear_confirm"), function(){
+state.panel = null; state.screen = "summary"; save(); render();
+});
+sotto.appendChild(stop);
+if(state.arrowsPerTargetOverride && (GAME_MODES[state.mode]||{}).freeFormat){
+var skipBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("skip_remaining_btn")+'</button>');
+skipBtn.addEventListener("click", function(){ state.panel = null; finishTargetEarly(); });
+sotto.appendChild(skipBtn);
+}
+p.appendChild(sotto);
+return p;
+}
+
+// ---------- PANNELLO: la sagoma ----------
+// Non e' piu' un secondo modo di segnare il punteggio in concorrenza con i
+// tasti: e' il posto dove si registra DOVE ha colpito la freccia. Chi vuole
+// solo il punto, tocca il tasto e non apre mai questo pannello.
+function pannelloSagoma(mode, pts, unit, arrowNumber){
+var p = el('<div class="pannello"></div>');
+var testa = el('<div class="pannello-testa"></div>');
+testa.appendChild(el('<span class="pannello-titolo">'+t("pista_sagoma_titolo")+'</span>'));
+var x = el('<button type="button" class="pannello-chiudi" aria-label="'+t("pista_chiudi")+'">\u00d7</button>');
+x.addEventListener("click", function(){ state.panel = null; save(); render(); });
+testa.appendChild(x);
+p.appendChild(testa);
 
 var board = el('<div class="board"></div>');
 var svgWrap = el('<div class="silhouette-wrap"></div>');
 svgWrap.innerHTML = targetSVG(mode);
 board.appendChild(svgWrap);
-var toolbar = el('<div class="zoom-toolbar"><button class="btn btn-ghost btn-sm" id="zoomBtn">'+icon("sight",14)+' '+t("zoom_btn")+'</button></div>');
+var toolbar = el('<div class="zoom-toolbar"></div>');
+var zoomBtn = el('<button class="btn btn-ghost btn-sm">'+icon("sight",14)+' '+t("zoom_btn")+'</button>');
+toolbar.appendChild(zoomBtn);
 board.appendChild(toolbar);
 var legendParts = mode.zones.map(function(z){ return t(z.labelKey)+' '+pts[z.key]; });
 board.appendChild(el('<div class="legend-row">'+legendParts.join(" &middot; ")+' &middot; '+t("fuori_sagoma")+' 0</div>'));
 if(mode.provisional){
 board.appendChild(el('<div class="legend-row" style="color:var(--danger);">'+t("provisional_note")+'</div>'));
 }
-var readoutHolder = el('<div id="readoutHolder"></div>');
+var readoutHolder = el('<div></div>');
 board.appendChild(readoutHolder);
-card.appendChild(board);
+p.appendChild(board);
 
-var strip = el('<div class="shots-strip"></div>');
-state.archers.forEach(function(a){
-var entries = state.scores[a.id];
-if(entries.length >= state.target){
-var ent = entries[state.target-1];
-strip.appendChild(el('<span class="shot-pill">'+escapeHtml(a.name)+': '+ent.total+'</span>'));
+// Il segno d'impatto: alone chiaro sotto, nucleo scuro sopra. Prima era un
+// blu scritto a mano (#1d5fd1) che spariva contro la zona sagoma nel tema
+// scuro, cioe' proprio dove serve di piu'.
+function drawMarker(svgEl, x, y){
+var old = svgEl.querySelector("#impactMarker");
+if(old) old.remove();
+var ns = "http://www.w3.org/2000/svg";
+var g = document.createElementNS(ns, "g");
+g.setAttribute("id", "impactMarker");
+g.setAttribute("pointer-events", "none");
+function croce(colore, spessore){
+var sub = document.createElementNS(ns, "g");
+sub.setAttribute("stroke", colore);
+sub.setAttribute("stroke-linecap", "round");
+sub.setAttribute("fill", "none");
+var c = document.createElementNS(ns, "circle");
+c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 6);
+c.setAttribute("stroke-width", spessore);
+var l1 = document.createElementNS(ns, "line");
+l1.setAttribute("x1", x-11); l1.setAttribute("y1", y); l1.setAttribute("x2", x+11); l1.setAttribute("y2", y);
+l1.setAttribute("stroke-width", spessore);
+var l2 = document.createElementNS(ns, "line");
+l2.setAttribute("x1", x); l2.setAttribute("y1", y-11); l2.setAttribute("x2", x); l2.setAttribute("y2", y+11);
+l2.setAttribute("stroke-width", spessore);
+sub.appendChild(c); sub.appendChild(l1); sub.appendChild(l2);
+return sub;
 }
+g.appendChild(croce("#FFFFFF", "5"));
+g.appendChild(croce("#12160F", "2.2"));
+svgEl.appendChild(g);
+}
+
+function showReadout(){
+readoutHolder.innerHTML = "";
+var box = el(
+'<div class="impact-readout">'+
+'<div class="lbl">'+t("detected_score",{unit:unit, n:arrowNumber})+'</div>'+
+'<div class="pts">'+pending.score+'</div>'+
+'<div style="font-size:0.8rem;color:var(--muted);margin-top:2px;">'+pending.zoneLabel+'</div>'+
+'</div>'
+);
+var azioni = el('<div class="impact-actions"></div>');
+var corr = el('<button class="btn btn-ghost">'+t("correct_point_btn")+'</button>');
+var conf = el('<button class="btn btn-primary">'+t("confirm_shot_btn")+'</button>');
+corr.addEventListener("click", function(){
+pending = null;
+var svgEl2 = svgWrap.querySelector("svg");
+var old = svgEl2 && svgEl2.querySelector("#impactMarker");
+if(old) old.remove();
+readoutHolder.innerHTML = "";
 });
-if(strip.children.length){ card.appendChild(strip); }
-
-wrap.appendChild(card);
-wrap.appendChild(standingsBtn);
-wrap.appendChild(leaderboardBox);
-wrap.appendChild(el('<div class="row"><button class="btn btn-block" id="undoBtn">'+t("undo_btn")+'</button></div>'));
-
-if(state.arrowsPerTargetOverride && mode.freeFormat){
-var skipBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("skip_remaining_btn")+'</button>');
-skipBtn.addEventListener("click", finishTargetEarly);
-wrap.appendChild(skipBtn);
+conf.addEventListener("click", function(){
+if(navigator.vibrate){ navigator.vibrate(15); }
+if(pending.zoneKey === "superspot"){ leafBurst(conf); }
+var punti = pending.score;
+state.panel = null;
+registerShot(punti);
+});
+azioni.appendChild(corr); azioni.appendChild(conf);
+box.appendChild(azioni);
+readoutHolder.appendChild(box);
 }
-
-var interruptBtn = el('<button class="btn btn-ghost-danger btn-block" style="margin-top:10px;">'+t("interrupt_btn")+'</button>');
-wrap.appendChild(interruptBtn);
 
 setTimeout(function(){
 var svgEl = svgWrap.querySelector("svg");
-
+if(!svgEl) return;
 svgEl.addEventListener("click", function(e){
 var pt = svgEl.createSVGPoint();
 pt.x = e.clientX; pt.y = e.clientY;
 var ctm = svgEl.getScreenCTM();
 if(!ctm) return;
 var loc = pt.matrixTransform(ctm.inverse());
-
-var cx = 150, cy = 150;
-var dx = loc.x - cx, dy = loc.y - cy;
+var dx = loc.x - 150, dy = loc.y - 150;
 var dist = Math.sqrt(dx*dx + dy*dy);
 var radii = mode.radii, zones = mode.zones;
 var inBody = dist <= radii[radii.length-1];
-
-var score = 0;
-var zoneLabel = t("fuori_sagoma");
-var zoneKey = null;
+var score = 0, zoneLabel = t("fuori_sagoma"), zoneKey = null;
 if(inBody){
 for(var zi=0; zi<radii.length; zi++){
 if(dist <= radii[zi]){ zoneKey = zones[zi].key; zoneLabel = t(zones[zi].labelKey); break; }
@@ -12472,68 +12760,15 @@ pending = { x: loc.x, y: loc.y, score: score, zoneLabel: zoneLabel, zoneKey: zon
 drawMarker(svgEl, loc.x, loc.y);
 showReadout();
 });
-
-document.getElementById("zoomBtn").addEventListener("click", function(){
+zoomBtn.addEventListener("click", function(){
 zoomed = !zoomed;
 svgWrap.classList.toggle("zoomed", zoomed);
-this.innerHTML = zoomed ? t("zoom_btn_reduce") : (icon("sight",14)+' '+t("zoom_btn"));
+zoomBtn.innerHTML = zoomed ? t("zoom_btn_reduce") : (icon("sight",14)+' '+t("zoom_btn"));
 if(pending){ drawMarker(svgEl, pending.x, pending.y); }
-});
-
-document.getElementById("undoBtn").addEventListener("click", undoLastShot);
-armDoubleConfirm(interruptBtn, t("clear_confirm"), function(){
-state.screen = "summary"; save(); render();
 });
 },0);
 
-function drawMarker(svgEl, x, y){
-var old = svgEl.querySelector("#impactMarker");
-if(old) old.remove();
-var ns = "http://www.w3.org/2000/svg";
-var g = document.createElementNS(ns, "g");
-g.setAttribute("id", "impactMarker");
-g.setAttribute("pointer-events", "none");
-var c = document.createElementNS(ns, "circle");
-c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 6);
-c.setAttribute("fill", "none"); c.setAttribute("stroke", "#1d5fd1"); c.setAttribute("stroke-width", "2.6");
-var l1 = document.createElementNS(ns, "line");
-l1.setAttribute("x1", x-10); l1.setAttribute("y1", y); l1.setAttribute("x2", x+10); l1.setAttribute("y2", y);
-l1.setAttribute("stroke", "#1d5fd1"); l1.setAttribute("stroke-width", "1.8");
-var l2 = document.createElementNS(ns, "line");
-l2.setAttribute("x1", x); l2.setAttribute("y1", y-10); l2.setAttribute("x2", x); l2.setAttribute("y2", y+10);
-l2.setAttribute("stroke", "#1d5fd1"); l2.setAttribute("stroke-width", "1.8");
-g.appendChild(c); g.appendChild(l1); g.appendChild(l2);
-svgEl.appendChild(g);
-}
-
-function showReadout(){
-readoutHolder.innerHTML = "";
-readoutHolder.appendChild(el(
-'<div class="impact-readout">'+
-'<div class="lbl">'+t("detected_score",{unit:unit, n:arrowNumber})+'</div>'+
-'<div class="pts">'+pending.score+'</div>'+
-'<div style="font-size:0.8rem;color:var(--muted);margin-top:2px;">'+pending.zoneLabel+'</div>'+
-'<div class="impact-actions">'+
-'<button class="btn btn-ghost" id="correctBtn">'+t("correct_point_btn")+'</button>'+
-'<button class="btn btn-primary" id="confirmBtn">'+t("confirm_shot_btn")+'</button>'+
-'</div>'+
-'</div>'
-));
-document.getElementById("correctBtn").addEventListener("click", function(){
-pending = null;
-var svgEl2 = svgWrap.querySelector("svg");
-var old = svgEl2.querySelector("#impactMarker");
-if(old) old.remove();
-readoutHolder.innerHTML = "";
-});
-document.getElementById("confirmBtn").addEventListener("click", function(){
-if(navigator.vibrate){ navigator.vibrate(15); }
-if(pending.zoneKey === "superspot"){ leafBurst(document.getElementById("confirmBtn")); }
-registerShot(pending.score);
-});
-}
-
-return wrap;
+return p;
 }
 
 // ---------- TRANSIZIONE: prossimo arciere ----------
@@ -12653,6 +12888,7 @@ return out;
 function advanceToNextTarget(){
 var mode = GAME_MODES[state.mode] || GAME_MODES.training;
 state.awaitingStep = null;
+state.panel = null;
 state.archerIndex = 0;
 if(state.target < state.format){
 state.target += 1;
@@ -12683,6 +12919,8 @@ var done = mode.stopAtFirstHit
 ? (score === 0 || state.pendingArrows.length >= tac)
 : (state.pendingArrows.length >= tac);
 
+state.lastShotInfo = { name: archer.name, score: score };
+
 if(done){
 var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
 var entry = { arrows: state.pendingArrows.slice(), total: total };
@@ -12690,8 +12928,16 @@ state.scores[archer.id].push(entry);
 syncShotToSession(archer, entry);
 state.pendingArrows = [];
 state.arrowIndex = 0;
+// Il passaggio di turno non merita piu' una schermata a se': la fila dei
+// turni nella scena dice gia' a chi tocca, e la diceva anche mentre stavi
+// segnando. Su un percorso da 24 piazzole in quattro sono 95 interruzioni
+// e 95 tocchi in meno. L'unica sosta che resta e' la fine del giro, dove
+// c'e' davvero qualcosa da decidere (vedere il finale, o aggiungerne una).
 if(state.archerIndex < state.archers.length - 1){
-state.awaitingStep = "archer";
+state.archerIndex += 1;
+} else if(state.target < state.format){
+advanceToNextTarget();
+return;
 } else {
 state.awaitingStep = "target";
 }
@@ -12708,10 +12954,14 @@ var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
 var earlyEntry = { arrows: state.pendingArrows.slice(), total: total };
 state.scores[archer.id].push(earlyEntry);
 syncShotToSession(archer, earlyEntry);
+state.lastShotInfo = { name: archer.name, score: total };
 state.pendingArrows = [];
 state.arrowIndex = 0;
 if(state.archerIndex < state.archers.length - 1){
-state.awaitingStep = "archer";
+state.archerIndex += 1;
+} else if(state.target < state.format){
+advanceToNextTarget();
+return;
 } else {
 state.awaitingStep = "target";
 }
@@ -12719,6 +12969,9 @@ save(); render();
 }
 
 function undoLastShot(){
+// La striscia dell'annulla mostra l'ultimo tiro: appena lo si toglie, sparisce.
+state.lastShotInfo = null;
+state.panel = null;
 // Frecce già segnate in questa piazzola ma non ancora completata: si toglie solo l'ultima
 if(state.pendingArrows && state.pendingArrows.length > 0){
 state.pendingArrows.pop();
