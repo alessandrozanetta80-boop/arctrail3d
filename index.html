@@ -1065,24 +1065,40 @@ body.schermo-percorso #app{ display:flex; flex-direction:column; }
 .pista{ flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
 .pista-spazio{ flex:1 1 auto; min-height:var(--s-3); position:relative; overflow:hidden; }
 
-/* ── la filigrana: archi, non un bersaglio ──
-   Sta nello spazio che avanza, quindi non toglie niente a nessuno: quando
-   lo spazio si stringe (schermo basso, testo di sistema ingrandito) viene
-   ritagliata e sparisce da sola, senza una media query. Con un pannello
-   aperto non viene disegnata affatto, perche' .pista-spazio non c'e'.
-   Il centro e' FUORI dal riquadro: si vedono solo archi che escono dai
-   bordi. Un cerchio intero al centro dello schermo sembrerebbe una cosa da
-   toccare; un arco legge come texture, come le curve di livello di una
-   carta. Il colore arriva da --text-1, quindi funziona nei tre temi senza
-   una riga per tema. Non si muove: e' un fondale, non un cambio di stato. */
+/* ── la filigrana: il bersaglio, riconoscibile ──
+   Primo tentativo: archi con il centro fuori dal riquadro. Sbagliato — si
+   vedevano curve che non dicevano niente, perche' senza centro un cerchio
+   non e' un bersaglio, e' una curva. Adesso il centro SI VEDE, e sono le
+   fasce esterne a uscire dai bordi: la forma si legge in un colpo d'occhio
+   e il taglio la dichiara fondale, non oggetto.
+
+   Le misure sono quelle vere della sagoma (raggi 19/46/85/140 su 300),
+   quindi non e' un bersaglio generico: e' QUESTO bersaglio, in piccolo.
+
+   Solo tratto, nessun pieno: un disco pieno in basso a destra sembrerebbe
+   un tasto. E il disegno sta nella MASCHERA, non nel colore, cosi' la tinta
+   arriva da --text-1 e i tre temi funzionano senza una riga per tema.
+
+   Sta nello spazio che avanza, quindi non toglie niente a nessuno: se lo
+   spazio si stringe viene ritagliata; con un pannello aperto non esiste
+   proprio, perche' non esiste .pista-spazio. Non si muove: e' un fondale. */
 .pista-spazio::before{
 content:""; position:absolute; inset:0; pointer-events:none;
-background:repeating-radial-gradient(circle at 78% 168%,
-transparent 0 26px,
-color-mix(in srgb, var(--text-1) 9%, transparent) 26px 27.5px);
--webkit-mask-image:radial-gradient(circle at 78% 168%, #000 30%, transparent 78%);
-mask-image:radial-gradient(circle at 78% 168%, #000 30%, transparent 78%);
+background-color:color-mix(in srgb, var(--text-1) 12%, transparent);
+/* proprieta' per esteso, non la scorciatoia "mask:": dentro l'indirizzo del
+   disegno c'e' una barra, e nella scorciatoia la barra separa posizione e
+   misura. Per esteso non c'e' niente da confondere. */
+-webkit-mask-image:var(--filigrana); mask-image:var(--filigrana);
+-webkit-mask-repeat:no-repeat;       mask-repeat:no-repeat;
+-webkit-mask-position:78% 62%;       mask-position:78% 62%;
+-webkit-mask-size:260px 260px;       mask-size:260px 260px;
 }
+:root{
+--filigrana:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cg fill='none' stroke='white'%3E%3Ccircle cx='150' cy='150' r='140' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='85' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='46' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='19' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='113' stroke-width='1.2'/%3E%3Ccircle cx='150' cy='150' r='65' stroke-width='1.2'/%3E%3Ccircle cx='150' cy='150' r='32' stroke-width='1.2'/%3E%3C/g%3E%3C/svg%3E");
+}
+/* Schermo basso o telefono di traverso: lo spazio che avanza e' una
+   striscia, e una striscia di bersaglio sembra un errore. Meglio niente. */
+@media (max-height:560px){ .pista-spazio::before{ display:none; } }
 @media print{ .pista-spazio::before{ display:none; } }
 
 /* ── testata: il passo del giro, piccolo, dove serve ──
@@ -10247,7 +10263,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-pista-b";
+var BUILD_STAMP = "2026-08-16-pista-d";
 
 function infoScreen(){
 var wrap = el('<div></div>');
