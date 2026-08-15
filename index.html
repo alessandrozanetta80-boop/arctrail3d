@@ -51,7 +51,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
@@ -62,145 +62,256 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 <style>
-/* ══════════════════════════════════════════════════════════════════════════
-   FONDAMENTA — revisione design 15/08/2026
-   Tre livelli: PALETTE (colori grezzi) · RUOLI (a cosa servono) · PONTE
-   (i vecchi nomi rimappati, cosi' le 12.000 righe sotto non si toccano).
-   Tutto dichiarato DENTRO body.theme-*, mai ereditato: una variabile che ne
-   cita un'altra si risolve sul nodo dove e' dichiarata, ed e' il motivo per
-   cui prima la barra restava nera col tema chiaro.
-   ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════════
+   IL SISTEMA — 16/08/2026
+   Tre strati, e nient'altro sopra.
 
-/* I CINQUE COLORI DELLA TASTIERA — assoluti, fuori dai temi, ed e' il punto.
-   Sono l'unica cosa che non cambia passando da chiaro a scuro: e' un comando
-   di sicurezza che si usa a memoria muscolare, col guanto e il sole in faccia.
-   Croma spinto al massimo che la cifra bianca regge (+27/30/61/63% sui
-   valori di ieri, a parita' di luminanza). Schiarire invece no: sotto il velo
-   del riverbero un inchiostro scuro su fondo chiaro crolla a 2,5:1. */
+     STRATO 1 · PRIMITIVI   i colori esistono, non hanno ancora un mestiere
+     STRATO 2 · RUOLI       l'unico vocabolario che i componenti possono usare
+     STRATO 3 · ALIAS       i vecchi nomi (--bg, --cream, --line...) rimappati
+                            sui ruoli, cosi' il CSS gia' scritto continua a
+                            funzionare senza toccarlo tutto in un colpo
+
+   Cambiare tema = riscrivere la mappa dei RUOLI. Zero regole di componente.
+   Regola d'oro: se una regola piu' sotto nomina un colore con un esadecimale
+   scritto a mano, e' un errore da correggere, non un caso particolare.
+
+   IL BUG CHE TORNA SEMPRE — una variabile che ne cita un'altra viene risolta
+   SUL NODO DOVE E' DICHIARATA, non dove viene usata. Per questo ruoli e alias
+   stanno nello STESSO blocco: se gli alias fossero in :root e i ruoli su
+   body, gli alias leggerebbero i ruoli di :root e il tema non cambierebbe.
+   E' esattamente quello che era successo alle --navbar-*.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ───────────────────────── STRATO 1 · PRIMITIVI ─────────────────────────── */
 :root{
---k-perfect:#CC1A20; --k-superspot:#DD4A00; --k-spot:#188F3D;
---k-sagoma:#1668D6;  --k-zero:#63705F;
+/* Verde bosco, argilla, oro: i tre colori dell'app, in gradini veri.
+   Se serve una tinta nuova si aggiunge QUI, non dentro un componente. */
+--green-900:#1D4F26; --green-800:#24602C; --green-700:#2C5230; --green-600:#315B35;
+--green-500:#3C6D42; --green-400:#60A966; --green-200:#DDEBDA;
+--clay-800:#8A3F09; --clay-700:#BC4F0B; --clay-600:#BE530F; --clay-500:#C1571F;
+--clay-400:#E8722F; --clay-200:#FBE2D0;
+--gold-800:#6E4E0C; --gold-700:#7A5610; --gold-600:#8A6210; --gold-500:#B07E12;
+--gold-400:#CBA35C; --gold-200:#F6E8C6; --gold-100:#FDF2D9;
+--red-700:#8E0F14; --red-600:#A81319; --red-400:#E23D2E; --red-100:#F9DCDC;
+--blue-600:#2E5FA8; --blue-400:#5B8FD6;
+--lime-500:#6FBF3F;
+/* Neutri caldi: la terra e il muschio, non il grigio da ufficio. */
+--sand-50:#FFFFFF;  --sand-100:#F5F6F0; --sand-200:#ECEDE6; --sand-300:#D3D7CB;
+--sand-400:#B4BBAC; --sand-500:#5F645C; --sand-600:#565D53; --sand-700:#3A403A;
+--sand-900:#12160F;
+--moss-900:#0F1412; --moss-800:#16201C; --moss-700:#1A2620; --moss-600:#2A362F;
+--moss-500:#3B4A41; --moss-300:#9AA39C; --moss-200:#C7CFC5; --moss-100:#EDE6D6;
+
+/* ───── SPAZIO · 4 / 8 / 12 / 16 / 24 / 32 / 48 ─────
+   La regola era gia' scritta in cima a questo file da mesi ("nessun 6,
+   nessun 7, nessun 9") ma non era applicabile perche' non esisteva la scala.
+   Adesso esiste: se una misura non ci sta dentro, si cambia il disegno. */
 --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
---r-s:10px; --r-m:14px; --r-l:20px; --tap:44px;
+
+/* ───── RAGGI · cinque, non nove ───── */
+--r-sm:10px; --r-md:12px; --r-lg:16px; --r-xl:20px; --r-pill:999px;
+
+/* ───── BERSAGLIO MINIMO ─────
+   44 Apple, 48 Material. Sul percorso si tocca con la mano sudata e spesso
+   col guanto: 44 e' il pavimento, non il traguardo. */
+--hit:44px;
+
+/* ───── MOVIMENTO · una curva, tre durate ─────
+   Il movimento racconta un CAMBIO DI STATO. Se non c'e' un cambio, non deve
+   muoversi niente: le animazioni a ciclo infinito (il timer che pulsava, il
+   riflesso che scorreva sulla barra) consumavano batteria e attenzione per
+   non dire nulla di nuovo. Sono state tolte. */
+--ease:cubic-bezier(.2,.8,.2,1);
+--dur-1:120ms; --dur-2:180ms; --dur-3:260ms;
+
+/* ───── CARATTERI · due famiglie, tre mestieri ─────
+   Fraunces = marchio e titoli. Outfit = tutto il resto.
+   Outfit tabular = OGNI cifra. Prima i punteggi erano in Playfair Display,
+   un Didone ad aste sottilissime: al riverbero le aste spariscono e un 8
+   diventa un 3. Un punteggio non e' decorazione, e' il dato. */
 --font-ui:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 --font-display:"Fraunces",Georgia,serif;
---font-num:"Outfit",-apple-system,sans-serif;
-color-scheme:light dark;
-}
-@media (prefers-color-scheme:light){ html{ background:#ECEDE6; } }
-@media (prefers-color-scheme:dark){  html{ background:#0F1412; } }
-/* Il tema vive su <body>, ma barre di scorrimento e controlli di sistema li
-   disegna <html>: senza questo restavano del tema sbagliato. */
-html:has(body.theme-light){ color-scheme:light; background:#ECEDE6; }
-html:has(body.theme-dark){  color-scheme:dark;  background:#0F1412; }
+--font-num:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 
-/* ═══════════ SCURO — sera, sede, macchina, batteria ═══════════
-   Non nero pieno: sull'OLED il nero assoluto fa aloni intorno al testo. */
-:root, body.theme-dark{
---surface-0:#0F1412; --surface-1:#17211D; --surface-2:#1F2C26; --surface-3:#26352E;
---text-1:#EDF0EA;    /* 16,2:1 */
---text-2:#B6C0B8;    /*  9,9:1 */
---text-3:#8D998F;    /*  6,3:1 — il minimo, solo per cose non essenziali */
---text-on-fill:#FFFFFF;
---border:#2D3B34; --border-strong:#5B6E60;   /* forte = 3,0:1, bersagli da toccare */
---stroke:1px;
---brand-fill:#2F6B37; --brand-text:#6FBF77;
-/* codice funzione: riempimenti uguali nei due temi, testi e fondi tenui no */
---fn-training-fill:var(--k-spot);      --fn-training-text:#5FD46B;
---fn-gara-fill:var(--k-superspot);     --fn-gara-text:#FF9A55;
---fn-prepara-fill:#A87413;             --fn-prepara-text:#E3BC6E;
---fn-training-soft:#16331F; --fn-gara-soft:#3A2612; --fn-prepara-soft:#332B15;
---danger-fill:#A31E22; --danger-text:#F4756A;
---success-fill:#2F6B37; --success-text:#6FBF77;
-/* FUOCO: blu, cioe' fuori dai colori del marchio, di proposito. Era --gold,
-   e sugli elementi gia' bordati d'oro spariva proprio dove serviva. */
---focus:#7FB3FF;
-/* ELEVAZIONE: allo scuro l'ombra, al chiaro il bordo. Ora e' un token, cosi'
-   nessun componente deve piu' riscriverlo per tema. */
---elev-1:0 2px 8px rgba(0,0,0,0.35);
---elev-2:0 8px 24px -8px rgba(0,0,0,0.55);
---elev-menu:0 16px 32px -12px rgba(0,0,0,0.70);
---grana:0.42;
---alone-1:rgba(90,140,30,0.16); --alone-2:rgba(96,169,102,0.11); --alone-3:rgba(232,114,47,0.08);
-/* ── ponte verso i vecchi nomi ── */
---bg:var(--surface-0); --bg-panel:var(--surface-1); --bg-panel-2:var(--surface-2);
---wood:var(--surface-1); --wood-2:var(--surface-2);
---cream:var(--text-1); --ink-2:var(--text-2); --muted:var(--text-3);
---line:var(--border); --line-strong:var(--border-strong);
---accent:var(--brand-fill); --accent-soft:var(--brand-text); --accent-ink:#FFFFFF;
---bark:var(--fn-gara-text); --gold:var(--fn-prepara-text);
---danger:var(--danger-text); --success:var(--success-text);
---checkbox-border:rgba(237,240,234,0.45);
---navbar-bg:var(--surface-1); --navbar-line:var(--border); --navbar-fg:var(--text-3);
---navbar-on:var(--brand-text); --navbar-pill:var(--surface-3);
---navbar-pill-ink:var(--brand-text); --navbar-green:var(--brand-text);
---navbar-shadow:rgba(0,0,0,0.45);
-/* i --q* disegnano anche le zone del bersaglio: restano i colori del bersaglio */
---qss:#E8722F; --qspot:#6FBF3F; --qsag:#3E6FC2; --qperfect:#C1272D; --qzero:#464A42;
+/* ───── TIPOGRAFIA · scala fluida ─────
+   clamp() al posto delle media query: la misura cresce con lo schermo senza
+   scalini, e resta in rem, quindi chi ha ingrandito il testo di sistema
+   continua a vederlo ingrandito. */
+--t-xs:clamp(0.66rem,0.63rem + 0.15vw,0.72rem);
+--t-sm:clamp(0.78rem,0.75rem + 0.18vw,0.86rem);
+--t-md:clamp(0.92rem,0.89rem + 0.18vw,1rem);
+--t-lg:clamp(1.05rem,1rem + 0.3vw,1.2rem);
+--t-xl:clamp(1.3rem,1.15rem + 0.7vw,1.6rem);
+--t-2xl:clamp(1.9rem,1.55rem + 1.7vw,2.5rem);
+--t-3xl:clamp(2.6rem,2rem + 3vw,3.9rem);
 }
 
-/* ═══════════ CHIARO — il tema da percorso ═══════════
-   Al sole il vetro aggiunge un velo luminoso costante: sul fondo scuro quel
-   velo mangia il contrasto, sul chiaro lo alza. Tre regole:
-     1) contrasto sovradimensionato — testo principale sopra 15:1;
-     2) nessuna tinta sotto il 18%, sotto quella soglia il codice colore
-        sparisce e le tre sezioni diventano tre rettangoli bianchi;
-     3) l'elevazione col BORDO, non con l'ombra.
-   Regola di colore che risolve mezzo problema da sola: un colore per il
-   riempimento, uno per la scritta. */
-body.theme-light{
+/* ═════════════ STRATO 2 · RUOLI + STRATO 3 · ALIAS — TEMA CHIARO ═════════════
+   Il chiaro e' il predefinito: all'aperto il vetro aggiunge un velo luminoso
+   costante, che sul fondo scuro mangia il contrasto e sul chiaro lo alza.
+   Tre vincoli che il chiaro deve rispettare per reggere il sole:
+     1) contrasto sovradimensionato: testo principale sopra 12:1, non 4,5;
+     2) niente tinte sotto il 18%: sparirebbero, e con loro il codice colore
+        (verde = allenamento, arancio = gara, oro = prepara);
+     3) l'elevazione si fa con i BORDI: un'ombra all'8% di nero, fuori, non
+        esiste, e i pulsanti sembrano disattivati.
+   E' anche in :root perche' prima che parta il JS il body non ha ancora
+   nessuna classe di tema: senza questo, mezzo secondo di pagina senza colori. */
+:root, body.theme-light{
 color-scheme:light;
---surface-0:#ECEDE6; --surface-1:#FFFFFF; --surface-2:#F4F5EF; --surface-3:#E7E9E0;
---text-1:#11150F;    /* 18,5:1 */
---text-2:#333A32;    /* 11,7:1 */
---text-3:#545B50;    /*  7,0:1 — era 5,1:1, troppo poco fuori */
---text-on-fill:#FFFFFF;
---border:#CED3C6; --border-strong:#7F8779;   /* 3,7:1 */
---stroke:1.5px;                              /* fuori un filo da 1px non si vede */
---brand-fill:#1F5A28; --brand-text:#1B5023;
-/* LA HOME SI GUARDA ALL'OMBRA, prima di uscire: e' l'unico punto dell'app
-   dove il vincolo del sole non c'e'. La voglia di aprire l'app nasce qui,
-   non nella tastiera, che si guarda di corsa con le mani occupate.
-   Testo su fondo tenue: 5,1 / 5,7 / 6,5. */
---fn-training-fill:var(--k-spot);      --fn-training-text:#166B27;
---fn-gara-fill:var(--k-superspot);     --fn-gara-text:#8F3D08;
---fn-prepara-fill:#A87413;             --fn-prepara-text:#6B4B0B;
---fn-training-soft:#CFE9C6; --fn-gara-soft:#FFDCB4; --fn-prepara-soft:#FCE6A8;
---danger-fill:#9E1218; --danger-text:#9C121A;
---success-fill:#26702C; --success-text:#1B5023;
---focus:#1150C4;   /* 6,0:1 sulla tela */
---elev-1:0 1px 2px rgba(30,45,34,0.06);
---elev-2:0 1px 2px rgba(30,45,34,0.05), 0 12px 24px -20px rgba(30,45,34,0.35);
---elev-menu:0 12px 28px -16px rgba(30,45,34,0.45);
---grana:0.18;
---alone-1:rgba(82,127,24,0.09); --alone-2:rgba(154,111,28,0.07); --alone-3:rgba(190,83,15,0.06);
-/* ── ponte ── */
---bg:var(--surface-0); --bg-panel:var(--surface-1); --bg-panel-2:var(--surface-2);
+
+/* superfici */
+--surface:var(--sand-200); --surface-1:var(--sand-50); --surface-2:var(--sand-100);
+/* testo — 18:1 / 9:1 / 6:1 sul foglio */
+--text-1:var(--sand-900); --text-2:var(--sand-700); --text-3:var(--sand-600);
+/* bordi */
+--border:var(--sand-300); --border-strong:var(--sand-400);
+/* marchio e codice colore */
+--brand:var(--green-800); --brand-soft:var(--green-800); --brand-ink:#FFFFFF;
+--clay:var(--clay-600); --gold-role:var(--gold-700);
+--danger-role:var(--red-600); --success-role:#2E7D32;
+
+/* elevazione: quasi solo un velo sotto, il lavoro lo fa il bordo */
+--elev-1:0 1px 2px rgba(30,45,34,.05);
+--elev-2:0 1px 2px rgba(30,45,34,.05), 0 12px 24px -20px rgba(30,45,34,.35);
+--elev-3:0 1px 2px rgba(30,45,34,.06), 0 22px 44px -30px rgba(30,45,34,.55);
+--focus-ring:0 0 0 3px color-mix(in srgb, var(--brand) 24%, transparent);
+
+/* il velo di colore sotto la pagina */
+--wash-1:rgba(82,127,24,0.10); --wash-2:rgba(154,111,28,0.08); --wash-3:rgba(190,83,15,0.07);
+--grain:0.22;
+
+/* i tre comandi del menu: fondo tenue, pastiglia piena, testo scuro.
+   Quando al sole la tinta sbiadisce, il quadretto pieno resta l'unico
+   appiglio di colore. */
+--tone-train-bg:var(--green-200); --tone-train-fg:var(--green-800); --tone-train-solid:var(--green-800);
+--tone-race-bg:var(--clay-200);  --tone-race-fg:var(--clay-600);   --tone-race-solid:var(--clay-600);
+--tone-prep-bg:var(--gold-200);  --tone-prep-fg:var(--gold-600);   --tone-prep-solid:var(--gold-500);
+--tone-border:38%;
+
+/* i cinque tasti del punteggio: l'unica cosa che conta davvero al campo.
+   Fondo pieno, cifra bianca. Il colore si legge da lontano, il numero da
+   vicino. Contrasto del bianco su ciascun fondo: 4,9 / 5,2 / 5,9 / 7,2 / 5,6.
+   NON usano le variabili delle zone del bersaglio (--qss & co.): quelle
+   disegnano la sagoma e devono restare quello che sono. */
+--score-ss:var(--clay-700); --score-spot:#2E7D32; --score-sag:var(--blue-600);
+--score-perfect:var(--red-600); --score-zero:var(--sand-500); --score-ink:#FFFFFF;
+
+/* il timer. Da fermo ha un colore suo — ambra — che non e' nessuno dei tre
+   codici dell'app, cosi' al sole non lo si confonde con "gara" o "prepara". */
+--timer-idle-bg:linear-gradient(135deg,var(--gold-100),#F9E9C4);
+--timer-idle-bd:rgba(138,98,16,.55); --timer-idle-fg:#3A2A05;
+--timer-run-bg:var(--green-200);  --timer-run-bd:var(--green-800); --timer-run-fg:#1B4C22;
+--timer-warn-bg:var(--gold-200);  --timer-warn-bd:var(--gold-600); --timer-warn-fg:var(--gold-800);
+--timer-dgr-bg:var(--red-100);    --timer-dgr-bd:var(--red-600);   --timer-dgr-fg:var(--red-700);
+
+/* insegna e sezioni */
+--navbar-bg:var(--sand-50); --navbar-line:var(--sand-300); --navbar-fg:var(--sand-600);
+--navbar-on:var(--green-800); --navbar-pill:var(--green-800);
+--navbar-pill-ink:#FFFFFF; --navbar-shadow:rgba(30,45,34,0.14);
+--navbar-green:var(--green-800);
+--navbar-hover:rgba(18,22,15,0.05);
+
+/* zone del bersaglio: restano quelle che sono, e' anatomia, non stile */
+--qss:var(--clay-400); --qspot:var(--lime-500); --qsag:var(--blue-600);
+--qzero:#9A9C93; --qperfect:#C1272D;
+--checkbox-border:rgba(18,22,15,0.45);
+
+/* ───── ALIAS · i vecchi nomi, rimappati ───── */
+--bg:var(--surface); --bg-panel:var(--surface-1); --bg-panel-2:var(--surface-2);
 --wood:var(--surface-1); --wood-2:var(--surface-2);
 --cream:var(--text-1); --ink-2:var(--text-2); --muted:var(--text-3);
 --line:var(--border); --line-strong:var(--border-strong);
---accent:var(--brand-fill); --accent-soft:var(--brand-text); --accent-ink:#FFFFFF;
---bark:var(--fn-gara-text); --gold:var(--fn-prepara-text);
---danger:var(--danger-text); --success:var(--success-text);
---checkbox-border:rgba(17,21,15,0.45);
---navbar-bg:#FFFFFF; --navbar-line:#CED3C6; --navbar-fg:#545B50;
---navbar-on:var(--brand-fill); --navbar-pill:var(--brand-fill);
---navbar-pill-ink:#FFFFFF; --navbar-green:var(--brand-fill);
---navbar-shadow:rgba(30,45,34,0.14);
---qss:#E8722F; --qspot:#6FBF3F; --qsag:#3E6FC2; --qperfect:#C1272D; --qzero:#9A9C93;
+--accent:var(--brand); --accent-soft:var(--brand-soft); --accent-ink:var(--brand-ink);
+--bark:var(--clay); --gold:var(--gold-role);
+--danger:var(--danger-role); --success:var(--success-role);
+}
+
+/* ═══════════════════════ TEMA SCURO — stessa mappa, altri valori ═══════════
+   Al buio, in macchina tornando dal campo, o per chi lo preferisce e basta.
+   Qui l'elevazione e' l'opposto: sul nero un'ombra non si vede, quindi a
+   distinguere i piani sono la superficie che schiarisce e il bordo. */
+body.theme-dark{
+color-scheme:dark;
+
+--surface:var(--moss-900); --surface-1:var(--moss-800); --surface-2:var(--moss-700);
+--text-1:var(--moss-100); --text-2:var(--moss-200); --text-3:var(--moss-300);
+--border:var(--moss-600); --border-strong:var(--moss-500);
+--brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:#FFFFFF;
+--clay:var(--clay-400); --gold-role:var(--gold-400);
+--danger-role:var(--red-400); --success-role:#4CAF50;
+
+--elev-1:0 1px 3px rgba(0,0,0,.35);
+--elev-2:0 2px 10px rgba(0,0,0,.34);
+--elev-3:0 6px 22px rgba(0,0,0,.42);
+--focus-ring:0 0 0 3px color-mix(in srgb, var(--brand-soft) 34%, transparent);
+
+--wash-1:rgba(90,140,30,0.20); --wash-2:rgba(96,169,102,0.14); --wash-3:rgba(232,114,47,0.10);
+--grain:0.5;
+
+/* Stessa forma del chiaro — fondo tenue, pastiglia piena — non un disegno
+   diverso. Un componente, due mappe. */
+--tone-train-bg:color-mix(in srgb, var(--green-600) 24%, var(--surface-1));
+--tone-train-fg:var(--green-400); --tone-train-solid:var(--green-500);
+--tone-race-bg:color-mix(in srgb, var(--clay-500) 24%, var(--surface-1));
+--tone-race-fg:var(--clay-400);   --tone-race-solid:var(--clay-500);
+--tone-prep-bg:color-mix(in srgb, var(--gold-500) 24%, var(--surface-1));
+--tone-prep-fg:var(--gold-400);   --tone-prep-solid:var(--gold-500);
+--tone-border:55%;
+
+--score-ss:var(--clay-500); --score-spot:var(--green-500); --score-sag:#31558F;
+--score-perfect:var(--red-600); --score-zero:#4A4F47; --score-ink:#FFFFFF;
+
+--timer-idle-bg:linear-gradient(135deg,var(--moss-700),var(--moss-800));
+--timer-idle-bd:var(--border-strong); --timer-idle-fg:var(--text-1);
+--timer-run-bg:color-mix(in srgb, var(--green-600) 18%, var(--surface-1));
+--timer-run-bd:var(--green-400);  --timer-run-fg:var(--green-400);
+--timer-warn-bg:color-mix(in srgb, var(--gold-400) 15%, var(--surface-1));
+--timer-warn-bd:var(--gold-400);  --timer-warn-fg:var(--gold-400);
+--timer-dgr-bg:color-mix(in srgb, var(--red-400) 15%, var(--surface-1));
+--timer-dgr-bd:var(--red-400);    --timer-dgr-fg:var(--red-400);
+
+--navbar-bg:var(--surface-1); --navbar-line:var(--border); --navbar-fg:var(--text-3);
+--navbar-on:var(--green-400); --navbar-pill:color-mix(in srgb, var(--green-400) 18%, var(--surface-2));
+--navbar-pill-ink:var(--green-400); --navbar-shadow:rgba(0,0,0,0.45);
+--navbar-green:var(--green-400);
+--navbar-hover:rgba(255,255,255,0.06);
+
+--qss:var(--clay-400); --qspot:var(--lime-500); --qsag:var(--blue-400);
+--qzero:#464A42; --qperfect:#C1272D;
+--checkbox-border:rgba(237,230,214,0.4);
+
+--bg:var(--surface); --bg-panel:var(--surface-1); --bg-panel-2:var(--surface-2);
+--wood:var(--surface-1); --wood-2:var(--surface-2);
+--cream:var(--text-1); --ink-2:var(--text-2); --muted:var(--text-3);
+--line:var(--border); --line-strong:var(--border-strong);
+--accent:var(--brand); --accent-soft:var(--brand-soft); --accent-ink:var(--brand-ink);
+--bark:var(--clay); --gold:var(--gold-role);
+--danger:var(--danger-role); --success:var(--success-role);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
-body{ margin:0; color:var(--cream); position:relative;
+/* Un solo sfondo per tutti i temi: le tre macchie di colore cambiano
+   intensita' tramite --wash-*, non regola per regola. */
+body{ margin:0; color:var(--text-1); position:relative;
 background:
-radial-gradient(ellipse 900px 500px at 8% -5%, rgba(90,140,30,0.20), transparent 60%),
-radial-gradient(ellipse 700px 500px at 105% 15%, rgba(96,169,102,0.14), transparent 55%),
-radial-gradient(ellipse 800px 600px at 50% 120%, rgba(232,114,47,0.10), transparent 60%),
-var(--bg);
-font-family:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; min-height:100dvh; padding-bottom:env(safe-area-inset-bottom); }
-body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.5; mix-blend-mode:multiply;
+radial-gradient(ellipse 900px 500px at 8% -5%, var(--wash-1), transparent 60%),
+radial-gradient(ellipse 700px 500px at 105% 15%, var(--wash-2), transparent 55%),
+radial-gradient(ellipse 800px 600px at 50% 120%, var(--wash-3), transparent 60%),
+var(--surface);
+font-family:var(--font-ui); font-size:var(--t-md); min-height:100dvh;
+padding-bottom:env(safe-area-inset-bottom); text-size-adjust:100%; -webkit-text-size-adjust:100%; }
+body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:var(--grain); mix-blend-mode:multiply;
 background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-.display{ font-family:'Fraunces',Georgia,serif; font-weight:700; letter-spacing:0.03em; }
+.display{ font-family:var(--font-display); font-weight:700; letter-spacing:0.03em; text-wrap:balance; }
+/* Ogni cifra dell'app passa di qui: larghezza fissa, cosi' un punteggio che
+   cambia non fa ballare la riga, e aste piene che il sole non mangia. */
+.num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1; }
+/* Un solo anello di fuoco, per tutto. Prima era su quattro classi scelte a
+   mano e tutto il resto non ne aveva. */
+:where(button,a,input,select,textarea,[tabindex]):focus-visible{
+outline:2px solid var(--brand-soft); outline-offset:2px; border-radius:var(--r-sm); }
 #app{ max-width:520px; margin:0 auto; padding:18px 16px 32px; min-height:100dvh; position:relative; }
 /* ══════════════ LA BARRA IN ALTO ══════════════
    Tre regole, e da queste discende tutto il resto. Non c'e' una soglia
@@ -228,22 +339,18 @@ flex-wrap:wrap; row-gap:8px;
 position:sticky; top:0; z-index:50; margin-top:env(safe-area-inset-top);
 background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
 header.top .brandblock{ display:flex; align-items:center; gap:12px; min-width:0; flex:0 0 auto; }
-header.top .logo{ width:44px; height:44px; flex:0 0 auto; border-radius:22%; overflow:hidden; }
-/* logoSVG() non restituisce un <svg>: restituisce un <img src="logo.jpg">
-   con le misure scritte NELLO STILE IN LINEA, sempre 52px. La regola che
-   le adattava parlava di "svg" — che li' dentro non c'e' — quindi
-   un'immagine da 52 stava in una finestra da 44 e usciva dal blocco
-   verde. Lo stile in linea batte il foglio di stile: l'!important e' qui
-   l'unico modo di riprendersi la misura senza toccare logoSVG(), che
-   serve anche allo splash e al profilo. */
-header.top .logo svg, header.top .logo img{
-width:100% !important; height:100% !important; display:block;
-border-radius:inherit !important; object-fit:cover; }
+header.top .logo{ width:var(--hit); height:var(--hit); flex:0 0 auto; border-radius:22%; overflow:hidden; }
+/* Il marchio: una misura sola, che arriva da --mark. Dentro l'insegna la
+   riscrive il contenitore, quindi non c'e' piu' niente da battere. */
+.brandmark{ width:var(--mark,44px); height:var(--mark,44px); display:block;
+border-radius:22%; object-fit:cover; }
+header.top .logo{ --mark:44px; }
+header.top .logo .brandmark{ border-radius:inherit; }
 header.top .headtxt{ flex:0 0 auto; min-width:0; }
 header.top .head-actions{ flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center; gap:8px; }
 
 /* Il tasto della barra. Uno solo, sempre uguale, sempre 44x44. */
-.bar-btn{ width:44px; height:44px; flex:0 0 auto; padding:0; position:relative;
+.bar-btn{ width:var(--hit); height:var(--hit); flex:0 0 auto; padding:0; position:relative;
 display:inline-flex; align-items:center; justify-content:center;
 border-radius:12px; background:var(--bg-panel); border:1.5px solid var(--line-strong);
 color:var(--ink-2); cursor:pointer; font-family:inherit; }
@@ -279,8 +386,7 @@ color:var(--cream); font-family:inherit; font-size:0.92rem; font-weight:600; tex
 .bar-menu-count{ margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:10px;
 background:var(--danger); color:#fff; font-size:0.66rem; font-weight:800;
 display:flex; align-items:center; justify-content:center; }
-@media (hover:hover) and (pointer:fine){ .bar-menu-item:hover{ background:var(--bg-panel-2); } .bar-btn:hover{ border-color:var(--accent-soft); } }
-header.top .brand-title{ font-family:'Fraunces',Georgia,serif; font-weight:700; font-size:clamp(0.72rem,3.2vw,0.95rem); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
+header.top .brand-title{ font-family:var(--font-display); font-weight:700; font-size:clamp(0.72rem,3.2vw,0.95rem); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
 header.top .brandblock{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-soft); }
 header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
@@ -290,68 +396,68 @@ display:inline-flex; align-items:center; justify-content:center; white-space:now
 line-height:1; letter-spacing:0.01em; }
 .home-btn:active{ transform:scale(0.97); }
 .home-btn.small{ font-size:0.8rem; padding:0 13px; }
-.card{ background:linear-gradient(180deg, var(--bg-panel-2) 0%, var(--bg-panel) 100%); border:1px solid var(--line); border-radius:16px; padding:18px; margin-bottom:16px;
-box-shadow:0 6px 16px rgba(0,0,0,0.28); border-top:2px solid var(--gold);
+.card{ background:var(--surface-1); border:1px solid var(--border); border-radius:var(--r-lg);
+padding:var(--s-4); margin-bottom:var(--s-4); box-shadow:var(--elev-2);
+border-top:2px solid color-mix(in srgb, var(--gold-role) 45%, transparent);
 position:relative; z-index:1; }
 h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 12px; }
-.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:10px; padding:14px 18px; font-size:1rem; font-weight:700; cursor:pointer; color:var(--cream); background:var(--bg-panel-2); border:1px solid var(--line); box-shadow:0 3px 8px rgba(0,0,0,0.22); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease; }
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:var(--s-2);
+border-radius:var(--r-md); padding:14px var(--s-4); min-height:var(--hit);
+font-family:inherit; font-size:var(--t-md); font-weight:700; cursor:pointer;
+color:var(--text-1); background:var(--surface-2); border:1.5px solid var(--border-strong);
+box-shadow:var(--elev-1);
+transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease),
+           background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
 .btn:active{ transform:scale(0.97); filter:brightness(0.97); }
 .btn:disabled{ opacity:0.4; cursor:default; }
 .btn-primary{ background:var(--accent); border-color:transparent; color:var(--accent-ink); font-weight:700; }
 .btn-primary:active{ }
 .btn-block{ width:100%; }
-.btn-ghost{ background:transparent; border:1px solid var(--line); color:var(--muted); }
+/* I "fantasma" erano bianco su bianco con un filo di bordo: si leggevano come
+   disattivati. Superficie propria + bordo forte, in tutti i temi. */
+.btn-ghost{ background:var(--surface-2); border:1.5px solid var(--border-strong); color:var(--text-1); }
+.btn-ghost .menu-sub{ color:var(--text-3); }
 .btn-sm{ padding:9px 14px; font-size:0.85rem; }
 .btn-danger{ background:var(--danger); border-color:transparent; color:#fff; }
-.btn-ghost-danger{ background:color-mix(in srgb, var(--danger) 14%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--danger) 55%, transparent); color:color-mix(in srgb, var(--danger) 55%, white); }
+.btn-ghost-danger{ background:color-mix(in srgb, var(--danger-role) 12%, var(--surface-1)); border:1.5px solid color-mix(in srgb, var(--danger-role) 55%, transparent); color:var(--danger-role); }
 .btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
-.btn-standings{ background:var(--gold); border-color:transparent; color:#231a09; font-weight:800; box-shadow:0 4px 14px rgba(203,163,92,0.35); }
-body.theme-dark .btn-standings{ background:color-mix(in srgb, var(--gold) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--gold) 60%, transparent); color:var(--gold); box-shadow:none; }
-body.theme-light .btn-standings{ background:color-mix(in srgb, var(--gold) 12%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--gold) 55%, transparent); color:var(--gold); box-shadow:0 1px 3px rgba(0,0,0,0.08); }
-.menu-btn{ padding:18px; font-size:1.05rem; justify-content:flex-start; text-align:left; margin-bottom:10px; position:relative; overflow:hidden; }
+.btn-standings{ background:color-mix(in srgb, var(--gold-role) 14%, var(--surface-1));
+border:1.5px solid color-mix(in srgb, var(--gold-role) 55%, transparent);
+color:var(--gold-role); font-weight:800; box-shadow:none; }
+.menu-btn{ padding:var(--s-4); font-size:var(--t-lg); justify-content:flex-start; text-align:left; margin-bottom:var(--s-3); position:relative; overflow:hidden; }
 /* L'icona dentro una pastiglia: quando al sole la tinta del fondo sbiadisce,
    il quadretto pieno resta l'unico appiglio di colore. */
 .menu-btn .menu-icon{ font-size:1.4rem; position:relative; z-index:1;
 display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
-width:42px; height:42px; border-radius:13px;
+width:var(--hit); height:var(--hit); border-radius:var(--r-md);
 background:color-mix(in srgb, currentColor 16%, transparent); }
 .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; position:relative; z-index:1; }
 .menu-btn .menu-sub{ font-size:0.7rem; font-weight:400; opacity:0.85; margin-top:2px; }
-.menu-btn::after{ content:""; position:absolute; inset:0; background:linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 45%); pointer-events:none; }
-.menu-btn.training{ background:#2C5230; color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(44,82,48,0.35); }
-.menu-btn.gara{ background:#C1571F; color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(193,87,31,0.35); }
-.menu-btn.prepara{ background:#B98A3A; color:#231a09; border-color:transparent; box-shadow:0 4px 14px rgba(185,138,58,0.35); }
-body.theme-dark .menu-btn.training{ background:color-mix(in srgb, #2C5230 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #2C5230 60%, transparent); color:#60A966; box-shadow:none; }
-body.theme-dark .menu-btn.gara{ background:color-mix(in srgb, #C1571F 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #C1571F 60%, transparent); color:#E8722F; box-shadow:none; }
-body.theme-dark .menu-btn.prepara{ background:color-mix(in srgb, #B98A3A 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, #B98A3A 60%, transparent); color:#CBA35C; box-shadow:none; }
-body.theme-dark .menu-btn .menu-txt{ color:#fff; }
-body.theme-dark .menu-btn .menu-sub{ color:var(--muted); opacity:1; }
-/* Le tinte erano al 12%: #E6EAE6, #F8EBE4, #F7F1E7. Al sole tre rettangoli
-   bianchi identici. Portate al ~20% e affiancate da una pastiglia piena. */
-body.theme-light .menu-btn.training{ background:#DDEBDA; border:1.5px solid rgba(36,96,44,0.42); color:#24602C; box-shadow:none; }
-body.theme-light .menu-btn.gara{ background:#FBE2D0; border:1.5px solid rgba(190,83,15,0.45); color:#BE530F; box-shadow:none; }
-body.theme-light .menu-btn.prepara{ background:#F6E8C6; border:1.5px solid rgba(176,126,18,0.50); color:#8A6210; box-shadow:none; }
-body.theme-light .menu-btn.training .menu-icon{ background:#24602C; color:#FFFFFF; }
-body.theme-light .menu-btn.gara .menu-icon{ background:#BE530F; color:#FFFFFF; }
-body.theme-light .menu-btn.prepara .menu-icon{ background:#B07E12; color:#FFFFFF; }
-body.theme-light .menu-btn .menu-txt{ color:var(--cream); }
-body.theme-light .menu-btn .menu-sub{ color:#4B5248; opacity:1; font-weight:500; }
-/* il velo bianco in diagonale, sul chiaro, sbiadisce e basta */
-body.theme-light .menu-btn::after{ display:none; }
+/* I tre comandi: fondo tenue, bordo della stessa famiglia, pastiglia piena.
+   Un solo disegno per tutti i temi — cambiano solo le tre coppie --tone-*. */
+.menu-btn.training{ background:var(--tone-train-bg); color:var(--tone-train-fg);
+border:1.5px solid color-mix(in srgb, var(--tone-train-solid) var(--tone-border), transparent); box-shadow:none; }
+.menu-btn.gara{ background:var(--tone-race-bg); color:var(--tone-race-fg);
+border:1.5px solid color-mix(in srgb, var(--tone-race-solid) var(--tone-border), transparent); box-shadow:none; }
+.menu-btn.prepara{ background:var(--tone-prep-bg); color:var(--tone-prep-fg);
+border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border), transparent); box-shadow:none; }
+.menu-btn.training .menu-icon{ background:var(--tone-train-solid); color:#FFFFFF; }
+.menu-btn.gara .menu-icon{ background:var(--tone-race-solid); color:#FFFFFF; }
+.menu-btn.prepara .menu-icon{ background:var(--tone-prep-solid); color:#FFFFFF; }
+.menu-btn .menu-txt{ color:var(--text-1); }
+.menu-btn .menu-sub{ color:var(--text-3); opacity:1; font-weight:500; }
 .row{ display:flex; gap:10px; }
 .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
-.chip{ flex:1 1 0; min-width:0; text-align:center; padding:12px 4px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel-2); color:var(--cream); font-weight:700; cursor:pointer; white-space:normal; overflow-wrap:break-word; line-height:1.2; transition:filter .12s ease, border-color .12s ease; }
-.chip.active{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent-soft); }
+.chip{ flex:1 1 0; min-width:0; min-height:var(--hit); text-align:center; padding:12px var(--s-1); border-radius:var(--r-sm); border:1.5px solid var(--border-strong); background:var(--surface-2); color:var(--text-1); font-family:inherit; font-weight:700; cursor:pointer; white-space:normal; overflow-wrap:break-word; line-height:1.2; transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
+.chip.active{ background:var(--brand); color:var(--brand-ink); border-color:var(--brand); }
 @media (hover:hover) and (pointer:fine){
-.btn:not(:disabled):hover{ filter:brightness(1.08); }
-.btn-ghost:hover{ border-color:var(--accent-soft); color:var(--cream); }
-.menu-btn:hover{ filter:brightness(1.06); transform:translateY(-1px); }
-.chip:not(.active):hover{ border-color:var(--accent-soft); filter:brightness(1.1); }
-.quick-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
-.btn-ghost-danger:hover{ background:color-mix(in srgb, var(--danger) 24%, var(--bg-panel)); }
-.btn-standings:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+.menu-btn:hover{ transform:translateY(-1px); box-shadow:var(--elev-2);
+border-color:color-mix(in srgb, currentColor 62%, transparent); }
+.quick-btn:hover{ transform:translateY(-1px); box-shadow:var(--elev-2); }
+.btn-ghost-danger:hover{ background:color-mix(in srgb, var(--danger-role) 20%, var(--surface-1)); }
+.btn-standings:hover{ border-color:var(--gold-role); }
+.bar-menu-item:hover, .bar-btn:hover{ border-color:var(--brand-soft); background:var(--surface-2); }
 }
-.btn:focus-visible, .chip:focus-visible, .lang-pick-btn:focus-visible, .grid-pick-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
 .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
 .lang-chip{ min-width:60px; }
 .lang-pick-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:16px 20px; border-radius:10px; border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; transition:transform .12s ease, border-color .12s ease; }
@@ -366,32 +472,40 @@ body.theme-light .menu-btn::after{ display:none; }
 .grid-pick-btn:active{ transform:scale(0.95); }
 .grid-pick-btn:hover, .grid-pick-btn:focus{ border-color:var(--accent-soft); }
 .grid-pick-btn .flag{ font-size:1.7rem; line-height:1; }
-input[type=text], input[type=number]{ width:100%; padding:13px 14px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:1rem; }
-input[type=text]:focus, input[type=number]:focus{ outline:2px solid var(--accent-soft); }
+input[type=text], input[type=number], input[type=email], input[type=tel],
+input[type=password], input[type=search], textarea, select{
+width:100%; padding:13px 14px; min-height:var(--hit); border-radius:var(--r-sm);
+border:1.5px solid var(--border-strong); background:var(--surface-1); color:var(--text-1);
+font-family:inherit; font-size:var(--t-md);
+transition:border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
+input:focus-visible, textarea:focus-visible, select:focus-visible{
+outline:none; border-color:var(--brand-soft); box-shadow:var(--focus-ring); }
 .archer-list{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
 .archer-row{ display:flex; align-items:center; justify-content:space-between; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
 .archer-row .name{ font-weight:600; }
 .remove-x{ background:none;border:none;color:var(--danger);font-size:1.2rem;cursor:pointer;line-height:1; padding:4px 6px; }
 .progress-wrap{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
 .progress-track{ height:8px; background:var(--bg-panel-2); border-radius:8px; overflow:hidden; margin-bottom:14px; position:relative; }
-.progress-fill{ height:100%; background:linear-gradient(90deg,var(--accent-soft),var(--gold)); border-radius:8px; transition:width .4s ease; position:relative; overflow:hidden; }
-.progress-fill::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent); width:40%; animation:shimmer 2.2s ease-in-out infinite; }
-@keyframes shimmer{ 0%{ transform:translateX(-120%); } 100%{ transform:translateX(280%); } }
+/* Il riflesso che scorreva in eterno e' stato tolto: diceva "sto caricando"
+   a una barra che non carica niente — misura quanti bersagli hai fatto.
+   Il movimento resta dov'e' l'informazione: la larghezza che cresce. */
+.progress-fill{ height:100%; background:linear-gradient(90deg,var(--brand-soft),var(--gold-role));
+border-radius:var(--r-sm); transition:width var(--dur-3) var(--ease); }
 .partial-card{ padding:12px 14px; margin-bottom:14px; }
 .partial-title{ font-size:0.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:8px; }
 .partial-row{ display:flex; justify-content:space-between; align-items:center; padding:5px 0; font-size:0.92rem; }
 .partial-row + .partial-row{ border-top:1px solid var(--line); }
 .partial-row .pname{ font-weight:600; }
 .partial-row.leader .pname{ color:var(--accent-soft); }
-.partial-row .ptot{ font-weight:800; color:var(--gold); font-family:"Outfit",sans-serif; }
+.partial-row .ptot{ font-weight:800; color:var(--gold-role); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
 .target-stage{ text-align:center; }
 .archer-turn{ font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
-.archer-name-big{ font-size:1.4rem; margin-bottom:6px; font-family:'Fraunces',Georgia,serif; font-weight:900; letter-spacing:0.01em; }
+.archer-name-big{ font-size:var(--t-xl); margin-bottom:var(--s-2); font-family:var(--font-display); font-weight:700; letter-spacing:0.01em; text-wrap:balance; }
 .arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:999px; margin-bottom:12px; }
 .mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:999px; margin-bottom:7px; text-transform:uppercase; letter-spacing:.05em; }
 .piazzola-hero{ margin-bottom:6px; }
 .piazzola-hero-lbl{ font-size:0.7rem; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin-bottom:0px; }
-.piazzola-num{ font-size:3.1rem; font-weight:700; color:var(--bark); font-family:"Fraunces",Georgia,serif; line-height:1; position:relative; display:inline-block; }
+.piazzola-num{ font-size:var(--t-2xl); font-weight:800; color:var(--clay); font-family:var(--font-num); font-variant-numeric:tabular-nums; line-height:1; position:relative; display:inline-block; }
 .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
 background:radial-gradient(circle, rgba(232,114,47,0.16), transparent 70%); z-index:-1; }
 .board{ position:relative; border-radius:16px; padding:12px;
@@ -403,54 +517,55 @@ background:var(--bg-panel-2); border:1px solid rgba(203,163,92,0.55); box-shadow
 .zoom-toolbar{ display:flex; justify-content:center; gap:8px; margin-top:10px; }
 .legend-row{ font-size:0.68rem; color:var(--muted); margin-top:8px; line-height:1.5; }
 .impact-readout{ margin-top:14px; background:var(--bg-panel-2); border:1px solid var(--gold); border-radius:12px; padding:14px; text-align:center; }
-.impact-readout .pts{ font-size:1.9rem; font-weight:900; color:var(--gold); font-family:'Fraunces',Georgia,serif; }
+.impact-readout .pts{ font-size:var(--t-xl); font-weight:800; color:var(--gold-role); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
 .impact-readout .lbl{ font-size:0.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:4px; }
 .impact-actions{ display:flex; gap:10px; margin-top:12px; }
 .impact-actions .btn{ flex:1; }
-.quick-grid{ display:grid; gap:7px; margin:18px 0 10px; }
-.quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:92px; padding:8px 2px; gap:3px; position:relative; overflow:visible; border-radius:16px; line-height:1.15; box-shadow:0 3px 10px rgba(0,0,0,0.22); transition:transform .12s ease, filter .12s ease, box-shadow .12s ease, background .12s ease; }
-.quick-btn:active{ transform:scale(0.94) translateY(2px) !important; filter:brightness(1.15); }
+.quick-grid{ display:grid; gap:var(--s-2); margin:var(--s-4) 0 var(--s-3); }
+.quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:92px; padding:var(--s-2) var(--s-1); gap:3px; position:relative; overflow:visible; border-radius:var(--r-lg); line-height:1.15; font-family:inherit; cursor:pointer; transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease); }
+.quick-btn:active{ transform:scale(0.94) translateY(2px); }
 .quick-btn .quick-lbl{ font-size:clamp(0.5rem,2.4vw,0.64rem); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:normal; line-height:1.15; text-wrap:pretty; max-width:100%; }
-.quick-btn .quick-pts{ font-size:1.55rem; font-weight:900; font-family:"Fraunces",Georgia,serif; color:#fff; }
-body.theme-light .quick-btn .quick-pts{ color:inherit; }
-.quick-btn.superspot{ background:color-mix(in srgb, var(--qss) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qss) 60%, transparent); color:var(--qss); }
-.quick-btn.spot{ background:color-mix(in srgb, var(--qspot) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qspot) 60%, transparent); color:var(--qspot); }
-.quick-btn.sagoma{ background:color-mix(in srgb, var(--qsag) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qsag) 60%, transparent); color:var(--qsag); }
-.quick-btn.zero{ background:color-mix(in srgb, var(--qzero) 40%, var(--bg-panel)); border:1px solid var(--line); color:var(--muted); }
-.quick-btn.perfect{ background:color-mix(in srgb, var(--qperfect) 25%, var(--bg-panel)); border:1px solid color-mix(in srgb, var(--qperfect) 60%, transparent); color:var(--qperfect); }
-/* TEMA CHIARO — i cinque tasti sono l'unica cosa che conta davvero al campo:
-   si premono col sole in faccia, di fretca, spesso con la mano sudata.
-   Prima erano fondi tinti col numero colorato sopra: una fila di rettangoli
-   quasi bianchi. Ora sono pieni, con la cifra bianca. Il colore lo si legge
-   da lontano, il numero da vicino.
-   I fondi NON usano le variabili --q*: quelle disegnano anche le zone del
-   bersaglio, che devono restare quelle che sono.
-   Contrasto del bianco su ciascun fondo: 4,9 / 5,2 / 5,9 / 7,2 / 5,6. */
-body.theme-light .quick-btn{ border:1.5px solid rgba(18,22,15,0.10); box-shadow:none; }
-body.theme-light .quick-btn.superspot{ background:#BC4F0B; color:#FFFFFF; }
-body.theme-light .quick-btn.spot{ background:#2E7D32; color:#FFFFFF; }
-body.theme-light .quick-btn.sagoma{ background:#2E5FA8; color:#FFFFFF; }
-body.theme-light .quick-btn.perfect{ background:#A81319; color:#FFFFFF; }
-body.theme-light .quick-btn.zero{ background:#5F645C; color:#FFFFFF; }
+.quick-btn .quick-pts{ font-size:1.55rem; font-weight:800; font-family:var(--font-num); font-variant-numeric:tabular-nums; color:var(--score-ink); }
+/* Fondo pieno, cifra bianca, in TUTTI i temi. Il ragionamento scritto per il
+   chiaro ("il colore lo si legge da lontano, il numero da vicino") vale
+   identico al buio: non c'e' motivo di avere due disegni. */
+.quick-btn{ color:var(--score-ink); border:1.5px solid rgba(0,0,0,0.12); box-shadow:none; }
+.quick-btn.superspot{ background:var(--score-ss); }
+.quick-btn.spot{ background:var(--score-spot); }
+.quick-btn.sagoma{ background:var(--score-sag); }
+.quick-btn.perfect{ background:var(--score-perfect); }
+.quick-btn.zero{ background:var(--score-zero); }
 .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
 .stats-row{ display:flex; gap:8px; margin-bottom:14px; }
 .stat-box{ flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 6px; }
-.stat-box .stat-num{ font-family:"Fraunces",Georgia,serif; font-weight:900; font-size:1.5rem; color:var(--accent-soft); }
+.stat-box .stat-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.5rem; color:var(--brand-soft); }
 .stat-box .stat-lbl{ font-size:0.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:2px; }
-@keyframes timerPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
-.timer-box{ margin:8px 0 20px; }
-.timer-idle{ background:linear-gradient(135deg, rgba(26,38,32,0.9), rgba(22,32,28,0.9)); border:1.5px solid var(--line); border-radius:24px; padding:20px; text-align:center; }
+.timer-box{ margin:var(--s-2) 0 var(--s-5); }
+/* Da fermo ha un colore suo (ambra sul chiaro): non e' nessuno dei tre codici
+   dell'app, quindi al sole non lo si scambia per "gara" o "prepara". */
+.timer-idle{ background:var(--timer-idle-bg); border:1.5px solid var(--timer-idle-bd);
+border-radius:var(--r-xl); padding:var(--s-5); text-align:center; }
 .timer-idle-row{ display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:14px; }
 .timer-idle .btn-sm{ padding:4px 9px; min-width:0; }
-.timer-dur{ font-family:"Outfit",sans-serif; font-variant-numeric:tabular-nums; font-weight:700; font-size:1.4rem; color:var(--cream); min-width:80px; text-align:center; }
+.timer-dur{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:700; font-size:var(--t-xl); color:var(--timer-idle-fg); min-width:80px; text-align:center; }
 .timer-start-btn{ width:100%; }
-.timer-running{ background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), color-mix(in srgb, var(--gold) 8%, transparent)); border:1.5px solid var(--accent); border-radius:24px; padding:28px 20px; text-align:center; box-shadow:0 0 34px color-mix(in srgb, var(--accent) 28%, transparent), inset 0 0 26px color-mix(in srgb, var(--accent) 10%, transparent); transition:border-color .3s, box-shadow .3s; }
-.timer-running.timer-warn{ border-color:var(--gold); box-shadow:0 0 34px color-mix(in srgb, var(--gold) 28%, transparent), inset 0 0 26px color-mix(in srgb, var(--gold) 10%, transparent); }
-.timer-running.timer-danger{ border-color:var(--danger); box-shadow:0 0 34px color-mix(in srgb, var(--danger) 28%, transparent), inset 0 0 26px color-mix(in srgb, var(--danger) 10%, transparent); }
-.timer-running-label{ font-size:0.7rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:8px; }
-.timer-num{ font-family:"Outfit",sans-serif; font-weight:800; font-size:4rem; font-variant-numeric:tabular-nums; color:var(--accent-soft); line-height:1; display:block; margin-bottom:16px; animation:timerPulse 1s ease-in-out infinite; }
-.timer-num.timer-warn{ color:var(--gold); }
-.timer-num.timer-danger{ color:var(--danger); }
+/* In corsa: tinta piena, non un alone. L'alone era una box-shadow di 34px che
+   sul chiaro non esisteva e sullo scuro sfumava il bordo. */
+.timer-running{ background:var(--timer-run-bg); border:1.5px solid var(--timer-run-bd);
+border-radius:var(--r-xl); padding:var(--s-6) var(--s-5); text-align:center; box-shadow:none;
+transition:background var(--dur-3) var(--ease), border-color var(--dur-3) var(--ease); }
+.timer-running.timer-warn{ background:var(--timer-warn-bg); border-color:var(--timer-warn-bd); }
+.timer-running.timer-danger{ background:var(--timer-dgr-bg); border-color:var(--timer-dgr-bd); }
+.timer-running-label{ font-size:var(--t-xs); text-transform:uppercase; letter-spacing:.1em; color:var(--text-2); margin-bottom:var(--s-2); }
+/* Le cifre NON pulsano piu'. Un ciclo infinito non racconta nessun cambio di
+   stato: consuma batteria e ruba attenzione a chi e' sulla linea di tiro.
+   Il passaggio di soglia (verde -> ambra -> rosso) e' il cambio, e quello si
+   vede: e' una transizione, non un battito. */
+.timer-num{ font-family:var(--font-num); font-weight:800; font-size:var(--t-3xl);
+font-variant-numeric:tabular-nums; color:var(--timer-run-fg); line-height:1; display:block;
+margin-bottom:var(--s-4); transition:color var(--dur-3) var(--ease); }
+.timer-num.timer-warn{ color:var(--timer-warn-fg); }
+.timer-num.timer-danger{ color:var(--timer-dgr-fg); }
 .timer-pause-btn{ width:100%; }
 .shots-strip{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:14px 0 4px; }
 .shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
@@ -460,7 +575,7 @@ table.score-table th{ color:var(--muted); font-weight:600; font-size:0.7rem; tex
 table.score-table td.name-col, table.score-table th.name-col{ text-align:left; }
 .piazz-flow{ display:flex; flex-direction:column; gap:10px; }
 .piazz-card{ display:flex; align-items:center; gap:14px; background:var(--bg-panel); border:1px solid var(--line); border-radius:16px; padding:12px 16px; box-shadow:0 2px 8px rgba(0,0,0,0.18); }
-.piazz-card-num{ font-family:'Fraunces',Georgia,serif; font-weight:800; font-size:1.25rem; color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
+.piazz-card-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.25rem; color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
 .piazz-card-right{ display:flex; flex-wrap:wrap; gap:14px; flex:1; }
 .ring-item{ display:flex; flex-direction:column; align-items:center; gap:3px; }
 .ring-badge{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.92rem; color:#3a2a12;
@@ -469,7 +584,7 @@ border:2px solid var(--bark); flex:0 0 auto; }
 .ring-badge.empty{ opacity:0.35; background:#EDEAE0; border-color:#cfc9b8; color:var(--muted); }
 .ring-name{ font-size:0.62rem; color:var(--muted); max-width:56px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .rank-row.first td{ color:var(--accent-soft); font-weight:700; }
-.total-col{ font-weight:800; color:var(--gold); font-family:"Outfit",sans-serif; }
+.total-col{ font-weight:800; color:var(--gold-role); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
 .footer-note{ text-align:center; color:var(--muted); font-size:0.72rem; margin-top:18px; line-height:1.5; }
 .rules-panel{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-top:12px; font-size:0.78rem; line-height:1.6; }
 .rules-panel .rp-title{ font-weight:700; color:var(--cream); margin-bottom:4px; }
@@ -479,11 +594,11 @@ border:2px solid var(--bark); flex:0 0 auto; }
 .empty-hint{ color:var(--muted); font-size:0.85rem; text-align:center; padding:10px 0; }
 .empty-state-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-left:3px solid var(--accent-soft); border-radius:14px; padding:20px 18px; }
 .empty-state-icon{ width:40px; height:40px; border-radius:50%; background:rgba(96,169,102,0.20); color:var(--accent-soft); display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
-.empty-state-title{ font-family:'Fraunces',Georgia,serif; font-weight:900; font-size:1.1rem; margin-bottom:8px; }
+.empty-state-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-lg); margin-bottom:var(--s-2); text-wrap:balance; }
 .empty-state-body{ font-size:0.85rem; color:var(--muted); line-height:1.55; margin-bottom:16px; }
 .editorial-block{ text-align:center; padding:22px 10px; }
 .editorial-icon{ width:44px; height:44px; border-radius:50%; background:var(--qsag); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
-.editorial-title{ font-family:'Fraunces',Georgia,serif; font-weight:900; font-size:1.05rem; line-height:1.45; margin-bottom:10px; }
+.editorial-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-lg); line-height:1.45; margin-bottom:var(--s-3); text-wrap:balance; }
 .editorial-body{ font-size:0.84rem; color:var(--muted); line-height:1.6; max-width:360px; margin:0 auto; }
 .timeline-row{ display:flex; align-items:center; gap:12px; padding:10px 12px; background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:10px; margin-bottom:8px; }
 .timeline-icon{ width:30px; height:30px; border-radius:50%; background:rgba(96,169,102,0.20); color:var(--accent-soft); display:flex; align-items:center; justify-content:center; flex:none; }
@@ -492,13 +607,13 @@ border:2px solid var(--bark); flex:0 0 auto; }
 .timeline-result{ font-size:0.85rem; font-weight:800; color:var(--gold); flex:none; }
 .section-block-header{ font-size:0.68rem; text-transform:uppercase; letter-spacing:.08em; font-weight:800; padding:4px 10px; border-radius:999px; display:inline-block; margin-bottom:10px; }
 .splash-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:82dvh; text-align:center; gap:6px; }
-.splash-logo{ width:160px; height:160px; margin-bottom:10px; filter:drop-shadow(0 8px 20px rgba(29,154,140,0.35)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
+.splash-logo{ width:160px; height:160px; margin-bottom:var(--s-3); filter:drop-shadow(0 8px 20px color-mix(in srgb, var(--brand) 35%, transparent)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
 .splash-title{ font-size:2.1rem; color:var(--accent-soft); margin:0; animation:splashUp .6s ease .15s both; }
 .splash-tag{ color:var(--muted); font-size:0.85rem; margin-bottom:26px; letter-spacing:.03em; animation:splashUp .6s ease .3s both; }
 .splash-wrap .btn{ min-width:200px; padding:16px 24px; font-size:1.05rem; animation:splashUp .6s ease .45s both; }
 @keyframes splashLogo{ 0%{ opacity:0; transform:scale(0.6) rotate(-8deg); } 100%{ opacity:1; transform:scale(1) rotate(0deg); } }
 @keyframes splashUp{ 0%{ opacity:0; transform:translateY(14px); } 100%{ opacity:1; transform:translateY(0); } }
-.big-target-num{ font-size:4.4rem; font-weight:600; color:var(--accent-soft); font-family:"Fraunces",serif; margin:4px 0 10px; line-height:1; position:relative; display:inline-block; }
+.big-target-num{ font-size:var(--t-3xl); font-weight:800; color:var(--brand-soft); font-family:var(--font-num); font-variant-numeric:tabular-nums; margin:4px 0 10px; line-height:1; position:relative; display:inline-block; }
 .big-target-num::before{ content:""; position:absolute; left:50%; top:50%; width:180px; height:180px; transform:translate(-50%,-50%); border-radius:50%;
 background:radial-gradient(circle, rgba(96,169,102,0.20), transparent 70%); z-index:-1; }
 .leaf-burst{ position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:5; }
@@ -539,17 +654,49 @@ sola, piu' larga. */
 #app{ max-width:960px; }
 }
 
-/* Col mouse serve un ritorno visivo: sul telefono basta il :active del dito. */
-@media (hover:hover) and (pointer:fine) and (min-width:760px){
-.btn:not(:disabled):hover{ filter:none; box-shadow:0 3px 12px rgba(30,40,34,0.14); }
-.card:hover{ box-shadow:0 4px 18px rgba(30,40,34,0.10); }
+/* ══════════════ L'INSEGNA DA COMPUTER (dai 760px in su) ══════════════
+   Qui NON si ridichiara piu' un solo colore. Prima questo blocco riscriveva
+   l'intera tavolozza e imponeva il tema chiaro anche a chi aveva scelto lo
+   scuro: la scelta dell'utente veniva semplicemente ignorata appena la
+   finestra superava i 760px. Adesso il tema e' uno solo, quello scelto, e
+   qui dentro resta solo la FORMA: dove stanno le cose, quanto sono grandi. */
+@media (min-width:760px){
+/* BARRA UNICA (13/08): la barra delle 5 sezioni non e' piu' un secondo
+blocco scuro sotto la testata, ma vive DENTRO la testata (vedi
+appendTabBarTo). Due mattoni neri sovrapposti prendevano un terzo dello
+schermo prima ancora di iniziare a leggere. Ora e' una sola insegna, ed
+essendo l'unica va tenuta a vista: sticky. */
+header.top{
+position:sticky; top:12px; z-index:70;
+height:auto; min-height:60px; padding:8px 12px 8px 8px; gap:16px;
+flex-wrap:wrap; row-gap:8px;
+background:var(--navbar-bg); border:1px solid var(--navbar-line); border-radius:16px;
+box-shadow:0 3px 14px var(--navbar-shadow); backdrop-filter:none; -webkit-backdrop-filter:none;
+margin-top:0; margin-bottom:16px; margin-left:0; margin-right:0;
 }
+/* Anche le sezioni sono bersagli: da tablet si toccano col dito. */
+.tabbar-wide > button{ min-height:var(--hit); }
+/* il titolo non deve piu' mangiarsi la riga: lo spazio va alle sezioni */
+header.top .headtxt{ flex:0 0 auto; }
+.tabbar-wide{ flex:1 1 420px; flex-wrap:wrap; justify-content:center; gap:3px; }
+/* Colonna stretta (moduli, chat, percorso): le sezioni scendono su una riga
+loro, ma restano dentro la stessa insegna. I comandi di destra restano su
+in alto grazie a order. */
+#app.narrow header.top .head-actions{ order:1; }
+#app.narrow header.top .tabbar-wide{ order:2; flex-basis:100%; }
+}
+/* ══════════════ FINE INSEGNA DA COMPUTER ══════════════ */
+
+/* Col mouse serve un ritorno visivo; sul telefono basta il :active del dito.
+   Erano tre blocchi che si contraddicevano a vicenda (uno metteva
+   filter:brightness, un altro filter:none, un terzo rialzava ogni scheda al
+   passaggio del mouse). Uno solo, e nessuno usa piu' "filter": schiarire
+   tutto indiscriminatamente sbiadisce anche il testo. */
 @media (hover:hover) and (pointer:fine){
-.btn:hover:not(:disabled){ filter:brightness(1.07); border-color:var(--accent-soft); }
-.chip:hover{ border-color:var(--accent-soft); }
-.card{ transition:box-shadow .15s ease; }
+.btn:not(:disabled):hover{ border-color:var(--brand-soft); box-shadow:var(--elev-2); }
+.chip:not(.active):hover{ border-color:var(--brand-soft); }
 }
-@media (prefers-reduced-motion:reduce){ *{ transition:none !important; } .leaf-particle{ animation:none !important; display:none; } .splash-logo,.splash-title,.splash-tag,.splash-wrap .btn{ animation:none !important; opacity:1 !important; transform:none !important; } .progress-fill::after{ animation:none !important; display:none; } }
+@media (prefers-reduced-motion:reduce){ *{ transition:none !important; } .leaf-particle{ animation:none !important; display:none; } .splash-logo,.splash-title,.splash-tag,.splash-wrap .btn{ animation:none !important; opacity:1 !important; transform:none !important; } }
 @media print{
 .no-print{ display:none !important; }
 body{ background:#fff !important; color:#111 !important; }
@@ -620,14 +767,14 @@ width:100%; padding:12px; border-radius:10px; border:1px solid var(--line); back
 body{
   background:
     linear-gradient(90deg,
-      rgba(255,255,255,0) calc(50% - 610px),
-      rgba(255,255,255,0.55) calc(50% - 545px),
-      rgba(255,255,255,0.55) calc(50% + 545px),
-      rgba(255,255,255,0) calc(50% + 610px)),
-    radial-gradient(ellipse 1100px 620px at 10% -10%, rgba(82,127,24,0.15), transparent 62%),
-    radial-gradient(ellipse 900px 560px at 105% 8%, rgba(154,111,28,0.11), transparent 58%),
-    radial-gradient(ellipse 1000px 700px at 50% 116%, rgba(200,85,26,0.10), transparent 62%),
-    linear-gradient(180deg,#F7F6F2 0%,#EDEBE3 100%);
+      transparent calc(50% - 610px),
+      color-mix(in srgb, var(--surface-1) 55%, transparent) calc(50% - 545px),
+      color-mix(in srgb, var(--surface-1) 55%, transparent) calc(50% + 545px),
+      transparent calc(50% + 610px)),
+    radial-gradient(ellipse 1100px 620px at 10% -10%, var(--wash-1), transparent 62%),
+    radial-gradient(ellipse 900px 560px at 105% 8%, var(--wash-2), transparent 58%),
+    radial-gradient(ellipse 1000px 700px at 50% 116%, var(--wash-3), transparent 62%),
+    var(--surface);
 }
 html{ scroll-behavior:smooth; }
 #app{ max-width:1060px; padding:20px 34px 76px; }
@@ -639,9 +786,7 @@ html{ scroll-behavior:smooth; }
    pieno — cosi' il presidio resta, ma non e' piu' la testata a gridare. */
 header.top{
   min-height:60px; padding:8px 12px 8px 8px; gap:16px; border-radius:16px;
-  background:linear-gradient(180deg,#FFFFFF 0%,#FBFBF7 100%);
-  border:1px solid var(--line);
-  box-shadow:0 1px 2px rgba(30,45,34,0.05), 0 18px 40px -32px rgba(30,45,34,0.45);
+  background:var(--navbar-bg); border:1px solid var(--navbar-line); box-shadow:var(--elev-2);
   margin-bottom:20px; position:sticky; top:12px; z-index:70; isolation:isolate;
 }
 header.top::after{ display:none; }
@@ -651,37 +796,31 @@ header.top .brand-title{ font-size:1.1rem; font-weight:700; letter-spacing:0.13e
    comando vero e proprio ("Cambia"). */
 header.top .home-btn{
   height:44px; border-radius:12px;
-  background:#F3F4EE; border:1.5px solid var(--line-strong); color:var(--ink-2);
-  transition:background .16s ease, border-color .16s ease, transform .16s ease;
+  background:var(--surface-2); border:1.5px solid var(--border-strong); color:var(--text-2);
+  transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
 }
 header.top .home-btn:hover{
-  background:#E6EFE5; border-color:var(--accent); color:var(--accent); transform:translateY(-1px);
+  background:color-mix(in srgb, var(--brand) 10%, var(--surface-1));
+  border-color:var(--brand); color:var(--brand); transform:translateY(-1px);
 }
 header.top .home-btn.small{
-  background:var(--bark); border-color:transparent; color:#fff; font-weight:700;
-  box-shadow:0 8px 18px -10px rgba(200,85,26,0.9);
+  background:var(--clay); border-color:transparent; color:#fff; font-weight:700;
+  box-shadow:0 8px 18px -10px color-mix(in srgb, var(--clay) 90%, transparent);
 }
-header.top .home-btn.small:hover{ background:#D96124; border-color:transparent; }
+header.top .home-btn.small:hover{ background:color-mix(in srgb, var(--clay) 88%, white); border-color:transparent; }
 
 /* ── 3. Le sezioni: non piu' una barra a se', ma il centro della testata ── */
-.tabbar-wide{
-  padding:0 !important; margin:0 !important; border:none !important;
-  background:none !important; box-shadow:none !important; border-radius:0 !important;
-}
-.tabbar-wide button{ transition:background .16s ease, border-color .16s ease; }
-.tabbar-wide button:not(.on):hover{ background:rgba(18,22,15,0.05) !important; }
-.tabbar-wide button > svg{ transition:transform .16s ease; }
+.tabbar-wide button > svg{ transition:transform var(--dur-2) var(--ease); }
 .tabbar-wide button:hover > svg{ transform:translateY(-1px); }
 
 /* ── 4. I riquadri ───────────────────────────────────────────────────── */
 .card{
   border-radius:18px; padding:22px 24px; margin-bottom:18px;
-  border:1px solid #E4E1D7;
-  border-top:2px solid color-mix(in srgb, var(--gold) 42%, transparent);
-  box-shadow:0 1px 2px rgba(30,45,34,0.05), 0 22px 44px -32px rgba(30,45,34,0.55);
-  transition:box-shadow .18s ease;
+  border:1px solid var(--border);
+  border-top:2px solid color-mix(in srgb, var(--gold-role) 42%, transparent);
+  box-shadow:var(--elev-3);
+  transition:box-shadow var(--dur-2) var(--ease);
 }
-.card:hover{ box-shadow:0 1px 2px rgba(30,45,34,0.06), 0 26px 52px -30px rgba(30,45,34,0.6); }
 h2.section-title{
   display:flex; align-items:center; gap:12px;
   font-size:0.72rem; letter-spacing:0.18em; margin-bottom:16px;
@@ -731,20 +870,14 @@ h2.section-title::after{
              background .16s ease, border-color .16s ease, color .16s ease;
 }
 .btn:not(:disabled):hover{ filter:none; }
-.btn-primary{
-  background:linear-gradient(180deg,#3C6D42 0%,#2C5230 100%);
-  box-shadow:0 1px 2px rgba(30,45,34,0.14), 0 14px 26px -18px rgba(44,82,48,0.95);
-}
 .btn-primary:hover{
-  background:linear-gradient(180deg,#457B4C 0%,#325C37 100%); transform:translateY(-1px);
-  box-shadow:0 2px 4px rgba(30,45,34,0.14), 0 18px 30px -18px rgba(44,82,48,0.95);
+  background:color-mix(in srgb, var(--brand) 88%, white); transform:translateY(-1px);
 }
 .menu-cols .card > .btn.btn-primary.btn-block{ max-width:380px; }
 .menu-cols > .btn.btn-ghost.btn-block{ max-width:340px; margin:0 auto; display:flex; }
-.btn-ghost{ background:var(--bg-panel-2); border:1.5px solid var(--line-strong); color:var(--cream); }
 .btn-ghost:hover{
-  background:#fff; border-color:var(--accent-soft); color:var(--accent);
-  transform:translateY(-1px); box-shadow:0 10px 22px -16px rgba(30,45,34,0.7);
+  background:var(--surface-1); border-color:var(--brand-soft); color:var(--brand);
+  transform:translateY(-1px);
 }
 
 /* ── 7. Campi di testo: erano tutti diversi tra loro ─────────────────────
@@ -753,28 +886,22 @@ h2.section-title::after{
 input[type=text], input[type=number], input[type=email], input[type=tel],
 input[type=password], input[type=search], input[type=date], input[type=time], textarea{
   width:100%; padding:13px 14px; border-radius:10px; border:1px solid var(--line);
-  background:#fff; color:var(--cream); font-size:1rem; font-family:inherit;
-  transition:border-color .15s ease, box-shadow .15s ease;
-}
-input[type=text]:hover, input[type=number]:hover, input[type=email]:hover, input[type=tel]:hover{ border-color:#CFCABC; }
-input[type=text]:focus, input[type=number]:focus, input[type=email]:focus, input[type=tel]:focus,
-input[type=password]:focus, textarea:focus{
-  outline:none; border-color:var(--accent-soft);
-  box-shadow:0 0 0 3px color-mix(in srgb, var(--accent-soft) 18%, transparent);
+  background:var(--surface-1); color:var(--text-1); font-size:var(--t-md); font-family:inherit;
+  transition:border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
 }
 
 /* ── 8. Respiro e dettagli ───────────────────────────────────────────── */
 .footer-note{ margin-top:28px; font-size:0.74rem; }
 .empty-hint{ font-size:0.88rem; padding:14px 0; }
 .archer-row, .timeline-row, .cp-class-row{ transition:border-color .15s ease, background .15s ease; }
-.archer-row:hover, .cp-class-row:hover{ border-color:#D8D3C4; }
+.archer-row:hover, .cp-class-row:hover{ border-color:var(--border-strong); }
 .stat-box{ padding:14px 8px; border-radius:14px; }
 .stat-box .stat-num{ font-size:1.7rem; }
-.piazz-card{ border-radius:18px; box-shadow:0 1px 2px rgba(30,45,34,0.05), 0 16px 32px -26px rgba(30,45,34,0.5); }
+.piazz-card{ border-radius:var(--r-xl); box-shadow:var(--elev-2); }
 table.score-table{ font-size:0.9rem; }
 table.score-table th{ letter-spacing:.09em; }
 table.score-table tbody tr{ transition:background .15s ease; }
-table.score-table tbody tr:hover{ background:rgba(49,91,53,0.045); }
+table.score-table tbody tr:hover{ background:color-mix(in srgb, var(--brand) 6%, transparent); }
 
 }
 /* ══════════════════ FINE RIFINITURA ══════════════════ */
@@ -825,195 +952,96 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
 .adm-act .btn{flex:1;min-width:96px;}
 @media(min-width:700px){.adm-dl{grid-template-columns:180px 1fr;}}
 @media(prefers-reduced-motion:reduce){.adm-chev{transition:none;}}
+/* ══════════════ RIFINITURA DEL TEMA CHIARO (15/08/2026) ══════════════
+   Tutto quello che segue vale solo con body.theme-light: lo scuro non lo
+   tocca nemmeno di striscio. Per tornare indietro basta cancellare fino a
+   "FINE RIFINITURA CHIARO". */
 
-/* ══════════════════════════════════════════════════════════════════════════
-   LIVELLO DI REVISIONE — 15/08/2026
-   Sta in fondo di proposito: vince per ordine di sorgente sulle regole
-   scritte sopra, senza doverle rincorrere una a una. Il prefisso body[class]
-   serve a battere le vecchie "body.theme-light .x" senza usare !important.
-   ══════════════════════════════════════════════════════════════════════════ */
+/* Pagina #ECEDE6 contro riquadro bianco: prima ballavano il 6% di luminanza,
+   al sole erano la stessa cosa. L'ombra e' quasi solo un velo sotto. */
+/* Era troppo tenue per fare da titolo di sezione. */
+h2.section-title{ color:var(--text-2); }
 
-/* ── TIPOGRAFIA ────────────────────────────────────────────────────────────
-   Playfair Display esce: faceva lo stesso mestiere di Fraunces, e undici
-   tagli scaricati da Google su una PWA che deve funzionare senza campo sono
-   undici occasioni di cadere su Georgia a percorso iniziato.
-   I NUMERI escono dal serif: un serif ad alto contrasto ha le aste sottili,
-   ed e' la prima cosa che sparisce col riverbero. Vanno in Outfit tabellare,
-   cosi' ogni cifra occupa la stessa larghezza e la classifica non balla
-   mentre i punteggi arrivano. */
-body[class] .quick-btn .quick-pts,
-body[class] .stat-box .stat-num,
-body[class] .impact-readout .pts,
-body[class] .total-col,
-body[class] .timer-num,
-body[class] .timer-dur,
-body[class] .partial-row .ptot,
-body[class] .piazzola-num,
-body[class] .big-target-num,
-body[class] table.score-table td{
-font-family:var(--font-num);
-font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1,"lnum" 1;
-letter-spacing:-0.01em;
+/* I "fantasma" (Il mio diario, Scrivi una segnalazione...) erano bianco su
+   bianco con un filo di bordo: si leggevano come disattivati. */
+
+/* Il marchio si tiene il verde pieno: e' l'unico blocco di colore forte
+   della testata, e da lontano basta quello per riconoscere l'app. */
+/* Il marchio si tiene il verde pieno in tutti i temi: e' l'unico blocco di
+   colore forte dell'insegna, e da lontano basta quello per riconoscere l'app.
+   Era scritto solo per il chiaro, quindi sullo scuro spariva. */
+header.top .brandblock{
+background:linear-gradient(140deg,var(--green-700) 0%,var(--green-900) 100%);
+padding:var(--s-1) 14px var(--s-1) var(--s-1); border-radius:var(--r-lg);
 }
-body[class] .piazzola-num, body[class] .big-target-num{ font-weight:800; }
-body[class] .archer-name-big,
-body[class] .empty-state-title,
-body[class] .editorial-title{ font-family:var(--font-display); font-weight:800; }
+header.top .brand-title{ color:#FFFFFF; }
 
-/* ── I CINQUE TASTI — l'elemento firma ────────────────────────────────────
-   Identici nei due temi. Bianco su ciascun fondo: 5,6 / 4,2 / 4,2 / 5,3 /
-   5,2 — sopra il 3:1 richiesto dal testo grande, che e' cio' che la cifra e'.
-   Lo zero resta grigio: e' l'assenza di punteggio, non deve fare festa. */
-body[class] .quick-grid{ gap:var(--s-2); margin:var(--s-4) 0 var(--s-3); }
-body[class] .quick-btn{
-height:96px; border-radius:var(--r-m);
-border:1.5px solid rgba(0,0,0,0.20); box-shadow:none; color:#FFFFFF;
-}
-body[class] .quick-btn .quick-pts{ color:#FFFFFF; font-weight:800; font-size:1.5rem; }
-body[class] .quick-btn .quick-lbl{ color:#FFFFFF; font-weight:800; font-size:0.62rem; }
-body[class] .quick-btn.perfect{   background:var(--k-perfect); }
-body[class] .quick-btn.superspot{ background:var(--k-superspot); }
-body[class] .quick-btn.spot{      background:var(--k-spot); }
-body[class] .quick-btn.sagoma{    background:var(--k-sagoma); }
-body[class] .quick-btn.zero{      background:var(--k-zero); }
-/* premuto: SCURISCE. brightness in su, al sole, spinge il colore verso il
-   bianco della pagina, cioe' verso la sparizione. */
-body[class] .quick-btn:active{ transform:scale(0.96) translateY(1px) !important; filter:brightness(0.86); }
-
-/* ── LE TRE SEZIONI — una regola sola per entrambi i temi ─────────────────
-   Prima erano sei blocchi, tre per tema. I token contengono la differenza. */
-body[class] .menu-btn{ box-shadow:none; border:var(--stroke) solid transparent; border-radius:var(--r-m); }
-body[class] .menu-btn.training{ background:var(--fn-training-soft); border-color:var(--fn-training-fill); color:var(--fn-training-text); }
-body[class] .menu-btn.gara{     background:var(--fn-gara-soft);     border-color:var(--fn-gara-fill);     color:var(--fn-gara-text); }
-body[class] .menu-btn.prepara{  background:var(--fn-prepara-soft);  border-color:var(--fn-prepara-fill);  color:var(--fn-prepara-text); }
-body[class] .menu-btn.training .menu-icon{ background:var(--fn-training-fill); color:#FFFFFF; }
-body[class] .menu-btn.gara .menu-icon{     background:var(--fn-gara-fill);     color:#FFFFFF; }
-body[class] .menu-btn.prepara .menu-icon{  background:var(--fn-prepara-fill);  color:#FFFFFF; }
-body[class] .menu-btn .menu-txt{ color:var(--text-1); }
-body[class] .menu-btn .menu-sub{ color:var(--text-3); opacity:1; font-weight:500; }
-body[class] .menu-btn::after{ display:none; }   /* via il velo bianco in diagonale */
-
-/* ── ELEVAZIONE UNIFICATA ─────────────────────────────────────────────────
-   IL FILETTO ORO stava in cima a OGNI scheda. L'oro significa "prepara
-   gara": messo ovunque smette di significare, ed e' rumore che compete col
-   segnale. Resta solo dove vuol dire qualcosa. */
-body[class] .card{
-background:var(--surface-1); border:var(--stroke) solid var(--border);
-border-top:var(--stroke) solid var(--border);
-border-radius:var(--r-l); box-shadow:var(--elev-2);
-}
-body[class] .card.is-prepara{ border-top:2px solid var(--fn-prepara-fill); }
-body[class] .btn{ box-shadow:var(--elev-1); border:var(--stroke) solid var(--border); }
-body[class] .btn-primary{ background:var(--brand-fill); color:#FFFFFF; border-color:transparent; }
-body[class] .btn-ghost{ background:var(--surface-2); border:var(--stroke) solid var(--border-strong); color:var(--text-1); }
-body[class] .btn-ghost .menu-sub{ color:var(--text-3); }
-body[class] .btn-danger{ background:var(--danger-fill); color:#FFFFFF; border-color:transparent; }
-body[class] .btn-ghost-danger{ background:transparent; border:var(--stroke) solid var(--danger-fill); color:var(--danger-text); }
-body[class] .btn-standings{ background:var(--fn-prepara-fill); color:#FFFFFF; border-color:transparent; box-shadow:var(--elev-1); }
-body[class] .bar-menu{ box-shadow:var(--elev-menu); border:var(--stroke) solid var(--border-strong); }
-body[class] .board{ box-shadow:var(--elev-1); border:var(--stroke) solid var(--border-strong); }
-body[class] .chip{ border:var(--stroke) solid var(--border-strong); }
-body[class] .chip.active{ background:var(--brand-fill); color:#FFFFFF; border-color:var(--brand-fill); }
-body[class] input[type=text], body[class] input[type=number], body[class] input[type=email],
-body[class] input[type=tel], body[class] textarea, body[class] select{
-border:var(--stroke) solid var(--border-strong); background:var(--surface-1); color:var(--text-1);
-}
-body[class] .rules-panel, body[class] .archer-row, body[class] .cp-class-row,
-body[class] .adm-row, body[class] .cp-percorso-card, body[class] .stat-box,
-body[class] .shot-pill, body[class] .piazz-card, body[class] .arrow-badge{
-border-color:var(--border-strong);
+/* ── LE CINQUE SEZIONI ────────────────────────────────────────────────────
+   Tutto in CSS, niente stile in linea, zero !important. La voce attiva ha
+   una pastiglia PIENA: al sole il solo cambio di colore del testo non si
+   vede. L'inchiostro della pastiglia e' un token (--navbar-pill-ink), quindi
+   il caso "verde su verde" — la sezione aperta che era l'unica illeggibile —
+   non e' piu' nemmeno esprimibile. */
+.tabbar{ display:flex; z-index:60; }
+.tabbar-bottom{ position:fixed; left:0; right:0; bottom:0; max-width:520px; margin:0 auto;
+border-top:2px solid var(--navbar-on); background:var(--navbar-bg);
+box-shadow:0 -10px 26px var(--navbar-shadow); padding-bottom:env(safe-area-inset-bottom); }
+.tabbar button{ background:none; border:1px solid transparent; cursor:pointer;
+font-family:inherit; color:var(--navbar-fg);
+transition:color var(--dur-2) var(--ease), background var(--dur-2) var(--ease); }
+.tabbar .tab-lbl{ line-height:1.1; }
+/* in fondo, sul telefono: icona sopra, parola sotto */
+.tabn{ flex:1; min-height:var(--hit); padding:7px var(--s-1) 9px;
+display:flex; flex-direction:column; align-items:center; gap:3px; }
+.tabn .tab-pill{ display:flex; align-items:center; justify-content:center;
+width:46px; height:29px; border-radius:15px; border:1px solid transparent; }
+.tabn .tab-lbl{ font-size:var(--t-xs); font-weight:600; text-align:center; }
+.tabn.on{ color:var(--navbar-pill-ink); }
+.tabn.on .tab-pill{ background:var(--navbar-pill); border-color:var(--navbar-on); }
+.tabn.on .tab-lbl{ font-weight:800; color:var(--navbar-on); }
+/* in riga, dentro l'insegna: la pastiglia E' il pulsante intero */
+.tabw{ flex:0 1 auto; min-width:0; min-height:var(--hit); padding:6px 11px;
+border-radius:var(--r-md); display:flex; align-items:center; gap:7px; }
+.tabw .tab-lbl{ font-size:var(--t-sm); font-weight:600; white-space:nowrap; }
+.tabw.on{ background:var(--navbar-pill); border-color:var(--navbar-on); color:var(--navbar-pill-ink); }
+.tabw.on .tab-lbl{ font-weight:800; }
+@media (hover:hover) and (pointer:fine){
+.tabbar button:not(.on):hover{ background:var(--navbar-hover); color:var(--text-1); }
 }
 
-/* ── TESTATA: OPACA ───────────────────────────────────────────────────────
-   Aveva backdrop-filter:blur(14px). Il blur e' fra le operazioni piu' care
-   che si possano chiedere alla GPU di un Android di fascia media — che e' il
-   telefono della maggior parte degli arcieri — e al sole una barra
-   traslucida sopra contenuto che scorre e' poltiglia. Sopra il testo che
-   scorre serve un piano, non un vetro. */
-body[class] header.top{
-background:var(--navbar-bg); backdrop-filter:none; -webkit-backdrop-filter:none;
-border-bottom:var(--stroke) solid var(--navbar-line);
-}
-body.theme-light .brandblock{ background:linear-gradient(140deg,#2A6B32 0%,#1D4F26 100%); padding:4px 14px 4px 4px; border-radius:16px; }
-body.theme-light header.top .brand-title{ color:#FFFFFF; }
-/* Tre pastiglie arancioni in fila erano la cosa piu' pesante della testata:
-   resta colorato solo il comando vero e proprio. */
-body.theme-light header.top .home-btn{ background:var(--surface-2); border:var(--stroke) solid var(--border-strong); color:var(--text-2); }
-body.theme-light header.top .home-btn.small{ background:var(--fn-gara-fill); border-color:transparent; color:#FFFFFF; }
-body[class] header.top .home-btn.pericolo{ background:transparent; border:1.5px solid var(--danger-fill); color:var(--danger-text); }
+/* ══════════════ FINE RIFINITURA CHIARO ══════════════ */
 
-/* ── BARRA DELLE SEZIONI ─────────────────────────────────────────────────── */
-body[class] .tabbar-wide > button.on{ background:var(--navbar-pill); color:var(--navbar-pill-ink); }
-body[class] .tabbar-wide > button.on > span, body[class] .tabbar-wide > button.on > svg{ color:inherit; stroke:currentColor; }
-body[class] .tabbar:not(.tabbar-wide) > button.on{ color:var(--navbar-on); }
-body[class] .tabbar:not(.tabbar-wide) > button.on > span:first-child{
-background:var(--navbar-pill); border-color:var(--navbar-pill); color:var(--navbar-pill-ink);
-}
+/* ═══════════════ TRANSIZIONI DI SCHERMATA ═══════════════
+   L'insegna in cima ha un nome suo: il browser la riconosce come LA STESSA
+   COSA prima e dopo, quindi resta ferma mentre sotto cambia il contenuto.
+   E' la differenza fra una pagina che si ricarica e un oggetto che risponde:
+   la cornice non deve mai sfarfallare. */
+header.top{ view-transition-name:app-header; }
+::view-transition-old(root),
+::view-transition-new(root){ animation-duration:var(--dur-3); animation-timing-function:var(--ease); }
+::view-transition-old(app-header),
+::view-transition-new(app-header){ animation:none; mix-blend-mode:normal; }
 
-/* ── TIMER ────────────────────────────────────────────────────────────────
-   Il pulsare c'era SEMPRE, dal primo secondo, insieme al luccichio perenne
-   della barra di avanzamento. Due layer compositi accesi per quattro ore di
-   percorso sono una scelta di consumo, non di stile. Ora pulsa negli ultimi
-   secondi, quando il pulsare e' informazione. */
-body[class] .timer-idle{
-background:var(--fn-prepara-soft); border:var(--stroke) solid var(--fn-prepara-fill);
-border-radius:var(--r-l); box-shadow:none;
-}
-body[class] .timer-dur{ color:var(--text-1); }
-body[class] .timer-idle .btn-ghost{ background:var(--surface-1); border-color:var(--fn-prepara-fill); color:var(--text-1); }
-body[class] .timer-running{
-background:var(--fn-training-soft); border:var(--stroke) solid var(--fn-training-fill);
-border-radius:var(--r-l); box-shadow:none;
-}
-body[class] .timer-running.timer-warn{ background:var(--fn-prepara-soft); border-color:var(--fn-prepara-fill); box-shadow:none; }
-body[class] .timer-running.timer-danger{ background:var(--fn-gara-soft); border-color:var(--danger-fill); box-shadow:none; }
-body[class] .timer-running-label{ color:var(--text-2); }
-body[class] .timer-num{ color:var(--fn-training-text); animation:none; }
-body[class] .timer-num.timer-warn{ color:var(--fn-prepara-text); }
-body[class] .timer-num.timer-danger{ color:var(--danger-text); animation:timerPulse 1s ease-in-out infinite; }
-body[class] .progress-fill::after{ animation:none; display:none; }
+/* ═══════════════ IL TESTO GRANDE NON DEVE ROMPERE NIENTE ═══════════════
+   Chi ha ingrandito il testo nelle impostazioni del telefono (e sul percorso
+   e' la norma, non l'eccezione) trovava i tasti alti 92px con dentro due
+   righe che non ci stavano. L'altezza diventa un minimo, non una gabbia. */
+.quick-btn{ height:auto; min-height:92px; }
+.menu-btn{ min-height:var(--hit); }
 
-/* ── FUOCO: visibile, uguale ovunque, mai lo stesso colore di altro ─────── */
-body[class] :where(button,a,input,select,textarea,[tabindex]):focus-visible{
-outline:3px solid var(--focus); outline-offset:2px;
-}
+/* ═══════════════ QUALITA' DI LETTURA ═══════════════ */
+h2.section-title, .onboard-title, .editorial-title, .empty-state-title{ text-wrap:balance; }
+.menu-sub, .editorial-body, .empty-state-body, .rules-panel{ text-wrap:pretty; }
+/* La barra di scorrimento che appare e sparisce faceva saltare la colonna
+   di qualche pixel a ogni cambio di schermata. */
+html{ scrollbar-gutter:stable; }
 
-/* ── ATMOSFERA pilotata da token ─────────────────────────────────────────── */
-body[class]{
-font-family:var(--font-ui);
-background:
-radial-gradient(ellipse 900px 500px at 8% -5%,  var(--alone-1), transparent 60%),
-radial-gradient(ellipse 700px 500px at 105% 15%, var(--alone-2), transparent 55%),
-radial-gradient(ellipse 800px 600px at 50% 120%, var(--alone-3), transparent 60%),
-var(--surface-0);
-}
-body[class]::before{ opacity:var(--grana); }
-@media (prefers-reduced-transparency:reduce){
-body[class]::before{ display:none; }
-body[class]{ background:var(--surface-0); }
-}
-
-/* ── MOVIMENTO ──────────────────────────────────────────────────────────── */
+/* ═══════════════ RIDUCI MOVIMENTO ═══════════════
+   Vale anche per le transizioni di schermata, che il blocco storico piu'
+   sopra non poteva conoscere. */
 @media (prefers-reduced-motion:reduce){
-*, *::before, *::after{
-animation-duration:0.01ms !important; animation-iteration-count:1 !important;
-transition-duration:0.01ms !important; scroll-behavior:auto !important;
+::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*){ animation:none !important; }
 }
-.leaf-burst, .leaf-particle{ display:none !important; }
-}
-
-/* ── LARGHEZZA ≠ TEMA ─────────────────────────────────────────────────────
-   Il vecchio blocco "VESTE CHIARA" riscriveva body.theme-dark coi valori del
-   chiaro: chi sceglieva Scura e apriva l'app su un tablet vedeva Chiara. Un
-   interruttore che non interruttore e' peggio che non averlo. E' stato tolto.
-   Da qui il tema e' la scelta della persona, il breakpoint solo impianto. */
-@media (min-width:760px){
-#app{ max-width:900px; padding:var(--s-5) var(--s-6) var(--s-7); }
-#app.narrow{ max-width:620px; }
-body[class] .card{ padding:var(--s-5); }
-}
-@media (min-width:1080px){ #app{ max-width:960px; } }
-
 </style>
 </head>
 <body>
@@ -1896,7 +1924,7 @@ profile_error_password_short: "La password deve avere almeno 6 caratteri.", prof
 profile_error_email_in_use: "Questa email \u00e8 gi\u00e0 registrata. Usa \u201cAccedi\u201d con la tua password.",
 login_password: "Password", login_forgot: "Password dimenticata?", login_reset_sent: "Ti abbiamo mandato un'email per reimpostare la password. Se non la vedi, controlla anche nella cartella spam.",
 profile_arco: "Arco principale", profile_privacy: "Ho letto l'informativa privacy e acconsento al trattamento dei miei dati per l'uso dell'app.",
-theme_section_title: "Aspetto", theme_dark_label: "Scura", theme_light_label: "Chiara",
+theme_section_title: "Aspetto", theme_dark_label: "Scura", theme_light_label: "Chiara", theme_auto_label: "Automatica",
 profile_submit: "Crea profilo e continua", profile_error: "Compila nome, username, email, almeno una federazione, l'arco principale e accetta la privacy.",
 pg_title: "Prepara gara",  pg_back_menu: "\u2190 Torna al menu", pg_choose_gara: "Scegli la gara",
 pg_my_saved_routes: "\uD83D\uDCCB I miei percorsi salvati", pg_saved_routes_title: "I miei percorsi salvati", pg_loading: "Caricamento\u2026", pg_error_loading: "Errore nel caricamento: {err}", pg_use_route_btn: "Usa questo percorso",
@@ -2332,7 +2360,7 @@ mode_nfas_training_desc:"Free training following NFAS zones: a single arrow per 
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"match \u00b7 up to 3 arrows", mode_nfas_biggame_unit:"Arrow",
 mode_nfas_biggame_desc:"Official NFAS Big Game Round: 28 targets, up to 3 arrows (only the first hit counts), the Inner Kill only counts on the first arrow.",
 profile_arco: "Main bow", profile_edit_email_note: "To change your login email, contact support.",
-theme_section_title: "Appearance", theme_dark_label: "Dark", theme_light_label: "Light",
+theme_section_title: "Appearance", theme_dark_label: "Dark", theme_light_label: "Light", theme_auto_label: "Auto",
 profile_edit_save: "Save changes", profile_edit_saved_msg: "Changes saved.", profile_edit_title: "Your profile",
 profile_email: "Email", profile_error: "Fill in name, username, email, at least one federation, your main bow, and accept the privacy policy.",
 profile_error_email_in_use: "This email is already registered. Use \u201cLog in\u201d with your password.",
@@ -2789,7 +2817,7 @@ mode_nfas_training_desc:"Entra\u00eenement libre selon les zones NFAS\u00a0: une
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"comp\u00e9tition \u00b7 jusqu’\u00e0 3 fl\u00e8ches", mode_nfas_biggame_unit:"Fl\u00e8che",
 mode_nfas_biggame_desc:"Big Game Round officiel NFAS\u00a0: 28 cibles, jusqu’\u00e0 3 fl\u00e8ches (seul le premier impact compte), l’Inner Kill ne compte que sur la premi\u00e8re fl\u00e8che.",
 profile_arco: "Arc principal", profile_edit_email_note: "Pour changer votre e-mail de connexion, contactez l’assistance.",
-theme_section_title: "Apparence", theme_dark_label: "Sombre", theme_light_label: "Claire",
+theme_section_title: "Apparence", theme_dark_label: "Sombre", theme_light_label: "Claire", theme_auto_label: "Automatique",
 profile_edit_save: "Enregistrer les modifications", profile_edit_saved_msg: "Modifications enregistr\u00e9es.", profile_edit_title: "Votre profil",
 profile_email: "E-mail", profile_error: "Remplissez le nom, le pseudo, l’e-mail, au moins une f\u00e9d\u00e9ration, votre arc principal, et acceptez la politique de confidentialit\u00e9.",
 profile_error_email_in_use: "Cet e-mail est d\u00e9j\u00e0 enregistr\u00e9. Utilisez \u00ab Se connecter \u00bb avec votre mot de passe.",
@@ -3246,7 +3274,7 @@ mode_nfas_training_desc:"Freies Training nach NFAS-Zonen: ein einzelner Pfeil pr
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"Wettkampf \u00b7 bis zu 3 Pfeile", mode_nfas_biggame_unit:"Pfeil",
 mode_nfas_biggame_desc:"Offizielle NFAS Big Game Round: 28 Ziele, bis zu 3 Pfeile (nur der erste Treffer z\u00e4hlt), der Inner Kill z\u00e4hlt nur beim ersten Pfeil.",
 profile_arco: "Hauptbogen", profile_edit_email_note: "Um deine Anmelde-E-Mail zu \u00e4ndern, wende dich an den Support.",
-theme_section_title: "Erscheinungsbild", theme_dark_label: "Dunkel", theme_light_label: "Hell",
+theme_section_title: "Erscheinungsbild", theme_dark_label: "Dunkel", theme_light_label: "Hell", theme_auto_label: "Automatisch",
 profile_edit_save: "\u00c4nderungen speichern", profile_edit_saved_msg: "\u00c4nderungen gespeichert.", profile_edit_title: "Dein Profil",
 profile_email: "E-Mail", profile_error: "F\u00fclle Name, Benutzername, E-Mail, mindestens einen Verband und deinen Hauptbogen aus und akzeptiere die Datenschutzerkl\u00e4rung.",
 profile_error_email_in_use: "Diese E-Mail ist bereits registriert. Nutze \u201eAnmelden\u201c mit deinem Passwort.",
@@ -3738,7 +3766,7 @@ profile_error_password_short: "\u015eifre en az 6 karakter olmal\u0131.", profil
 profile_error_email_in_use: "Bu e-posta zaten kay\u0131tl\u0131. \u015eifrenle \u201cGiri\u015f yap\u201d\u2019\u0131 kullan.",
 login_password: "\u015eifre", login_forgot: "\u015eifreni mi unuttun?", login_reset_sent: "\u015eifreni s\u0131f\u0131rlamak i\u00e7in sana bir e-posta g\u00f6nderdik. G\u00f6rm\u00fcyorsan spam klas\u00f6r\u00fcn\u00fc de kontrol et.",
 profile_arco: "Ana yay", profile_privacy: "Gizlilik bildirimini okudum ve uygulaman\u0131n kullan\u0131m\u0131 i\u00e7in verilerimin i\u015flenmesini kabul ediyorum.",
-theme_section_title: "G\u00f6r\u00fcn\u00fcm", theme_dark_label: "Koyu", theme_light_label: "A\u00e7\u0131k",
+theme_section_title: "G\u00f6r\u00fcn\u00fcm", theme_dark_label: "Koyu", theme_light_label: "A\u00e7\u0131k", theme_auto_label: "Otomatik",
 profile_submit: "Profili olu\u015ftur ve devam et", profile_error: "Ad, kullan\u0131c\u0131 ad\u0131, e-posta, en az bir federasyon, ana yay\u0131 doldur ve gizlili\u011fi kabul et.",
 pg_title: "Yar\u0131\u015fma Haz\u0131rla",  pg_back_menu: "\u2190 Men\u00fcye d\u00f6n", pg_choose_gara: "Yar\u0131\u015fmay\u0131 se\u00e7",
 pg_my_saved_routes: "\uD83D\uDCCB Kay\u0131tl\u0131 parkurlar\u0131m", pg_saved_routes_title: "Kay\u0131tl\u0131 parkurlar\u0131m", pg_loading: "Y\u00fckleniyor\u2026", pg_error_loading: "Y\u00fckleme hatas\u0131: {err}", pg_use_route_btn: "Bu parkuru kullan",
@@ -4209,7 +4237,7 @@ profile_error_password_short: "Пароль должен содержать ми
 profile_error_email_in_use: "Этот email уже зарегистрирован. Используйте «Войти» с вашим паролем.",
 login_password: "Пароль", login_forgot: "Забыли пароль?", login_reset_sent: "Мы отправили вам письмо для сброса пароля. Если не видите его, проверьте папку со спамом.",
 profile_arco: "Основной лук", profile_privacy: "Я прочитал(а) политику конфиденциальности и согласен(на) на обработку моих данных для использования приложения.",
-theme_section_title: "Внешний вид", theme_dark_label: "Тёмная", theme_light_label: "Светлая",
+theme_section_title: "Внешний вид", theme_dark_label: "Тёмная", theme_light_label: "Светлая", theme_auto_label: "Авто",
 profile_submit: "Создать профиль и продолжить", profile_error: "Заполните имя, имя пользователя, email, хотя бы одну федерацию, основной лук и примите политику конфиденциальности.",
 pg_title: "Подготовить соревнование",  pg_back_menu: "← В меню", pg_choose_gara: "Выберите соревнование",
 pg_my_saved_routes: "📋 Мои сохранённые маршруты", pg_saved_routes_title: "Мои сохранённые маршруты", pg_loading: "Загрузка…", pg_error_loading: "Ошибка загрузки: {err}", pg_use_route_btn: "Использовать этот маршрут",
@@ -4680,7 +4708,7 @@ profile_error_password_short: "La contrase\u00f1a debe tener al menos 6 caracter
 profile_error_email_in_use: "Este email ya est\u00e1 registrado. Usa \u201cIniciar sesi\u00f3n\u201d con tu contrase\u00f1a.",
 login_password: "Contrase\u00f1a", login_forgot: "\u00bfHas olvidado la contrase\u00f1a?", login_reset_sent: "Te hemos enviado un email para restablecer la contrase\u00f1a. Si no lo ves, revisa tambi\u00e9n la carpeta de spam.",
 profile_arco: "Arco principal", profile_privacy: "He le\u00eddo la pol\u00edtica de privacidad y acepto el tratamiento de mis datos para el uso de la app.",
-theme_section_title: "Aspecto", theme_dark_label: "Oscuro", theme_light_label: "Claro",
+theme_section_title: "Aspecto", theme_dark_label: "Oscuro", theme_light_label: "Claro", theme_auto_label: "Automático",
 profile_submit: "Crear perfil y continuar", profile_error: "Rellena el nombre, nombre de usuario, email, al menos una federaci\u00f3n, el arco principal y acepta la privacidad.",
 pg_title: "Preparar competici\u00f3n",  pg_back_menu: "\u2190 Volver al men\u00fa", pg_choose_gara: "Elige la competici\u00f3n",
 pg_my_saved_routes: "\uD83D\uDCCB Mis recorridos guardados", pg_saved_routes_title: "Mis recorridos guardados", pg_loading: "Cargando\u2026", pg_error_loading: "Error al cargar: {err}", pg_use_route_btn: "Usar este recorrido",
@@ -5151,7 +5179,7 @@ profile_error_password_short: "L\u00f6senordet m\u00e5ste vara minst 6 tecken.",
 profile_error_email_in_use: "Denna e-post \u00e4r redan registrerad. Anv\u00e4nd \u201dLogga in\u201d med ditt l\u00f6senord.",
 login_password: "L\u00f6senord", login_forgot: "Gl\u00f6mt l\u00f6senord?", login_reset_sent: "Vi har skickat ett e-postmeddelande f\u00f6r att \u00e5terst\u00e4lla l\u00f6senordet. Om du inte ser det, kolla \u00e4ven skr\u00e4pposten.",
 profile_arco: "Huvudb\u00e5ge", profile_privacy: "Jag har l\u00e4st integritetspolicyn och samtycker till behandling av mina uppgifter f\u00f6r anv\u00e4ndning av appen.",
-theme_section_title: "Utseende", theme_dark_label: "M\u00f6rkt", theme_light_label: "Ljust",
+theme_section_title: "Utseende", theme_dark_label: "M\u00f6rkt", theme_light_label: "Ljust", theme_auto_label: "Automatiskt",
 profile_submit: "Skapa profil och forts\u00e4tt", profile_error: "Fyll i namn, anv\u00e4ndarnamn, e-post, minst ett f\u00f6rbund, huvudb\u00e5ge och acceptera integritetspolicyn.",
 pg_title: "F\u00f6rbered t\u00e4vling",  pg_back_menu: "\u2190 Tillbaka till menyn", pg_choose_gara: "V\u00e4lj t\u00e4vling",
 pg_my_saved_routes: "\uD83D\uDCCB Mina sparade rundor", pg_saved_routes_title: "Mina sparade rundor", pg_loading: "L\u00e4ser in\u2026", pg_error_loading: "Fel vid inl\u00e4sning: {err}", pg_use_route_btn: "Anv\u00e4nd denna runda",
@@ -5622,7 +5650,7 @@ profile_error_password_short: "Het wachtwoord moet minstens 6 tekens bevatten.",
 profile_error_email_in_use: "Deze e-mail is al geregistreerd. Gebruik \u201cInloggen\u201d met je wachtwoord.",
 login_password: "Wachtwoord", login_forgot: "Wachtwoord vergeten?", login_reset_sent: "We hebben je een e-mail gestuurd om je wachtwoord te resetten. Zie je hem niet, controleer dan ook je spammap.",
 profile_arco: "Hoofdboog", profile_privacy: "Ik heb de privacyverklaring gelezen en ga akkoord met de verwerking van mijn gegevens voor het gebruik van de app.",
-theme_section_title: "Uiterlijk", theme_dark_label: "Donker", theme_light_label: "Licht",
+theme_section_title: "Uiterlijk", theme_dark_label: "Donker", theme_light_label: "Licht", theme_auto_label: "Automatisch",
 profile_submit: "Profiel aanmaken en doorgaan", profile_error: "Vul naam, gebruikersnaam, e-mail, minstens \u00e9\u00e9n bond, hoofdboog in en accepteer de privacyverklaring.",
 pg_title: "Wedstrijd voorbereiden",  pg_back_menu: "\u2190 Terug naar menu", pg_choose_gara: "Kies de wedstrijd",
 pg_my_saved_routes: "\uD83D\uDCCB Mijn opgeslagen rondes", pg_saved_routes_title: "Mijn opgeslagen rondes", pg_loading: "Laden\u2026", pg_error_loading: "Fout bij laden: {err}", pg_use_route_btn: "Deze ronde gebruiken",
@@ -6282,8 +6310,11 @@ return out;
 
 var LOGO_DATA_URI = "logo.jpg";
 function logoSVG(size){
-var r = Math.round(size*0.22);
-return '<img src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="width:'+size+'px;height:'+size+'px;border-radius:'+r+'px;object-fit:cover;display:block;">';
+// La misura viaggia come variabile CSS, non come width/height in linea: cosi'
+// il foglio di stile puo' adattarla (telefono/computer/splash) senza dover
+// vincere contro lo stile in linea a colpi di !important, che era il motivo
+// per cui un logo da 52px stava in una finestra da 44 e ne usciva.
+return '<img class="brandmark" src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="--mark:'+size+'px;">';
 }
 
 var ICON_PATHS = {
@@ -6394,37 +6425,75 @@ var NARROW_SCREENS = {
 // Dal 15/08/2026 i temi sono DUE: "dark" (la vecchia Soft) e "light".
 // "satura" ed "elegante" restavano salvati addosso a chi li aveva scelti:
 // vengono ricondotti allo scuro una volta sola, e riscritti.
+// I temi sono TRE: chiaro (predefinito), scuro, e "automatica" — che segue
+// l'impostazione del telefono e cambia da sola all'imbrunire.
+// E soprattutto: la scelta vale SEMPRE. Prima, da 760px in su, il foglio di
+// stile riscriveva la tavolozza e imponeva il chiaro anche a chi aveva scelto
+// lo scuro. Adesso il tema e' uno solo, quello scelto, su ogni schermo.
 var THEME_BAR_COLOR = { light:"#ECEDE6", dark:"#16201C" };
+var sysDark = (typeof window.matchMedia === "function")
+? window.matchMedia("(prefers-color-scheme: dark)") : null;
 function normalizeTheme(th){
-if(th === "light") return "light";
-if(th === "dark" || th === "elegante" || th === "satura") return "dark";
-// Primo avvio: si segue il telefono invece di imporre una scelta. Chi un
-// tema lo ha gia' scelto non viene toccato: quel valore e' salvato in state.
-try{
-if(typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
-}catch(e){}
+if(th === "light" || th === "dark" || th === "auto") return th;
+if(th === "elegante" || th === "satura") return "dark";
 return "light";
+}
+// Il tema SCELTO ("auto") e il tema EFFETTIVO ("dark" adesso) sono due cose
+// diverse: la pastiglia nel profilo mostra il primo, il body porta il secondo.
+function resolvedTheme(th){
+if(th === "auto") return (sysDark && sysDark.matches) ? "dark" : "light";
+return th;
 }
 function currentTheme(){
 var raw = state.theme;
-if(raw && raw !== "light" && raw !== "dark"){
+if(raw && raw !== "light" && raw !== "dark" && raw !== "auto"){
 state.theme = normalizeTheme(raw);
 try{ save(); }catch(e){}
 }
 return normalizeTheme(raw);
 }
 function applyTheme(th){
-th = normalizeTheme(th);
+var eff = resolvedTheme(normalizeTheme(th));
 document.body.classList.remove("theme-satura", "theme-elegante");
-document.body.classList.toggle("theme-light", th === "light");
-document.body.classList.toggle("theme-dark", th === "dark");
+document.body.classList.toggle("theme-light", eff === "light");
+document.body.classList.toggle("theme-dark", eff === "dark");
 // La barra dell'indirizzo del browser deve seguire il tema, altrimenti resta
 // una striscia nera sopra l'app bianca.
 var m = document.querySelector('meta[name="theme-color"]');
-if(m) m.setAttribute("content", THEME_BAR_COLOR[th] || THEME_BAR_COLOR.light);
+if(m) m.setAttribute("content", THEME_BAR_COLOR[eff] || THEME_BAR_COLOR.light);
+}
+// Se il telefono passa a scuro mentre l'app e' aperta, chi ha scelto
+// "automatica" lo vede subito, senza riaprire.
+if(sysDark){
+var onSysTheme = function(){ try{ if(currentTheme() === "auto") applyTheme("auto"); }catch(e){} };
+if(sysDark.addEventListener) sysDark.addEventListener("change", onSysTheme);
+else if(sysDark.addListener) sysDark.addListener(onSysTheme);
 }
 
+// ── LE TRANSIZIONI DI SCHERMATA ──────────────────────────────────────────
+// render() svuota e ridisegna tutto: e' semplice e non sbaglia mai uno stato,
+// ma visivamente l'app SBATTE da una schermata all'altra come una pagina web
+// che si ricarica, invece di rispondere come un oggetto.
+// startViewTransition() incarica il browser di dissolvere fra il prima e il
+// dopo. Costa cinque righe e non tocca una virgola della logica.
+// Due cautele, che sono il punto:
+//   1) SOLO quando si cambia davvero schermata o sezione. Sul percorso ogni
+//      freccia ridisegna: dissolvere li' vorrebbe dire ritardare la conferma
+//      del punteggio, cioe' peggiorare l'unica cosa che conta.
+//   2) mai con "riduci movimento" acceso.
+var vtKey = "";
 function render(){
+var key = String(state.screen) + "|" + String(state.tab) + "|" + String(authState);
+var moved = (vtKey !== "" && key !== vtKey);
+vtKey = key;
+var still = (typeof window.matchMedia === "function")
+&& window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if(!moved || still || typeof document.startViewTransition !== "function"){ renderNow(); return; }
+try{ document.startViewTransition(function(){ renderNow(); }); }
+catch(e){ renderNow(); }
+}
+
+function renderNow(){
 var app = document.getElementById("app");
 app.innerHTML = "";
 app.classList.toggle("narrow", !state.lang || authState !== "ready" || !!NARROW_SCREENS[state.screen]);
@@ -7315,7 +7384,7 @@ card.appendChild(bowRow);
 card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("theme_section_title")+'</h2>'));
 var themeSel = currentTheme();
 var themeRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
-[["dark", t("theme_dark_label")], ["light", t("theme_light_label")]].forEach(function(pair){
+[["light", t("theme_light_label")], ["dark", t("theme_dark_label")], ["auto", t("theme_auto_label")]].forEach(function(pair){
 var k = pair[0], label = pair[1];
 var chip = el('<div class="chip" style="min-width:120px;">'+label+'</div>');
 if(k === themeSel) chip.classList.add("active");
@@ -7665,7 +7734,7 @@ function pgGruppoLabel(pcfg, k){ for(var i=0;i<pcfg.gruppi.length;i++){ if(pcfg.
 function preparaGaraScreen(){
 if(!state.pgScreen) state.pgScreen = "pick";
 var wrap = el('<div></div>');
-wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:&quot;Fraunces&quot;,Georgia,serif;color:var(--gold);font-size:1.15rem;">'+t("pg_title")+'</h2></div>'));
+wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:var(--font-display);color:var(--gold);font-size:1.15rem;">'+t("pg_title")+'</h2></div>'));
 if(state.pgScreen === "pick") wrap.appendChild(pgPickScreen());
 else if(state.pgScreen === "elenco") wrap.appendChild(pgElencoScreen());
 else if(state.pgScreen === "setup") wrap.appendChild(pgSetupScreen());
@@ -8251,10 +8320,11 @@ function tabBar(wide){
 // fondo scuro ce l'ha gia'.
 // niente stile in linea per il caso largo: le misure stanno in .tabbar-wide,
 // altrimenti lo stile in linea vince sulle media query e la riga non va a capo.
-var base = wide
-? ''
-: 'position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;border-top:2px solid var(--navbar-on);background:var(--navbar-bg);box-shadow:0 -10px 26px var(--navbar-shadow);padding-bottom:env(safe-area-inset-bottom);';
-var bar = el('<div class="tabbar'+(wide?' tabbar-wide':'')+'" style="z-index:60;display:flex;'+base+'"></div>');
+// Niente piu' stile in linea: solo classi. Lo stile in linea vinceva contro
+// il foglio di stile, e per riprendersi il controllo servivano catene di
+// !important — che sono poi il motivo per cui la sezione aperta finiva verde
+// su verde e diventava l'unica illeggibile.
+var bar = el('<nav class="tabbar'+(wide?' tabbar-wide':' tabbar-bottom')+'" aria-label="'+t("nav_shoot")+'"></nav>');
 [["campi","navfield",t("nav_fields")],
  ["tira","navshoot",t("nav_shoot")],
  ["compagnie","navclub",t("nav_clubs")],
@@ -8267,13 +8337,13 @@ var b;
 if(wide){
 // In riga: icona e parola affiancate, e la pastiglia e' il pulsante intero.
 // In colonna, dentro una barra alta 40px, non ci starebbero.
-b = el('<button class="tabw'+(on?" on":"")+'" style="flex:0 1 auto;min-width:0;background:'+(on?"var(--navbar-pill)":"transparent")+';border:1px solid '+(on?"var(--navbar-on)":"transparent")+';border-radius:12px;padding:6px 11px;cursor:pointer;display:flex;align-items:center;gap:7px;color:'+(on?"var(--navbar-on)":"var(--navbar-fg)")+';">'+
+b = el('<button class="tabw'+(on?" on":"")+'" aria-current="'+(on?"page":"false")+'">'+
 navIcon(tb[1],20,(on?1.9:1.5))+
-'<span style="font-size:0.79rem;font-weight:'+(on?"800":"600")+';line-height:1.1;white-space:nowrap;">'+tb[2]+'</span></button>');
+'<span class="tab-lbl">'+tb[2]+'</span></button>');
 } else {
-b = el('<button class="'+(on?"on":"")+'" style="flex:1;background:none;border:none;padding:7px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:'+(on?"var(--navbar-on)":"var(--navbar-fg)")+';">'+
-'<span style="display:flex;align-items:center;justify-content:center;width:46px;height:29px;border-radius:15px;background:'+(on?"var(--navbar-pill)":"transparent")+';border:1px solid '+(on?"var(--navbar-on)":"transparent")+';">'+navIcon(tb[1],21,(on?1.9:1.5))+'</span>'+
-'<span style="font-size:0.64rem;font-weight:'+(on?"800":"600")+';line-height:1.1;text-align:center;">'+tb[2]+'</span></button>');
+b = el('<button class="tabn'+(on?" on":"")+'" aria-current="'+(on?"page":"false")+'">'+
+'<span class="tab-pill">'+navIcon(tb[1],21,(on?1.9:1.5))+'</span>'+
+'<span class="tab-lbl">'+tb[2]+'</span></button>');
 }
 b.addEventListener("click", function(){ state.tab = key; state.screen = "menu"; homeOverride = false; clubShowAll = false; save(); render(); window.scrollTo(0,0); });
 bar.appendChild(b);
