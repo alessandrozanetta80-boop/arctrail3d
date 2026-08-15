@@ -659,6 +659,41 @@ table.score-table tbody tr:hover{ background:rgba(49,91,53,0.045); }
 header.top .head-actions, header.top > .home-btn{ order:1; }
 header.top .tabbar-wide{ order:2; flex-basis:100%; }
 }
+/* ── Pannello admin: elenco utenti ──────────────────────────────────────
+   Solo l'admin vede questa roba: testi in italiano, niente t().          */
+.adm-tot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:2px 0 12px;}
+.adm-tot > div{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 3px;text-align:center;}
+.adm-tot b{display:block;font-size:1.15rem;line-height:1.1;}
+.adm-tot span{display:block;font-size:0.58rem;color:var(--muted);margin-top:3px;letter-spacing:0.04em;line-height:1.25;}
+.adm-search{width:100%;font-size:0.85rem;padding:8px 10px;margin-bottom:8px;}
+.adm-filtri{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.adm-f{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:5px 11px;font-size:0.74rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.adm-f.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.adm-row{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden;background:var(--bg-panel-2);}
+.adm-row.open{border-color:var(--accent-soft);}
+.adm-head{display:flex;align-items:center;gap:10px;padding:9px 10px;cursor:pointer;}
+.adm-ini{flex:0 0 34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;}
+.adm-who{flex:1;min-width:0;}
+.adm-name{font-weight:700;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.adm-sub{font-size:0.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.adm-badge{font-size:0.58rem;font-weight:700;padding:2px 6px;border-radius:5px;white-space:nowrap;margin-left:4px;letter-spacing:0.03em;}
+.adm-chev{color:var(--muted);font-size:0.95rem;margin-left:6px;transition:transform .18s;}
+.adm-row.open .adm-chev{transform:rotate(90deg);}
+.adm-body{display:none;padding:0 10px 10px;}
+.adm-row.open .adm-body{display:block;}
+.adm-grp{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:12px 0 2px;}
+.adm-dl{display:grid;grid-template-columns:auto 1fr;border-top:1px solid var(--line);}
+.adm-dl > div{padding:6px 0;border-bottom:1px solid var(--line);min-width:0;font-size:0.8rem;line-height:1.4;}
+.adm-dl .k{color:var(--muted);padding-right:12px;white-space:nowrap;font-size:0.74rem;}
+.adm-dl .v{word-break:break-word;}
+.adm-si{color:var(--accent-soft);font-weight:700;}
+.adm-no{color:var(--bark);font-weight:700;}
+.adm-nd{color:#63776A;}
+.adm-note{width:100%;font-size:0.8rem;padding:7px 9px;}
+.adm-act{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.adm-act .btn{flex:1;min-width:96px;}
+@media(min-width:700px){.adm-dl{grid-template-columns:180px 1fr;}}
+@media(prefers-reduced-motion:reduce){.adm-chev{transition:none;}}
 </style>
 </head>
 <body>
@@ -8796,6 +8831,187 @@ return wrap;
 // ---------- AMMINISTRAZIONE ACCESSI ----------
 function adminScreen(){
 var wrap = el('<div></div>');
+// ── Elenco utenti: stato della vista ──────────────────────────────────
+// Vivono qui e non dentro loadList: ricerca, filtro e schede aperte devono
+// sopravvivere al ridisegno che parte dopo ogni Premium/Beta/Revoca.
+var admFilter = "tutti", admQuery = "", admRows = [], admOpen = {}, admWrap = null;
+var ADM_FED_LABEL = {};
+try{ PROFILE_FEDERATIONS.forEach(function(f){ ADM_FED_LABEL[f.code] = f.label; }); }catch(e){}
+
+function admIniz(n){
+n = String(n || "").trim();
+if(!n) return "?";
+var p = n.split(/\s+/);
+return (p[0].charAt(0) + (p[1] ? p[1].charAt(0) : "")).toUpperCase();
+}
+function admSi(txt){ return '<span class="adm-si">'+txt+'</span>'; }
+function admNo(txt){ return '<span class="adm-no">'+txt+'</span>'; }
+function admNd(txt){ return '<span class="adm-nd">'+txt+'</span>'; }
+function admBool(v, siTxt, noTxt){
+if(v === true)  return admSi(siTxt || "S\u00ec");
+if(v === false) return admNo(noTxt || "No");
+return admNd("Non registrato");
+}
+function admDl(coppie){
+var h = '<div class="adm-dl">';
+coppie.forEach(function(c){ h += '<div class="k">'+c[0]+'</div><div class="v">'+c[1]+'</div>'; });
+return h + '</div>';
+}
+// createdAt esiste solo per chi si e' iscritto da quando lo scriviamo: sui
+// vecchi account non c'e' e non si recupera dal telefono, sta in Auth.
+function admData(ts){
+if(!ts) return admNd("Non registrata");
+var dt = null;
+try{ dt = ts.toDate ? ts.toDate() : (ts.seconds ? new Date(ts.seconds*1000) : new Date(ts)); }catch(e){ return admNd("?"); }
+if(!dt || isNaN(dt.getTime())) return admNd("?");
+return ("0"+dt.getDate()).slice(-2)+"/"+("0"+(dt.getMonth()+1)).slice(-2)+"/"+dt.getFullYear();
+}
+function admFed(list){
+if(!list || !list.length) return admNd("Nessuna");
+return list.map(function(f){
+f = f || {};
+var lab = ADM_FED_LABEL[f.code] || String(f.code || "?").toUpperCase();
+return escapeHtml(lab) + (f.tessera
+? ' <span style="color:var(--muted);">tessera '+escapeHtml(String(f.tessera))+'</span>'
+: ' ' + admNd("senza tessera"));
+}).join("<br>");
+}
+
+// Una riga chiusa per utente; la scheda si apre toccandola.
+function admUserRow(row){
+var d = row.data || {};
+var nome = d.nomeCognome || "";
+var user = d.username || "";
+var titolo = user || nome || row.email;
+var sotto = [];
+if(nome) sotto.push(nome);
+if(d.compagnia) sotto.push(String(d.compagnia));
+if(!sotto.length) sotto.push(row.email);
+
+var box = el('<div class="adm-row"></div>');
+if(admOpen[row.id]) box.classList.add("open");
+
+var badges = "";
+if(row.betaTester) badges += '<span class="adm-badge" style="background:var(--bark);color:#fff;">BETA</span>';
+if(row.premium)    badges += '<span class="adm-badge" style="background:var(--accent);color:var(--accent-ink);">PREMIUM</span>';
+
+var head = el('<div class="adm-head">'
++ '<div class="adm-ini">'+escapeHtml(admIniz(nome || user))+'</div>'
++ '<div class="adm-who"><div class="adm-name">'+escapeHtml(titolo)+'</div>'
++ '<div class="adm-sub">'+escapeHtml(sotto.join(" \u00b7 "))+'</div></div>'
++ '<div style="flex:0 0 auto;display:flex;align-items:center;">'+badges+'<span class="adm-chev">\u203a</span></div>'
++ '</div>');
+head.addEventListener("click", function(){ admOpen[row.id] = box.classList.toggle("open"); });
+box.appendChild(head);
+
+var body = el('<div class="adm-body"></div>');
+
+body.appendChild(el('<div class="adm-grp">Anagrafica</div>'));
+body.appendChild(el(admDl([
+["Nome utente",        user ? escapeHtml(user) : admNd("Non impostato")],
+["Nome e cognome",     nome ? escapeHtml(nome) : admNd("Non impostato")],
+["Nascosto agli altri", d.nomeNascosto === true ? admNo("S\u00ec, vedono il nome utente") : admSi("No")],
+["Email",              escapeHtml(row.email)],
+["Compagnia",          d.compagnia
+? (escapeHtml(d.compagniaNome || "") + ' <span style="color:var(--muted);">('+escapeHtml(String(d.compagnia))+')</span>')
+: admNd("Nessuna compagnia")]
+])));
+
+body.appendChild(el('<div class="adm-grp">Tiro</div>'));
+body.appendChild(el(admDl([
+["Arco principale", d.arco ? escapeHtml(PROFILE_BOW_LABEL[d.arco] || String(d.arco)) : admNd("Non indicato")],
+["Federazioni",     admFed(d.federazioni)]
+])));
+
+body.appendChild(el('<div class="adm-grp">Stato</div>'));
+body.appendChild(el(admDl([
+["Iscritto il",       admData(d.createdAt)],
+["Collaudatore",      row.betaTester ? admSi("S\u00ec") : "No"],
+["Premium",           row.premium ? admSi("S\u00ec") : "No"],
+["Privacy accettata", admBool(d.privacy)],
+["Termini accettati", admBool(d.terms)]
+])));
+
+body.appendChild(el('<div class="adm-grp">Tecnico</div>'));
+var nBloc = 0;
+try{ nBloc = d.blockedUsers ? Object.keys(d.blockedUsers).length : 0; }catch(e){}
+body.appendChild(el(admDl([
+["Notifiche push",  d.fcmToken ? admSi("Attive su un dispositivo") : admNd("Nessun dispositivo")],
+["Utenti bloccati", String(nBloc)],
+["Identificativo",  '<span style="font-family:monospace;font-size:0.68rem;color:var(--muted);word-break:break-all;">'+escapeHtml(row.id)+'</span>']
+])));
+
+body.appendChild(el('<div class="adm-grp">Nota (solo admin)</div>'));
+var noteInput = el('<input type="text" class="adm-note" placeholder="Perche\u0027 e\u0027 premium, chi lo ha presentato\u2026">');
+noteInput.value = adminNotes[row.id] || "";
+noteInput.addEventListener("change", function(){
+var v = noteInput.value.trim();
+noteInput.disabled = true;
+db.collection("admin_notes").doc(row.id).set({ nota: v, at: firebase.firestore.FieldValue.serverTimestamp() })
+.then(function(){ adminNotes[row.id] = v; noteInput.disabled = false; })
+.catch(function(e){ noteInput.disabled = false; alert(e && e.message ? e.message : "Errore"); });
+});
+body.appendChild(noteInput);
+
+var act = el('<div class="adm-act"></div>');
+// Premium: interruttore unico, visibile solo qui dentro. L'utente non lo
+// vede e non se lo puo' scrivere: lo vietano le regole.
+var premBtn = el('<button class="btn btn-ghost btn-sm" style="'+(row.premium?'border-color:var(--accent-soft);color:var(--accent-soft);':'')+'">Premium '+(row.premium?'ON':'OFF')+'</button>');
+premBtn.addEventListener("click", function(){
+premBtn.disabled = true;
+db.collection("users").doc(row.id).update({premium: !row.premium})
+.then(loadList)
+.catch(function(e){ premBtn.disabled = false; alert(e && e.message ? e.message : "Errore"); });
+});
+act.appendChild(premBtn);
+
+var betaBtn = el('<button class="btn btn-ghost btn-sm" style="'+(row.betaTester?'border-color:var(--bark);color:var(--bark);':'')+'">Beta '+(row.betaTester?'ON':'OFF')+'</button>');
+betaBtn.addEventListener("click", function(){
+betaBtn.disabled = true;
+db.collection("users").doc(row.id).update({betaTester: !row.betaTester})
+.then(loadList)
+.catch(function(e){ betaBtn.disabled = false; alert(e && e.message ? e.message : "Errore"); });
+});
+act.appendChild(betaBtn);
+
+var revBtn = el('<button class="btn btn-ghost btn-sm" style="border-color:var(--danger);color:var(--danger);">'+t("admin_revoke_btn")+'</button>');
+revBtn.addEventListener("click", function(){
+if(!window.confirm("Revocare l\u0027accesso a " + (nome || user || row.email) + "?")) return;
+revBtn.disabled = true;
+db.collection("users").doc(row.id).update({approved:false}).then(function(){
+// Revoca: fuori anche dall'elenco pubblico, altrimenti resterebbe
+// invitabile e contattabile.
+return deletePublicProfile(row.id);
+}).then(function(){ publicProfilesCache = null; archersDirectory = null; loadList(); })
+.catch(function(e){ revBtn.disabled = false; alert(e && e.message ? e.message : "Errore"); });
+});
+act.appendChild(revBtn);
+body.appendChild(act);
+
+box.appendChild(body);
+return box;
+}
+
+// Ridisegna solo l'elenco: ricerca e filtri non ricaricano niente da Firestore.
+function drawApproved(){
+if(!admWrap) return;
+var q = admQuery.trim().toLowerCase();
+var list = admRows.filter(function(r){
+var d = r.data || {};
+if(admFilter === "premium"   && !r.premium) return false;
+if(admFilter === "beta"      && !r.betaTester) return false;
+if(admFilter === "nascosti"  && d.nomeNascosto !== true) return false;
+if(admFilter === "senzaclub" && d.compagnia) return false;
+if(!q) return true;
+return ((d.username||"")+" "+(d.nomeCognome||"")+" "+(r.email||"")).toLowerCase().indexOf(q) >= 0;
+});
+admWrap.innerHTML = "";
+if(!list.length){
+admWrap.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);padding:8px 0;">Nessun utente corrisponde alla ricerca.</div>'));
+return;
+}
+list.forEach(function(r){ admWrap.appendChild(admUserRow(r)); });
+}
 var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("admin_title")+'</h2>'));
 var listWrap = el('<div id="adminListWrap"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
@@ -8953,48 +9169,47 @@ return writePublicProfile(row.id, row.data);
 rowEl.appendChild(btn);
 listWrap.appendChild(rowEl);
 });
+// ── Utenti approvati ────────────────────────────────────────────────
+// Prima era una colonna di pulsanti per ognuno: con nove utenti erano gia'
+// tre schermate. Ora una riga per persona e la scheda completa dentro.
+admRows = approved;
 listWrap.appendChild(el('<div style="font-weight:700;margin:16px 0 8px;">'+t("admin_approved_title")+' ('+approved.length+')</div>'));
-approved.forEach(function(row){
-var rowEl = el('<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;"><span style="font-size:0.9rem;word-break:break-all;flex:1;min-width:140px;">'+escapeHtml(row.email)+(row.betaTester?' <span style="background:var(--bark);color:#fff;padding:1px 6px;border-radius:4px;font-size:0.7rem;font-weight:700;">BETA</span>':'')+(row.premium?' <span style="background:var(--accent);color:var(--accent-ink);padding:1px 6px;border-radius:4px;font-size:0.7rem;font-weight:700;">PREMIUM</span>':'')+'</span></div>');
-var betaBtn = el('<button class="btn btn-ghost btn-sm" style="'+(row.betaTester?'border-color:var(--bark);color:var(--bark);':'')+'">Beta '+(row.betaTester?'ON':'OFF')+'</button>');
-betaBtn.addEventListener("click", function(){
-betaBtn.disabled = true;
-db.collection("users").doc(row.id).update({betaTester: !row.betaTester}).then(loadList);
+
+var nPrem = 0, nBeta = 0, nNasc = 0, nClub = 0;
+approved.forEach(function(r){
+if(r.premium) nPrem++;
+if(r.betaTester) nBeta++;
+if(r.data && r.data.nomeNascosto === true) nNasc++;
+if(r.data && r.data.compagnia) nClub++;
 });
-rowEl.appendChild(betaBtn);
-// Premium: interruttore unico, visibile solo qui dentro (pannello admin).
-// L'utente non lo vede e non lo puo' scrivere: lo vietano le regole.
-var premBtn = el('<button class="btn btn-ghost btn-sm" style="'+(row.premium?'border-color:var(--accent-soft);color:var(--accent-soft);':'')+'">Premium '+(row.premium?'ON':'OFF')+'</button>');
-premBtn.addEventListener("click", function(){
-premBtn.disabled = true;
-db.collection("users").doc(row.id).update({premium: !row.premium})
-.then(loadList)
-.catch(function(e){ premBtn.disabled = false; alert(e && e.message ? e.message : "Errore"); });
+listWrap.appendChild(el('<div class="adm-tot">'
++ '<div><b>'+approved.length+'</b><span>APPROVATI</span></div>'
++ '<div><b>'+nPrem+'</b><span>PREMIUM</span></div>'
++ '<div><b>'+nBeta+'</b><span>COLLAUDATORI</span></div>'
++ '<div><b>'+nClub+'</b><span>IN COMPAGNIA</span></div>'
++ '</div>'));
+
+var admSearch = el('<input type="search" class="adm-search" placeholder="Cerca nome, nome utente o email">');
+admSearch.value = admQuery;
+admSearch.addEventListener("input", function(){ admQuery = admSearch.value; drawApproved(); });
+listWrap.appendChild(admSearch);
+
+var admFiltri = el('<div class="adm-filtri"></div>');
+[["tutti","Tutti"],["premium","Premium"],["beta","Collaudatori"],["nascosti","Nome nascosto ("+nNasc+")"],["senzaclub","Senza compagnia"]].forEach(function(f){
+var fb = el('<button class="adm-f'+(admFilter === f[0] ? ' on' : '')+'">'+f[1]+'</button>');
+fb.addEventListener("click", function(){
+admFilter = f[0];
+Array.prototype.forEach.call(admFiltri.querySelectorAll(".adm-f"), function(x){ x.classList.remove("on"); });
+fb.classList.add("on");
+drawApproved();
 });
-rowEl.appendChild(premBtn);
-var noteInput = el('<input type="text" placeholder="Nota (solo admin)" style="flex-basis:100%;font-size:0.8rem;padding:6px 8px;">');
-noteInput.value = adminNotes[row.id] || "";
-noteInput.addEventListener("change", function(){
-var v = noteInput.value.trim();
-noteInput.disabled = true;
-db.collection("admin_notes").doc(row.id).set({ nota: v, at: firebase.firestore.FieldValue.serverTimestamp() })
-.then(function(){ adminNotes[row.id] = v; noteInput.disabled = false; })
-.catch(function(e){ noteInput.disabled = false; alert(e && e.message ? e.message : "Errore"); });
+admFiltri.appendChild(fb);
 });
-rowEl.appendChild(noteInput);
-var btn = el('<button class="btn btn-ghost btn-sm">'+t("admin_revoke_btn")+'</button>');
-btn.addEventListener("click", function(){
-btn.disabled = true;
-db.collection("users").doc(row.id).update({approved:false}).then(function(){
-// Revoca: fuori anche dall'elenco pubblico, altrimenti resterebbe
-// invitabile e contattabile.
-return deletePublicProfile(row.id);
-}).then(function(){ publicProfilesCache = null; archersDirectory = null; loadList(); })
-.catch(function(e){ btn.disabled = false; alert(e && e.message ? e.message : "Errore"); });
-});
-rowEl.appendChild(btn);
-listWrap.appendChild(rowEl);
-});
+listWrap.appendChild(admFiltri);
+
+admWrap = el('<div></div>');
+listWrap.appendChild(admWrap);
+drawApproved();
 }).catch(function(err){
 listWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
 });
@@ -9168,7 +9383,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-15-pgbeta";
+var BUILD_STAMP = "2026-08-15-admdati";
 
 function infoScreen(){
 var wrap = el('<div></div>');
