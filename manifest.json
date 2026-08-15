@@ -1,11 +1,12 @@
 {
+  "id": "/",
   "name": "ArcTrail 3D",
   "short_name": "ArcTrail 3D",
   "description": "Segnapunti per il tiro con l'arco 3D",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0E1512",
+  "background_color": "#F5F4F0",
   "theme_color": "#315B35",
   "orientation": "portrait",
   "icons": [
