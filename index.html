@@ -1180,50 +1180,30 @@ padding-top:calc(var(--s-3) + env(safe-area-inset-top));
 padding-bottom:var(--s-3); }
 body.schermo-percorso header.top{ margin-top:0; }
 .pista{ flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
-.pista-spazio{ flex:1 1 auto; min-height:var(--s-3); position:relative; overflow:hidden; }
+.pista-spazio{ flex:1 1 auto; min-height:var(--s-3); }
 
-/* ── la filigrana: il bersaglio, riconoscibile ──
-   Primo tentativo: archi con il centro fuori dal riquadro. Sbagliato — si
-   vedevano curve che non dicevano niente, perche' senza centro un cerchio
-   non e' un bersaglio, e' una curva. Adesso il centro SI VEDE, e sono le
-   fasce esterne a uscire dai bordi: la forma si legge in un colpo d'occhio
-   e il taglio la dichiara fondale, non oggetto.
+/* ── LA FILIGRANA NON C'E' PIU' (16/08/2026) ──
+   Due prove sul campo, due bocciature, e la seconda dopo una correzione fatta
+   apposta. La prima volta il bersaglio finiva al centro geometrico dello
+   schermo ed era l'elemento piu' grande della pagina. E' stato spostato
+   nell'angolo e ingrandito perche' due bordi lo tagliassero sempre: alla
+   seconda prova era di nuovo la cosa piu' grande, solo storta.
 
-   Le misure sono quelle vere della sagoma (raggi 19/46/85/140 su 300),
-   quindi non e' un bersaglio generico: e' QUESTO bersaglio, in piccolo.
+   La ragione e' strutturale e va scritta, altrimenti fra due mesi qualcuno la
+   rimette. .pista-spazio E' LA REGIONE PIU' GRANDE DELLO SCHERMO per
+   costruzione: assorbe tutto l'avanzo perche' la tastiera resti in fondo. Un
+   disegno messo li' dentro non puo' essere piccolo, qualunque siano le sue
+   misure, perche' e' l'unica cosa dentro il rettangolo piu' grande. Nessun
+   valore di opacita' o di posizione risolve un problema di gerarchia.
 
-   Solo tratto, nessun pieno: un disco pieno in basso a destra sembrerebbe
-   un tasto. E il disegno sta nella MASCHERA, non nel colore, cosi' la tinta
-   arriva da --text-1 e i tre temi funzionano senza una riga per tema.
+   E la prova del nove e' quella che le note usano gia' altrove: si scriva
+   cosa fa. Non dice il punteggio, non dice il turno, non dice dove sei. Era
+   decorazione — la sola cosa nell'app senza un mestiere — su una schermata
+   che si guarda per due ore. Toccava a lei andarsene per prima.
 
-   Sta nello spazio che avanza, quindi non toglie niente a nessuno: se lo
-   spazio si stringe viene ritagliata; con un pannello aperto non esiste
-   proprio, perche' non esiste .pista-spazio. Non si muove: e' un fondale. */
-.pista-spazio::before{
-content:""; position:absolute; inset:0; pointer-events:none;
-background-color:color-mix(in srgb, var(--text-1) 10%, transparent);
-/* proprieta' per esteso, non la scorciatoia "mask:": dentro l'indirizzo del
-   disegno c'e' una barra, e nella scorciatoia la barra separa posizione e
-   misura. Per esteso non c'e' niente da confondere. */
--webkit-mask-image:var(--filigrana); mask-image:var(--filigrana);
--webkit-mask-repeat:no-repeat;       mask-repeat:no-repeat;
-/* PRIMO GIRO SU UN TELEFONO VERO, 16/08/2026: bocciata. Con molto spazio
-   libero il bersaglio finiva al centro geometrico dello schermo ed era
-   l'elemento PIU' GRANDE della pagina: non leggeva come fondale e non leggeva
-   come sporco, leggeva come un oggetto da toccare che non fa niente. Il taglio
-   doveva dichiararla fondale, ma se lo spazio e' alto il taglio non avviene.
-   Adesso il centro sta nell'angolo in basso a destra e il disegno e' grande
-   quanto basta perche' due bordi lo taglino SEMPRE, qualunque sia lo spazio. */
--webkit-mask-position:96% 94%;       mask-position:96% 94%;
--webkit-mask-size:380px 380px;       mask-size:380px 380px;
-}
-:root{
---filigrana:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cg fill='none' stroke='white'%3E%3Ccircle cx='150' cy='150' r='140' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='85' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='46' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='19' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='113' stroke-width='1.2'/%3E%3Ccircle cx='150' cy='150' r='65' stroke-width='1.2'/%3E%3Ccircle cx='150' cy='150' r='32' stroke-width='1.2'/%3E%3C/g%3E%3C/svg%3E");
-}
-/* Schermo basso o telefono di traverso: lo spazio che avanza e' una
-   striscia, e una striscia di bersaglio sembra un errore. Meglio niente. */
-@media (max-height:560px){ .pista-spazio::before{ display:none; } }
-@media print{ .pista-spazio::before{ display:none; } }
+   Lo spazio resta vuoto, e vuoto e' quello che deve essere: e' il respiro fra
+   il dato in alto e il comando in basso. */
+
 
 /* ── testata: il passo del giro, piccolo, dove serve ──
    La cifra della piazzola era l'elemento piu' grande dello schermo. E' l'unica
@@ -1313,9 +1293,15 @@ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
    destra e senza fondo pieno. */
 .pista-scorciatoie{ flex:0 0 auto; display:flex; justify-content:flex-end;
 gap:var(--s-2); margin-bottom:var(--s-2); }
+/* Prima era largo tutta la riga col fondo dorato e leggeva come un quinto
+   tasto punteggio. La correzione era andata troppo in la': senza fondo e in
+   grigio chiaro spariva. PICCOLO NON VUOL DIRE INVISIBILE — un'azione
+   secondaria deve avere il peso di un'azione secondaria, non di nessuna. */
 .pista-scorciatoie .btn{ flex:0 0 auto; padding:var(--s-2) var(--s-3);
-font-size:var(--t-xs); min-height:36px; background:none; box-shadow:none;
-border:1px solid var(--border); color:var(--text-2); font-weight:600; }
+font-size:var(--t-sm); min-height:var(--hit); box-shadow:none;
+background:color-mix(in srgb, var(--gold-role) 12%, var(--surface-1));
+border:1.5px solid color-mix(in srgb, var(--gold-role) 50%, transparent);
+color:var(--gold-role); font-weight:700; }
 
 /* ── la striscia dell'annulla: il rimedio accanto all'errore ──
    Prima l'annulla stava in fondo a 1150px di pagina, mentre l'errore era in
@@ -1329,10 +1315,15 @@ font-size:var(--t-sm); font-weight:600; }
 body.theme-dark .striscia-annulla{ background:color-mix(in srgb, var(--gold-400) 16%, var(--surface-1));
 border-color:var(--gold-400); color:var(--gold-400); }
 .striscia-annulla .num{ font-weight:800; }
+.striscia-annulla > span{ min-width:0; }
+/* Il rimedio non va a capo. Sul telefono vero "Annulla freccia" si spezzava in
+   due righe e la striscia diventava alta il doppio del tasto che la contiene:
+   un comando spezzato sembra due comandi. Il testo a sinistra puo' accorciarsi
+   quanto serve, il comando no. */
 .striscia-annulla button{ display:inline-flex; align-items:center; gap:var(--s-1);
-min-height:36px; padding:0 var(--s-2); background:none; border:none;
-color:var(--clay); font-family:inherit; font-size:var(--t-sm); font-weight:700;
-cursor:pointer; border-radius:var(--r-sm); }
+flex:0 0 auto; white-space:nowrap; min-height:36px; padding:0 var(--s-2);
+background:none; border:none; color:var(--clay); font-family:inherit;
+font-size:var(--t-sm); font-weight:700; cursor:pointer; border-radius:var(--r-sm); }
 
 /* ── la tastiera ──
    Mai piu' di tre per riga: su un telefono da 390px un tasto passa da 54 a
@@ -7128,7 +7119,14 @@ app.innerHTML = "";
 app.classList.toggle("narrow", !state.lang || authState !== "ready" || !!NARROW_SCREENS[state.screen]);
 // La pista e' l'unica schermata che non scorre: #app diventa una colonna
 // flessibile perche' la tastiera possa stare in fondo senza posizione fissa.
-document.body.classList.toggle("schermo-percorso", state.screen === "round" && authState === "ready");
+// LA REGOLA "NON SCORRE" SEGUE LA SCHERMATA CHE SI VEDE, NON LO STATO.
+// Con homeOverride lo stato resta "round" ma a schermo c'e' il menu: la
+// condizione guardava solo state.screen, quindi il menu ereditava
+// height:100dvh + overflow:hidden e RESTAVA BLOCCATO. Si usciva dal giro e la
+// pagina non si scorreva piu'. Il bug era li' dal 16/08, prima di tutto il
+// resto: nessuno era mai uscito dal giro per guardare il menu.
+document.body.classList.toggle("schermo-percorso",
+state.screen === "round" && authState === "ready" && !homeOverride);
 if(typeof syncNavGuard === "function") syncNavGuard();
 if(state.lang){ document.documentElement.lang = state.lang; }
 applyTheme(currentTheme());
@@ -10535,7 +10533,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-superficie-b";
+var BUILD_STAMP = "2026-08-16-superficie-c";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
