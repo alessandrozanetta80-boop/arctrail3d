@@ -10655,7 +10655,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-andamento-b";
+var BUILD_STAMP = "2026-08-16-andamento-c";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13389,31 +13389,41 @@ turni.appendChild(t1);
 });
 if(state.archers.length > 1){ scena.appendChild(turni); }
 
-// ── L'ANDAMENTO: cosa hai fatto finora ──
-// Lo spazio in mezzo alla pista era stato riempito con un bersaglio in
-// filigrana, ed e' stato tolto perche' non aveva un mestiere. Ma vuoto e
-// basta e' altrettanto sbagliato: la regione piu' grande dello schermo, per
-// due ore, che non dice niente. Qui va l'unica informazione che l'app
-// possiede e non mostrava da nessuna parte durante il giro — il totale e le
-// piazzole gia' chiuse. E' la stessa cosa per cui si apriva la Classifica,
-// ma senza aprire niente. Superata la prova: si puo' scrivere cosa fa.
-var mieEntries = state.scores[currentArcher.id] || [];
-if(mieEntries.length){
-var and = el('<div class="pista-andamento"></div>');
-var testa = el('<div class="pista-tot"></div>');
-testa.appendChild(el('<span class="eti">'+t("pista_totale")+'</span>'));
-testa.appendChild(el('<b class="num">'+totalFor(currentArcher.id)+'</b>'));
-and.appendChild(testa);
-var strisciaP = el('<div class="pista-fatte"></div>');
-mieEntries.forEach(function(ent, idx){
-strisciaP.appendChild(el('<span class="fatta"><i>'+(idx+1)+'</i><b class="num">'+ent.total+'</b></span>'));
-firma += "|f"+(idx+1)+":"+ent.total;
-});
-and.appendChild(strisciaP);
-scena.appendChild(and);
-}
 scena.setAttribute("data-firma", firma);
 return scena;
+}
+
+// ---------- REGIONE: lo spazio che avanza, e cosa ci sta dentro ----------
+// PRIMO TENTATIVO SBAGLIATO, 16/08/2026: l'andamento era stato messo dentro
+// .pista-scena. Ma la scena e' l'unica regione che CEDE (flex:0 1 auto,
+// overflow-y:auto): con tre arcieri la scheda diventava piu' alta dello spazio
+// disponibile, cominciava a scorrere, e scorrendo nascondeva il nome di chi
+// tira — cioe' proprio la cosa che quella scheda esiste per dire.
+// Il posto giusto e' lo spazio che avanza: e' la regione che CRESCE. Se c'e'
+// posto l'andamento si vede, se non ce n'e' viene ritagliato e la scena resta
+// intatta. Stessa proprieta' che rendeva la filigrana "gratis" — ma questo,
+// a differenza di quella, si puo' scrivere cosa fa.
+function pistaSpazio(c){
+var sp = el('<div class="pista-spazio" data-regione="spazio"></div>');
+var mie = state.scores[c.currentArcher.id] || [];
+sp.setAttribute("data-firma", c.currentArcher.id + "|"
++ mie.map(function(e){ return e.total; }).join(","));
+if(!mie.length) return sp;
+var and = el('<div class="pista-andamento"></div>');
+// Le piazzole chiuse: una riga sola, le piu' recenti a destra. A capo no —
+// una fila che va a capo cresce senza limite e torna a rubare spazio alla
+// scena, che e' l'errore appena corretto.
+var fatte = el('<div class="pista-fatte"></div>');
+mie.forEach(function(ent, idx){
+fatte.appendChild(el('<span class="fatta"><i>'+(idx+1)+'</i><b class="num">'+ent.total+'</b></span>'));
+});
+and.appendChild(fatte);
+var tot = el('<div class="pista-tot"></div>');
+tot.appendChild(el('<span class="eti">'+t("pista_totale")+'</span>'));
+tot.appendChild(el('<b class="num">'+totalFor(c.currentArcher.id)+'</b>'));
+and.appendChild(tot);
+sp.appendChild(and);
+return sp;
 }
 
 // ---------- REGIONE: la striscia dell'annulla ----------
