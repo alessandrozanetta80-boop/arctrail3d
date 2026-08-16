@@ -943,6 +943,51 @@ font-family:inherit; font-size:var(--t-md); line-height:1;
 min-width:var(--hit); min-height:var(--hit); border-radius:var(--r-sm); }
 .iscritto-rm:hover{ color:var(--danger-role); }
 
+/* La divisione, la tessera, il codice di Compagnia.
+   Sono i quattro dati che l'Art. 18.j vuole nella classifica da consegnare:
+   se non si scrivono qui non esistono nel documento, e li' non si recuperano
+   piu'. Quindi stanno a vista, non dietro a un tocco: un campo che si apre
+   solo se lo cerchi resta vuoto, e il vuoto si scopre alla premiazione.
+   L'etichetta pero' non si ripete sessanta volte. I due menu si presentano da
+   soli - la voce vuota porta il nome del menu - e i due numeri si riconoscono
+   dalla forma: cifre la tessera, due cifre e quattro lettere il codice, che
+   per giunta risponde col nome della compagnia. Il nome per esteso lo sente
+   chi non vede, con aria-label. */
+.iscritto-row{ display:block; padding:var(--s-2) 0;
+border-bottom:1px solid var(--border); }
+.iscritto-capo{ display:flex; align-items:center; gap:var(--s-2); }
+.iscritto-dati{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+gap:var(--s-2); margin-top:var(--s-2); }
+.iscritto-dati input, .iscritto-dati select{ font-size:var(--t-sm);
+padding:var(--s-2) var(--s-3); }
+.iscritto-dati input{ font-family:var(--font-num);
+font-variant-numeric:tabular-nums slashed-zero; }
+/* Il nome della compagnia sta sotto ai due numeri e prende tutta la riga:
+   e' una risposta, non un campo. */
+.iscritto-club{ grid-column:1 / -1; font-size:var(--t-xs); color:var(--text-3); }
+.iscritto-club.ignoto{ color:var(--danger-role); }
+/* La coppia che finisce in classifica, accanto al nome. Chi non ce l'ha
+   intera dice "Ospite" a chiare lettere: un vuoto silenzioso lo scopri alla
+   premiazione. Colore d'attenzione, non d'allarme - Ospite e' una condizione
+   prevista dal regolamento, non un errore. */
+.divisione-sigla{ font-size:var(--t-xs); font-weight:800; letter-spacing:.06em;
+padding:var(--s-1) var(--s-2); border-radius:var(--r-pill); white-space:nowrap;
+background:var(--surface-2); border:1px solid var(--border); color:var(--text-2); }
+.divisione-sigla.ospite{ color:var(--clay); }
+
+/* Il resoconto dell'importazione: non una conferma da premere, un foglio che
+   resta li'. Le righe non capite si mostrano una per una - un'importazione che
+   ne perde tre su cento in silenzio e' peggio di una che non parte, perche'
+   l'errore si scopre in gara, quando manca una persona. */
+.pg-esito{ margin:var(--s-2) 0 var(--s-4); padding:var(--s-3);
+border:1px solid var(--border); border-radius:var(--r-sm);
+background:var(--surface-2); }
+.pg-esito-conti{ font-size:var(--t-sm); color:var(--text-2); }
+.pg-esito-dubbie{ font-size:var(--t-xs); color:var(--clay); font-weight:700;
+margin-top:var(--s-2); }
+.pg-esito-riga{ font-size:var(--t-xs); color:var(--text-3);
+font-family:var(--font-num); padding:var(--s-1) 0; }
+
 /* ══════════════════ RIFINITURA DA COMPUTER (agosto 2026) ══════════════════
    Tutto quello che segue vive dentro @media (min-width:900px): sul telefono
    e sul tablet in verticale non cambia una virgola.
@@ -2402,8 +2447,15 @@ pg_knee_not_allowed_timed: "Ginocchio non ammesso (a tempo)", pg_knee_not_allowe
 pg_desc_placeholder: "Breve descrizione (facoltativa)", pg_cancel: "Annulla", pg_save_piazzola: "Salva piazzola",
 pg_section_participants: "{gara} \u2014 iscritti e squadre", pg_first_name_ph: "Nome", pg_last_name_ph: "Cognome", pg_add_btn: "Aggiungi",
 pg_search_account_hint: "Oppure cerca un account gi\u00e0 registrato (cos\u00ec l'iscritto risulta collegato, utile per le notifiche future)",
-pg_bulk_import_hint: "Oppure incolla un elenco: un blocco per squadra separato da riga vuota o intestazione \u201cSquadra N\u201d, un cognome (o \u201cCognome, Nome\u201d) per riga.",
+pg_bulk_import_hint: "Oppure incolla un elenco: un blocco per squadra, separato da riga vuota o dall'intestazione «Squadra N». Su ogni riga cognome e nome e, se ce l'hai, numero di tessera, sigle di Classe e Categoria e codice di Compagnia: l'ordine non conta.",
 pg_import_teams_btn: "Importa squadre GI\u00c0 FORMATE (mantiene i tuoi gruppi)", pg_participants_count_label: "Iscritti:", pg_not_linked: "(non collegato)", pg_remove_participant: "Togli {name} dagli iscritti",
+pg_bulk_placeholder: "Squadra 1\nNatale, Luca, 12345, SEM, LB, 01VERB\nVallo, Marco\n\nSquadra 2\n…",
+pg_div_intro: "Classe e Categoria decidono chi vince contro chi: le assegna la Compagnia all'iscrizione e a gara aperta non cambiano. Chi non ha entrambe è Ospite e resta fuori classifica. Nomi e sigle sono quelli del regolamento:",
+pg_div_classe: "Classe", pg_div_categoria: "Categoria", pg_div_ospite: "Ospite",
+pg_div_classe_di: "Classe di {name}", pg_div_categoria_di: "Categoria di {name}",
+pg_tessera_ph: "N. tessera", pg_tessera_di: "Numero di tessera di {name}",
+pg_codice_ph: "Codice compagnia", pg_codice_di: "Codice di Compagnia di {name}", pg_codice_ignoto: "Codice sconosciuto",
+pg_import_esito: "Iscritti: {n} \u00b7 con divisione: {div} \u00b7 con tessera: {tess} \u00b7 con compagnia: {comp}", pg_import_dubbie: "Da ricontrollare: {n} \u00b7 nessuna riga è stata buttata",
 pg_people_per_team: "Persone per squadra (max 6)", pg_auto_teams_btn: "Crea squadre AUTOMATICHE (mischiate, non a blocchi A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignora eventuali gruppi gi\u00e0 decisi: ricalcola le squadre da zero (mischiando i cognomi tra le squadre, ordine di tiro alfabetico solo dentro ciascuna).",
 pg_organizer_view_title: "Vista organizzatore \u2014 chi parte da dove", 
@@ -2866,8 +2918,15 @@ pg_knee_not_allowed_timed: "Kneeling not allowed (timed target)", pg_knee_not_al
 pg_desc_placeholder: "Short description (optional)", pg_cancel: "Cancel", pg_save_piazzola: "Save target",
 pg_section_participants: "{gara} \u2014 participants and teams", pg_first_name_ph: "First name", pg_last_name_ph: "Last name", pg_add_btn: "Add",
 pg_search_account_hint: "Or search for an already registered account (this links the participant, useful for future notifications)",
-pg_bulk_import_hint: "Or paste a list: one block per team separated by a blank line or a \u201cTeam N\u201d heading, one last name (or \u201cLast name, First name\u201d) per line.",
+pg_bulk_import_hint: "Or paste a list: one block per team, separated by a blank line or a “Team N” heading. On each line last name and first name and, if you have them, membership number, Class and Category codes and club code: the order doesn't matter.",
 pg_import_teams_btn: "Import ALREADY FORMED teams (keeps your groups)", pg_participants_count_label: "Participants:", pg_not_linked: "(not linked)", pg_remove_participant: "Remove {name} from the list",
+pg_bulk_placeholder: "Team 1\nNatale, Luca, 12345, SEM, LB, 01VERB\nVallo, Marco\n\nTeam 2\n…",
+pg_div_intro: "Class and Category decide who competes against whom: the club assigns them at registration and they don't change once the competition is open. Anyone without both is a Guest and stays out of the rankings. Names and codes are the ones in the rulebook:",
+pg_div_classe: "Class", pg_div_categoria: "Category", pg_div_ospite: "Guest",
+pg_div_classe_di: "Class for {name}", pg_div_categoria_di: "Category for {name}",
+pg_tessera_ph: "Membership no.", pg_tessera_di: "Membership number for {name}",
+pg_codice_ph: "Club code", pg_codice_di: "Club code for {name}", pg_codice_ignoto: "Unknown code",
+pg_import_esito: "Participants: {n} \u00b7 with division: {div} \u00b7 with membership number: {tess} \u00b7 with club: {comp}", pg_import_dubbie: "To check: {n} \u00b7 no line was discarded",
 pg_people_per_team: "People per team (max 6)", pg_auto_teams_btn: "Create AUTOMATIC teams (shuffled, not A-Z blocks)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignores any groups already decided: recalculates teams from scratch (mixing last names across teams, alphabetical shooting order only within each team).",
 pg_organizer_view_title: "Organizer view \u2014 who starts where", 
@@ -3344,8 +3403,15 @@ pg_knee_not_allowed_timed: "Tir \u00e0 genou non admis (chronom\u00e9tr\u00e9e)"
 pg_desc_placeholder: "Br\u00e8ve description (facultative)", pg_cancel: "Annuler", pg_save_piazzola: "Enregistrer la cible",
 pg_section_participants: "{gara} \u2014 inscrits et \u00e9quipes", pg_first_name_ph: "Pr\u00e9nom", pg_last_name_ph: "Nom", pg_add_btn: "Ajouter",
 pg_search_account_hint: "Ou recherchez un compte d\u00e9j\u00e0 inscrit (l’inscrit sera ainsi li\u00e9, utile pour les futures notifications)",
-pg_bulk_import_hint: "Ou collez une liste\u00a0: un bloc par \u00e9quipe s\u00e9par\u00e9 par une ligne vide ou un titre \u00ab\u00a0\u00c9quipe N\u00a0\u00bb, un nom (ou \u00ab\u00a0Nom, Pr\u00e9nom\u00a0\u00bb) par ligne.",
+pg_bulk_import_hint: "Ou collez une liste : un bloc par équipe, séparé par une ligne vide ou par le titre « Équipe N ». Sur chaque ligne nom et prénom et, si vous les avez, numéro de licence, sigles de Classe et Catégorie et code du club : l'ordre n'a pas d'importance.",
 pg_import_teams_btn: "Importer des \u00e9quipes D\u00c9J\u00c0 FORM\u00c9ES (conserve vos groupes)", pg_participants_count_label: "Inscrits\u00a0:", pg_not_linked: "(non li\u00e9)", pg_remove_participant: "Retirer {name} de la liste",
+pg_bulk_placeholder: "Équipe 1\nNatale, Luca, 12345, SEM, LB, 01VERB\nVallo, Marco\n\nÉquipe 2\n…",
+pg_div_intro: "La Classe et la Catégorie décident qui affronte qui : le club les attribue à l'inscription et elles ne changent plus une fois la compétition ouverte. Sans les deux, l'archer est Invité et reste hors classement. Les noms et les sigles sont ceux du règlement :",
+pg_div_classe: "Classe", pg_div_categoria: "Catégorie", pg_div_ospite: "Invité",
+pg_div_classe_di: "Classe de {name}", pg_div_categoria_di: "Catégorie de {name}",
+pg_tessera_ph: "N° de licence", pg_tessera_di: "Numéro de licence de {name}",
+pg_codice_ph: "Code du club", pg_codice_di: "Code du club de {name}", pg_codice_ignoto: "Code inconnu",
+pg_import_esito: "Inscrits : {n} \u00b7 avec division : {div} \u00b7 avec licence : {tess} \u00b7 avec club : {comp}", pg_import_dubbie: "À vérifier : {n} \u00b7 aucune ligne n'a été jetée",
 pg_people_per_team: "Personnes par \u00e9quipe (max 6)", pg_auto_teams_btn: "Cr\u00e9er des \u00e9quipes AUTOMATIQUES (m\u00e9lang\u00e9es, pas par blocs A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignore les groupes d\u00e9j\u00e0 d\u00e9cid\u00e9s\u00a0: recalcule les \u00e9quipes \u00e0 z\u00e9ro (en m\u00e9langeant les noms entre les \u00e9quipes, ordre de tir alphab\u00e9tique seulement \u00e0 l’int\u00e9rieur de chacune).",
 pg_organizer_view_title: "Vue organisateur \u2014 qui part d’o\u00f9", 
@@ -3822,8 +3888,15 @@ pg_knee_not_allowed_timed: "Kniender Schuss nicht erlaubt (zeitlich begrenzt)", 
 pg_desc_placeholder: "Kurze Beschreibung (optional)", pg_cancel: "Abbrechen", pg_save_piazzola: "Ziel speichern",
 pg_section_participants: "{gara} \u2014 Teilnehmer und Teams", pg_first_name_ph: "Vorname", pg_last_name_ph: "Nachname", pg_add_btn: "Hinzuf\u00fcgen",
 pg_search_account_hint: "Oder ein bereits registriertes Konto suchen (so wird der Teilnehmer verkn\u00fcpft, n\u00fctzlich f\u00fcr k\u00fcnftige Benachrichtigungen)",
-pg_bulk_import_hint: "Oder eine Liste einf\u00fcgen: ein Block pro Team, getrennt durch eine Leerzeile oder eine \u201eTeam N\u201c-\u00dcberschrift, ein Nachname (oder \u201eNachname, Vorname\u201c) pro Zeile.",
+pg_bulk_import_hint: "Oder eine Liste einfügen: ein Block pro Team, getrennt durch eine Leerzeile oder die Überschrift „Team N“. In jeder Zeile Nachname und Vorname und, falls vorhanden, Mitgliedsnummer, Kürzel für Klasse und Kategorie und Vereinscode: die Reihenfolge spielt keine Rolle.",
 pg_import_teams_btn: "BEREITS GEBILDETE Teams importieren (beh\u00e4lt deine Gruppen)", pg_participants_count_label: "Teilnehmer:", pg_not_linked: "(nicht verkn\u00fcpft)", pg_remove_participant: "{name} aus der Liste entfernen",
+pg_bulk_placeholder: "Team 1\nNatale, Luca, 12345, SEM, LB, 01VERB\nVallo, Marco\n\nTeam 2\n…",
+pg_div_intro: "Klasse und Kategorie entscheiden, wer gegen wen antritt: Der Verein vergibt sie bei der Anmeldung, und nach Wettkampfbeginn ändern sie sich nicht mehr. Wer nicht beides hat, ist Gast und bleibt außerhalb der Wertung. Namen und Kürzel stammen aus dem Reglement:",
+pg_div_classe: "Klasse", pg_div_categoria: "Kategorie", pg_div_ospite: "Gast",
+pg_div_classe_di: "Klasse von {name}", pg_div_categoria_di: "Kategorie von {name}",
+pg_tessera_ph: "Mitgliedsnr.", pg_tessera_di: "Mitgliedsnummer von {name}",
+pg_codice_ph: "Vereinscode", pg_codice_di: "Vereinscode von {name}", pg_codice_ignoto: "Unbekannter Code",
+pg_import_esito: "Teilnehmer: {n} \u00b7 mit Einteilung: {div} \u00b7 mit Mitgliedsnummer: {tess} \u00b7 mit Verein: {comp}", pg_import_dubbie: "Zu prüfen: {n} \u00b7 keine Zeile wurde verworfen",
 pg_people_per_team: "Personen pro Team (max. 6)", pg_auto_teams_btn: "AUTOMATISCHE Teams erstellen (gemischt, nicht in A-Z-Bl\u00f6cken)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignoriert bereits festgelegte Gruppen: berechnet die Teams komplett neu (mischt Nachnamen zwischen den Teams, alphabetische Schie\u00dfreihenfolge nur innerhalb jedes Teams).",
 pg_organizer_view_title: "Organisator-Ansicht \u2014 wer startet wo", 
@@ -4328,8 +4401,15 @@ pg_knee_not_allowed_timed: "Diz \u00fcst\u00fc yasak (s\u00fcreli)", pg_knee_not
 pg_desc_placeholder: "K\u0131sa a\u00e7\u0131klama (iste\u011fe ba\u011fl\u0131)", pg_cancel: "\u0130ptal", pg_save_piazzola: "Hedefi kaydet",
 pg_section_participants: "{gara} \u2014 kat\u0131l\u0131mc\u0131lar ve tak\u0131mlar", pg_first_name_ph: "Ad", pg_last_name_ph: "Soyad", pg_add_btn: "Ekle",
 pg_search_account_hint: "Ya da kay\u0131tl\u0131 bir hesap ara (b\u00f6ylece kat\u0131l\u0131mc\u0131 hesab\u0131na ba\u011fl\u0131 olur, ileride bildirimler i\u00e7in yararl\u0131)",
-pg_bulk_import_hint: "Ya da bir liste yap\u0131\u015ft\u0131r: her tak\u0131m bo\u015f sat\u0131rla veya \u201cTak\u0131m N\u201d ba\u015fl\u0131\u011f\u0131yla ayr\u0131l\u0131r, sat\u0131r ba\u015f\u0131na bir soyad (veya \u201cSoyad, Ad\u201d).",
+pg_bulk_import_hint: "Ya da bir liste yapıştır: her takım için bir blok, boş satırla veya “Takım N” başlığıyla ayrılır. Her satırda soyad ve ad, varsa lisans numarası, Sınıf ve Kategori kısaltmaları ve kulüp kodu: sıra önemli değil.",
 pg_import_teams_btn: "ZATEN OLU\u015eTURULMU\u015e tak\u0131mlar\u0131 i\u00e7e aktar (gruplar\u0131n\u0131 korur)", pg_participants_count_label: "Kat\u0131l\u0131mc\u0131lar:", pg_not_linked: "(ba\u011fl\u0131 de\u011fil)", pg_remove_participant: "{name} kişisini listeden çıkar",
+pg_bulk_placeholder: "Takım 1\nNatale, Luca, 12345, SEM, LB, 01VERB\nVallo, Marco\n\nTakım 2\n…",
+pg_div_intro: "Sınıf ve Kategori kimin kime karşı yarıştığını belirler: kayıt sırasında kulüp atar ve yarışma açıldıktan sonra değişmez. İkisi birden olmayan Konuk sayılır ve sıralamaya girmez. Adlar ve kısaltmalar yönetmelikten alınmıştır:",
+pg_div_classe: "Sınıf", pg_div_categoria: "Kategori", pg_div_ospite: "Konuk",
+pg_div_classe_di: "{name} için sınıf", pg_div_categoria_di: "{name} için kategori",
+pg_tessera_ph: "Lisans no", pg_tessera_di: "{name} için lisans numarası",
+pg_codice_ph: "Kulüp kodu", pg_codice_di: "{name} için kulüp kodu", pg_codice_ignoto: "Bilinmeyen kod",
+pg_import_esito: "Katılımcı: {n} \u00b7 sınıflandırmalı: {div} \u00b7 lisans numaralı: {tess} \u00b7 kulüplü: {comp}", pg_import_dubbie: "Kontrol edilecek: {n} \u00b7 hiçbir satır atılmadı",
 pg_people_per_team: "Tak\u0131m ba\u015f\u0131na ki\u015fi (en fazla 6)", pg_auto_teams_btn: "OTOMATIK tak\u0131mlar olu\u015ftur (kar\u0131\u015f\u0131k, A-Z blok de\u011fil)",
 pg_auto_teams_warning: "\u26a0\ufe0f Zaten karar verilmi\u015f gruplar\u0131 yok sayar: tak\u0131mlar\u0131 s\u0131f\u0131rdan yeniden hesaplar (soyadlar\u0131 tak\u0131mlar aras\u0131nda kar\u0131\u015ft\u0131r\u0131r, at\u0131\u015f s\u0131ras\u0131 sadece her tak\u0131m i\u00e7inde alfabetik).",
 pg_organizer_view_title: "Organizat\u00f6r g\u00f6r\u00fcn\u00fcm\u00fc \u2014 kim nereden ba\u015fl\u0131yor", 
@@ -4820,8 +4900,15 @@ pg_knee_not_allowed_timed: "Стрельба с колена не разреше
 pg_desc_placeholder: "Краткое описание (необязательно)", pg_cancel: "Отмена", pg_save_piazzola: "Сохранить мишень",
 pg_section_participants: "{gara} — участники и команды", pg_first_name_ph: "Имя", pg_last_name_ph: "Фамилия", pg_add_btn: "Добавить",
 pg_search_account_hint: "Или найдите уже зарегистрированный аккаунт (так участник будет привязан к аккаунту, что полезно для будущих уведомлений)",
-pg_bulk_import_hint: "Или вставьте список: один блок на команду, разделённый пустой строкой или заголовком «Команда N», по одной фамилии (или «Фамилия, Имя») на строку.",
+pg_bulk_import_hint: "Или вставьте список: один блок на команду, разделённый пустой строкой или заголовком «Команда N». В каждой строке фамилия и имя и, если есть, номер билета, коды класса и категории и код клуба: порядок не важен.",
 pg_import_teams_btn: "Импортировать УЖЕ СФОРМИРОВАННЫЕ команды (сохраняет ваши группы)", pg_participants_count_label: "Участников:", pg_not_linked: "(не привязан)", pg_remove_participant: "Убрать {name} из списка",
+pg_bulk_placeholder: "Команда 1\nNatale, Luca, 12345, SEM, LB, 01VERB\nVallo, Marco\n\nКоманда 2\n…",
+pg_div_intro: "Класс и категория определяют, кто с кем соревнуется: их назначает клуб при регистрации, и после открытия соревнования они не меняются. Без обоих значений участник — гость и в зачёт не входит. Названия и коды взяты из регламента:",
+pg_div_classe: "Класс", pg_div_categoria: "Категория", pg_div_ospite: "Гость",
+pg_div_classe_di: "Класс: {name}", pg_div_categoria_di: "Категория: {name}",
+pg_tessera_ph: "Номер билета", pg_tessera_di: "Номер билета: {name}",
+pg_codice_ph: "Код клуба", pg_codice_di: "Код клуба: {name}", pg_codice_ignoto: "Неизвестный код",
+pg_import_esito: "Участников: {n} \u00b7 с дивизионом: {div} \u00b7 с номером билета: {tess} \u00b7 с клубом: {comp}", pg_import_dubbie: "Проверить: {n} \u00b7 ни одна строка не отброшена",
 pg_people_per_team: "Человек на команду (макс. 6)", pg_auto_teams_btn: "Создать АВТОМАТИЧЕСКИЕ команды (перемешанные, не блоками А-Я)",
 pg_auto_teams_warning: "⚠️ Игнорирует уже решённые группы: пересчитывает команды с нуля (перемешивая фамилии между командами, порядок стрельбы по алфавиту только внутри каждой команды).",
 pg_organizer_view_title: "Вид организатора — кто откуда начинает", 
@@ -5312,8 +5399,15 @@ pg_knee_not_allowed_timed: "Rodillas no permitido (con tiempo)", pg_knee_not_all
 pg_desc_placeholder: "Breve descripci\u00f3n (opcional)", pg_cancel: "Cancelar", pg_save_piazzola: "Guardar diana",
 pg_section_participants: "{gara} \u2014 inscritos y equipos", pg_first_name_ph: "Nombre", pg_last_name_ph: "Apellido", pg_add_btn: "A\u00f1adir",
 pg_search_account_hint: "O busca una cuenta ya registrada (as\u00ed el inscrito queda vinculado, \u00fatil para futuras notificaciones)",
-pg_bulk_import_hint: "O pega una lista: un bloque por equipo separado por l\u00ednea en blanco o encabezado \u201cEquipo N\u201d, un apellido (o \u201cApellido, Nombre\u201d) por l\u00ednea.",
+pg_bulk_import_hint: "O pega una lista: un bloque por equipo, separado por una línea en blanco o por el encabezado «Equipo N». En cada línea apellido y nombre y, si los tienes, número de licencia, siglas de Clase y Categoría y código del club: el orden no importa.",
 pg_import_teams_btn: "Importar equipos YA FORMADOS (mantiene tus grupos)", pg_participants_count_label: "Inscritos:", pg_not_linked: "(no vinculado)", pg_remove_participant: "Quitar a {name} de la lista",
+pg_bulk_placeholder: "Equipo 1\nNatale, Luca, 12345, SEM, LB, 01VERB\nVallo, Marco\n\nEquipo 2\n…",
+pg_div_intro: "Clase y Categoría deciden quién compite contra quién: las asigna el club en la inscripción y no cambian una vez abierta la competición. Quien no tenga ambas es Invitado y queda fuera de la clasificación. Los nombres y las siglas son los del reglamento:",
+pg_div_classe: "Clase", pg_div_categoria: "Categoría", pg_div_ospite: "Invitado",
+pg_div_classe_di: "Clase de {name}", pg_div_categoria_di: "Categoría de {name}",
+pg_tessera_ph: "N.º de licencia", pg_tessera_di: "Número de licencia de {name}",
+pg_codice_ph: "Código del club", pg_codice_di: "Código del club de {name}", pg_codice_ignoto: "Código desconocido",
+pg_import_esito: "Inscritos: {n} \u00b7 con división: {div} \u00b7 con licencia: {tess} \u00b7 con club: {comp}", pg_import_dubbie: "Para revisar: {n} \u00b7 no se ha descartado ninguna línea",
 pg_people_per_team: "Personas por equipo (m\u00e1x. 6)", pg_auto_teams_btn: "Crear equipos AUTOM\u00c1TICOS (mezclados, no en bloques A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignora los grupos ya decididos: recalcula los equipos desde cero (mezclando los apellidos entre equipos, orden de tiro alfab\u00e9tico solo dentro de cada equipo).",
 pg_organizer_view_title: "Vista del organizador \u2014 qui\u00e9n empieza d\u00f3nde", 
@@ -5804,8 +5898,15 @@ pg_knee_not_allowed_timed: "Kn\u00e4 ej till\u00e5tet (tidsbegr\u00e4nsat)", pg_
 pg_desc_placeholder: "Kort beskrivning (valfritt)", pg_cancel: "Avbryt", pg_save_piazzola: "Spara m\u00e5l",
 pg_section_participants: "{gara} \u2014 deltagare och lag", pg_first_name_ph: "F\u00f6rnamn", pg_last_name_ph: "Efternamn", pg_add_btn: "L\u00e4gg till",
 pg_search_account_hint: "Eller s\u00f6k ett redan registrerat konto (d\u00e5 blir deltagaren kopplad, anv\u00e4ndbart f\u00f6r framtida notiser)",
-pg_bulk_import_hint: "Eller klistra in en lista: ett block per lag \u00e5tskilt av en tom rad eller rubriken \u201dLag N\u201d, ett efternamn (eller \u201dEfternamn, F\u00f6rnamn\u201d) per rad.",
+pg_bulk_import_hint: "Eller klistra in en lista: ett block per lag, åtskilt av en tom rad eller rubriken ”Lag N”. På varje rad efternamn och förnamn och, om du har dem, licensnummer, koder för Klass och Kategori och klubbkod: ordningen spelar ingen roll.",
 pg_import_teams_btn: "Importera REDAN BILDADE lag (beh\u00e5ller dina grupper)", pg_participants_count_label: "Deltagare:", pg_not_linked: "(ej kopplad)", pg_remove_participant: "Ta bort {name} från listan",
+pg_bulk_placeholder: "Lag 1\nNatale, Luca, 12345, SEM, LB, 01VERB\nVallo, Marco\n\nLag 2\n…",
+pg_div_intro: "Klass och Kategori avgör vem som tävlar mot vem: klubben tilldelar dem vid anmälan och de ändras inte när tävlingen väl är öppen. Den som saknar någon av dem är Gäst och står utanför resultatlistan. Namn och koder kommer från reglementet:",
+pg_div_classe: "Klass", pg_div_categoria: "Kategori", pg_div_ospite: "Gäst",
+pg_div_classe_di: "Klass för {name}", pg_div_categoria_di: "Kategori för {name}",
+pg_tessera_ph: "Licensnr", pg_tessera_di: "Licensnummer för {name}",
+pg_codice_ph: "Klubbkod", pg_codice_di: "Klubbkod för {name}", pg_codice_ignoto: "Okänd kod",
+pg_import_esito: "Deltagare: {n} \u00b7 med indelning: {div} \u00b7 med licensnummer: {tess} \u00b7 med klubb: {comp}", pg_import_dubbie: "Att kontrollera: {n} \u00b7 ingen rad har kastats",
 pg_people_per_team: "Personer per lag (max 6)", pg_auto_teams_btn: "Skapa AUTOMATISKA lag (blandade, inte i block A-\u00d6)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignorerar redan best\u00e4mda grupper: ber\u00e4knar om lagen fr\u00e5n b\u00f6rjan (blandar efternamn mellan lagen, alfabetisk skjutordning endast inom varje lag).",
 pg_organizer_view_title: "Arrang\u00f6rsvy \u2014 vem b\u00f6rjar var", 
@@ -6296,8 +6397,15 @@ pg_knee_not_allowed_timed: "Knielend niet toegestaan (met tijd)", pg_knee_not_al
 pg_desc_placeholder: "Korte beschrijving (optioneel)", pg_cancel: "Annuleren", pg_save_piazzola: "Doel opslaan",
 pg_section_participants: "{gara} \u2014 deelnemers en teams", pg_first_name_ph: "Voornaam", pg_last_name_ph: "Achternaam", pg_add_btn: "Toevoegen",
 pg_search_account_hint: "Of zoek een reeds geregistreerd account (zo wordt de deelnemer gekoppeld, handig voor toekomstige meldingen)",
-pg_bulk_import_hint: "Of plak een lijst: een blok per team gescheiden door een lege regel of de titel \u201cTeam N\u201d, \u00e9\u00e9n achternaam (of \u201cAchternaam, Voornaam\u201d) per regel.",
+pg_bulk_import_hint: "Of plak een lijst: een blok per team, gescheiden door een lege regel of de titel “Team N”. Op elke regel achternaam en voornaam en, als je ze hebt, lidnummer, codes voor Klasse en Categorie en verenigingscode: de volgorde maakt niet uit.",
 pg_import_teams_btn: "AL GEVORMDE teams importeren (behoudt je groepen)", pg_participants_count_label: "Deelnemers:", pg_not_linked: "(niet gekoppeld)", pg_remove_participant: "{name} uit de lijst verwijderen",
+pg_bulk_placeholder: "Team 1\nNatale, Luca, 12345, SEM, LB, 01VERB\nVallo, Marco\n\nTeam 2\n…",
+pg_div_intro: "Klasse en Categorie bepalen wie het tegen wie opneemt: de vereniging kent ze toe bij de inschrijving en ze veranderen niet meer zodra de wedstrijd open is. Wie beide mist, is Gast en blijft buiten het klassement. Namen en codes komen uit het reglement:",
+pg_div_classe: "Klasse", pg_div_categoria: "Categorie", pg_div_ospite: "Gast",
+pg_div_classe_di: "Klasse van {name}", pg_div_categoria_di: "Categorie van {name}",
+pg_tessera_ph: "Lidnummer", pg_tessera_di: "Lidnummer van {name}",
+pg_codice_ph: "Verenigingscode", pg_codice_di: "Verenigingscode van {name}", pg_codice_ignoto: "Onbekende code",
+pg_import_esito: "Deelnemers: {n} \u00b7 met indeling: {div} \u00b7 met lidnummer: {tess} \u00b7 met vereniging: {comp}", pg_import_dubbie: "Na te kijken: {n} \u00b7 geen enkele regel is weggegooid",
 pg_people_per_team: "Personen per team (max. 6)", pg_auto_teams_btn: "AUTOMATISCHE teams aanmaken (gemengd, niet in blokken A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Negeert reeds beslist groepen: berekent de teams opnieuw vanaf nul (mengt de achternamen tussen de teams, alfabetische schietvolgorde alleen binnen elk team).",
 pg_organizer_view_title: "Organisatorweergave \u2014 wie begint waar", 
@@ -6495,6 +6603,76 @@ fftl: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" },
 nhb: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" },
 efaa: { garaModes: ["ifaa_3d"], trainingMode:"ifaa_training" }
 };
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LE DIVISIONI: CHI VINCE CONTRO CHI
+
+   Non e' una terna (stile + eta' + sesso): e' una COPPIA, Classe e Categoria.
+   Il sesso e' gia' dentro la classe, e la prova che la coppia e' giusta e la
+   terna no e' che DA - Diversamente Abili - non ha sesso: con tre assi
+   indipendenti quella classe non si puo' scrivere. Un modello che non sa
+   rappresentare una classe del regolamento e' sbagliato, per elegante che sia.
+
+   La SIGLA e' la chiave, non un nostro codice. La federazione ha gia' deciso
+   come si chiamano, "al fine di unificare la codifica informatica per la
+   compilazione delle classifiche": se l'app inventasse `arco_ricurvo` invece
+   di `RI`, la classifica che consegna andrebbe tradotta da qualcuno prima di
+   essere usata. Si salvano le due sigle; i nomi restano in italiano in tutte
+   e nove le lingue, perche' Cacciatori Maschile e Longbow sono nomi propri
+   del regolamento, come Percorso, Tracciato e Battuta.
+
+   OSP non e' un ripiego: e' nel regolamento, ed e' insieme classe e categoria
+   perche' non ha ne' l'una ne' l'altra. Quindi il "fuori classifica" non va
+   inventato - chi non dichiara e' Ospite, che in gara esiste e ha un nome.
+
+   E queste sono le sigle FIARC, non "le sigle". Una federazione senza tabella
+   qui non rompe niente: divisioniPer() restituisce null, i due menu non
+   compaiono e la schermata resta quella di prima. Aggiungere una federazione
+   e' aggiungere una voce, non toccare codice.
+   ══════════════════════════════════════════════════════════════════════════ */
+var DIVISIONI = {
+fiarc: {
+fonte: "Regolamento Tecnico FIARC, Art. 3 \u2014 delibera 033/2023/D del 02/12/2023",
+classi: [
+{ s:"CUF", n:"Cuccioli Femminile" }, { s:"CUM", n:"Cuccioli Maschile" },
+{ s:"SCF", n:"Scout Femminile" },    { s:"SCM", n:"Scout Maschile" },
+{ s:"CAF", n:"Cacciatori Femminile" },{ s:"CAM", n:"Cacciatori Maschile" },
+{ s:"SEF", n:"Seniores Femminile" }, { s:"SEM", n:"Seniores Maschile" },
+{ s:"DA",  n:"Diversamente Abili" }
+],
+categorie: [
+{ s:"AS", n:"Arco Storico" }, { s:"LB", n:"Longbow" },
+{ s:"RI", n:"Arco Ricurvo" }, { s:"AN", n:"Arco Nudo" },
+{ s:"CO", n:"Arco Compound" },{ s:"SL", n:"Stile Libero" },
+{ s:"SI", n:"Stile Libero Illimitato" }, { s:"FS", n:"Freestyle" }
+],
+ospite: "OSP"
+}
+};
+function divisioniPer(fed){ return (fed && DIVISIONI[fed]) ? DIVISIONI[fed] : null; }
+// La federazione di una gara. Il formato IFAA e' condiviso da sei federazioni:
+// vale quella dell'utente se e' fra quelle, altrimenti la prima.
+function pgFederazione(garaKey){
+var f = (PG_MODES[garaKey] || {}).fed || "fiarc";
+if(!Array.isArray(f)) return f;
+return (f.indexOf(state.federation) !== -1) ? state.federation : f[0];
+}
+// La coppia che finisce in classifica. Chi non ha entrambe e' Ospite, e lo
+// dice: la divisione mancante non si scopre alla premiazione.
+function divisioneDi(p, tab){
+if(!tab) return null;
+if(p && p.classe && p.categoria) return { classe:p.classe, categoria:p.categoria, ospite:false };
+return { classe:tab.ospite, categoria:tab.ospite, ospite:true };
+}
+function sigleDi(voci){ return voci.map(function(v){ return v.s; }); }
+// Il codice di Compagnia non e' testo libero: l'elenco vero e' gia' nel file.
+// Un codice sbagliato spedito alla Segreteria e' un errore che scopre
+// qualcun altro, giorni dopo, e che nessuno puo' piu' correggere.
+function compagniaNome(cod){
+if(!cod || typeof COMPAGNIE === "undefined") return null;
+var c = COMPAGNIE[String(cod).toUpperCase()];
+return c ? c.nome : null;
+}
 
 function load(){ try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
 function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
@@ -8582,7 +8760,8 @@ return Array.isArray(f) ? f.indexOf(cur)!==-1 : f===cur;
 }).forEach(function(key){
 var b = el('<button class="btn btn-ghost btn-block menu-btn">'+PG_MODES[key].label+'</button>');
 b.addEventListener("click", function(){
-state.pgDraft = { gara:key, nome:"", data:"", compagnia:"", numPiazzole:PG_MODES[key].piazzoleDefault, piazzole:[], iscritti:[], squadre:[], gruppiSize:5 };
+state.pgDraft = { gara:key, nome:"", data:"", compagnia:"", numPiazzole:PG_MODES[key].piazzoleDefault, piazzole:[], iscritti:[], squadre:[], gruppiSize:6 };
+state.pgImport = null;
 state.pgScreen = "setup"; save(); render();
 });
 d.appendChild(b);
@@ -8797,8 +8976,184 @@ box.appendChild(actions);
 return box;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   LA RIGA DELL'ISCRITTO
+
+   Chi e', e i quattro dati che finiranno in classifica. I campi scrivono
+   dentro l'oggetto della persona - lo stesso oggetto che sta anche dentro la
+   squadra - e NON chiamano render(): un ridisegno a ogni lettera perde il
+   fuoco e il cursore, e qui si compilano sessanta righe di fila. La pastiglia
+   della divisione si aggiorna da sola, senza rifare la pagina.
+   ══════════════════════════════════════════════════════════════════════════ */
+function menuSigle(vuoto, voci, valore, aria, cambia){
+var sel = el('<select aria-label="'+escapeHtml(aria)+'"></select>');
+var o0 = document.createElement("option");
+o0.value = ""; o0.textContent = vuoto;
+sel.appendChild(o0);
+voci.forEach(function(v){
+var o = document.createElement("option");
+// la sigla per prima: e' quella che finisce in classifica, il nome la spiega
+o.value = v.s; o.textContent = v.s + " \u00b7 " + v.n;
+if(v.s === valore) o.selected = true;
+sel.appendChild(o);
+});
+sel.addEventListener("change", function(){ cambia(this.value); save(); });
+return sel;
+}
+function iscrittoRow(p, idx, tab){
+var chi = p.cognome + (p.nome ? " " + p.nome : "");
+var row = el('<div class="iscritto-row"></div>');
+var capo = el('<div class="iscritto-capo"></div>');
+capo.appendChild(el('<span class="iscritto-nome">'+escapeHtml(p.cognome)+(p.nome?' '+escapeHtml(p.nome):'')+(p.username?' <span class="iscritto-user">@'+escapeHtml(p.username)+'</span>':' <span class="iscritto-slegato">'+t("pg_not_linked")+'</span>')+'</span>'));
+var pastiglia = null;
+function diciDivisione(){
+if(!pastiglia) return;
+var dv = divisioneDi(p, tab);
+pastiglia.className = "divisione-sigla" + (dv.ospite ? " ospite" : "");
+pastiglia.textContent = dv.ospite ? t("pg_div_ospite") : dv.classe + " \u00b7 " + dv.categoria;
+}
+if(tab){
+pastiglia = el('<span class="divisione-sigla"></span>');
+diciDivisione();
+capo.appendChild(pastiglia);
+}
+var rm = el('<button class="iscritto-rm" aria-label="'+escapeHtml(t("pg_remove_participant",{name:chi}))+'">\u2715</button>');
+rm.addEventListener("click", function(){ state.pgDraft.iscritti.splice(idx,1); state.pgDraft.squadre=[]; save(); render(); });
+capo.appendChild(rm);
+row.appendChild(capo);
+
+var dati = el('<div class="iscritto-dati"></div>');
+if(tab){
+dati.appendChild(menuSigle(t("pg_div_classe"), tab.classi, p.classe||"", t("pg_div_classe_di",{name:chi}), function(v){ p.classe = v; diciDivisione(); }));
+dati.appendChild(menuSigle(t("pg_div_categoria"), tab.categorie, p.categoria||"", t("pg_div_categoria_di",{name:chi}), function(v){ p.categoria = v; diciDivisione(); }));
+}
+var tess = el('<input type="text" inputmode="numeric" placeholder="'+escapeHtml(t("pg_tessera_ph"))+'" value="'+escapeHtml(p.tessera||"")+'" aria-label="'+escapeHtml(t("pg_tessera_di",{name:chi}))+'">');
+tess.addEventListener("input", function(){ p.tessera = this.value.replace(/[^0-9]/g,""); if(this.value !== p.tessera) this.value = p.tessera; });
+tess.addEventListener("change", function(){ save(); });
+dati.appendChild(tess);
+var cod = el('<input type="text" placeholder="'+escapeHtml(t("pg_codice_ph"))+'" value="'+escapeHtml(p.compagnia||"")+'" aria-label="'+escapeHtml(t("pg_codice_di",{name:chi}))+'">');
+var club = el('<div class="iscritto-club"></div>');
+function diciCompagnia(){
+var nome = compagniaNome(p.compagnia);
+club.className = "iscritto-club" + ((p.compagnia && !nome) ? " ignoto" : "");
+club.textContent = !p.compagnia ? "" : (nome || t("pg_codice_ignoto"));
+}
+cod.addEventListener("input", function(){
+p.compagnia = this.value.toUpperCase().replace(/[^0-9A-Z]/g,"").slice(0,6);
+if(this.value !== p.compagnia) this.value = p.compagnia;
+diciCompagnia();
+});
+cod.addEventListener("change", function(){ save(); });
+diciCompagnia();
+dati.appendChild(cod);
+dati.appendChild(club);
+row.appendChild(dati);
+return row;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   L'IMPORTAZIONE LEGGE IL SENSO, NON LA POSIZIONE
+
+   Un formato deciso da noi ("cognome, nome, tessera, classe...") obbligherebbe
+   l'organizzatore a riordinare a mano cento righe uscite dal suo foglio di
+   calcolo: sarebbe lavoro nostro scaricato su di lui. Quindi ogni pezzo si
+   riconosce da com'e' fatto, e l'ordine delle colonne non conta:
+
+     solo cifre, almeno quattro      il numero di tessera
+     due cifre + quattro lettere     il codice di Compagnia
+     sigla nota, tutta maiuscola     Classe o Categoria
+     il resto, in ordine             cognome, poi nome
+
+   LA TRAPPOLA: DA e' la sigla di Diversamente Abili ed e' anche l'inizio di
+   DA SILVA. Una sigla non viene mai riconosciuta nel primo pezzo della riga,
+   che e' sempre il cognome.
+
+   LE RIGHE NON CAPITE NON SI BUTTANO. Una riga senza separatori - dai PDF
+   capita - che dentro ha una tessera, o tutte e due le sigle, non e' un
+   cognome: e' una riga schiacciata, e finisce fra quelle da ricontrollare.
+   Una sola sigla non basta a sospettare, altrimenti DA SILVA sparirebbe dalla
+   lista. Un'importazione che perde tre nomi su cento in silenzio e' peggio di
+   una che non parte: l'errore si scopre in gara, quando manca una persona.
+   ══════════════════════════════════════════════════════════════════════════ */
+var RE_TESSERA = /^[0-9]{4,}$/;
+var RE_CODICE_COMPAGNIA = /^[0-9]{2}[A-Za-z]{4}$/;
+function sigleDentro(riga, sigle){
+var parole = riga.split(/[^A-Za-z]+/);
+for(var i=0;i<parole.length;i++){ if(parole[i] && sigle.indexOf(parole[i]) !== -1) return true; }
+return false;
+}
+function pgLeggiRiga(riga, tab){
+var pezzi = riga.split(/\s*[,;\u00b7|\t]+\s*/).map(function(x){ return x.trim(); }).filter(function(x){ return x.length; });
+if(!pezzi.length) return null;
+var classi = tab ? sigleDi(tab.classi) : [];
+var categorie = tab ? sigleDi(tab.categorie) : [];
+if(pezzi.length === 1 && (/[0-9]{4,}/.test(riga) || (sigleDentro(riga, classi) && sigleDentro(riga, categorie)))) return null;
+var p = { nome:"", cognome:"" }, parole = [];
+pezzi.forEach(function(v, i){
+if(!p.tessera && RE_TESSERA.test(v)){ p.tessera = v; return; }
+if(!p.compagnia && RE_CODICE_COMPAGNIA.test(v)){ p.compagnia = v.toUpperCase(); return; }
+if(i > 0 && v === v.toUpperCase()){
+if(!p.classe && classi.indexOf(v) !== -1){ p.classe = v; return; }
+if(!p.categoria && categorie.indexOf(v) !== -1){ p.categoria = v; return; }
+if(tab && v === tab.ospite) return; // Ospite e' l'assenza della coppia: non si scrive
+}
+parole.push(v);
+});
+p.cognome = parole.shift() || "";
+p.nome = parole.join(" ");
+return p.cognome ? p : null;
+}
+// L'intestazione di squadra nella lingua in uso, non solo in italiano: un
+// olandese scrive "Team 1", e finora quella riga diventava un iscritto.
+function pgIntestazioneSquadra(riga){
+if(/^squadra\b/i.test(riga)) return true;
+if(/^piazzola\s*[:\-]?\s*[0-9]+/i.test(riga)) return true;
+var etichetta = String(t("pg_squadra_n")).split("{n}")[0].trim();
+return etichetta.length > 1 && riga.toLowerCase().indexOf(etichetta.toLowerCase()) === 0;
+}
+function pgImporta(testo, tab){
+var squadre = [], tutti = [], dubbie = [];
+String(testo).split(/\n\s*\n/).forEach(function(blocco){
+var membri = [];
+blocco.split("\n").forEach(function(riga){
+riga = riga.trim();
+if(!riga || pgIntestazioneSquadra(riga)) return;
+var p = pgLeggiRiga(riga, tab);
+if(!p){ dubbie.push(riga); return; }
+membri.push(p); tutti.push(p);
+});
+membri.sort(function(a,b){ return a.cognome.localeCompare(b.cognome) || a.nome.localeCompare(b.nome); });
+if(membri.length) squadre.push({ membri:membri });
+});
+var conti = { iscritti:tutti.length, divisione:0, tessera:0, compagnia:0, dubbie:dubbie };
+tutti.forEach(function(p){
+if(p.classe && p.categoria) conti.divisione++;
+if(p.tessera) conti.tessera++;
+// Il codice si confronta con l'elenco vero: uno sbagliato resta nella riga,
+// in rosso e correggibile, ma non si fa contare fra quelli buoni.
+if(p.compagnia && compagniaNome(p.compagnia)) conti.compagnia++;
+});
+return { squadre:squadre, tutti:tutti, conti:conti };
+}
+// Il resoconto non e' una conferma da premere: e' un foglio che resta li'.
+function pgEsitoImport(c){
+var box = el('<div class="pg-esito"></div>');
+box.appendChild(el('<div class="pg-esito-conti">'+escapeHtml(t("pg_import_esito",{n:c.iscritti, div:c.divisione, tess:c.tessera, comp:c.compagnia}))+'</div>'));
+var dubbie = c.dubbie || [];
+if(dubbie.length){
+box.appendChild(el('<div class="pg-esito-dubbie">'+escapeHtml(t("pg_import_dubbie",{n:dubbie.length}))+'</div>'));
+dubbie.forEach(function(riga){
+var r = el('<div class="pg-esito-riga"></div>');
+r.textContent = riga;
+box.appendChild(r);
+});
+}
+return box;
+}
+
 function pgIscrittiScreen(){
 var pcfg = PG_MODES[state.pgDraft.gara];
+var tab = divisioniPer(pgFederazione(state.pgDraft.gara));
 var d = el('<div class="card"></div>');
 d.appendChild(el('<h3 class="section-title">'+t("pg_section_participants",{gara:pcfg.label})+'</h3>'));
 
@@ -8857,47 +9212,27 @@ searchResults.appendChild(chip);
 }
 
 d.appendChild(el('<div class="pg-nota pg-nota-stacco">'+t("pg_bulk_import_hint")+'</div>'));
-var bulkArea = el('<textarea placeholder="Squadra 1\nVallo\nZanetta\nBonetti\nArpaia\nNatale\n\nSquadra 2\n..." class="pg-campo-testo"></textarea>');
+var bulkArea = el('<textarea placeholder="'+escapeHtml(t("pg_bulk_placeholder"))+'" class="pg-campo-testo"></textarea>');
 var bulkBtn = el('<button class="btn btn-ghost btn-block pg-stacco-importa">'+t("pg_import_teams_btn")+'</button>');
 bulkBtn.addEventListener("click", function(){
-var blocks = bulkArea.value.split(/\n\s*\n/);
-var squadre = [], tutti = [];
-blocks.forEach(function(block){
-var lines = block.split("\n");
-var membri = [];
-lines.forEach(function(line){
-line = line.trim();
-if(!line) return;
-if (/^squadra\b/i.test(line)) return; // intestazione, ignorata
-var pMatch = line.match(/^piazzola\s*[:\-]?\s*(\d+)/i);
-if (pMatch) return;
-var c, n;
-if (line.indexOf(",") !== -1){ var parts=line.split(","); c=parts[0].trim(); n=parts.slice(1).join(",").trim(); }
-else { c = line; n = ""; }
-if (c){ var pers = {nome:n, cognome:c}; membri.push(pers); tutti.push(pers); }
-});
-membri.sort(function(a,b){ return a.cognome.localeCompare(b.cognome) || a.nome.localeCompare(b.nome); });
-if(membri.length) squadre.push({ membri:membri });
-});
-if(!squadre.length) return;
+var esito = pgImporta(bulkArea.value, tab);
+if(!esito.tutti.length && !esito.conti.dubbie.length) return;
 var numPiazzole = state.pgDraft.piazzole.length || state.pgDraft.numPiazzole || 1;
-squadre.forEach(function(s, idx){ s.piazzolaPartenza = (idx % numPiazzole) + 1; });
-state.pgDraft.iscritti = state.pgDraft.iscritti.concat(tutti);
-state.pgDraft.squadre = squadre;
-bulkArea.value = ""; render();
+esito.squadre.forEach(function(sq, idx){ sq.piazzolaPartenza = (idx % numPiazzole) + 1; });
+state.pgDraft.iscritti = state.pgDraft.iscritti.concat(esito.tutti);
+if(esito.squadre.length) state.pgDraft.squadre = esito.squadre;
+state.pgImport = esito.conti;
+bulkArea.value = ""; save(); render();
 });
 d.appendChild(bulkArea); d.appendChild(bulkBtn);
+if(state.pgImport) d.appendChild(pgEsitoImport(state.pgImport));
 
 d.appendChild(el('<div class="pg-conto">'+t("pg_participants_count_label")+' <b>'+state.pgDraft.iscritti.length+'</b></div>'));
 if(state.pgDraft.iscritti.length){
+if(tab) d.appendChild(el('<div class="pg-nota">'+escapeHtml(t("pg_div_intro"))+' '+escapeHtml(tab.fonte)+'</div>'));
 var iscrittiList = el('<div class="pg-elenco-iscritti"></div>');
 state.pgDraft.iscritti.forEach(function(p, idx){
-var row = el('<div class="iscritto-row"></div>');
-row.appendChild(el('<span class="iscritto-nome">'+escapeHtml(p.cognome)+(p.nome?' '+escapeHtml(p.nome):'')+(p.username?' <span class="iscritto-user">@'+escapeHtml(p.username)+'</span>':' <span class="iscritto-slegato">'+t("pg_not_linked")+'</span>')+'</span>'));
-var rm = el('<button class="iscritto-rm" aria-label="'+escapeHtml(t("pg_remove_participant",{name:p.cognome+(p.nome?" "+p.nome:"")}))+'">\u2715</button>');
-rm.addEventListener("click", function(){ state.pgDraft.iscritti.splice(idx,1); state.pgDraft.squadre=[]; render(); });
-row.appendChild(rm);
-iscrittiList.appendChild(row);
+iscrittiList.appendChild(iscrittoRow(p, idx, tab));
 });
 d.appendChild(iscrittiList);
 }
@@ -8951,7 +9286,7 @@ completo.createdBy = currentUser.uid;
 completo.createdByEmail = currentUser.email || "";
 completo.createdAt = firebase.firestore.FieldValue.serverTimestamp();
 db.collection("percorsi").add(completo).then(function(){
-state.pgDraft = null; state.pgScreen = "pick"; state.screen = "menu";
+state.pgDraft = null; state.pgImport = null; state.pgScreen = "pick"; state.screen = "menu";
 save(); render();
 }).catch(function(err){
 saveBtn.disabled = false;
@@ -8961,7 +9296,7 @@ save();
 });
 } else {
 state.percorsi.push(completo);
-state.pgDraft = null; state.pgScreen = "pick"; state.screen = "menu";
+state.pgDraft = null; state.pgImport = null; state.pgScreen = "pick"; state.screen = "menu";
 save(); render();
 }
 });
@@ -10797,7 +11132,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-paesi-a";
+var BUILD_STAMP = "2026-08-16-divisione-a";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
