@@ -89,6 +89,7 @@
    Se serve una tinta nuova si aggiunge QUI, non dentro un componente. */
 --green-900:#1D4F26; --green-800:#24602C; --green-700:#2C5230; --green-600:#315B35;
 --green-500:#3C6D42; --green-400:#60A966; --green-200:#DDEBDA;
+--green-success:#2E7D32; --green-success-dk:#4CAF50;
 --clay-800:#8A3F09; --clay-700:#BC4F0B; --clay-600:#BE530F; --clay-500:#C1571F;
 --clay-400:#E8722F; --clay-200:#FBE2D0;
 --gold-800:#6E4E0C; --gold-700:#7A5610; --gold-600:#8A6210; --gold-500:#B07E12;
@@ -96,6 +97,12 @@
 --red-700:#8E0F14; --red-600:#A81319; --red-400:#E23D2E; --red-100:#F9DCDC;
 --blue-600:#2E5FA8; --blue-400:#5B8FD6;
 --lime-500:#6FBF3F;
+--violet-500:#6A5A8C; --tan-500:#8A7A5C;
+/* Le due tinte della paglia del bersaglio da anelli. Sono un materiale,
+   non una decorazione: stanno qui perche' un componente non nomina mai
+   un esadecimale, nemmeno quando disegna un oggetto reale. */
+--straw-200:#F1E2B8; --straw-500:#D9B96A; --straw-900:#3A2A12;
+--sand-250:#EDEAE0; --sand-350:#CFC9B8;
 /* Neutri caldi: la terra e il muschio, non il grigio da ufficio. */
 --sand-50:#FFFFFF;  --sand-100:#F5F6F0; --sand-200:#ECEDE6; --sand-300:#D3D7CB;
 --sand-400:#B4BBAC; --sand-500:#5F645C; --sand-600:#565D53; --sand-700:#3A403A;
@@ -170,7 +177,11 @@ color-scheme:light;
 /* marchio e codice colore */
 --brand:var(--green-800); --brand-soft:var(--green-800); --brand-ink:#FFFFFF;
 --clay:var(--clay-600); --gold-role:var(--gold-700);
---danger-role:var(--red-600); --success-role:#2E7D32;
+--danger-role:var(--red-600); --success-role:var(--green-success);
+/* il bersaglio da anelli e le pastiglie d'arco: ruoli, non tinte a mano */
+--ring-bg-a:var(--straw-200); --ring-bg-b:var(--straw-500); --ring-ink:var(--straw-900);
+--ring-empty-bg:var(--sand-250); --ring-empty-bd:var(--sand-350);
+--bow-longbow:var(--violet-500); --bow-storico:var(--tan-500);
 
 /* elevazione: quasi solo un velo sotto, il lavoro lo fa il bordo */
 --elev-1:0 1px 2px rgba(30,45,34,.05);
@@ -193,8 +204,8 @@ color-scheme:light;
 /* i cinque tasti del punteggio: l'unica cosa che conta davvero al campo.
    Fondo pieno, cifra bianca. Il colore si legge da lontano, il numero da
    vicino. Contrasto del bianco su ciascun fondo: 4,9 / 5,2 / 5,9 / 7,2 / 5,6.
-   NON usano le variabili delle zone del bersaglio (--qss & co.): quelle
-   disegnano la sagoma e devono restare quello che sono. */
+   Le variabili delle zone del bersaglio non ci sono piu': disegnavano la
+   sagoma, e la sagoma non si disegna piu'. Resta --qsag, che serve altrove. */
 --score-ss:var(--clay-700); --score-spot:#2E7D32; --score-sag:var(--blue-600);
 --score-perfect:var(--red-600); --score-zero:var(--sand-500); --score-ink:#FFFFFF;
 
@@ -214,8 +225,7 @@ color-scheme:light;
 --navbar-hover:rgba(18,22,15,0.05);
 
 /* zone del bersaglio: restano quelle che sono, e' anatomia, non stile */
---qss:var(--clay-400); --qspot:var(--lime-500); --qsag:var(--blue-600);
---qzero:#9A9C93; --qperfect:#C1272D;
+--qsag:var(--blue-600);
 --checkbox-border:rgba(18,22,15,0.45);
 
 /* ───── ALIAS · i vecchi nomi, rimappati ───── */
@@ -240,7 +250,11 @@ color-scheme:dark;
 --border:var(--moss-600); --border-strong:var(--moss-500);
 --brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:#FFFFFF;
 --clay:var(--clay-400); --gold-role:var(--gold-400);
---danger-role:var(--red-400); --success-role:#4CAF50;
+--danger-role:var(--red-400); --success-role:var(--green-success-dk);
+/* Al buio la paglia resta paglia — e' l'oggetto — ma il vuoto segue la
+   superficie, altrimenti sarebbe una macchia chiara su fondo nero. */
+--ring-empty-bg:var(--moss-600); --ring-empty-bd:var(--moss-500);
+--bow-longbow:#8E7CB5; --bow-storico:#B5A176;
 
 --elev-1:0 1px 3px rgba(0,0,0,.35);
 --elev-2:0 2px 10px rgba(0,0,0,.34);
@@ -278,8 +292,7 @@ color-scheme:dark;
 --navbar-green:var(--green-400);
 --navbar-hover:rgba(255,255,255,0.06);
 
---qss:var(--clay-400); --qspot:var(--lime-500); --qsag:var(--blue-400);
---qzero:#464A42; --qperfect:#C1272D;
+--qsag:var(--blue-400);
 --checkbox-border:rgba(237,230,214,0.4);
 
 --bg:var(--surface); --bg-panel:var(--surface-1); --bg-panel-2:var(--surface-2);
@@ -373,6 +386,48 @@ border-radius:10px; background:var(--danger); color:#fff; font-size:0.64rem; fon
 display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
 .bar-dot{ position:absolute; top:4px; right:4px; width:10px; height:10px; border-radius:50%;
 background:var(--danger); border:2px solid var(--bg-panel); }
+
+/* ── la pastiglia della firma ──────────────────────────────────────────────
+   Sta accanto al marchio, ed e' l'unica cosa che si aggiunge alla barra
+   durante il giro. Non e' un'eccezione alla regola «marchio, uscita e
+   segnalazione, e nient'altro»: quella regola conta le PORTE, e questa non
+   e' una porta. Non e' un tasto, non ha un menu, non si puo' toccare. Un
+   pallino rosso e' una richiesta; questa e' una risposta.
+
+   Tre gradini di uno stesso stato — solo qui / lo vedono / firmato — e
+   nessuna riga per tema: --clay e --success-role sono ruoli, esistono in
+   tutti e due, e il fondo si ricava dalla superficie con un color-mix. */
+/* ── il riquadro delle misure, in fondo alla schermata Info ──
+   Sta sotto la versione del file perche' e' della stessa famiglia: roba per
+   chi sta provando l'app. Tono spento di proposito: sono numeri da guardare
+   una volta ogni tanto, non un cruscotto. */
+.misure{ margin-top:var(--s-3); padding:var(--s-3); border:1px solid var(--border);
+border-radius:var(--r-md); background:var(--surface-1); }
+.misure-riga{ display:flex; justify-content:space-between; align-items:baseline;
+gap:var(--s-3); font-size:var(--t-sm); color:var(--text-2); padding:var(--s-1) 0; }
+.misure-riga b{ color:var(--text-1); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
+.misure-nota, .misure-vuoto{ font-size:var(--t-xs); color:var(--text-3); line-height:1.5;
+margin-top:var(--s-2); }
+.misure .btn{ margin-top:var(--s-2); }
+.firma-pill{ display:inline-flex; align-items:center; gap:var(--s-1);
+flex:0 1 auto; min-width:0; min-height:28px; padding:0 var(--s-2);
+border-radius:var(--r-pill); border:1.5px solid var(--border-strong);
+background:var(--surface-2); color:var(--text-2);
+font-family:var(--font-ui); font-size:var(--t-xs); font-weight:700;
+letter-spacing:.02em; white-space:nowrap; user-select:none;
+transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
+.firma-pill > svg{ flex:0 0 auto; }
+.firma-pill .firma-testo{ overflow:hidden; text-overflow:ellipsis; }
+.firma-pill.solo-qui{ background:color-mix(in srgb, var(--clay) 14%, var(--surface-1));
+border-color:color-mix(in srgb, var(--clay) 45%, transparent); color:var(--clay); }
+.firma-pill.firmato{ background:color-mix(in srgb, var(--success-role) 14%, var(--surface-1));
+border-color:color-mix(in srgb, var(--success-role) 45%, transparent); color:var(--success-role); }
+/* Sotto i 380px la barra porta gia' marchio + due tasti: la parola esce e
+   resta il glifo, che ha comunque il suo nome accessibile addosso. Meglio
+   una parola in meno che una testata che va a capo su una schermata che per
+   regola non scorre. */
+@media (max-width:379px){ .firma-pill .firma-testo{ display:none; } }
+@media print{ .firma-pill{ display:none; } }
 
 /* Il troppo-pieno. Le voci qui dentro hanno la parola scritta: un menu
    di soli glifi non lo legge nessuno. */
@@ -492,7 +547,7 @@ outline:none; border-color:var(--brand-soft); box-shadow:var(--focus-ring); }
 /* Il riflesso che scorreva in eterno e' stato tolto: diceva "sto caricando"
    a una barra che non carica niente — misura quanti bersagli hai fatto.
    Il movimento resta dov'e' l'informazione: la larghezza che cresce. */
-.progress-fill{ height:100%; background:linear-gradient(90deg,var(--brand-soft),var(--gold-role));
+.progress-fill{ height:100%; width:var(--pct,0%); background:linear-gradient(90deg,var(--brand-soft),var(--gold-role));
 border-radius:var(--r-sm); transition:width var(--dur-3) var(--ease); }
 .partial-card{ padding:12px 14px; margin-bottom:14px; }
 .partial-title{ font-size:0.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:8px; }
@@ -511,23 +566,16 @@ border-radius:var(--r-sm); transition:width var(--dur-3) var(--ease); }
 .piazzola-num{ font-size:var(--t-2xl); font-weight:800; color:var(--clay); font-family:var(--font-num); font-variant-numeric:tabular-nums; line-height:1; position:relative; display:inline-block; }
 .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
 background:radial-gradient(circle, rgba(232,114,47,0.16), transparent 70%); z-index:-1; }
-.board{ position:relative; border-radius:16px; padding:12px;
-background:var(--bg-panel-2); border:1px solid rgba(203,163,92,0.55); box-shadow:0 4px 14px rgba(0,0,0,0.3); }
-.silhouette-wrap{ position:relative; max-width:280px; margin:0 auto; border-radius:10px; overflow:hidden; touch-action:pan-x pan-y; }
-.silhouette-wrap.zoomed{ overflow:auto; max-height:360px; }
-.silhouette-wrap svg{ width:100%; height:auto; display:block; cursor:crosshair; }
-.silhouette-wrap.zoomed svg{ width:210%; height:auto; }
-.zoom-toolbar{ display:flex; justify-content:center; gap:8px; margin-top:10px; }
-.legend-row{ font-size:0.68rem; color:var(--muted); margin-top:8px; line-height:1.5; }
-.impact-readout{ margin-top:14px; background:var(--bg-panel-2); border:1px solid var(--gold); border-radius:12px; padding:14px; text-align:center; }
-.impact-readout .pts{ font-size:var(--t-xl); font-weight:800; color:var(--gold-role); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
-.impact-readout .lbl{ font-size:0.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:4px; }
-.impact-actions{ display:flex; gap:10px; margin-top:12px; }
-.impact-actions .btn{ flex:1; }
 .quick-grid{ display:grid; gap:var(--s-2); margin:var(--s-4) 0 var(--s-3); }
 .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:92px; padding:var(--s-2) var(--s-1); gap:3px; position:relative; overflow:visible; border-radius:var(--r-lg); line-height:1.15; font-family:inherit; cursor:pointer; transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease); }
 .quick-btn:active{ transform:scale(0.94) translateY(2px); }
-.quick-btn .quick-lbl{ font-size:clamp(0.5rem,2.4vw,0.64rem); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:normal; line-height:1.15; text-wrap:pretty; max-width:100%; }
+/* Erano clamp(0.5rem, …): otto pixel, in maiuscoletto, sul controllo piu'
+   importante dell'app — quello pensato per essere letto al sole col guanto.
+   Il colpevole non era il testo, era la riga unica di tasti: con tre per riga
+   l'etichetta ci sta dentro la scala. La regola stretta vinceva solo sul
+   percorso per specificita', e gli 8px restavano nel file pronti a tornare il
+   giorno in cui un .quick-btn fosse comparso fuori da .tastiera (16/08/2026). */
+.quick-btn .quick-lbl{ font-size:var(--t-xs); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:normal; line-height:1.15; text-wrap:pretty; max-width:100%; }
 .quick-btn .quick-pts{ font-size:1.55rem; font-weight:800; font-family:var(--font-num); font-variant-numeric:tabular-nums; color:var(--score-ink); }
 /* Fondo pieno, cifra bianca, in TUTTI i temi. Il ragionamento scritto per il
    chiaro ("il colore lo si legge da lontano, il numero da vicino") vale
@@ -581,10 +629,10 @@ table.score-table td.name-col, table.score-table th.name-col{ text-align:left; }
 .piazz-card-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.25rem; color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
 .piazz-card-right{ display:flex; flex-wrap:wrap; gap:14px; flex:1; }
 .ring-item{ display:flex; flex-direction:column; align-items:center; gap:3px; }
-.ring-badge{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.92rem; color:#3a2a12;
-background: repeating-radial-gradient(circle at center, #f1e2b8 0px, #f1e2b8 4px, #d9b96a 4px, #d9b96a 7px, #f1e2b8 7px, #f1e2b8 11px, #d9b96a 11px 14px, #f1e2b8 14px 17px);
+.ring-badge{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.92rem; color:var(--ring-ink);
+background: repeating-radial-gradient(circle at center, var(--ring-bg-a) 0px, var(--ring-bg-a) 4px, var(--ring-bg-b) 4px, var(--ring-bg-b) 7px, var(--ring-bg-a) 7px, var(--ring-bg-a) 11px, var(--ring-bg-b) 11px 14px, var(--ring-bg-a) 14px 17px);
 border:2px solid var(--bark); flex:0 0 auto; }
-.ring-badge.empty{ opacity:0.35; background:#EDEAE0; border-color:#cfc9b8; color:var(--muted); }
+.ring-badge.empty{ opacity:0.35; background:var(--ring-empty-bg); border-color:var(--ring-empty-bd); color:var(--muted); }
 .ring-name{ font-size:0.62rem; color:var(--muted); max-width:56px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .rank-row.first td{ color:var(--accent-soft); font-weight:700; }
 .total-col{ font-weight:800; color:var(--gold-role); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
@@ -735,8 +783,8 @@ table.score-table th, table.score-table td{ border:1px solid #999 !important; }
 .cp-bow-chip{ font-size:0.6rem; font-weight:800; padding:2px 7px; border-radius:8px; color:#fff; text-transform:uppercase; margin-left:6px; }
 .cp-bow-chip.compound{ background:var(--accent); color:var(--accent-ink); }
 .cp-bow-chip.ricurvo{ background:var(--bark); }
-.cp-bow-chip.longbow{ background:#6a5a8c; }
-.cp-bow-chip.storico{ background:#8a7a5c; }
+.cp-bow-chip.longbow{ background:var(--bow-longbow); }
+.cp-bow-chip.storico{ background:var(--bow-storico); }
 .cp-class-tabs{ display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
 .cp-class-row{ display:flex; align-items:center; gap:10px; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:10px; padding:9px 12px; margin-bottom:7px; }
 .cp-class-row .cp-pos{ width:22px; text-align:center; font-weight:800; color:var(--muted); flex:0 0 auto; }
@@ -950,7 +998,7 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
 .adm-dl .v{word-break:break-word;}
 .adm-si{color:var(--accent-soft);font-weight:700;}
 .adm-no{color:var(--bark);font-weight:700;}
-.adm-nd{color:#63776A;}
+.adm-nd{color:var(--text-3);}
 .adm-note{width:100%;font-size:0.8rem;padding:7px 9px;}
 .adm-act{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
 .adm-act .btn{flex:1;min-width:96px;}
@@ -1061,7 +1109,25 @@ html{ scrollbar-gutter:stable; }
    lunghi, il quinto e sesto arciere e la riga in piu' delle modalita' a tre
    frecce senza spostare niente. E' cio' che rende il contratto mantenibile.
    ═══════════════════════════════════════════════════════════════════════════ */
-body.schermo-percorso #app{ display:flex; flex-direction:column; }
+/* ── "non scorre" era una speranza, adesso e' una struttura (16/08/2026) ──
+   min-height:100dvh vuol dire: se il contenuto cresce, io cresco. E c'era un
+   caso che lo innescava SEMPRE: header.top ha margin-top:env(safe-area-inset-top),
+   che in PWA su iPhone vale ~47px, mentre 100dvh la safe area la contiene gia'.
+   La colonna misurava 100dvh + 47px, quindi la tastiera usciva dallo schermo e
+   compariva la barra di scorrimento — sulla schermata che esiste per non averla.
+
+   height (non min-height) + overflow:hidden. La safe area passa nel padding di
+   #app invece che nel margine della testata, cosi' sta DENTRO i 100dvh.
+   E una sola regione puo' cedere: la scena. Se il testo di sistema e'
+   ingrandito, si comprime quella — non la tastiera, che e' il contratto. */
+body.schermo-percorso{ height:100dvh; overflow:hidden; }
+body.schermo-percorso #app{
+display:flex; flex-direction:column; height:100%;
+/* solo in alto: quella in basso ce l'ha gia' il body, e contarla due volte
+   e' esattamente il bug che questo blocco serve a chiudere. */
+padding-top:calc(var(--s-3) + env(safe-area-inset-top));
+padding-bottom:var(--s-3); }
+body.schermo-percorso header.top{ margin-top:0; }
 .pista{ flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
 .pista-spazio{ flex:1 1 auto; min-height:var(--s-3); position:relative; overflow:hidden; }
 
@@ -1130,7 +1196,10 @@ transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--
 
 /* ── la scena: chi tira adesso ──
    Il dato variabile e sbagliabile e' questo, quindi e' il piu' grande. */
-.pista-scena{ flex:0 0 auto; text-align:left; margin-bottom:0; }
+/* L'unica regione che puo' cedere. flex:0 1 auto + min-height:0 = tiene la sua
+   misura naturale finche' c'e' posto, si comprime quando non ce n'e'. Cede la
+   scena, mai la tastiera. */
+.pista-scena{ flex:0 1 auto; min-height:0; overflow-y:auto; text-align:left; margin-bottom:0; }
 .pista-arciere{ font-size:var(--t-2xl); line-height:1.05; color:var(--text-1);
 margin:0; text-wrap:balance; }
 .pista-freccia{ font-size:var(--t-sm); color:var(--text-3); margin-top:var(--s-1); }
@@ -1186,7 +1255,9 @@ padding-bottom:env(safe-area-inset-bottom); }
 .tastiera-riga[data-n="2"]{ grid-template-columns:repeat(2,1fr); }
 .tastiera-riga[data-n="3"]{ grid-template-columns:repeat(3,1fr); }
 .tastiera .quick-btn{ height:auto; min-height:64px; gap:2px; }
-.tastiera .quick-btn .quick-lbl{ font-size:var(--t-xs); letter-spacing:.03em; }
+/* La misura ora e' quella base (vedi .quick-lbl): qui resta solo cio' che
+   e' davvero specifico del percorso. */
+.tastiera .quick-btn .quick-lbl{ letter-spacing:.03em; }
 .tastiera .quick-btn .quick-pts{ font-size:var(--t-xl); }
 
 /* In orizzontale la tastiera si mangerebbe lo schermo: si abbassa. */
@@ -1209,8 +1280,6 @@ margin-bottom:var(--s-3); flex:0 0 auto; }
 display:inline-flex; align-items:center; justify-content:center;
 background:none; border:1.5px solid var(--border-strong); border-radius:var(--r-sm);
 color:var(--text-2); font-size:1.1rem; line-height:1; cursor:pointer; }
-.pannello .board{ margin-top:0; }
-.pannello .silhouette-wrap{ max-width:240px; }
 .pannello-sotto{ margin-top:auto; padding-top:var(--s-3); flex:0 0 auto; }
 </style>
 </head>
@@ -1599,8 +1668,6 @@ state.tab = "tira";
 state.panel = null;
 state.lastShotInfo = null;
 var homeOverride = false;
-var pending = null;
-var zoomed = false;
 var timerRemaining = null;
 var timerRunning = false;
 var timerTargetKey = null;
@@ -1650,13 +1717,10 @@ report_admin_self: "Sei tu l’amministratore: le segnalazioni degli altri utent
 dm_admin_sub: "{name} — amministratore di ArcTrail 3D",
 dm_real_name: "Nome e cognome: {name} (visibile solo all’amministratore)",
 
-
 country_italy: "Italia",
 country_france: "Francia",
 country_switzerland: "Svizzera",
-
 coming_soon: "scrivici",
-
 
 back_to_menu: "\u2190 Torna al menu",
 back_step: "\u2190 Indietro",
@@ -1671,7 +1735,6 @@ menu_train_label: "Inizia Allenamento",
 menu_train_sub: "frecce e piazzole a scelta",
 menu_gara_label: "Gara libera",
 menu_gara_sub: "gestisci le piazzole sul momento",
-
 
 
 market_btn_label: "Marketplace",
@@ -1699,7 +1762,6 @@ diario_by_mode_hint: "Ogni disciplina ha un punteggio massimo diverso: qui i num
 nav_menu: "\u2190 Menu",
 cancel_btn: "Chiudi",
 reg_done_btn: "Fatto",
-
 setup_change_btn: "Cambia",
 setup_lang_label: "Lingua",
 setup_country_label: "Nazione dove tiri",
@@ -1758,7 +1820,6 @@ fr_type_other: "Altro",
 fr_piazzola_label: "Piazzola interessata",
 fr_piazzola_none: "Non indicata",
 fr_report_open_btn: "Segnala un problema su un percorso",
-
 campi_announce_btn: "Annuncia un allenamento",
 train_add_target_btn: "Continua: aggiungi una piazzola",
 train_free_hint: "In allenamento decidi tu quante piazzole fare, e puoi aggiungerne altre anche a giro iniziato.",
@@ -1963,7 +2024,6 @@ logout_word: "Esci",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letale", zone_ffta_spot: "Vitale", zone_ffta_sagoma: "Corpo",
 target_singular: "Piazzola",
-
 finora: " \u00b7 finora: {list} pt",
 vale_prima: " \u00b7 vale la prima a segno",
 hdr_more: "Altro",
@@ -1971,27 +2031,36 @@ timer_start: "Avvia timer", timer_reset: "Azzera", timer_resume: "Riprendi", tim
 zero_label: "Nulla",
 quick_hint_target: "oppure segna il punto esatto sul bersaglio",
 fuori_sagoma: "fuori sagoma",
-zoom_btn: "Ingrandisci mira",
-zoom_btn_reduce: "Riduci mira",
 undo_btn: "Annulla ultima freccia",
 pista_ultimo_altrove: "{txt} ({p} {n})",
+/* la pastiglia della firma: tre gradini di uno stesso stato */
+firma_solo_qui: "Solo qui",
+firma_lo_vedono: "Lo vedono",
+firma_firmato: "Firmato",
+firma_firmato_n: "Firmato {n}/{tot}",
+firma_solo_qui_nota: "L'ultimo punteggio è ancora solo su questo telefono: gli altri non lo vedono.",
+firma_lo_vedono_nota: "I punteggi sono arrivati agli altri del gruppo.",
+firma_firmato_nota: "Controfirmati da un altro arciere: {n} su {tot}.",
 target_inline: "piazzola",
-pista_sagoma_btn: "Sagoma",
 pista_classifica_btn: "Classifica",
 pista_ultimo: "Ultimo: {name}",
 pista_ultimo_freccia: "{name} \u00b7 {n}\u00aa freccia",
 pista_ultimo_piazzola: "{name} \u00b7 piazzola chiusa",
 pista_annulla_freccia: "Annulla freccia",
 pista_annulla_breve: "Annulla",
+misure_giri: "Giri finiti / iniziati",
+misure_annulli: "Annulli per giro",
+misure_classifiche: "Classifiche aperte per giro",
+misure_ritmo: "Secondi fra due frecce (mediana)",
+misure_nota: "Mediana su {n} intervalli. Restano su questo telefono: non vengono inviati da nessuna parte.",
+misure_vuoto: "Ancora nessuna misura: comincia un giro.",
+misure_azzera: "Azzera le misure",
+misure_azzera_conferma: "Azzerare? Tocca di nuovo",
 pista_chiudi: "Chiudi",
 pista_tocca_a: "Tocca a {name}",
 pista_freccia_di: "Freccia {n} di {tot}",
 pista_per_piazzola: "Piazzola per piazzola",
-pista_sagoma_titolo: "Segna il punto d'impatto",
 interrupt_btn: "Termina percorso e vedi classifica",
-detected_score: "Punteggio rilevato ({unit} {n})",
-correct_point_btn: "Correggi punto",
-confirm_shot_btn: "Conferma tiro",
 done_word: "fatto",
 next_archer_btn: "Prossimo: {name} \u2192",
 target_done: "Piazzola completata",
@@ -2095,12 +2164,10 @@ cp_admin_claim_btn: "🔑 Richiedi amministrazione di questa compagnia",
 cp_admin_claim_pending: "Richiesta inviata — in attesa di approvazione dall'admin app.",
 
 
-
 cp_admin_map_error: "Errore nel salvataggio.",
 cp_admin_tel: "Telefono",
 cp_admin_email_label: "Email compagnia",
 cp_admin_sito: "Sito web",
-
 home_register_btn: "Registrati", home_login_link: "Hai gi\u00e0 un account?", home_login_link_word: "Accedi",
 home_install_btn: "Installa l'app sul telefono",
 home_install_ios_text: "<b>Su iPhone:</b> tocca il pulsante <b>Condividi</b> in basso nel browser (il quadrato con la freccia verso l'alto), poi scegli <b>\u201cAggiungi alla schermata Home\u201d</b>. Comparir\u00e0 un'icona come per qualsiasi altra app.",
@@ -2204,7 +2271,6 @@ fr_type_other: "Other",
 fr_piazzola_label: "Target concerned",
 fr_piazzola_none: "Not specified",
 fr_report_open_btn: "Report a problem on a course",
-
 campi_announce_btn: "Announce a training",
 train_add_target_btn: "Continue: add a target",
 train_free_hint: "In training you decide how many targets to shoot, and you can add more even after the round has started.",
@@ -2354,13 +2420,10 @@ legal_terms: "Terms of use",
 legal_about: "About ArcTrail 3D",
 profile_terms: "I have read and accept the terms of use.",
 
-
 country_italy: "Italy",
 country_france: "France",
 country_switzerland: "Switzerland",
-
 coming_soon: "let us know",
-
 
 back_to_menu: "\u2190 Back to menu",
 back_step: "\u2190 Back",
@@ -2375,7 +2438,6 @@ menu_train_label: "Start Training",
 menu_train_sub: "arrows and targets, your choice",
 menu_gara_label: "Free Competition",
 menu_gara_sub: "manage the targets on the spot",
-
 
 
 market_btn_label: "Marketplace",
@@ -2403,7 +2465,6 @@ diario_by_mode_hint: "Each discipline has a different maximum score: here the nu
 nav_menu: "\u2190 Menu",
 cancel_btn: "Close",
 reg_done_btn: "Done",
-
 setup_change_btn: "Change",
 setup_lang_label: "Language",
 setup_country_label: "Country where you shoot",
@@ -2437,7 +2498,6 @@ logout_word: "Log out",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Center", zone_ffta_superspot: "Kill", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Body",
 target_singular: "Target",
-
 finora: " \u00b7 so far: {list} pts",
 vale_prima: " \u00b7 only the first hit counts",
 hdr_more: "More",
@@ -2445,27 +2505,36 @@ timer_start: "Start timer", timer_reset: "Reset", timer_resume: "Resume", timer_
 zero_label: "Miss",
 quick_hint_target: "or mark the exact impact point on the target",
 fuori_sagoma: "miss",
-zoom_btn: "Zoom target",
-zoom_btn_reduce: "Zoom out",
 undo_btn: "Undo last arrow",
 pista_ultimo_altrove: "{txt} ({p} {n})",
+/* la pastiglia della firma: tre gradini di uno stesso stato */
+firma_solo_qui: "Only here",
+firma_lo_vedono: "They see it",
+firma_firmato: "Signed",
+firma_firmato_n: "Signed {n}/{tot}",
+firma_solo_qui_nota: "The last score is still only on this phone: the others cannot see it.",
+firma_lo_vedono_nota: "The scores have reached the rest of the group.",
+firma_firmato_nota: "Countersigned by another archer: {n} of {tot}.",
 target_inline: "target",
-pista_sagoma_btn: "Target",
 pista_classifica_btn: "Standings",
 pista_ultimo: "Last: {name}",
 pista_ultimo_freccia: "{name} \u00b7 arrow {n}",
 pista_ultimo_piazzola: "{name} \u00b7 target closed",
 pista_annulla_freccia: "Undo arrow",
 pista_annulla_breve: "Undo",
+misure_giri: "Rounds finished / started",
+misure_annulli: "Undos per round",
+misure_classifiche: "Standings opened per round",
+misure_ritmo: "Seconds between arrows (median)",
+misure_nota: "Median over {n} intervals. They stay on this phone: nothing is sent anywhere.",
+misure_vuoto: "No measurements yet: start a round.",
+misure_azzera: "Reset measurements",
+misure_azzera_conferma: "Reset? Tap again",
 pista_chiudi: "Close",
 pista_tocca_a: "{name}'s turn",
 pista_freccia_di: "Arrow {n} of {tot}",
 pista_per_piazzola: "Target by target",
-pista_sagoma_titolo: "Mark the impact point",
 interrupt_btn: "End round and view results",
-detected_score: "Detected score ({unit} {n})",
-correct_point_btn: "Correct point",
-confirm_shot_btn: "Confirm shot",
 done_word: "done",
 next_archer_btn: "Next: {name} \u2192",
 target_done: "Target completed",
@@ -2675,7 +2744,6 @@ fr_type_other: "Autre",
 fr_piazzola_label: "Cible concern\u00e9e",
 fr_piazzola_none: "Non indiqu\u00e9e",
 fr_report_open_btn: "Signaler un probl\u00e8me sur un parcours",
-
 campi_announce_btn: "Annoncer un entra\u00eenement",
 train_add_target_btn: "Continuer : ajouter une cible",
 train_free_hint: "\u00c0 l’entra\u00eenement, vous d\u00e9cidez du nombre de cibles, et vous pouvez en ajouter m\u00eame une fois le tour commenc\u00e9.",
@@ -2825,13 +2893,10 @@ legal_terms: "Conditions d’utilisation",
 legal_about: "\u00c0 propos d’ArcTrail 3D",
 profile_terms: "J’ai lu et j’accepte les conditions d’utilisation.",
 
-
 country_italy: "Italie",
 country_france: "France",
 country_switzerland: "Suisse",
-
 coming_soon: "\u00e9crivez-nous",
-
 
 back_to_menu: "\u2190 Retour au menu",
 back_step: "\u2190 Retour",
@@ -2846,7 +2911,6 @@ menu_train_label: "Commencer l\u2019entra\u00eenement",
 menu_train_sub: "fl\u00e8ches et cibles \u00e0 volont\u00e9",
 menu_gara_label: "Comp\u00e9tition libre",
 menu_gara_sub: "g\u00e9rez les cibles sur le moment",
-
 
 
 market_btn_label: "Marketplace",
@@ -2874,7 +2938,6 @@ diario_by_mode_hint: "Chaque discipline a un score maximum diff\u00e9rent : ici 
 nav_menu: "\u2190 Menu",
 cancel_btn: "Fermer",
 reg_done_btn: "Termin\u00e9",
-
 setup_change_btn: "Changer",
 setup_lang_label: "Langue",
 setup_country_label: "Pays o\u00f9 vous tirez",
@@ -2908,7 +2971,6 @@ logout_word: "D\u00e9connexion",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Petit tu\u00e9", zone_ffta_superspot: "Tu\u00e9", zone_ffta_spot: "Zone vitale", zone_ffta_sagoma: "Corps",
 target_singular: "Cible",
-
 finora: " \u00b7 jusqu\u2019ici : {list} pts",
 vale_prima: " \u00b7 seul le premier tir marquant compte",
 hdr_more: "Plus",
@@ -2916,27 +2978,36 @@ timer_start: "D\u00e9marrer", timer_reset: "R\u00e9initialiser", timer_resume: "
 zero_label: "Nul",
 quick_hint_target: "ou marquez le point d\u2019impact exact sur la cible",
 fuori_sagoma: "hors cible",
-zoom_btn: "Zoomer sur la cible",
-zoom_btn_reduce: "D\u00e9zoomer",
 undo_btn: "Annuler la derni\u00e8re fl\u00e8che",
-pista_sagoma_btn: "Silhouette",
 pista_classifica_btn: "Classement",
 pista_ultimo: "Dernier : {name}",
 pista_ultimo_freccia: "{name} \u00b7 fl\u00e8che {n}",
 pista_ultimo_piazzola: "{name} \u00b7 cible termin\u00e9e",
 pista_annulla_freccia: "Annuler la fl\u00e8che",
 pista_annulla_breve: "Annuler",
+misure_giri: "Parcours termin\u00e9s / commenc\u00e9s",
+misure_annulli: "Annulations par parcours",
+misure_classifiche: "Classements ouverts par parcours",
+misure_ritmo: "Secondes entre deux fl\u00e8ches (m\u00e9diane)",
+misure_nota: "M\u00e9diane sur {n} intervalles. Elles restent sur ce t\u00e9l\u00e9phone : rien n\u2019est envoy\u00e9.",
+misure_vuoto: "Aucune mesure pour l\u2019instant : commencez un parcours.",
+misure_azzera: "R\u00e9initialiser les mesures",
+misure_azzera_conferma: "R\u00e9initialiser ? Touchez encore",
 pista_chiudi: "Fermer",
 pista_tocca_a: "Au tour de {name}",
 pista_freccia_di: "Fl\u00e8che {n} sur {tot}",
 pista_per_piazzola: "Cible par cible",
-pista_sagoma_titolo: "Marquez le point d\u2019impact",
 pista_ultimo_altrove: "{txt} ({p} {n})",
+/* la pastiglia della firma: tre gradini di uno stesso stato */
+firma_solo_qui: "Ici seulement",
+firma_lo_vedono: "Ils le voient",
+firma_firmato: "Signé",
+firma_firmato_n: "Signé {n}/{tot}",
+firma_solo_qui_nota: "Le dernier score est encore uniquement sur ce téléphone : les autres ne le voient pas.",
+firma_lo_vedono_nota: "Les scores sont arrivés au reste du groupe.",
+firma_firmato_nota: "Contresignés par un autre archer : {n} sur {tot}.",
 target_inline: "cible",
 interrupt_btn: "Terminer le parcours et voir le classement",
-detected_score: "Score d\u00e9tect\u00e9 ({unit} {n})",
-correct_point_btn: "Corriger le point",
-confirm_shot_btn: "Confirmer le tir",
 done_word: "termin\u00e9",
 next_archer_btn: "Suivant : {name} \u2192",
 target_done: "Cible termin\u00e9e",
@@ -3146,7 +3217,6 @@ fr_type_other: "Sonstiges",
 fr_piazzola_label: "Betroffenes Ziel",
 fr_piazzola_none: "Nicht angegeben",
 fr_report_open_btn: "Ein Problem auf einem Parcours melden",
-
 campi_announce_btn: "Ein Training ank\u00fcndigen",
 train_add_target_btn: "Weiter: ein Ziel hinzuf\u00fcgen",
 train_free_hint: "Im Training entscheidest du, wie viele Ziele du schie\u00dft, und du kannst auch w\u00e4hrend der Runde weitere hinzuf\u00fcgen.",
@@ -3296,13 +3366,10 @@ legal_terms: "Nutzungsbedingungen",
 legal_about: "\u00dcber ArcTrail 3D",
 profile_terms: "Ich habe die Nutzungsbedingungen gelesen und akzeptiere sie.",
 
-
 country_italy: "Italien",
 country_france: "Frankreich",
 country_switzerland: "Schweiz",
-
 coming_soon: "schreib uns",
-
 
 back_to_menu: "\u2190 Zur\u00fcck zum Men\u00fc",
 back_step: "\u2190 Zur\u00fcck",
@@ -3317,7 +3384,6 @@ menu_train_label: "Training starten",
 menu_train_sub: "Pfeile und Ziele nach Wahl",
 menu_gara_label: "Freier Wettkampf",
 menu_gara_sub: "verwalte die Ziele spontan",
-
 
 
 market_btn_label: "Marketplace",
@@ -3345,7 +3411,6 @@ diario_by_mode_hint: "Jede Disziplin hat eine andere H\u00f6chstpunktzahl: hier 
 nav_menu: "\u2190 Men\u00fc",
 cancel_btn: "Schließen",
 reg_done_btn: "Fertig",
-
 setup_change_btn: "\u00c4ndern",
 setup_lang_label: "Sprache",
 setup_country_label: "Land, in dem du schie\u00dft",
@@ -3379,7 +3444,6 @@ logout_word: "Abmelden",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Kern", zone_ffta_superspot: "T\u00f6dlich", zone_ffta_spot: "Vital", zone_ffta_sagoma: "K\u00f6rper",
 target_singular: "Ziel",
-
 finora: " \u00b7 bisher: {list} Pkt",
 vale_prima: " \u00b7 nur der erste Treffer z\u00e4hlt",
 hdr_more: "Mehr",
@@ -3387,27 +3451,36 @@ timer_start: "Timer starten", timer_reset: "Zur\u00fccksetzen", timer_resume: "F
 zero_label: "Fehler",
 quick_hint_target: "oder markiere den genauen Treffpunkt auf dem Ziel",
 fuori_sagoma: "Fehlschuss",
-zoom_btn: "Ziel vergr\u00f6\u00dfern",
-zoom_btn_reduce: "Verkleinern",
 undo_btn: "Letzten Pfeil r\u00fcckg\u00e4ngig machen",
-pista_sagoma_btn: "Silhouette",
 pista_classifica_btn: "Rangliste",
 pista_ultimo: "Zuletzt: {name}",
 pista_ultimo_freccia: "{name} \u00b7 Pfeil {n}",
 pista_ultimo_piazzola: "{name} \u00b7 Ziel abgeschlossen",
 pista_annulla_freccia: "Pfeil zur\u00fccknehmen",
 pista_annulla_breve: "R\u00fcckg\u00e4ngig",
+misure_giri: "Runden beendet / begonnen",
+misure_annulli: "R\u00fccknahmen pro Runde",
+misure_classifiche: "Wertungen ge\u00f6ffnet pro Runde",
+misure_ritmo: "Sekunden zwischen zwei Pfeilen (Median)",
+misure_nota: "Median aus {n} Intervallen. Sie bleiben auf diesem Telefon: nichts wird gesendet.",
+misure_vuoto: "Noch keine Messwerte: starte eine Runde.",
+misure_azzera: "Messwerte zur\u00fccksetzen",
+misure_azzera_conferma: "Zur\u00fccksetzen? Nochmal tippen",
 pista_chiudi: "Schlie\u00dfen",
 pista_tocca_a: "{name} ist dran",
 pista_freccia_di: "Pfeil {n} von {tot}",
 pista_per_piazzola: "Ziel f\u00fcr Ziel",
-pista_sagoma_titolo: "Trefferpunkt markieren",
 pista_ultimo_altrove: "{txt} ({p} {n})",
+/* la pastiglia della firma: tre gradini di uno stesso stato */
+firma_solo_qui: "Nur hier",
+firma_lo_vedono: "Sie sehen es",
+firma_firmato: "Signiert",
+firma_firmato_n: "Signiert {n}/{tot}",
+firma_solo_qui_nota: "Der letzte Punktestand ist noch nur auf diesem Telefon: die anderen sehen ihn nicht.",
+firma_lo_vedono_nota: "Die Punktestände sind bei der Gruppe angekommen.",
+firma_firmato_nota: "Von einem anderen Schützen gegengezeichnet: {n} von {tot}.",
 target_inline: "Ziel",
 interrupt_btn: "Parcours beenden und Rangliste ansehen",
-detected_score: "Erkannter Punktwert ({unit} {n})",
-correct_point_btn: "Punkt korrigieren",
-confirm_shot_btn: "Schuss best\u00e4tigen",
 done_word: "fertig",
 next_archer_btn: "N\u00e4chste(r): {name} \u2192",
 target_done: "Ziel abgeschlossen",
@@ -3617,7 +3690,6 @@ fr_type_other: "Di\u011fer",
 fr_piazzola_label: "\u0130lgili hedef",
 fr_piazzola_none: "Belirtilmedi",
 fr_report_open_btn: "Parkurdaki bir sorunu bildir",
-
 campi_announce_btn: "Antrenman duyur",
 train_add_target_btn: "Devam: bir hedef ekle",
 train_free_hint: "Antrenmanda ka\u00e7 hedef ataca\u011f\u0131na sen karar verirsin ve tur ba\u015flad\u0131ktan sonra da hedef ekleyebilirsin.",
@@ -3767,13 +3839,10 @@ legal_terms: "Kullan\u0131m ko\u015fullar\u0131",
 legal_about: "ArcTrail 3D nedir?",
 profile_terms: "Kullan\u0131m ko\u015fullar\u0131n\u0131 okudum ve kabul ediyorum.",
 
-
 country_italy: "\u0130talya",
 country_france: "Fransa",
 country_switzerland: "\u0130svi\u00e7re",
-
 coming_soon: "bize yaz\u0131n",
-
 
 back_to_menu: "\u2190 Men\u00fcye d\u00f6n",
 back_step: "\u2190 Geri",
@@ -3788,7 +3857,6 @@ menu_train_label: "Antrenmana Ba\u015fla",
 menu_train_sub: "ok ve hedef say\u0131s\u0131 sizin se\u00e7iminizde",
 menu_gara_label: "Serbest Yar\u0131\u015fma",
 menu_gara_sub: "hedefleri anl\u0131k y\u00f6net",
-
 
 
 market_btn_label: "Pazar yeri",
@@ -3816,7 +3884,6 @@ diario_by_mode_hint: "Her disiplinin azami puan\u0131 farkl\u0131d\u0131r: burad
 nav_menu: "\u2190 Men\u00fc",
 cancel_btn: "Kapat",
 reg_done_btn: "Tamam",
-
 setup_change_btn: "De\u011fi\u015ftir",
 setup_lang_label: "Dil",
 setup_country_label: "At\u0131\u015f yapt\u0131\u011f\u0131n \u00fclke",
@@ -3870,7 +3937,6 @@ logout_word: "\u00c7\u0131k\u0131\u015f",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Siluet", zone_perfect: "Perfect",
 zone_ffta_perfect: "Merkez", zone_ffta_superspot: "\u00d6ld\u00fcr\u00fcc\u00fc", zone_ffta_spot: "Hayati", zone_ffta_sagoma: "G\u00f6vde",
 target_singular: "Hedef",
-
 finora: " \u00b7 \u015fu ana kadar: {list} p",
 vale_prima: " \u00b7 sadece ilk isabet ge\u00e7erli",
 hdr_more: "Daha fazla",
@@ -3878,27 +3944,36 @@ timer_start: "Zamanlay\u0131c\u0131y\u0131 ba\u015flat", timer_reset: "S\u0131f\
 zero_label: "Isk\u0131",
 quick_hint_target: "veya hedef \u00fczerinde tam noktay\u0131 i\u015faretle",
 fuori_sagoma: "siluet d\u0131\u015f\u0131",
-zoom_btn: "Hedefi b\u00fcy\u00fct",
-zoom_btn_reduce: "K\u00fc\u00e7\u00fclt",
 undo_btn: "Son oku geri al",
-pista_sagoma_btn: "Siluet",
 pista_classifica_btn: "S\u0131ralama",
 pista_ultimo: "Son: {name}",
 pista_ultimo_freccia: "{name} \u00b7 {n}. ok",
 pista_ultimo_piazzola: "{name} \u00b7 hedef tamamland\u0131",
 pista_annulla_freccia: "Oku geri al",
 pista_annulla_breve: "Geri al",
+misure_giri: "Biten / ba\u015flayan turlar",
+misure_annulli: "Tur ba\u015f\u0131na geri alma",
+misure_classifiche: "Tur ba\u015f\u0131na a\u00e7\u0131lan s\u0131ralama",
+misure_ritmo: "\u0130ki ok aras\u0131 saniye (medyan)",
+misure_nota: "{n} aral\u0131k \u00fczerinden medyan. Bu telefonda kal\u0131r: hi\u00e7bir yere g\u00f6nderilmez.",
+misure_vuoto: "Hen\u00fcz \u00f6l\u00e7\u00fcm yok: bir tur ba\u015flat.",
+misure_azzera: "\u00d6l\u00e7\u00fcmleri s\u0131f\u0131rla",
+misure_azzera_conferma: "S\u0131f\u0131rlans\u0131n m\u0131? Tekrar dokun",
 pista_chiudi: "Kapat",
 pista_tocca_a: "S\u0131ra {name}",
 pista_freccia_di: "Ok {n}/{tot}",
 pista_per_piazzola: "Hedef hedef",
-pista_sagoma_titolo: "Vuru\u015f noktas\u0131n\u0131 i\u015faretle",
 pista_ultimo_altrove: "{txt} ({p} {n})",
+/* la pastiglia della firma: tre gradini di uno stesso stato */
+firma_solo_qui: "Sadece burada",
+firma_lo_vedono: "Onlar görüyor",
+firma_firmato: "İmzalandı",
+firma_firmato_n: "İmzalandı {n}/{tot}",
+firma_solo_qui_nota: "Son puan hâlâ yalnızca bu telefonda: diğerleri göremiyor.",
+firma_lo_vedono_nota: "Puanlar gruptaki diğerlerine ulaştı.",
+firma_firmato_nota: "Başka bir okçu tarafından imzalandı: {tot} üzerinden {n}.",
 target_inline: "hedef",
 interrupt_btn: "Parkuru bitir ve s\u0131ralamay\u0131 g\u00f6r",
-detected_score: "Alg\u0131lanan puan ({unit} {n})",
-correct_point_btn: "Noktay\u0131 d\u00fczelt",
-confirm_shot_btn: "At\u0131\u015f\u0131 onayla",
 done_word: "tamam",
 next_archer_btn: "S\u0131radaki: {name} \u2192",
 target_done: "Hedef tamamland\u0131",
@@ -4102,7 +4177,6 @@ fr_type_other: "\u0414\u0440\u0443\u0433\u043e\u0435",
 fr_piazzola_label: "\u041c\u0438\u0448\u0435\u043d\u044c, \u043e \u043a\u043e\u0442\u043e\u0440\u043e\u0439 \u0440\u0435\u0447\u044c",
 fr_piazzola_none: "\u041d\u0435 \u0443\u043a\u0430\u0437\u0430\u043d\u0430",
 fr_report_open_btn: "\u0421\u043e\u043e\u0431\u0449\u0438\u0442\u044c \u043e \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u0435 \u043d\u0430 \u043c\u0430\u0440\u0448\u0440\u0443\u0442\u0435",
-
 campi_announce_btn: "\u041e\u0431\u044a\u044f\u0432\u0438\u0442\u044c \u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0443",
 train_add_target_btn: "\u041f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c: \u0434\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u043c\u0438\u0448\u0435\u043d\u044c",
 train_free_hint: "\u041d\u0430 \u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0435 \u0432\u044b \u0441\u0430\u043c\u0438 \u0440\u0435\u0448\u0430\u0435\u0442\u0435, \u0441\u043a\u043e\u043b\u044c\u043a\u043e \u043c\u0438\u0448\u0435\u043d\u0435\u0439 \u043f\u0440\u043e\u0439\u0442\u0438, \u0438 \u043c\u043e\u0436\u0435\u0442\u0435 \u0434\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0435\u0449\u0451 \u0434\u0430\u0436\u0435 \u043f\u043e\u0441\u043b\u0435 \u043d\u0430\u0447\u0430\u043b\u0430 \u043a\u0440\u0443\u0433\u0430.",
@@ -4252,13 +4326,10 @@ legal_terms: "\u0423\u0441\u043b\u043e\u0432\u0438\u044f \u0438\u0441\u043f\u043
 legal_about: "\u041e \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0438 ArcTrail 3D",
 profile_terms: "\u042f \u043f\u0440\u043e\u0447\u0438\u0442\u0430\u043b \u0438 \u043f\u0440\u0438\u043d\u0438\u043c\u0430\u044e \u0443\u0441\u043b\u043e\u0432\u0438\u044f \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u044f.",
 
-
 country_italy: "Италия",
 country_france: "Франция",
 country_switzerland: "Швейцария",
-
 coming_soon: "напишите нам",
-
 
 back_to_menu: "← В меню",
 back_step: "← Назад",
@@ -4273,7 +4344,6 @@ menu_train_label: "Начать тренировку",
 menu_train_sub: "стрелы и мишени по выбору",
 menu_gara_label: "Свободное соревнование",
 menu_gara_sub: "управляй мишенями на месте",
-
 
 
 market_btn_label: "\u0411\u0430\u0440\u0430\u0445\u043e\u043b\u043a\u0430",
@@ -4301,7 +4371,6 @@ diario_by_mode_hint: "\u0423 \u043a\u0430\u0436\u0434\u043e\u0439 \u0434\u0438\u
 nav_menu: "\u2190 \u041c\u0435\u043d\u044e",
 cancel_btn: "Закрыть",
 reg_done_btn: "\u0413\u043e\u0442\u043e\u0432\u043e",
-
 setup_change_btn: "\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c",
 setup_lang_label: "\u042f\u0437\u044b\u043a",
 setup_country_label: "\u0421\u0442\u0440\u0430\u043d\u0430, \u0433\u0434\u0435 \u0432\u044b \u0441\u0442\u0440\u0435\u043b\u044f\u0435\u0442\u0435",
@@ -4355,7 +4424,6 @@ logout_word: "Выйти",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Силуэт", zone_perfect: "Perfect",
 zone_ffta_perfect: "Центр", zone_ffta_superspot: "Смертельная", zone_ffta_spot: "Жизненная", zone_ffta_sagoma: "Тело",
 target_singular: "Мишень",
-
 finora: " · пока что: {list} очк.",
 vale_prima: " · засчитывается только первое попадание",
 hdr_more: "Ещё",
@@ -4363,27 +4431,36 @@ timer_start: "Запустить таймер", timer_reset: "Сбросить",
 zero_label: "Промах",
 quick_hint_target: "или отметьте точную точку на мишени",
 fuori_sagoma: "мимо силуэта",
-zoom_btn: "Увеличить прицел",
-zoom_btn_reduce: "Уменьшить",
 undo_btn: "Отменить последнюю стрелу",
-pista_sagoma_btn: "Силуэт",
 pista_classifica_btn: "Результаты",
 pista_ultimo: "Последний: {name}",
 pista_ultimo_freccia: "{name} \u00b7 стрела {n}",
 pista_ultimo_piazzola: "{name} \u00b7 мишень завершена",
 pista_annulla_freccia: "Отменить стрелу",
 pista_annulla_breve: "Отменить",
+misure_giri: "\u041f\u0440\u043e\u0439\u0434\u0435\u043d\u043e / \u043d\u0430\u0447\u0430\u0442\u043e \u043a\u0440\u0443\u0433\u043e\u0432",
+misure_annulli: "\u041e\u0442\u043c\u0435\u043d \u0437\u0430 \u043a\u0440\u0443\u0433",
+misure_classifiche: "\u041e\u0442\u043a\u0440\u044b\u0442\u0438\u0439 \u0442\u0430\u0431\u043b\u0438\u0446\u044b \u0437\u0430 \u043a\u0440\u0443\u0433",
+misure_ritmo: "\u0421\u0435\u043a\u0443\u043d\u0434 \u043c\u0435\u0436\u0434\u0443 \u0441\u0442\u0440\u0435\u043b\u0430\u043c\u0438 (\u043c\u0435\u0434\u0438\u0430\u043d\u0430)",
+misure_nota: "\u041c\u0435\u0434\u0438\u0430\u043d\u0430 \u043f\u043e {n} \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u0430\u043c. \u041e\u0441\u0442\u0430\u044e\u0442\u0441\u044f \u043d\u0430 \u044d\u0442\u043e\u043c \u0442\u0435\u043b\u0435\u0444\u043e\u043d\u0435: \u043d\u0438\u043a\u0443\u0434\u0430 \u043d\u0435 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u044f\u044e\u0442\u0441\u044f.",
+misure_vuoto: "\u0418\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u043e\u043a\u0430 \u043d\u0435\u0442: \u043d\u0430\u0447\u043d\u0438\u0442\u0435 \u043a\u0440\u0443\u0433.",
+misure_azzera: "\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u044f",
+misure_azzera_conferma: "\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c? \u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437",
 pista_chiudi: "Закрыть",
 pista_tocca_a: "Очередь: {name}",
 pista_freccia_di: "Стрела {n} из {tot}",
 pista_per_piazzola: "По мишеням",
-pista_sagoma_titolo: "Отметьте точку попадания",
 pista_ultimo_altrove: "{txt} ({p} {n})",
+/* la pastiglia della firma: tre gradini di uno stesso stato */
+firma_solo_qui: "Только здесь",
+firma_lo_vedono: "Они видят",
+firma_firmato: "Подписано",
+firma_firmato_n: "Подписано {n}/{tot}",
+firma_solo_qui_nota: "Последний результат пока только на этом телефоне: остальные его не видят.",
+firma_lo_vedono_nota: "Результаты дошли до остальных в группе.",
+firma_firmato_nota: "Заверено другим лучником: {n} из {tot}.",
 target_inline: "мишень",
 interrupt_btn: "Завершить маршрут и посмотреть результаты",
-detected_score: "Обнаруженный результат ({unit} {n})",
-correct_point_btn: "Исправить точку",
-confirm_shot_btn: "Подтвердить выстрел",
 done_word: "готово",
 next_archer_btn: "Следующий: {name} →",
 target_done: "Мишень завершена",
@@ -4587,7 +4664,6 @@ fr_type_other: "Otro",
 fr_piazzola_label: "Diana afectada",
 fr_piazzola_none: "No indicada",
 fr_report_open_btn: "Avisar de un problema en un recorrido",
-
 campi_announce_btn: "Anunciar un entrenamiento",
 train_add_target_btn: "Continuar: a\u00f1adir una diana",
 train_free_hint: "En entrenamiento decides t\u00fa cu\u00e1ntas dianas hacer, y puedes a\u00f1adir m\u00e1s incluso con la ronda empezada.",
@@ -4737,13 +4813,10 @@ legal_terms: "Condiciones de uso",
 legal_about: "Qu\u00e9 es ArcTrail 3D",
 profile_terms: "He le\u00eddo y acepto las condiciones de uso.",
 
-
 country_italy: "Italia",
 country_france: "Francia",
 country_switzerland: "Suiza",
-
 coming_soon: "escr\u00edbenos",
-
 
 back_to_menu: "\u2190 Volver al men\u00fa",
 back_step: "\u2190 Atr\u00e1s",
@@ -4758,7 +4831,6 @@ menu_train_label: "Iniciar Entrenamiento",
 menu_train_sub: "flechas y dianas a elegir",
 menu_gara_label: "Competici\u00f3n libre",
 menu_gara_sub: "gestiona las dianas sobre la marcha",
-
 
 
 market_btn_label: "Marketplace",
@@ -4786,7 +4858,6 @@ diario_by_mode_hint: "Cada disciplina tiene una puntuaci\u00f3n m\u00e1xima dist
 nav_menu: "\u2190 Men\u00fa",
 cancel_btn: "Cerrar",
 reg_done_btn: "Hecho",
-
 setup_change_btn: "Cambiar",
 setup_lang_label: "Idioma",
 setup_country_label: "Pa\u00eds donde tiras",
@@ -4840,7 +4911,6 @@ logout_word: "Salir",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silueta", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letal", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Cuerpo",
 target_singular: "Diana",
-
 finora: " \u00b7 hasta ahora: {list} pts",
 vale_prima: " \u00b7 solo cuenta el primer impacto",
 hdr_more: "Más",
@@ -4848,27 +4918,36 @@ timer_start: "Iniciar temporizador", timer_reset: "Reiniciar", timer_resume: "Re
 zero_label: "Nulo",
 quick_hint_target: "o marca el punto exacto en la diana",
 fuori_sagoma: "fuera de silueta",
-zoom_btn: "Ampliar mira",
-zoom_btn_reduce: "Reducir mira",
 undo_btn: "Deshacer \u00faltima flecha",
-pista_sagoma_btn: "Silueta",
 pista_classifica_btn: "Clasificaci\u00f3n",
 pista_ultimo: "\u00daltimo: {name}",
 pista_ultimo_freccia: "{name} \u00b7 flecha {n}",
 pista_ultimo_piazzola: "{name} \u00b7 diana completada",
 pista_annulla_freccia: "Deshacer flecha",
 pista_annulla_breve: "Deshacer",
+misure_giri: "Recorridos terminados / iniciados",
+misure_annulli: "Deshacer por recorrido",
+misure_classifiche: "Clasificaciones abiertas por recorrido",
+misure_ritmo: "Segundos entre dos flechas (mediana)",
+misure_nota: "Mediana sobre {n} intervalos. Se quedan en este tel\u00e9fono: no se env\u00edan a ninguna parte.",
+misure_vuoto: "A\u00fan no hay mediciones: empieza un recorrido.",
+misure_azzera: "Reiniciar mediciones",
+misure_azzera_conferma: "\u00bfReiniciar? Toca otra vez",
 pista_chiudi: "Cerrar",
 pista_tocca_a: "Turno de {name}",
 pista_freccia_di: "Flecha {n} de {tot}",
 pista_per_piazzola: "Diana por diana",
-pista_sagoma_titolo: "Marca el punto de impacto",
 pista_ultimo_altrove: "{txt} ({p} {n})",
+/* la pastiglia della firma: tre gradini di uno stesso stato */
+firma_solo_qui: "Solo aquí",
+firma_lo_vedono: "Lo ven",
+firma_firmato: "Firmado",
+firma_firmato_n: "Firmado {n}/{tot}",
+firma_solo_qui_nota: "La última puntuación sigue solo en este teléfono: los demás no la ven.",
+firma_lo_vedono_nota: "Las puntuaciones han llegado al resto del grupo.",
+firma_firmato_nota: "Refrendadas por otro arquero: {n} de {tot}.",
 target_inline: "diana",
 interrupt_btn: "Terminar recorrido y ver clasificaci\u00f3n",
-detected_score: "Puntuaci\u00f3n detectada ({unit} {n})",
-correct_point_btn: "Corregir punto",
-confirm_shot_btn: "Confirmar tiro",
 done_word: "hecho",
 next_archer_btn: "Siguiente: {name} \u2192",
 target_done: "Diana completada",
@@ -5072,7 +5151,6 @@ fr_type_other: "Annat",
 fr_piazzola_label: "Ber\u00f6rt m\u00e5l",
 fr_piazzola_none: "Inte angivet",
 fr_report_open_btn: "Rapportera ett problem p\u00e5 en bana",
-
 campi_announce_btn: "Annonsera en tr\u00e4ning",
 train_add_target_btn: "Forts\u00e4tt: l\u00e4gg till ett m\u00e5l",
 train_free_hint: "P\u00e5 tr\u00e4ning best\u00e4mmer du hur m\u00e5nga m\u00e5l du skjuter, och du kan l\u00e4gga till fler \u00e4ven efter att rundan b\u00f6rjat.",
@@ -5222,13 +5300,10 @@ legal_terms: "Anv\u00e4ndarvillkor",
 legal_about: "Om ArcTrail 3D",
 profile_terms: "Jag har l\u00e4st och accepterar anv\u00e4ndarvillkoren.",
 
-
 country_italy: "Italien",
 country_france: "Frankrike",
 country_switzerland: "Schweiz",
-
 coming_soon: "skriv till oss",
-
 
 back_to_menu: "\u2190 Tillbaka till menyn",
 back_step: "\u2190 Tillbaka",
@@ -5243,7 +5318,6 @@ menu_train_label: "Starta tr\u00e4ning",
 menu_train_sub: "pilar och m\u00e5l valfritt",
 menu_gara_label: "Fri t\u00e4vling",
 menu_gara_sub: "hantera m\u00e5len l\u00f6pande",
-
 
 
 market_btn_label: "Marketplace",
@@ -5271,7 +5345,6 @@ diario_by_mode_hint: "Varje disciplin har olika maxpo\u00e4ng: h\u00e4r \u00e4r 
 nav_menu: "\u2190 Meny",
 cancel_btn: "Stäng",
 reg_done_btn: "Klar",
-
 setup_change_btn: "\u00c4ndra",
 setup_lang_label: "Spr\u00e5k",
 setup_country_label: "Land d\u00e4r du skjuter",
@@ -5325,7 +5398,6 @@ logout_word: "Logga ut",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhuett", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centrum", zone_ffta_superspot: "D\u00f6dlig", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Kropp",
 target_singular: "M\u00e5l",
-
 finora: " \u00b7 hittills: {list} p",
 vale_prima: " \u00b7 endast f\u00f6rsta tr\u00e4ffen r\u00e4knas",
 hdr_more: "Mer",
@@ -5333,27 +5405,36 @@ timer_start: "Starta timer", timer_reset: "Nollst\u00e4ll", timer_resume: "\u00c
 zero_label: "Bom",
 quick_hint_target: "eller markera den exakta punkten p\u00e5 m\u00e5let",
 fuori_sagoma: "utanf\u00f6r silhuetten",
-zoom_btn: "F\u00f6rstora sikte",
-zoom_btn_reduce: "F\u00f6rminska",
 undo_btn: "\u00c5ngra senaste pilen",
-pista_sagoma_btn: "Silhuett",
 pista_classifica_btn: "Resultat",
 pista_ultimo: "Senast: {name}",
 pista_ultimo_freccia: "{name} \u00b7 pil {n}",
 pista_ultimo_piazzola: "{name} \u00b7 m\u00e5let klart",
 pista_annulla_freccia: "\u00c5ngra pil",
 pista_annulla_breve: "\u00c5ngra",
+misure_giri: "Rundor avslutade / p\u00e5b\u00f6rjade",
+misure_annulli: "\u00c5ngra per runda",
+misure_classifiche: "\u00d6ppnade st\u00e4llningar per runda",
+misure_ritmo: "Sekunder mellan tv\u00e5 pilar (median)",
+misure_nota: "Median \u00f6ver {n} intervall. De stannar i den h\u00e4r telefonen: inget skickas n\u00e5gonstans.",
+misure_vuoto: "Inga m\u00e4tningar \u00e4nnu: starta en runda.",
+misure_azzera: "Nollst\u00e4ll m\u00e4tningar",
+misure_azzera_conferma: "Nollst\u00e4lla? Tryck igen",
 pista_chiudi: "St\u00e4ng",
 pista_tocca_a: "{name}s tur",
 pista_freccia_di: "Pil {n} av {tot}",
 pista_per_piazzola: "M\u00e5l f\u00f6r m\u00e5l",
-pista_sagoma_titolo: "Markera tr\u00e4ffpunkten",
 pista_ultimo_altrove: "{txt} ({p} {n})",
+/* la pastiglia della firma: tre gradini di uno stesso stato */
+firma_solo_qui: "Bara här",
+firma_lo_vedono: "De ser det",
+firma_firmato: "Signerat",
+firma_firmato_n: "Signerat {n}/{tot}",
+firma_solo_qui_nota: "Den senaste poängen finns ännu bara i den här telefonen: de andra ser den inte.",
+firma_lo_vedono_nota: "Poängen har nått resten av gruppen.",
+firma_firmato_nota: "Kontrasignerade av en annan bågskytt: {n} av {tot}.",
 target_inline: "m\u00e5l",
 interrupt_btn: "Avsluta rundan och se resultatet",
-detected_score: "Uppt\u00e4ckt po\u00e4ng ({unit} {n})",
-correct_point_btn: "R\u00e4tta punkt",
-confirm_shot_btn: "Bekr\u00e4fta skott",
 done_word: "klart",
 next_archer_btn: "N\u00e4sta: {name} \u2192",
 target_done: "M\u00e5let klart",
@@ -5557,7 +5638,6 @@ fr_type_other: "Anders",
 fr_piazzola_label: "Betrokken doel",
 fr_piazzola_none: "Niet aangegeven",
 fr_report_open_btn: "Een probleem op een parcours melden",
-
 campi_announce_btn: "Een training aankondigen",
 train_add_target_btn: "Doorgaan: een doel toevoegen",
 train_free_hint: "Bij een training bepaal je zelf hoeveel doelen je schiet, en je kunt er ook tijdens de ronde nog bij doen.",
@@ -5707,13 +5787,10 @@ legal_terms: "Gebruiksvoorwaarden",
 legal_about: "Over ArcTrail 3D",
 profile_terms: "Ik heb de gebruiksvoorwaarden gelezen en ga ermee akkoord.",
 
-
 country_italy: "Itali\u00eb",
 country_france: "Frankrijk",
 country_switzerland: "Zwitserland",
-
 coming_soon: "schrijf ons",
-
 
 back_to_menu: "\u2190 Terug naar menu",
 back_step: "\u2190 Terug",
@@ -5728,7 +5805,6 @@ menu_train_label: "Training starten",
 menu_train_sub: "pijlen en doelen naar keuze",
 menu_gara_label: "Vrije wedstrijd",
 menu_gara_sub: "beheer de doelen ter plekke",
-
 
 
 market_btn_label: "Marketplace",
@@ -5756,7 +5832,6 @@ diario_by_mode_hint: "Elke discipline heeft een andere maximumscore: hier zijn d
 nav_menu: "\u2190 Menu",
 cancel_btn: "Sluiten",
 reg_done_btn: "Klaar",
-
 setup_change_btn: "Wijzigen",
 setup_lang_label: "Taal",
 setup_country_label: "Land waar je schiet",
@@ -5810,7 +5885,6 @@ logout_word: "Uitloggen",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouet", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centrum", zone_ffta_superspot: "Dodelijk", zone_ffta_spot: "Vitaal", zone_ffta_sagoma: "Lichaam",
 target_singular: "Doel",
-
 finora: " \u00b7 tot nu toe: {list} pt",
 vale_prima: " \u00b7 alleen de eerste treffer telt",
 hdr_more: "Meer",
@@ -5818,27 +5892,36 @@ timer_start: "Timer starten", timer_reset: "Resetten", timer_resume: "Hervatten"
 zero_label: "Mis",
 quick_hint_target: "of markeer het exacte punt op het doel",
 fuori_sagoma: "buiten het silhouet",
-zoom_btn: "Vizier vergroten",
-zoom_btn_reduce: "Verkleinen",
 undo_btn: "Laatste pijl ongedaan maken",
-pista_sagoma_btn: "Silhouet",
 pista_classifica_btn: "Klassement",
 pista_ultimo: "Laatste: {name}",
 pista_ultimo_freccia: "{name} \u00b7 pijl {n}",
 pista_ultimo_piazzola: "{name} \u00b7 doel voltooid",
 pista_annulla_freccia: "Pijl ongedaan maken",
 pista_annulla_breve: "Ongedaan",
+misure_giri: "Rondes voltooid / gestart",
+misure_annulli: "Ongedaan maken per ronde",
+misure_classifiche: "Standen geopend per ronde",
+misure_ritmo: "Seconden tussen twee pijlen (mediaan)",
+misure_nota: "Mediaan over {n} intervallen. Ze blijven op deze telefoon: er wordt niets verstuurd.",
+misure_vuoto: "Nog geen metingen: begin een ronde.",
+misure_azzera: "Metingen wissen",
+misure_azzera_conferma: "Wissen? Tik nogmaals",
 pista_chiudi: "Sluiten",
 pista_tocca_a: "{name} is aan de beurt",
 pista_freccia_di: "Pijl {n} van {tot}",
 pista_per_piazzola: "Doel voor doel",
-pista_sagoma_titolo: "Markeer het inslagpunt",
 pista_ultimo_altrove: "{txt} ({p} {n})",
+/* la pastiglia della firma: tre gradini di uno stesso stato */
+firma_solo_qui: "Alleen hier",
+firma_lo_vedono: "Zij zien het",
+firma_firmato: "Ondertekend",
+firma_firmato_n: "Ondertekend {n}/{tot}",
+firma_solo_qui_nota: "De laatste score staat nog alleen op deze telefoon: de anderen zien hem niet.",
+firma_lo_vedono_nota: "De scores zijn bij de rest van de groep aangekomen.",
+firma_firmato_nota: "Medeondertekend door een andere boogschutter: {n} van {tot}.",
 target_inline: "doel",
 interrupt_btn: "Ronde be\u00ebindigen en klassement bekijken",
-detected_score: "Gedetecteerde score ({unit} {n})",
-correct_point_btn: "Punt corrigeren",
-confirm_shot_btn: "Schot bevestigen",
 done_word: "klaar",
 next_archer_btn: "Volgende: {name} \u2192",
 target_done: "Doel voltooid",
@@ -6571,46 +6654,6 @@ host.appendChild(burst);
 setTimeout(function(){ burst.remove(); }, 750);
 }
 
-function targetSVG(mode){
-var zones = mode.zones, radii = mode.radii;
-var n = zones.length;
-var colorVar = { perfect:"var(--qperfect)", superspot:"var(--qss)", spot:"var(--qspot)", sagoma:"var(--qsag)" };
-var cx=150, cy=150;
-var outerR = radii[radii.length-1];
-var out = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">';
-out += '<defs>';
-// gradiente radiale per ogni zona (luce in alto a sinistra) - generato per qualsiasi colore/zona, non solo le 3 fisse del mockup
-var usedGrad = {};
-for(var gi=0; gi<n; gi++){
-var gc = colorVar[zones[gi].cls] || "var(--qsag)";
-var gid = "zoneGrad_" + gc.replace(/[^a-z0-9]/gi,'');
-if(usedGrad[gid]) continue;
-usedGrad[gid] = true;
-out += '<radialGradient id="'+gid+'" cx="35%" cy="30%">'+
-'<stop offset="0%" stop-color="color-mix(in srgb, '+gc+' 75%, white)"/>'+
-'<stop offset="60%" stop-color="'+gc+'"/>'+
-'<stop offset="100%" stop-color="color-mix(in srgb, '+gc+' 80%, black)"/>'+
-'</radialGradient>';
-}
-out += '</defs>';
-for(var i=n-1;i>=0;i--){
-var isOuter = (i===n-1);
-var c = colorVar[zones[i].cls] || "var(--qsag)";
-var gid2 = "zoneGrad_" + c.replace(/[^a-z0-9]/gi,'');
-out += '<circle '+(isOuter?'class="hitshape" ':'')+'cx="'+cx+'" cy="'+cy+'" r="'+radii[i]+'" fill="url(#'+gid2+')" stroke="#CBA35C" stroke-width="2" stroke-opacity="0.6"'+(isOuter?'':' pointer-events="none"')+'/>';
-if(isOuter){
-// linee concentriche ben definite (come nel mockup): disegnate qui, le zone interne
-// (che seguono nel ciclo) le coprono naturalmente, restano visibili solo sulla fascia esterna
-out += '<g style="mix-blend-mode:overlay;opacity:0.5;pointer-events:none;">';
-for(var rr=4; rr<=outerR; rr+=7){
-out += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rr+'" fill="none" stroke="rgba(217,185,106,0.6)" stroke-width="2"/>';
-}
-out += '</g>';
-}
-}
-out += '</svg>';
-return out;
-}
 
 // Il file vecchio era un quadrato scuro 300x300 appoggiato in alto a sinistra
 // di una tela 308x308: 0px di margine sopra e a sinistra, 8px sotto e a
@@ -6637,7 +6680,6 @@ bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21
 mail: '<rect x="3" y="5" width="18" height="14" rx="2.2"/><path d="M3.6 6.6 12 13l8.4-6.4"/>',
 warn: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
 cart: '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.5 12h11L21 7H6"/>',
-
 bow: '<path d="M6 3c-2 5-2 16 0 21"/><path d="M6 3c6 2 12 8 12 9s-6 7-12 9"/><path d="M4 12h15"/><path d="M15 8l4 4-4 4"/>',
 target: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v3M21 12h-3M3 12h3"/><path d="M17 3l-4.5 7.5"/><path d="M20 6l-6 6.5"/>',
 pin: '<path d="M12 21s7-6.8 7-12a7 7 0 0 0-14 0c0 5.2 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/>',
@@ -6649,7 +6691,6 @@ search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/>',
 shuffle: '<path d="M3 6h3.5c2 0 3 1 4.5 3"/><path d="M14 6h3l3 3M17 3l3 3-3 3"/><path d="M3 18h3.5c2 0 3-1 4.5-3"/><path d="M14 18h3l3-3M17 21l3-3-3-3"/>',
 leaf: '<path d="M5 19c8 1 14-5 15-15C11 5 5 11 5 19z"/><path d="M6 18c3-4 6-7 12-11"/>',
 globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.8 2.3 4.3 5.3 4.3 8.5s-1.5 6.2-4.3 8.5c-2.8-2.3-4.3-5.3-4.3-8.5s1.5-6.2 4.3-8.5z"/>',
-sight: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/>',
 info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"/>',
 clipboard: '<rect x="5" y="4" width="14" height="17" rx="1.5"/><rect x="8.5" y="2.5" width="7" height="3" rx="1"/><path d="M8.5 10.5h7M8.5 14h7M8.5 17.5h4"/>',
 mappin: '<path d="M12 21s7-6.8 7-12a7 7 0 0 0-14 0c0 5.2 7 12 7 12z"/><circle cx="12" cy="9" r="3.2"/><circle cx="12" cy="9" r="0.9" fill="currentColor" stroke="none"/>',
@@ -6657,7 +6698,13 @@ emblem: '<path d="M12 2.5l7 2.5v6c0 5-3 8.3-7 10.5-4-2.2-7-5.5-7-10.5V5z"/><path
 clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.5l3.5 2"/>',
 undo: '<path d="M4 9h10a5.5 5.5 0 0 1 0 11h-6"/><path d="M8 4.5L3.5 9L8 13.5"/>',
 empty: '<circle cx="12" cy="12" r="8.5"/><path d="M6.5 6.5l11 11"/>',
-chart: '<path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="5" width="3" height="12"/>'
+chart: '<path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="5" width="3" height="12"/>',
+/* I tre gradini della pastiglia della firma. Stanno qui e non in un SVG
+   scritto a mano dentro il componente: l'alfabeto delle icone e' uno solo,
+   ed e' questo. */
+soloqui: '<rect x="7" y="2.5" width="10" height="19" rx="2.4"/><path d="M10.5 5.6h3"/><path d="M12 17.6h.01"/>',
+occhio: '<path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
+firma: '<path d="M2.5 12.6 6.2 16.3 12.4 8.8"/><path d="M10.6 15.4 12.4 17.2 21.5 6.6"/>'
 };
 
 /* ── Le cinque della barra, a due tinte ──────────────────────────────────
@@ -7965,6 +8012,15 @@ var h = el(
 '<div class="headtxt"><span class="brand-title">ArcTrail 3D</span></div></div>'+
 '</header>'
 );
+
+// La pastiglia della firma sta accanto al marchio, prima delle azioni (che
+// hanno margin-left:auto e restano a destra). Non e' un'azione: e' l'unica
+// cosa che la barra dice invece di chiedere.
+if(firmaVisibile()){
+var pastigliaFirma = el('<span class="firma-pill"></span>');
+riempiFirma(pastigliaFirma);
+h.appendChild(pastigliaFirma);
+}
 
 // ── Le azioni, in ordine di importanza ────────────────────────────────
 // Sul telefono ne restano in vista DUE: le altre scendono nel
@@ -10341,28 +10397,39 @@ if(data.status !== "active"){
 card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("session_closed_note")+'</div>'));
 }
 var archerNames = data.archerNames || [];
+var confirms = data.confirms || {};
 var hasAny = false;
 archerNames.forEach(function(an){
-var entries = (data.scores && data.scores[an.id]) || [];
+var entries = sessionShots(data, an.id);
 var block = el('<div style="margin-bottom:14px;"></div>');
 block.appendChild(el('<div style="font-weight:700;margin-bottom:6px;">'+escapeHtml(an.name)+'</div>'));
 if(entries.length === 0){
 block.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);">'+t("session_no_data")+'</div>'));
 }
-entries.forEach(function(entry, idx){
+entries.forEach(function(entry){
 hasAny = true;
-var canConfirm = data.doubleConfirm && !entry.confirmed && entry.by !== (currentUser && currentUser.uid) && data.status === "active";
-var statusLabel = entry.confirmed ? t("session_confirmed_label") : t("session_pending_label");
-var statusColor = entry.confirmed ? "var(--accent-soft)" : "var(--bark)";
+var firmato = entry.legacy ? entry.legacyConfirmed : !!confirms[entry.key];
+var canConfirm = data.doubleConfirm && !firmato && entry.by !== (currentUser && currentUser.uid) && data.status === "active";
+var statusLabel = firmato ? t("session_confirmed_label") : t("session_pending_label");
+var statusColor = firmato ? "var(--accent-soft)" : "var(--bark)";
+// Il numero della piazzola si dichiara: un elenco di totali senza il posto
+// a cui appartengono e' la stessa ambiguita' che la striscia dell'annulla ha
+// gia' dovuto togliere di mezzo sulla pista.
+var dove = entry.target ? (t("target_inline")+' '+entry.target+' \u00b7 ') : '';
 var row = el(
 '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:0.85rem;">'+
-'<span>'+entry.arrows.join(", ")+' &middot; <b>'+entry.total+'</b></span>'+
+'<span>'+dove+escapeHtml(entry.arrows.join(", "))+' &middot; <b class="num">'+entry.total+'</b></span>'+
 '<span style="color:'+statusColor+';font-size:0.75rem;">'+statusLabel+'</span></div>'
 );
 block.appendChild(row);
 if(canConfirm){
 var cBtn = el('<button class="btn btn-primary btn-sm btn-block" style="margin-top:4px;">'+t("session_confirm_btn")+'</button>');
-cBtn.addEventListener("click", function(){ confirmSessionShot(an.id, idx); });
+(function(e){
+cBtn.addEventListener("click", function(){
+if(e.legacy) confirmSessionShotLegacy(an.id, e.idx);
+else confirmSessionShot(an.id, e.sid);
+});
+})(entry);
 block.appendChild(cBtn);
 }
 });
@@ -10378,7 +10445,76 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-15-pista-e";
+var BUILD_STAMP = "2026-08-16-misure-a";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   QUATTRO NUMERI, E DOVE NON VANNO
+
+   Le decisioni di queste note sono argomentate bene, e queste note sono
+   scritte abbastanza bene da far sembrare un argomento una prova. Il ridisegno
+   per regioni e' stato provato a banco: il banco pero' misura lo STATO, non la
+   percezione. Serviva qualcosa che desse un voto sul campo.
+
+   NON SI SPEDISCONO DA NESSUNA PARTE. Vivono in una chiave di localStorage
+   loro, separata dallo stato del giro, e in fondo alla schermata Info le legge
+   solo chi tiene il telefono in mano. Non passano da Firestore, non entrano
+   nella sessione condivisa, non hanno un identificatore. Un numero che non
+   parte non puo' essere frainteso da nessuno.
+
+   Sono quattro perche' quattro sono le domande a cui non si sa rispondere:
+     giri finiti / iniziati   il giro arriva in fondo, o si abbandona?
+     annulli per giro         quanto spesso si sbaglia a segnare?
+     classifiche per giro     quanto pesa quel tasto, l'unico rimasto?
+     mediana fra due frecce   quanto e' veloce lo sguardo dopo il tocco?
+
+   IL QUARTO E' CAMBIATO RISPETTO ALLE NOTE, e vale la pena scrivere perche'.
+   Era "secondi mediani per piazzola". Ma il tempo di una piazzola e' quasi
+   tutto tiro, cammino e attesa degli altri: l'app ci sta dentro per una
+   frazione, quindi quel numero non puo' dare un voto al ridisegno. La distanza
+   fra due frecce dello STESSO arciere invece e' quasi solo app. I salti oltre
+   il minuto si scartano: quello non e' esitare, e' camminare.
+
+   MEDIANA, non media: una pausa pranzo a meta' giro sposta una media e non
+   sposta una mediana.
+   ══════════════════════════════════════════════════════════════════════════ */
+var MISURE_KEY = "arctrail3d_misure_v1";
+var MISURE_MAX = 300;          // quanti intervalli si tengono: oltre non aggiungono nulla
+var ultimoTocco = null;        // istante dell'ultima freccia segnata, per l'intervallo
+
+function misureLeggi(){
+try{ var raw = localStorage.getItem(MISURE_KEY); var m = raw ? JSON.parse(raw) : null; if(!m) throw 0;
+m.intervalli = m.intervalli || []; return m; }
+catch(e){ return { giriIniziati:0, giriFiniti:0, annulli:0, classifiche:0, intervalli:[] }; }
+}
+function misura(campo, quanto){
+try{
+var m = misureLeggi();
+if(campo === "intervalli"){
+m.intervalli.push(quanto);
+if(m.intervalli.length > MISURE_MAX) m.intervalli = m.intervalli.slice(-MISURE_MAX);
+} else {
+m[campo] = (m[campo] || 0) + (quanto === undefined ? 1 : quanto);
+}
+localStorage.setItem(MISURE_KEY, JSON.stringify(m));
+}catch(e){}
+}
+// L'intervallo si registra solo fra due frecce dello stesso arciere nella
+// stessa piazzola: e' l'unico tratto in cui fra un tocco e l'altro non c'e'
+// altro che l'app.
+function misuraTocco(stessoTurno){
+var ora = Date.now();
+if(stessoTurno && ultimoTocco){
+var d = (ora - ultimoTocco) / 1000;
+if(d > 0.15 && d < 60) misura("intervalli", Math.round(d*10)/10);
+}
+ultimoTocco = ora;
+}
+function mediana(v){
+if(!v.length) return null;
+var a = v.slice().sort(function(x,y){ return x-y; });
+var i = Math.floor(a.length/2);
+return a.length % 2 ? a[i] : Math.round(((a[i-1]+a[i])/2)*10)/10;
+}
 
 function infoScreen(){
 var wrap = el('<div></div>');
@@ -10401,8 +10537,39 @@ contactCard.appendChild(legalRow2);
 wrap.appendChild(contactCard);
 
 wrap.appendChild(el('<div style="font-size:0.68rem;color:var(--muted);text-align:center;margin-top:16px;">Versione file: '+BUILD_STAMP+'</div>'));
+wrap.appendChild(riquadroMisure());
 
 return wrap;
+}
+
+// Il riquadro sta in fondo, sotto la versione, perche' e' della stessa
+// famiglia: roba per chi sta provando l'app, non per chi la usa.
+function riquadroMisure(){
+var m = misureLeggi();
+var box = el('<div class="misure no-print"></div>');
+if(!m.giriIniziati && !m.intervalli.length){
+box.appendChild(el('<div class="misure-vuoto">'+t("misure_vuoto")+'</div>'));
+return box;
+}
+var med = mediana(m.intervalli);
+[[t("misure_giri"), m.giriFiniti + " / " + m.giriIniziati],
+ [t("misure_annulli"), m.giriIniziati ? (Math.round(m.annulli/m.giriIniziati*10)/10) : "\u2013"],
+ [t("misure_classifiche"), m.giriIniziati ? (Math.round(m.classifiche/m.giriIniziati*10)/10) : "\u2013"],
+ [t("misure_ritmo"), med === null ? "\u2013" : (med + " s")]
+].forEach(function(riga){
+var r = el('<div class="misure-riga"></div>');
+r.appendChild(el('<span>'+riga[0]+'</span>'));
+r.appendChild(el('<b class="num">'+riga[1]+'</b>'));
+box.appendChild(r);
+});
+box.appendChild(el('<div class="misure-nota">'+t("misure_nota",{n:m.intervalli.length})+'</div>'));
+var azz = el('<button type="button" class="btn btn-ghost btn-sm btn-block">'+t("misure_azzera")+'</button>');
+armDoubleConfirm(azz, t("misure_azzera_conferma"), function(){
+try{ localStorage.removeItem(MISURE_KEY); }catch(e){}
+ultimoTocco = null; render();
+});
+box.appendChild(azz);
+return box;
 }
 
 // ---------- STORICO ----------
@@ -10809,8 +10976,6 @@ archers.forEach(function(a){
 if(a.invitedUid){ participants.push({ uid: a.invitedUid, name: a.name }); }
 });
 if(participants.length < 2) return null;
-var scoresInit = {};
-archers.forEach(function(a){ scoresInit[a.id] = []; });
 var ref = db.collection("sessions").doc();
 ref.set({
 ownerUid: currentUser.uid,
@@ -10821,7 +10986,13 @@ doubleConfirm: !!doubleConfirm,
 archerNames: archers.map(function(a){ return { id:a.id, name:a.name }; }),
 participants: participants,
 participantUids: participants.map(function(p){ return p.uid; }),
-scores: scoresInit,
+// v2: i tiri non sono piu' un elenco per arciere ma una mappa con chiave.
+// Vedi sessionShotKey(). "scores" non viene piu' scritto: chi legge lo
+// accetta ancora, perche' una sessione aperta prima dell'aggiornamento
+// deve restare leggibile fino a che non scade.
+v: 2,
+shots: {},
+confirms: {},
 status: "active",
 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -10829,19 +11000,172 @@ updatedAt: firebase.firestore.FieldValue.serverTimestamp()
 return ref.id;
 }
 
+// La chiave di un tiro dentro la sessione. E' un pezzo di percorso di campo
+// Firestore, quindi deve essere un identificatore valido: uid() puo' cominciare
+// con una cifra, e un percorso che comincia con una cifra va citato fra apici
+// inversi. La "k" davanti costa un byte ed evita tutta quella classe di guai.
+function sessionShotKey(archerId, sid){ return "k" + archerId + "_" + sid; }
+
+// PERCHE' UNA MAPPA E NON PIU' UN ELENCO.
+// Prima si scriveva con arrayUnion e non rimuoveva nessuno: era il buco
+// dichiarato nelle note. Le due strade per tapparlo erano una transazione
+// (che pero' su un percorso non funziona: senza rete non parte, ed e' proprio
+// li' che si annulla) e arrayRemove con l'oggetto identico (che fallisce in
+// silenzio al primo byte che non combacia — cioe' lo stesso bug di prima, ma
+// invisibile). Con una mappa, togliere e' scrivere una cancellazione su una
+// chiave: atomico, e messo in coda dall'SDK come qualunque altra scrittura,
+// quindi l'annulla fatto sotto gli alberi parte appena c'e' campo.
+// Conseguenza gratuita: la riga non viene mai riscritta, quindi la controfirma
+// non puo' piu' vivere dentro di essa. Sta in "confirms", con la stessa chiave.
 function syncShotToSession(archer, entry){
 if(!state.sessionId || DEV_MODE || !db) return;
-var confirmed = !state.doubleConfirm;
-var payload = { arrows: entry.arrows, total: entry.total, confirmed: confirmed, by: (currentUser && currentUser.uid) || null, at: Date.now() };
+// sid: l'identita' della riga. Senza, l'unico modo di togliere un tiro dal
+// documento e' indovinare quale sia — e "quale" e' esattamente l'informazione
+// che serve quando si annulla.
+if(!entry.sid) entry.sid = uid();
 var update = {};
-update["scores." + archer.id] = firebase.firestore.FieldValue.arrayUnion(payload);
+update["shots." + sessionShotKey(archer.id, entry.sid)] = {
+archerId: archer.id,
+sid: entry.sid,
+target: state.target,
+arrows: entry.arrows,
+total: entry.total,
+needsConfirm: !!state.doubleConfirm,
+by: (currentUser && currentUser.uid) || null,
+at: Date.now()
+};
+update.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+db.collection("sessions").doc(state.sessionId).update(update).catch(function(){});
+}
+
+// L'annulla propaga. Era il punto 1 della lista, ed era il prerequisito di
+// tutto: il giorno in cui a schermo compare "l'hanno confermato", quella frase
+// starebbe certificando una riga che sul telefono di chi segna non esiste piu'.
+// Una firma su un documento sbagliato e' peggio di nessuna firma.
+function unsyncShotFromSession(archer, entry){
+if(!state.sessionId || DEV_MODE || !db) return;
+// giro aperto da una versione precedente: la riga non ha identita', quindi
+// non si puo' togliere quella giusta. Non si tira a indovinare.
+if(!archer || !entry || !entry.sid) return;
+var k = sessionShotKey(archer.id, entry.sid);
+var update = {};
+update["shots." + k] = firebase.firestore.FieldValue.delete();
+// la firma se ne va insieme al documento che firmava: una controfirma orfana
+// certificherebbe un tiro che non c'e' piu'.
+update["confirms." + k] = firebase.firestore.FieldValue.delete();
 update.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
 db.collection("sessions").doc(state.sessionId).update(update).catch(function(){});
 }
 
 function closeSharedSession(){
+stopOwnSessionListener();
 if(!state.sessionId || DEV_MODE || !db) return;
 db.collection("sessions").doc(state.sessionId).update({ status:"closed", updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(function(){});
+}
+
+// ── LA PASTIGLIA DELLA FIRMA: lo stato del DOCUMENTO, non della macchina ──
+// Su un percorso la scheda di carta non serve a ricordare — per quello basta
+// un quaderno — serve a testimoniare: gli altri guardano chi scrive, e alla
+// fine si firma. Il meccanismo c'era gia' tutto (createSharedSession,
+// syncShotToSession, confirmSessionShot) e sulla schermata dove si segna, cioe'
+// l'unica che si guarda per due ore, non compariva da nessuna parte.
+//
+// La scala ha tre gradini e dice sempre il PEGGIORE, non la media: un
+// documento con una riga rimasta sul telefono non e' "visto", e' "solo qui".
+var firmaStato = { attiva:false, tiri:0, firme:0, inCoda:false, doppia:false };
+var ownSessionUnsub = null;
+var ownSessionId = null;
+
+function startOwnSessionListener(){
+if(DEV_MODE || !db || !state.sessionId) return;
+if(ownSessionUnsub && ownSessionId === state.sessionId) return;
+stopOwnSessionListener();
+ownSessionId = state.sessionId;
+// includeMetadataChanges: senza, non arriva l'unico evento che distingue
+// "scritto sul telefono" da "arrivato agli altri".
+ownSessionUnsub = db.collection("sessions").doc(state.sessionId)
+.onSnapshot({ includeMetadataChanges:true }, function(doc){
+leggiFirma(doc); dipingiFirma();
+}, function(){ firmaStato.attiva = false; dipingiFirma(); });
+}
+
+function stopOwnSessionListener(){
+if(ownSessionUnsub){ ownSessionUnsub(); ownSessionUnsub = null; }
+ownSessionId = null;
+firmaStato = { attiva:false, tiri:0, firme:0, inCoda:false, doppia:false };
+}
+
+function leggiFirma(doc){
+var d = (doc && doc.exists) ? doc.data() : null;
+if(!d){ firmaStato.attiva = false; firmaStato.tiri = 0; firmaStato.firme = 0; return; }
+var shots = d.shots || {};
+var confirms = d.confirms || {};
+var tiri = 0, firme = 0;
+for(var k in shots){
+if(!Object.prototype.hasOwnProperty.call(shots, k)) continue;
+tiri++;
+var c = confirms[k];
+// una firma vale solo se e' di un altro: chi segna non controfirma se stesso.
+if(c && c.by && c.by !== ((shots[k] && shots[k].by) || null)) firme++;
+}
+firmaStato.attiva = (d.status === "active");
+firmaStato.doppia = !!d.doubleConfirm;
+firmaStato.tiri = tiri;
+firmaStato.firme = firme;
+// hasPendingWrites: la riga c'e' sul telefono ma non e' ancora salita.
+firmaStato.inCoda = !!(doc.metadata && doc.metadata.hasPendingWrites);
+}
+
+// La pastiglia compare al PRIMO tiro salito, non all'apertura del giro: prima
+// di allora non c'e' nessun documento di cui dire lo stato, e un'etichetta che
+// non parla di niente e' l'errore gia' fatto col badge della modalita'.
+function firmaVisibile(){
+return !!state.sessionId && state.screen === "round" && !homeOverride
+&& firmaStato.attiva && firmaStato.tiri > 0;
+}
+
+function riempiFirma(p){
+var gradino, glifo, testo, titolo;
+if(firmaStato.inCoda){
+gradino = "solo-qui"; glifo = "soloqui";
+testo = t("firma_solo_qui"); titolo = t("firma_solo_qui_nota");
+// firme > 0 non e' ridondante: a documento vuoto "0 su 0" e' vero e direbbe
+// "firmato" di una scheda su cui non c'e' scritto niente. Oggi non si
+// vedrebbe — firmaVisibile() pretende almeno un tiro — ma una regola giusta
+// solo grazie a una guardia lontana e' un bug con un timer.
+} else if(firmaStato.doppia && firmaStato.firme > 0 && firmaStato.firme >= firmaStato.tiri){
+gradino = "firmato"; glifo = "firma";
+testo = t("firma_firmato");
+titolo = t("firma_firmato_nota", { n:firmaStato.firme, tot:firmaStato.tiri });
+} else if(firmaStato.doppia && firmaStato.firme > 0){
+gradino = "visto"; glifo = "firma";
+testo = t("firma_firmato_n", { n:firmaStato.firme, tot:firmaStato.tiri });
+titolo = t("firma_firmato_nota", { n:firmaStato.firme, tot:firmaStato.tiri });
+} else {
+gradino = "visto"; glifo = "occhio";
+testo = t("firma_lo_vedono"); titolo = t("firma_lo_vedono_nota");
+}
+p.className = "firma-pill " + gradino;
+p.setAttribute("role", "status");
+p.setAttribute("title", titolo);
+p.setAttribute("aria-label", titolo);
+p.innerHTML = icon(glifo, 14) + '<span class="firma-testo">' + escapeHtml(testo) + '</span>';
+}
+
+// Il ridisegno completo e' il gesto piu' costoso che l'app fa, e qui cambia una
+// pastiglia: si tocca quella e basta. E' il primo pezzo, piccolo, del punto 3
+// della lista — ridisegnare la sola regione che e' cambiata.
+function dipingiFirma(){
+var head = document.querySelector("header.top");
+if(!head) return;
+var n = head.querySelector(".firma-pill");
+if(!firmaVisibile()){ if(n && n.parentNode) n.parentNode.removeChild(n); return; }
+if(!n){
+n = el('<span class="firma-pill"></span>');
+var azioni = head.querySelector(".head-actions");
+if(azioni) head.insertBefore(n, azioni); else head.appendChild(n);
+}
+riempiFirma(n);
 }
 
 // ── SEGNALAZIONE PERCORSO ──────────────────────────────────────────────────
@@ -12472,8 +12796,24 @@ if(followUnsub){ followUnsub(); followUnsub = null; }
 state.followSessionData = null;
 }
 
-function confirmSessionShot(archerId, idx){
-if(!state.followSessionId || !db) return;
+// La controfirma e' una scrittura su una chiave sua, non piu' una riscrittura
+// dell'elenco intero. Il vecchio giro leggi-modifica-riscrivi aveva un difetto
+// che nessuno aveva ancora visto perche' la funzione non si usava: due arcieri
+// che controfirmano due tiri diversi nello stesso momento leggevano tutti e due
+// l'elenco di prima, e chi scriveva per secondo cancellava la firma dell'altro.
+function confirmSessionShot(archerId, sid){
+if(!state.followSessionId || !db || !currentUser || !sid) return;
+var update = {};
+update["confirms." + sessionShotKey(archerId, sid)] = { by: currentUser.uid, at: Date.now() };
+update.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+db.collection("sessions").doc(state.followSessionId).update(update).catch(function(){});
+}
+
+// Sessioni aperte prima dell'aggiornamento: i tiri sono ancora un elenco e la
+// firma vive dentro la riga. Restano leggibili e controfirmabili finche' non
+// scadono (otto ore). Da togliere quando non ne circolera' piu' nessuna.
+function confirmSessionShotLegacy(archerId, idx){
+if(!state.followSessionId || !db || !currentUser) return;
 var ref = db.collection("sessions").doc(state.followSessionId);
 ref.get().then(function(doc){
 if(!doc.exists) return;
@@ -12487,8 +12827,36 @@ ref.update(update).catch(function(){});
 });
 }
 
+// I tiri di un arciere, in ordine, da qualunque delle due forme di documento.
+// Ordinati per piazzola: e' l'ordine in cui sono stati tirati ed e' l'unico che
+// chi guarda sa gia'.
+function sessionShots(data, archerId){
+var out = [];
+if(data && data.shots){
+var shots = data.shots;
+for(var k in shots){
+if(!Object.prototype.hasOwnProperty.call(shots, k)) continue;
+var s = shots[k];
+if(!s || s.archerId !== archerId) continue;
+out.push({ key:k, sid:s.sid || null, target:s.target || 0,
+arrows:s.arrows || [], total:s.total || 0,
+by:s.by || null, at:s.at || 0, legacy:false, legacyConfirmed:false });
+}
+out.sort(function(a,b){ return (a.target - b.target) || (a.at - b.at); });
+return out;
+}
+var old = (data && data.scores && data.scores[archerId]) || [];
+old.forEach(function(e, i){
+out.push({ key:null, sid:null, idx:i, target:i + 1,
+arrows:e.arrows || [], total:e.total || 0,
+by:e.by || null, at:e.at || 0, legacy:true, legacyConfirmed:!!e.confirmed });
+});
+return out;
+}
+
 function beginRound(modeKey){
 homeOverride = false; // senza questo un percorso nuovo veniva dirottato al menu
+stopOwnSessionListener(); // la pastiglia non deve raccontare il giro di ieri
 var mode = GAME_MODES[modeKey];
 if(!mode.freeFormat){ state.arrowsPerTargetOverride = null; }
 var format = mode.freeFormat ? clamp(parseInt(state.pendingFormat,10)||14, mode.minFormat, mode.maxFormat) : mode.formats[0];
@@ -12500,6 +12868,7 @@ archers.sort(function(a,b){ return a.name.localeCompare(b.name, state.lang || "i
 var scores = {};
 archers.forEach(function(a){ scores[a.id] = []; });
 state.roundActive = true;
+misura("giriIniziati"); ultimoTocco = null;
 state.archersBase = archers.slice(); // ordine della prima piazzola: da qui si ricava quello di tutte le altre
 state.rotBaseTarget = 1;
 state.screen = "round";
@@ -12539,14 +12908,13 @@ state.awaitingStep = null;
 if(state.archerIndex < state.archers.length - 1){ state.archerIndex += 1; }
 save();
 }
-pending = null;
-zoomed = false;
 state.pendingArrows = state.pendingArrows || [];
+// Chi segna deve poter sapere se qualcuno lo sta seguendo. La guardia sta
+// dentro: se la sessione e' gia' in ascolto non succede niente, e su un giro
+// senza arcieri invitati non parte proprio.
+startOwnSessionListener();
 
 var mode = effectiveMode();
-var unit = modeUnit(state.mode);
-var totalTargets = state.format;
-var pct = Math.round(((state.target-1) / totalTargets) * 100);
 var wrap = el('<div class="pista"></div>');
 
 // ── battuta: prima si dichiara che piazzola e', poi si tira ──
@@ -12579,13 +12947,86 @@ wrap.appendChild(pickCard);
 return wrap;
 }
 
-var currentArcher = state.archers[state.archerIndex];
-var arrowNumber = state.pendingArrows.length + 1;
-var totArrows = targetArrowCount(mode);
-var pts = mode.scoring[arrowNumber] || mode.scoring[mode.arrowsPerTarget] || mode.scoring[1];
+var c = pistaContesto(mode);
 
+wrap.appendChild(pistaTesta(c));
+
+// ══════════════ PANNELLI oppure SCENA ══════════════
+if(state.panel === "classifica"){
+wrap.appendChild(pannelloClassifica());
+} else {
+wrap.appendChild(pistaScena(c));
+
+
+wrap.appendChild(el('<div class="pista-spazio"></div>'));
+
+var scorciatoie = el('<div class="pista-scorciatoie no-print"></div>');
+var bCla = el('<button class="btn btn-standings">'+icon("target",16)+' '+t("pista_classifica_btn")+'</button>');
+bCla.addEventListener("click", function(){ misura("classifiche"); state.panel = "classifica"; save(); render(); });
+scorciatoie.appendChild(bCla);
+wrap.appendChild(scorciatoie);
+}
+
+// La striscia dell'annulla c'e' solo se c'e' qualcosa da annullare.
+var striscia = pistaStriscia();
+if(striscia) wrap.appendChild(striscia);
+
+wrap.appendChild(pistaTastiera(c));
+
+return wrap;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LE REGIONI DELLA PISTA, E PERCHE' SONO FUNZIONI A PARTE
+
+   Il criterio scritto nelle note dice che il valore di questa schermata e'
+   QUANTO E' VELOCE LO SGUARDO dopo il tocco. Quello sguardo *e'* il
+   ridisegno. Finche' ogni freccia svuotava #app e ricostruiva tutto, la
+   funzione dichiarata come l'unica che conta era anche la piu' costosa:
+   288 ricostruzioni per giro, ciascuna capace di mangiarsi il :active del
+   tasto ancora sotto il dito.
+
+   Adesso ogni regione sa dirsi con una FIRMA: una stringa che riassume tutto
+   quello che la farebbe sembrare diversa. dipingiPista() rifa' solo le
+   regioni la cui firma e' cambiata; le altre non vengono toccate, quindi il
+   nodo su cui poggia il dito sopravvive al tocco.
+
+   La regola che tiene insieme la cosa: NESSUNA REGIONE HA DUE COSTRUTTORI.
+   roundScreen() e dipingiPista() chiamano le stesse quattro funzioni. Due
+   percorsi che disegnano la stessa cosa divergono sempre, e in silenzio.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+// Tutto quello che le regioni devono sapere, calcolato una volta sola.
+function pistaContesto(mode){
+mode = mode || effectiveMode();
+state.pendingArrows = state.pendingArrows || [];
+var arrowNumber = state.pendingArrows.length + 1;
+return {
+mode: mode,
+currentArcher: state.archers[state.archerIndex],
+arrowNumber: arrowNumber,
+totArrows: targetArrowCount(mode),
+totalTargets: state.format,
+pct: Math.round(((state.target-1) / state.format) * 100),
+pts: mode.scoring[arrowNumber] || mode.scoring[mode.arrowsPerTarget] || mode.scoring[1]
+};
+}
+
+// ---------- REGIONE: la testata (passo, avanzamento, timer) ----------
+// E' l'unica regione che non si puo' costruire "per prova": dentro ci sono il
+// conto alla rovescia e il suo setInterval, e un nodo costruito e poi buttato
+// si porterebbe via l'intervallo di quello ancora a schermo — il timer visibile
+// si fermerebbe da solo. Per questo la sua firma si sa PRIMA di costruirla.
+function firmaTesta(c){
+return state.target+"/"+c.totalTargets+"|"+c.pct+"|"+state.target+"_"+state.archerIndex;
+}
+function pistaTesta(c){
+var totalTargets = c.totalTargets, pct = c.pct;
 // ══════════════ TESTATA: il passo del giro ══════════════
-var testa = el('<div class="pista-testa"></div>');
+var testa = el('<div class="pista-testa" data-regione="testa"></div>');
+// La firma include il turno: cambiando arciere il timer DEVE ripartire da
+// zero, e il modo piu' sicuro per garantirlo e' che la regione si rifaccia.
+testa.setAttribute("data-firma", firmaTesta(c));
 var passoRiga = el('<div class="pista-passo-riga"></div>');
 passoRiga.appendChild(el('<span class="pista-passo">'+t("target_singular")+' '+state.target+' / '+totalTargets+'</span>'));
 
@@ -12600,7 +13041,11 @@ var chip = el('<button type="button" class="chip-timer"></button>');
 var regola = el('<div class="timer-regola"></div>');
 passoRiga.appendChild(chip);
 testa.appendChild(passoRiga);
-testa.appendChild(el('<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%;"></div></div>'));
+// La percentuale e' un DATO, non uno stile: entra come proprieta'
+// personalizzata e la larghezza la decide il foglio di stile.
+var barra = el('<div class="progress-track"><div class="progress-fill"></div></div>');
+barra.firstChild.style.setProperty("--pct", pct+"%");
+testa.appendChild(barra);
 testa.appendChild(regola);
 
 function tintaTimer(){
@@ -12678,17 +13123,18 @@ dipingiTimer();
 });
 dipingiTimer();
 if(timerRunning && timerRemaining !== null){ avviaConto(); }
-wrap.appendChild(testa);
+return testa;
+}
 
-// ══════════════ PANNELLI oppure SCENA ══════════════
-if(state.panel === "classifica"){
-wrap.appendChild(pannelloClassifica());
-} else if(state.panel === "sagoma"){
-wrap.appendChild(pannelloSagoma(mode, pts, unit, arrowNumber));
-} else {
+// ---------- REGIONE: la scena (chi tira adesso, e chi viene dopo) ----------
+function pistaScena(c){
+var mode = c.mode, currentArcher = c.currentArcher, arrowNumber = c.arrowNumber, totArrows = c.totArrows;
 // ── la scena: chi tira adesso, e chi viene dopo ──
-var scena = el('<div class="card pista-scena"></div>');
-scena.appendChild(el('<div class="pista-arciere display">'+escapeHtml(currentArcher.name)+'</div>'));
+// aria-live: e' la stessa funzione della fila dei turni — sapere di chi e' il
+// turno senza doverlo cercare — per un utente che non guarda lo schermo.
+var scena = el('<div class="card pista-scena" data-regione="scena" aria-live="polite"></div>');
+var firma = currentArcher.name+"|"+arrowNumber+"/"+totArrows+"|"+state.pendingArrows.join(",");
+scena.appendChild(el('<h2 class="pista-arciere display">'+escapeHtml(currentArcher.name)+'</h2>'));
 var sotto = t("pista_freccia_di",{n:arrowNumber, tot:totArrows});
 if(state.pendingArrows.length){ sotto += t("finora",{list:state.pendingArrows.join(', ')}); }
 if(mode.stopAtFirstHit){ sotto += t("vale_prima"); }
@@ -12704,26 +13150,18 @@ var testo;
 if(ent){ testo = ent.total; }
 else if(stato === "ora" && state.pendingArrows.length){ testo = state.pendingArrows.reduce(function(s,x){ return s+x; },0); }
 else { testo = "\u2013"; }
+firma += "|" + a.id + ":" + stato + ":" + testo;
 var t1 = el('<div class="turno'+(stato==="ora"?" ora":"")+'"></div>');
 t1.appendChild(el('<div class="turno-badge '+stato+'">'+testo+'</div>'));
 t1.appendChild(el('<span class="turno-nome">'+escapeHtml(a.name)+'</span>'));
 turni.appendChild(t1);
 });
 if(state.archers.length > 1){ scena.appendChild(turni); }
-wrap.appendChild(scena);
-
-wrap.appendChild(el('<div class="pista-spazio"></div>'));
-
-var scorciatoie = el('<div class="pista-scorciatoie no-print"></div>');
-var bSag = el('<button class="btn btn-ghost">'+icon("sight",16)+' '+t("pista_sagoma_btn")+'</button>');
-bSag.addEventListener("click", function(){ state.panel = "sagoma"; save(); render(); });
-var bCla = el('<button class="btn btn-standings">'+icon("target",16)+' '+t("pista_classifica_btn")+'</button>');
-bCla.addEventListener("click", function(){ state.panel = "classifica"; save(); render(); });
-scorciatoie.appendChild(bSag); scorciatoie.appendChild(bCla);
-wrap.appendChild(scorciatoie);
+scena.setAttribute("data-firma", firma);
+return scena;
 }
 
-// ══════════════ LA STRISCIA DELL'ANNULLA ══════════════
+// ---------- REGIONE: la striscia dell'annulla ----------
 // Sostituisce la conferma: si segna e si va avanti, e il rimedio resta
 // visibile accanto al risultato invece che in fondo alla pagina.
 // L'UNITA' SI DICHIARA, NON SI FA INDOVINARE. Prima questo campo voleva
@@ -12733,9 +13171,13 @@ wrap.appendChild(scorciatoie);
 // "Ultimo: Anna 5" — due numeri per la stessa persona nello stesso istante,
 // risolvibili solo sapendo che uno e' un totale e l'altro un'ultima freccia.
 // Adesso la striscia dice quale delle due cose sta mostrando.
-if(state.lastShotInfo){
+function pistaStriscia(){
+if(!state.lastShotInfo) return null;
 var info = state.lastShotInfo;
-var striscia = el('<div class="striscia-annulla no-print"></div>');
+// role="status": la striscia compare dopo ogni freccia ed e' il rimedio.
+// Comparire in silenzio significherebbe non esistere, per chi non vede.
+var striscia = el('<div class="striscia-annulla no-print" data-regione="striscia" role="status"></div>');
+striscia.setAttribute("data-firma", [info.name,info.score,info.unit,info.n,info.target,state.target].join("|"));
 var testoUlt;
 if(info.unit === "piazzola"){ testoUlt = t("pista_ultimo_piazzola",{name:escapeHtml(info.name)}); }
 else if(info.n){ testoUlt = t("pista_ultimo_freccia",{name:escapeHtml(info.name), n:info.n}); }
@@ -12753,9 +13195,12 @@ striscia.appendChild(el('<span>'+testoUlt+' <b class="num">'+info.score+'</b></s
 var bAnn = el('<button type="button">'+icon("undo",16)+' '+t("pista_annulla_freccia")+'</button>');
 bAnn.addEventListener("click", undoLastShot);
 striscia.appendChild(bAnn);
-wrap.appendChild(striscia);
+return striscia;
 }
 
+// ---------- REGIONE: la tastiera ----------
+function pistaTastiera(c){
+var mode = c.mode, pts = c.pts;
 // ══════════════ LA TASTIERA ══════════════
 var voci = mode.zones.map(function(z){
 return { cls:z.cls, label:t(z.labelKey), pts:pts[z.key], key:z.key };
@@ -12767,23 +13212,119 @@ if(voci.length <= 3){ righe = [voci]; }
 else if(voci.length === 4){ righe = [voci.slice(0,2), voci.slice(2)]; }
 else { righe = [voci.slice(0,3), voci.slice(3)]; }
 
-var tastiera = el('<div class="tastiera no-print"></div>');
+var tastiera = el('<div class="tastiera no-print" data-regione="tastiera"></div>');
+// DUE FIRME, e la ragione l'ha trovata il banco. In Percorso il punteggio
+// dipende da quale freccia e' (20/18/16, poi 14/12/10, poi 8/6/4): con una
+// firma sola la tastiera si rifaceva 287 volte su 288, cioe' il tasto sotto
+// il dito moriva comunque e tutto questo lavoro non serviva a niente.
+//   forma  = quante righe, quali colori, quali etichette → non cambia quasi mai
+//   numeri = le cifre                                    → cambiano a ogni freccia
+// Se cambiano solo i numeri, i nodi restano e si riscrive la sola cifra.
+tastiera.setAttribute("data-firma", righe.map(function(r){ return r.length; }).join(",")
++ "|" + voci.map(function(v){ return v.cls+":"+v.label; }).join("|"));
+tastiera.setAttribute("data-numeri", voci.map(function(v){ return v.pts; }).join(","));
 righe.forEach(function(riga){
 var r = el('<div class="tastiera-riga" data-n="'+riga.length+'"></div>');
 riga.forEach(function(v){
-var b = el('<button class="btn quick-btn '+v.cls+'"><span class="quick-lbl">'+v.label+'</span><span class="quick-pts">'+v.pts+'</span></button>');
+// Il punteggio sta NEL NODO, non in una chiusura: quando si aggiorna la sola
+// cifra il tasto resta lo stesso, e un ascoltatore che leggesse una chiusura
+// vecchia segnerebbe il punteggio della freccia precedente.
+var b = el('<button class="btn quick-btn '+v.cls+'" data-pts="'+v.pts+'" data-zona="'+(v.key||"")+'"><span class="quick-lbl">'+v.label+'</span><span class="quick-pts">'+v.pts+'</span></button>');
 b.addEventListener("click", function(){
 if(navigator.vibrate){ navigator.vibrate(15); }
-if(v.key === "perfect" || v.key === "superspot"){ leafBurst(b); }
-registerShot(v.pts);
+var zona = b.getAttribute("data-zona");
+if(zona === "perfect" || zona === "superspot"){ leafBurst(b); }
+registerShot(Number(b.getAttribute("data-pts")));
 });
 r.appendChild(b);
 });
 tastiera.appendChild(r);
 });
-wrap.appendChild(tastiera);
+return tastiera;
+}
 
-return wrap;
+// Stessa forma, cifre diverse: si riscrive la cifra e basta. E' l'unico punto
+// dell'app dove un nodo sopravvive a un cambio di dato, ed e' anche l'unico
+// dove serve: e' il nodo che ha il dito sopra.
+function aggiornaNumeriTastiera(nodo, c){
+var voci = c.mode.zones.map(function(z){ return c.pts[z.key]; });
+voci.push(0);
+var tasti = nodo.querySelectorAll(".quick-btn");
+if(tasti.length !== voci.length) return false;
+for(var i=0; i<tasti.length; i++){
+tasti[i].setAttribute("data-pts", voci[i]);
+var cifra = tasti[i].querySelector(".quick-pts");
+if(cifra) cifra.textContent = voci[i];
+}
+nodo.setAttribute("data-numeri", voci.join(","));
+return true;
+}
+
+/* ---------- IL RIDISEGNO MIRATO ----------
+   Torna true se ha aggiornato la pista sul posto, false se la schermata ha
+   cambiato FORMA e serve un render() intero. Chi chiama scrive sempre:
+
+       save(); if(!dipingiPista()) render();
+
+   Le uscite sono deliberatamente pessimiste: in ogni caso dubbio si torna al
+   ridisegno intero, che e' lento ma non sbaglia mai. Un aggiornamento mirato
+   che indovina e' peggio di un ridisegno che rallenta. */
+function dipingiPista(){
+if(state.screen !== "round" || authState !== "ready" || homeOverride) return false;
+// una sosta a tutto schermo, la scelta della piazzola in battuta, un pannello
+// aperto: sono altre forme, non questa.
+if(state.awaitingStep || state.panel) return false;
+var wrap = document.querySelector(".pista");
+if(!wrap) return false;
+var mode = effectiveMode();
+if(mode.key === "battuta" && (state.pendingArrows||[]).length === 0
+&& !(state.liveBattutaTypes && state.liveBattutaTypes[state.target])) return false;
+if(!state.archers[state.archerIndex]) return false;
+
+var c = pistaContesto(mode);
+
+// La testata: firma prima, costruzione solo se serve (vedi firmaTesta).
+var vecchiaTesta = wrap.querySelector(".pista-testa");
+if(!vecchiaTesta) return false;
+if(firmaTesta(c) !== vecchiaTesta.getAttribute("data-firma")){
+wrap.replaceChild(pistaTesta(c), vecchiaTesta);
+}
+
+// Scena e tastiera non hanno effetti collaterali: costruirle per confronto e
+// poi buttarle non costa niente e non rompe niente.
+var vecchiaScena = wrap.querySelector(".pista-scena");
+if(!vecchiaScena) return false;
+var nuovaScena = pistaScena(c);
+if(nuovaScena.getAttribute("data-firma") !== vecchiaScena.getAttribute("data-firma")){
+wrap.replaceChild(nuovaScena, vecchiaScena);
+}
+
+// LA TASTIERA E' IL PUNTO. Se la forma e' la stessa non si sostituisce niente:
+// si riscrivono le cifre dentro i tasti che ci sono gia'. Il tasto appena
+// premuto resta lo stesso nodo, con il suo :active, per tutta la durata del
+// tocco. Solo se cambiano righe, colori o etichette si rifa' davvero.
+var vecchiaTast = wrap.querySelector(".tastiera");
+if(!vecchiaTast) return false;
+var nuovaTast = pistaTastiera(c);
+if(nuovaTast.getAttribute("data-firma") !== vecchiaTast.getAttribute("data-firma")){
+wrap.replaceChild(nuovaTast, vecchiaTast);
+} else if(nuovaTast.getAttribute("data-numeri") !== vecchiaTast.getAttribute("data-numeri")){
+if(!aggiornaNumeriTastiera(vecchiaTast, c)) return false;
+}
+
+// La striscia invece nasce e muore, quindi le serve un posto dove nascere:
+// subito prima della tastiera, che e' l'unica regione sempre presente in
+// fondo. Il rimedio dev'essere adiacente all'errore anche qui.
+var vecchiaStr = wrap.querySelector(".striscia-annulla");
+var nuovaStr = pistaStriscia();
+if(!nuovaStr){
+if(vecchiaStr) wrap.removeChild(vecchiaStr);
+} else if(!vecchiaStr){
+wrap.insertBefore(nuovaStr, wrap.querySelector(".tastiera"));
+} else if(nuovaStr.getAttribute("data-firma") !== vecchiaStr.getAttribute("data-firma")){
+wrap.replaceChild(nuovaStr, vecchiaStr);
+}
+return true;
 }
 
 // ---------- PANNELLO: la classifica ----------
@@ -12847,162 +13388,11 @@ p.appendChild(sotto);
 return p;
 }
 
-// ---------- PANNELLO: la sagoma ----------
-// Non e' piu' un secondo modo di segnare il punteggio in concorrenza con i
-// tasti: e' il posto dove si registra DOVE ha colpito la freccia. Chi vuole
-// solo il punto, tocca il tasto e non apre mai questo pannello.
-function pannelloSagoma(mode, pts, unit, arrowNumber){
-var p = el('<div class="pannello"></div>');
-var testa = el('<div class="pannello-testa"></div>');
-testa.appendChild(el('<span class="pannello-titolo">'+t("pista_sagoma_titolo")+'</span>'));
-var x = el('<button type="button" class="pannello-chiudi" aria-label="'+t("pista_chiudi")+'">\u00d7</button>');
-x.addEventListener("click", function(){ state.panel = null; save(); render(); });
-testa.appendChild(x);
-p.appendChild(testa);
-
-var board = el('<div class="board"></div>');
-var svgWrap = el('<div class="silhouette-wrap"></div>');
-svgWrap.innerHTML = targetSVG(mode);
-board.appendChild(svgWrap);
-var toolbar = el('<div class="zoom-toolbar"></div>');
-var zoomBtn = el('<button class="btn btn-ghost btn-sm">'+icon("sight",14)+' '+t("zoom_btn")+'</button>');
-toolbar.appendChild(zoomBtn);
-board.appendChild(toolbar);
-var legendParts = mode.zones.map(function(z){ return t(z.labelKey)+' '+pts[z.key]; });
-board.appendChild(el('<div class="legend-row">'+legendParts.join(" &middot; ")+' &middot; '+t("fuori_sagoma")+' 0</div>'));
-if(mode.provisional){
-board.appendChild(el('<div class="legend-row" style="color:var(--danger);">'+t("provisional_note")+'</div>'));
-}
-var readoutHolder = el('<div></div>');
-board.appendChild(readoutHolder);
-p.appendChild(board);
-
-// Il segno d'impatto: alone chiaro sotto, nucleo scuro sopra. Prima era un
-// blu scritto a mano (#1d5fd1) che spariva contro la zona sagoma nel tema
-// scuro, cioe' proprio dove serve di piu'.
-function drawMarker(svgEl, x, y){
-var old = svgEl.querySelector("#impactMarker");
-if(old) old.remove();
-var ns = "http://www.w3.org/2000/svg";
-var g = document.createElementNS(ns, "g");
-g.setAttribute("id", "impactMarker");
-g.setAttribute("pointer-events", "none");
-function croce(colore, spessore){
-var sub = document.createElementNS(ns, "g");
-sub.setAttribute("stroke", colore);
-sub.setAttribute("stroke-linecap", "round");
-sub.setAttribute("fill", "none");
-var c = document.createElementNS(ns, "circle");
-c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 6);
-c.setAttribute("stroke-width", spessore);
-var l1 = document.createElementNS(ns, "line");
-l1.setAttribute("x1", x-11); l1.setAttribute("y1", y); l1.setAttribute("x2", x+11); l1.setAttribute("y2", y);
-l1.setAttribute("stroke-width", spessore);
-var l2 = document.createElementNS(ns, "line");
-l2.setAttribute("x1", x); l2.setAttribute("y1", y-11); l2.setAttribute("x2", x); l2.setAttribute("y2", y+11);
-l2.setAttribute("stroke-width", spessore);
-sub.appendChild(c); sub.appendChild(l1); sub.appendChild(l2);
-return sub;
-}
-g.appendChild(croce("#FFFFFF", "5"));
-g.appendChild(croce("#12160F", "2.2"));
-svgEl.appendChild(g);
-}
-
-function showReadout(){
-readoutHolder.innerHTML = "";
-var box = el(
-'<div class="impact-readout">'+
-'<div class="lbl">'+t("detected_score",{unit:unit, n:arrowNumber})+'</div>'+
-'<div class="pts">'+pending.score+'</div>'+
-'<div style="font-size:0.8rem;color:var(--muted);margin-top:2px;">'+pending.zoneLabel+'</div>'+
-'</div>'
-);
-var azioni = el('<div class="impact-actions"></div>');
-var corr = el('<button class="btn btn-ghost">'+t("correct_point_btn")+'</button>');
-var conf = el('<button class="btn btn-primary">'+t("confirm_shot_btn")+'</button>');
-corr.addEventListener("click", function(){
-pending = null;
-var svgEl2 = svgWrap.querySelector("svg");
-var old = svgEl2 && svgEl2.querySelector("#impactMarker");
-if(old) old.remove();
-readoutHolder.innerHTML = "";
-});
-conf.addEventListener("click", function(){
-if(navigator.vibrate){ navigator.vibrate(15); }
-if(pending.zoneKey === "superspot"){ leafBurst(conf); }
-var punti = pending.score;
-state.panel = null;
-registerShot(punti);
-});
-azioni.appendChild(corr); azioni.appendChild(conf);
-box.appendChild(azioni);
-readoutHolder.appendChild(box);
-}
-
-setTimeout(function(){
-var svgEl = svgWrap.querySelector("svg");
-if(!svgEl) return;
-svgEl.addEventListener("click", function(e){
-var pt = svgEl.createSVGPoint();
-pt.x = e.clientX; pt.y = e.clientY;
-var ctm = svgEl.getScreenCTM();
-if(!ctm) return;
-var loc = pt.matrixTransform(ctm.inverse());
-var dx = loc.x - 150, dy = loc.y - 150;
-var dist = Math.sqrt(dx*dx + dy*dy);
-var radii = mode.radii, zones = mode.zones;
-var inBody = dist <= radii[radii.length-1];
-var score = 0, zoneLabel = t("fuori_sagoma"), zoneKey = null;
-if(inBody){
-for(var zi=0; zi<radii.length; zi++){
-if(dist <= radii[zi]){ zoneKey = zones[zi].key; zoneLabel = t(zones[zi].labelKey); break; }
-}
-score = pts[zoneKey];
-}
-pending = { x: loc.x, y: loc.y, score: score, zoneLabel: zoneLabel, zoneKey: zoneKey };
-drawMarker(svgEl, loc.x, loc.y);
-showReadout();
-});
-zoomBtn.addEventListener("click", function(){
-zoomed = !zoomed;
-svgWrap.classList.toggle("zoomed", zoomed);
-zoomBtn.innerHTML = zoomed ? t("zoom_btn_reduce") : (icon("sight",14)+' '+t("zoom_btn"));
-if(pending){ drawMarker(svgEl, pending.x, pending.y); }
-});
-},0);
-
-return p;
-}
-
-// ---------- TRANSIZIONE: prossimo arciere ----------
-function archerTransitionScreen(){
-var wrap = el('<div></div>');
-var justDone = state.archers[state.archerIndex];
-var entries = state.scores[justDone.id];
-var lastEnt = entries[entries.length-1];
-var next = state.archers[state.archerIndex+1];
-
-var card = el('<div class="card target-stage"></div>');
-card.appendChild(el('<div class="mode-badge">'+escapeHtml(modeLabel(state.mode))+'</div>'));
-card.appendChild(el('<div class="archer-turn">'+t("target_singular")+' '+state.target+' &middot; '+t("done_word")+'</div>'));
-card.appendChild(el('<div class="archer-name-big display">'+escapeHtml(justDone.name)+': '+lastEnt.total+' pt</div>'));
-wrap.appendChild(card);
-
-var nextBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("next_archer_btn",{name:escapeHtml(next.name)})+'</button>');
-nextBtn.addEventListener("click", function(){
-state.awaitingStep = null;
-state.archerIndex += 1;
-save(); render();
-});
-wrap.appendChild(nextBtn);
-
-var undoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("undo_btn")+'</button>');
-undoBtn.addEventListener("click", undoLastShot);
-wrap.appendChild(undoBtn);
-
-return wrap;
-}
+// La transizione "prossimo arciere" non esiste piu' (16/08/2026).
+// Erano 96 soste per giro che cambiavano stato senza cambiare forma: bisognava
+// LEGGERE per sapere dove si era. Adesso lo dice la fila dei cerchi dentro la
+// scena, mentre segni il precedente. La funzione era rimasta come rete di
+// sicurezza per un rilascio; nessuno la chiamava piu'.
 
 // ---------- TRANSIZIONE: prossima piazzola ----------
 function targetTransitionScreen(){
@@ -13103,15 +13493,22 @@ state.archers = orderForTarget(state.target);
 } else {
 state.roundActive = false;
 state.screen = "summary";
+// Finito vuol dire ARRIVATO IN FONDO. L'interruzione dalla classifica porta
+// alla stessa schermata ma non e' la stessa cosa, e contarla insieme
+// cancellerebbe proprio il numero che si voleva sapere.
+misura("giriFiniti");
 closeSharedSession();
 }
-save(); render();
+save(); if(!dipingiPista()) render();
 }
 
 function registerShot(score){
 var mode = effectiveMode();
 var archer = state.archers[state.archerIndex];
 state.pendingArrows = state.pendingArrows || [];
+// L'intervallo vale solo se la freccia precedente e' dello stesso arciere
+// sulla stessa piazzola: fra un arciere e l'altro c'e' un tiro vero di mezzo.
+misuraTocco(state.pendingArrows.length > 0);
 state.pendingArrows.push(score);
 
 var tac = targetArrowCount(mode);
@@ -13153,7 +13550,11 @@ state.awaitingStep = "target";
 } else {
 state.arrowIndex = state.pendingArrows.length;
 }
-save(); render();
+// IL RIDISEGNO E' LA FUNZIONE, non un dettaglio di resa. Vedi il blocco sulle
+// regioni: si rifa' solo quello che e' cambiato, e la tastiera — che di norma
+// non cambia — non viene toccata, quindi il tasto appena premuto resta lo
+// stesso nodo e non perde il suo :active a meta' tocco.
+save(); if(!dipingiPista()) render();
 }
 
 function finishTargetEarly(){
@@ -13175,10 +13576,11 @@ return;
 } else {
 state.awaitingStep = "target";
 }
-save(); render();
+save(); if(!dipingiPista()) render();
 }
 
 function undoLastShot(){
+misura("annulli"); ultimoTocco = null;
 // La striscia dell'annulla mostra l'ultimo tiro: appena lo si toglie, sparisce.
 state.lastShotInfo = null;
 state.panel = null;
@@ -13186,7 +13588,7 @@ state.panel = null;
 if(state.pendingArrows && state.pendingArrows.length > 0){
 state.pendingArrows.pop();
 state.arrowIndex = state.pendingArrows.length;
-save(); render();
+save(); if(!dipingiPista()) render();
 return;
 }
 
@@ -13214,6 +13616,11 @@ var archer = state.archers[archerIdx];
 var entries = state.scores[archer.id];
 if(entries.length >= targetNum){
 var lastEntry = entries.pop();
+// L'ANNULLA PROPAGA. La riga esce anche dal documento condiviso, insieme alla
+// controfirma che avesse gia' addosso. Quando l'arciere ricompletera' la
+// piazzola nascera' una riga nuova, con un sid nuovo: non si "corregge" una
+// testimonianza, se ne scrive un'altra.
+unsyncShotFromSession(archer, lastEntry);
 // si toglie solo l'ultima freccia della piazzola: le altre restano gia' segnate, pronte per essere confermate di nuovo
 state.pendingArrows = lastEntry.arrows.slice(0, -1);
 state.arrowIndex = state.pendingArrows.length;
@@ -13223,7 +13630,7 @@ state.arrowIndex = 0;
 }
 state.target = targetNum;
 state.archerIndex = archerIdx;
-save(); render();
+save(); if(!dipingiPista()) render();
 }
 
 // ---------- SUMMARY ----------
