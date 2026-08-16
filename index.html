@@ -96,6 +96,14 @@
 --gold-400:#CBA35C; --gold-200:#F6E8C6; --gold-100:#FDF2D9;
 --red-700:#8E0F14; --red-600:#A81319; --red-400:#E23D2E; --red-100:#F9DCDC;
 --blue-600:#2E5FA8; --blue-400:#5B8FD6;
+/* Il pallino del sole. E' l'UNICA tinta dell'app che non cambia fra i temi,
+   e non e' una svista: e' un contrassegno, non un colore di superficie. Il
+   tasto che accende il Sole deve farsi trovare in tutti e tre i temi e con lo
+   schermo gia' illeggibile, e a quel punto un giallo che si adatta al tema si
+   adatta anche a sparire. E' piccolo — 4 pixel di raggio — quindi si nota
+   senza gridare, che e' esattamente quello che serve a un comando che si usa
+   due volte in un giro. */
+--sun-dot:#FFC21A;
 /* La zona sagoma era un blu cobalto: l'unico colore dell'app senza parenti da
    nessun'altra parte, e stava sul controllo piu' importante. Arancione, verde,
    cobalto e grigio insieme si leggono come un'app di quiz, non come uno
@@ -531,22 +539,6 @@ background:transparent; border:1.5px solid var(--border-strong); color:var(--tex
 header.top .home-btn.pericolo:active,
 header.top .home-btn.pericolo.armato{
 border-color:var(--danger); color:var(--danger); }
-/* ── L'INTERRUTTORE DEL SOLE ───────────────────────────────────────────────
-   Acceso e' un tasto PIENO, non un bordo colorato: e' l'unico stato che deve
-   restare leggibile proprio nella condizione in cui viene acceso — sotto il
-   sole diretto, dove i bordi e le tinte tenui sono le prime cose a sparire.
-   Il colore e' --gold, che nell'app vuol dire "prepara": non e' un codice di
-   percorso (verde allenamento, arancio gara), quindi non si confonde con lo
-   stato del giro. */
-.bar-btn.acceso{ background:var(--sun-on-bg); border-color:var(--sun-on-bg); color:var(--sun-on-fg); }
-/* Stessa trappola di specificita' gia' documentata per "Segnala": la pelle
-   del tasto e' scritta nominando il tema, quindi la variante acceso deve
-   nominarlo anche lei o perde e il tasto resta grigio. */
-header.top .home-btn.acceso,
-body.theme-light header.top .home-btn.acceso,
-body.theme-dark header.top .home-btn.acceso,
-body.theme-sole header.top .home-btn.acceso{
-background:var(--sun-on-bg); border-color:var(--sun-on-bg); color:var(--sun-on-fg); }
 .bar-badge{ position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 4px;
 border-radius:10px; background:var(--danger); color:#fff; font-size:0.64rem; font-weight:800;
 display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
@@ -1700,8 +1692,8 @@ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
    — e stava esattamente dove il pollice arriva per sbaglio. E' un'azione
    secondaria: torna a occupare lo spazio di un'azione secondaria, allineato a
    destra e senza fondo pieno. */
-.pista-scorciatoie{ flex:0 0 auto; display:flex; justify-content:flex-end;
-gap:var(--s-2); margin-bottom:var(--s-2); }
+.pista-scorciatoie{ flex:0 0 auto; display:flex; justify-content:space-between;
+align-items:center; gap:var(--s-2); margin-bottom:var(--s-2); }
 /* Prima era largo tutta la riga col fondo dorato e leggeva come un quinto
    tasto punteggio. La correzione era andata troppo in la': senza fondo e in
    grigio chiaro spariva. PICCOLO NON VUOL DIRE INVISIBILE — un'azione
@@ -1711,6 +1703,19 @@ font-size:var(--t-sm); min-height:var(--hit); box-shadow:none;
 background:color-mix(in srgb, var(--gold-role) 12%, var(--surface-1));
 border:1.5px solid color-mix(in srgb, var(--gold-role) 50%, transparent);
 color:var(--gold-role); font-weight:700; }
+/* ── L'INTERRUTTORE DEL SOLE ───────────────────────────────────────────────
+   Spento e' NEUTRO, non giallo. Accanto alla Classifica, che e' gia' dorata,
+   due tinte d'oro affiancate sarebbero due etichette e nessuna notizia — la
+   stessa regola per cui "Segnala" a riposo non e' rosso.
+   Ma neutro non vuol dire spento: porta la parola e il bordo pieno, perche'
+   e' l'unico comando dell'app che va TROVATO quando lo schermo non si legge.
+   Acceso e' pieno: al sole diretto bordi e tinte tenui sono le prime cose a
+   sparire, quindi lo stato deve reggere proprio nella condizione in cui lo
+   accendi. */
+.pista-scorciatoie .btn-sole{ background:var(--surface-1);
+border:1.5px solid var(--border-strong); color:var(--text-1); }
+.pista-scorciatoie .btn-sole.acceso{ background:var(--sun-on-bg);
+border-color:var(--sun-on-bg); color:var(--sun-on-fg); }
 
 /* ── la striscia dell'annulla: il rimedio accanto all'errore ──
    Prima l'annulla stava in fondo a 1150px di pagina, mentre l'errore era in
@@ -7481,7 +7486,7 @@ return '<img class="brandmark" src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="
 
 var ICON_PATHS = {
 home: '<path d="M4 11.4 12 4l8 7.4"/><path d="M6.4 10.2V20h11.2v-9.8"/><path d="M10 20v-5h4v5"/>',
-sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.4M12 19v2.4M2.6 12h2.4M19 12h2.4"/><path d="M5.4 5.4l1.7 1.7M16.9 16.9l1.7 1.7M18.6 5.4l-1.7 1.7M7.1 16.9l-1.7 1.7"/>',
+sun: '<circle cx="12" cy="12" r="4.2" style="fill:var(--sun-dot)"/><path d="M12 2.6v2.4M12 19v2.4M2.6 12h2.4M19 12h2.4"/><path d="M5.4 5.4l1.7 1.7M16.9 16.9l1.7 1.7M18.6 5.4l-1.7 1.7M7.1 16.9l-1.7 1.7"/>',
 more: '<circle cx="12" cy="5" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.6" fill="currentColor" stroke="none"/>',
 bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
 mail: '<rect x="3" y="5" width="18" height="14" rx="2.2"/><path d="M3.6 6.6 12 13l8.4-6.4"/>',
@@ -8923,11 +8928,12 @@ h.appendChild(pastigliaFirma);
 // fino a quattro, e per farcele stare si rimpiccioliva il marchio finche'
 // non si tagliava. Si toglie un'azione, non si stringe il titolo.
 // L'ordine e' questo perche' e' quello dell'uso: prima si esce, poi si
-// accende il Sole, poi si segnala un guaio del percorso, poi si leggono le
-// notifiche, poi i messaggi; cambiare federazione si fa una volta nella vita.
-// Il Sole sta PRIMA della segnalazione di proposito: se un giorno la barra si
-// riempira', l'ultima cosa che deve finire dentro il troppo-pieno e' il tasto
-// che serve quando lo schermo non si legge.
+// segnala un guaio del percorso, poi si leggono le notifiche, poi i
+// messaggi; cambiare federazione si fa una volta nella vita.
+// L'interruttore del Sole ha provato a stare qui ed e' durato mezz'ora: in
+// cima, grigio come gli altri due e grande come un'icona, non lo vedeva
+// nessuno. Sta nella riga delle scorciatoie, dove arriva il pollice e dove
+// puo' portarsi dietro la parola.
 var azioni = [];
 if(showHome){
 azioni.push({ id:"menu", glifo:"home", testo:t("nav_menu"), conParola:true, vai:function(){
@@ -8937,10 +8943,6 @@ if(duranteGiro){ homeOverride = true; }
 else { state.screen = "menu"; }
 save(); render();
 }});
-if(duranteGiro){
-azioni.push({ id:"sole", glifo:"sun", testo:t("theme_sun_label"), conParola:true,
-premuto:soleAcceso(), vai:toggleSole });
-}
 if(duranteGiro && currentUser){
 azioni.push({ id:"segnala", glifo:"warn", testo:t("fr_report_btn_short"), titolo:t("fr_report_title"),
 conParola:true, pericolo:true, vai:function(){
@@ -8998,13 +9000,6 @@ var classi = conParola
 var b = el('<button type="button" class="'+classi+' no-print"></button>');
 b.setAttribute("title", a.titolo || a.testo);
 b.setAttribute("aria-label", a.titolo || a.testo);
-// Un interruttore deve DIRE in che stato e', e non solo con il colore: chi
-// usa un lettore di schermo sente "Sole, premuto", e chi non distingue le
-// tinte al sole vede comunque un tasto pieno invece di un tasto vuoto.
-if(typeof a.premuto === "boolean"){
-b.setAttribute("aria-pressed", String(a.premuto));
-if(a.premuto) b.classList.add("acceso");
-}
 b.innerHTML = icon(a.glifo, conParola ? 17 : 20);
 if(conParola) b.appendChild(document.createTextNode(a.testo));
 if(a.conta > 0) b.appendChild(el('<span class="bar-badge">'+(a.conta > 9 ? "9+" : a.conta)+'</span>'));
@@ -10879,7 +10874,13 @@ var nomeComp = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[codice])
 var head = el('<div class="card"></div>');
 head.appendChild(el('<h2 class="section-title">'+t("club_space_title")+'</h2>'));
 head.appendChild(el('<div style="font-weight:800;font-size:1rem;color:var(--gold);">'+escapeHtml(nomeComp)+'</div>'));
-head.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-top:3px;">'+t("club_space_sub")+'</div>'));
+// Il sottotitolo "i dati che gli arcieri vedono e dove arrivano le
+// segnalazioni" e' stato tolto (16/08): la scheda subito sotto si presenta gia'
+// da sola — "DATI DI RIFERIMENTO · compaiono agli arcieri nella scheda della
+// compagnia" — e diceva la stessa cosa due centimetri piu' su. Una spiegazione
+// ripetuta non spiega il doppio: insegna a saltare le spiegazioni.
+// La stringa resta in STRINGS perche' la porta ancora il tasto del menu, dove
+// e' l'unica cosa che dice cosa c'e' dietro.
 wrap.appendChild(head);
 
 var body = el('<div></div>');
@@ -11602,7 +11603,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-sole-in-testata";
+var BUILD_STAMP = "2026-08-16-spazio-compagnia";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -14122,6 +14123,16 @@ wrap.appendChild(pistaScena(c));
 wrap.appendChild(pistaSpazio(c));
 
 var scorciatoie = el('<div class="pista-scorciatoie no-print"></div>');
+// A SINISTRA IL SOLE, A DESTRA LA CLASSIFICA. La riga era allineata tutta a
+// destra e meta' larghezza stava vuota: lo spazio c'era gia'.
+// Il Sole porta la PAROLA, non solo il glifo — un sole da solo si legge
+// "luminosita'", e questo e' il comando che serve quando lo schermo non si
+// legge piu': se per trovarlo devi leggere bene, non serve a niente.
+var bSole = el('<button class="btn btn-sole'+(soleAcceso() ? " acceso" : "")+'">'
++ icon("sun",16) + ' ' + t("theme_sun_label") + '</button>');
+bSole.setAttribute("aria-pressed", String(soleAcceso()));
+bSole.addEventListener("click", toggleSole);
+scorciatoie.appendChild(bSole);
 var bCla = el('<button class="btn btn-standings">'+icon("target",16)+' '+t("pista_classifica_btn")+'</button>');
 bCla.addEventListener("click", function(){ misura("classifiche"); state.panel = "classifica"; save(); render(); });
 scorciatoie.appendChild(bCla);
