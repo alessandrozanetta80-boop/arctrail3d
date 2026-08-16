@@ -365,6 +365,8 @@ color-scheme:light;
 --clay:var(--clay-800); --gold-role:var(--gold-800);
 --danger-role:var(--red-700); --success-role:var(--green-800);
 
+/* il bersaglio da anelli e' paglia: al sole la paglia e' chiara, non fangosa */
+--ring-bg-a:var(--straw-200); --ring-bg-b:var(--straw-500); --ring-ink:var(--straw-900);
 --ring-empty-bg:var(--sand-250); --ring-empty-bd:var(--sand-900);
 
 /* niente ombre: al sole non si vedono e mangiano contrasto */
@@ -377,17 +379,36 @@ color-scheme:light;
 
 /* i tre comandi del menu: la pastiglia piena resta l'appiglio, il fondo
    tenue si toglie di mezzo */
---tone-train-bg:var(--sand-50); --tone-train-fg:var(--green-900); --tone-train-solid:var(--green-900);
---tone-race-bg:var(--sand-50);  --tone-race-fg:var(--clay-800);   --tone-race-solid:var(--clay-800);
---tone-prep-bg:var(--sand-50);  --tone-prep-fg:var(--gold-800);   --tone-prep-solid:var(--gold-800);
+/* Stessa correzione sui tre comandi del menu: la PASTIGLIA e' un fondo, e
+   quindi va viva; il TESTO accanto e' testo, e quindi resta scuro. */
+--tone-train-bg:var(--sand-50); --tone-train-fg:var(--green-900); --tone-train-solid:var(--lime-500);
+--tone-race-bg:var(--sand-50);  --tone-race-fg:var(--clay-800);   --tone-race-solid:var(--clay-400);
+--tone-prep-bg:var(--sand-50);  --tone-prep-fg:var(--gold-800);   --tone-prep-solid:var(--gold-400);
 --tone-border:100%;
 /* il vuoto del bersaglio e le superfici tenui non devono restare veli */
 --checkbox-border:var(--sand-900);
 
-/* i cinque tasti: gli unici che al sole reggevano gia'. Scendono di un
-   gradino, cosi' il bianco sopra sale sopra il 7:1 su tutti e cinque. */
---score-ss:var(--clay-800); --score-spot:var(--green-800); --score-sag:var(--slate-700);
---score-perfect:var(--red-700); --score-zero:var(--sand-700); --score-ink:var(--sand-50);
+/* I CINQUE TASTI: ERANO STATI SCURITI, ED ERA IL VERSO SBAGLIATO.
+   *(Corretto il 16/08 sera, dal campo: «al sole i colori così scuri sono
+   difficili da vedere, dei colori più vivi aiuterebbero».)*
+
+   Il ragionamento di prima era: al sole serve contrasto, quindi tutto piu'
+   scuro. Vale per il TESTO, e infatti il testo resta quasi nero. Non vale per
+   un tasto colorato, e per una ragione che a scrivania non si vede: al sole lo
+   schermo non riesce piu' a fare il bianco luminoso, quindi un fondo scuro e
+   un altro fondo scuro diventano due macchie fangose, distinguibili solo
+   avvicinando gli occhi. E il tasto non si legge, si RICONOSCE — a colpo
+   d'occhio, mentre si guarda il bersaglio.
+
+   Quello che sopravvive alla luce forte e' la TINTA, non la profondita'.
+   Quindi: fondi vivi, e sopra l'inchiostro nero invece del bianco. Sul fondo
+   chiaro il nero regge, e la tinta resta tinta. E' la soluzione dei cartelli
+   stradali, che quel problema lo hanno risolto prima di noi.
+
+   Nero su ciascun fondo: 8,3 / 8,9 / 4,8 / 6,2 / 15,1. Il quarto e il terzo
+   stanno sotto il 7 ma sopra il 4,5, e queste sono cifre grandi e grasse. */
+--score-ss:var(--clay-400); --score-spot:var(--lime-500); --score-sag:var(--slate-400);
+--score-perfect:var(--red-400); --score-zero:var(--sand-300); --score-ink:var(--sand-900);
 
 /* il timer perde il gradiente: due tinte che si mescolano al sole sono una
    tinta sola, e sporca */
@@ -2647,8 +2668,8 @@ profile_error_password_short: "La password deve avere almeno 6 caratteri.", prof
 profile_error_email_in_use: "Questa email \u00e8 gi\u00e0 registrata. Usa \u201cAccedi\u201d con la tua password.",
 login_password: "Password", login_forgot: "Password dimenticata?", login_reset_sent: "Ti abbiamo mandato un'email per reimpostare la password. Se non la vedi, controlla anche nella cartella spam.",
 profile_arco: "Arco principale", profile_privacy: "Ho letto l'informativa privacy e acconsento al trattamento dei miei dati per l'uso dell'app.",
-theme_section_title: "Aspetto", theme_dark_label: "Scura", theme_light_label: "Chiara", theme_auto_label: "Automatica", theme_sun_label: "Sole",
-theme_hint: "Sole: massimo contrasto per lo schermo sotto il sole diretto. Automatica segue l'impostazione del telefono, non la luce che hai intorno.",
+theme_section_title: "Aspetto", theme_dark_label: "Scura", theme_light_label: "Chiara", theme_sun_label: "Sole",
+theme_hint: "Sole: colori vivi e testo nero, per lo schermo sotto il sole diretto. Nessuna app può accorgersi della luce che hai intorno, quindi il tema si sceglie a mano e resta quello finché non lo cambi.",
 profile_submit: "Crea profilo e continua", profile_error: "Compila nome, username, email, almeno una federazione, l'arco principale e accetta la privacy.",
 pg_title: "Prepara gara",  pg_back_menu: "\u2190 Torna al menu", pg_choose_gara: "Scegli la gara",
 pg_my_saved_routes: "\uD83D\uDCCB I miei percorsi salvati", pg_saved_routes_title: "I miei percorsi salvati", pg_loading: "Caricamento\u2026", pg_error_loading: "Errore nel caricamento: {err}", pg_use_route_btn: "Usa questo percorso",
@@ -3125,8 +3146,8 @@ mode_nfas_training_desc:"Free training following NFAS zones: a single arrow per 
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"match \u00b7 up to 3 arrows", mode_nfas_biggame_unit:"Arrow",
 mode_nfas_biggame_desc:"Official NFAS Big Game Round: 28 targets, up to 3 arrows (only the first hit counts), the Inner Kill only counts on the first arrow.",
 profile_arco: "Main bow", profile_edit_email_note: "To change your login email, contact support.",
-theme_section_title: "Appearance", theme_dark_label: "Dark", theme_light_label: "Light", theme_auto_label: "Auto", theme_sun_label: "Sun",
-theme_hint: "Sun: maximum contrast for a screen in direct sunlight. Auto follows your phone's setting, not the light around you.",
+theme_section_title: "Appearance", theme_dark_label: "Dark", theme_light_label: "Light", theme_sun_label: "Sun",
+theme_hint: "Sun: vivid colours and black text, for a screen in direct sunlight. No app can sense the light around you, so you pick the theme by hand and it stays until you change it.",
 profile_edit_save: "Save changes", profile_edit_saved_msg: "Changes saved.", profile_edit_title: "Your profile",
 profile_email: "Email", profile_error: "Fill in name, username, email, at least one federation, your main bow, and accept the privacy policy.",
 profile_error_email_in_use: "This email is already registered. Use \u201cLog in\u201d with your password.",
@@ -3624,8 +3645,8 @@ mode_nfas_training_desc:"Entra\u00eenement libre selon les zones NFAS\u00a0: une
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"comp\u00e9tition \u00b7 jusqu’\u00e0 3 fl\u00e8ches", mode_nfas_biggame_unit:"Fl\u00e8che",
 mode_nfas_biggame_desc:"Big Game Round officiel NFAS\u00a0: 28 cibles, jusqu’\u00e0 3 fl\u00e8ches (seul le premier impact compte), l’Inner Kill ne compte que sur la premi\u00e8re fl\u00e8che.",
 profile_arco: "Arc principal", profile_edit_email_note: "Pour changer votre e-mail de connexion, contactez l’assistance.",
-theme_section_title: "Apparence", theme_dark_label: "Sombre", theme_light_label: "Claire", theme_auto_label: "Automatique", theme_sun_label: "Soleil",
-theme_hint: "Soleil : contraste maximal pour un écran en plein soleil. Automatique suit le réglage du téléphone, pas la lumière autour de vous.",
+theme_section_title: "Apparence", theme_dark_label: "Sombre", theme_light_label: "Claire", theme_sun_label: "Soleil",
+theme_hint: "Soleil : couleurs vives et texte noir, pour un écran en plein soleil. Aucune application ne peut détecter la lumière autour de vous : le thème se choisit à la main et reste tel quel.",
 profile_edit_save: "Enregistrer les modifications", profile_edit_saved_msg: "Modifications enregistr\u00e9es.", profile_edit_title: "Votre profil",
 profile_email: "E-mail", profile_error: "Remplissez le nom, le pseudo, l’e-mail, au moins une f\u00e9d\u00e9ration, votre arc principal, et acceptez la politique de confidentialit\u00e9.",
 profile_error_email_in_use: "Cet e-mail est d\u00e9j\u00e0 enregistr\u00e9. Utilisez \u00ab Se connecter \u00bb avec votre mot de passe.",
@@ -4123,8 +4144,8 @@ mode_nfas_training_desc:"Freies Training nach NFAS-Zonen: ein einzelner Pfeil pr
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"Wettkampf \u00b7 bis zu 3 Pfeile", mode_nfas_biggame_unit:"Pfeil",
 mode_nfas_biggame_desc:"Offizielle NFAS Big Game Round: 28 Ziele, bis zu 3 Pfeile (nur der erste Treffer z\u00e4hlt), der Inner Kill z\u00e4hlt nur beim ersten Pfeil.",
 profile_arco: "Hauptbogen", profile_edit_email_note: "Um deine Anmelde-E-Mail zu \u00e4ndern, wende dich an den Support.",
-theme_section_title: "Erscheinungsbild", theme_dark_label: "Dunkel", theme_light_label: "Hell", theme_auto_label: "Automatisch", theme_sun_label: "Sonne",
-theme_hint: "Sonne: maximaler Kontrast für den Bildschirm in direkter Sonne. Automatisch folgt der Einstellung des Telefons, nicht dem Licht um dich herum.",
+theme_section_title: "Erscheinungsbild", theme_dark_label: "Dunkel", theme_light_label: "Hell", theme_sun_label: "Sonne",
+theme_hint: "Sonne: kräftige Farben und schwarze Schrift, für den Bildschirm in direkter Sonne. Keine App kann das Licht um dich herum erkennen: du wählst das Thema selbst, und es bleibt so.",
 profile_edit_save: "\u00c4nderungen speichern", profile_edit_saved_msg: "\u00c4nderungen gespeichert.", profile_edit_title: "Dein Profil",
 profile_email: "E-Mail", profile_error: "F\u00fclle Name, Benutzername, E-Mail, mindestens einen Verband und deinen Hauptbogen aus und akzeptiere die Datenschutzerkl\u00e4rung.",
 profile_error_email_in_use: "Diese E-Mail ist bereits registriert. Nutze \u201eAnmelden\u201c mit deinem Passwort.",
@@ -4657,8 +4678,8 @@ profile_error_password_short: "\u015eifre en az 6 karakter olmal\u0131.", profil
 profile_error_email_in_use: "Bu e-posta zaten kay\u0131tl\u0131. \u015eifrenle \u201cGiri\u015f yap\u201d\u2019\u0131 kullan.",
 login_password: "\u015eifre", login_forgot: "\u015eifreni mi unuttun?", login_reset_sent: "\u015eifreni s\u0131f\u0131rlamak i\u00e7in sana bir e-posta g\u00f6nderdik. G\u00f6rm\u00fcyorsan spam klas\u00f6r\u00fcn\u00fc de kontrol et.",
 profile_arco: "Ana yay", profile_privacy: "Gizlilik bildirimini okudum ve uygulaman\u0131n kullan\u0131m\u0131 i\u00e7in verilerimin i\u015flenmesini kabul ediyorum.",
-theme_section_title: "G\u00f6r\u00fcn\u00fcm", theme_dark_label: "Koyu", theme_light_label: "A\u00e7\u0131k", theme_auto_label: "Otomatik", theme_sun_label: "Güneş",
-theme_hint: "Güneş: doğrudan güneş altındaki ekran için en yüksek kontrast. Otomatik, çevredeki ışığı değil telefonun ayarını izler.",
+theme_section_title: "G\u00f6r\u00fcn\u00fcm", theme_dark_label: "Koyu", theme_light_label: "A\u00e7\u0131k", theme_sun_label: "Güneş",
+theme_hint: "Güneş: doğrudan güneş altındaki ekran için canlı renkler ve siyah yazı. Hiçbir uygulama çevrenizdeki ışığı algılayamaz: temayı elle seçersiniz ve öyle kalır.",
 profile_submit: "Profili olu\u015ftur ve devam et", profile_error: "Ad, kullan\u0131c\u0131 ad\u0131, e-posta, en az bir federasyon, ana yay\u0131 doldur ve gizlili\u011fi kabul et.",
 pg_title: "Yar\u0131\u015fma Haz\u0131rla",  pg_back_menu: "\u2190 Men\u00fcye d\u00f6n", pg_choose_gara: "Yar\u0131\u015fmay\u0131 se\u00e7",
 pg_my_saved_routes: "\uD83D\uDCCB Kay\u0131tl\u0131 parkurlar\u0131m", pg_saved_routes_title: "Kay\u0131tl\u0131 parkurlar\u0131m", pg_loading: "Y\u00fckleniyor\u2026", pg_error_loading: "Y\u00fckleme hatas\u0131: {err}", pg_use_route_btn: "Bu parkuru kullan",
@@ -5170,8 +5191,8 @@ profile_error_password_short: "Пароль должен содержать ми
 profile_error_email_in_use: "Этот email уже зарегистрирован. Используйте «Войти» с вашим паролем.",
 login_password: "Пароль", login_forgot: "Забыли пароль?", login_reset_sent: "Мы отправили вам письмо для сброса пароля. Если не видите его, проверьте папку со спамом.",
 profile_arco: "Основной лук", profile_privacy: "Я прочитал(а) политику конфиденциальности и согласен(на) на обработку моих данных для использования приложения.",
-theme_section_title: "Внешний вид", theme_dark_label: "Тёмная", theme_light_label: "Светлая", theme_auto_label: "Авто", theme_sun_label: "Солнце",
-theme_hint: "Солнце: максимальный контраст для экрана под прямым солнцем. Авто следует настройке телефона, а не свету вокруг вас.",
+theme_section_title: "Внешний вид", theme_dark_label: "Тёмная", theme_light_label: "Светлая", theme_sun_label: "Солнце",
+theme_hint: "Солнце: яркие цвета и чёрный текст для экрана под прямым солнцем. Ни одно приложение не чувствует свет вокруг вас: тему вы выбираете сами, и она остаётся.",
 profile_submit: "Создать профиль и продолжить", profile_error: "Заполните имя, имя пользователя, email, хотя бы одну федерацию, основной лук и примите политику конфиденциальности.",
 pg_title: "Подготовить соревнование",  pg_back_menu: "← В меню", pg_choose_gara: "Выберите соревнование",
 pg_my_saved_routes: "📋 Мои сохранённые маршруты", pg_saved_routes_title: "Мои сохранённые маршруты", pg_loading: "Загрузка…", pg_error_loading: "Ошибка загрузки: {err}", pg_use_route_btn: "Использовать этот маршрут",
@@ -5683,8 +5704,8 @@ profile_error_password_short: "La contrase\u00f1a debe tener al menos 6 caracter
 profile_error_email_in_use: "Este email ya est\u00e1 registrado. Usa \u201cIniciar sesi\u00f3n\u201d con tu contrase\u00f1a.",
 login_password: "Contrase\u00f1a", login_forgot: "\u00bfHas olvidado la contrase\u00f1a?", login_reset_sent: "Te hemos enviado un email para restablecer la contrase\u00f1a. Si no lo ves, revisa tambi\u00e9n la carpeta de spam.",
 profile_arco: "Arco principal", profile_privacy: "He le\u00eddo la pol\u00edtica de privacidad y acepto el tratamiento de mis datos para el uso de la app.",
-theme_section_title: "Aspecto", theme_dark_label: "Oscuro", theme_light_label: "Claro", theme_auto_label: "Automático", theme_sun_label: "Sol",
-theme_hint: "Sol: máximo contraste para la pantalla a pleno sol. Automático sigue el ajuste del teléfono, no la luz que te rodea.",
+theme_section_title: "Aspecto", theme_dark_label: "Oscuro", theme_light_label: "Claro", theme_sun_label: "Sol",
+theme_hint: "Sol: colores vivos y texto negro, para la pantalla a pleno sol. Ninguna app puede detectar la luz que te rodea: el tema se elige a mano y se queda así.",
 profile_submit: "Crear perfil y continuar", profile_error: "Rellena el nombre, nombre de usuario, email, al menos una federaci\u00f3n, el arco principal y acepta la privacidad.",
 pg_title: "Preparar competici\u00f3n",  pg_back_menu: "\u2190 Volver al men\u00fa", pg_choose_gara: "Elige la competici\u00f3n",
 pg_my_saved_routes: "\uD83D\uDCCB Mis recorridos guardados", pg_saved_routes_title: "Mis recorridos guardados", pg_loading: "Cargando\u2026", pg_error_loading: "Error al cargar: {err}", pg_use_route_btn: "Usar este recorrido",
@@ -6196,8 +6217,8 @@ profile_error_password_short: "L\u00f6senordet m\u00e5ste vara minst 6 tecken.",
 profile_error_email_in_use: "Denna e-post \u00e4r redan registrerad. Anv\u00e4nd \u201dLogga in\u201d med ditt l\u00f6senord.",
 login_password: "L\u00f6senord", login_forgot: "Gl\u00f6mt l\u00f6senord?", login_reset_sent: "Vi har skickat ett e-postmeddelande f\u00f6r att \u00e5terst\u00e4lla l\u00f6senordet. Om du inte ser det, kolla \u00e4ven skr\u00e4pposten.",
 profile_arco: "Huvudb\u00e5ge", profile_privacy: "Jag har l\u00e4st integritetspolicyn och samtycker till behandling av mina uppgifter f\u00f6r anv\u00e4ndning av appen.",
-theme_section_title: "Utseende", theme_dark_label: "M\u00f6rkt", theme_light_label: "Ljust", theme_auto_label: "Automatiskt", theme_sun_label: "Sol",
-theme_hint: "Sol: högsta kontrast för skärmen i direkt solljus. Automatiskt följer telefonens inställning, inte ljuset omkring dig.",
+theme_section_title: "Utseende", theme_dark_label: "M\u00f6rkt", theme_light_label: "Ljust", theme_sun_label: "Sol",
+theme_hint: "Sol: starka färger och svart text, för skärmen i direkt solljus. Ingen app kan känna av ljuset omkring dig: du väljer temat själv, och det stannar.",
 profile_submit: "Skapa profil och forts\u00e4tt", profile_error: "Fyll i namn, anv\u00e4ndarnamn, e-post, minst ett f\u00f6rbund, huvudb\u00e5ge och acceptera integritetspolicyn.",
 pg_title: "F\u00f6rbered t\u00e4vling",  pg_back_menu: "\u2190 Tillbaka till menyn", pg_choose_gara: "V\u00e4lj t\u00e4vling",
 pg_my_saved_routes: "\uD83D\uDCCB Mina sparade rundor", pg_saved_routes_title: "Mina sparade rundor", pg_loading: "L\u00e4ser in\u2026", pg_error_loading: "Fel vid inl\u00e4sning: {err}", pg_use_route_btn: "Anv\u00e4nd denna runda",
@@ -6709,8 +6730,8 @@ profile_error_password_short: "Het wachtwoord moet minstens 6 tekens bevatten.",
 profile_error_email_in_use: "Deze e-mail is al geregistreerd. Gebruik \u201cInloggen\u201d met je wachtwoord.",
 login_password: "Wachtwoord", login_forgot: "Wachtwoord vergeten?", login_reset_sent: "We hebben je een e-mail gestuurd om je wachtwoord te resetten. Zie je hem niet, controleer dan ook je spammap.",
 profile_arco: "Hoofdboog", profile_privacy: "Ik heb de privacyverklaring gelezen en ga akkoord met de verwerking van mijn gegevens voor het gebruik van de app.",
-theme_section_title: "Uiterlijk", theme_dark_label: "Donker", theme_light_label: "Licht", theme_auto_label: "Automatisch", theme_sun_label: "Zon",
-theme_hint: "Zon: maximaal contrast voor een scherm in direct zonlicht. Automatisch volgt de instelling van je telefoon, niet het licht om je heen.",
+theme_section_title: "Uiterlijk", theme_dark_label: "Donker", theme_light_label: "Licht", theme_sun_label: "Zon",
+theme_hint: "Zon: felle kleuren en zwarte tekst, voor een scherm in direct zonlicht. Geen app kan het licht om je heen meten: je kiest het thema zelf en het blijft zo.",
 profile_submit: "Profiel aanmaken en doorgaan", profile_error: "Vul naam, gebruikersnaam, e-mail, minstens \u00e9\u00e9n bond, hoofdboog in en accepteer de privacyverklaring.",
 pg_title: "Wedstrijd voorbereiden",  pg_back_menu: "\u2190 Terug naar menu", pg_choose_gara: "Kies de wedstrijd",
 pg_my_saved_routes: "\uD83D\uDCCB Mijn opgeslagen rondes", pg_saved_routes_title: "Mijn opgeslagen rondes", pg_loading: "Laden\u2026", pg_error_loading: "Fout bij laden: {err}", pg_use_route_btn: "Deze ronde gebruiken",
@@ -7561,26 +7582,39 @@ var NARROW_SCREENS = {
 // E soprattutto: la scelta vale SEMPRE. Prima, da 760px in su, il foglio di
 // stile riscriveva la tavolozza e imponeva il chiaro anche a chi aveva scelto
 // lo scuro. Adesso il tema e' uno solo, quello scelto, su ogni schermo.
-var sysDark = (typeof window.matchMedia === "function")
-? window.matchMedia("(prefers-color-scheme: dark)") : null;
+/* NIENTE PIU' TEMA AUTOMATICO. *(16/08/2026, sera, ed e' una sottrazione.)*
+   Seguiva l'impostazione scura/chiara del telefono. Chi lo sceglieva si
+   aspettava un'altra cosa — che l'app si accorgesse della LUCE — e non
+   vedendola succedere concludeva, tre volte di fila, che fosse rotto.
+   Non lo era, e non poteva fare quello che gli si chiedeva: il sensore di
+   luce ambientale non c'e' su iOS ne' su Safari, e su Android sta dietro un
+   permesso sperimentale. Un'automazione che funziona su meta' dei telefoni e'
+   peggio di una scelta manuale che funziona su tutti.
+   Prima e' stato spiegato sotto, poi rinominato; alla terza volta la risposta
+   giusta era togliere. **Una funzione che va spiegata due volte e' una
+   funzione di troppo.** Restano tre temi, tutti e tre scelti a mano, e l'app
+   parte da chiara.
+   `normalizeTheme` continua ad accettare "auto" per un motivo solo: c'e' gente
+   che ce l'ha salvato sul telefono, e va portata a chiara senza accorgersene.
+   E' una migrazione, non un residuo — come "elegante" e "satura" qui sotto. */
 function normalizeTheme(th){
-if(th === "light" || th === "dark" || th === "auto" || th === "sole") return th;
+if(th === "light" || th === "dark" || th === "sole") return th;
 if(th === "elegante" || th === "satura") return "dark";
 return "light";
 }
-// Il tema SCELTO ("auto") e il tema EFFETTIVO ("dark" adesso) sono due cose
-// diverse: la pastiglia nel profilo mostra il primo, il body porta il secondo.
-function resolvedTheme(th){
-if(th === "auto") return (sysDark && sysDark.matches) ? "dark" : "light";
-return th;
-}
+function resolvedTheme(th){ return normalizeTheme(th); }
 function currentTheme(){
 var raw = state.theme;
-if(raw && raw !== "light" && raw !== "dark" && raw !== "auto"){
+// Un tema che non esiste piu' — "auto", "elegante", "satura" — non si tiene
+// in memoria: si converte una volta e si riscrive. Altrimenti la conversione
+// riparte ad ogni apertura, e il giorno che qualcuno legge state.theme senza
+// passare di qui trova un valore che il foglio di stile non conosce.
+if(raw !== "light" && raw !== "dark" && raw !== "sole"){
 state.theme = normalizeTheme(raw);
 try{ save(); }catch(e){}
+return state.theme;
 }
-return normalizeTheme(raw);
+return raw;
 }
 function applyTheme(th){
 var eff = resolvedTheme(normalizeTheme(th));
@@ -7600,13 +7634,6 @@ var fondo = "";
 try{ fondo = window.getComputedStyle(document.body).getPropertyValue("--surface").trim(); }catch(e){}
 if(fondo) m.setAttribute("content", fondo);
 }
-}
-// Se il telefono passa a scuro mentre l'app e' aperta, chi ha scelto
-// "automatica" lo vede subito, senza riaprire.
-if(sysDark){
-var onSysTheme = function(){ try{ if(currentTheme() === "auto") applyTheme("auto"); }catch(e){} };
-if(sysDark.addEventListener) sysDark.addEventListener("change", onSysTheme);
-else if(sysDark.addListener) sysDark.addListener(onSysTheme);
 }
 
 // ── LE TRANSIZIONI DI SCHERMATA ──────────────────────────────────────────
@@ -8718,7 +8745,7 @@ card.appendChild(bowRow);
 card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("theme_section_title")+'</h2>'));
 var themeSel = currentTheme();
 var themeRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
-[["light", t("theme_light_label")], ["dark", t("theme_dark_label")], ["sole", t("theme_sun_label")], ["auto", t("theme_auto_label")]].forEach(function(pair){
+[["light", t("theme_light_label")], ["dark", t("theme_dark_label")], ["sole", t("theme_sun_label")]].forEach(function(pair){
 var k = pair[0], label = pair[1];
 var chip = el('<div class="chip" style="min-width:120px;">'+label+'</div>');
 if(k === themeSel) chip.classList.add("active");
@@ -8732,22 +8759,11 @@ applyTheme(themeSel);
 // sceglieva un tema e usciva senza salvare se lo ritrovava cambiato al
 // rientro — cioe' l'app diceva di no a una scelta che aveva gia' eseguito.
 state.theme = k; save();
-aggiornaEtichettaAuto();
 if(savedMsg) savedMsg.textContent = "";
 });
 themeRow.appendChild(chip);
 });
 card.appendChild(themeRow);
-// "Automatica" segue il telefono, e il telefono non lo cambia nessuno mentre
-// cammina: da fuori sembrava rotta. Adesso la pastiglia dice a cosa sta
-// corrispondendo ADESSO, quindi la si puo' smentire invece di sospettarla.
-var chipAuto = themeRow.lastChild;
-function aggiornaEtichettaAuto(){
-if(!chipAuto) return;
-var ora = resolvedTheme("auto") === "dark" ? t("theme_dark_label") : t("theme_light_label");
-chipAuto.textContent = t("theme_auto_label") + " \u00b7 " + ora.toLowerCase();
-}
-aggiornaEtichettaAuto();
 // "Automatica" sembrava promettere che l'app si accorga di dov'e': dal campo
 // e' arrivato "in modalita' automatica non cambia nulla", ed era vero e
 // giusto insieme — segue il telefono, e il telefono nessuno lo cambia
@@ -11523,7 +11539,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-club-a";
+var BUILD_STAMP = "2026-08-16-tre-temi";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
