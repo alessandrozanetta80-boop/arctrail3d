@@ -63,7 +63,7 @@
 <link rel="icon" href="icon-192.png">
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
-   IL SISTEMA — 16/08/2026
+   IL SISTEMA — 15/08/2026
    Tre strati, e nient'altro sopra.
 
      STRATO 1 · PRIMITIVI   i colori esistono, non hanno ancora un mestiere
@@ -640,7 +640,7 @@ background:radial-gradient(circle, rgba(232,114,47,0.16), transparent 70%); z-in
    Il colpevole non era il testo, era la riga unica di tasti: con tre per riga
    l'etichetta ci sta dentro la scala. La regola stretta vinceva solo sul
    percorso per specificita', e gli 8px restavano nel file pronti a tornare il
-   giorno in cui un .quick-btn fosse comparso fuori da .tastiera (16/08/2026). */
+   giorno in cui un .quick-btn fosse comparso fuori da .tastiera (15/08/2026). */
 .quick-btn .quick-lbl{ font-size:var(--t-xs); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:normal; line-height:1.15; text-wrap:pretty; max-width:100%; }
 .quick-btn .quick-pts{ font-size:1.55rem; font-weight:800; font-family:var(--font-num); font-variant-numeric:tabular-nums; color:var(--score-ink); }
 /* Fondo pieno, cifra bianca, in TUTTI i temi. Il ragionamento scritto per il
@@ -691,39 +691,6 @@ table.score-table th, table.score-table td{ padding:8px 6px; text-align:center; 
 table.score-table th{ color:var(--muted); font-weight:600; font-size:0.7rem; text-transform:uppercase; letter-spacing:.05em; }
 table.score-table td.name-col, table.score-table th.name-col{ text-align:left; }
 .piazz-flow{ display:flex; flex-direction:column; gap:10px; }
-
-/* LA DIVISIONE DELL'ISCRITTO (Prepara gara).
-   La riga era tutta stile in linea dal JS: qui diventa una regola, cosi' il
-   conto del guardiano scende invece di salire. Due menu perche' la divisione
-   e' una coppia — Classe e Categoria — e il sesso sta gia' dentro la Classe. */
-.iscritto-row{ display:flex; flex-wrap:wrap; align-items:center; gap:var(--s-2);
-  background:var(--surface-1); border:1px solid var(--border);
-  border-radius:var(--r-md); padding:var(--s-2) var(--s-3); margin-bottom:var(--s-1); }
-.iscritto-nome{ flex:1 1 140px; min-width:0; font-size:var(--t-sm); }
-.iscritto-rm{ background:none; border:none; color:var(--text-3); cursor:pointer;
-  font-size:1rem; min-width:var(--hit); min-height:var(--hit); }
-.divisione-sel{ flex:1 1 100%; display:flex; gap:var(--s-2); }
-.divisione-sel select{ flex:1 1 0; min-width:0; min-height:var(--hit);
-  background:var(--surface); border:1px solid var(--border); color:var(--text-1);
-  border-radius:var(--r-sm); padding:var(--s-1) var(--s-2);
-  font-family:var(--font-ui); font-size:var(--t-xs); }
-.divisione-sigla{ font-family:var(--font-num); font-size:var(--t-xs);
-  font-weight:800; letter-spacing:0.04em; color:var(--text-2); }
-.divisione-ospite{ color:var(--text-3); }
-.iscritto-tag{ color:var(--accent-soft); font-size:var(--t-xs); }
-.iscritto-tag.muted-tag{ color:var(--text-3); }
-.pg-div-hint{ font-size:var(--t-xs); color:var(--text-3); margin:0 0 var(--s-2); }
-.divisione-sel input{ flex:1 1 0; min-width:0; min-height:var(--hit);
-  background:var(--surface); border:1px solid var(--border); color:var(--text-1);
-  border-radius:var(--r-sm); padding:var(--s-1) var(--s-2);
-  font-family:var(--font-num); font-size:var(--t-xs); }
-.compagnia-eco{ flex:1 1 100%; font-size:var(--t-xs); color:var(--text-2); }
-.compagnia-eco.compagnia-ignota{ color:var(--clay); font-weight:700; }
-.import-esito{ border:1px solid var(--border); border-radius:var(--r-md);
-  padding:var(--s-3); margin-bottom:var(--s-3); background:var(--surface-1); }
-.import-capito{ font-size:var(--t-xs); color:var(--text-2); margin:0; }
-.import-perse{ font-size:var(--t-xs); color:var(--clay); font-weight:700; margin:var(--s-2) 0 var(--s-1); }
-.import-elenco{ margin:0; padding-left:var(--s-4); font-size:var(--t-xs); color:var(--text-2); }
 .piazz-card{ display:flex; align-items:center; gap:14px; background:var(--bg-panel); border:1px solid var(--line); border-radius:16px; padding:12px 16px; box-shadow:0 2px 8px rgba(0,0,0,0.18); }
 .piazz-card-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.25rem; color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
 .piazz-card-right{ display:flex; flex-wrap:wrap; gap:14px; flex:1; }
@@ -1208,7 +1175,7 @@ html{ scrollbar-gutter:stable; }
    lunghi, il quinto e sesto arciere e la riga in piu' delle modalita' a tre
    frecce senza spostare niente. E' cio' che rende il contratto mantenibile.
    ═══════════════════════════════════════════════════════════════════════════ */
-/* ── "non scorre" era una speranza, adesso e' una struttura (16/08/2026) ──
+/* ── "non scorre" era una speranza, adesso e' una struttura (15/08/2026) ──
    min-height:100dvh vuol dire: se il contenuto cresce, io cresco. E c'era un
    caso che lo innescava SEMPRE: header.top ha margin-top:env(safe-area-inset-top),
    che in PWA su iPhone vale ~47px, mentre 100dvh la safe area la contiene gia'.
@@ -1234,7 +1201,7 @@ body.schermo-percorso header.top{ margin-top:0; }
 .pista-spazio{ flex:1 1 auto; min-height:var(--s-3); display:flex;
 flex-direction:column; justify-content:flex-end; overflow:hidden; }
 
-/* ── LA FILIGRANA NON C'E' PIU' (16/08/2026) ──
+/* ── LA FILIGRANA NON C'E' PIU' (15/08/2026) ──
    Due prove sul campo, due bocciature, e la seconda dopo una correzione fatta
    apposta. La prima volta il bersaglio finiva al centro geometrico dello
    schermo ed era l'elemento piu' grande della pagina. E' stato spostato
@@ -2363,13 +2330,7 @@ pg_section_participants: "{gara} \u2014 iscritti e squadre", pg_first_name_ph: "
 pg_search_account_hint: "Oppure cerca un account gi\u00e0 registrato (cos\u00ec l'iscritto risulta collegato, utile per le notifiche future)",
 pg_bulk_import_hint: "Oppure incolla un elenco: un blocco per squadra separato da riga vuota o intestazione \u201cSquadra N\u201d, un cognome (o \u201cCognome, Nome\u201d) per riga.",
 pg_import_teams_btn: "Importa squadre GI\u00c0 FORMATE (mantiene i tuoi gruppi)", pg_participants_count_label: "Iscritti:", pg_not_linked: "(non collegato)",
-pg_people_per_team: "Persone per squadra (max 6)",
-pg_tessera_ph: "N. tessera", pg_compagnia_ph: "Cod. compagnia",
-pg_import_capito: "Capito: {n} iscritti \u00b7 {d} con divisione \u00b7 {t} con tessera \u00b7 {c} con compagnia",
-pg_import_non_capito: "Righe non capite ({n}). Controllale e riscrivile:",
-pg_import_ordine: "L\u2019ordine delle colonne non conta: tessera, sigle e codice compagnia si riconoscono da soli. Separa con tabulazione, punto e virgola o virgola.", pg_compagnia_ignota: "codice compagnia sconosciuto",
-pg_div_classe_ph: "Classe\u2026", pg_div_cat_ph: "Categoria\u2026", pg_div_ospite: "Ospite \u00b7 fuori classifica",
-pg_div_hint: "La divisione la assegna chi organizza. Chi non ce l\u2019ha \u00e8 Ospite (OSP) e non entra in classifica.", pg_auto_teams_btn: "Crea squadre AUTOMATICHE (mischiate, non a blocchi A-Z)",
+pg_people_per_team: "Persone per squadra (max 6)", pg_auto_teams_btn: "Crea squadre AUTOMATICHE (mischiate, non a blocchi A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignora eventuali gruppi gi\u00e0 decisi: ricalcola le squadre da zero (mischiando i cognomi tra le squadre, ordine di tiro alfabetico solo dentro ciascuna).",
 pg_organizer_view_title: "Vista organizzatore \u2014 chi parte da dove", 
 pg_save_route_btn: "Salva percorso", pg_saving: "Salvataggio in corso\u2026", pg_save_error_online: "Errore nel salvataggio online ({err}). Salvato solo su questo dispositivo.",
@@ -2832,13 +2793,7 @@ pg_section_participants: "{gara} \u2014 participants and teams", pg_first_name_p
 pg_search_account_hint: "Or search for an already registered account (this links the participant, useful for future notifications)",
 pg_bulk_import_hint: "Or paste a list: one block per team separated by a blank line or a \u201cTeam N\u201d heading, one last name (or \u201cLast name, First name\u201d) per line.",
 pg_import_teams_btn: "Import ALREADY FORMED teams (keeps your groups)", pg_participants_count_label: "Participants:", pg_not_linked: "(not linked)",
-pg_people_per_team: "People per team (max 6)",
-pg_tessera_ph: "Membership no.", pg_compagnia_ph: "Club code",
-pg_import_capito: "Understood: {n} entrants \u00b7 {d} with division \u00b7 {t} with membership no. \u00b7 {c} with club",
-pg_import_non_capito: "Lines not understood ({n}). Check and rewrite them:",
-pg_import_ordine: "Column order doesn\u2019t matter: membership number, codes and club code are recognised on their own. Separate with tab, semicolon or comma.", pg_compagnia_ignota: "unknown club code",
-pg_div_classe_ph: "Class\u2026", pg_div_cat_ph: "Category\u2026", pg_div_ospite: "Guest \u00b7 not ranked",
-pg_div_hint: "The organiser assigns the division. Anyone without one is a Guest (OSP) and stays out of the ranking.", pg_auto_teams_btn: "Create AUTOMATIC teams (shuffled, not A-Z blocks)",
+pg_people_per_team: "People per team (max 6)", pg_auto_teams_btn: "Create AUTOMATIC teams (shuffled, not A-Z blocks)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignores any groups already decided: recalculates teams from scratch (mixing last names across teams, alphabetical shooting order only within each team).",
 pg_organizer_view_title: "Organizer view \u2014 who starts where", 
 pg_save_route_btn: "Save route", pg_saving: "Saving\u2026", pg_save_error_online: "Error saving online ({err}). Saved on this device only.",
@@ -3315,13 +3270,7 @@ pg_section_participants: "{gara} \u2014 inscrits et \u00e9quipes", pg_first_name
 pg_search_account_hint: "Ou recherchez un compte d\u00e9j\u00e0 inscrit (l’inscrit sera ainsi li\u00e9, utile pour les futures notifications)",
 pg_bulk_import_hint: "Ou collez une liste\u00a0: un bloc par \u00e9quipe s\u00e9par\u00e9 par une ligne vide ou un titre \u00ab\u00a0\u00c9quipe N\u00a0\u00bb, un nom (ou \u00ab\u00a0Nom, Pr\u00e9nom\u00a0\u00bb) par ligne.",
 pg_import_teams_btn: "Importer des \u00e9quipes D\u00c9J\u00c0 FORM\u00c9ES (conserve vos groupes)", pg_participants_count_label: "Inscrits\u00a0:", pg_not_linked: "(non li\u00e9)",
-pg_people_per_team: "Personnes par \u00e9quipe (max 6)",
-pg_tessera_ph: "N\u00b0 de licence", pg_compagnia_ph: "Code du club",
-pg_import_capito: "Compris : {n} inscrits \u00b7 {d} avec division \u00b7 {t} avec licence \u00b7 {c} avec club",
-pg_import_non_capito: "Lignes non comprises ({n}). V\u00e9rifiez-les et r\u00e9\u00e9crivez-les :",
-pg_import_ordine: "L\u2019ordre des colonnes n\u2019a pas d\u2019importance : licence, sigles et code du club sont reconnus seuls. S\u00e9parez par tabulation, point-virgule ou virgule.", pg_compagnia_ignota: "code de club inconnu",
-pg_div_classe_ph: "Classe\u2026", pg_div_cat_ph: "Cat\u00e9gorie\u2026", pg_div_ospite: "Invit\u00e9 \u00b7 hors classement",
-pg_div_hint: "La division est attribu\u00e9e par l\u2019organisateur. Sans division, l\u2019archer est Invit\u00e9 (OSP) et n\u2019entre pas au classement.", pg_auto_teams_btn: "Cr\u00e9er des \u00e9quipes AUTOMATIQUES (m\u00e9lang\u00e9es, pas par blocs A-Z)",
+pg_people_per_team: "Personnes par \u00e9quipe (max 6)", pg_auto_teams_btn: "Cr\u00e9er des \u00e9quipes AUTOMATIQUES (m\u00e9lang\u00e9es, pas par blocs A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignore les groupes d\u00e9j\u00e0 d\u00e9cid\u00e9s\u00a0: recalcule les \u00e9quipes \u00e0 z\u00e9ro (en m\u00e9langeant les noms entre les \u00e9quipes, ordre de tir alphab\u00e9tique seulement \u00e0 l’int\u00e9rieur de chacune).",
 pg_organizer_view_title: "Vue organisateur \u2014 qui part d’o\u00f9", 
 pg_save_route_btn: "Enregistrer le parcours", pg_saving: "Enregistrement en cours\u2026", pg_save_error_online: "Erreur lors de l’enregistrement en ligne ({err}). Enregistr\u00e9 uniquement sur cet appareil.",
@@ -3798,13 +3747,7 @@ pg_section_participants: "{gara} \u2014 Teilnehmer und Teams", pg_first_name_ph:
 pg_search_account_hint: "Oder ein bereits registriertes Konto suchen (so wird der Teilnehmer verkn\u00fcpft, n\u00fctzlich f\u00fcr k\u00fcnftige Benachrichtigungen)",
 pg_bulk_import_hint: "Oder eine Liste einf\u00fcgen: ein Block pro Team, getrennt durch eine Leerzeile oder eine \u201eTeam N\u201c-\u00dcberschrift, ein Nachname (oder \u201eNachname, Vorname\u201c) pro Zeile.",
 pg_import_teams_btn: "BEREITS GEBILDETE Teams importieren (beh\u00e4lt deine Gruppen)", pg_participants_count_label: "Teilnehmer:", pg_not_linked: "(nicht verkn\u00fcpft)",
-pg_people_per_team: "Personen pro Team (max. 6)",
-pg_tessera_ph: "Mitgliedsnummer", pg_compagnia_ph: "Vereinscode",
-pg_import_capito: "Verstanden: {n} Teilnehmende \u00b7 {d} mit Division \u00b7 {t} mit Mitgliedsnummer \u00b7 {c} mit Verein",
-pg_import_non_capito: "Nicht verstandene Zeilen ({n}). Bitte pr\u00fcfen und neu schreiben:",
-pg_import_ordine: "Die Spaltenreihenfolge spielt keine Rolle: Mitgliedsnummer, K\u00fcrzel und Vereinscode werden von selbst erkannt. Mit Tabulator, Semikolon oder Komma trennen.", pg_compagnia_ignota: "unbekannter Vereinscode",
-pg_div_classe_ph: "Klasse\u2026", pg_div_cat_ph: "Kategorie\u2026", pg_div_ospite: "Gast \u00b7 ohne Wertung",
-pg_div_hint: "Die Division vergibt die Organisation. Ohne Division gilt der Sch\u00fctze als Gast (OSP) und kommt nicht in die Wertung.", pg_auto_teams_btn: "AUTOMATISCHE Teams erstellen (gemischt, nicht in A-Z-Bl\u00f6cken)",
+pg_people_per_team: "Personen pro Team (max. 6)", pg_auto_teams_btn: "AUTOMATISCHE Teams erstellen (gemischt, nicht in A-Z-Bl\u00f6cken)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignoriert bereits festgelegte Gruppen: berechnet die Teams komplett neu (mischt Nachnamen zwischen den Teams, alphabetische Schie\u00dfreihenfolge nur innerhalb jedes Teams).",
 pg_organizer_view_title: "Organisator-Ansicht \u2014 wer startet wo", 
 pg_save_route_btn: "Strecke speichern", pg_saving: "Wird gespeichert\u2026", pg_save_error_online: "Fehler beim Online-Speichern ({err}). Nur auf diesem Ger\u00e4t gespeichert.",
@@ -4309,13 +4252,7 @@ pg_section_participants: "{gara} \u2014 kat\u0131l\u0131mc\u0131lar ve tak\u0131
 pg_search_account_hint: "Ya da kay\u0131tl\u0131 bir hesap ara (b\u00f6ylece kat\u0131l\u0131mc\u0131 hesab\u0131na ba\u011fl\u0131 olur, ileride bildirimler i\u00e7in yararl\u0131)",
 pg_bulk_import_hint: "Ya da bir liste yap\u0131\u015ft\u0131r: her tak\u0131m bo\u015f sat\u0131rla veya \u201cTak\u0131m N\u201d ba\u015fl\u0131\u011f\u0131yla ayr\u0131l\u0131r, sat\u0131r ba\u015f\u0131na bir soyad (veya \u201cSoyad, Ad\u201d).",
 pg_import_teams_btn: "ZATEN OLU\u015eTURULMU\u015e tak\u0131mlar\u0131 i\u00e7e aktar (gruplar\u0131n\u0131 korur)", pg_participants_count_label: "Kat\u0131l\u0131mc\u0131lar:", pg_not_linked: "(ba\u011fl\u0131 de\u011fil)",
-pg_people_per_team: "Tak\u0131m ba\u015f\u0131na ki\u015fi (en fazla 6)",
-pg_tessera_ph: "Lisans no.", pg_compagnia_ph: "Kul\u00fcp kodu",
-pg_import_capito: "Anla\u015f\u0131ld\u0131: {n} kat\u0131l\u0131mc\u0131 \u00b7 {d} divizyonlu \u00b7 {t} lisansl\u0131 \u00b7 {c} kul\u00fcpl\u00fc",
-pg_import_non_capito: "Anla\u015f\u0131lmayan sat\u0131rlar ({n}). Kontrol edip yeniden yaz\u0131n:",
-pg_import_ordine: "S\u00fctun s\u0131ras\u0131 \u00f6nemli de\u011fil: lisans, k\u0131saltmalar ve kul\u00fcp kodu kendili\u011finden tan\u0131n\u0131r. Sekme, noktal\u0131 virg\u00fcl veya virg\u00fclle ay\u0131r\u0131n.", pg_compagnia_ignota: "bilinmeyen kul\u00fcp kodu",
-pg_div_classe_ph: "S\u0131n\u0131f\u2026", pg_div_cat_ph: "Kategori\u2026", pg_div_ospite: "Konuk \u00b7 s\u0131ralama d\u0131\u015f\u0131",
-pg_div_hint: "Divizyonu organizat\u00f6r atar. Divizyonu olmayan Konuk (OSP) say\u0131l\u0131r ve s\u0131ralamaya girmez.", pg_auto_teams_btn: "OTOMATIK tak\u0131mlar olu\u015ftur (kar\u0131\u015f\u0131k, A-Z blok de\u011fil)",
+pg_people_per_team: "Tak\u0131m ba\u015f\u0131na ki\u015fi (en fazla 6)", pg_auto_teams_btn: "OTOMATIK tak\u0131mlar olu\u015ftur (kar\u0131\u015f\u0131k, A-Z blok de\u011fil)",
 pg_auto_teams_warning: "\u26a0\ufe0f Zaten karar verilmi\u015f gruplar\u0131 yok sayar: tak\u0131mlar\u0131 s\u0131f\u0131rdan yeniden hesaplar (soyadlar\u0131 tak\u0131mlar aras\u0131nda kar\u0131\u015ft\u0131r\u0131r, at\u0131\u015f s\u0131ras\u0131 sadece her tak\u0131m i\u00e7inde alfabetik).",
 pg_organizer_view_title: "Organizat\u00f6r g\u00f6r\u00fcn\u00fcm\u00fc \u2014 kim nereden ba\u015fl\u0131yor", 
 pg_save_route_btn: "Parkuru kaydet", pg_saving: "Kaydediliyor\u2026", pg_save_error_online: "\u00c7evrimi\u00e7i kaydetme hatas\u0131 ({err}). Sadece bu cihazda kaydedildi.",
@@ -4806,13 +4743,7 @@ pg_section_participants: "{gara} — участники и команды", pg_f
 pg_search_account_hint: "Или найдите уже зарегистрированный аккаунт (так участник будет привязан к аккаунту, что полезно для будущих уведомлений)",
 pg_bulk_import_hint: "Или вставьте список: один блок на команду, разделённый пустой строкой или заголовком «Команда N», по одной фамилии (или «Фамилия, Имя») на строку.",
 pg_import_teams_btn: "Импортировать УЖЕ СФОРМИРОВАННЫЕ команды (сохраняет ваши группы)", pg_participants_count_label: "Участников:", pg_not_linked: "(не привязан)",
-pg_people_per_team: "Человек на команду (макс. 6)",
-pg_tessera_ph: "Номер билета", pg_compagnia_ph: "Код клуба",
-pg_import_capito: "Распознано: {n} участников \u00b7 {d} с дивизионом \u00b7 {t} с номером \u00b7 {c} с клубом",
-pg_import_non_capito: "Нераспознанные строки ({n}). Проверьте и перепишите:",
-pg_import_ordine: "Порядок столбцов не важен: номер билета, сокращения и код клуба распознаются сами. Разделяйте табуляцией, точкой с запятой или запятой.", pg_compagnia_ignota: "неизвестный код клуба",
-pg_div_classe_ph: "Класс\u2026", pg_div_cat_ph: "Категория\u2026", pg_div_ospite: "Гость \u00b7 вне зачёта",
-pg_div_hint: "Дивизион назначает организатор. Без дивизиона стрелок считается Гостем (OSP) и не входит в зачёт.", pg_auto_teams_btn: "Создать АВТОМАТИЧЕСКИЕ команды (перемешанные, не блоками А-Я)",
+pg_people_per_team: "Человек на команду (макс. 6)", pg_auto_teams_btn: "Создать АВТОМАТИЧЕСКИЕ команды (перемешанные, не блоками А-Я)",
 pg_auto_teams_warning: "⚠️ Игнорирует уже решённые группы: пересчитывает команды с нуля (перемешивая фамилии между командами, порядок стрельбы по алфавиту только внутри каждой команды).",
 pg_organizer_view_title: "Вид организатора — кто откуда начинает", 
 pg_save_route_btn: "Сохранить маршрут", pg_saving: "Идёт сохранение…", pg_save_error_online: "Ошибка онлайн-сохранения ({err}). Сохранено только на этом устройстве.",
@@ -5303,13 +5234,7 @@ pg_section_participants: "{gara} \u2014 inscritos y equipos", pg_first_name_ph: 
 pg_search_account_hint: "O busca una cuenta ya registrada (as\u00ed el inscrito queda vinculado, \u00fatil para futuras notificaciones)",
 pg_bulk_import_hint: "O pega una lista: un bloque por equipo separado por l\u00ednea en blanco o encabezado \u201cEquipo N\u201d, un apellido (o \u201cApellido, Nombre\u201d) por l\u00ednea.",
 pg_import_teams_btn: "Importar equipos YA FORMADOS (mantiene tus grupos)", pg_participants_count_label: "Inscritos:", pg_not_linked: "(no vinculado)",
-pg_people_per_team: "Personas por equipo (m\u00e1x. 6)",
-pg_tessera_ph: "N.\u00ba de licencia", pg_compagnia_ph: "C\u00f3digo de club",
-pg_import_capito: "Entendido: {n} inscritos \u00b7 {d} con divisi\u00f3n \u00b7 {t} con licencia \u00b7 {c} con club",
-pg_import_non_capito: "L\u00edneas no entendidas ({n}). Rev\u00edsalas y reescr\u00edbelas:",
-pg_import_ordine: "El orden de las columnas no importa: licencia, siglas y c\u00f3digo de club se reconocen solos. Separa con tabulaci\u00f3n, punto y coma o coma.", pg_compagnia_ignota: "c\u00f3digo de club desconocido",
-pg_div_classe_ph: "Clase\u2026", pg_div_cat_ph: "Categor\u00eda\u2026", pg_div_ospite: "Invitado \u00b7 fuera de clasificaci\u00f3n",
-pg_div_hint: "La divisi\u00f3n la asigna quien organiza. Quien no la tiene es Invitado (OSP) y no entra en la clasificaci\u00f3n.", pg_auto_teams_btn: "Crear equipos AUTOM\u00c1TICOS (mezclados, no en bloques A-Z)",
+pg_people_per_team: "Personas por equipo (m\u00e1x. 6)", pg_auto_teams_btn: "Crear equipos AUTOM\u00c1TICOS (mezclados, no en bloques A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignora los grupos ya decididos: recalcula los equipos desde cero (mezclando los apellidos entre equipos, orden de tiro alfab\u00e9tico solo dentro de cada equipo).",
 pg_organizer_view_title: "Vista del organizador \u2014 qui\u00e9n empieza d\u00f3nde", 
 pg_save_route_btn: "Guardar recorrido", pg_saving: "Guardando\u2026", pg_save_error_online: "Error al guardar online ({err}). Guardado solo en este dispositivo.",
@@ -5800,13 +5725,7 @@ pg_section_participants: "{gara} \u2014 deltagare och lag", pg_first_name_ph: "F
 pg_search_account_hint: "Eller s\u00f6k ett redan registrerat konto (d\u00e5 blir deltagaren kopplad, anv\u00e4ndbart f\u00f6r framtida notiser)",
 pg_bulk_import_hint: "Eller klistra in en lista: ett block per lag \u00e5tskilt av en tom rad eller rubriken \u201dLag N\u201d, ett efternamn (eller \u201dEfternamn, F\u00f6rnamn\u201d) per rad.",
 pg_import_teams_btn: "Importera REDAN BILDADE lag (beh\u00e5ller dina grupper)", pg_participants_count_label: "Deltagare:", pg_not_linked: "(ej kopplad)",
-pg_people_per_team: "Personer per lag (max 6)",
-pg_tessera_ph: "Licensnummer", pg_compagnia_ph: "Klubbkod",
-pg_import_capito: "F\u00f6rstod: {n} deltagare \u00b7 {d} med division \u00b7 {t} med licens \u00b7 {c} med klubb",
-pg_import_non_capito: "Rader som inte f\u00f6rstods ({n}). Kontrollera och skriv om dem:",
-pg_import_ordine: "Kolumnordningen spelar ingen roll: licens, f\u00f6rkortningar och klubbkod k\u00e4nns igen av sig sj\u00e4lva. Separera med tabb, semikolon eller komma.", pg_compagnia_ignota: "ok\u00e4nd klubbkod",
-pg_div_classe_ph: "Klass\u2026", pg_div_cat_ph: "Kategori\u2026", pg_div_ospite: "G\u00e4st \u00b7 utanf\u00f6r resultatlistan",
-pg_div_hint: "Divisionen tilldelas av arrang\u00f6ren. Utan division r\u00e4knas skytten som G\u00e4st (OSP) och hamnar utanf\u00f6r resultatlistan.", pg_auto_teams_btn: "Skapa AUTOMATISKA lag (blandade, inte i block A-\u00d6)",
+pg_people_per_team: "Personer per lag (max 6)", pg_auto_teams_btn: "Skapa AUTOMATISKA lag (blandade, inte i block A-\u00d6)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignorerar redan best\u00e4mda grupper: ber\u00e4knar om lagen fr\u00e5n b\u00f6rjan (blandar efternamn mellan lagen, alfabetisk skjutordning endast inom varje lag).",
 pg_organizer_view_title: "Arrang\u00f6rsvy \u2014 vem b\u00f6rjar var", 
 pg_save_route_btn: "Spara runda", pg_saving: "Sparar\u2026", pg_save_error_online: "Fel vid onlinesparande ({err}). Sparad endast p\u00e5 denna enhet.",
@@ -6297,13 +6216,7 @@ pg_section_participants: "{gara} \u2014 deelnemers en teams", pg_first_name_ph: 
 pg_search_account_hint: "Of zoek een reeds geregistreerd account (zo wordt de deelnemer gekoppeld, handig voor toekomstige meldingen)",
 pg_bulk_import_hint: "Of plak een lijst: een blok per team gescheiden door een lege regel of de titel \u201cTeam N\u201d, \u00e9\u00e9n achternaam (of \u201cAchternaam, Voornaam\u201d) per regel.",
 pg_import_teams_btn: "AL GEVORMDE teams importeren (behoudt je groepen)", pg_participants_count_label: "Deelnemers:", pg_not_linked: "(niet gekoppeld)",
-pg_people_per_team: "Personen per team (max. 6)",
-pg_tessera_ph: "Lidnummer", pg_compagnia_ph: "Clubcode",
-pg_import_capito: "Begrepen: {n} deelnemers \u00b7 {d} met divisie \u00b7 {t} met lidnummer \u00b7 {c} met club",
-pg_import_non_capito: "Niet-begrepen regels ({n}). Controleer en herschrijf ze:",
-pg_import_ordine: "De volgorde van de kolommen maakt niet uit: lidnummer, afkortingen en clubcode worden vanzelf herkend. Scheid met tab, puntkomma of komma.", pg_compagnia_ignota: "onbekende clubcode",
-pg_div_classe_ph: "Klasse\u2026", pg_div_cat_ph: "Categorie\u2026", pg_div_ospite: "Gast \u00b7 buiten klassement",
-pg_div_hint: "De divisie wordt toegekend door de organisatie. Zonder divisie is de schutter Gast (OSP) en valt buiten het klassement.", pg_auto_teams_btn: "AUTOMATISCHE teams aanmaken (gemengd, niet in blokken A-Z)",
+pg_people_per_team: "Personen per team (max. 6)", pg_auto_teams_btn: "AUTOMATISCHE teams aanmaken (gemengd, niet in blokken A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Negeert reeds beslist groepen: berekent de teams opnieuw vanaf nul (mengt de achternamen tussen de teams, alfabetische schietvolgorde alleen binnen elk team).",
 pg_organizer_view_title: "Organisatorweergave \u2014 wie begint waar", 
 pg_save_route_btn: "Ronde opslaan", pg_saving: "Opslaan\u2026", pg_save_error_online: "Fout bij online opslaan ({err}). Alleen op dit apparaat opgeslagen.",
@@ -7296,7 +7209,7 @@ app.classList.toggle("narrow", !state.lang || authState !== "ready" || !!NARROW_
 // Con homeOverride lo stato resta "round" ma a schermo c'e' il menu: la
 // condizione guardava solo state.screen, quindi il menu ereditava
 // height:100dvh + overflow:hidden e RESTAVA BLOCCATO. Si usciva dal giro e la
-// pagina non si scorreva piu'. Il bug era li' dal 16/08, prima di tutto il
+// pagina non si scorreva piu'. Il bug era li' dal 15/08, prima di tutto il
 // resto: nessuno era mai uscito dal giro per guardare il menu.
 document.body.classList.toggle("schermo-percorso",
 state.screen === "round" && authState === "ready" && !homeOverride);
@@ -8537,104 +8450,6 @@ return [
 { key:"tempo", label:t("gl_tempo"), frecce:3 }
 ];
 }
-// LE DIVISIONI. Regolamento Tecnico FIARC, Art. 3 (delibera 033/2023/D del
-// 02/12/2023): le sigle qui sotto sono la codifica che la federazione usa gia'
-// "al fine di unificare la codifica informatica per la compilazione delle
-// classifiche". Si salvano quelle e non un nostro codice: la classifica che si
-// consegna esce gia' nella lingua di chi la riceve.
-//
-// NON E' UNA TERNA, E' UNA COPPIA. Il sesso e' dentro la Classe (CUF/CUM...),
-// non e' un asse a se': la prova e' DA, Diversamente Abili, che il sesso non
-// ce l'ha. Un modello con tre assi indipendenti non saprebbe scriverla.
-//
-// OSP e' insieme classe e categoria, e non entra in classifica: il "fuori
-// classifica" non l'abbiamo inventato noi, sta nel regolamento.
-// Aggiungere una federazione qui e' aggiungere una voce, non toccare codice.
-var DIVISIONI = {
-fiarc: {
-classi: [["CUF","Cuccioli Femminile"],["CUM","Cuccioli Maschile"],
-["SCF","Scout Femminile"],["SCM","Scout Maschile"],
-["CAF","Cacciatori Femminile"],["CAM","Cacciatori Maschile"],
-["SEF","Seniores Femminile"],["SEM","Seniores Maschile"],
-["DA","Diversamente Abili"]],
-categorie: [["AS","Arco Storico"],["LB","Longbow"],["RI","Arco Ricurvo"],
-["AN","Arco Nudo"],["CO","Arco Compound"],["SL","Stile Libero"],
-["SI","Stile Libero Illimitato"],["FS","Freestyle"]]
-}
-};
-function divisioniPer(fed){ return DIVISIONI[fed || "fiarc"] || null; }
-// Un iscritto senza coppia completa e' Ospite: non e' un errore da correggere,
-// e' una condizione prevista. Chi consegna deve saperlo prima della premiazione,
-// non scoprirlo dopo.
-function divisioneSigla(p){
-if(!p || !p.classe || !p.categoria) return "OSP";
-return p.classe + " " + p.categoria;
-}
-// COME SI LEGGE UNA RIGA INCOLLATA.
-// Chi organizza incolla da un foglio di calcolo, e le colonne non sono mai
-// nello stesso ordine due volte. Un formato che decidiamo noi ("cognome,
-// nome, tessera, classe...") costringe l'organizzatore a riordinare cento
-// righe a mano: e' lavoro nostro scaricato su di lui.
-// Quindi ogni pezzo si riconosce da COM'E' FATTO, non da dove sta:
-//   - solo cifre, almeno quattro    -> numero di tessera
-//   - due cifre + quattro lettere   -> codice di Compagnia (01VERB), e lo si
-//                                      confronta con l'elenco vero
-//   - sigla nota, tutta maiuscola   -> Classe o Categoria
-//   - il resto, in ordine           -> cognome, poi nome
-// UNA TRAPPOLA, E LA SUA GUARDIA: "DA" e' la sigla di Diversamente Abili ed e'
-// anche l'inizio di "DA SILVA". Una sigla non viene mai riconosciuta nel primo
-// pezzo della riga, che e' sempre il cognome.
-function pgLeggiRiga(linea, div){
-var pezzi = linea.split(/[\t;|]/);
-if(pezzi.length === 1) pezzi = linea.split(",");
-pezzi = pezzi.map(function(x){ return x.trim(); }).filter(function(x){ return x; });
-if(!pezzi.length) return null;
-
-var classi = {}, categorie = {};
-if(div){
-div.classi.forEach(function(c){ classi[c[0]] = 1; });
-div.categorie.forEach(function(c){ categorie[c[0]] = 1; });
-}
-var out = { nome:"", cognome:"", tessera:"", compagnia:"", classe:null, categoria:null };
-var testo = [];
-pezzi.forEach(function(pz, i){
-var su = pz.toUpperCase();
-if(/^\d{4,}$/.test(pz) && !out.tessera){ out.tessera = pz; return; }
-if(/^\d{2}[A-Z]{4}$/.test(su) && !out.compagnia){ out.compagnia = su; return; }
-if(i > 0 && pz === su){
-if(classi[su] && !out.classe){ out.classe = su; return; }
-if(categorie[su] && !out.categoria){ out.categoria = su; return; }
-}
-testo.push(pz);
-});
-if(!testo.length) return null;
-// Riga incollata SENZA separatori (capita dai PDF): "Zanetta Giulia 45678 SEF
-// AN 01BICO" e' un pezzo solo. Lo spazio non si puo' usare come separatore —
-// dentro i cognomi ce n'e' — ma se in quell'unico pezzo compaiono una tessera
-// o una sigla, allora non e' un cognome: e' una riga da mostrare, non da
-// trasformare in un nome assurdo che nessuno rilegge.
-if(pezzi.length === 1 && /(\s\d{4,}(\s|$))|(\s[A-Z]{2,3}(\s|$))/.test(" " + testo[0])) return null;
-out.cognome = testo[0];
-out.nome = testo.slice(1).join(" ");
-return out;
-}
-
-// Il codice di Compagnia non e' testo libero: l'elenco vero e' gia' nel file
-// (compagnie-data.js). Un codice sbagliato in una classifica spedita alla
-// Segreteria e' un errore che scopre qualcun altro, giorni dopo.
-function compagniaNome(codice){
-if(!codice) return null;
-var tab = (typeof COMPAGNIE !== "undefined") ? COMPAGNIE : null;
-if(!tab) return null;
-var c = tab[String(codice).toUpperCase()];
-return c ? c.nome : null;
-}
-
-function divisioneChiave(p){
-if(!p || !p.classe || !p.categoria) return "OSP";
-return p.classe + "|" + p.categoria;
-}
-
 var PG_MODES = {
 round3d: { label:"Round 3D", piazzoleDefault:24, gruppi:[["g1","max 35 m"],["g2","max 35 m"],["g3","max 35 m"],["g4","max 35 m"]], hasTipo:false, hasTempo:true, hasMobileToggle:true, ginocchioAllowed:false, frecceFixed:2 },
 percorso: { label:"Percorso", piazzoleDefault:24, gruppi:[["g1","max 40 m"],["g2","max 40 m"],["g3","max 30 m"],["g4","max 20 m"]], hasTipo:false, hasTempo:true, hasMobileToggle:false, ginocchioAllowed:true, frecceFixed:3 },
@@ -8893,9 +8708,6 @@ box.appendChild(actions);
 return box;
 }
 
-// L'esito dell'ultima importazione. Vive quanto la schermata: e' un resoconto
-// da leggere adesso, non uno stato da salvare.
-var pgEsitoImport = null;
 function pgIscrittiScreen(){
 var pcfg = PG_MODES[state.pgDraft.gara];
 var d = el('<div class="card"></div>');
@@ -8960,8 +8772,7 @@ var bulkArea = el('<textarea placeholder="Squadra 1\nVallo\nZanetta\nBonetti\nAr
 var bulkBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:8px;margin-bottom:16px;">'+t("pg_import_teams_btn")+'</button>');
 bulkBtn.addEventListener("click", function(){
 var blocks = bulkArea.value.split(/\n\s*\n/);
-var squadre = [], tutti = [], scartate = [];
-var divTab = divisioniPer(state.federation);
+var squadre = [], tutti = [];
 blocks.forEach(function(block){
 var lines = block.split("\n");
 var membri = [];
@@ -8971,108 +8782,32 @@ if(!line) return;
 if (/^squadra\b/i.test(line)) return; // intestazione, ignorata
 var pMatch = line.match(/^piazzola\s*[:\-]?\s*(\d+)/i);
 if (pMatch) return;
-var pers = pgLeggiRiga(line, divTab);
-// Una riga che non si capisce NON si butta: si mostra. Un'importazione che
-// perde tre nomi su cento in silenzio e' peggio di una che non parte.
-if(!pers || !pers.cognome){ scartate.push(line); return; }
-membri.push(pers); tutti.push(pers);
+var c, n;
+if (line.indexOf(",") !== -1){ var parts=line.split(","); c=parts[0].trim(); n=parts.slice(1).join(",").trim(); }
+else { c = line; n = ""; }
+if (c){ var pers = {nome:n, cognome:c}; membri.push(pers); tutti.push(pers); }
 });
 membri.sort(function(a,b){ return a.cognome.localeCompare(b.cognome) || a.nome.localeCompare(b.nome); });
 if(membri.length) squadre.push({ membri:membri });
 });
-pgEsitoImport = {
-letti: tutti.length,
-conDiv: tutti.filter(function(x){ return x.classe && x.categoria; }).length,
-conTess: tutti.filter(function(x){ return x.tessera; }).length,
-conComp: tutti.filter(function(x){ return x.compagnia; }).length,
-scartate: scartate
-};
-if(!squadre.length){ render(); return; }
+if(!squadre.length) return;
 var numPiazzole = state.pgDraft.piazzole.length || state.pgDraft.numPiazzole || 1;
 squadre.forEach(function(s, idx){ s.piazzolaPartenza = (idx % numPiazzole) + 1; });
 state.pgDraft.iscritti = state.pgDraft.iscritti.concat(tutti);
 state.pgDraft.squadre = squadre;
 bulkArea.value = ""; render();
 });
-d.appendChild(el('<p class="pg-div-hint">'+t("pg_import_ordine")+'</p>'));
 d.appendChild(bulkArea); d.appendChild(bulkBtn);
 
-// L'IMPORTAZIONE DICHIARA COSA HA CAPITO, prima che qualcuno se ne accorga in
-// gara. Non e' una conferma da premere: e' un resoconto che resta li'.
-if(pgEsitoImport){
-var esito = el('<div class="import-esito"></div>');
-esito.appendChild(el('<p class="import-capito">'+t("pg_import_capito",{
-n: pgEsitoImport.letti, d: pgEsitoImport.conDiv,
-t: pgEsitoImport.conTess, c: pgEsitoImport.conComp
-})+'</p>'));
-if(pgEsitoImport.scartate.length){
-esito.appendChild(el('<p class="import-perse">'+t("pg_import_non_capito",{n:pgEsitoImport.scartate.length})+'</p>'));
-var ul = el('<ul class="import-elenco"></ul>');
-pgEsitoImport.scartate.slice(0,12).forEach(function(r){ ul.appendChild(el('<li>'+escapeHtml(r)+'</li>')); });
-esito.appendChild(ul);
-}
-d.appendChild(esito);
-}
-
 d.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px;">'+t("pg_participants_count_label")+' <b style="color:var(--gold);">'+state.pgDraft.iscritti.length+'</b></div>'));
-d.appendChild(el('<p class="pg-div-hint">'+t("pg_div_hint")+'</p>'));
 if(state.pgDraft.iscritti.length){
 var iscrittiList = el('<div style="margin-bottom:10px;"></div>');
 state.pgDraft.iscritti.forEach(function(p, idx){
-var row = el('<div class="iscritto-row"></div>');
-row.appendChild(el('<span class="iscritto-nome">'+escapeHtml(p.cognome)+(p.nome?' '+escapeHtml(p.nome):'')+(p.username?' <span class="iscritto-tag">@'+escapeHtml(p.username)+'</span>':' <span class="iscritto-tag muted-tag">'+t("pg_not_linked")+'</span>')+'</span>'));
-
-// La sigla sta accanto al nome perche' e' quella che finisce in classifica:
-// se e' sbagliata, e' sbagliato il vincitore. Un iscritto senza coppia
-// completa dice "Ospite" a chiare lettere invece di stare zitto.
-var completa = !!(p.classe && p.categoria);
-row.appendChild(el('<span class="divisione-sigla'+(completa?'':' divisione-ospite')+'">'+(completa?escapeHtml(divisioneSigla(p)):escapeHtml(t("pg_div_ospite")))+'</span>'));
-
-var rm = el('<button class="iscritto-rm">\u2715</button>');
+var row = el('<div class="iscritto-row" style="display:flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin-bottom:5px;"></div>');
+row.appendChild(el('<span style="flex:1;font-size:0.82rem;">'+escapeHtml(p.cognome)+(p.nome?' '+escapeHtml(p.nome):'')+(p.username?' <span style="color:var(--accent-soft);">@'+escapeHtml(p.username)+'</span>':' <span style="color:var(--muted);font-size:0.7rem;">'+t("pg_not_linked")+'</span>')+'</span>'));
+var rm = el('<button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;">\u2715</button>');
 rm.addEventListener("click", function(){ state.pgDraft.iscritti.splice(idx,1); state.pgDraft.squadre=[]; render(); });
 row.appendChild(rm);
-
-// I due menu della divisione. I nomi di Classe e Categoria restano in italiano
-// in tutte le lingue: sono nomi propri del regolamento, come Percorso,
-// Tracciato e Battuta. Si traduce l'etichetta, non il nome.
-var div = divisioniPer(state.federation);
-if(div){
-var selWrap = el('<div class="divisione-sel"></div>');
-function menu(voci, scelta, segnaposto, salva){
-var sel = el('<select></select>');
-sel.appendChild(el('<option value="">'+escapeHtml(segnaposto)+'</option>'));
-voci.forEach(function(v){
-var o = el('<option value="'+v[0]+'">'+escapeHtml(v[1])+' \u00b7 '+v[0]+'</option>');
-if(scelta === v[0]) o.selected = true;
-sel.appendChild(o);
-});
-sel.addEventListener("change", function(){ salva(sel.value || null); save(); render(); });
-return sel;
-}
-selWrap.appendChild(menu(div.classi, p.classe, t("pg_div_classe_ph"), function(v){ p.classe = v; }));
-selWrap.appendChild(menu(div.categorie, p.categoria, t("pg_div_cat_ph"), function(v){ p.categoria = v; }));
-row.appendChild(selWrap);
-}
-
-// Tessera e codice di Compagnia: non sono un di piu', sono meta' di quello
-// che la classifica deve riportare (Art. 18.j). Se mancano qui, mancano nel
-// documento che si consegna, e li' non si possono piu' recuperare.
-var datiWrap = el('<div class="divisione-sel"></div>');
-var tessInp = el('<input type="text" inputmode="numeric" placeholder="'+escapeHtml(t("pg_tessera_ph"))+'">');
-tessInp.value = p.tessera || "";
-tessInp.addEventListener("change", function(){ p.tessera = tessInp.value.trim(); save(); });
-var compInp = el('<input type="text" placeholder="'+escapeHtml(t("pg_compagnia_ph"))+'">');
-compInp.value = p.compagnia || "";
-compInp.addEventListener("change", function(){ p.compagnia = compInp.value.trim().toUpperCase(); save(); render(); });
-datiWrap.appendChild(tessInp); datiWrap.appendChild(compInp);
-row.appendChild(datiWrap);
-
-// Il codice si conferma da solo mostrando il nome. Un codice che non esiste lo
-// dice subito, non alla premiazione.
-if(p.compagnia){
-var nomeComp = compagniaNome(p.compagnia);
-row.appendChild(el('<span class="compagnia-eco'+(nomeComp?'':' compagnia-ignota')+'">'+escapeHtml(nomeComp || t("pg_compagnia_ignota"))+'</span>'));
-}
 iscrittiList.appendChild(row);
 });
 d.appendChild(iscrittiList);
@@ -10924,7 +10659,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-divisioni-b";
+var BUILD_STAMP = "2026-08-16-date-a";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13663,7 +13398,7 @@ return scena;
 }
 
 // ---------- REGIONE: lo spazio che avanza, e cosa ci sta dentro ----------
-// PRIMO TENTATIVO SBAGLIATO, 16/08/2026: l'andamento era stato messo dentro
+// PRIMO TENTATIVO SBAGLIATO, 15/08/2026: l'andamento era stato messo dentro
 // .pista-scena. Ma la scena e' l'unica regione che CEDE (flex:0 1 auto,
 // overflow-y:auto): con tre arcieri la scheda diventava piu' alta dello spazio
 // disponibile, cominciava a scorrere, e scorrendo nascondeva il nome di chi
@@ -13928,7 +13663,7 @@ p.appendChild(sotto);
 return p;
 }
 
-// La transizione "prossimo arciere" non esiste piu' (16/08/2026).
+// La transizione "prossimo arciere" non esiste piu' (15/08/2026).
 // Erano 96 soste per giro che cambiavano stato senza cambiare forma: bisognava
 // LEGGERE per sapere dove si era. Adesso lo dice la fila dei cerchi dentro la
 // scena, mentre segni il precedente. La funzione era rimasta come rete di
