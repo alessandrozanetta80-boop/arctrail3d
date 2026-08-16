@@ -62,7 +62,7 @@ self.addEventListener("notificationclick", function(event){
 });
 
 // ─────────────────────────── CACHE ───────────────────────────
-var CACHE_NAME = "arctrail3d-v3";
+var CACHE_NAME = "arctrail3d-v4";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
@@ -73,7 +73,8 @@ var APP_SHELL = [
   "logo.webp",
   "logo.jpg",
   "icon-192.png",
-  "icon-512.png"
+  "icon-512.png",
+  "icon-512-maskable.png"
 ];
 
 // Domini esterni di cui teniamo copia: caratteri e librerie. NON i dati.
