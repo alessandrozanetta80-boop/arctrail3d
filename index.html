@@ -51,7 +51,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
@@ -96,6 +96,13 @@
 --gold-400:#CBA35C; --gold-200:#F6E8C6; --gold-100:#FDF2D9;
 --red-700:#8E0F14; --red-600:#A81319; --red-400:#E23D2E; --red-100:#F9DCDC;
 --blue-600:#2E5FA8; --blue-400:#5B8FD6;
+/* La zona sagoma era un blu cobalto: l'unico colore dell'app senza parenti da
+   nessun'altra parte, e stava sul controllo piu' importante. Arancione, verde,
+   cobalto e grigio insieme si leggono come un'app di quiz, non come uno
+   strumento. L'ardesia e' lo stesso ruolo — quarta tinta, distinguibile a
+   colpo d'occhio — ma appartiene al paesaggio: e' il colore delle montagne
+   lontane. Bianco sopra: 6,6 e 5,4. */
+--slate-700:#334657; --slate-600:#41566B; --slate-400:#5C7794;
 --lime-500:#6FBF3F;
 --violet-500:#6A5A8C; --tan-500:#8A7A5C;
 /* Le due tinte della paglia del bersaglio da anelli. Sono un materiale,
@@ -133,13 +140,18 @@
 --dur-1:120ms; --dur-2:180ms; --dur-3:260ms;
 
 /* ───── CARATTERI · due famiglie, tre mestieri ─────
-   Fraunces = marchio e titoli. Outfit = tutto il resto.
-   Outfit tabular = OGNI cifra. Prima i punteggi erano in Playfair Display,
+   Fraunces = marchio e titoli. Inter = tutto il resto e OGNI cifra.
+   Outfit era un geometrico: 0, 6, 8 e 9 sono quasi lo stesso cerchio, e questa
+   e' un'app che scrive numeri per due ore al sole. Era lo stesso errore di
+   Playfair — un carattere scelto per come sta fermo, non per come si legge di
+   sfuggita — commesso con un altro meccanismo. Inter e' disegnato per gli
+   schermi: aperture larghe, occhio grande, cifre tabulari vere e zero
+   barrato. Prima i punteggi erano in Playfair Display,
    un Didone ad aste sottilissime: al riverbero le aste spariscono e un 8
    diventa un 3. Un punteggio non e' decorazione, e' il dato. */
---font-ui:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+--font-ui:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 --font-display:"Fraunces",Georgia,serif;
---font-num:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+--font-num:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 
 /* ───── TIPOGRAFIA · scala fluida ─────
    clamp() al posto delle media query: la misura cresce con lo schermo senza
@@ -206,8 +218,8 @@ color-scheme:light;
    vicino. Contrasto del bianco su ciascun fondo: 4,9 / 5,2 / 5,9 / 7,2 / 5,6.
    Le variabili delle zone del bersaglio non ci sono piu': disegnavano la
    sagoma, e la sagoma non si disegna piu'. Resta --qsag, che serve altrove. */
---score-ss:var(--clay-700); --score-spot:#2E7D32; --score-sag:var(--blue-600);
---score-perfect:var(--red-600); --score-zero:var(--sand-500); --score-ink:#FFFFFF;
+--score-ss:var(--clay-700); --score-spot:var(--green-success); --score-sag:var(--slate-600);
+--score-perfect:var(--red-600); --score-zero:var(--sand-500); --score-ink:var(--sand-50);
 
 /* il timer. Da fermo ha un colore suo — ambra — che non e' nessuno dei tre
    codici dell'app, cosi' al sole non lo si confonde con "gara" o "prepara". */
@@ -225,7 +237,7 @@ color-scheme:light;
 --navbar-hover:rgba(18,22,15,0.05);
 
 /* zone del bersaglio: restano quelle che sono, e' anatomia, non stile */
---qsag:var(--blue-600);
+--qsag:var(--slate-600);
 --checkbox-border:rgba(18,22,15,0.45);
 
 /* ───── ALIAS · i vecchi nomi, rimappati ───── */
@@ -274,8 +286,8 @@ color-scheme:dark;
 --tone-prep-fg:var(--gold-400);   --tone-prep-solid:var(--gold-500);
 --tone-border:55%;
 
---score-ss:var(--clay-500); --score-spot:var(--green-500); --score-sag:#31558F;
---score-perfect:var(--red-600); --score-zero:#4A4F47; --score-ink:#FFFFFF;
+--score-ss:var(--clay-500); --score-spot:var(--green-500); --score-sag:var(--slate-700);
+--score-perfect:var(--red-600); --score-zero:var(--sand-700); --score-ink:var(--sand-50);
 
 --timer-idle-bg:linear-gradient(135deg,var(--moss-700),var(--moss-800));
 --timer-idle-bd:var(--border-strong); --timer-idle-fg:var(--text-1);
@@ -292,7 +304,7 @@ color-scheme:dark;
 --navbar-green:var(--green-400);
 --navbar-hover:rgba(255,255,255,0.06);
 
---qsag:var(--blue-400);
+--qsag:var(--slate-400);
 --checkbox-border:rgba(237,230,214,0.4);
 
 --bg:var(--surface); --bg-panel:var(--surface-1); --bg-panel-2:var(--surface-2);
@@ -320,7 +332,11 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .display{ font-family:var(--font-display); font-weight:700; letter-spacing:0.03em; text-wrap:balance; }
 /* Ogni cifra dell'app passa di qui: larghezza fissa, cosi' un punteggio che
    cambia non fa ballare la riga, e aste piene che il sole non mangia. */
-.num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1; }
+/* tabulari perche' le colonne di punteggi non devono ballare; zero barrato
+   perche' e' l'unica cifra che si confonde con una lettera, e "0" su un tasto
+   accanto a "O" di SPOT al sole non deve essere una domanda. */
+.num, [class*="-num"]{ font-family:var(--font-num);
+font-variant-numeric:tabular-nums slashed-zero; }
 /* Un solo anello di fuoco, per tutto. Prima era su quattro classi scelte a
    mano e tutto il resto non ne aveva. */
 :where(button,a,input,select,textarea,[tabindex]):focus-visible{
@@ -377,10 +393,18 @@ header.top .home-btn{ position:relative; gap:8px; }
    tasto e' scritta come "body.theme-light header.top .home-btn", che pesa
    piu' di "header.top .home-btn.pericolo": senza nominare anche i temi, la
    variante di pericolo perdeva e il tasto tornava grigio come gli altri. */
+/* IL ROSSO E' UNA NOTIZIA, NON UN'ETICHETTA. Il triangolo della segnalazione
+   stava in rosso pieno in testata per tutto il giro, a riposo: rosso vuol dire
+   "adesso c'e' un problema", e li' non c'era niente. Un colore che grida
+   sempre non sa piu' gridare. A riposo e' neutro come gli altri; diventa rosso
+   quando viene toccato — cioe' quando un problema c'e' davvero. */
 header.top .home-btn.pericolo,
 body.theme-light header.top .home-btn.pericolo,
 body.theme-dark header.top .home-btn.pericolo{
-background:transparent; border:1.5px solid var(--danger); color:var(--danger); }
+background:transparent; border:1.5px solid var(--border-strong); color:var(--text-2); }
+header.top .home-btn.pericolo:active,
+header.top .home-btn.pericolo.armato{
+border-color:var(--danger); color:var(--danger); }
 .bar-badge{ position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 4px;
 border-radius:10px; background:var(--danger); color:#fff; font-size:0.64rem; font-weight:800;
 display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
@@ -444,7 +468,7 @@ color:var(--cream); font-family:inherit; font-size:0.92rem; font-weight:600; tex
 .bar-menu-count{ margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:10px;
 background:var(--danger); color:#fff; font-size:0.66rem; font-weight:800;
 display:flex; align-items:center; justify-content:center; }
-header.top .brand-title{ font-family:var(--font-display); font-weight:700; font-size:clamp(0.72rem,3.2vw,0.95rem); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
+header.top .brand-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-sm); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
 header.top .brandblock{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-soft); }
 header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
@@ -504,6 +528,33 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
 .menu-btn.prepara .menu-icon{ background:var(--tone-prep-solid); color:#FFFFFF; }
 .menu-btn .menu-txt{ color:var(--text-1); }
 .menu-btn .menu-sub{ color:var(--text-3); opacity:1; font-weight:500; }
+
+/* ── LE RIGHE DENTRO UNA SCHEDA NON SONO SCHEDE ──
+   Il Profilo aveva quattro rettangoli arrotondati uno dentro l'altro per dire
+   una riga di elenco: fondo crema, scheda bianca col filo d'oro, pastiglia
+   grigia col suo bordo, quadretto grigio col suo bordo, e finalmente l'icona.
+   Quattro livelli, e i due di mezzo non aggiungono nessuna informazione: sono
+   tutti dello stesso grigio, quindi non aiutano nemmeno a scorrere l'elenco.
+   Dentro una scheda una riga e' una riga: testo, sottotitolo, un filo che la
+   separa dalla successiva, e una freccia che dice dove porta.
+   I tre comandi colorati (training/gara/prepara) restano pastiglie: li' sono
+   il contenuto della schermata, non un elenco. */
+.card .menu-btn.btn-ghost{
+background:none; border:none; box-shadow:none; border-radius:0;
+padding:var(--s-3) 0; margin-bottom:0; width:100%; gap:var(--s-3); }
+.card .menu-btn.btn-ghost + .menu-btn.btn-ghost{ border-top:1px solid var(--border); }
+.card .menu-btn.btn-ghost:active{ transform:none; background:var(--surface-2); }
+/* L'icona perde il quadretto: resta il segno, nel grigio del testo minore.
+   Un contenitore che non contiene niente e' peso. */
+.card .menu-btn.btn-ghost .menu-icon{
+background:none; width:auto; height:auto; color:var(--text-3); }
+.card .menu-btn.btn-ghost .menu-txt{ flex:1 1 auto; min-width:0; }
+/* La freccia e' l'unica cosa che dichiara "questa riga porta da qualche
+   parte", ora che il rettangolo non lo dice piu'. */
+.card .menu-btn.btn-ghost.riga-attenzione .menu-icon{ color:var(--danger-role); }
+.card .menu-btn.btn-ghost::after{
+content:"\203a"; flex:0 0 auto; color:var(--text-3);
+font-size:var(--t-lg); line-height:1; }
 .row{ display:flex; gap:10px; }
 .chip-group{ display:flex; gap:8px; flex-wrap:wrap; }
 .chip{ flex:1 1 0; min-width:0; min-height:var(--hit); text-align:center; padding:12px var(--s-1); border-radius:var(--r-sm); border:1.5px solid var(--border-strong); background:var(--surface-2); color:var(--text-1); font-family:inherit; font-weight:700; cursor:pointer; white-space:normal; overflow-wrap:break-word; line-height:1.2; transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
@@ -1150,14 +1201,21 @@ body.schermo-percorso header.top{ margin-top:0; }
    proprio, perche' non esiste .pista-spazio. Non si muove: e' un fondale. */
 .pista-spazio::before{
 content:""; position:absolute; inset:0; pointer-events:none;
-background-color:color-mix(in srgb, var(--text-1) 12%, transparent);
+background-color:color-mix(in srgb, var(--text-1) 10%, transparent);
 /* proprieta' per esteso, non la scorciatoia "mask:": dentro l'indirizzo del
    disegno c'e' una barra, e nella scorciatoia la barra separa posizione e
    misura. Per esteso non c'e' niente da confondere. */
 -webkit-mask-image:var(--filigrana); mask-image:var(--filigrana);
 -webkit-mask-repeat:no-repeat;       mask-repeat:no-repeat;
--webkit-mask-position:78% 62%;       mask-position:78% 62%;
--webkit-mask-size:260px 260px;       mask-size:260px 260px;
+/* PRIMO GIRO SU UN TELEFONO VERO, 16/08/2026: bocciata. Con molto spazio
+   libero il bersaglio finiva al centro geometrico dello schermo ed era
+   l'elemento PIU' GRANDE della pagina: non leggeva come fondale e non leggeva
+   come sporco, leggeva come un oggetto da toccare che non fa niente. Il taglio
+   doveva dichiararla fondale, ma se lo spazio e' alto il taglio non avviene.
+   Adesso il centro sta nell'angolo in basso a destra e il disegno e' grande
+   quanto basta perche' due bordi lo taglino SEMPRE, qualunque sia lo spazio. */
+-webkit-mask-position:96% 94%;       mask-position:96% 94%;
+-webkit-mask-size:380px 380px;       mask-size:380px 380px;
 }
 :root{
 --filigrana:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cg fill='none' stroke='white'%3E%3Ccircle cx='150' cy='150' r='140' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='85' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='46' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='19' stroke-width='3.5'/%3E%3Ccircle cx='150' cy='150' r='113' stroke-width='1.2'/%3E%3Ccircle cx='150' cy='150' r='65' stroke-width='1.2'/%3E%3Ccircle cx='150' cy='150' r='32' stroke-width='1.2'/%3E%3C/g%3E%3C/svg%3E");
@@ -1194,14 +1252,38 @@ transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--
 .timer-regola{ display:flex; align-items:center; gap:var(--s-2); margin-top:var(--s-2); }
 .timer-regola .timer-dur{ flex:1 1 auto; min-width:0; font-size:var(--t-lg); }
 
-/* ── la scena: chi tira adesso ──
-   Il dato variabile e sbagliabile e' questo, quindi e' il piu' grande. */
+/* ── la scena: comanda quello che cambia ──
+   La regola vecchia diceva: il nome e' il piu' grande, perche' e' il dato che
+   cambia in continuazione ed e' l'unico che si sbaglia; il numero della
+   piazzola lo sai gia', e' dipinto sul paletto. Vero — QUANDO CI SONO ALTRI.
+   Da soli il nome non cambia mai, la fila dei turni non viene nemmeno
+   disegnata, e l'elemento piu' grande dello schermo diventa l'unica
+   informazione con valore zero: se tiri da solo sai come ti chiami. E il
+   paletto non c'e' sempre: in allenamento a formato libero le piazzole le hai
+   decise tu, non sono dipinte da nessuna parte.
+   Quindi il protagonista dipende: da solo la PIAZZOLA, in gruppo il NOME. Il
+   posto sullo schermo resta lo stesso, cambia chi lo occupa, e cambia una
+   volta sola a inizio giro: la memoria muscolare non ne soffre. */
 /* L'unica regione che puo' cedere. flex:0 1 auto + min-height:0 = tiene la sua
    misura naturale finche' c'e' posto, si comprime quando non ce n'e'. Cede la
    scena, mai la tastiera. */
 .pista-scena{ flex:0 1 auto; min-height:0; overflow-y:auto; text-align:left; margin-bottom:0; }
-.pista-arciere{ font-size:var(--t-2xl); line-height:1.05; color:var(--text-1);
-margin:0; text-wrap:balance; }
+.pista-arciere{ font-size:var(--t-xl); font-weight:800; line-height:1.1;
+color:var(--text-1); margin:0; text-wrap:balance; }
+/* Fraunces e' un carattere da titoli, con grazie e contrasto forte. Un nome
+   proprio lo regge; uno username con trattino basso e cifre — "Ale_01Verb" —
+   diventa la copertina di un libro. Qui il nome sta nel carattere d'interfaccia,
+   e Fraunces
+   resta al mestiere che queste note gli hanno dato: marchio e titoli. */
+.pista-piazzola{ margin:0; }
+.pista-piazzola .eti{ display:block; font-family:var(--font-ui);
+font-size:var(--t-xs); font-weight:600; letter-spacing:.09em;
+text-transform:uppercase; color:var(--text-3); margin-bottom:var(--s-1); }
+.pista-piazzola .cifre{ display:flex; align-items:baseline; gap:var(--s-2);
+font-family:var(--font-display); font-weight:700; font-size:var(--t-2xl);
+line-height:1; color:var(--text-1); font-variant-numeric:tabular-nums; }
+.pista-piazzola .su{ font-family:var(--font-num); font-size:var(--t-lg);
+font-weight:600; color:var(--text-3); }
 .pista-freccia{ font-size:var(--t-sm); color:var(--text-3); margin-top:var(--s-1); }
 .pista-nota{ font-size:var(--t-xs); color:var(--danger-role); margin-top:var(--s-2); }
 
@@ -1224,8 +1306,16 @@ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .turno.ora .turno-nome{ color:var(--text-1); font-weight:700; }
 
 /* ── le due scorciatoie ── */
-.pista-scorciatoie{ flex:0 0 auto; display:flex; gap:var(--s-2); margin-bottom:var(--s-2); }
-.pista-scorciatoie .btn{ flex:1 1 0; min-width:0; padding:var(--s-2) var(--s-2); font-size:var(--t-sm); }
+/* Finche' erano due si bilanciavano. Rimasto solo, largo tutta la riga e con
+   il fondo dorato, il tasto Classifica leggeva come un quinto tasto punteggio
+   — e stava esattamente dove il pollice arriva per sbaglio. E' un'azione
+   secondaria: torna a occupare lo spazio di un'azione secondaria, allineato a
+   destra e senza fondo pieno. */
+.pista-scorciatoie{ flex:0 0 auto; display:flex; justify-content:flex-end;
+gap:var(--s-2); margin-bottom:var(--s-2); }
+.pista-scorciatoie .btn{ flex:0 0 auto; padding:var(--s-2) var(--s-3);
+font-size:var(--t-xs); min-height:36px; background:none; box-shadow:none;
+border:1px solid var(--border); color:var(--text-2); font-weight:600; }
 
 /* ── la striscia dell'annulla: il rimedio accanto all'errore ──
    Prima l'annulla stava in fondo a 1150px di pagina, mentre l'errore era in
@@ -8311,7 +8401,7 @@ var f = PG_MODES[key].fed||"fiarc";
 var cur = state.federation||"fiarc";
 return Array.isArray(f) ? f.indexOf(cur)!==-1 : f===cur;
 }).forEach(function(key){
-var b = el('<button class="btn btn-ghost btn-block menu-btn" style="margin-bottom:8px;">'+PG_MODES[key].label+'</button>');
+var b = el('<button class="btn btn-ghost btn-block menu-btn">'+PG_MODES[key].label+'</button>');
 b.addEventListener("click", function(){
 state.pgDraft = { gara:key, nome:"", data:"", compagnia:"", numPiazzole:PG_MODES[key].piazzoleDefault, piazzole:[], iscritti:[], squadre:[], gruppiSize:5 };
 state.pgScreen = "setup"; save(); render();
@@ -9096,7 +9186,7 @@ regCard.appendChild(el('<a href="'+mailHref+'" class="btn btn-primary btn-block"
 wrap.appendChild(regCard);
 
 if(currentUser && myClubCode()){
-var spaceBtn = el('<button class="btn btn-ghost btn-block menu-btn" style="margin-bottom:14px;"><span class="menu-icon">'+icon("emblem",24)+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
+var spaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("emblem",24)+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
 spaceBtn.addEventListener("click", function(){ state.clubSpaceCode = myClubCode(); state.screen = "club-space"; save(); render(); });
 wrap.appendChild(spaceBtn);
 }
@@ -9688,7 +9778,7 @@ var annBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="m
 annBtn.addEventListener("click", function(){ state.screen = "open-training-create"; save(); render(); });
 actCard.appendChild(annBtn);
 
-var repBtn = el('<button class="btn btn-ghost btn-block menu-btn" style="border-color:color-mix(in srgb, var(--danger) 45%, transparent);"><span class="menu-icon" style="color:var(--danger);">'+icon("warn",24)+'</span><span class="menu-txt">'+t("fr_report_open_btn")+'<span class="menu-sub">'+t("fr_report_sub")+'</span></span></button>');
+var repBtn = el('<button class="btn btn-ghost btn-block menu-btn riga-attenzione"><span class="menu-icon">'+icon("warn",24)+'</span><span class="menu-txt">'+t("fr_report_open_btn")+'<span class="menu-sub">'+t("fr_report_sub")+'</span></span></button>');
 repBtn.addEventListener("click", function(){ state.frFrom = "menu"; state.screen = "field-report"; save(); render(); });
 actCard.appendChild(repBtn);
 wrap.appendChild(actCard);
@@ -10445,7 +10535,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-misure-a";
+var BUILD_STAMP = "2026-08-16-superficie-b";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13018,7 +13108,8 @@ pts: mode.scoring[arrowNumber] || mode.scoring[mode.arrowsPerTarget] || mode.sco
 // si porterebbe via l'intervallo di quello ancora a schermo — il timer visibile
 // si fermerebbe da solo. Per questo la sua firma si sa PRIMA di costruirla.
 function firmaTesta(c){
-return state.target+"/"+c.totalTargets+"|"+c.pct+"|"+state.target+"_"+state.archerIndex;
+return state.target+"/"+c.totalTargets+"|"+c.pct+"|"+state.target+"_"+state.archerIndex
++"|"+(state.archers.length > 1 ? "gruppo" : "solo");
 }
 function pistaTesta(c){
 var totalTargets = c.totalTargets, pct = c.pct;
@@ -13028,7 +13119,14 @@ var testa = el('<div class="pista-testa" data-regione="testa"></div>');
 // zero, e il modo piu' sicuro per garantirlo e' che la regione si rifaccia.
 testa.setAttribute("data-firma", firmaTesta(c));
 var passoRiga = el('<div class="pista-passo-riga"></div>');
+// Il numero della piazzola si dice UNA VOLTA SOLA sullo schermo. Se comanda la
+// scena (arciere solo), qui resta la sola barra: ripeterlo in piccolo sotto lo
+// stesso numero in grande e' una delle tre ripetizioni gia' tolte altrove.
+if(state.archers.length > 1){
 passoRiga.appendChild(el('<span class="pista-passo">'+t("target_singular")+' '+state.target+' / '+totalTargets+'</span>'));
+} else {
+passoRiga.appendChild(el('<span class="pista-passo"></span>'));
+}
 
 var tKey = state.target + "_" + state.archerIndex;
 if(tKey !== timerTargetKey){
@@ -13129,12 +13227,27 @@ return testa;
 // ---------- REGIONE: la scena (chi tira adesso, e chi viene dopo) ----------
 function pistaScena(c){
 var mode = c.mode, currentArcher = c.currentArcher, arrowNumber = c.arrowNumber, totArrows = c.totArrows;
+var solo = state.archers.length <= 1;
 // ── la scena: chi tira adesso, e chi viene dopo ──
 // aria-live: e' la stessa funzione della fila dei turni — sapere di chi e' il
 // turno senza doverlo cercare — per un utente che non guarda lo schermo.
 var scena = el('<div class="card pista-scena" data-regione="scena" aria-live="polite"></div>');
-var firma = currentArcher.name+"|"+arrowNumber+"/"+totArrows+"|"+state.pendingArrows.join(",");
-scena.appendChild(el('<h2 class="pista-arciere display">'+escapeHtml(currentArcher.name)+'</h2>'));
+// state.target entra nella firma: da soli il protagonista E' la piazzola, e
+// senza il numero qui la firma resterebbe identica cambiando bersaglio.
+var firma = solo+"|"+state.target+"|"+currentArcher.name+"|"+arrowNumber+"/"+totArrows+"|"+state.pendingArrows.join(",");
+if(solo){
+// Da soli: comanda la piazzola. Il nome non compare affatto — dire a un uomo
+// come si chiama per due ore non e' un'informazione.
+var hero = el('<h2 class="pista-piazzola"></h2>');
+hero.appendChild(el('<span class="eti">'+t("target_singular")+'</span>'));
+var cifre = el('<span class="cifre"></span>');
+cifre.appendChild(el('<span>'+state.target+'</span>'));
+cifre.appendChild(el('<span class="su">/ '+c.totalTargets+'</span>'));
+hero.appendChild(cifre);
+scena.appendChild(hero);
+} else {
+scena.appendChild(el('<h2 class="pista-arciere">'+escapeHtml(currentArcher.name)+'</h2>'));
+}
 var sotto = t("pista_freccia_di",{n:arrowNumber, tot:totArrows});
 if(state.pendingArrows.length){ sotto += t("finora",{list:state.pendingArrows.join(', ')}); }
 if(mode.stopAtFirstHit){ sotto += t("vale_prima"); }
