@@ -604,6 +604,49 @@ font-family:inherit; font-size:var(--t-md);
 transition:border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
 input:focus-visible, textarea:focus-visible, select:focus-visible{
 outline:none; border-color:var(--brand-soft); box-shadow:var(--focus-ring); }
+
+/* ── 7b. Le classi che erano solo un nome ────────────────────────────────
+   Trovate dall'ottava domanda del guardiano il 16/08/2026: `input-field`,
+   `checkbox-row`, `gruppo-card`, `printable`. Il JS le scriveva, il foglio
+   non le conosceva. Due erano innocue — un campo di testo e' gia' vestito
+   dal selettore di elemento, quindi la classe era un nome vuoto che sembrava
+   un aggancio. Una no: la scheda di un percorso salvato usciva come testo
+   nudo dove ogni altra scheda ha fondo, bordo e respiro.
+   La regola dietro tutte e quattro: se una classe non decide niente, o le si
+   da' un mestiere o si toglie. Un aggancio che non tiene e' peggio che non
+   averlo, perche' la volta dopo ci si appende qualcosa.
+
+   Qui dentro c'e' anche lo stile che stava in linea sei volte uguale sulla
+   riga con la spunta. Sei copie della stessa impaginazione divergono sempre:
+   infatti erano gia' divergenti, con quattro margini diversi e due fuori
+   scala. */
+.input-field{ display:block; }
+textarea.input-field{ resize:none; }
+.input-field.cerca{ margin-bottom:8px; }      /* filtro sopra un elenco */
+.input-field.in-modulo{ margin-bottom:12px; } /* campo dentro una pila di campi */
+.input-field.in-riga{ flex:1; width:auto; margin-bottom:0; } /* accanto al tasto invia */
+.input-field.corto{ width:160px; }
+.input-field.data{ width:184px; }
+.input-field.stretto{ width:88px; flex:none; text-align:center; }
+
+/* Il testo di una spunta si legge per forza — e' quello che si sta
+   accettando. Stava su --muted, il ruolo piu' spento dei tre: al sole non si
+   legge. Sale a --text-2 e resta distinto dal testo pieno. */
+.checkbox-row{ display:flex; align-items:flex-start; gap:8px; margin:12px 0 0;
+  font-size:var(--t-sm); line-height:1.45; color:var(--text-2); cursor:pointer; }
+.checkbox-row input[type=checkbox]{ width:auto; min-height:0; flex:none; margin-top:2px; }
+.checkbox-row b{ color:var(--text-1); font-weight:700; }
+.checkbox-row .nota{ display:block; margin-top:4px; }
+.checkbox-row.sotto-campo{ margin:4px 0 16px; }   /* appartiene al campo sopra */
+.checkbox-row.prima-serrata{ margin:16px 0 8px; } /* apre una coppia di spunte */
+.checkbox-row.serrata{ margin:0 0 8px; }          /* la chiude */
+/* Non un consenso da leggere: un interruttore. Testo pieno, nessun margine. */
+.checkbox-row.principale{ margin:0; color:var(--text-1); }
+
+.gruppo-card{ background:var(--surface-1); border:1px solid var(--border);
+  border-radius:16px; padding:12px 16px; margin-bottom:12px; }
+.gruppo-card h4{ margin:0 0 4px; }
+
 .archer-list{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
 .archer-row{ display:flex; align-items:center; justify-content:space-between; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
 .archer-row .name{ font-weight:600; }
@@ -7242,7 +7285,6 @@ return normalizeTheme(raw);
 }
 function applyTheme(th){
 var eff = resolvedTheme(normalizeTheme(th));
-document.body.classList.remove("theme-satura", "theme-elegante");
 document.body.classList.toggle("theme-light", eff === "light");
 document.body.classList.toggle("theme-dark", eff === "dark");
 // La barra dell'indirizzo del browser deve seguire il tema, altrimenti resta
@@ -7559,7 +7601,7 @@ if(ov.parentNode) ov.parentNode.removeChild(ov);
 openAdminChat();
 });
 box.appendChild(reportBtn);
-box.appendChild(el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:12px 0 0;cursor:pointer;"><input type="checkbox" id="welcomeNoteAck" style="width:auto;margin-top:2px;"><span>'+escapeHtml(t("welcome_note_ack"))+'</span></label>'));
+box.appendChild(el('<label class="checkbox-row"><input type="checkbox" id="welcomeNoteAck"><span>'+escapeHtml(t("welcome_note_ack"))+'</span></label>'));
 var okBtn = el('<button class="btn btn-primary btn-block" style="margin-top:10px;">'+escapeHtml(t("welcome_note_start"))+'</button>');
 okBtn.addEventListener("click", function(){
 var ack = document.getElementById("welcomeNoteAck");
@@ -8092,7 +8134,7 @@ card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+'
 // Nome e cognome restano obbligatori, ma si possono tenere per se': senza un
 // documento d'identita' nessuno puo' impedire i nomi finti, tanto vale dare
 // la scelta a chi ci tiene.
-card.appendChild(el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:-8px 0 16px;"><input type="checkbox" id="pfHideName" style="width:auto;margin-top:2px;"><span><b style="color:var(--cream);font-weight:700;">'+t("profile_hide_name")+'</b><span style="display:block;margin-top:3px;">'+t("profile_hide_name_note")+'</span></span></label>'));
+card.appendChild(el('<label class="checkbox-row sotto-campo"><input type="checkbox" id="pfHideName"><span><b>'+t("profile_hide_name")+'</b><span class="nota">'+t("profile_hide_name_note")+'</span></span></label>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_email")+'</label><input type="email" id="pfEmail" autocomplete="email"></div>'));
 // L'email si scrive due volte: da oggi il link di conferma e' l'unica porta
 // d'ingresso, quindi una lettera sbagliata lascerebbe la persona fuori senza
@@ -8130,9 +8172,9 @@ bowRow.appendChild(chip);
 });
 card.appendChild(bowRow);
 
-var privacyRow = el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:16px 0 6px;"><input type="checkbox" id="pfPrivacy" style="width:auto;margin-top:2px;"><span>'+t("profile_privacy")+'</span></label>');
+var privacyRow = el('<label class="checkbox-row prima-serrata"><input type="checkbox" id="pfPrivacy"><span>'+t("profile_privacy")+'</span></label>');
 card.appendChild(privacyRow);
-var termsRow = el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:0 0 6px;"><input type="checkbox" id="pfTerms" style="width:auto;margin-top:2px;"><span>'+t("profile_terms")+'</span></label>');
+var termsRow = el('<label class="checkbox-row serrata"><input type="checkbox" id="pfTerms"><span>'+t("profile_terms")+'</span></label>');
 card.appendChild(termsRow);
 card.appendChild(el('<div style="font-size:0.76rem;margin:0 0 8px;"><a href="/privacy.html" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_privacy")+'</a> &middot; <a href="/termini.html" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_terms")+'</a></div>'));
 
@@ -8284,7 +8326,7 @@ card.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:-10
 
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="peNome" value="'+escapeHtml(profile.nomeCognome||"")+'"></div>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+' <span style="font-weight:400;color:var(--muted);">'+t("profile_username_hint")+'</span></label><input type="text" id="peUsername" value="'+escapeHtml(profile.username||"")+'"></div>'));
-card.appendChild(el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.78rem;color:var(--muted);margin:-8px 0 16px;"><input type="checkbox" id="peHideName"'+(profile.nomeNascosto?' checked':'')+' style="width:auto;margin-top:2px;"><span><b style="color:var(--cream);font-weight:700;">'+t("profile_hide_name")+'</b><span style="display:block;margin-top:3px;">'+t("profile_hide_name_note")+'</span></span></label>'));
+card.appendChild(el('<label class="checkbox-row sotto-campo"><input type="checkbox" id="peHideName"'+(profile.nomeNascosto?' checked':'')+'><span><b>'+t("profile_hide_name")+'</b><span class="nota">'+t("profile_hide_name_note")+'</span></span></label>'));
 
 card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_federazioni")+'</h2>'));
 var fedWrap = el('<div></div>');
@@ -8314,7 +8356,7 @@ var clubSelDiv = el('<div style="background:var(--accent);color:var(--accent-ink
 var clubSelName = el('<span style="font-weight:700;font-size:0.92rem;"></span>');
 var clubClear = el('<button style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
 clubSelDiv.appendChild(clubSelName); clubSelDiv.appendChild(clubClear);
-var clubSearch = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("profile_club_search"))+'" style="margin-bottom:6px;">');
+var clubSearch = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("profile_club_search"))+'">');
 var clubList = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;display:none;"></div>');
 card.appendChild(clubSelDiv); card.appendChild(clubSearch); card.appendChild(clubList);
 function refreshClub(){
@@ -8806,7 +8848,7 @@ return d;
 }
 state.pgElenco.forEach(function(p){
 var pcfgLbl = (PG_MODES[p.gara]||{}).label || p.gara;
-var card = el('<div class="gruppo-card" style="margin-bottom:10px;"></div>');
+var card = el('<div class="gruppo-card"></div>');
 card.appendChild(el('<h4 style="color:var(--gold);">'+escapeHtml(p.nome||t("pg_no_name"))+' \u2014 '+pcfgLbl+'</h4>'));
 var summary = t("pg_route_summary", {
 data: p.data ? escapeHtml(p.data)+' \u00b7 ' : '',
@@ -9836,7 +9878,7 @@ if(hasInvitedArchers() && !DEV_MODE && db && currentUser){
 var sharedCard = el('<div class="card"></div>');
 sharedCard.appendChild(el('<h2 class="section-title">'+t("train_shared_title")+'</h2>'));
 sharedCard.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">'+t("train_shared_hint")+'</div>'));
-var dcRow = el('<label class="checkbox-row" style="display:flex;align-items:flex-start;gap:8px;font-size:0.85rem;"><input type="checkbox" id="doubleConfirmChk" style="width:auto;margin-top:2px;"><span>'+t("train_double_confirm_label")+'</span></label>');
+var dcRow = el('<label class="checkbox-row principale"><input type="checkbox" id="doubleConfirmChk"><span>'+t("train_double_confirm_label")+'</span></label>');
 var dcChk = dcRow.querySelector("#doubleConfirmChk");
 dcChk.checked = !!state.doubleConfirm;
 dcChk.addEventListener("change", function(){ state.doubleConfirm = dcChk.checked; save(); });
@@ -10443,7 +10485,7 @@ infoCard.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);margin
 
 function campo(label, tipo, valore, ph){
 infoCard.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">'+label+'</label>'));
-var inp = el('<input type="'+tipo+'" class="input-field" placeholder="'+escapeHtml(ph||label)+'" value="'+escapeHtml(valore||"")+'" style="margin-bottom:12px;">');
+var inp = el('<input type="'+tipo+'" class="input-field in-modulo" placeholder="'+escapeHtml(ph||label)+'" value="'+escapeHtml(valore||"")+'">');
 infoCard.appendChild(inp);
 return inp;
 }
@@ -10454,7 +10496,7 @@ var sitoInp  = campo(t("cp_admin_sito"), "text", info.sito, "www.compagnia.it");
 var addrInp  = campo(t("club_addr"), "text", info.indirizzo, "Via A. Alberti, Vignone (VB)");
 
 infoCard.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("club_notes")+'</label>'));
-var noteInp = el('<textarea class="input-field" rows="3" style="margin-bottom:14px;resize:none;"></textarea>');
+var noteInp = el('<textarea class="input-field in-modulo" rows="3"></textarea>');
 noteInp.value = info.note || "";
 infoCard.appendChild(noteInp);
 
@@ -11132,7 +11174,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-divisione-a";
+var BUILD_STAMP = "2026-08-16-classi-b";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -11557,7 +11599,7 @@ var locale = (LANG_META[state.lang]||LANG_META.it).locale;
 var d = new Date(h.date);
 var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 
-var card = el('<div class="card printable"></div>');
+var card = el('<div class="card"></div>');
 card.appendChild(el('<div class="print-header"><h2 style="margin:0;">ArcTrail 3D \u2014 '+escapeHtml(mLabel)+'</h2><div style="font-size:0.85rem;">'+dateStr+'</div></div>'));
 card.appendChild(el('<h2 class="section-title">'+t("classifica_title",{mode:escapeHtml(mLabel)})+'</h2>'));
 
@@ -11572,7 +11614,7 @@ tbody.appendChild(el(
 card.appendChild(table);
 wrap.appendChild(card);
 
-var detailCard = el('<div class="card printable"></div>');
+var detailCard = el('<div class="card"></div>');
 detailCard.appendChild(el('<h2 class="section-title">'+t("detail_title")+'</h2>'));
 var piazzFlow = el('<div class="piazz-flow"></div>');
 for(var i=0;i<h.format;i++){
@@ -11876,7 +11918,7 @@ var selDiv = el('<div style="background:var(--accent);color:var(--accent-ink);bo
 var selName = el('<span style="font-weight:700;font-size:0.92rem;"></span>');
 var selClear = el('<button style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
 selDiv.appendChild(selName); selDiv.appendChild(selClear);
-var searchInp = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("fr_field_search"))+'" style="margin-bottom:6px;">');
+var searchInp = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("fr_field_search"))+'">');
 var listDiv = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;display:none;"></div>');
 card.appendChild(selDiv); card.appendChild(searchInp); card.appendChild(listDiv);
 
@@ -11930,7 +11972,7 @@ refreshTipo();
 
 // ── Piazzola: precompilata con quella dove sei se il giro e' in corso ──────
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_piazzola_label")+'</label>'));
-var pzSel = el('<select class="input-field" style="margin-bottom:16px;width:160px;"></select>');
+var pzSel = el('<select class="input-field in-modulo corto"></select>');
 pzSel.appendChild(el('<option value="">'+t("fr_piazzola_none")+'</option>'));
 for(var pz=1; pz<=40; pz++){ pzSel.appendChild(el('<option value="'+pz+'">'+pz+'</option>')); }
 if(state.roundActive && state.target){ pzSel.value = String(state.target); }
@@ -11938,7 +11980,7 @@ card.appendChild(pzSel);
 
 // ── Descrizione ───────────────────────────────────────────────────────────
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_report_desc")+'</label>'));
-var descInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("fr_report_desc_ph"))+'" rows="4" style="margin-bottom:16px;resize:none;"></textarea>');
+var descInp = el('<textarea class="input-field in-modulo" placeholder="'+escapeHtml(t("fr_report_desc_ph"))+'" rows="4"></textarea>');
 card.appendChild(descInp);
 
 var status = el('<div style="font-size:0.85rem;margin-bottom:10px;min-height:20px;text-align:center;"></div>');
@@ -12082,7 +12124,7 @@ msgList.scrollTop = msgList.scrollHeight;
 setTimeout(loadOtMsgs, 0);
 
 var inputRow = el('<div style="display:flex;gap:8px;align-items:flex-end;"></div>');
-var textInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("ot_msg_placeholder"))+'" rows="2" style="flex:1;resize:none;"></textarea>');
+var textInp = el('<textarea class="input-field in-riga" placeholder="'+escapeHtml(t("ot_msg_placeholder"))+'" rows="2"></textarea>');
 var sendBtn = el('<button class="btn btn-primary" style="padding:10px 16px;">'+t("ot_msg_send")+'</button>');
 inputRow.appendChild(textInp);
 inputRow.appendChild(sendBtn);
@@ -12438,7 +12480,7 @@ chipRow.appendChild(chip);
 panel.appendChild(chipRow);
 
 panel.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("rep_note_label")+'</label>'));
-var notaInp = el('<textarea class="input-field" rows="2" style="resize:none;"></textarea>');
+var notaInp = el('<textarea class="input-field" rows="2"></textarea>');
 panel.appendChild(notaInp);
 
 var alsoBlock = null;
@@ -12889,7 +12931,7 @@ card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bot
 
 // Cerca un arciere
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("dm_search_label")+'</label>'));
-var searchInp = el('<input type="text" class="input-field" placeholder="\ud83d\udd0d '+escapeHtml(t("dm_search_placeholder"))+'" style="margin-bottom:6px;">');
+var searchInp = el('<input type="text" class="input-field cerca" placeholder="\ud83d\udd0d '+escapeHtml(t("dm_search_placeholder"))+'">');
 card.appendChild(searchInp);
 var results = el('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"></div>');
 card.appendChild(results);
@@ -13015,7 +13057,7 @@ dmMarkRead(chatId);
 }, 0);
 
 var inputRow = el('<div style="display:flex;gap:8px;align-items:flex-end;"></div>');
-var textInp = el('<textarea class="input-field" data-keep="dm:draft:'+chatId+'" placeholder="'+escapeHtml(t("dm_placeholder"))+'" rows="2" style="flex:1;resize:none;"></textarea>');
+var textInp = el('<textarea class="input-field in-riga" data-keep="dm:draft:'+chatId+'" placeholder="'+escapeHtml(t("dm_placeholder"))+'" rows="2"></textarea>');
 var sendBtn = el('<button class="btn btn-primary" style="padding:10px 16px;">'+t("dm_send")+'</button>');
 inputRow.appendChild(textInp);
 inputRow.appendChild(sendBtn);
@@ -13161,7 +13203,7 @@ fieldSelectedDiv.appendChild(fieldClearBtn);
 fieldSelectedDiv.style.display = "none";
 card.appendChild(fieldSelectedDiv);
 
-var fieldSearchInp = el('<input type="text" class="input-field" placeholder="🔍 '+escapeHtml(t("campi_filter_placeholder"))+'" style="margin-bottom:6px;">');
+var fieldSearchInp = el('<input type="text" class="input-field cerca" placeholder="🔍 '+escapeHtml(t("campi_filter_placeholder"))+'">');
 card.appendChild(fieldSearchInp);
 var fieldListDiv = el('<div style="max-height:200px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;display:none;"></div>');
 card.appendChild(fieldListDiv);
@@ -13233,15 +13275,15 @@ var otLat = null, otLng = null;
 
 // Data
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_date_label")+'</label>'));
-var dateInp = el('<input type="date" class="input-field" style="margin-bottom:12px;width:184px;">');
+var dateInp = el('<input type="date" class="input-field in-modulo data">');
 var today = new Date(); dateInp.value = today.toISOString().slice(0,10);
 card.appendChild(dateInp);
 
 // Ora — due tendine (niente orologio nativo illeggibile)
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_time_label")+'</label>'));
 var timeRow = el('<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;"></div>');
-var hSel = el('<select class="input-field" style="width:88px;flex:none;text-align:center;"></select>');
-var mSel = el('<select class="input-field" style="width:88px;flex:none;text-align:center;"></select>');
+var hSel = el('<select class="input-field stretto"></select>');
+var mSel = el('<select class="input-field stretto"></select>');
 hSel.appendChild(el('<option value="">--</option>'));
 for(var hh=0; hh<24; hh++){
 var hv = (hh<10?"0":"")+hh;
@@ -13274,7 +13316,7 @@ card.appendChild(spotsWrap);
 
 // Note
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_note_label")+'</label>'));
-var noteInp = el('<textarea class="input-field" placeholder="'+escapeHtml(t("ot_note_placeholder"))+'" rows="2" style="margin-bottom:16px;resize:none;"></textarea>');
+var noteInp = el('<textarea class="input-field in-modulo" placeholder="'+escapeHtml(t("ot_note_placeholder"))+'" rows="2"></textarea>');
 card.appendChild(noteInp);
 
 // Visibilita': riservato alla compagnia oppure aperto a tutti.
@@ -13314,7 +13356,7 @@ refreshVis();
 // Inviti nominativi
 card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_invite_label")+'</label>'));
 var inviteWrap = el('<div style="margin-bottom:16px;"></div>');
-var inviteSearch = el('<input type="text" class="input-field" placeholder="'+escapeHtml(t("ot_invite_placeholder"))+'" style="margin-bottom:6px;">');
+var inviteSearch = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("ot_invite_placeholder"))+'">');
 var inviteResults = el('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;"></div>');
 var inviteChips = el('<div style="display:flex;flex-wrap:wrap;gap:6px;"></div>');
 inviteWrap.appendChild(inviteSearch);
@@ -14451,7 +14493,7 @@ tbody.appendChild(el(
 card.appendChild(table);
 wrap.appendChild(card);
 
-var detailCard = el('<div class="card printable"></div>');
+var detailCard = el('<div class="card"></div>');
 detailCard.appendChild(el('<h2 class="section-title">'+t("detail_title")+'</h2>'));
 var piazzFlow = el('<div class="piazz-flow"></div>');
 for(var i=0;i<state.format;i++){
