@@ -345,20 +345,27 @@ color-scheme:dark;
 body.theme-sole{
 color-scheme:light;
 
-/* il foglio si sbianca, la scheda resta l'unico bianco pieno */
---surface:var(--sand-100); --surface-1:var(--sand-50); --surface-2:var(--sand-200);
-/* i tre gradini del testo si stringono verso il nero: al sole il terzo
-   gradino del chiaro (#565D53) e' la prima cosa che se ne va */
+/* PRIMA VERSIONE TROPPO TIMIDA, e l'ha detto il campo lo stesso giorno:
+   «la modalita' sole non cambia molto dalla light». Aveva ragione — erano
+   sand-100 contro sand-200 di fondo e un solo gradino di grigio piu' scuro:
+   la differenza c'era e non si vedeva, che al sole vuol dire che non c'era.
+   Un mezzo passo verso il contrasto non e' meta' del risultato: e' zero, piu'
+   una voce in piu' nel menu. Adesso il foglio e' bianco pieno e i separatori
+   sono neri: se qualcuno lo trovera' brutto all'ombra, va bene cosi', non e'
+   il tema dell'ombra. */
+--surface:var(--sand-50); --surface-1:var(--sand-50); --surface-2:var(--sand-200);
+/* i tre gradini del testo collassano quasi sul nero: al sole il grigio non e'
+   una gerarchia, e' una cosa che non si legge */
 --text-1:var(--sand-900); --text-2:var(--sand-900); --text-3:var(--sand-700);
 /* un bordo che non si vede non separa niente */
---border:var(--sand-400); --border-strong:var(--sand-700);
+--border:var(--sand-500); --border-strong:var(--sand-900);
 
 /* marchio e codici: i gradini piu' scuri di ogni famiglia */
 --brand:var(--green-900); --brand-soft:var(--green-900); --brand-ink:var(--sand-50);
 --clay:var(--clay-800); --gold-role:var(--gold-800);
 --danger-role:var(--red-700); --success-role:var(--green-800);
 
---ring-empty-bg:var(--sand-250); --ring-empty-bd:var(--sand-700);
+--ring-empty-bg:var(--sand-250); --ring-empty-bd:var(--sand-900);
 
 /* niente ombre: al sole non si vedono e mangiano contrasto */
 --elev-1:none; --elev-2:none; --elev-3:none;
@@ -374,6 +381,8 @@ color-scheme:light;
 --tone-race-bg:var(--sand-50);  --tone-race-fg:var(--clay-800);   --tone-race-solid:var(--clay-800);
 --tone-prep-bg:var(--sand-50);  --tone-prep-fg:var(--gold-800);   --tone-prep-solid:var(--gold-800);
 --tone-border:100%;
+/* il vuoto del bersaglio e le superfici tenui non devono restare veli */
+--checkbox-border:var(--sand-900);
 
 /* i cinque tasti: gli unici che al sole reggevano gia'. Scendono di un
    gradino, cosi' il bianco sopra sale sopra il 7:1 su tutti e cinque. */
@@ -395,7 +404,6 @@ color-scheme:light;
 --navbar-hover:rgba(18,22,15,0.08);
 
 --qsag:var(--slate-700);
---checkbox-border:var(--sand-700);
 
 /* ───── ALIAS · ridichiarati, e sopra c'e' scritto perche' ───── */
 --bg:var(--surface); --bg-panel:var(--surface-1); --bg-panel-2:var(--surface-2);
@@ -2674,6 +2682,7 @@ pg_retry: "riprova", pg_menu_btn_label: "Prepara gara", pg_menu_btn_sub: "per co
 gl_which_piazzola: "Che piazzola hai davanti?", gl_singola: "Singola", gl_mobile: "Mobile", gl_branco: "Branco (3 sagome)", gl_tempo: "Tempo limitato (3 sagome)",
 gl_1_arrow: "1 freccia", gl_3_arrows_stop: "3 frecce, si interrompe al primo mancato", gl_3_arrows_sum: "3 frecce, si sommano sempre",
 notif_section_title: "Notifiche", notif_enable_btn: "\uD83D\uDD14 Attiva notifiche su questo dispositivo",
+notif_already_btn: "Notifiche gi\u00e0 attive", notif_already: "Sono attive su questo dispositivo: non c'\u00e8 niente da fare.",
 notif_not_available: "Non disponibile su questo browser/dispositivo", notif_not_supported: "Questo browser non supporta le notifiche.",
 notif_requesting: "Richiesta permesso in corso\u2026", notif_denied: "Permesso negato: puoi riattivarlo dalle impostazioni del browser per questo sito.",
 notif_token_error: "Impossibile ottenere il token. Riprova.", notif_enabled: "Notifiche attivate su questo dispositivo.",
@@ -3158,6 +3167,7 @@ pg_retry: "retry", pg_menu_btn_label: "Prepare Event", pg_menu_btn_sub: "for clu
 gl_which_piazzola: "Which target do you see?", gl_singola: "Single", gl_mobile: "Moving", gl_branco: "Group (3 targets)", gl_tempo: "Timed (3 targets)",
 gl_1_arrow: "1 arrow", gl_3_arrows_stop: "3 arrows, stops at the first miss", gl_3_arrows_sum: "3 arrows, always added up",
 notif_section_title: "Notifications", notif_enable_btn: "\uD83D\uDD14 Enable notifications on this device",
+notif_already_btn: "Notifications already on", notif_already: "They are on for this device: nothing to do here.",
 notif_not_available: "Not available on this browser/device", notif_not_supported: "This browser doesn't support notifications.",
 notif_requesting: "Requesting permission\u2026", notif_denied: "Permission denied: you can re-enable it from your browser's settings for this site.",
 notif_token_error: "Couldn't get the token. Please try again.", notif_enabled: "Notifications enabled on this device.",
@@ -3656,6 +3666,7 @@ pg_retry: "r\u00e9essayer", pg_menu_btn_label: "Pr\u00e9parer la comp\u00e9titio
 gl_which_piazzola: "Quelle cible avez-vous devant vous\u00a0?", gl_singola: "Simple", gl_mobile: "Mobile", gl_branco: "Groupe (3 cibles)", gl_tempo: "Chronom\u00e9tr\u00e9e (3 cibles)",
 gl_1_arrow: "1 fl\u00e8che", gl_3_arrows_stop: "3 fl\u00e8ches, s’arr\u00eate au premier tir manqu\u00e9", gl_3_arrows_sum: "3 fl\u00e8ches, toujours additionn\u00e9es",
 notif_section_title: "Notifications", notif_enable_btn: "\uD83D\uDD14 Activer les notifications sur cet appareil",
+notif_already_btn: "Notifications déjà activées", notif_already: "Elles sont actives sur cet appareil : il n’y a rien à faire.",
 notif_not_available: "Non disponible sur ce navigateur/appareil", notif_not_supported: "Ce navigateur ne prend pas en charge les notifications.",
 notif_requesting: "Demande d’autorisation en cours\u2026", notif_denied: "Autorisation refus\u00e9e\u00a0: vous pouvez la r\u00e9activer depuis les param\u00e8tres de votre navigateur pour ce site.",
 notif_token_error: "Impossible d’obtenir le jeton. R\u00e9essayez.", notif_enabled: "Notifications activ\u00e9es sur cet appareil.",
@@ -4154,6 +4165,7 @@ pg_retry: "erneut versuchen", pg_menu_btn_label: "Wettkampf vorbereiten", pg_men
 gl_which_piazzola: "Welches Ziel siehst du vor dir?", gl_singola: "Einzeln", gl_mobile: "Beweglich", gl_branco: "Gruppe (3 Ziele)", gl_tempo: "Zeitlich begrenzt (3 Ziele)",
 gl_1_arrow: "1 Pfeil", gl_3_arrows_stop: "3 Pfeile, endet beim ersten Fehlschuss", gl_3_arrows_sum: "3 Pfeile, immer zusammengez\u00e4hlt",
 notif_section_title: "Benachrichtigungen", notif_enable_btn: "\uD83D\uDD14 Benachrichtigungen auf diesem Ger\u00e4t aktivieren",
+notif_already_btn: "Benachrichtigungen bereits aktiv", notif_already: "Sie sind auf diesem Gerät aktiv: hier ist nichts zu tun.",
 notif_not_available: "Auf diesem Browser/Ger\u00e4t nicht verf\u00fcgbar", notif_not_supported: "Dieser Browser unterst\u00fctzt keine Benachrichtigungen.",
 notif_requesting: "Berechtigung wird angefragt\u2026", notif_denied: "Berechtigung verweigert: du kannst sie in den Browser-Einstellungen f\u00fcr diese Seite wieder aktivieren.",
 notif_token_error: "Token konnte nicht abgerufen werden. Bitte erneut versuchen.", notif_enabled: "Benachrichtigungen auf diesem Ger\u00e4t aktiviert.",
@@ -4680,6 +4692,7 @@ pg_retry: "tekrar dene", pg_menu_btn_label: "Yar\u0131\u015fma Haz\u0131rla", pg
 gl_which_piazzola: "Kar\u015f\u0131ndaki hedef hangisi?", gl_singola: "Tekli", gl_mobile: "Hareketli", gl_branco: "Grup (3 siluet)", gl_tempo: "S\u00fcreli (3 siluet)",
 gl_1_arrow: "1 ok", gl_3_arrows_stop: "3 ok, ilk \u0131sk\u0131da durur", gl_3_arrows_sum: "3 ok, her zaman toplan\u0131r",
 notif_section_title: "Bildirimler", notif_enable_btn: "\uD83D\uDD14 Bu cihazda bildirimleri etkinle\u015ftir",
+notif_already_btn: "Bildirimler zaten açık", notif_already: "Bu cihazda açıklar: yapmanız gereken bir şey yok.",
 notif_not_available: "Bu taray\u0131c\u0131/cihazda kullan\u0131lam\u0131yor", notif_not_supported: "Bu taray\u0131c\u0131 bildirimleri desteklemiyor.",
 notif_requesting: "\u0130zin isteniyor\u2026", notif_denied: "\u0130zin reddedildi: bu site i\u00e7in taray\u0131c\u0131 ayarlar\u0131ndan yeniden a\u00e7abilirsin.",
 notif_token_error: "Token al\u0131namad\u0131. Tekrar dene.", notif_enabled: "Bu cihazda bildirimler etkinle\u015ftirildi.",
@@ -5192,6 +5205,7 @@ pg_retry: "повторить", pg_menu_btn_label: "Подготовить со�
 gl_which_piazzola: "Какая мишень перед вами?", gl_singola: "Одиночная", gl_mobile: "Подвижная", gl_branco: "Группа (3 силуэта)", gl_tempo: "По времени (3 силуэта)",
 gl_1_arrow: "1 стрела", gl_3_arrows_stop: "3 стрелы, останавливается при первом промахе", gl_3_arrows_sum: "3 стрелы, всегда суммируются",
 notif_section_title: "Уведомления", notif_enable_btn: "🔔 Включить уведомления на этом устройстве",
+notif_already_btn: "Уведомления уже включены", notif_already: "Они включены на этом устройстве: делать ничего не нужно.",
 notif_not_available: "Недоступно в этом браузере/устройстве", notif_not_supported: "Этот браузер не поддерживает уведомления.",
 notif_requesting: "Запрос разрешения…", notif_denied: "Разрешение отклонено: вы можете снова включить его в настройках браузера для этого сайта.",
 notif_token_error: "Не удалось получить токен. Попробуйте снова.", notif_enabled: "Уведомления включены на этом устройстве.",
@@ -5704,6 +5718,7 @@ pg_retry: "reintentar", pg_menu_btn_label: "Preparar competici\u00f3n", pg_menu_
 gl_which_piazzola: "\u00bfQu\u00e9 diana tienes delante?", gl_singola: "Individual", gl_mobile: "M\u00f3vil", gl_branco: "Grupo (3 siluetas)", gl_tempo: "Con tiempo limitado (3 siluetas)",
 gl_1_arrow: "1 flecha", gl_3_arrows_stop: "3 flechas, se detiene en el primer fallo", gl_3_arrows_sum: "3 flechas, siempre suman",
 notif_section_title: "Notificaciones", notif_enable_btn: "\uD83D\uDD14 Activar notificaciones en este dispositivo",
+notif_already_btn: "Notificaciones ya activas", notif_already: "Están activas en este dispositivo: no hay nada que hacer.",
 notif_not_available: "No disponible en este navegador/dispositivo", notif_not_supported: "Este navegador no admite notificaciones.",
 notif_requesting: "Solicitando permiso\u2026", notif_denied: "Permiso denegado: puedes reactivarlo desde los ajustes del navegador para este sitio.",
 notif_token_error: "No se pudo obtener el token. Int\u00e9ntalo de nuevo.", notif_enabled: "Notificaciones activadas en este dispositivo.",
@@ -6216,6 +6231,7 @@ pg_retry: "f\u00f6rs\u00f6k igen", pg_menu_btn_label: "F\u00f6rbered t\u00e4vlin
 gl_which_piazzola: "Vilket m\u00e5l har du framf\u00f6r dig?", gl_singola: "Enkelt", gl_mobile: "R\u00f6rligt", gl_branco: "Grupp (3 silhuetter)", gl_tempo: "Tidsbegr\u00e4nsat (3 silhuetter)",
 gl_1_arrow: "1 pil", gl_3_arrows_stop: "3 pilar, stannar vid f\u00f6rsta bommen", gl_3_arrows_sum: "3 pilar, r\u00e4knas alltid",
 notif_section_title: "Notiser", notif_enable_btn: "\uD83D\uDD14 Aktivera notiser p\u00e5 denna enhet",
+notif_already_btn: "Notiser redan på", notif_already: "De är på för den här enheten: inget att göra här.",
 notif_not_available: "Inte tillg\u00e4ngligt i denna webbl\u00e4sare/enhet", notif_not_supported: "Denna webbl\u00e4sare st\u00f6djer inte notiser.",
 notif_requesting: "Beg\u00e4r beh\u00f6righet\u2026", notif_denied: "Beh\u00f6righet nekad: du kan \u00e5teraktivera den i webbl\u00e4sarens inst\u00e4llningar f\u00f6r denna webbplats.",
 notif_token_error: "Kunde inte h\u00e4mta token. F\u00f6rs\u00f6k igen.", notif_enabled: "Notiser aktiverade p\u00e5 denna enhet.",
@@ -6728,6 +6744,7 @@ pg_retry: "opnieuw proberen", pg_menu_btn_label: "Wedstrijd voorbereiden", pg_me
 gl_which_piazzola: "Welk doel heb je voor je?", gl_singola: "Enkel", gl_mobile: "Bewegend", gl_branco: "Groep (3 silhouetten)", gl_tempo: "Met tijdslimiet (3 silhouetten)",
 gl_1_arrow: "1 pijl", gl_3_arrows_stop: "3 pijlen, stopt bij de eerste misser", gl_3_arrows_sum: "3 pijlen, tellen altijd op",
 notif_section_title: "Meldingen", notif_enable_btn: "\uD83D\uDD14 Meldingen inschakelen op dit apparaat",
+notif_already_btn: "Meldingen al ingeschakeld", notif_already: "Ze staan aan op dit apparaat: er is niets te doen.",
 notif_not_available: "Niet beschikbaar in deze browser/dit apparaat", notif_not_supported: "Deze browser ondersteunt geen meldingen.",
 notif_requesting: "Toestemming aanvragen\u2026", notif_denied: "Toestemming geweigerd: je kunt dit opnieuw inschakelen in de browserinstellingen voor deze site.",
 notif_token_error: "Kan geen token ophalen. Probeer opnieuw.", notif_enabled: "Meldingen ingeschakeld op dit apparaat.",
@@ -8699,11 +8716,27 @@ Array.prototype.forEach.call(themeRow.querySelectorAll(".chip"), function(c){ c.
 chip.classList.add("active");
 themeSel = k;
 applyTheme(themeSel);
+// Un tema non e' un campo di un modulo: si vede subito, quindi si salva
+// subito. Restava appeso a "Salva" insieme al nome e alla tessera, e chi
+// sceglieva un tema e usciva senza salvare se lo ritrovava cambiato al
+// rientro — cioe' l'app diceva di no a una scelta che aveva gia' eseguito.
+state.theme = k; save();
+aggiornaEtichettaAuto();
 if(savedMsg) savedMsg.textContent = "";
 });
 themeRow.appendChild(chip);
 });
 card.appendChild(themeRow);
+// "Automatica" segue il telefono, e il telefono non lo cambia nessuno mentre
+// cammina: da fuori sembrava rotta. Adesso la pastiglia dice a cosa sta
+// corrispondendo ADESSO, quindi la si puo' smentire invece di sospettarla.
+var chipAuto = themeRow.lastChild;
+function aggiornaEtichettaAuto(){
+if(!chipAuto) return;
+var ora = resolvedTheme("auto") === "dark" ? t("theme_dark_label") : t("theme_light_label");
+chipAuto.textContent = t("theme_auto_label") + " \u00b7 " + ora.toLowerCase();
+}
+aggiornaEtichettaAuto();
 // "Automatica" sembrava promettere che l'app si accorga di dov'e': dal campo
 // e' arrivato "in modalita' automatica non cambia nulla", ed era vero e
 // giusto insieme — segue il telefono, e il telefono nessuno lo cambia
@@ -8716,12 +8749,28 @@ card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("noti
 var notifRow = el('<div style="margin-bottom:6px;"></div>');
 var notifBtn = el('<button class="btn btn-ghost btn-block">'+t("notif_enable_btn")+'</button>');
 var notifStatus = el('<div style="font-size:0.78rem;color:var(--muted);margin-top:6px;"></div>');
+// IL TASTO NON GUARDAVA MAI SE ERANO GIA' ATTIVE. *(16/08/2026, dal campo:
+// "ogni volta che vado sul profilo mi chiede di attivare le notifiche ma l'ho
+// fatto 1000 volte".)* Chiedere una cosa gia' fatta non e' solo inutile: fa
+// dubitare di averla fatta, e la volta dopo la si rifa'. Il permesso lo sa il
+// browser e basta chiederglielo — quello che mancava era la domanda.
+// I tre stati sono diversi e vanno detti diversi: concesso (non c'e' niente da
+// fare), negato (non lo si puo' riaprire da qui, va cambiato nelle
+// impostazioni del telefono: un tasto che non puo' funzionare non deve
+// invitare a premerlo), mai chiesto (e allora si chiede).
+var permesso = (typeof Notification !== "undefined") ? Notification.permission : null;
 if(!messaging){
 notifBtn.disabled = true;
 notifStatus.textContent = t("notif_not_available") + (messagingInitError ? " (" + messagingInitError + ")" : "") + ".";
 } else if(typeof Notification === "undefined"){
 notifBtn.disabled = true;
 notifStatus.textContent = t("notif_not_supported");
+} else if(permesso === "granted"){
+notifBtn.textContent = t("notif_already_btn");
+notifStatus.textContent = t("notif_already");
+} else if(permesso === "denied"){
+notifBtn.disabled = true;
+notifStatus.textContent = t("notif_denied");
 }
 notifBtn.addEventListener("click", function(){ enableNotifications(notifStatus, notifBtn); });
 notifRow.appendChild(notifBtn); notifRow.appendChild(notifStatus);
@@ -11461,7 +11510,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-sole-a";
+var BUILD_STAMP = "2026-08-16-sole-b";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
