@@ -7004,6 +7004,17 @@ if(!cod || typeof COMPAGNIE === "undefined") return null;
 var c = COMPAGNIE[String(cod).toUpperCase()];
 return c ? c.nome : null;
 }
+// L'ELENCO CHE L'APP POSSIEDE E' QUELLO FIARC, E BASTA. *(16/08/2026.)*
+// Finche' non se ne dichiara un altro, per ogni altra federazione il codice si
+// scrive e non si controlla. Dire "Codice sconosciuto" a un numero di
+// struttura francese perfettamente valido e' un'ACCUSA FALSA, e chi la riceve
+// fa una di due cose: cancella un dato giusto, oppure smette di fidarsi del
+// rosso. Un controllo di cui non ci si fida e' spento, e non lo sa nessuno —
+// e' la stessa frase gia' scritta per il guardiano che gridava al lupo.
+// Aggiungere una federazione qui vuol dire aggiungere il suo elenco, non
+// togliere una riga: e un elenco PARZIALE non conta come elenco, perche'
+// direbbe "sconosciuto" a tutti i club che non ci sono dentro.
+function haElencoCompagnie(fed){ return fed === "fiarc"; }
 
 function load(){ try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
 function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
@@ -9411,7 +9422,9 @@ tess.addEventListener("change", function(){ save(); });
 dati.appendChild(tess);
 var cod = el('<input type="text" placeholder="'+escapeHtml(t("pg_codice_ph"))+'" value="'+escapeHtml(p.compagnia||"")+'" aria-label="'+escapeHtml(t("pg_codice_di",{name:chi}))+'">');
 var club = el('<div class="iscritto-club"></div>');
+var elencoNoto = haElencoCompagnie(pgFederazione((state.pgDraft||{}).gara));
 function diciCompagnia(){
+if(!elencoNoto){ club.className = "iscritto-club"; club.textContent = ""; return; }
 var nome = compagniaNome(p.compagnia);
 club.className = "iscritto-club" + ((p.compagnia && !nome) ? " ignoto" : "");
 club.textContent = !p.compagnia ? "" : (nome || t("pg_codice_ignoto"));
@@ -9509,7 +9522,7 @@ if(p.classe && p.categoria) conti.divisione++;
 if(p.tessera) conti.tessera++;
 // Il codice si confronta con l'elenco vero: uno sbagliato resta nella riga,
 // in rosso e correggibile, ma non si fa contare fra quelli buoni.
-if(p.compagnia && compagniaNome(p.compagnia)) conti.compagnia++;
+if(p.compagnia && (compagniaNome(p.compagnia) || !haElencoCompagnie(pgFederazione((state.pgDraft||{}).gara)))) conti.compagnia++;
 });
 return { squadre:squadre, tutti:tutti, conti:conti };
 }
@@ -11510,7 +11523,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-sole-b";
+var BUILD_STAMP = "2026-08-16-club-a";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
