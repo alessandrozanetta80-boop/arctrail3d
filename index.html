@@ -869,6 +869,79 @@ width:100%; padding:12px; border-radius:10px; border:1px solid var(--line); back
 .pf-tessera.show{ display:block; }
 .pf-tessera label{ font-size:0.68rem; color:var(--muted); font-weight:700; margin-bottom:4px; display:block; text-transform:uppercase; letter-spacing:.05em; }
 .pf-tessera input{ width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.85rem; }
+.cp-vuoto{ font-size:var(--t-sm); color:var(--text-3); line-height:1.5; margin:0 0 var(--s-3); }
+
+/* ---------- PREPARA GARA ----------
+   Sette campi di questa schermata erano scritti a mano dal JS, e ognuno
+   RIDISEGNAVA da capo il campo che il foglio di stile definisce gia' piu' in
+   alto: fondo piu' scuro, bordo piu' sottile, padding fuori scala e - la cosa
+   che conta - nessun min-height:var(--hit). Erano campi SOTTO i 44px, in
+   l'unica schermata che si compila in piedi al banco iscrizioni, col telefono
+   in una mano. Non erano una variante voluta: erano il componente comune,
+   peggiorato in silenzio, sette volte.
+   Quindi qui NON nasce un componente nuovo: quegli stili se ne vanno e basta,
+   e i campi tornano quelli di tutta l'app. Restano solo le vere eccezioni -
+   una larghezza, un'altezza minima, una regola di flusso. */
+/* Il selettore porta anche il tipo di campo di proposito. La regola comune
+   piu' in alto e' scritta come input[type=number] - un attributo, che pesa
+   quanto una classe piu' un elemento. Una classe da sola PERDE, e la
+   larghezza tornerebbe al 100% senza che nessuno se ne accorga qui. */
+input[type=number].pg-campo-num{ width:96px; }
+input[type=text].pg-campo-nome{ width:auto; flex:1 1 120px; }
+textarea.pg-campo-testo{ min-height:120px; }
+.pg-campo-riga{ margin-bottom:var(--s-3); }
+.pg-campo-etichetta{ display:block; font-size:var(--t-xs); font-weight:700;
+color:var(--text-3); text-transform:uppercase; letter-spacing:.05em;
+margin-bottom:var(--s-1); }
+
+.pg-riga{ display:flex; flex-wrap:wrap; gap:var(--s-2); margin-bottom:var(--s-2); }
+.pg-riga-larga{ flex:1 1 100%; }
+.pg-riga-num{ display:flex; align-items:center; flex-wrap:wrap; gap:var(--s-3);
+margin-bottom:var(--s-3); }
+.pg-riga-num span{ font-size:var(--t-sm); color:var(--text-3); }
+.pg-blocco{ margin-bottom:var(--s-3); }
+.pg-esiti{ margin-top:var(--s-2); display:flex; flex-wrap:wrap; gap:var(--s-2); }
+.pg-nota{ font-size:var(--t-xs); color:var(--text-3); margin:var(--s-1) 0; }
+/* Stessa frase, stesso componente, due schermate: la ricerca per username
+   vive sia in Arcieri sia in Prepara gara. Il nome non porta il prefisso di
+   nessuna delle due, perche' non appartiene a nessuna delle due. */
+.cerca-vuoto{ font-size:var(--t-xs); color:var(--text-3); padding:var(--s-1) 0; }
+.pg-nota-stacco{ margin:var(--s-3) 0 var(--s-1); }
+.pg-conto{ font-size:var(--t-sm); color:var(--text-3); margin-bottom:var(--s-2); }
+.pg-conto b{ color:var(--gold-role); }
+.pg-avviso{ font-size:var(--t-xs); color:var(--clay); margin:0 0 var(--s-4); }
+.pg-stacco-sotto{ margin-bottom:var(--s-2); }
+.pg-stacco-importa{ margin:var(--s-2) 0 var(--s-4); }
+.pg-stacco-sopra{ margin-top:var(--s-4); }
+.pg-stato{ font-size:var(--t-sm); color:var(--text-3); margin-top:var(--s-2);
+text-align:center; }
+.pg-titolo-squadre{ font-size:var(--t-sm); color:var(--gold-role);
+margin:var(--s-4) 0 var(--s-2); }
+.pg-squadra{ font-size:var(--t-sm); background:var(--surface-2);
+border:1px solid var(--border); border-radius:var(--r-sm);
+padding:var(--s-2) var(--s-3); margin-bottom:var(--s-2); }
+.pg-squadra b{ color:var(--gold-role); }
+.pg-azioni{ display:flex; gap:var(--s-3); }
+.pg-azioni .btn-primary{ flex:1; }
+
+/* La riga dell'iscritto e' una RIGA, non una scheda: vale qui la regola gia'
+   scritta per il Profilo. Era un rettangolo col suo fondo, il suo bordo e il
+   suo raggio, dentro una scheda che ha gia' fondo, bordo e raggio: due
+   scatole uguali annidate non dicono niente in piu' e non aiutano a scorrere
+   l'elenco, che e' l'unica cosa che devono fare. Resta il filo di
+   separazione. Il tasto che toglie l'iscritto era alto sedici pixel: adesso
+   e' un bersaglio da 44, perche' cancellare la persona sbagliata dalla lista
+   iscritti non e' un errore che si annulla con un tocco. */
+.pg-elenco-iscritti{ margin-bottom:var(--s-3); border-top:1px solid var(--border); }
+.iscritto-row{ display:flex; align-items:center; gap:var(--s-2);
+padding:var(--s-1) 0; border-bottom:1px solid var(--border); }
+.iscritto-nome{ flex:1; font-size:var(--t-sm); }
+.iscritto-user{ color:var(--brand-soft); }
+.iscritto-slegato{ color:var(--text-3); font-size:var(--t-xs); }
+.iscritto-rm{ background:none; border:none; color:var(--text-3); cursor:pointer;
+font-family:inherit; font-size:var(--t-md); line-height:1;
+min-width:var(--hit); min-height:var(--hit); border-radius:var(--r-sm); }
+.iscritto-rm:hover{ color:var(--danger-role); }
 
 /* ══════════════════ RIFINITURA DA COMPUTER (agosto 2026) ══════════════════
    Tutto quello che segue vive dentro @media (min-width:900px): sul telefono
@@ -2281,6 +2354,7 @@ zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wou
 menu_compagnie_label: "Compagnie", 
 compagnie_title: "Compagnie", compagnie_regione: "Regione", compagnie_provincia: "Provincia", compagnie_luogo: "Luogo del campo",
 compagnie_pick_regione: "Scegli la regione\u2026", compagnie_pick_provincia: "Scegli la provincia\u2026", compagnie_pick_luogo: "Scegli il campo\u2026", compagnie_provincia_non_specificata: "Provincia non specificata",
+compagnie_paese_vuoto: "Nel tuo paese non ci sono ancora società nell’elenco. Se conosci un campo o una compagnia, scrivimi e la aggiungo.", compagnie_paese_segnala: "Segnala una società", campi_maps_query: "campo tiro con l’arco 3D",
 compagnie_no_percorsi: "Questa compagnia non ha ancora percorsi caricati.",
 compagnie_no_dati: "Dati completi non ancora caricati per questa compagnia.",
 compagnie_new_percorso: "+ Nuovo percorso", compagnie_new_risultato: "+ Nuovo risultato", compagnie_classifica: "Classifica",
@@ -2329,7 +2403,7 @@ pg_desc_placeholder: "Breve descrizione (facoltativa)", pg_cancel: "Annulla", pg
 pg_section_participants: "{gara} \u2014 iscritti e squadre", pg_first_name_ph: "Nome", pg_last_name_ph: "Cognome", pg_add_btn: "Aggiungi",
 pg_search_account_hint: "Oppure cerca un account gi\u00e0 registrato (cos\u00ec l'iscritto risulta collegato, utile per le notifiche future)",
 pg_bulk_import_hint: "Oppure incolla un elenco: un blocco per squadra separato da riga vuota o intestazione \u201cSquadra N\u201d, un cognome (o \u201cCognome, Nome\u201d) per riga.",
-pg_import_teams_btn: "Importa squadre GI\u00c0 FORMATE (mantiene i tuoi gruppi)", pg_participants_count_label: "Iscritti:", pg_not_linked: "(non collegato)",
+pg_import_teams_btn: "Importa squadre GI\u00c0 FORMATE (mantiene i tuoi gruppi)", pg_participants_count_label: "Iscritti:", pg_not_linked: "(non collegato)", pg_remove_participant: "Togli {name} dagli iscritti",
 pg_people_per_team: "Persone per squadra (max 6)", pg_auto_teams_btn: "Crea squadre AUTOMATICHE (mischiate, non a blocchi A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignora eventuali gruppi gi\u00e0 decisi: ricalcola le squadre da zero (mischiando i cognomi tra le squadre, ordine di tiro alfabetico solo dentro ciascuna).",
 pg_organizer_view_title: "Vista organizzatore \u2014 chi parte da dove", 
@@ -2748,6 +2822,7 @@ compagnie_no_dati: "Full details not yet added for this club.", compagnie_no_per
 compagnie_nome_percorso: "Course name", compagnie_num_piazzole: "Number of targets", compagnie_piazzole_word: "targets",
 cp_admin_claim_btn: "🔑 Request admin of this club", cp_admin_claim_pending: "Request sent — awaiting approval.", cp_admin_map_error: "Save error.", cp_admin_tel: "Phone", cp_admin_email_label: "Club email", cp_admin_sito: "Website", 
 compagnie_pick_luogo: "Choose the field\u2026", compagnie_pick_provincia: "Choose the province\u2026", compagnie_pick_regione: "Choose the region\u2026", compagnie_provincia_non_specificata: "Province not specified",
+compagnie_paese_vuoto: "There are no clubs listed for your country yet. If you know a field or a club, write to me and I’ll add it.", compagnie_paese_segnala: "Suggest a club", campi_maps_query: "3D archery range",
 compagnie_provincia: "Province", compagnie_punteggi_word: "scores recorded", compagnie_punteggio: "Score", compagnie_regione: "Region",
 compagnie_salva: "Save", compagnie_title: "Clubs", compagnie_tutti: "All", country_uk: "United Kingdom", country_turkey: "Turkey", country_russia: "Russia", country_spain: "Spain", country_netherlands: "Netherlands", country_sweden: "Sweden", 
 home_dev_text: "To report bugs or issues: {email} — {sito}. Data entered at this stage may be deleted or reset.",
@@ -2792,7 +2867,7 @@ pg_desc_placeholder: "Short description (optional)", pg_cancel: "Cancel", pg_sav
 pg_section_participants: "{gara} \u2014 participants and teams", pg_first_name_ph: "First name", pg_last_name_ph: "Last name", pg_add_btn: "Add",
 pg_search_account_hint: "Or search for an already registered account (this links the participant, useful for future notifications)",
 pg_bulk_import_hint: "Or paste a list: one block per team separated by a blank line or a \u201cTeam N\u201d heading, one last name (or \u201cLast name, First name\u201d) per line.",
-pg_import_teams_btn: "Import ALREADY FORMED teams (keeps your groups)", pg_participants_count_label: "Participants:", pg_not_linked: "(not linked)",
+pg_import_teams_btn: "Import ALREADY FORMED teams (keeps your groups)", pg_participants_count_label: "Participants:", pg_not_linked: "(not linked)", pg_remove_participant: "Remove {name} from the list",
 pg_people_per_team: "People per team (max 6)", pg_auto_teams_btn: "Create AUTOMATIC teams (shuffled, not A-Z blocks)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignores any groups already decided: recalculates teams from scratch (mixing last names across teams, alphabetical shooting order only within each team).",
 pg_organizer_view_title: "Organizer view \u2014 who starts where", 
@@ -3225,6 +3300,7 @@ compagnie_no_dati: "D\u00e9tails complets pas encore ajout\u00e9s pour ce club."
 compagnie_nome_percorso: "Nom du parcours", compagnie_num_piazzole: "Nombre de cibles", compagnie_piazzole_word: "cibles",
 cp_admin_claim_btn: "🔑 Demander l’administration de ce club", cp_admin_claim_pending: "Demande envoyée — en attente d’approbation.", cp_admin_map_error: "Erreur de sauvegarde.", cp_admin_tel: "Téléphone", cp_admin_email_label: "E-mail du club", cp_admin_sito: "Site web", 
 compagnie_pick_luogo: "Choisissez le terrain\u2026", compagnie_pick_provincia: "Choisissez la province\u2026", compagnie_pick_regione: "Choisissez la r\u00e9gion\u2026", compagnie_provincia_non_specificata: "Province non pr\u00e9cis\u00e9e",
+compagnie_paese_vuoto: "Aucun club n’est encore répertorié pour votre pays. Si vous connaissez un terrain ou un club, écrivez‑moi et je l’ajoute.", compagnie_paese_segnala: "Signaler un club", campi_maps_query: "parcours tir à l’arc 3D",
 compagnie_provincia: "Province", compagnie_punteggi_word: "scores enregistr\u00e9s", compagnie_punteggio: "Score", compagnie_regione: "R\u00e9gion",
 compagnie_salva: "Enregistrer", compagnie_title: "Clubs", compagnie_tutti: "Tous", country_uk: "Royaume-Uni", country_turkey: "Turquie", country_russia: "Russie", country_spain: "Espagne", country_netherlands: "Pays-Bas", country_sweden: "Su\u00e8de", 
 home_dev_text: "Pour signaler un bug ou un problème : {email} — {sito}. Les données saisies à ce stade peuvent être supprimées ou réinitialisées.",
@@ -3269,7 +3345,7 @@ pg_desc_placeholder: "Br\u00e8ve description (facultative)", pg_cancel: "Annuler
 pg_section_participants: "{gara} \u2014 inscrits et \u00e9quipes", pg_first_name_ph: "Pr\u00e9nom", pg_last_name_ph: "Nom", pg_add_btn: "Ajouter",
 pg_search_account_hint: "Ou recherchez un compte d\u00e9j\u00e0 inscrit (l’inscrit sera ainsi li\u00e9, utile pour les futures notifications)",
 pg_bulk_import_hint: "Ou collez une liste\u00a0: un bloc par \u00e9quipe s\u00e9par\u00e9 par une ligne vide ou un titre \u00ab\u00a0\u00c9quipe N\u00a0\u00bb, un nom (ou \u00ab\u00a0Nom, Pr\u00e9nom\u00a0\u00bb) par ligne.",
-pg_import_teams_btn: "Importer des \u00e9quipes D\u00c9J\u00c0 FORM\u00c9ES (conserve vos groupes)", pg_participants_count_label: "Inscrits\u00a0:", pg_not_linked: "(non li\u00e9)",
+pg_import_teams_btn: "Importer des \u00e9quipes D\u00c9J\u00c0 FORM\u00c9ES (conserve vos groupes)", pg_participants_count_label: "Inscrits\u00a0:", pg_not_linked: "(non li\u00e9)", pg_remove_participant: "Retirer {name} de la liste",
 pg_people_per_team: "Personnes par \u00e9quipe (max 6)", pg_auto_teams_btn: "Cr\u00e9er des \u00e9quipes AUTOMATIQUES (m\u00e9lang\u00e9es, pas par blocs A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignore les groupes d\u00e9j\u00e0 d\u00e9cid\u00e9s\u00a0: recalcule les \u00e9quipes \u00e0 z\u00e9ro (en m\u00e9langeant les noms entre les \u00e9quipes, ordre de tir alphab\u00e9tique seulement \u00e0 l’int\u00e9rieur de chacune).",
 pg_organizer_view_title: "Vue organisateur \u2014 qui part d’o\u00f9", 
@@ -3702,6 +3778,7 @@ compagnie_no_dati: "F\u00fcr diesen Verein wurden noch keine vollst\u00e4ndigen 
 compagnie_nome_percorso: "Name des Parcours", compagnie_num_piazzole: "Anzahl der Ziele", compagnie_piazzole_word: "Ziele",
 cp_admin_claim_btn: "🔑 Admin dieses Vereins beantragen", cp_admin_claim_pending: "Anfrage gesendet — warte auf Genehmigung.", cp_admin_map_error: "Speicherfehler.", cp_admin_tel: "Telefon", cp_admin_email_label: "Vereins-E-Mail", cp_admin_sito: "Webseite", 
 compagnie_pick_luogo: "W\u00e4hle den Platz\u2026", compagnie_pick_provincia: "W\u00e4hle die Provinz\u2026", compagnie_pick_regione: "W\u00e4hle die Region\u2026", compagnie_provincia_non_specificata: "Provinz nicht angegeben",
+compagnie_paese_vuoto: "Für dein Land sind noch keine Vereine eingetragen. Wenn du einen Parcours oder Verein kennst, schreib mir — ich trage ihn ein.", compagnie_paese_segnala: "Verein melden", campi_maps_query: "3D Bogenparcours",
 compagnie_provincia: "Provinz", compagnie_punteggi_word: "erfasste Ergebnisse", compagnie_punteggio: "Ergebnis", compagnie_regione: "Region",
 compagnie_salva: "Speichern", compagnie_title: "Vereine", compagnie_tutti: "Alle", country_uk: "Vereinigtes K\u00f6nigreich", country_turkey: "T\u00fcrkei", country_russia: "Russland", country_spain: "Spanien", country_netherlands: "Niederlande", country_sweden: "Schweden", 
 home_dev_text: "Um Fehler oder Probleme zu melden: {email} — {sito}. In dieser Phase eingegebene Daten können gelöscht oder zurückgesetzt werden.",
@@ -3746,7 +3823,7 @@ pg_desc_placeholder: "Kurze Beschreibung (optional)", pg_cancel: "Abbrechen", pg
 pg_section_participants: "{gara} \u2014 Teilnehmer und Teams", pg_first_name_ph: "Vorname", pg_last_name_ph: "Nachname", pg_add_btn: "Hinzuf\u00fcgen",
 pg_search_account_hint: "Oder ein bereits registriertes Konto suchen (so wird der Teilnehmer verkn\u00fcpft, n\u00fctzlich f\u00fcr k\u00fcnftige Benachrichtigungen)",
 pg_bulk_import_hint: "Oder eine Liste einf\u00fcgen: ein Block pro Team, getrennt durch eine Leerzeile oder eine \u201eTeam N\u201c-\u00dcberschrift, ein Nachname (oder \u201eNachname, Vorname\u201c) pro Zeile.",
-pg_import_teams_btn: "BEREITS GEBILDETE Teams importieren (beh\u00e4lt deine Gruppen)", pg_participants_count_label: "Teilnehmer:", pg_not_linked: "(nicht verkn\u00fcpft)",
+pg_import_teams_btn: "BEREITS GEBILDETE Teams importieren (beh\u00e4lt deine Gruppen)", pg_participants_count_label: "Teilnehmer:", pg_not_linked: "(nicht verkn\u00fcpft)", pg_remove_participant: "{name} aus der Liste entfernen",
 pg_people_per_team: "Personen pro Team (max. 6)", pg_auto_teams_btn: "AUTOMATISCHE Teams erstellen (gemischt, nicht in A-Z-Bl\u00f6cken)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignoriert bereits festgelegte Gruppen: berechnet die Teams komplett neu (mischt Nachnamen zwischen den Teams, alphabetische Schie\u00dfreihenfolge nur innerhalb jedes Teams).",
 pg_organizer_view_title: "Organisator-Ansicht \u2014 wer startet wo", 
@@ -4210,6 +4287,7 @@ zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wou
 menu_compagnie_label: "Kul\u00fcpler", 
 compagnie_title: "Kul\u00fcpler", compagnie_regione: "B\u00f6lge", compagnie_provincia: "\u0130l", compagnie_luogo: "Saha konumu",
 compagnie_pick_regione: "B\u00f6lge se\u00e7\u2026", compagnie_pick_provincia: "\u0130l se\u00e7\u2026", compagnie_pick_luogo: "Saha se\u00e7\u2026", compagnie_provincia_non_specificata: "\u0130l belirtilmemi\u015f",
+compagnie_paese_vuoto: "Ülkende henüz listede kulüp yok. Bir saha ya da kulüp biliyorsan bana yaz, ekleyeyim.", compagnie_paese_segnala: "Kulüp bildir", campi_maps_query: "3D okçuluk parkuru",
 compagnie_no_percorsi: "Bu kul\u00fcp hen\u00fcz parkur y\u00fcklemedi.",
 compagnie_no_dati: "Bu kul\u00fcp i\u00e7in tam veriler hen\u00fcz y\u00fcklenmedi.",
 compagnie_new_percorso: "+ Yeni parkur", compagnie_new_risultato: "+ Yeni sonu\u00e7", compagnie_classifica: "S\u0131ralama",
@@ -4251,7 +4329,7 @@ pg_desc_placeholder: "K\u0131sa a\u00e7\u0131klama (iste\u011fe ba\u011fl\u0131)
 pg_section_participants: "{gara} \u2014 kat\u0131l\u0131mc\u0131lar ve tak\u0131mlar", pg_first_name_ph: "Ad", pg_last_name_ph: "Soyad", pg_add_btn: "Ekle",
 pg_search_account_hint: "Ya da kay\u0131tl\u0131 bir hesap ara (b\u00f6ylece kat\u0131l\u0131mc\u0131 hesab\u0131na ba\u011fl\u0131 olur, ileride bildirimler i\u00e7in yararl\u0131)",
 pg_bulk_import_hint: "Ya da bir liste yap\u0131\u015ft\u0131r: her tak\u0131m bo\u015f sat\u0131rla veya \u201cTak\u0131m N\u201d ba\u015fl\u0131\u011f\u0131yla ayr\u0131l\u0131r, sat\u0131r ba\u015f\u0131na bir soyad (veya \u201cSoyad, Ad\u201d).",
-pg_import_teams_btn: "ZATEN OLU\u015eTURULMU\u015e tak\u0131mlar\u0131 i\u00e7e aktar (gruplar\u0131n\u0131 korur)", pg_participants_count_label: "Kat\u0131l\u0131mc\u0131lar:", pg_not_linked: "(ba\u011fl\u0131 de\u011fil)",
+pg_import_teams_btn: "ZATEN OLU\u015eTURULMU\u015e tak\u0131mlar\u0131 i\u00e7e aktar (gruplar\u0131n\u0131 korur)", pg_participants_count_label: "Kat\u0131l\u0131mc\u0131lar:", pg_not_linked: "(ba\u011fl\u0131 de\u011fil)", pg_remove_participant: "{name} kişisini listeden çıkar",
 pg_people_per_team: "Tak\u0131m ba\u015f\u0131na ki\u015fi (en fazla 6)", pg_auto_teams_btn: "OTOMATIK tak\u0131mlar olu\u015ftur (kar\u0131\u015f\u0131k, A-Z blok de\u011fil)",
 pg_auto_teams_warning: "\u26a0\ufe0f Zaten karar verilmi\u015f gruplar\u0131 yok sayar: tak\u0131mlar\u0131 s\u0131f\u0131rdan yeniden hesaplar (soyadlar\u0131 tak\u0131mlar aras\u0131nda kar\u0131\u015ft\u0131r\u0131r, at\u0131\u015f s\u0131ras\u0131 sadece her tak\u0131m i\u00e7inde alfabetik).",
 pg_organizer_view_title: "Organizat\u00f6r g\u00f6r\u00fcn\u00fcm\u00fc \u2014 kim nereden ba\u015fl\u0131yor", 
@@ -4701,6 +4779,7 @@ zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wou
 menu_compagnie_label: "Клубы", 
 compagnie_title: "Клубы", compagnie_regione: "Регион", compagnie_provincia: "Провинция", compagnie_luogo: "Место площадки",
 compagnie_pick_regione: "Выберите регион…", compagnie_pick_provincia: "Выберите провинцию…", compagnie_pick_luogo: "Выберите площадку…", compagnie_provincia_non_specificata: "Провинция не указана",
+compagnie_paese_vuoto: "Для вашей страны в списке пока нет клубов. Если знаете площадку или клуб — напишите мне, и я добавлю.", compagnie_paese_segnala: "Предложить клуб", campi_maps_query: "3D стрельба из лука площадка",
 compagnie_no_percorsi: "Этот клуб ещё не загрузил маршруты.",
 compagnie_no_dati: "Полные данные для этого клуба пока не загружены.",
 compagnie_new_percorso: "+ Новый маршрут", compagnie_new_risultato: "+ Новый результат", compagnie_classifica: "Результаты",
@@ -4742,7 +4821,7 @@ pg_desc_placeholder: "Краткое описание (необязательн�
 pg_section_participants: "{gara} — участники и команды", pg_first_name_ph: "Имя", pg_last_name_ph: "Фамилия", pg_add_btn: "Добавить",
 pg_search_account_hint: "Или найдите уже зарегистрированный аккаунт (так участник будет привязан к аккаунту, что полезно для будущих уведомлений)",
 pg_bulk_import_hint: "Или вставьте список: один блок на команду, разделённый пустой строкой или заголовком «Команда N», по одной фамилии (или «Фамилия, Имя») на строку.",
-pg_import_teams_btn: "Импортировать УЖЕ СФОРМИРОВАННЫЕ команды (сохраняет ваши группы)", pg_participants_count_label: "Участников:", pg_not_linked: "(не привязан)",
+pg_import_teams_btn: "Импортировать УЖЕ СФОРМИРОВАННЫЕ команды (сохраняет ваши группы)", pg_participants_count_label: "Участников:", pg_not_linked: "(не привязан)", pg_remove_participant: "Убрать {name} из списка",
 pg_people_per_team: "Человек на команду (макс. 6)", pg_auto_teams_btn: "Создать АВТОМАТИЧЕСКИЕ команды (перемешанные, не блоками А-Я)",
 pg_auto_teams_warning: "⚠️ Игнорирует уже решённые группы: пересчитывает команды с нуля (перемешивая фамилии между командами, порядок стрельбы по алфавиту только внутри каждой команды).",
 pg_organizer_view_title: "Вид организатора — кто откуда начинает", 
@@ -5192,6 +5271,7 @@ zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wou
 menu_compagnie_label: "Clubes", 
 compagnie_title: "Clubes", compagnie_regione: "Regi\u00f3n", compagnie_provincia: "Provincia", compagnie_luogo: "Ubicaci\u00f3n del campo",
 compagnie_pick_regione: "Elige la regi\u00f3n\u2026", compagnie_pick_provincia: "Elige la provincia\u2026", compagnie_pick_luogo: "Elige el campo\u2026", compagnie_provincia_non_specificata: "Provincia no especificada",
+compagnie_paese_vuoto: "Todavía no hay clubes en la lista para tu país. Si conoces un campo o un club, escríbeme y lo añado.", compagnie_paese_segnala: "Proponer un club", campi_maps_query: "campo de tiro con arco 3D",
 compagnie_no_percorsi: "Este club a\u00fan no ha cargado recorridos.",
 compagnie_no_dati: "Todav\u00eda no se han cargado datos completos para este club.",
 compagnie_new_percorso: "+ Nuevo recorrido", compagnie_new_risultato: "+ Nuevo resultado", compagnie_classifica: "Clasificaci\u00f3n",
@@ -5233,7 +5313,7 @@ pg_desc_placeholder: "Breve descripci\u00f3n (opcional)", pg_cancel: "Cancelar",
 pg_section_participants: "{gara} \u2014 inscritos y equipos", pg_first_name_ph: "Nombre", pg_last_name_ph: "Apellido", pg_add_btn: "A\u00f1adir",
 pg_search_account_hint: "O busca una cuenta ya registrada (as\u00ed el inscrito queda vinculado, \u00fatil para futuras notificaciones)",
 pg_bulk_import_hint: "O pega una lista: un bloque por equipo separado por l\u00ednea en blanco o encabezado \u201cEquipo N\u201d, un apellido (o \u201cApellido, Nombre\u201d) por l\u00ednea.",
-pg_import_teams_btn: "Importar equipos YA FORMADOS (mantiene tus grupos)", pg_participants_count_label: "Inscritos:", pg_not_linked: "(no vinculado)",
+pg_import_teams_btn: "Importar equipos YA FORMADOS (mantiene tus grupos)", pg_participants_count_label: "Inscritos:", pg_not_linked: "(no vinculado)", pg_remove_participant: "Quitar a {name} de la lista",
 pg_people_per_team: "Personas por equipo (m\u00e1x. 6)", pg_auto_teams_btn: "Crear equipos AUTOM\u00c1TICOS (mezclados, no en bloques A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignora los grupos ya decididos: recalcula los equipos desde cero (mezclando los apellidos entre equipos, orden de tiro alfab\u00e9tico solo dentro de cada equipo).",
 pg_organizer_view_title: "Vista del organizador \u2014 qui\u00e9n empieza d\u00f3nde", 
@@ -5683,6 +5763,7 @@ zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wou
 menu_compagnie_label: "Klubbar", 
 compagnie_title: "Klubbar", compagnie_regione: "Region", compagnie_provincia: "Provins", compagnie_luogo: "Banans plats",
 compagnie_pick_regione: "V\u00e4lj region\u2026", compagnie_pick_provincia: "V\u00e4lj provins\u2026", compagnie_pick_luogo: "V\u00e4lj bana\u2026", compagnie_provincia_non_specificata: "Provins ej angiven",
+compagnie_paese_vuoto: "Det finns ännu inga klubbar i listan för ditt land. Om du känner till en bana eller en klubb, skriv till mig så lägger jag till den.", compagnie_paese_segnala: "Tipsa om en klubb", campi_maps_query: "3D bågskytte bana",
 compagnie_no_percorsi: "Denna klubb har \u00e4nnu inte laddat upp n\u00e5gra rundor.",
 compagnie_no_dati: "Fullst\u00e4ndiga uppgifter \u00e4nnu inte uppladdade f\u00f6r denna klubb.",
 cp_admin_claim_btn: "🔑 Begär administration", cp_admin_claim_pending: "Begäran skickad.", cp_admin_map_error: "Fel.", cp_admin_tel: "Telefon", cp_admin_email_label: "E-post", cp_admin_sito: "Webbplats", 
@@ -5724,7 +5805,7 @@ pg_desc_placeholder: "Kort beskrivning (valfritt)", pg_cancel: "Avbryt", pg_save
 pg_section_participants: "{gara} \u2014 deltagare och lag", pg_first_name_ph: "F\u00f6rnamn", pg_last_name_ph: "Efternamn", pg_add_btn: "L\u00e4gg till",
 pg_search_account_hint: "Eller s\u00f6k ett redan registrerat konto (d\u00e5 blir deltagaren kopplad, anv\u00e4ndbart f\u00f6r framtida notiser)",
 pg_bulk_import_hint: "Eller klistra in en lista: ett block per lag \u00e5tskilt av en tom rad eller rubriken \u201dLag N\u201d, ett efternamn (eller \u201dEfternamn, F\u00f6rnamn\u201d) per rad.",
-pg_import_teams_btn: "Importera REDAN BILDADE lag (beh\u00e5ller dina grupper)", pg_participants_count_label: "Deltagare:", pg_not_linked: "(ej kopplad)",
+pg_import_teams_btn: "Importera REDAN BILDADE lag (beh\u00e5ller dina grupper)", pg_participants_count_label: "Deltagare:", pg_not_linked: "(ej kopplad)", pg_remove_participant: "Ta bort {name} från listan",
 pg_people_per_team: "Personer per lag (max 6)", pg_auto_teams_btn: "Skapa AUTOMATISKA lag (blandade, inte i block A-\u00d6)",
 pg_auto_teams_warning: "\u26a0\ufe0f Ignorerar redan best\u00e4mda grupper: ber\u00e4knar om lagen fr\u00e5n b\u00f6rjan (blandar efternamn mellan lagen, alfabetisk skjutordning endast inom varje lag).",
 pg_organizer_view_title: "Arrang\u00f6rsvy \u2014 vem b\u00f6rjar var", 
@@ -6174,6 +6255,7 @@ zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wou
 menu_compagnie_label: "Verenigingen", 
 compagnie_title: "Verenigingen", compagnie_regione: "Regio", compagnie_provincia: "Provincie", compagnie_luogo: "Locatie van de baan",
 compagnie_pick_regione: "Kies de regio\u2026", compagnie_pick_provincia: "Kies de provincie\u2026", compagnie_pick_luogo: "Kies de baan\u2026", compagnie_provincia_non_specificata: "Provincie niet opgegeven",
+compagnie_paese_vuoto: "Voor jouw land staan er nog geen verenigingen in de lijst. Ken je een baan of vereniging? Schrijf me, dan voeg ik hem toe.", compagnie_paese_segnala: "Vereniging doorgeven", campi_maps_query: "3D handboogschieten parcours",
 compagnie_no_percorsi: "Deze vereniging heeft nog geen rondes ge\u00fcpload.",
 compagnie_no_dati: "Volledige gegevens nog niet ge\u00fcpload voor deze vereniging.",
 compagnie_new_percorso: "+ Nieuwe ronde", compagnie_new_risultato: "+ Nieuw resultaat", compagnie_classifica: "Klassement",
@@ -6215,7 +6297,7 @@ pg_desc_placeholder: "Korte beschrijving (optioneel)", pg_cancel: "Annuleren", p
 pg_section_participants: "{gara} \u2014 deelnemers en teams", pg_first_name_ph: "Voornaam", pg_last_name_ph: "Achternaam", pg_add_btn: "Toevoegen",
 pg_search_account_hint: "Of zoek een reeds geregistreerd account (zo wordt de deelnemer gekoppeld, handig voor toekomstige meldingen)",
 pg_bulk_import_hint: "Of plak een lijst: een blok per team gescheiden door een lege regel of de titel \u201cTeam N\u201d, \u00e9\u00e9n achternaam (of \u201cAchternaam, Voornaam\u201d) per regel.",
-pg_import_teams_btn: "AL GEVORMDE teams importeren (behoudt je groepen)", pg_participants_count_label: "Deelnemers:", pg_not_linked: "(niet gekoppeld)",
+pg_import_teams_btn: "AL GEVORMDE teams importeren (behoudt je groepen)", pg_participants_count_label: "Deelnemers:", pg_not_linked: "(niet gekoppeld)", pg_remove_participant: "{name} uit de lijst verwijderen",
 pg_people_per_team: "Personen per team (max. 6)", pg_auto_teams_btn: "AUTOMATISCHE teams aanmaken (gemengd, niet in blokken A-Z)",
 pg_auto_teams_warning: "\u26a0\ufe0f Negeert reeds beslist groepen: berekent de teams opnieuw vanaf nul (mengt de achternamen tussen de teams, alfabetische schietvolgorde alleen binnen elk team).",
 pg_organizer_view_title: "Organisatorweergave \u2014 wie begint waar", 
@@ -7746,12 +7828,19 @@ return state.compagnieData[codice];
 }
 
 // ---------- HOME / PROFILO ----------
+// Questo elenco DEVE contenere le stesse federazioni di FEDERATIONS: se una
+// federazione ha un formato di gara nell'app ma non e' qui, l'app le offre la
+// gara e le nega la tessera. Mancavano TOF, RFSL, RFETA, SBF e NHB: cinque
+// paesi interi potevano tirare e non potevano dire chi erano. Il guardiano
+// adesso confronta le due liste a ogni passata.
 var PROFILE_FEDERATIONS = [
 {code:"fiarc", label:"FIARC"}, {code:"fitarco", label:"FITARCO"},
 {code:"ffta", label:"FFTA"}, {code:"fftl", label:"FFTL"},
 {code:"swissarchery", label:"SwissArchery"}, {code:"faas", label:"FAAS"},
 {code:"oebsv", label:"\u00d6BSV"}, {code:"dfbv", label:"DFBV"},
-{code:"archerygb", label:"Archery GB"}, {code:"nfas", label:"NFAS"}, {code:"efaa", label:"EFAA"}
+{code:"archerygb", label:"Archery GB"}, {code:"nfas", label:"NFAS"}, {code:"efaa", label:"EFAA"},
+{code:"turkey", label:"TOF"}, {code:"russia", label:"\u0420\u0424\u0421\u041b"},
+{code:"spain", label:"RFETA"}, {code:"sweden", label:"SBF"}, {code:"nhb", label:"NHB"}
 ];
 var PROFILE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longbow", storico:"Storico" };
 var ADMIN_CONTACT_EMAIL = "info@arctrail3d.com";
@@ -8411,7 +8500,7 @@ var matches = list.filter(function(u){
 return u.username.toLowerCase().indexOf(q) !== -1 && already.indexOf(u.username.toLowerCase()) === -1;
 }).slice(0,6);
 if(matches.length === 0){
-searchResults.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);">'+t("search_username_empty")+'</div>'));
+searchResults.appendChild(el('<div class="cerca-vuoto">'+t("search_username_empty")+'</div>'));
 return;
 }
 matches.forEach(function(u){
@@ -8565,8 +8654,8 @@ return d;
 }
 
 function pgField(label, value, onChange, type){
-var f = el('<div style="margin-bottom:12px;"><label style="display:block;font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">'+label+'</label></div>');
-var inp = el('<input type="'+(type||"text")+'" value="'+(value||"").toString().replace(/"/g,"&quot;")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;font-size:0.88rem;">');
+var f = el('<div class="pg-campo-riga"><label class="pg-campo-etichetta">'+label+'</label></div>');
+var inp = el('<input type="'+(type||"text")+'" value="'+(value||"").toString().replace(/"/g,"&quot;")+'">');
 inp.oninput = function(){ onChange(this.value); };
 f.appendChild(inp);
 return f;
@@ -8579,8 +8668,8 @@ d.appendChild(el('<h3 class="section-title">'+t("pg_section_route_data",{gara:pc
 d.appendChild(pgField(t("pg_field_route_name"), state.pgDraft.nome, function(v){ state.pgDraft.nome=v; }));
 d.appendChild(pgField(t("pg_field_date"), state.pgDraft.data, function(v){ state.pgDraft.data=v; }, "date"));
 d.appendChild(pgField(t("pg_field_org"), state.pgDraft.compagnia, function(v){ state.pgDraft.compagnia=v; }));
-var numField = el('<div style="margin-bottom:14px;"><label style="display:block;font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">'+t("pg_field_num_piazzole")+'</label></div>');
-var numInp = el('<input type="number" min="1" max="60" value="'+state.pgDraft.numPiazzole+'" style="width:100px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;">');
+var numField = el('<div class="pg-campo-riga"><label class="pg-campo-etichetta">'+t("pg_field_num_piazzole")+'</label></div>');
+var numInp = el('<input type="number" min="1" max="60" value="'+state.pgDraft.numPiazzole+'" class="pg-campo-num">');
 numInp.oninput = function(){ state.pgDraft.numPiazzole = parseInt(this.value)||1; };
 numField.appendChild(numInp);
 d.appendChild(numField);
@@ -8687,14 +8776,14 @@ togglesRow.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);">'+
 if(pcfg.hideGinocchio){ draft.ginocchio = true; }
 box.appendChild(togglesRow);
 
-var descInp = el('<input type="text" placeholder="'+t("pg_desc_placeholder")+'" value="'+(draft.descrizione||"").replace(/"/g,"&quot;")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;font-size:0.85rem;margin-bottom:12px;">');
+var descInp = el('<input type="text" placeholder="'+t("pg_desc_placeholder")+'" value="'+(draft.descrizione||"").replace(/"/g,"&quot;")+'" class="pg-stacco-sotto">');
 descInp.oninput = function(){ draft.descrizione=this.value; };
 box.appendChild(descInp);
 
-var actions = el('<div style="display:flex;gap:10px;"></div>');
+var actions = el('<div class="pg-azioni"></div>');
 var cancelBtn = el('<button class="btn btn-ghost">'+t("pg_cancel")+'</button>');
 cancelBtn.addEventListener("click", function(){ state.pgEditingIndex=null; state.pgEditDraft=null; render(); });
-var saveBtn = el('<button class="btn btn-primary" style="flex:1;">'+t("pg_save_piazzola")+'</button>');
+var saveBtn = el('<button class="btn btn-primary">'+t("pg_save_piazzola")+'</button>');
 saveBtn.disabled = pcfg.hasTipo && !draft.tipo;
 saveBtn.addEventListener("click", function(){
 if(pcfg.hasTipo && !draft.tipo) return;
@@ -8713,10 +8802,10 @@ var pcfg = PG_MODES[state.pgDraft.gara];
 var d = el('<div class="card"></div>');
 d.appendChild(el('<h3 class="section-title">'+t("pg_section_participants",{gara:pcfg.label})+'</h3>'));
 
-var addRow = el('<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;"></div>');
-var addNome = el('<input type="text" placeholder="'+t("pg_first_name_ph")+'" style="flex:1 1 120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;">');
-var addCognome = el('<input type="text" placeholder="'+t("pg_last_name_ph")+'" style="flex:1 1 120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;">');
-var addBtn = el('<button class="btn btn-primary" style="flex:1 1 100%;">'+t("pg_add_btn")+'</button>');
+var addRow = el('<div class="pg-riga"></div>');
+var addNome = el('<input type="text" placeholder="'+t("pg_first_name_ph")+'" class="pg-campo-nome">');
+var addCognome = el('<input type="text" placeholder="'+t("pg_last_name_ph")+'" class="pg-campo-nome">');
+var addBtn = el('<button class="btn btn-primary pg-riga-larga">'+t("pg_add_btn")+'</button>');
 function doAdd(){
 var n=addNome.value.trim(), c=addCognome.value.trim();
 if(!n||!c) return;
@@ -8729,10 +8818,10 @@ addRow.appendChild(addNome); addRow.appendChild(addCognome); addRow.appendChild(
 d.appendChild(addRow);
 
 if(!DEV_MODE && db){
-d.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:2px 0 4px;">'+t("pg_search_account_hint")+'</div>'));
-var searchRow = el('<div style="margin-bottom:10px;"></div>');
-var searchInput = el('<input type="text" placeholder="'+t("search_username_placeholder")+'" style="width:100%;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;">');
-var searchResults = el('<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;"></div>');
+d.appendChild(el('<div class="pg-nota">'+t("pg_search_account_hint")+'</div>'));
+var searchRow = el('<div class="pg-blocco"></div>');
+var searchInput = el('<input type="text" placeholder="'+t("search_username_placeholder")+'">');
+var searchResults = el('<div class="pg-esiti"></div>');
 searchRow.appendChild(searchInput); searchRow.appendChild(searchResults);
 d.appendChild(searchRow);
 
@@ -8745,7 +8834,7 @@ loadApprovedUsers(function(list){
 var already = state.pgDraft.iscritti.map(function(a){ return (a.uid||"")+"|"+a.cognome+"|"+a.nome; });
 var matches = list.filter(function(u){ return u.username.toLowerCase().indexOf(q) !== -1; }).slice(0,6);
 if(matches.length === 0){
-searchResults.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);">'+t("search_username_empty")+'</div>'));
+searchResults.appendChild(el('<div class="cerca-vuoto">'+t("search_username_empty")+'</div>'));
 return;
 }
 matches.forEach(function(u){
@@ -8767,9 +8856,9 @@ searchResults.appendChild(chip);
 });
 }
 
-d.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:10px 0 4px;">'+t("pg_bulk_import_hint")+'</div>'));
-var bulkArea = el('<textarea placeholder="Squadra 1\nVallo\nZanetta\nBonetti\nArpaia\nNatale\n\nSquadra 2\n..." style="width:100%;min-height:120px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:10px;padding:9px 11px;font-size:0.82rem;"></textarea>');
-var bulkBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:8px;margin-bottom:16px;">'+t("pg_import_teams_btn")+'</button>');
+d.appendChild(el('<div class="pg-nota pg-nota-stacco">'+t("pg_bulk_import_hint")+'</div>'));
+var bulkArea = el('<textarea placeholder="Squadra 1\nVallo\nZanetta\nBonetti\nArpaia\nNatale\n\nSquadra 2\n..." class="pg-campo-testo"></textarea>');
+var bulkBtn = el('<button class="btn btn-ghost btn-block pg-stacco-importa">'+t("pg_import_teams_btn")+'</button>');
 bulkBtn.addEventListener("click", function(){
 var blocks = bulkArea.value.split(/\n\s*\n/);
 var squadre = [], tutti = [];
@@ -8799,13 +8888,13 @@ bulkArea.value = ""; render();
 });
 d.appendChild(bulkArea); d.appendChild(bulkBtn);
 
-d.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px;">'+t("pg_participants_count_label")+' <b style="color:var(--gold);">'+state.pgDraft.iscritti.length+'</b></div>'));
+d.appendChild(el('<div class="pg-conto">'+t("pg_participants_count_label")+' <b>'+state.pgDraft.iscritti.length+'</b></div>'));
 if(state.pgDraft.iscritti.length){
-var iscrittiList = el('<div style="margin-bottom:10px;"></div>');
+var iscrittiList = el('<div class="pg-elenco-iscritti"></div>');
 state.pgDraft.iscritti.forEach(function(p, idx){
-var row = el('<div class="iscritto-row" style="display:flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin-bottom:5px;"></div>');
-row.appendChild(el('<span style="flex:1;font-size:0.82rem;">'+escapeHtml(p.cognome)+(p.nome?' '+escapeHtml(p.nome):'')+(p.username?' <span style="color:var(--accent-soft);">@'+escapeHtml(p.username)+'</span>':' <span style="color:var(--muted);font-size:0.7rem;">'+t("pg_not_linked")+'</span>')+'</span>'));
-var rm = el('<button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;">\u2715</button>');
+var row = el('<div class="iscritto-row"></div>');
+row.appendChild(el('<span class="iscritto-nome">'+escapeHtml(p.cognome)+(p.nome?' '+escapeHtml(p.nome):'')+(p.username?' <span class="iscritto-user">@'+escapeHtml(p.username)+'</span>':' <span class="iscritto-slegato">'+t("pg_not_linked")+'</span>')+'</span>'));
+var rm = el('<button class="iscritto-rm" aria-label="'+escapeHtml(t("pg_remove_participant",{name:p.cognome+(p.nome?" "+p.nome:"")}))+'">\u2715</button>');
 rm.addEventListener("click", function(){ state.pgDraft.iscritti.splice(idx,1); state.pgDraft.squadre=[]; render(); });
 row.appendChild(rm);
 iscrittiList.appendChild(row);
@@ -8813,8 +8902,8 @@ iscrittiList.appendChild(row);
 d.appendChild(iscrittiList);
 }
 
-var sizeRow = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span style="font-size:0.78rem;color:var(--muted);">'+t("pg_people_per_team")+'</span></div>');
-var sizeInp = el('<input type="number" min="2" max="6" value="'+(state.pgDraft.gruppiSize||6)+'" style="width:70px;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:8px;padding:6px 8px;">');
+var sizeRow = el('<div class="pg-riga-num"><span>'+t("pg_people_per_team")+'</span></div>');
+var sizeInp = el('<input type="number" min="2" max="6" value="'+(state.pgDraft.gruppiSize||6)+'" class="pg-campo-num">');
 // Regolamento Tecnico FIARC, Art. 5.c: una squadra ha al massimo SEI
 // componenti, e l'Art. 7.m ne impegna gia' quattro di ruolo (Caposquadra,
 // due Marcatori, Cronometrista). Qui il tetto era cinque, scritto a mano e
@@ -8823,8 +8912,8 @@ sizeInp.oninput = function(){ state.pgDraft.gruppiSize = Math.max(2,Math.min(6,p
 sizeRow.appendChild(sizeInp);
 d.appendChild(sizeRow);
 
-var autoBtn = el('<button class="btn btn-ghost btn-block" style="margin-bottom:6px;">'+t("pg_auto_teams_btn")+'</button>');
-var autoWarn = el('<p style="font-size:0.7rem;color:var(--bark);margin:0 0 16px;">'+t("pg_auto_teams_warning")+'</p>');
+var autoBtn = el('<button class="btn btn-ghost btn-block pg-stacco-sotto">'+t("pg_auto_teams_btn")+'</button>');
+var autoWarn = el('<p class="pg-avviso">'+t("pg_auto_teams_warning")+'</p>');
 autoBtn.disabled = state.pgDraft.iscritti.length < 2;
 autoBtn.addEventListener("click", function(){
 var ordinati = state.pgDraft.iscritti.slice().sort(function(a,b){ return a.cognome.localeCompare(b.cognome) || a.nome.localeCompare(b.nome); });
@@ -8845,13 +8934,13 @@ d.appendChild(autoWarn);
 
 if(state.pgDraft.squadre.length){
 var numPiazzole = state.pgDraft.piazzole.length || state.pgDraft.numPiazzole || 1;
-d.appendChild(el('<h4 style="font-size:0.85rem;color:var(--gold);margin:14px 0 8px;">'+t("pg_organizer_view_title")+'</h4>'));
+d.appendChild(el('<h4 class="pg-titolo-squadre">'+t("pg_organizer_view_title")+'</h4>'));
 state.pgDraft.squadre.forEach(function(s, gIdx){
-d.appendChild(el('<div style="font-size:0.8rem;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:6px;"><b style="color:var(--gold);">'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
+d.appendChild(el('<div class="pg-squadra"><b>'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
 });
 
-var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-top:16px;">'+t("pg_save_route_btn")+'</button>');
-var saveStatus = el('<div style="font-size:0.78rem;color:var(--muted);margin-top:8px;text-align:center;"></div>');
+var saveBtn = el('<button class="btn btn-primary btn-block pg-stacco-sopra">'+t("pg_save_route_btn")+'</button>');
+var saveStatus = el('<div class="pg-stato"></div>');
 saveBtn.addEventListener("click", function(){
 var completo = JSON.parse(JSON.stringify(state.pgDraft));
 completo.salvatoIl = new Date().toISOString();
@@ -9535,9 +9624,39 @@ var isFitarco = cod.indexOf("FT") === 0;
 return state.federation === "fitarco" ? isFitarco : !isFitarco;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   LE SOCIETA' HANNO UN PAESE, E FINORA ERA SEMPRE L'ITALIA
+
+   L'elenco contiene 663 societa' italiane, ordinate per regione e provincia
+   italiane. Il filtro che c'era separava soltanto FITARCO dal resto: quindi
+   uno svedese apriva "Klubbar" e trovava il menu delle regioni italiane, con
+   il Piemonte in cima. Non era una lista vuota tradotta male: era la lista
+   di un altro paese, presentata come se fosse la sua.
+
+   Il paese si legge dal dato, non da un elenco di eccezioni scritto qui: una
+   societa' senza `paese` e' italiana, perche' oggi lo sono tutte. Il giorno
+   che entra la prima societa' francese le basta `paese:"fr"` e compare, senza
+   che nessuno debba ricordarsi di toccare questa funzione.
+   ══════════════════════════════════════════════════════════════════════════ */
+function compagniaPaese(cod){
+var c = (typeof COMPAGNIE !== "undefined") ? COMPAGNIE[cod] : null;
+return (c && c.paese) ? c.paese : "it";
+}
+function compagniaVisibile(cod){
+if(state.country && compagniaPaese(cod) !== state.country) return false;
+return compagniaFederazioneOk(cod);
+}
+// Quante se ne vedono in tutto: se sono zero, la schermata non deve mostrare
+// nessun menu. Un menu che si apre su un elenco vuoto fa credere di aver
+// sbagliato a scegliere, e si riprova.
+function compagnieDelPaese(){
+if(typeof COMPAGNIE === "undefined") return [];
+return Object.keys(COMPAGNIE).filter(compagniaVisibile);
+}
+
 function compagnieScreen(){
 initCompagnieData();
-if(state.compagniaAttiva && !compagniaFederazioneOk(state.compagniaAttiva)){
+if(state.compagniaAttiva && !compagniaVisibile(state.compagniaAttiva)){
 state.compagniaAttiva = null;
 state.compagniaRegione = null;
 state.compagniaProvincia = null;
@@ -9547,10 +9666,27 @@ var wrap = el('<div></div>');
 var selCard = el('<div class="card"></div>');
 selCard.appendChild(el('<h2 class="section-title">'+t("compagnie_title")+'</h2>'));
 
+// Nessuna societa' per questo paese: si dice, e si offre l'unica cosa utile
+// da fare — segnalarne una. Il menu delle regioni non compare affatto.
+if(compagnieDelPaese().length === 0){
+selCard.appendChild(el('<p class="cp-vuoto">'+escapeHtml(t("compagnie_paese_vuoto"))+'</p>'));
+if(currentUser){
+var segnBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("compagnie_paese_segnala")+'</button>');
+segnBtn.addEventListener("click", function(){ openAdminChat(); });
+selCard.appendChild(segnBtn);
+}
+wrap.appendChild(selCard);
+return wrap;
+}
+
 var regRow = el('<div class="cp-select-row"><label>'+t("compagnie_regione")+'</label><select id="cpSelRegione"></select></div>');
 var regSel = regRow.querySelector("select");
 regSel.appendChild(el('<option value="">'+t("compagnie_pick_regione")+'</option>'));
-COMPAGNIE_REGIONI.slice().sort(function(x,y){ return x.localeCompare(y,"it"); }).forEach(function(r){
+// Solo le regioni che hanno almeno una societa' visibile: un'opzione che
+// porta a un elenco vuoto e' una promessa non mantenuta.
+var regioniPiene = {};
+compagnieDelPaese().forEach(function(cod){ regioniPiene[COMPAGNIE[cod].regione] = true; });
+COMPAGNIE_REGIONI.filter(function(r){ return regioniPiene[r]; }).sort(function(x,y){ return x.localeCompare(y,"it"); }).forEach(function(r){
 var opt = el('<option value="'+r+'">'+r+'</option>');
 if(state.compagniaRegione === r) opt.setAttribute("selected","selected");
 regSel.appendChild(opt);
@@ -9563,7 +9699,7 @@ var haNonSpecificata = false;
 Object.keys(COMPAGNIE).forEach(function(cod){
 var c = COMPAGNIE[cod];
 if(c.regione !== state.compagniaRegione) return;
-if(!compagniaFederazioneOk(cod)) return;
+if(!compagniaVisibile(cod)) return;
 if(c.provincia === "\u2014"){ haNonSpecificata = true; }
 else { provinceSet[c.provincia] = true; }
 });
@@ -9599,7 +9735,7 @@ var luogoSel = luogoRow.querySelector("select");
 luogoSel.appendChild(el('<option value="">'+t("compagnie_pick_luogo")+'</option>'));
 Object.keys(COMPAGNIE).forEach(function(cod){
 var c = COMPAGNIE[cod];
-if(c.regione === state.compagniaRegione && c.provincia === state.compagniaProvincia && compagniaFederazioneOk(cod)){
+if(c.regione === state.compagniaRegione && c.provincia === state.compagniaProvincia && compagniaVisibile(cod)){
 var label = c.luogo + " \u2014 " + c.nome + " (" + cod + ")" + (c.completa ? " \u2b50" : "");
 var opt = el('<option value="'+cod+'">'+label+'</option>');
 if(state.compagniaAttiva === cod) opt.setAttribute("selected","selected");
@@ -9884,7 +10020,9 @@ locCard.appendChild(el('<h2 class="section-title">'+t("campi_title")+'</h2>'));
 var locBtn = el('<button class="btn btn-primary btn-block">'+icon("pin",18)+' '+t("campi_btn")+'</button>');
 locBtn.addEventListener("click", function(){
 locBtn.innerHTML = t("campi_searching");
-apriMaps("tiro con l'arco campo 3D");
+// La frase che finisce su Maps era scritta a mano in italiano, per tutte e
+// nove le lingue: un olandese cercava "tiro con l'arco campo 3D" in Olanda.
+apriMaps(t("campi_maps_query"));
 setTimeout(function(){ locBtn.innerHTML = icon("pin",18)+' '+t("campi_btn"); }, 2500);
 });
 locCard.appendChild(locBtn);
@@ -10659,7 +10797,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-date-a";
+var BUILD_STAMP = "2026-08-16-paesi-a";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -12725,7 +12863,9 @@ var matches = [];
 if(typeof COMPAGNIE !== "undefined"){
 Object.keys(COMPAGNIE).forEach(function(cod){
 var c = COMPAGNIE[cod];
-if(!compagniaFederazioneOk(cod)) return;
+// Anche la ricerca del campo nel profilo: cercare fra le societa' di un
+// altro paese non serve a nessuno.
+if(!compagniaVisibile(cod)) return;
 var label = c.nome + (c.luogo ? " — " + c.luogo : "");
 if(label.toLowerCase().indexOf(q.toLowerCase()) !== -1) matches.push({ label:label, cod:cod });
 });
