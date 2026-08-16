@@ -1267,6 +1267,27 @@ font-weight:600; color:var(--text-3); }
 .pista-freccia{ font-size:var(--t-sm); color:var(--text-3); margin-top:var(--s-1); }
 .pista-nota{ font-size:var(--t-xs); color:var(--danger-role); margin-top:var(--s-2); }
 
+/* ── l'andamento: il totale e le piazzole gia' chiuse ──
+   Il posto dove stava la filigrana. La differenza e' che questo si puo'
+   scrivere: dice a quanto sei e come ci sei arrivato. */
+.pista-andamento{ margin-top:var(--s-3); padding-top:var(--s-3);
+border-top:1px solid var(--border); }
+.pista-tot{ display:flex; align-items:baseline; justify-content:space-between;
+gap:var(--s-3); }
+.pista-tot .eti{ font-size:var(--t-xs); font-weight:600; letter-spacing:.09em;
+text-transform:uppercase; color:var(--text-3); }
+.pista-tot .num{ font-family:var(--font-display); font-weight:700;
+font-size:var(--t-xl); line-height:1; color:var(--gold-role); }
+/* Le piazzole chiuse: numero piccolo sopra, punteggio sotto. Vanno a capo
+   invece di scorrere — una riga che scorre nasconde meta' del giro, e questa
+   e' l'unica vista d'insieme che non chiede di aprire niente. */
+.pista-fatte{ display:flex; flex-wrap:wrap; gap:var(--s-1); margin-top:var(--s-2); }
+.fatta{ display:inline-flex; flex-direction:column; align-items:center;
+min-width:32px; padding:var(--s-1); border-radius:var(--r-sm);
+background:var(--surface-2); }
+.fatta i{ font-style:normal; font-size:var(--t-xs); color:var(--text-3); line-height:1; }
+.fatta b{ font-size:var(--t-sm); font-weight:700; color:var(--text-1); line-height:1.3; }
+
 /* ── i turni della piazzola: sostituiscono 95 schermate di passaggio ──
    Il cerchio tratteggiato dice "poi tocca a Sara" senza fermare nessuno. */
 .pista-turni{ display:flex; gap:var(--s-2); margin-top:var(--s-3);
@@ -2137,6 +2158,7 @@ misure_nota: "Mediana su {n} intervalli. Restano su questo telefono: non vengono
 misure_vuoto: "Ancora nessuna misura: comincia un giro.",
 misure_azzera: "Azzera le misure",
 misure_azzera_conferma: "Azzerare? Tocca di nuovo",
+pista_totale: "Totale",
 pista_chiudi: "Chiudi",
 pista_tocca_a: "Tocca a {name}",
 pista_freccia_di: "Freccia {n} di {tot}",
@@ -2611,6 +2633,7 @@ misure_nota: "Median over {n} intervals. They stay on this phone: nothing is sen
 misure_vuoto: "No measurements yet: start a round.",
 misure_azzera: "Reset measurements",
 misure_azzera_conferma: "Reset? Tap again",
+pista_totale: "Total",
 pista_chiudi: "Close",
 pista_tocca_a: "{name}'s turn",
 pista_freccia_di: "Arrow {n} of {tot}",
@@ -3074,6 +3097,7 @@ misure_nota: "M\u00e9diane sur {n} intervalles. Elles restent sur ce t\u00e9l\u0
 misure_vuoto: "Aucune mesure pour l\u2019instant : commencez un parcours.",
 misure_azzera: "R\u00e9initialiser les mesures",
 misure_azzera_conferma: "R\u00e9initialiser ? Touchez encore",
+pista_totale: "Total",
 pista_chiudi: "Fermer",
 pista_tocca_a: "Au tour de {name}",
 pista_freccia_di: "Fl\u00e8che {n} sur {tot}",
@@ -3547,6 +3571,7 @@ misure_nota: "Median aus {n} Intervallen. Sie bleiben auf diesem Telefon: nichts
 misure_vuoto: "Noch keine Messwerte: starte eine Runde.",
 misure_azzera: "Messwerte zur\u00fccksetzen",
 misure_azzera_conferma: "Zur\u00fccksetzen? Nochmal tippen",
+pista_totale: "Gesamt",
 pista_chiudi: "Schlie\u00dfen",
 pista_tocca_a: "{name} ist dran",
 pista_freccia_di: "Pfeil {n} von {tot}",
@@ -4040,6 +4065,7 @@ misure_nota: "{n} aral\u0131k \u00fczerinden medyan. Bu telefonda kal\u0131r: hi
 misure_vuoto: "Hen\u00fcz \u00f6l\u00e7\u00fcm yok: bir tur ba\u015flat.",
 misure_azzera: "\u00d6l\u00e7\u00fcmleri s\u0131f\u0131rla",
 misure_azzera_conferma: "S\u0131f\u0131rlans\u0131n m\u0131? Tekrar dokun",
+pista_totale: "Toplam",
 pista_chiudi: "Kapat",
 pista_tocca_a: "S\u0131ra {name}",
 pista_freccia_di: "Ok {n}/{tot}",
@@ -4527,6 +4553,7 @@ misure_nota: "\u041c\u0435\u0434\u0438\u0430\u043d\u0430 \u043f\u043e {n} \u0438
 misure_vuoto: "\u0418\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u043e\u043a\u0430 \u043d\u0435\u0442: \u043d\u0430\u0447\u043d\u0438\u0442\u0435 \u043a\u0440\u0443\u0433.",
 misure_azzera: "\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u044f",
 misure_azzera_conferma: "\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c? \u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437",
+pista_totale: "\u0418\u0442\u043e\u0433",
 pista_chiudi: "Закрыть",
 pista_tocca_a: "Очередь: {name}",
 pista_freccia_di: "Стрела {n} из {tot}",
@@ -5014,6 +5041,7 @@ misure_nota: "Mediana sobre {n} intervalos. Se quedan en este tel\u00e9fono: no 
 misure_vuoto: "A\u00fan no hay mediciones: empieza un recorrido.",
 misure_azzera: "Reiniciar mediciones",
 misure_azzera_conferma: "\u00bfReiniciar? Toca otra vez",
+pista_totale: "Total",
 pista_chiudi: "Cerrar",
 pista_tocca_a: "Turno de {name}",
 pista_freccia_di: "Flecha {n} de {tot}",
@@ -5501,6 +5529,7 @@ misure_nota: "Median \u00f6ver {n} intervall. De stannar i den h\u00e4r telefone
 misure_vuoto: "Inga m\u00e4tningar \u00e4nnu: starta en runda.",
 misure_azzera: "Nollst\u00e4ll m\u00e4tningar",
 misure_azzera_conferma: "Nollst\u00e4lla? Tryck igen",
+pista_totale: "Totalt",
 pista_chiudi: "St\u00e4ng",
 pista_tocca_a: "{name}s tur",
 pista_freccia_di: "Pil {n} av {tot}",
@@ -5988,6 +6017,7 @@ misure_nota: "Mediaan over {n} intervallen. Ze blijven op deze telefoon: er word
 misure_vuoto: "Nog geen metingen: begin een ronde.",
 misure_azzera: "Metingen wissen",
 misure_azzera_conferma: "Wissen? Tik nogmaals",
+pista_totale: "Totaal",
 pista_chiudi: "Sluiten",
 pista_tocca_a: "{name} is aan de beurt",
 pista_freccia_di: "Pijl {n} van {tot}",
@@ -6830,7 +6860,14 @@ return '<svg viewBox="0 0 24 24" width="'+(size||20)+'" height="'+(size||20)+'" 
 // La barra in basso resta visibile ovunque: da una sotto-schermata si cambiava
 // sezione solo passando dal pulsante Menu.
 function appendTabBarTo(app){
-if(state.screen === "round" || state.screen === "summary"){ app.style.paddingBottom = ""; return; }
+// STESSA FAMIGLIA DEL BUG DELLO SCORRIMENTO, STESSA CAUSA: la guardia
+// guardava lo STATO invece della schermata che si vede. Durante un giro la
+// barra non deve esserci — quella regola e' giusta — ma con homeOverride lo
+// stato resta "round" mentre a schermo c'e' il menu, e il menu restava senza
+// barra. Chi tocca la casetta si trovava in un vicolo cieco: niente barra,
+// e (fino a poco fa) nemmeno lo scorrimento.
+if(!homeOverride && (state.screen === "round" || state.screen === "summary")){
+app.style.paddingBottom = ""; return; }
 var wideBar = (typeof window.matchMedia === "function") && window.matchMedia("(min-width: 760px)").matches;
 var bar = tabBar(wideBar);
 if(wideBar){
@@ -10533,7 +10570,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-superficie-c";
+var BUILD_STAMP = "2026-08-16-andamento-a";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13268,6 +13305,30 @@ t1.appendChild(el('<span class="turno-nome">'+escapeHtml(a.name)+'</span>'));
 turni.appendChild(t1);
 });
 if(state.archers.length > 1){ scena.appendChild(turni); }
+
+// ── L'ANDAMENTO: cosa hai fatto finora ──
+// Lo spazio in mezzo alla pista era stato riempito con un bersaglio in
+// filigrana, ed e' stato tolto perche' non aveva un mestiere. Ma vuoto e
+// basta e' altrettanto sbagliato: la regione piu' grande dello schermo, per
+// due ore, che non dice niente. Qui va l'unica informazione che l'app
+// possiede e non mostrava da nessuna parte durante il giro — il totale e le
+// piazzole gia' chiuse. E' la stessa cosa per cui si apriva la Classifica,
+// ma senza aprire niente. Superata la prova: si puo' scrivere cosa fa.
+var mieEntries = state.scores[currentArcher.id] || [];
+if(mieEntries.length){
+var and = el('<div class="pista-andamento"></div>');
+var testa = el('<div class="pista-tot"></div>');
+testa.appendChild(el('<span class="eti">'+t("pista_totale")+'</span>'));
+testa.appendChild(el('<b class="num">'+totalFor(currentArcher.id)+'</b>'));
+and.appendChild(testa);
+var strisciaP = el('<div class="pista-fatte"></div>');
+mieEntries.forEach(function(ent, idx){
+strisciaP.appendChild(el('<span class="fatta"><i>'+(idx+1)+'</i><b class="num">'+ent.total+'</b></span>'));
+firma += "|f"+(idx+1)+":"+ent.total;
+});
+and.appendChild(strisciaP);
+scena.appendChild(and);
+}
 scena.setAttribute("data-firma", firma);
 return scena;
 }
