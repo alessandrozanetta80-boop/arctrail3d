@@ -552,6 +552,21 @@ background:none; width:auto; height:auto; color:var(--text-3); }
 /* La freccia e' l'unica cosa che dichiara "questa riga porta da qualche
    parte", ora che il rettangolo non lo dice piu'. */
 .card .menu-btn.btn-ghost.riga-attenzione .menu-icon{ color:var(--danger-role); }
+
+/* ── chi tira, in cima al setup ── */
+.riga-arcieri{ padding-bottom:var(--s-3); }
+.ra-testa{ display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); }
+.ra-testa h2{ margin:0; }
+.ra-nomi{ display:flex; flex-wrap:wrap; gap:var(--s-2); margin-top:var(--s-3); }
+/* L'etichetta sopra un campo non e' burocrazia: e' l'unica cosa che dice a
+   che serve, quando due campi identici fanno cose diverse. */
+.campo-eti{ font-size:var(--t-xs); font-weight:600; letter-spacing:.06em;
+text-transform:uppercase; color:var(--text-3); margin:var(--s-3) 0 var(--s-1); }
+.card > .campo-eti:first-of-type{ margin-top:var(--s-2); }
+.ra-nome{ display:inline-flex; align-items:center; min-height:32px;
+padding:0 var(--s-3); border-radius:var(--r-pill); background:var(--surface-2);
+border:1px solid var(--border); color:var(--text-1);
+font-size:var(--t-sm); font-weight:600; }
 .card .menu-btn.btn-ghost::after{
 content:"\203a"; flex:0 0 auto; color:var(--text-3);
 font-size:var(--t-lg); line-height:1; }
@@ -1180,7 +1195,11 @@ padding-top:calc(var(--s-3) + env(safe-area-inset-top));
 padding-bottom:var(--s-3); }
 body.schermo-percorso header.top{ margin-top:0; }
 .pista{ flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
-.pista-spazio{ flex:1 1 auto; min-height:var(--s-3); }
+/* Lo spazio che avanza adesso ospita l'andamento. Ancorato in basso e
+   ritagliato: quando lo spazio si stringe sparisce dall'alto, cioe' prima le
+   piazzole vecchie e per ultimo il totale, che e' quello che conta. */
+.pista-spazio{ flex:1 1 auto; min-height:var(--s-3); display:flex;
+flex-direction:column; justify-content:flex-end; overflow:hidden; }
 
 /* ── LA FILIGRANA NON C'E' PIU' (16/08/2026) ──
    Due prove sul campo, due bocciature, e la seconda dopo una correzione fatta
@@ -1270,18 +1289,21 @@ font-weight:600; color:var(--text-3); }
 /* ── l'andamento: il totale e le piazzole gia' chiuse ──
    Il posto dove stava la filigrana. La differenza e' che questo si puo'
    scrivere: dice a quanto sei e come ci sei arrivato. */
-.pista-andamento{ margin-top:var(--s-3); padding-top:var(--s-3);
-border-top:1px solid var(--border); }
+.pista-andamento{ flex:0 0 auto; padding:var(--s-3) 0 var(--s-2); }
 .pista-tot{ display:flex; align-items:baseline; justify-content:space-between;
-gap:var(--s-3); }
+gap:var(--s-3); padding-top:var(--s-2); border-top:1px solid var(--border); }
 .pista-tot .eti{ font-size:var(--t-xs); font-weight:600; letter-spacing:.09em;
 text-transform:uppercase; color:var(--text-3); }
 .pista-tot .num{ font-family:var(--font-display); font-weight:700;
 font-size:var(--t-xl); line-height:1; color:var(--gold-role); }
-/* Le piazzole chiuse: numero piccolo sopra, punteggio sotto. Vanno a capo
-   invece di scorrere — una riga che scorre nasconde meta' del giro, e questa
-   e' l'unica vista d'insieme che non chiede di aprire niente. */
-.pista-fatte{ display:flex; flex-wrap:wrap; gap:var(--s-1); margin-top:var(--s-2); }
+/* Le piazzole chiuse: numero piccolo sopra, punteggio sotto. UNA RIGA SOLA,
+   le piu' recenti a destra. Andare a capo la farebbe crescere senza limite e
+   tornerebbe a rubare spazio alla scena: e' l'errore appena corretto. Quello
+   che non ci sta esce da sinistra, cioe' le piazzole piu' vecchie, che sono
+   anche le meno interessanti. La vista completa resta la Classifica. */
+.pista-fatte{ display:flex; flex-wrap:nowrap; justify-content:flex-end;
+gap:var(--s-1); margin-bottom:var(--s-2); overflow:hidden; }
+.pista-fatte .fatta{ flex:0 0 auto; }
 .fatta{ display:inline-flex; flex-direction:column; align-items:center;
 min-width:32px; padding:var(--s-1); border-radius:var(--r-sm);
 background:var(--surface-2); }
@@ -2159,6 +2181,9 @@ misure_vuoto: "Ancora nessuna misura: comincia un giro.",
 misure_azzera: "Azzera le misure",
 misure_azzera_conferma: "Azzerare? Tocca di nuovo",
 pista_totale: "Totale",
+reg_lbl_nome: "Chi non è iscritto: scrivi il nome",
+reg_lbl_cerca: "Chi è iscritto: cercalo per username",
+reg_edit_btn: "Modifica",
 pista_chiudi: "Chiudi",
 pista_tocca_a: "Tocca a {name}",
 pista_freccia_di: "Freccia {n} di {tot}",
@@ -2634,6 +2659,9 @@ misure_vuoto: "No measurements yet: start a round.",
 misure_azzera: "Reset measurements",
 misure_azzera_conferma: "Reset? Tap again",
 pista_totale: "Total",
+reg_lbl_nome: "Not registered: type a name",
+reg_lbl_cerca: "Registered: search by username",
+reg_edit_btn: "Edit",
 pista_chiudi: "Close",
 pista_tocca_a: "{name}'s turn",
 pista_freccia_di: "Arrow {n} of {tot}",
@@ -3098,6 +3126,9 @@ misure_vuoto: "Aucune mesure pour l\u2019instant : commencez un parcours.",
 misure_azzera: "R\u00e9initialiser les mesures",
 misure_azzera_conferma: "R\u00e9initialiser ? Touchez encore",
 pista_totale: "Total",
+reg_lbl_nome: "Non inscrit : écrivez le nom",
+reg_lbl_cerca: "Inscrit : cherchez par nom d’utilisateur",
+reg_edit_btn: "Modifier",
 pista_chiudi: "Fermer",
 pista_tocca_a: "Au tour de {name}",
 pista_freccia_di: "Fl\u00e8che {n} sur {tot}",
@@ -3572,6 +3603,9 @@ misure_vuoto: "Noch keine Messwerte: starte eine Runde.",
 misure_azzera: "Messwerte zur\u00fccksetzen",
 misure_azzera_conferma: "Zur\u00fccksetzen? Nochmal tippen",
 pista_totale: "Gesamt",
+reg_lbl_nome: "Nicht registriert: Namen eingeben",
+reg_lbl_cerca: "Registriert: nach Benutzername suchen",
+reg_edit_btn: "Bearbeiten",
 pista_chiudi: "Schlie\u00dfen",
 pista_tocca_a: "{name} ist dran",
 pista_freccia_di: "Pfeil {n} von {tot}",
@@ -4066,6 +4100,9 @@ misure_vuoto: "Hen\u00fcz \u00f6l\u00e7\u00fcm yok: bir tur ba\u015flat.",
 misure_azzera: "\u00d6l\u00e7\u00fcmleri s\u0131f\u0131rla",
 misure_azzera_conferma: "S\u0131f\u0131rlans\u0131n m\u0131? Tekrar dokun",
 pista_totale: "Toplam",
+reg_lbl_nome: "Kayıtlı değil: adı yaz",
+reg_lbl_cerca: "Kayıtlı: kullanıcı adıyla ara",
+reg_edit_btn: "Düzenle",
 pista_chiudi: "Kapat",
 pista_tocca_a: "S\u0131ra {name}",
 pista_freccia_di: "Ok {n}/{tot}",
@@ -4554,6 +4591,9 @@ misure_vuoto: "\u0418\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u04
 misure_azzera: "\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u044f",
 misure_azzera_conferma: "\u0421\u0431\u0440\u043e\u0441\u0438\u0442\u044c? \u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437",
 pista_totale: "\u0418\u0442\u043e\u0433",
+reg_lbl_nome: "Не зарегистрирован: впишите имя",
+reg_lbl_cerca: "Зарегистрирован: найдите по имени пользователя",
+reg_edit_btn: "Изменить",
 pista_chiudi: "Закрыть",
 pista_tocca_a: "Очередь: {name}",
 pista_freccia_di: "Стрела {n} из {tot}",
@@ -5042,6 +5082,9 @@ misure_vuoto: "A\u00fan no hay mediciones: empieza un recorrido.",
 misure_azzera: "Reiniciar mediciones",
 misure_azzera_conferma: "\u00bfReiniciar? Toca otra vez",
 pista_totale: "Total",
+reg_lbl_nome: "No inscrito: escribe el nombre",
+reg_lbl_cerca: "Inscrito: búscalo por nombre de usuario",
+reg_edit_btn: "Editar",
 pista_chiudi: "Cerrar",
 pista_tocca_a: "Turno de {name}",
 pista_freccia_di: "Flecha {n} de {tot}",
@@ -5530,6 +5573,9 @@ misure_vuoto: "Inga m\u00e4tningar \u00e4nnu: starta en runda.",
 misure_azzera: "Nollst\u00e4ll m\u00e4tningar",
 misure_azzera_conferma: "Nollst\u00e4lla? Tryck igen",
 pista_totale: "Totalt",
+reg_lbl_nome: "Inte registrerad: skriv namnet",
+reg_lbl_cerca: "Registrerad: sök på användarnamn",
+reg_edit_btn: "Ändra",
 pista_chiudi: "St\u00e4ng",
 pista_tocca_a: "{name}s tur",
 pista_freccia_di: "Pil {n} av {tot}",
@@ -6018,6 +6064,9 @@ misure_vuoto: "Nog geen metingen: begin een ronde.",
 misure_azzera: "Metingen wissen",
 misure_azzera_conferma: "Wissen? Tik nogmaals",
 pista_totale: "Totaal",
+reg_lbl_nome: "Niet geregistreerd: typ de naam",
+reg_lbl_cerca: "Geregistreerd: zoek op gebruikersnaam",
+reg_edit_btn: "Bewerken",
 pista_chiudi: "Sluiten",
 pista_tocca_a: "{name} is aan de beurt",
 pista_freccia_di: "Pijl {n} van {tot}",
@@ -8295,13 +8344,19 @@ function registrationScreen(){
 var wrap = el('<div></div>');
 
 var card2 = el('<div class="card"></div>');
-card2.appendChild(el('<h2 class="section-title">'+t("team_title")+'</h2>'));
+var pendingOra = state.pendingArchers || [];
+card2.appendChild(el('<h2 class="section-title">'+t("team_title")+(pendingOra.length ? ' \u00b7 '+pendingOra.length : '')+'</h2>'));
+// DUE CAMPI UNO SOTTO L'ALTRO, SENZA UNA PAROLA CHE LI DISTINGUA: uno aggiunge
+// un nome qualunque, l'altro cerca un iscritto, e il "+" appartiene solo al
+// primo. Chi non lo sa gia' non puo' dedurlo. Adesso ognuno dice a chi serve.
+card2.appendChild(el('<div class="campo-eti">'+t("reg_lbl_nome")+'</div>'));
 var form = el('<div class="row"><input type="text" id="archerInput" placeholder="'+t("archer_placeholder")+'"><button class="btn btn-primary" id="addArcherBtn">+</button></div>');
 card2.appendChild(form);
 
 var searchResults = null, searchInput = null;
 if(!DEV_MODE && db){
-var searchRow = el('<div class="row" style="margin-top:8px;"><input type="text" id="archerSearchInput" placeholder="'+t("search_username_placeholder")+'"></div>');
+card2.appendChild(el('<div class="campo-eti">'+t("reg_lbl_cerca")+'</div>'));
+var searchRow = el('<div class="row"><input type="text" id="archerSearchInput" placeholder="'+t("search_username_placeholder")+'"></div>');
 card2.appendChild(searchRow);
 searchResults = el('<div id="archerSearchResults" style="margin-top:4px;display:flex;flex-wrap:wrap;gap:6px;"></div>');
 card2.appendChild(searchResults);
@@ -9323,6 +9378,7 @@ function trainingSetupScreen(){
 var wrap = el('<div></div>');
 var trainKey = FEDERATIONS[state.federation || "fiarc"].trainingMode;
 var mode = GAME_MODES[trainKey];
+wrap.appendChild(rigaArcieri("training-setup"));
 
 var card1 = el('<div class="card"></div>');
 card1.appendChild(el('<h2 class="section-title">'+t("train_setup_title")+'</h2>'));
@@ -9378,9 +9434,38 @@ wrap.appendChild(el('<div class="rules-panel"><div class="rp-title">'+t("rules_t
 return wrap;
 }
 
+/* ── CHI TIRA, E COME SI TORNA A CAMBIARLO ──
+   Dalla schermata degli arcieri si andava avanti e basta: nessun ritorno. Chi
+   toccava "Continua" per sbaglio, o si accorgeva dopo di aver dimenticato
+   qualcuno, non aveva nessuna strada per rimettere mano alla squadra — se non
+   ricominciare da capo. E la squadra e' l'unica cosa che NON si puo' piu'
+   cambiare una volta partiti, quindi e' l'ultima che dovrebbe essere
+   irreversibile.
+   La riga fa due cose con lo stesso pezzo di schermo: dice CHI c'e' (il dato
+   che avevi appena inserito e che la schermata dopo nascondeva) e offre la
+   strada per tornarci. Un ritorno che mostra anche lo stato non e' un tasto
+   indietro: e' una conferma. */
+function rigaArcieri(tornaA){
+var arcieri = state.pendingArchers || [];
+var card = el('<div class="card riga-arcieri"></div>');
+var testa = el('<div class="ra-testa"></div>');
+testa.appendChild(el('<h2 class="section-title">'+t("team_title")+' \u00b7 '+arcieri.length+'</h2>'));
+var mod = el('<button type="button" class="btn btn-ghost btn-sm">'+t("reg_edit_btn")+'</button>');
+mod.addEventListener("click", function(){
+state.registrationNext = tornaA; state.screen = "registration"; save(); render();
+});
+testa.appendChild(mod);
+card.appendChild(testa);
+var nomi = el('<div class="ra-nomi"></div>');
+arcieri.forEach(function(a){ nomi.appendChild(el('<span class="ra-nome">'+escapeHtml(a.name)+'</span>')); });
+card.appendChild(nomi);
+return card;
+}
+
 // ---------- GARA: setup ----------
 function garaSetupScreen(){
 var wrap = el('<div></div>');
+wrap.appendChild(rigaArcieri("gara-setup"));
 var garaModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
 var modeKey = (state.pendingMode && garaModes.indexOf(state.pendingMode) !== -1) ? state.pendingMode : garaModes[0];
 var mode = GAME_MODES[modeKey];
@@ -10570,7 +10655,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-andamento-a";
+var BUILD_STAMP = "2026-08-16-andamento-b";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13081,9 +13166,7 @@ if(state.panel === "classifica"){
 wrap.appendChild(pannelloClassifica());
 } else {
 wrap.appendChild(pistaScena(c));
-
-
-wrap.appendChild(el('<div class="pista-spazio"></div>'));
+wrap.appendChild(pistaSpazio(c));
 
 var scorciatoie = el('<div class="pista-scorciatoie no-print"></div>');
 var bCla = el('<button class="btn btn-standings">'+icon("target",16)+' '+t("pista_classifica_btn")+'</button>');
@@ -13464,12 +13547,18 @@ wrap.replaceChild(pistaTesta(c), vecchiaTesta);
 
 // Scena e tastiera non hanno effetti collaterali: costruirle per confronto e
 // poi buttarle non costa niente e non rompe niente.
-var vecchiaScena = wrap.querySelector(".pista-scena");
-if(!vecchiaScena) return false;
-var nuovaScena = pistaScena(c);
-if(nuovaScena.getAttribute("data-firma") !== vecchiaScena.getAttribute("data-firma")){
-wrap.replaceChild(nuovaScena, vecchiaScena);
-}
+// Scena e spazio: nessun effetto collaterale, quindi si costruiscono per
+// confronto e si buttano se la firma non e' cambiata.
+var ok = true;
+[[".pista-scena", pistaScena], [".pista-spazio", pistaSpazio]].forEach(function(coppia){
+if(!ok) return;
+var vecchio = wrap.querySelector(coppia[0]);
+if(!vecchio){ ok = false; return; }
+var nuovo = coppia[1](c);
+if(nuovo.getAttribute("data-firma") === vecchio.getAttribute("data-firma")) return;
+wrap.replaceChild(nuovo, vecchio);
+});
+if(!ok) return false;
 
 // LA TASTIERA E' IL PUNTO. Se la forma e' la stessa non si sostituisce niente:
 // si riscrivono le cifre dentro i tasti che ci sono gia'. Il tasto appena
