@@ -128,7 +128,7 @@
 
 /* ───── BERSAGLIO MINIMO ─────
    44 Apple, 48 Material. Sul percorso si tocca con la mano sudata e spesso
-   col guanto: 44 e' il pavimento, non il traguardo. */
+   in piedi: 44 e' il pavimento, non il traguardo. */
 --hit:44px;
 
 /* ───── MOVIMENTO · una curva, tre durate ─────
@@ -351,7 +351,7 @@ outline:2px solid var(--brand-soft); outline-offset:2px; border-radius:var(--r-s
       trovati limando per far stare una riga, e ogni telefono nuovo ne
       chiedeva un altro.
    2) BERSAGLIO 44px. Apple ne chiede 44, Material 48. Sul percorso si
-      tocca con la mano sudata, spesso col guanto: sotto quella misura si
+      tocca con la mano sudata, in piedi, camminando: sotto quella misura si
       sbaglia tasto. Vale anche — soprattutto — sui telefoni piccoli.
    3) CAPIENZA 2 + TROPPO-PIENO. In vista al massimo due azioni; le altre
       scendono nel menu dell'ultimo tasto. Quando non ci stanno si toglie
@@ -676,10 +676,20 @@ border-radius:var(--r-sm); transition:width var(--dur-3) var(--ease); }
 .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
 background:radial-gradient(circle, rgba(232,114,47,0.16), transparent 70%); z-index:-1; }
 .quick-grid{ display:grid; gap:var(--s-2); margin:var(--s-4) 0 var(--s-3); }
+/* IL TESTO DI UN COMANDO NON E' TESTO DA COPIARE. *(16/08/2026, dal campo)*
+   Tenendo premuto un tasto punteggio, il telefono selezionava l'etichetta e
+   apriva la lente d'ingrandimento: il tocco smetteva di essere un punteggio e
+   diventava una selezione con due maniglie da chiudere a mano. E il tocco un
+   po' lungo non e' un caso raro — succede ogni volta che si guarda il
+   bersaglio invece dello schermo mentre il dito e' gia' giu'. Su una schermata
+   che si tocca 288 volte, "raro" moltiplicato per 288 e' "ogni giro".
+   Vale per i comandi, MAI per i campi di testo: li' selezionare serve. */
+button, .btn, .quick-btn, .firma-riga, .turno-badge, .fatta, .menu-btn{
+user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
 .quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:92px; padding:var(--s-2) var(--s-1); gap:3px; position:relative; overflow:visible; border-radius:var(--r-lg); line-height:1.15; font-family:inherit; cursor:pointer; transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease); }
 .quick-btn:active{ transform:scale(0.94) translateY(2px); }
 /* Erano clamp(0.5rem, …): otto pixel, in maiuscoletto, sul controllo piu'
-   importante dell'app — quello pensato per essere letto al sole col guanto.
+   importante dell'app — quello pensato per essere letto al sole, in piedi.
    Il colpevole non era il testo, era la riga unica di tasti: con tre per riga
    l'etichetta ci sta dentro la scala. La regola stretta vinceva solo sul
    percorso per specificita', e gli 8px restavano nel file pronti a tornare il
@@ -745,6 +755,51 @@ border:2px solid var(--bark); flex:0 0 auto; }
 .ring-name{ font-size:0.62rem; color:var(--muted); max-width:56px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .rank-row.first td{ color:var(--accent-soft); font-weight:700; }
 .total-col{ font-weight:800; color:var(--gold-role); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
+/* ── LA SCHEDA: si firma, e poi passa di mano ──────────────────────────────
+   Il terzo mestiere della scheda di carta. Registrare era gia' risolto, e
+   meglio della carta; testimoniare lo dice la pastiglia durante il giro. Qui
+   finisce il rito: ognuno firma toccando il proprio nome, e poi la scheda si
+   consegna. Da quel momento non si corregge piu' — ed e' proprio
+   l'irreversibilita' a rendere questo una consegna invece di un secondo
+   "condividi" con un'icona diversa.
+   La riga e' un bottone alto quanto un bersaglio per il pollice (--hit) e non
+   e' una pastiglia: dentro una scheda un elenco e' un elenco, e il filo che
+   separa basta a dire dove finisce una riga e comincia l'altra. */
+.scheda-firme{ display:flex; flex-direction:column; margin:var(--s-3) 0; }
+.firma-riga{ display:flex; align-items:center; gap:var(--s-3); width:100%;
+min-height:var(--hit); padding:var(--s-2) 0; text-align:left;
+background:none; border:none; border-bottom:1px solid var(--border);
+color:var(--text-1); font-family:var(--font-ui); font-size:var(--t-md);
+cursor:pointer; }
+.firma-riga:last-child{ border-bottom:none; }
+.firma-riga .fr-nome{ flex:1 1 auto; min-width:0; overflow:hidden;
+text-overflow:ellipsis; white-space:nowrap; font-weight:700; }
+.firma-riga .fr-tot{ flex:0 0 auto; font-family:var(--font-num);
+font-variant-numeric:tabular-nums; font-weight:800; color:var(--text-3); }
+/* Il segno cambia mestiere, quindi cambia forma: prima e' un invito a
+   toccare, dopo e' uno stato raggiunto. */
+.firma-riga .fr-segno{ flex:0 0 auto; display:inline-flex; align-items:center;
+gap:var(--s-1); min-height:var(--s-6); padding:0 var(--s-3);
+border-radius:var(--r-pill); border:1.5px solid var(--border-strong);
+background:var(--surface-2); color:var(--text-2);
+font-size:var(--t-xs); font-weight:700; letter-spacing:.02em; white-space:nowrap; }
+.firma-riga.firmata .fr-segno{ background:color-mix(in srgb, var(--success-role) 14%, var(--surface-1));
+border-color:color-mix(in srgb, var(--success-role) 45%, transparent); color:var(--success-role); }
+.firma-riga.btn-armed .fr-segno{ background:color-mix(in srgb, var(--clay) 14%, var(--surface-1));
+border-color:color-mix(in srgb, var(--clay) 45%, transparent); color:var(--clay); }
+.firma-riga[disabled]{ cursor:default; }
+.scheda-nota{ font-size:var(--t-xs); color:var(--text-3); line-height:1.5; }
+/* Un tasto spento non dice perche' e' spento: lo dice questa riga. */
+.scheda-manca{ font-size:var(--t-sm); color:var(--clay); font-weight:700;
+text-align:center; margin-top:var(--s-2); }
+/* Consegnata non e' un messaggio di riuscita che sparisce dopo due secondi:
+   e' lo stato in cui la scheda resta, e va guardato come tale. */
+.scheda-fatta{ display:flex; flex-direction:column; gap:var(--s-1);
+align-items:center; text-align:center; padding:var(--s-3) 0; }
+.scheda-fatta .sf-titolo{ display:inline-flex; align-items:center; gap:var(--s-2);
+font-family:var(--font-display); font-size:var(--t-lg); font-weight:700;
+color:var(--success-role); }
+.scheda-fatta .sf-quando{ font-size:var(--t-xs); color:var(--text-3); }
 .footer-note{ text-align:center; color:var(--muted); font-size:0.72rem; margin-top:18px; line-height:1.5; }
 .rules-panel{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-top:12px; font-size:0.78rem; line-height:1.6; }
 .rules-panel .rp-title{ font-weight:700; color:var(--cream); margin-bottom:4px; }
@@ -2367,6 +2422,18 @@ back_to_menu_full: "Torna al menu",
 back_to_history_btn: "\u2190 Torna allo storico",
 reset_round_btn: "Reset totale (cancella questo percorso)",
 export_pdf_btn: "Esporta / stampa PDF", print_sign_archer: "Firma arciere", print_sign_judge: "Firma giudice di gara",
+consegna_title: "La scheda",
+consegna_nota: "Ognuno firma toccando il proprio nome. Dopo la consegna la scheda non si corregge più.",
+consegna_firma: "Firma",
+consegna_firmato: "Firmato",
+consegna_togli: "Togliere? Tocca ancora",
+consegna_btn: "Consegna la scheda",
+consegna_conferma: "Consegnare? Tocca ancora",
+consegna_manca: "Serve anche la firma di un altro arciere",
+consegna_fatta: "Consegnata",
+consegna_fatta_nota: "{data}, ore {ora}",
+consegna_interrotta: "Giro interrotto alla piazzola {n} di {tot}: la scheda vale lo stesso, se è firmata.",
+consegna_firmata_da: "Firmata da: {list}",
 share_btn: "Condividi classifica",
 copied_msg: "Copiato negli appunti!",
 share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} piazzole",
@@ -2853,6 +2920,18 @@ back_to_menu_full: "Back to menu",
 back_to_history_btn: "\u2190 Back to history",
 reset_round_btn: "Full reset (delete this round)",
 export_pdf_btn: "Export / print PDF", print_sign_archer: "Archer's signature", print_sign_judge: "Judge's signature",
+consegna_title: "The scorecard",
+consegna_nota: "Each archer signs by tapping their own name. Once handed in, the card can no longer be changed.",
+consegna_firma: "Sign",
+consegna_firmato: "Signed",
+consegna_togli: "Remove? Tap again",
+consegna_btn: "Hand in the scorecard",
+consegna_conferma: "Hand it in? Tap again",
+consegna_manca: "One more archer still has to sign",
+consegna_fatta: "Handed in",
+consegna_fatta_nota: "{data}, {ora}",
+consegna_interrotta: "Round stopped at target {n} of {tot}: the card still counts, as long as it is signed.",
+consegna_firmata_da: "Signed by: {list}",
 share_btn: "Share results",
 copied_msg: "Copied to clipboard!",
 share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} targets",
@@ -3338,6 +3417,18 @@ back_to_menu_full: "Retour au menu",
 back_to_history_btn: "\u2190 Retour \u00e0 l’historique",
 reset_round_btn: "R\u00e9initialisation totale (supprime ce parcours)",
 export_pdf_btn: "Exporter / imprimer en PDF", print_sign_archer: "Signature de l’archer", print_sign_judge: "Signature du juge",
+consegna_title: "La feuille de marque",
+consegna_nota: "Chacun signe en touchant son propre nom. Une fois remise, la feuille ne se corrige plus.",
+consegna_firma: "Signer",
+consegna_firmato: "Signé",
+consegna_togli: "Retirer ? Touchez encore",
+consegna_btn: "Remettre la feuille",
+consegna_conferma: "Remettre ? Touchez encore",
+consegna_manca: "Il faut aussi la signature d’un autre archer",
+consegna_fatta: "Remise",
+consegna_fatta_nota: "{data}, {ora}",
+consegna_interrotta: "Parcours interrompu à la cible {n} sur {tot} : la feuille reste valable si elle est signée.",
+consegna_firmata_da: "Signée par : {list}",
 share_btn: "Partager le classement",
 copied_msg: "Copi\u00e9 dans le presse-papiers !",
 share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} cibles",
@@ -3823,6 +3914,18 @@ back_to_menu_full: "Zur\u00fcck zum Men\u00fc",
 back_to_history_btn: "\u2190 Zur\u00fcck zum Verlauf",
 reset_round_btn: "Komplett zur\u00fccksetzen (l\u00f6scht diesen Parcours)",
 export_pdf_btn: "Als PDF exportieren / drucken", print_sign_archer: "Unterschrift Sch\u00fctze", print_sign_judge: "Unterschrift Kampfrichter",
+consegna_title: "Die Wertungskarte",
+consegna_nota: "Jeder unterschreibt, indem er den eigenen Namen antippt. Nach der Abgabe kann die Karte nicht mehr geändert werden.",
+consegna_firma: "Unterschreiben",
+consegna_firmato: "Unterschrieben",
+consegna_togli: "Entfernen? Nochmal tippen",
+consegna_btn: "Karte abgeben",
+consegna_conferma: "Abgeben? Nochmal tippen",
+consegna_manca: "Es fehlt noch die Unterschrift eines anderen Schützen",
+consegna_fatta: "Abgegeben",
+consegna_fatta_nota: "{data}, {ora} Uhr",
+consegna_interrotta: "Runde bei Ziel {n} von {tot} abgebrochen: Die Karte gilt trotzdem, wenn sie unterschrieben ist.",
+consegna_firmata_da: "Unterschrieben von: {list}",
 share_btn: "Rangliste teilen",
 copied_msg: "In die Zwischenablage kopiert!",
 share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} Ziele",
@@ -4328,6 +4431,18 @@ back_to_menu_full: "Men\u00fcye d\u00f6n",
 back_to_history_btn: "\u2190 Ge\u00e7mi\u015fe d\u00f6n",
 reset_round_btn: "Tam s\u0131f\u0131rlama (bu parkuru sil)",
 export_pdf_btn: "PDF olarak d\u0131\u015fa aktar / yazd\u0131r", print_sign_archer: "Ok\u00e7u imzas\u0131", print_sign_judge: "Hakem imzas\u0131",
+consegna_title: "Puan kartı",
+consegna_nota: "Herkes kendi adına dokunarak imzalar. Teslim edildikten sonra kart değiştirilemez.",
+consegna_firma: "İmzala",
+consegna_firmato: "İmzalandı",
+consegna_togli: "Kaldırılsın mı? Tekrar dokun",
+consegna_btn: "Kartı teslim et",
+consegna_conferma: "Teslim edilsin mi? Tekrar dokun",
+consegna_manca: "Başka bir okçunun imzası da gerekli",
+consegna_fatta: "Teslim edildi",
+consegna_fatta_nota: "{data}, {ora}",
+consegna_interrotta: "Tur, {tot} hedeften {n}. hedefte durdu: imzalıysa kart yine de geçerlidir.",
+consegna_firmata_da: "İmzalayanlar: {list}",
 share_btn: "S\u0131ralamay\u0131 payla\u015f",
 copied_msg: "Panoya kopyaland\u0131!",
 share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} hedef",
@@ -4827,6 +4942,18 @@ back_to_menu_full: "Вернуться в меню",
 back_to_history_btn: "\u2190 Назад к истории",
 reset_round_btn: "Полный сброс (удалить этот маршрут)",
 export_pdf_btn: "Экспорт / печать PDF", print_sign_archer: "Подпись стрелка", print_sign_judge: "Подпись судьи",
+consegna_title: "Карточка",
+consegna_nota: "Каждый подписывает, коснувшись своего имени. После сдачи карточку изменить нельзя.",
+consegna_firma: "Подписать",
+consegna_firmato: "Подписано",
+consegna_togli: "Убрать? Коснитесь ещё раз",
+consegna_btn: "Сдать карточку",
+consegna_conferma: "Сдать? Коснитесь ещё раз",
+consegna_manca: "Нужна подпись ещё одного стрелка",
+consegna_fatta: "Сдана",
+consegna_fatta_nota: "{data}, {ora}",
+consegna_interrotta: "Круг прерван на мишени {n} из {tot}: карточка всё равно действительна, если она подписана.",
+consegna_firmata_da: "Подписали: {list}",
 share_btn: "Поделиться результатами",
 copied_msg: "Скопировано в буфер обмена!",
 share_header: "ArcTrail 3D – {mode} – {n} мишеней",
@@ -5326,6 +5453,18 @@ back_to_menu_full: "Volver al men\u00fa",
 back_to_history_btn: "\u2190 Volver al historial",
 reset_round_btn: "Reinicio total (borra este recorrido)",
 export_pdf_btn: "Exportar / imprimir PDF", print_sign_archer: "Firma del arquero", print_sign_judge: "Firma del juez",
+consegna_title: "La hoja de puntuación",
+consegna_nota: "Cada uno firma tocando su propio nombre. Una vez entregada, la hoja ya no se corrige.",
+consegna_firma: "Firmar",
+consegna_firmato: "Firmado",
+consegna_togli: "¿Quitar? Toca otra vez",
+consegna_btn: "Entregar la hoja",
+consegna_conferma: "¿Entregar? Toca otra vez",
+consegna_manca: "Falta también la firma de otro arquero",
+consegna_fatta: "Entregada",
+consegna_fatta_nota: "{data}, {ora}",
+consegna_interrotta: "Recorrido interrumpido en la diana {n} de {tot}: la hoja sigue valiendo si está firmada.",
+consegna_firmata_da: "Firmada por: {list}",
 share_btn: "Compartir clasificaci\u00f3n",
 copied_msg: "\u00a1Copiado al portapapeles!",
 share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} dianas",
@@ -5824,7 +5963,19 @@ detail_title: "Po\u00e4ng m\u00e5l f\u00f6r m\u00e5l",
 back_to_menu_full: "Tillbaka till menyn",
 back_to_history_btn: "\u2190 Tillbaka till historik",
 reset_round_btn: "Total \u00e5terst\u00e4llning (raderar denna runda)",
-export_pdf_btn: "Exportera / skriv ut PDF", print_sign_archer: "Sk\u00e4ttens underskrift", print_sign_judge: "Domarens underskrift",
+export_pdf_btn: "Exportera / skriv ut PDF", print_sign_archer: "Skyttens underskrift", print_sign_judge: "Domarens underskrift",
+consegna_title: "Protokollet",
+consegna_nota: "Var och en signerar genom att trycka på sitt eget namn. Efter inlämning kan protokollet inte ändras.",
+consegna_firma: "Signera",
+consegna_firmato: "Signerat",
+consegna_togli: "Ta bort? Tryck igen",
+consegna_btn: "Lämna in protokollet",
+consegna_conferma: "Lämna in? Tryck igen",
+consegna_manca: "Det behövs signatur från ytterligare en skytt",
+consegna_fatta: "Inlämnat",
+consegna_fatta_nota: "{data}, {ora}",
+consegna_interrotta: "Rundan avbröts vid mål {n} av {tot}: protokollet gäller ändå om det är signerat.",
+consegna_firmata_da: "Signerat av: {list}",
 share_btn: "Dela resultat",
 copied_msg: "Kopierat till urklipp!",
 share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} m\u00e5l",
@@ -6324,6 +6475,18 @@ back_to_menu_full: "Terug naar menu",
 back_to_history_btn: "\u2190 Terug naar geschiedenis",
 reset_round_btn: "Volledige reset (verwijdert deze ronde)",
 export_pdf_btn: "PDF exporteren / afdrukken", print_sign_archer: "Handtekening boogschutter", print_sign_judge: "Handtekening scheidsrechter",
+consegna_title: "De scorekaart",
+consegna_nota: "Iedereen tekent door op de eigen naam te tikken. Na het inleveren kan de kaart niet meer worden gewijzigd.",
+consegna_firma: "Tekenen",
+consegna_firmato: "Getekend",
+consegna_togli: "Verwijderen? Tik nogmaals",
+consegna_btn: "Scorekaart inleveren",
+consegna_conferma: "Inleveren? Tik nogmaals",
+consegna_manca: "Er is ook de handtekening van een andere boogschutter nodig",
+consegna_fatta: "Ingeleverd",
+consegna_fatta_nota: "{data}, {ora}",
+consegna_interrotta: "Ronde gestopt bij doel {n} van {tot}: de kaart blijft geldig als hij is getekend.",
+consegna_firmata_da: "Getekend door: {list}",
 share_btn: "Klassement delen",
 copied_msg: "Gekopieerd naar klembord!",
 share_header: "ArcTrail 3D \u2013 {mode} \u2013 {n} doelen",
@@ -6938,6 +7101,7 @@ format: roundEntry.format || null,
 modeKey: roundEntry.modeKey || null,
 modeLabel: roundEntry.modeLabel || "",
 results: packResults(roundEntry.results),
+consegna: roundEntry.consegna || null,
 savedAt: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true }).catch(function(err){
 cloudSyncState.lastError = describeFirebaseError(err);
@@ -11174,7 +11338,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-classi-b";
+var BUILD_STAMP = "2026-08-16-consegna-b";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13614,6 +13778,10 @@ state.pendingArrows = [];
 state.liveBattutaTypes = {};
 state.awaitingStep = null;
 state.savedToHistory = false;
+state.roundEntryDate = null;
+// la scheda di ieri non firma quella di oggi
+state.firme = {};
+state.consegna = null;
 state.panel = null;
 state.lastShotInfo = null;
 var trainKeyForFed = FEDERATIONS[state.federation || "fiarc"].trainingMode;
@@ -14426,6 +14594,192 @@ save(); if(!dipingiPista()) render();
 }
 
 // ---------- SUMMARY ----------
+/* ══════════════════════════════════════════════════════════════════════════
+   LA CONSEGNA: il terzo mestiere della scheda
+
+   Registrare era gia' risolto, e meglio della carta. Testimoniare lo dice la
+   pastiglia durante il giro. Mancava il gesto che chiude il rito: su un
+   percorso il giro finisce quando la scheda passa di mano, e finche'
+   consegnare non esiste la scheda di carta resta in tasca.
+
+   Due regole, e sono quelle che distinguono una consegna da un secondo
+   "condividi" con un'icona diversa:
+
+   1. UNA FIRMA VALE SE QUALCUNO HA VISTO. In gruppo ne servono almeno due,
+      da soli basta la propria. E' la stessa asimmetria della controfirma
+      durante il giro: chi segna non controfirma se stesso.
+   2. DOPO LA CONSEGNA NON SI TOCCA PIU' NIENTE. Una scheda passata di mano
+      non torna indietro. E' l'irreversibilita' a rendere l'atto un atto;
+      senza, sarebbe un'etichetta.
+
+   Cosa NON c'e', di proposito: un codice scheda. Era stato disegnato — sei
+   lettere maiuscole da dire al tavolo — e non passa la prova che deve passare
+   ogni cosa su questo schermo: *si scriva cosa fa*. Un codice che punta solo
+   dentro l'archivio di questo telefono non e' una ricevuta, e' una ricevuta
+   finta. La data, l'ora e i nomi di chi ha firmato sono veri tutti e tre.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+// Quante piazzole sono state davvero chiuse. Serve a distinguere il giro
+// arrivato in fondo da quello interrotto: FIARC Art. 18.i, una gara non finita
+// resta valida se la tabella e' firmata, e quindi vale la pena consegnarla.
+function piazzoleChiuse(){
+var n = 0;
+(state.archers||[]).forEach(function(a){
+var e = ((state.scores||{})[a.id]||[]).length;
+if(e > n) n = e;
+});
+return n;
+}
+function schedaConsegnata(){ return !!(state.consegna && state.consegna.at); }
+function firmeScheda(){
+var f = state.firme || {}, n = 0;
+(state.archers||[]).forEach(function(a){ if(f[a.id]) n++; });
+return n;
+}
+function consegnaPronta(){
+if(schedaConsegnata()) return false;
+var tot = (state.archers||[]).length;
+return firmeScheda() >= (tot > 1 ? 2 : 1);
+}
+function firmaScheda(archerId){
+if(schedaConsegnata()) return false;
+state.firme = state.firme || {};
+if(state.firme[archerId]) return false;
+state.firme[archerId] = new Date().toISOString();
+return true;
+}
+// Finche' la scheda e' in mano si puo' togliere una firma: non e' ancora uscita
+// di li'. Ma non e' un interruttore, quindi la si chiede due volte.
+function togliFirmaScheda(archerId){
+if(schedaConsegnata()) return false;
+if(!state.firme || !state.firme[archerId]) return false;
+delete state.firme[archerId];
+return true;
+}
+// Si consegna UNA VOLTA SOLA: la seconda chiamata restituisce la consegna di
+// prima invece di farne un'altra. Una scheda con due ore di consegna diverse
+// e' una scheda che non si sa quando e' stata consegnata.
+function registraConsegna(){
+if(schedaConsegnata()) return state.consegna;
+if(!consegnaPronta()) return null;
+var f = state.firme || {};
+state.consegna = {
+at: new Date().toISOString(),
+firme: (state.archers||[]).filter(function(a){ return !!f[a.id]; })
+.map(function(a){ return { name:a.name, at:f[a.id] }; }),
+piazzole: piazzoleChiuse(),
+formato: state.format
+};
+return state.consegna;
+}
+// In allenamento non si consegna niente a nessuno. Dire "consegna la scheda" a
+// chi tira da solo dietro casa e' lo stesso errore del badge della modalita':
+// un'etichetta che non parla di niente.
+function schedaVisibile(){
+var fed = FEDERATIONS[state.federation || "fiarc"];
+return !!fed && fed.garaModes.indexOf(state.mode) !== -1;
+}
+// La consegna deve sopravvivere alla schermata: finisce sulla riga di
+// cronologia gia' salvata e sulla copia in cloud. Senza, domani la scheda
+// risulta di nuovo da firmare — e una consegna che si dimentica non e' una
+// consegna. La riga si ritrova per data, non per posizione: la prima della
+// lista e' quasi sempre questa, ma "quasi sempre" non e' un criterio.
+function scriviConsegna(c){
+if(!c || !state.roundEntryDate) return;
+var hist = loadHistory();
+for(var i=0;i<hist.length;i++){
+if(hist[i] && hist[i].date === state.roundEntryDate){
+hist[i].consegna = {
+at: c.at,
+firme: c.firme.map(function(f){ return f.name; }),
+piazzole: c.piazzole
+};
+saveHistoryList(hist);
+backupRoundToCloud(hist[i]);
+return;
+}
+}
+}
+
+function schedaCard(ranked){
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("consegna_title")+'</h2>'));
+
+var fatta = schedaConsegnata();
+if(fatta){
+var c = state.consegna, d = new Date(c.at);
+var box = el('<div class="scheda-fatta"></div>');
+box.appendChild(el('<div class="sf-titolo">'+icon("firma",18)+' '+t("consegna_fatta")+'</div>'));
+box.appendChild(el('<div class="sf-quando">'+escapeHtml(t("consegna_fatta_nota",{
+data: d.toLocaleDateString(state.lang||"it"),
+ora: d.toLocaleTimeString(state.lang||"it", { hour:"2-digit", minute:"2-digit" })
+}))+'</div>'));
+card.appendChild(box);
+} else {
+card.appendChild(el('<div class="scheda-nota">'+escapeHtml(t("consegna_nota"))+'</div>'));
+}
+
+// Un giro interrotto non e' un giro perso, e chi non conosce l'Art. 18.i non
+// puo' saperlo: buttare una scheda buona e' un errore del disegno.
+var chiuse = piazzoleChiuse();
+if(chiuse < state.format){
+card.appendChild(el('<div class="scheda-nota">'+escapeHtml(t("consegna_interrotta",{n:chiuse, tot:state.format}))+'</div>'));
+}
+
+var lista = el('<div class="scheda-firme"></div>');
+(ranked || state.archers).forEach(function(a){
+var firmato = !!((state.firme||{})[a.id]);
+var riga = el('<button type="button" class="firma-riga'+(firmato?" firmata":"")+'"></button>');
+riga.appendChild(el('<span class="fr-nome">'+escapeHtml(a.name)+'</span>'));
+riga.appendChild(el('<span class="fr-tot">'+totalFor(a.id)+'</span>'));
+var segno = el('<span class="fr-segno"></span>');
+segno.innerHTML = firmato ? (icon("firma",14)+' '+t("consegna_firmato")) : t("consegna_firma");
+riga.appendChild(segno);
+
+if(fatta){
+riga.setAttribute("disabled","disabled");
+} else if(firmato){
+var armato = false, tmr = null;
+riga.addEventListener("click", function(){
+if(!armato){
+armato = true;
+riga.classList.add("btn-armed");
+segno.textContent = t("consegna_togli");
+tmr = setTimeout(function(){
+armato = false;
+riga.classList.remove("btn-armed");
+segno.innerHTML = icon("firma",14)+' '+t("consegna_firmato");
+}, 4000);
+} else {
+clearTimeout(tmr);
+if(togliFirmaScheda(a.id)){ save(); render(); }
+}
+});
+} else {
+riga.addEventListener("click", function(){
+if(firmaScheda(a.id)){ save(); render(); }
+});
+}
+lista.appendChild(riga);
+});
+card.appendChild(lista);
+
+if(!fatta){
+var pronta = consegnaPronta();
+var btn = el('<button class="btn btn-primary btn-block">'+t("consegna_btn")+'</button>');
+if(!pronta) btn.setAttribute("disabled","disabled");
+armDoubleConfirm(btn, t("consegna_conferma"), function(){
+var c = registraConsegna();
+if(!c) return;
+scriviConsegna(c);
+save(); render();
+});
+card.appendChild(btn);
+if(!pronta) card.appendChild(el('<div class="scheda-manca">'+escapeHtml(t("consegna_manca"))+'</div>'));
+}
+return card;
+}
+
 function summaryScreen(){
 var wrap = el('<div></div>');
 var mLabel = modeLabel(state.mode);
@@ -14455,6 +14809,9 @@ if(hist.length > HISTORY_MAX) hist.length = HISTORY_MAX;
 saveHistoryList(hist);
 backupRoundToCloud(roundEntry);
 state.savedToHistory = true;
+// La riga appena scritta si ritrova per data: alla consegna serve QUESTA, non
+// la prima della lista.
+state.roundEntryDate = nowISO;
 save();
 setTimeout(celebrationBurst, 150);
 }
@@ -14521,10 +14878,29 @@ piazzFlow.appendChild(pCard);
 detailCard.appendChild(piazzFlow);
 wrap.appendChild(detailCard);
 
-var sigRow = el('<div class="print-signatures"><div>'+t("print_sign_archer")+'</div><div>'+t("print_sign_judge")+'</div></div>');
+// La scheda sta dopo i numeri, come sulla carta: prima si legge, poi si firma.
+var consegnaAperta = false;
+if(schedaVisibile()){
+wrap.appendChild(schedaCard(ranked));
+consegnaAperta = !schedaConsegnata();
+}
+
+// Sulla stampa la riga della firma non e' piu' vuota se qualcuno ha firmato
+// nell'app: due righe da riempire a penna quando la firma c'e' gia' sono la
+// carta che rientra dalla finestra.
+var firmatari = schedaConsegnata()
+? state.consegna.firme.map(function(f){ return f.name; }).join(", ")
+: "";
+var colonnaFirme = firmatari
+? escapeHtml(t("consegna_firmata_da",{list:firmatari}))
+: t("print_sign_archer");
+var sigRow = el('<div class="print-signatures"><div>'+colonnaFirme+'</div><div>'+t("print_sign_judge")+'</div></div>');
 wrap.appendChild(sigRow);
 
-var newRound = el('<button class="btn btn-primary btn-block no-print" style="padding:16px;">'+t("back_to_menu_full")+'</button>');
+// Finche' la scheda non e' consegnata, il tasto principale di questa schermata
+// non puo' essere quello che se ne va: sarebbe l'unica azione in evidenza, e
+// direbbe di andarsene proprio prima del gesto che chiude il giro.
+var newRound = el('<button class="btn '+(consegnaAperta?"btn-ghost":"btn-primary")+' btn-block no-print" style="padding:16px;">'+t("back_to_menu_full")+'</button>');
 newRound.addEventListener("click", function(){ homeOverride = true; render(); });
 wrap.appendChild(newRound);
 
