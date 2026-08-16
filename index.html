@@ -189,6 +189,10 @@ color-scheme:light;
 /* marchio e codice colore */
 --brand:var(--green-800); --brand-soft:var(--green-800); --brand-ink:#FFFFFF;
 --clay:var(--clay-600); --gold-role:var(--gold-700);
+/* l'interruttore del Sole quando e' acceso: una coppia per tema, perche'
+   l'oro cambia valore fra i tre e un fondo scritto a mano una volta sola
+   sarebbe illeggibile in due casi su tre */
+--sun-on-bg:var(--gold-700); --sun-on-fg:#FFFFFF;
 --danger-role:var(--red-600); --success-role:var(--green-success);
 /* il bersaglio da anelli e le pastiglie d'arco: ruoli, non tinte a mano */
 --ring-bg-a:var(--straw-200); --ring-bg-b:var(--straw-500); --ring-ink:var(--straw-900);
@@ -262,6 +266,7 @@ color-scheme:dark;
 --border:var(--moss-600); --border-strong:var(--moss-500);
 --brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:#FFFFFF;
 --clay:var(--clay-400); --gold-role:var(--gold-400);
+--sun-on-bg:var(--gold-400); --sun-on-fg:#1A1305;
 --danger-role:var(--red-400); --success-role:var(--green-success-dk);
 /* Al buio la paglia resta paglia — e' l'oggetto — ma il vuoto segue la
    superficie, altrimenti sarebbe una macchia chiara su fondo nero. */
@@ -363,6 +368,7 @@ color-scheme:light;
 /* marchio e codici: i gradini piu' scuri di ogni famiglia */
 --brand:var(--green-900); --brand-soft:var(--green-900); --brand-ink:var(--sand-50);
 --clay:var(--clay-800); --gold-role:var(--gold-800);
+--sun-on-bg:var(--gold-800); --sun-on-fg:#FFFFFF;
 --danger-role:var(--red-700); --success-role:var(--green-800);
 
 /* il bersaglio da anelli e' paglia: al sole la paglia e' chiara, non fangosa */
@@ -525,6 +531,22 @@ background:transparent; border:1.5px solid var(--border-strong); color:var(--tex
 header.top .home-btn.pericolo:active,
 header.top .home-btn.pericolo.armato{
 border-color:var(--danger); color:var(--danger); }
+/* ── L'INTERRUTTORE DEL SOLE ───────────────────────────────────────────────
+   Acceso e' un tasto PIENO, non un bordo colorato: e' l'unico stato che deve
+   restare leggibile proprio nella condizione in cui viene acceso — sotto il
+   sole diretto, dove i bordi e le tinte tenui sono le prime cose a sparire.
+   Il colore e' --gold, che nell'app vuol dire "prepara": non e' un codice di
+   percorso (verde allenamento, arancio gara), quindi non si confonde con lo
+   stato del giro. */
+.bar-btn.acceso{ background:var(--sun-on-bg); border-color:var(--sun-on-bg); color:var(--sun-on-fg); }
+/* Stessa trappola di specificita' gia' documentata per "Segnala": la pelle
+   del tasto e' scritta nominando il tema, quindi la variante acceso deve
+   nominarlo anche lei o perde e il tasto resta grigio. */
+header.top .home-btn.acceso,
+body.theme-light header.top .home-btn.acceso,
+body.theme-dark header.top .home-btn.acceso,
+body.theme-sole header.top .home-btn.acceso{
+background:var(--sun-on-bg); border-color:var(--sun-on-bg); color:var(--sun-on-fg); }
 .bar-badge{ position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 4px;
 border-radius:10px; background:var(--danger); color:#fff; font-size:0.64rem; font-weight:800;
 display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
@@ -7459,6 +7481,7 @@ return '<img class="brandmark" src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="
 
 var ICON_PATHS = {
 home: '<path d="M4 11.4 12 4l8 7.4"/><path d="M6.4 10.2V20h11.2v-9.8"/><path d="M10 20v-5h4v5"/>',
+sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.4M12 19v2.4M2.6 12h2.4M19 12h2.4"/><path d="M5.4 5.4l1.7 1.7M16.9 16.9l1.7 1.7M18.6 5.4l-1.7 1.7M7.1 16.9l-1.7 1.7"/>',
 more: '<circle cx="12" cy="5" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.6" fill="currentColor" stroke="none"/>',
 bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
 mail: '<rect x="3" y="5" width="18" height="14" rx="2.2"/><path d="M3.6 6.6 12 13l8.4-6.4"/>',
@@ -7603,6 +7626,32 @@ if(th === "elegante" || th === "satura") return "dark";
 return "light";
 }
 function resolvedTheme(th){ return normalizeTheme(th); }
+
+// ── IL SOLE SI ACCENDE DOVE SERVE ────────────────────────────────────────
+// Il problema si presenta SUL PERCORSO: in piedi, col guanto, con lo schermo
+// che non si legge piu'. Mandare a cercare il rimedio dentro il profilo, con
+// lo schermo che non si legge, e' il disegno che fallisce nel momento in cui
+// serve — la stessa regola per cui la striscia dell'annulla sta ATTACCATA
+// all'errore e non in fondo a un riepilogo.
+// NON sono tre pastiglie in testata: Chiara e Scura sono una preferenza e si
+// scelgono una volta, nel profilo. Sole non e' una preferenza, e' il tempo che
+// cambia. Quindi UN interruttore, DUE stati, nessuna scelta da fare — e
+// spegnendolo si torna al tema che avevi, non a un predefinito.
+function soleAcceso(){ return currentTheme() === "sole"; }
+function toggleSole(){
+if(soleAcceso()){
+// Chi ha scelto Sole dal profilo non ha nessun tema "di prima": torna a
+// chiara, che e' il predefinito dichiarato dell'app.
+state.theme = normalizeTheme(state.themeAvantiSole || "light");
+state.themeAvantiSole = null;
+} else {
+state.themeAvantiSole = currentTheme();
+state.theme = "sole";
+}
+applyTheme(state.theme);
+try{ save(); }catch(e){}
+render();
+}
 function currentTheme(){
 var raw = state.theme;
 // Un tema che non esiste piu' — "auto", "elegante", "satura" — non si tiene
@@ -8874,8 +8923,11 @@ h.appendChild(pastigliaFirma);
 // fino a quattro, e per farcele stare si rimpiccioliva il marchio finche'
 // non si tagliava. Si toglie un'azione, non si stringe il titolo.
 // L'ordine e' questo perche' e' quello dell'uso: prima si esce, poi si
-// segnala un guaio del percorso, poi si leggono le notifiche, poi i
-// messaggi; cambiare federazione si fa una volta nella vita.
+// accende il Sole, poi si segnala un guaio del percorso, poi si leggono le
+// notifiche, poi i messaggi; cambiare federazione si fa una volta nella vita.
+// Il Sole sta PRIMA della segnalazione di proposito: se un giorno la barra si
+// riempira', l'ultima cosa che deve finire dentro il troppo-pieno e' il tasto
+// che serve quando lo schermo non si legge.
 var azioni = [];
 if(showHome){
 azioni.push({ id:"menu", glifo:"home", testo:t("nav_menu"), conParola:true, vai:function(){
@@ -8885,6 +8937,10 @@ if(duranteGiro){ homeOverride = true; }
 else { state.screen = "menu"; }
 save(); render();
 }});
+if(duranteGiro){
+azioni.push({ id:"sole", glifo:"sun", testo:t("theme_sun_label"), conParola:true,
+premuto:soleAcceso(), vai:toggleSole });
+}
 if(duranteGiro && currentUser){
 azioni.push({ id:"segnala", glifo:"warn", testo:t("fr_report_btn_short"), titolo:t("fr_report_title"),
 conParola:true, pericolo:true, vai:function(){
@@ -8942,6 +8998,13 @@ var classi = conParola
 var b = el('<button type="button" class="'+classi+' no-print"></button>');
 b.setAttribute("title", a.titolo || a.testo);
 b.setAttribute("aria-label", a.titolo || a.testo);
+// Un interruttore deve DIRE in che stato e', e non solo con il colore: chi
+// usa un lettore di schermo sente "Sole, premuto", e chi non distingue le
+// tinte al sole vede comunque un tasto pieno invece di un tasto vuoto.
+if(typeof a.premuto === "boolean"){
+b.setAttribute("aria-pressed", String(a.premuto));
+if(a.premuto) b.classList.add("acceso");
+}
 b.innerHTML = icon(a.glifo, conParola ? 17 : 20);
 if(conParola) b.appendChild(document.createTextNode(a.testo));
 if(a.conta > 0) b.appendChild(el('<span class="bar-badge">'+(a.conta > 9 ? "9+" : a.conta)+'</span>'));
@@ -11539,7 +11602,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-tre-temi";
+var BUILD_STAMP = "2026-08-16-sole-in-testata";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
