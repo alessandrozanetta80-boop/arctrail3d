@@ -1267,6 +1267,11 @@ margin-top:var(--s-2); }
 .pg-esito-riga{ font-size:var(--t-xs); color:var(--text-3);
 font-family:var(--font-num); padding:var(--s-1) 0; }
 
+/* Il tasto che porta dove porta l'avviso. Sta sotto il testo della notifica e
+   stacca da quello che c'e' sopra: e' l'unica cosa premibile della riga
+   insieme alla crocetta, e le due stanno agli angoli opposti apposta. */
+.notif-vai{ margin-top:var(--s-2); }
+
 /* ══════════════════ RIFINITURA DA COMPUTER (agosto 2026) ══════════════════
    Tutto quello che segue vive dentro @media (min-width:900px): sul telefono
    e sul tablet in verticale non cambia una virgola.
@@ -2450,6 +2455,8 @@ club_reports_clear: "Elimina le segnalazioni risolte",
 club_reports_clear_confirm: "Confermi? Le segnalazioni risolte vengono cancellate per sempre.",
 notif_center_delete_read: "Elimina le notifiche lette",
 notif_center_delete_all: "Elimina tutte le notifiche",
+notif_go_dm: "Apri la conversazione",
+notif_go_ad: "Vedi l'annuncio",
 notif_center_delete_confirm: "Confermi? Le notifiche vengono cancellate per sempre.",
 notif_delete_one: "Elimina",
 msg_delete_mine: "Elimina il mio messaggio",
@@ -2927,6 +2934,8 @@ club_reports_clear: "Delete resolved reports",
 club_reports_clear_confirm: "Are you sure? Resolved reports are deleted for good.",
 notif_center_delete_read: "Delete read notifications",
 notif_center_delete_all: "Delete all notifications",
+notif_go_dm: "Open the conversation",
+notif_go_ad: "See the listing",
 notif_center_delete_confirm: "Are you sure? The notifications are deleted for good.",
 notif_delete_one: "Delete",
 msg_delete_mine: "Delete my message",
@@ -3426,6 +3435,8 @@ club_reports_clear: "Supprimer les signalements r\u00e9solus",
 club_reports_clear_confirm: "Confirmer\u00a0? Les signalements r\u00e9solus sont supprim\u00e9s d\u00e9finitivement.",
 notif_center_delete_read: "Supprimer les notifications lues",
 notif_center_delete_all: "Supprimer toutes les notifications",
+notif_go_dm: "Ouvrir la conversation",
+notif_go_ad: "Voir l\u2019annonce",
 notif_center_delete_confirm: "Confirmer\u00a0? Les notifications sont supprim\u00e9es d\u00e9finitivement.",
 notif_delete_one: "Supprimer",
 msg_delete_mine: "Supprimer mon message",
@@ -3925,6 +3936,8 @@ club_reports_clear: "Erledigte Meldungen l\u00f6schen",
 club_reports_clear_confirm: "Best\u00e4tigen? Die erledigten Meldungen werden endg\u00fcltig gel\u00f6scht.",
 notif_center_delete_read: "Gelesene Benachrichtigungen l\u00f6schen",
 notif_center_delete_all: "Alle Benachrichtigungen l\u00f6schen",
+notif_go_dm: "Unterhaltung \u00f6ffnen",
+notif_go_ad: "Anzeige ansehen",
 notif_center_delete_confirm: "Best\u00e4tigen? Die Benachrichtigungen werden endg\u00fcltig gel\u00f6scht.",
 notif_delete_one: "L\u00f6schen",
 msg_delete_mine: "Meine Nachricht l\u00f6schen",
@@ -4424,6 +4437,8 @@ club_reports_clear: "\u00c7\u00f6z\u00fclm\u00fc\u015f bildirimleri sil",
 club_reports_clear_confirm: "Onayl\u0131yor musun? \u00c7\u00f6z\u00fclm\u00fc\u015f bildirimler kal\u0131c\u0131 olarak silinir.",
 notif_center_delete_read: "Okunmu\u015f bildirimleri sil",
 notif_center_delete_all: "B\u00fct\u00fcn bildirimleri sil",
+notif_go_dm: "Sohbeti a\u00e7",
+notif_go_ad: "\u0130lan\u0131 g\u00f6r",
 notif_center_delete_confirm: "Onayl\u0131yor musun? Bildirimler kal\u0131c\u0131 olarak silinir.",
 notif_delete_one: "Sil",
 msg_delete_mine: "Mesaj\u0131m\u0131 sil",
@@ -4937,6 +4952,8 @@ club_reports_clear: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0440\u0435\u04
 club_reports_clear_confirm: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u0435\u0442\u0435? \u0420\u0435\u0448\u0451\u043d\u043d\u044b\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f \u0443\u0434\u0430\u043b\u044f\u044e\u0442\u0441\u044f \u043d\u0430\u0432\u0441\u0435\u0433\u0434\u0430.",
 notif_center_delete_read: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u043f\u0440\u043e\u0447\u0438\u0442\u0430\u043d\u043d\u044b\u0435 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f",
 notif_center_delete_all: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0432\u0441\u0435 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f",
+notif_go_dm: "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043a\u0443",
+notif_go_ad: "\u041f\u043e\u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u0435",
 notif_center_delete_confirm: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u0435\u0442\u0435? \u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f \u0443\u0434\u0430\u043b\u044f\u044e\u0442\u0441\u044f \u043d\u0430\u0432\u0441\u0435\u0433\u0434\u0430.",
 notif_delete_one: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c",
 msg_delete_mine: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u043c\u043e\u0451 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435",
@@ -5450,6 +5467,8 @@ club_reports_clear: "Eliminar los avisos resueltos",
 club_reports_clear_confirm: "\u00bfConfirmas? Los avisos resueltos se borran para siempre.",
 notif_center_delete_read: "Eliminar las notificaciones le\u00eddas",
 notif_center_delete_all: "Eliminar todas las notificaciones",
+notif_go_dm: "Abrir la conversaci\u00f3n",
+notif_go_ad: "Ver el anuncio",
 notif_center_delete_confirm: "\u00bfConfirmas? Las notificaciones se borran para siempre.",
 notif_delete_one: "Eliminar",
 msg_delete_mine: "Eliminar mi mensaje",
@@ -5963,6 +5982,8 @@ club_reports_clear: "Radera \u00e5tg\u00e4rdade rapporter",
 club_reports_clear_confirm: "Bekr\u00e4ftar du? \u00c5tg\u00e4rdade rapporter raderas f\u00f6r alltid.",
 notif_center_delete_read: "Radera l\u00e4sta notiser",
 notif_center_delete_all: "Radera alla notiser",
+notif_go_dm: "\u00d6ppna konversationen",
+notif_go_ad: "Se annonsen",
 notif_center_delete_confirm: "Bekr\u00e4ftar du? Notiserna raderas f\u00f6r alltid.",
 notif_delete_one: "Radera",
 msg_delete_mine: "Radera mitt meddelande",
@@ -6476,6 +6497,8 @@ club_reports_clear: "Opgeloste meldingen verwijderen",
 club_reports_clear_confirm: "Bevestig je? Opgeloste meldingen worden definitief verwijderd.",
 notif_center_delete_read: "Gelezen meldingen verwijderen",
 notif_center_delete_all: "Alle meldingen verwijderen",
+notif_go_dm: "Gesprek openen",
+notif_go_ad: "Advertentie bekijken",
 notif_center_delete_confirm: "Bevestig je? De meldingen worden definitief verwijderd.",
 notif_delete_one: "Verwijderen",
 msg_delete_mine: "Mijn bericht verwijderen",
@@ -11721,7 +11744,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-righe-due-tinte";
+var BUILD_STAMP = "2026-08-17-dove-porta-app";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -12785,31 +12808,76 @@ render();
 // deployata le notifiche continuano ad arrivare invece di sparire in silenzio.
 // Applicate le regole, il ripiego fallisce da solo e resta valida solo la
 // strada del server. E' voluto: non va tolto prima, non serve toglierlo dopo.
-function sendPushViaFirestore(toUid, title, body){
+// DOVE PORTA L'AVVISO.
+// Il quarto argomento e' facoltativo e dice a quale cosa si riferisce la
+// notifica: la conversazione con chi l'ha mandata, o un annuncio del
+// mercatino. Chi non lo passa manda un avviso come prima, senza tasto.
+//
+// PER LA CHAT L'UID NON SI DICHIARA. Si scrive { k:"dm" } e basta: e'
+// destPulito(), sul server, a metterci l'uid di chi ha chiamato. Se lo
+// scegliesse chi manda, chiunque potrebbe recapitare un avviso che dice
+// «apri la conversazione con X» puntando a un altro.
+function sendPushViaFirestore(toUid, title, body, dest){
 if(!toUid) return;
 if(fns){
-fns.httpsCallable("sendNotification")({ toUid: toUid, title: String(title||""), body: String(body||"") })
+var d = { toUid: toUid, title: String(title||""), body: String(body||"") };
+if(dest) d.dest = dest;
+fns.httpsCallable("sendNotification")(d)
 .catch(function(err){
 console.error("sendNotification:", err && err.code, err && err.message);
 // Se la funzione non c'e' ancora (deploy non fatto), si ripiega.
 if(err && (err.code === "functions/not-found" || err.code === "functions/internal" || err.code === "functions/unavailable")){
-legacyPushWrite(toUid, title, body);
+legacyPushWrite(toUid, title, body, dest);
 }
 });
 } else {
-legacyPushWrite(toUid, title, body);
+legacyPushWrite(toUid, title, body, dest);
 }
 }
 
-// Vecchia scrittura diretta: usata solo come ripiego (vedi sopra).
-function legacyPushWrite(toUid, title, body){
+// LE DUE COPIE DELLA STESSA DOMANDA, e devono rispondere uguale.
+// Questa e' destPulito() di index.js, riscritta qui perche' il ripiego scrive
+// il documento senza passare dal server. Due elenchi chiusi che divergono
+// fanno nascere avvisi con un tasto che dall'altra parte non esiste — o
+// peggio, che porta dove non doveva. Se si aggiunge una forma la' , si
+// aggiunge anche qui, nella stessa mossa.
+function destPulitoQui(d){
+var MAX_ID = 128;
+if(!d || typeof d !== "object") return null;
+if(d.k === "dm") return currentUser ? { k:"dm", uid: currentUser.uid } : null;
+if(d.k === "annuncio"){
+var id = (typeof d.id === "string") ? d.id.trim().slice(0, MAX_ID) : "";
+return id ? { k:"annuncio", id: id } : null;
+}
+return null;
+}
+
+// LA STRADA DI RIPIEGO E' CHIUSA, E VA DETTO.
+// Questa scrittura diretta esisteva per il giorno in cui la Cloud Function non
+// fosse ancora pubblicata. Dal 13/08 le regole Firestore dicono
+// `allow create: if false` su notifications/{uid}/items — chiunque scriva da
+// qui viene rifiutato, compreso il legittimo proprietario. Quindi il ripiego
+// non ripiega: se la funzione non risponde, l'avviso non nasce.
+//
+// Resta qui, e non e' codice morto: e' l'unico posto che puo' dirlo. Prima il
+// `catch` era vuoto, cioe' un guasto totale delle notifiche non lasciava
+// nessuna traccia da nessuna parte — e di una notifica che non arriva non si
+// lamenta nessuno, perche' nessuno sa che doveva arrivare. Adesso lascia una
+// riga in console con scritto cosa e' successo davvero.
+function legacyPushWrite(toUid, title, body, dest){
 if(!db || !toUid) return;
-db.collection("notifications").doc(toUid).collection("items").add({
+var doc = {
 title: title,
 body: body,
 read: false,
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
-}).catch(function(){});
+};
+var pulito = destPulitoQui(dest);
+if(pulito) doc.dest = pulito;
+db.collection("notifications").doc(toUid).collection("items").add(doc)
+.catch(function(e){
+console.error("avviso non consegnato: la callable non ha risposto e le regole chiudono la scrittura dal client.", e && e.code);
+});
 }
 
 var notificationsListenerStarted = false;
@@ -13661,7 +13729,7 @@ createdAt: firebase.firestore.FieldValue.serverTimestamp()
 textInp.value = "";
 forgetDraft("dm:draft:"+chatId);
 sendBtn.disabled = false;
-sendPushViaFirestore(otherUid, t("dm_notif_title"), t("dm_notif_body",{ name: myName, text: txt.substring(0,60) }));
+sendPushViaFirestore(otherUid, t("dm_notif_title"), t("dm_notif_body",{ name: myName, text: txt.substring(0,60) }), { k:"dm" });
 }).catch(function(e){
 console.error("dm send:", e);
 sendBtn.disabled = false;
@@ -13686,6 +13754,65 @@ var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;
 backBtn.addEventListener("click", function(){ stopDmMessages(); state.screen = "messaggi"; save(); render(); });
 wrap.appendChild(backBtn);
 return wrap;
+}
+
+
+// ---------- DOVE PORTA UN AVVISO ----------
+// Il documento della notifica puo' portare `dest`, ripulito dal server (vedi
+// destPulito in index.js). Qui diventa un tasto, e il tasto dice DOVE VA:
+// «Apri la conversazione», «Vedi l'annuncio». Non «Apri» — una parola che non
+// nomina la destinazione costringe a premere per sapere dove si finisce, che e'
+// esattamente il lavoro che questo tasto esiste per togliere.
+//
+// Un avviso senza `dest` resta com'era: nessun tasto. Sono tutti quelli scritti
+// prima di oggi, piu' quelli che davvero non portano da nessuna parte (una
+// segnalazione registrata, un invito spedito).
+//
+// Il tasto e' separato dalla riga, e la riga non e' tutta premibile: accanto
+// c'e' gia' la crocetta che butta via l'avviso, e due bersagli con esiti
+// opposti dentro la stessa superficie si sbagliano con un guanto.
+//
+// Chi ci va sopra ha agito: l'avviso si segna letto nella stessa mossa.
+function destTasto(n){
+var d = n && n.dest;
+if(!d || typeof d !== "object") return null;
+
+var etichetta = null, vai = null;
+
+if(d.k === "dm" && d.uid){
+etichetta = t("notif_go_dm");
+vai = function(){
+// Il nome sta nella conversazione, che esiste per forza: l'avviso nasce
+// da un messaggio ricevuto. Se non si trova, `fillDmSubtitle` lo scrive
+// comunque appena la schermata e' aperta.
+var nome = "?";
+for(var i=0;i<myDirectChats.length;i++){
+var a = dmOther(myDirectChats[i]);
+if(a.uid === d.uid){ nome = a.name; break; }
+}
+openDirectChat(d.uid, nome);
+};
+}
+else if(d.k === "annuncio" && d.id){
+etichetta = t("notif_go_ad");
+vai = function(){
+// Stessa uscita della scheda Marketplace, con l'annuncio nell'indirizzo.
+state.tab = "tira"; save();
+window.location.href = "marketplace.html?ad=" + encodeURIComponent(d.id);
+};
+}
+
+if(!etichetta) return null;
+
+var b = el('<button class="btn btn-ghost btn-sm notif-vai">'+escapeHtml(etichetta)+'</button>');
+b.addEventListener("click", function(){
+if(n.read !== true && db && currentUser){
+db.collection("notifications").doc(currentUser.uid).collection("items").doc(n.id)
+.update({ read:true }).catch(function(){});
+}
+vai();
+});
+return b;
 }
 
 
@@ -13719,6 +13846,8 @@ row.appendChild(delOne);
 row.appendChild(el('<div style="font-size:0.9rem;font-weight:'+(nonLetta?'800':'600')+';padding-right:22px;">'+escapeHtml(n.title||"ArcTrail 3D")+'</div>'));
 if(n.body){ row.appendChild(el('<div style="font-size:0.85rem;line-height:1.4;margin-top:2px;">'+escapeHtml(n.body)+'</div>')); }
 if(quando){ row.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:4px;">'+quando+'</div>')); }
+var vai = destTasto(n);
+if(vai) row.appendChild(vai);
 card.appendChild(row);
 });
 if(notifUnreadCount > 0){
