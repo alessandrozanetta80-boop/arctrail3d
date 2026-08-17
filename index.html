@@ -245,7 +245,7 @@ color-scheme:light;
 --navbar-bg:var(--sand-50); --navbar-line:var(--sand-300); --navbar-fg:var(--sand-600);
 --navbar-on:var(--green-800); --navbar-pill:var(--green-800);
 --navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(30,45,34,0.14);
---navbar-green:var(--green-800);
+--navbar-accent:var(--clay-400);
 --navbar-hover:rgba(18,22,15,0.05);
 
 /* zone del bersaglio: restano quelle che sono, e' anatomia, non stile */
@@ -314,7 +314,7 @@ color-scheme:dark;
 --navbar-bg:var(--surface-1); --navbar-line:var(--border); --navbar-fg:var(--text-3);
 --navbar-on:var(--green-400); --navbar-pill:color-mix(in srgb, var(--green-400) 18%, var(--surface-2));
 --navbar-pill-ink:var(--green-400); --navbar-shadow:rgba(0,0,0,0.45);
---navbar-green:var(--green-400);
+--navbar-accent:var(--clay-400);
 --navbar-hover:rgba(255,255,255,0.06);
 
 --qsag:var(--slate-400);
@@ -435,7 +435,7 @@ color-scheme:light;
 --navbar-bg:var(--sand-50); --navbar-line:var(--sand-400); --navbar-fg:var(--sand-700);
 --navbar-on:var(--green-900); --navbar-pill:var(--green-900);
 --navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(18,22,15,0.22);
---navbar-green:var(--green-900);
+--navbar-accent:var(--clay-400);
 --navbar-hover:rgba(18,22,15,0.08);
 
 --qsag:var(--slate-700);
@@ -1102,66 +1102,6 @@ width:100%; padding:12px; border-radius:10px; border:1px solid var(--line); back
 .pf-tessera label{ font-size:0.68rem; color:var(--muted); font-weight:700; margin-bottom:4px; display:block; text-transform:uppercase; letter-spacing:.05em; }
 .pf-tessera input{ width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.85rem; }
 .cp-vuoto{ font-size:var(--t-sm); color:var(--text-3); line-height:1.5; margin:0 0 var(--s-3); }
-
-/* ---------- IL CAMPO CON L'OCCHIO ----------
-   Nascondere quello che si scrive protegge da chi guarda alle spalle. Al
-   banco iscrizioni di una gara, in piedi, col telefono in una mano e i guanti
-   nell'altra, alle spalle non c'e' nessuno: l'unica cosa da cui quei pallini
-   proteggono e' la persona da se stessa, e non e' un buon affare. Chi sbaglia
-   una lettera scopre solo dopo che l'ha sbagliata, e non sa dove.
-   Quindi si sceglie: parte coperta, e l'occhio la scopre.
-   L'occhio e' un tasto vero alto quanto il campo, non un'iconcina appoggiata
-   sopra: con un dito guantato un bersaglio da venti pixel non si prende. */
-.campo-pw{ position:relative; }
-.campo-pw input{ padding-right:var(--hit); }
-.campo-pw .occhio-pw{
-display:flex; align-items:center; justify-content:center;
-position:absolute; top:0; right:0; bottom:0; width:var(--hit);
-background:none; border:none; padding:0; cursor:pointer;
-color:var(--text-3); border-radius:var(--r-sm);
-transition:color var(--dur-2) var(--ease); }
-.campo-pw .occhio-pw:hover{ color:var(--text-1); }
-.campo-pw .occhio-pw:focus-visible{ outline:none; box-shadow:var(--focus-ring); }
-.campo-pw .occhio-pw.acceso{ color:var(--brand-soft); }
-.campo-pw.in-mezzo{ max-width:280px; margin:8px auto 0; }
-.campo-pw.in-mezzo input{ text-align:center; padding-left:var(--hit); }
-
-/* ---------- CENTRO NOTIFICHE ----------
-   Era tutto scritto in linea dal JS: dodici `style=`, che il guardiano conta
-   e che nessun tema puo' correggere. Qui il disegno torna nel foglio.
-   La riga che PORTA da qualche parte si distingue da quella che informa e
-   basta: cursore, freccia, e una riga in fondo che dice dove va. Un aggancio
-   che non si vede non e' un aggancio — la volta dopo nessuno ci prova. */
-.notif-riga{
-position:relative; border:1px solid var(--line); background:transparent;
-border-radius:var(--r-sm); padding:12px; margin-bottom:8px; }
-.notif-riga.nuova{ border-color:var(--accent-soft); background:var(--bg-panel-2); }
-.notif-riga.apribile{ cursor:pointer; transition:border-color var(--dur-2) var(--ease); }
-.notif-riga.apribile:hover{ border-color:var(--accent-soft); }
-.notif-riga.apribile:focus-visible{ outline:none; box-shadow:var(--focus-ring); }
-.notif-via{
-position:absolute; top:0; right:0; width:var(--hit); height:var(--hit);
-display:flex; align-items:center; justify-content:center;
-background:none; border:none; padding:0; cursor:pointer;
-color:var(--text-3); font-size:var(--t-lg); line-height:1; }
-.notif-via:hover{ color:var(--text-1); }
-.notif-titolo{ font-size:var(--t-sm); font-weight:600; padding-right:var(--hit); }
-.notif-riga.nuova .notif-titolo{ font-weight:800; }
-.notif-testo{ font-size:var(--t-sm); line-height:1.4; margin-top:4px; }
-.notif-quando{ font-size:var(--t-xs); color:var(--text-3); margin-top:4px; }
-.notif-vai{
-display:flex; align-items:center; gap:4px; margin-top:8px;
-font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
-.notif-vuoto{ font-size:var(--t-sm); color:var(--text-3); }
-.notif-sub{ font-size:var(--t-sm); color:var(--text-3); margin-bottom:12px; }
-.notif-azioni{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
-/* Una schermata che si apre sopra il menu: respiro in fondo, e i tasti che
-   ci stanno appesi sotto la scheda non si toccano fra loro. */
-.sotto-schermo{ padding-bottom:24px; }
-.sotto-schermo > .btn{ margin-top:8px; }
-/* `.pericolo` esisteva solo per i tasti della barra: sul tasto normale il
-   colore veniva riscritto a mano in linea, due volte, con lo stesso valore. */
-.btn.pericolo{ color:var(--danger); border-color:var(--danger); }
 
 /* ---------- PREPARA GARA ----------
    Sette campi di questa schermata erano scritti a mano dal JS, e ognuno
@@ -2439,12 +2379,6 @@ notif_center_title: "Notifiche",
 notif_center_sub: "Compaiono qui anche se non hai attivato le notifiche del telefono.",
 notif_center_empty: "Nessuna notifica.",
 notif_center_markall: "Segna tutte come lette",
-notif_open_msg: "Apri il messaggio",
-notif_open_chat: "Apri la conversazione con {name}",
-notif_open_ad: "Apri l'annuncio",
-notif_ad_gone: "L'annuncio non c'\u00e8 pi\u00f9: \u00e8 stato venduto, messo in pausa o tolto.",
-pw_show: "Mostra la password",
-pw_hide: "Nascondi la password",
 club_reports_show_closed: "Mostra anche le risolte",
 club_reports_hide_closed: "Nascondi le risolte",
 club_reports_clear: "Elimina le segnalazioni risolte",
@@ -2922,12 +2856,6 @@ notif_center_title: "Notifications",
 notif_center_sub: "They appear here even if you have not enabled phone notifications.",
 notif_center_empty: "No notifications.",
 notif_center_markall: "Mark all as read",
-notif_open_msg: "Open the message",
-notif_open_chat: "Open the conversation with {name}",
-notif_open_ad: "Open the listing",
-notif_ad_gone: "The listing is gone: it was sold, paused or removed.",
-pw_show: "Show the password",
-pw_hide: "Hide the password",
 club_reports_show_closed: "Also show resolved ones",
 club_reports_hide_closed: "Hide resolved ones",
 club_reports_clear: "Delete resolved reports",
@@ -3427,12 +3355,6 @@ notif_center_title: "Notifications",
 notif_center_sub: "Elles apparaissent ici m\u00eame si vous n’avez pas activ\u00e9 les notifications du t\u00e9l\u00e9phone.",
 notif_center_empty: "Aucune notification.",
 notif_center_markall: "Tout marquer comme lu",
-notif_open_msg: "Ouvrir le message",
-notif_open_chat: "Ouvrir la conversation avec {name}",
-notif_open_ad: "Ouvrir l'annonce",
-notif_ad_gone: "L'annonce n'est plus l\u00e0\u00a0: vendue, mise en pause ou retir\u00e9e.",
-pw_show: "Afficher le mot de passe",
-pw_hide: "Masquer le mot de passe",
 club_reports_show_closed: "Afficher aussi les r\u00e9solus",
 club_reports_hide_closed: "Masquer les r\u00e9solus",
 club_reports_clear: "Supprimer les signalements r\u00e9solus",
@@ -3932,12 +3854,6 @@ notif_center_title: "Benachrichtigungen",
 notif_center_sub: "Sie erscheinen hier auch dann, wenn du die Handy-Benachrichtigungen nicht aktiviert hast.",
 notif_center_empty: "Keine Benachrichtigungen.",
 notif_center_markall: "Alle als gelesen markieren",
-notif_open_msg: "Nachricht \u00f6ffnen",
-notif_open_chat: "Unterhaltung mit {name} \u00f6ffnen",
-notif_open_ad: "Anzeige \u00f6ffnen",
-notif_ad_gone: "Die Anzeige ist nicht mehr da: verkauft, pausiert oder entfernt.",
-pw_show: "Passwort anzeigen",
-pw_hide: "Passwort verbergen",
 club_reports_show_closed: "Auch erledigte anzeigen",
 club_reports_hide_closed: "Erledigte ausblenden",
 club_reports_clear: "Erledigte Meldungen l\u00f6schen",
@@ -4437,12 +4353,6 @@ notif_center_title: "Bildirimler",
 notif_center_sub: "Telefon bildirimlerini a\u00e7mam\u0131\u015f olsan da burada g\u00f6r\u00fcn\u00fcrler.",
 notif_center_empty: "Bildirim yok.",
 notif_center_markall: "Hepsini okundu i\u015faretle",
-notif_open_msg: "Mesaj\u0131 a\u00e7",
-notif_open_chat: "{name} ile olan sohbeti a\u00e7",
-notif_open_ad: "\u0130lan\u0131 a\u00e7",
-notif_ad_gone: "\u0130lan art\u0131k yok: sat\u0131ld\u0131, duraklat\u0131ld\u0131 ya da kald\u0131r\u0131ld\u0131.",
-pw_show: "Parolay\u0131 g\u00f6ster",
-pw_hide: "Parolay\u0131 gizle",
 club_reports_show_closed: "\u00c7\u00f6z\u00fclenleri de g\u00f6ster",
 club_reports_hide_closed: "\u00c7\u00f6z\u00fclenleri gizle",
 club_reports_clear: "\u00c7\u00f6z\u00fclm\u00fc\u015f bildirimleri sil",
@@ -4956,12 +4866,6 @@ notif_center_title: "\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u043
 notif_center_sub: "\u041e\u043d\u0438 \u043f\u043e\u044f\u0432\u043b\u044f\u044e\u0442\u0441\u044f \u0437\u0434\u0435\u0441\u044c, \u0434\u0430\u0436\u0435 \u0435\u0441\u043b\u0438 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f \u0442\u0435\u043b\u0435\u0444\u043e\u043d\u0430 \u043d\u0435 \u0432\u043a\u043b\u044e\u0447\u0435\u043d\u044b.",
 notif_center_empty: "\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u0439 \u043d\u0435\u0442.",
 notif_center_markall: "\u041e\u0442\u043c\u0435\u0442\u0438\u0442\u044c \u0432\u0441\u0435 \u043a\u0430\u043a \u043f\u0440\u043e\u0447\u0438\u0442\u0430\u043d\u043d\u044b\u0435",
-notif_open_msg: "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435",
-notif_open_chat: "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043a\u0443 \u0441 {name}",
-notif_open_ad: "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u0435",
-notif_ad_gone: "\u041e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f \u0431\u043e\u043b\u044c\u0448\u0435 \u043d\u0435\u0442: \u043f\u0440\u043e\u0434\u0430\u043d\u043e, \u043d\u0430 \u043f\u0430\u0443\u0437\u0435 \u0438\u043b\u0438 \u0443\u0434\u0430\u043b\u0435\u043d\u043e.",
-pw_show: "\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u044c \u043f\u0430\u0440\u043e\u043b\u044c",
-pw_hide: "\u0421\u043a\u0440\u044b\u0442\u044c \u043f\u0430\u0440\u043e\u043b\u044c",
 club_reports_show_closed: "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0438 \u0440\u0435\u0448\u0451\u043d\u043d\u044b\u0435",
 club_reports_hide_closed: "\u0421\u043a\u0440\u044b\u0442\u044c \u0440\u0435\u0448\u0451\u043d\u043d\u044b\u0435",
 club_reports_clear: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0440\u0435\u0448\u0451\u043d\u043d\u044b\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f",
@@ -5475,12 +5379,6 @@ notif_center_title: "Notificaciones",
 notif_center_sub: "Aparecen aqu\u00ed aunque no hayas activado las notificaciones del tel\u00e9fono.",
 notif_center_empty: "No hay notificaciones.",
 notif_center_markall: "Marcar todas como le\u00eddas",
-notif_open_msg: "Abrir el mensaje",
-notif_open_chat: "Abrir la conversaci\u00f3n con {name}",
-notif_open_ad: "Abrir el anuncio",
-notif_ad_gone: "El anuncio ya no est\u00e1: se vendi\u00f3, se pus\u00f3 en pausa o se retir\u00f3.",
-pw_show: "Mostrar la contrase\u00f1a",
-pw_hide: "Ocultar la contrase\u00f1a",
 club_reports_show_closed: "Mostrar tambi\u00e9n los resueltos",
 club_reports_hide_closed: "Ocultar los resueltos",
 club_reports_clear: "Eliminar los avisos resueltos",
@@ -5994,12 +5892,6 @@ notif_center_title: "Notiser",
 notif_center_sub: "De visas h\u00e4r \u00e4ven om du inte har aktiverat telefonens notiser.",
 notif_center_empty: "Inga notiser.",
 notif_center_markall: "Markera alla som l\u00e4sta",
-notif_open_msg: "\u00d6ppna meddelandet",
-notif_open_chat: "\u00d6ppna konversationen med {name}",
-notif_open_ad: "\u00d6ppna annonsen",
-notif_ad_gone: "Annonsen finns inte kvar: s\u00e5ld, pausad eller borttagen.",
-pw_show: "Visa l\u00f6senordet",
-pw_hide: "D\u00f6lj l\u00f6senordet",
 club_reports_show_closed: "Visa \u00e4ven \u00e5tg\u00e4rdade",
 club_reports_hide_closed: "D\u00f6lj \u00e5tg\u00e4rdade",
 club_reports_clear: "Radera \u00e5tg\u00e4rdade rapporter",
@@ -6513,12 +6405,6 @@ notif_center_title: "Meldingen",
 notif_center_sub: "Ze verschijnen hier ook als je de meldingen van je telefoon niet hebt aangezet.",
 notif_center_empty: "Geen meldingen.",
 notif_center_markall: "Alles als gelezen markeren",
-notif_open_msg: "Bericht openen",
-notif_open_chat: "Gesprek met {name} openen",
-notif_open_ad: "Advertentie openen",
-notif_ad_gone: "De advertentie is weg: verkocht, gepauzeerd of verwijderd.",
-pw_show: "Wachtwoord tonen",
-pw_hide: "Wachtwoord verbergen",
 club_reports_show_closed: "Ook opgeloste tonen",
 club_reports_hide_closed: "Opgeloste verbergen",
 club_reports_clear: "Opgeloste meldingen verwijderen",
@@ -7630,81 +7516,89 @@ chart: '<path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="12" width="3" heig
    ed e' questo. */
 soloqui: '<rect x="7" y="2.5" width="10" height="19" rx="2.4"/><path d="M10.5 5.6h3"/><path d="M12 17.6h.01"/>',
 occhio: '<path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
-/* Lo stesso occhio con una riga sopra. E' la stessa forma di proposito:
-   l'alfabeto delle icone e' uno solo, e due disegni diversi per lo stesso
-   oggetto fanno pensare a due oggetti. Il taglio dice l'AZIONE — «nascondi» —
-   non lo stato, perche' lo stato lo si legge nel campo. */
-occhiobarrato: '<path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/><path d="M4.2 4.2 19.8 19.8"/>',
-/* La freccia che dice «si va da qualche parte»: sta accanto alla riga di una
-   notifica che porta a un posto. */
-vai: '<path d="M5 12h13"/><path d="M12.5 6.2 18.6 12l-6.1 5.8"/>',
 firma: '<path d="M2.5 12.6 6.2 16.3 12.4 8.8"/><path d="M10.6 15.4 12.4 17.2 21.5 6.6"/>'
 };
 
-/* ── Le cinque della barra, a due tinte ──────────────────────────────────
-   "a" = il pieno colorato, disegnato PRIMA; "p" = il contorno, disegnato
-   sopra nel colore della voce. I colori sono solo i tre dell'app (verde,
-   arancio, oro): piu' di cosi' la barra diventa un giocattolo e non si
-   capisce piu' quale sezione e' aperta. */
-var NAV_TEAL = "var(--navbar-green)", NAV_BARK = "#E8722F", NAV_GOLD = "#C9922F";
-var NAV_ICONS = {
-navfield: {
-a: '<circle cx="12" cy="10.2" r="2.5" fill="'+NAV_TEAL+'" stroke="none"/>',
-p: '<path d="M12 20.8c4.1-4.5 6.2-7.9 6.2-10.4a6.2 6.2 0 1 0-12.4 0c0 2.5 2.1 5.9 6.2 10.4z"/><circle cx="12" cy="10.2" r="2.5"/>'
-},
-navshoot: {
-a: '<path d="M3.6 18.6 6.0 21.0M5.4 16.8 7.8 19.2" stroke="'+NAV_BARK+'" stroke-width="1.7"/>',
-p: '<circle cx="13.4" cy="10.6" r="7.2"/><circle cx="13.4" cy="10.6" r="3.0"/>'+
-   '<path d="M3.2 20.8 11.6 12.4"/>'+
-   '<path d="M13.4 10.6 12.5 13.4 10.6 11.5z" fill="currentColor"/>'
-},
-navclub: {
-a: '<path d="M6.2 4.6h11.6l-2.7 3.9 2.7 3.9H6.2z" fill="'+NAV_GOLD+'" stroke="none"/>',
-p: '<path d="M6.2 3.4v17.4"/><path d="M6.2 4.6h11.6l-2.7 3.9 2.7 3.9H6.2z"/>'
-},
-navmarket: {
-a: '<path fill-rule="evenodd" fill="'+NAV_BARK+'" stroke="none" d="M11.4 3.6h9.1v9.1l-8.4 8.4a1.6 1.6 0 0 1-2.3 0l-6.8-6.8a1.6 1.6 0 0 1 0-2.3zM16.5 5.9a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2z"/>',
-p: '<path d="M11.4 3.6h9.1v9.1l-8.4 8.4a1.6 1.6 0 0 1-2.3 0l-6.8-6.8a1.6 1.6 0 0 1 0-2.3z"/><circle cx="16.5" cy="7.5" r="1.6"/>'
-},
-navprofile: {
-a: '<circle cx="12" cy="8.3" r="3.7" fill="'+NAV_TEAL+'" stroke="none"/>',
-p: '<circle cx="12" cy="8.3" r="3.7"/><path d="M4.8 20.6c0-4 3.2-6.5 7.2-6.5s7.2 2.5 7.2 6.5"/>'
-}
+/* ── L'ALFABETO PIENO ───────────────────────────────────────
+   Otto disegni fatti da un illustratore: le cinque sezioni della barra e i
+   tre comandi del menu. Sono a superficie piena, non a tratto — e sono due
+   alfabeti, non due stili litigiosi. Il confine non e' la misura, e' il
+   mestiere: questo insieme marca le OTTO destinazioni, cioe' dove si va e da
+   dove si comincia a tirare; ICON_PATHS, a tratto, e' l'interfaccia — una
+   riga d'elenco, una pastiglia, un pulsante dentro una scheda. Percio' l'arco
+   pieno sta sul comando "Allenamento" e l'arco a tratto resta sulla riga
+   "annuncia un allenamento aperto": non e' un'incoerenza, e' la stessa
+   differenza che c'e' fra un'insegna e una didascalia.
+
+   "t" e' la trasformazione che rimette il disegno al centro della finestra:
+   arrivati dall'illustratore erano centrati ciascuno sul proprio baricentro
+   (dal 87,8 della cartellina al 105,1 del mirino su 200), e in una fila di
+   cinque quei 17 punti si vedono — le icone ballano. Il fattore di scala
+   porta tutte e otto alla stessa altezza d'inchiostro, 164 su 200.
+
+   "s" e' la struttura e prende SEMPRE il colore della voce (currentColor):
+   cosi' segue lo stato — spenta, accesa dentro la pastiglia, tema scuro —
+   senza che nessuno riscriva una tinta. "a" e' l'accento.
+
+   Le tinte dell'illustratore non sono entrate nel file. Il suo verde (#439c5e)
+   non e' nessuno dei verdi dell'app, e un'icona con la tinta cotta dentro non
+   sopravvive a quattro temi: al sole diventa il colore sbagliato, sulla
+   pastiglia accesa sparisce contro il fondo. Quello che l'illustratore ha dato
+   e' la FORMA. Il colore lo da' il sistema, ed e' un token.
+
+   Un accento solo per tutta la barra, arancio, invece dei tre di prima
+   (verde/arancio/oro). Il verde di prima aveva un difetto che si vedeva solo
+   accesa: il pallino del segnaposto era il verde della barra sopra una
+   pastiglia dello stesso verde, cioe' invisibile. Un accento che non e' mai il colore della
+   struttura non puo' sparire, in nessuno stato. */
+var ICONE_PIENE = {
+navfield: { t:'translate(100 100) scale(0.9924) translate(-100 -100) translate(0.00 -3.88)',
+s:'<path d="M100,176.34H98.4l1.6,2.47,1.6-2.47Z"/><path d="M100,171.8l-4-6.16c-1.36-2.09-33.41-51.56-43.13-69.36l-.07-.12a40.34,40.34,0,0,1-3.11-8.28A52.26,52.26,0,0,1,100,21.37h0a52.26,52.26,0,0,1,50.29,66.51,40.7,40.7,0,0,1-3.11,8.28l-.07.12c-9.72,17.8-41.77,67.27-43.13,69.36Zm-38.74-80c7.58,13.85,29.64,48.35,38.74,62.49,9.1-14.14,31.15-48.64,38.73-62.49a30.36,30.36,0,0,0,2.36-6.31l0-.14A42.78,42.78,0,0,0,100,30.88h0A42.73,42.73,0,0,0,58.86,85.34l0,.14A30.91,30.91,0,0,0,61.25,91.79Z"/><path d="M123.16,142.83c-2,3.13-3.89,6.12-5.65,8.88,11.15,2.68,17.71,7.6,17.71,11.34,0,5.28-13,12.9-33.59,13.28h-3.2c-20.59-.37-33.65-8-33.65-13.28,0-3.75,6.58-8.68,17.76-11.35-1.76-2.76-3.68-5.76-5.65-8.89-13.45,3.95-22.13,11.37-22.13,20.24,0,13.29,19.45,23.32,45.24,23.32s45.24-10,45.24-23.32C145.24,154.19,136.58,146.78,123.16,142.83Z"/>',
+a:'<path d="M100,102.51a28.91,28.91,0,1,1,22.63-10.93,28.64,28.64,0,0,1-22.58,10.93Zm0-46.09a17.19,17.19,0,1,0,13.49,27.89A17.2,17.2,0,0,0,100,56.42Z"/>' },
+navshoot: { t:'translate(100 100) scale(1.0077) translate(-100 -100) translate(0.00 -5.12)',
+s:'<rect x="94.21" y="23.81" width="11.58" height="44.26"/><rect x="94.21" y="142.11" width="11.58" height="44.26"/><path d="M112,160.59a56.19,56.19,0,0,0,43-43h10.78A66.73,66.73,0,0,1,112,171.37ZM88,171.37a66.73,66.73,0,0,1-53.79-53.79H45a56.19,56.19,0,0,0,43,43Zm67-77.76a56.19,56.19,0,0,0-43-43V39.82a66.72,66.72,0,0,1,53.79,53.79Zm-120.78,0A66.72,66.72,0,0,1,88,39.82V50.6a56.19,56.19,0,0,0-43,43Z"/><rect x="137.02" y="99.3" width="44.26" height="11.58"/><rect x="18.72" y="99.3" width="44.26" height="11.58"/>',
+a:'<path d="M99.93,121.72a16.64,16.64,0,1,1,16.64-16.63A16.65,16.65,0,0,1,99.93,121.72Z"/>' },
+navclub: { t:'translate(100 100) scale(1.0061) translate(-100 -100) translate(0.00 -5.00)',
+s:'<path d="M44.61,186.37v-8.86H60v-137l-.43-.3a8.82,8.82,0,1,1,10,0l-.43.3v137H85.75v8.86Z"/><polygon points="78.12 47.77 155.38 58.72 135.54 84.56 155.31 109.17 78.12 117.97 78.12 47.77"/>',
+a:'<circle cx="64.74" cy="32.73" r="9.19"/>' },
+navmarket: { t:'translate(100 100) scale(0.9924) translate(-100 -100) translate(7.62 -3.88)',
+s:'<path d="M140.36,83.49l-7.55-20.72-7.43-20.45-15.09,6.25a29.22,29.22,0,0,0-2.38,13l11-4.58,5.7,15.68,2.2,6,7.59,20.89-32,72.14a5.92,5.92,0,0,1-3.32,3.16,6,6,0,0,1-4.58-.11L48,154.14a6,6,0,0,1-3-7.89L76.77,74.47l13-5.39a51.89,51.89,0,0,1-.69-11.71L68.44,65.94,34.83,141.76a17.07,17.07,0,0,0,8.69,22.5L90.07,184.9a17.07,17.07,0,0,0,22.5-8.69L146.35,100Z"/><circle cx="106.83" cy="87.35" r="12.26"/><rect x="83.15" y="106.57" width="8.23" height="35.92" transform="translate(-61.9 154.06) rotate(-66.18)"/><rect x="76.13" y="122.47" width="8.23" height="35.92" transform="translate(-80.63 157.12) rotate(-66.18)"/>',
+a:'<path d="M135.84,81.62l-7.08-7a52.47,52.47,0,0,0,10.57-14.87,23.49,23.49,0,0,0,1-16.85c-2.83-9-7.9-12.59-15.93-11.34-6.73,1.05-12.78,5.37-16.59,11.86C96.26,63,110.17,83.54,110.31,83.74l-8.19,5.67c-.73-1-17.64-26-2.91-51,5.34-9.07,13.94-15.14,23.64-16.65,7.56-1.18,21.11-.39,27,18.18a33.45,33.45,0,0,1-1.43,24A62.07,62.07,0,0,1,135.84,81.62Z"/>' },
+navprofile: { t:'translate(100 100) scale(1.0719) translate(-100 -100) translate(0.00 -1.50)',
+s:'<path d="M120.7,102.23A41.94,41.94,0,1,0,95.39,109v.07H99.1a65.68,65.68,0,0,1,65.6,65.6v3.13h10v-3.13A75.73,75.73,0,0,0,120.7,102.23ZM97.78,99.07a32,32,0,1,1,32-32A32,32,0,0,1,97.78,99.07Z"/><path d="M60.34,110.37l5.37,8.43a66.16,66.16,0,0,1,12.11-6A51.27,51.27,0,0,1,68.21,106,75.43,75.43,0,0,0,60.34,110.37Z"/><path d="M45.92,122.29A75.29,75.29,0,0,0,25.3,174.18v3.13h10v-3.13a65.67,65.67,0,0,1,30.41-55.37l-5.38-8.44A76.54,76.54,0,0,0,45.92,122.29Z"/>',
+a:'<rect x="117.84" y="162.24" width="29.34" height="12.44"/>' },
+azarco: { t:'translate(100 100) scale(0.9880) translate(-100 -100) translate(0.00 -0.25)',
+s:'<path d="M146.16,92.37c-.59-33.18-34.61-53.59-34.61-53.59-8.27-5-10-9.24-10.18-11.69a7.63,7.63,0,0,0,.34-2.26,7.49,7.49,0,1,0-15,0C83,36.68,109,54.26,109,54.26a49,49,0,0,1,19.36,38.11Z"/><path d="M146.16,108.18c-.59,33.18-34.61,53.59-34.61,53.59-8.27,5-10,9.24-10.18,11.69a7.63,7.63,0,0,1,.34,2.26,7.49,7.49,0,0,1-15,0C83,163.87,109,146.29,109,146.29a49.05,49.05,0,0,0,19.36-38.11Z"/><path d="M85.34,38.63A12.63,12.63,0,0,0,88.89,42L55.62,88l-3.56-4Z"/><path d="M85.34,162.32a12.63,12.63,0,0,1,3.55-3.41l-33.27-46-3.56,4Z"/>',
+a:'<path d="M181.31,100l-23.7-13.23L159.1,97.5H29.65a2.77,2.77,0,0,0,0,5.53H159.22l-1,10.71Z"/><polygon points="46.04 84.86 18.69 84.86 30.44 100.27 18.69 115.67 46.04 115.67 60.85 100.27 46.04 84.86"/>' },
+azgara: { t:'translate(100 100) scale(1.0061) translate(-100 -100) translate(0.12 7.25)',
+s:'<path d="M130.54,76l-7.78,10.41a29.18,29.18,0,1,1-15-11.46l8-10.25A41.64,41.64,0,1,0,130.54,76Z"/><path d="M152.52,55.6l-7.17.59-4.14,5.52A59.08,59.08,0,1,1,126.66,50.6l4.23-5.45-1.34-7.08a71.57,71.57,0,1,0,23,17.53Z"/>',
+a:'<path d="M110.44,94.49l32.14-42.94,14.21-1.15L173,29.12l-18.26-.27L149.69,11.3,133.45,32.58l2.64,14L103.15,88.93a15.22,15.22,0,1,0,7.29,5.56Z"/>' },
+azprepara: { t:'translate(100 100) scale(1.0031) translate(-100 -100) translate(0.00 12.25)',
+s:'<path d="M141.27,27.27h-8.09V38h8.09a4.17,4.17,0,0,1,4.16,4.16V154.46a4.18,4.18,0,0,1-4.16,4.18H58.73a4.17,4.17,0,0,1-4.16-4.18V42.2A4.16,4.16,0,0,1,58.73,38h8.09V27.27H58.73A15,15,0,0,0,43.8,42.2V154.46A15,15,0,0,0,58.73,169.4h82.54a15,15,0,0,0,14.93-14.94V42.2A15,15,0,0,0,141.27,27.27Z"/><rect x="68.7" y="70.81" width="62.6" height="8.6"/><rect x="68.7" y="100.26" width="62.6" height="8.6"/><rect x="68.7" y="129.71" width="39.43" height="8.6"/>',
+a:'<path d="M128.87,23.33v18a3.78,3.78,0,0,1-3.78,3.78H74.91a3.78,3.78,0,0,1-3.78-3.78v-18a3.78,3.78,0,0,1,3.78-3.78H93.67a7,7,0,1,0,12.65,0h18.77A3.78,3.78,0,0,1,128.87,23.33Z"/><path d="M115.92,19.55a16.18,16.18,0,0,0-31.85,0,16,16,0,0,0-.26,2.88,16.19,16.19,0,0,0,32.37,0A16,16,0,0,0,115.92,19.55ZM100,29.38a6.94,6.94,0,1,1,7-6.95A7,7,0,0,1,100,29.38Z"/>' }
 };
-function navIcon(name, size, strokeWidth){
-var o = NAV_ICONS[name] || { a:"", p:"" };
-return '<svg viewBox="0 0 24 24" width="'+(size||21)+'" height="'+(size||21)+'" fill="none" stroke="currentColor" stroke-width="'+(strokeWidth||1.55)+'" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;">'+o.a+o.p+'</svg>';
+
+/* Due modi di colorare, e dipende da dove sta l'icona.
+   · "due": struttura nel colore della voce, accento arancio. E' la barra,
+     dove nessuna sezione ha un colore suo e l'arancio non compete con niente.
+   · "unica": tutto in un tinta sola. E' il menu, dove l'icona sta dentro una
+     pastiglia PIENA che e' gia' il codice colore (verde allenamento, arancio
+     gara, oro prepara). Un secondo colore li' dentro non aggiunge una
+     informazione: ne rompe una — e sulla pastiglia arancio sarebbe arancio su
+     arancio. Le forme reggono in silhouette perche' hanno gia' l'aria dentro:
+     l'arco e' aperto, la freccia esce dagli anelli, la molletta della
+     cartellina stacca. Provato a 24px sulle tre pastiglie prima di scriverlo. */
+function navIcon(name, size, tinta){
+var o = ICONE_PIENE[name];
+if(!o) return "";
+var acc = (tinta === "unica") ? "currentColor" : "var(--navbar-accent)";
+var px = size || 21;
+return '<svg viewBox="0 0 200 200" width="'+px+'" height="'+px+'" fill="currentColor" aria-hidden="true">'+
+'<g transform="'+o.t+'">'+o.s+'<g fill="'+acc+'">'+o.a+'</g></g></svg>';
 }
 function icon(name, size, strokeWidth){
 var p = ICON_PATHS[name] || "";
 return '<svg viewBox="0 0 24 24" width="'+(size||20)+'" height="'+(size||20)+'" fill="none" stroke="currentColor" stroke-width="'+(strokeWidth||1.6)+'" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;">'+p+'</svg>';
-}
-
-/* UN CAMPO PASSWORD CHE SI PUO' GUARDARE.
-   Restituisce il contenitore; il campo vero sta dentro e tiene il suo `id`,
-   quindi ogni riga che faceva getElementById per leggere il valore non cambia
-   di un carattere. Il tasto e' alto quanto il campo: si prende col pollice,
-   anche con un guanto.
-   Parte COPERTA di proposito. Mostrare per primo sarebbe piu' comodo e
-   sbagliato: chi si registra al banco iscrizioni ha davvero qualcuno alle
-   spalle, e la scelta di scoprirla deve restare un gesto, non un valore
-   predefinito che nessuno ha chiesto. */
-function campoPassword(id, autocomplete){
-var box = el('<div class="campo-pw"></div>');
-var inp = el('<input type="password" id="'+id+'" autocomplete="'+(autocomplete||"new-password")+'">');
-var occhio = el('<button type="button" class="occhio-pw" aria-label="'+escapeHtml(t("pw_show"))+'">'+icon("occhio",19)+'</button>');
-box.appendChild(inp); box.appendChild(occhio);
-occhio.addEventListener("click", function(){
-var eraScoperta = inp.type === "text";
-inp.type = eraScoperta ? "password" : "text";
-occhio.innerHTML = icon(eraScoperta ? "occhio" : "occhiobarrato", 19);
-occhio.setAttribute("aria-label", eraScoperta ? t("pw_show") : t("pw_hide"));
-occhio.classList.toggle("acceso", !eraScoperta);
-// Il fuoco torna dove si stava scrivendo: senza, dopo il tocco la
-// tastiera si chiude e si deve rientrare nel campo a mano.
-try{ inp.focus(); }catch(e){}
-});
-return box;
 }
 
 // La barra in basso resta visibile ovunque: da una sotto-schermata si cambiava
@@ -8171,14 +8065,8 @@ wrap.appendChild(logo);
 wrap.appendChild(el('<div class="onboard-sub">Accedi con la tua email per continuare</div>'));
 var input = el('<input type="email" id="loginEmailInput" placeholder="La tua email" style="max-width:280px;text-align:center;">');
 wrap.appendChild(input);
-// Il campo dell'accesso e' centrato come quello dell'email sopra: perche'
-// il testo resti centrato DAVVERO, l'occhio a destra si compensa con lo
-// stesso spazio a sinistra. Un testo centrato in un campo con un tasto solo
-// da una parte non e' centrato, e' spostato.
-var passBox = campoPassword("loginPasswordInput", "current-password");
-passBox.classList.add("in-mezzo");
-passBox.querySelector("input").setAttribute("placeholder", t("login_password"));
-wrap.appendChild(passBox);
+var passInput = el('<input type="password" id="loginPasswordInput" placeholder="'+t("login_password")+'" style="max-width:280px;text-align:center;margin-top:8px;" autocomplete="current-password">');
+wrap.appendChild(passInput);
 var errorMsg = el('<div style="color:var(--danger);font-size:0.8rem;margin-top:8px;min-height:1.2em;"></div>');
 if(authErrorMsg){ errorMsg.textContent = authErrorMsg; }
 wrap.appendChild(errorMsg);
@@ -8685,12 +8573,8 @@ card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_email")+'</l
 // d'ingresso, quindi una lettera sbagliata lascerebbe la persona fuori senza
 // capire perche'. L'incolla resta permesso di proposito.
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_email_confirm")+'</label><input type="email" id="pfEmail2" autocomplete="email"></div>'));
-var rigaPw = el('<div class="cp-select-row"><label>'+t("profile_password")+'</label></div>');
-rigaPw.appendChild(campoPassword("pfPassword", "new-password"));
-card.appendChild(rigaPw);
-var rigaPw2 = el('<div class="cp-select-row"><label>'+t("profile_password_confirm")+'</label></div>');
-rigaPw2.appendChild(campoPassword("pfPasswordConfirm", "new-password"));
-card.appendChild(rigaPw2);
+card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_password")+'</label><input type="password" id="pfPassword" autocomplete="new-password"></div>'));
+card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_password_confirm")+'</label><input type="password" id="pfPasswordConfirm" autocomplete="new-password"></div>'));
 
 card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_federazioni")+'</h2>'));
 var fedWrap = el('<div></div>');
@@ -10127,11 +10011,11 @@ if(wide){
 // In riga: icona e parola affiancate, e la pastiglia e' il pulsante intero.
 // In colonna, dentro una barra alta 40px, non ci starebbero.
 b = el('<button class="tabw'+(on?" on":"")+'" aria-current="'+(on?"page":"false")+'">'+
-navIcon(tb[1],20,(on?1.9:1.5))+
+navIcon(tb[1],20)+
 '<span class="tab-lbl">'+tb[2]+'</span></button>');
 } else {
 b = el('<button class="tabn'+(on?" on":"")+'" aria-current="'+(on?"page":"false")+'">'+
-'<span class="tab-pill">'+navIcon(tb[1],21,(on?1.9:1.5))+'</span>'+
+'<span class="tab-pill">'+navIcon(tb[1],21)+'</span>'+
 '<span class="tab-lbl">'+tb[2]+'</span></button>');
 }
 b.addEventListener("click", function(){ state.tab = key; state.screen = "menu"; homeOverride = false; clubShowAll = false; save(); forgetScroll(); render(); });
@@ -10190,7 +10074,7 @@ wrap.appendChild(otSectionCard(false));
 var menuCard = el('<div class="card"></div>');
 menuCard.appendChild(el('<h2 class="section-title">'+t("menu_title")+'</h2>'));
 
-var trainBtn = el('<button class="btn menu-btn training btn-block"><span class="menu-icon">'+icon("bow",24)+'</span><span class="menu-txt">'+t("menu_train_label")+'<span class="menu-sub">'+t("menu_train_sub")+'</span></span></button>');
+var trainBtn = el('<button class="btn menu-btn training btn-block"><span class="menu-icon">'+navIcon("azarco",24,"unica")+'</span><span class="menu-txt">'+t("menu_train_label")+'<span class="menu-sub">'+t("menu_train_sub")+'</span></span></button>');
 trainBtn.addEventListener("click", function(){
 state.pendingMode = FEDERATIONS[state.federation || "fiarc"].trainingMode;
 ensureSelfArcher();
@@ -10202,7 +10086,7 @@ menuCard.appendChild(trainBtn);
 
 var activeGaraModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
 var garaSub = activeGaraModes.map(function(k){ return modeLabel(k); }).join(", ") + "<br>" + t("menu_gara_sub");
-var garaBtn = el('<button class="btn menu-btn gara btn-block"><span class="menu-icon">'+icon("target",24)+'</span><span class="menu-txt">'+t("menu_gara_label")+'<span class="menu-sub">'+garaSub+'</span></span></button>');
+var garaBtn = el('<button class="btn menu-btn gara btn-block"><span class="menu-icon">'+navIcon("azgara",24,"unica")+'</span><span class="menu-txt">'+t("menu_gara_label")+'<span class="menu-sub">'+garaSub+'</span></span></button>');
 garaBtn.addEventListener("click", function(){
 var garaModes = FEDERATIONS[state.federation || "fiarc"].garaModes;
 if(!state.pendingMode || garaModes.indexOf(state.pendingMode) === -1){ state.pendingMode = garaModes[0]; }
@@ -10219,7 +10103,7 @@ menuCard.appendChild(garaBtn);
 var pgAllowed = pgAccessAllowed();
 if(pgAllowed !== null && ["fiarc","fitarco","ffta","swissarchery","faas","oebsv","dfbv","fftl","efaa","archerygb","nfas","turkey","russia","spain","sweden","nhb"].indexOf(state.federation||"fiarc") !== -1){
 if(pgAllowed){
-var pgBtn = el('<button class="btn menu-btn prepara btn-block"><span class="menu-icon">'+icon("clipboard",24)+'</span><span class="menu-txt">'+t("pg_menu_btn_label")+'<span class="menu-sub">'+t("pg_menu_btn_sub")+'</span></span></button>');
+var pgBtn = el('<button class="btn menu-btn prepara btn-block"><span class="menu-icon">'+navIcon("azprepara",24,"unica")+'</span><span class="menu-txt">'+t("pg_menu_btn_label")+'<span class="menu-sub">'+t("pg_menu_btn_sub")+'</span></span></button>');
 pgBtn.addEventListener("click", function(){ state.pgScreen = "pick"; state.screen = "prepara-gara"; save(); render(); });
 menuCard.appendChild(pgBtn);
 } else {
@@ -11762,7 +11646,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-dove-porta-b";
+var BUILD_STAMP = "2026-08-17-icone-piene";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -12826,44 +12710,31 @@ render();
 // deployata le notifiche continuano ad arrivare invece di sparire in silenzio.
 // Applicate le regole, il ripiego fallisce da solo e resta valida solo la
 // strada del server. E' voluto: non va tolto prima, non serve toglierlo dopo.
-// IL QUARTO ARGOMENTO: DOVE PORTA.
-// Un avviso senza destinazione dice cos'e' successo e lascia cercare dov'e'
-// successo. `dest` e' quel dove, e viaggia dentro il documento perche' e' la
-// notifica stessa a doverlo sapere: la push arriva anche ad app chiusa, e al
-// ritorno non c'e' nessuna conversazione in corso da cui indovinarlo.
-// Le forme sono due sole e dichiarate: { k:"dm", uid } e { k:"annuncio", id }.
-// Per la chat l'uid lo RISCRIVE il server con quello del chiamante: qui si
-// manda per il solo ripiego, che scrive senza passare dal server.
-// Finche' la funzione nuova non e' pubblicata, `dest` viene ignorato e la
-// notifica arriva come prima, solo senza il tasto per andarci. Nessuno resta
-// senza avviso durante il passaggio.
-function sendPushViaFirestore(toUid, title, body, dest){
+function sendPushViaFirestore(toUid, title, body){
 if(!toUid) return;
 if(fns){
-fns.httpsCallable("sendNotification")({ toUid: toUid, title: String(title||""), body: String(body||""), dest: dest || null })
+fns.httpsCallable("sendNotification")({ toUid: toUid, title: String(title||""), body: String(body||"") })
 .catch(function(err){
 console.error("sendNotification:", err && err.code, err && err.message);
 // Se la funzione non c'e' ancora (deploy non fatto), si ripiega.
 if(err && (err.code === "functions/not-found" || err.code === "functions/internal" || err.code === "functions/unavailable")){
-legacyPushWrite(toUid, title, body, dest);
+legacyPushWrite(toUid, title, body);
 }
 });
 } else {
-legacyPushWrite(toUid, title, body, dest);
+legacyPushWrite(toUid, title, body);
 }
 }
 
 // Vecchia scrittura diretta: usata solo come ripiego (vedi sopra).
-function legacyPushWrite(toUid, title, body, dest){
+function legacyPushWrite(toUid, title, body){
 if(!db || !toUid) return;
-var doc = {
+db.collection("notifications").doc(toUid).collection("items").add({
 title: title,
 body: body,
 read: false,
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
-};
-if(dest) doc.dest = dest;
-db.collection("notifications").doc(toUid).collection("items").add(doc).catch(function(){});
+}).catch(function(){});
 }
 
 var notificationsListenerStarted = false;
@@ -13396,7 +13267,6 @@ return wrap;
 var myDirectChats = [];
 var dmUnreadCount = 0;
 var directChatsListenerStarted = false;
-var dmElencoArrivato = false;
 var dmMsgUnsub = null;
 var archersDirectory = null;
 
@@ -13412,22 +13282,11 @@ if(!otherUid) otherUid = meUid;
 return { uid: otherUid, name: (chat.memberNames && chat.memberNames[otherUid]) || "?" };
 }
 
-// UNA RICEVUTA IN VIAGGIO E' GIA' UNA RICEVUTA.
-// dmMarkRead scrive readBy[me] con serverTimestamp(): finche' il server non
-// risponde, la copia locale di quel campo vale `null`. Letto alla lettera,
-// null vuol dire "mai letta" — quindi per un istante la conversazione appena
-// aperta tornava a dirsi NON letta, e il conto sulla campanella cambiava due
-// volte per ogni segno di lettura. Ogni cambio faceva un render(), ogni
-// render() riattaccava l'ascoltatore dei messaggi, che riscriveva la
-// ricevuta: era il giro che faceva sfarfallare la chat.
-// Il campo PRESENTE ma vuoto e il campo ASSENTE non sono la stessa cosa: il
-// primo e' una ricevuta partita, e conta come letta.
 function dmIsUnread(chat){
 if(!currentUser || !chat.lastAt) return false;
 if(chat.lastSenderUid === currentUser.uid) return false;
-var mappa = chat.readBy || {};
-if(Object.prototype.hasOwnProperty.call(mappa, currentUser.uid) && mappa[currentUser.uid] == null) return false;
-return dmMillis(chat.lastAt) > dmMillis(mappa[currentUser.uid]);
+var letto = chat.readBy ? chat.readBy[currentUser.uid] : null;
+return dmMillis(chat.lastAt) > dmMillis(letto);
 }
 
 function startDirectChatsListener(){
@@ -13443,24 +13302,6 @@ var n = 0;
 arr.forEach(function(c){ if(dmIsUnread(c)) n++; });
 var cambiato = (n !== dmUnreadCount);
 dmUnreadCount = n;
-// IL PRIMO ARRIVO RIDISEGNA COMUNQUE.
-// Il centro notifiche decide se una riga porta a una conversazione
-// guardando `myDirectChats`. Appena aperta l'app quell'elenco e' vuoto: se
-// arriva senza far cambiare il conto (perche' non c'e' niente da leggere),
-// «cambiato» resta falso e le righe restano senza tasto fino al prossimo
-// motivo qualunque di ridisegno. Il primo arrivo non e' un aggiornamento,
-// e' la comparsa del dato.
-var primoArrivo = !dmElencoArrivato;
-dmElencoArrivato = true;
-// MENTRE LA CHAT E' APERTA NON SI RIDISEGNA.
-// Su quella schermata il conto dei non letti non si vede: sta sulla
-// campanella del menu. Ridisegnare per aggiornare un numero invisibile
-// stacca e riattacca l'ascoltatore dei messaggi — ed e' il gradino su cui
-// si reggeva il giro che faceva sfarfallare la chat. Tolto quello, la
-// pagina che si vede resta in mano al suo ascoltatore, che e' l'unico che
-// sa cosa e' cambiato davvero.
-if(state.screen === "dm-chat") return;
-if(primoArrivo && state.screen === "notifiche"){ render(); return; }
 // Non ridisegnare mentre si sta scrivendo: si perderebbe il cursore.
 var att = document.activeElement;
 var staScrivendo = att && (att.tagName === "INPUT" || att.tagName === "TEXTAREA");
@@ -13548,24 +13389,10 @@ save(); render();
 // Segna letta la conversazione. Solo se il documento esiste gia': un set con
 // merge su un doc mai creato lo farebbe nascere senza members, quindi fuori
 // dalle regole e invisibile al listener.
-// SI SCRIVE SOLO SE C'E' QUALCOSA DA SEGNARE.
-// Prima scriveva a ogni apparizione dell'ascoltatore dei messaggi, anche su
-// una conversazione gia' letta da un pezzo: una scrittura inutile che pero'
-// faceva scattare l'ascoltatore delle conversazioni, che ridisegnava, che
-// riattaccava l'ascoltatore dei messaggi, che riscriveva. Il giro si chiudeva
-// e non si fermava piu'.
-// Si notava SOLO dopo la risposta di qualcun altro, e per un motivo preciso:
-// finche' l'ultimo messaggio era il proprio, dmIsUnread rispondeva "letta"
-// senza nemmeno guardare la ricevuta, quindi il conto non cambiava mai e il
-// giro non partiva. Bastava una risposta perche' partisse.
 function dmMarkRead(chatId){
 if(!db || !currentUser || !chatId) return;
-var chat = null;
-for(var i=0;i<myDirectChats.length;i++){ if(myDirectChats[i].id === chatId){ chat = myDirectChats[i]; break; } }
-// Un set con merge su un documento mai creato lo farebbe nascere senza
-// members: fuori dalle regole e invisibile all'ascoltatore.
-if(!chat) return;
-if(!dmIsUnread(chat)) return;
+var esiste = myDirectChats.some(function(c){ return c.id === chatId; });
+if(!esiste) return;
 var patch = { readBy: {} };
 patch.readBy[currentUser.uid] = firebase.firestore.FieldValue.serverTimestamp();
 db.collection("direct_chats").doc(chatId).set(patch, { merge:true }).catch(function(){});
@@ -13759,8 +13586,7 @@ createdAt: firebase.firestore.FieldValue.serverTimestamp()
 textInp.value = "";
 forgetDraft("dm:draft:"+chatId);
 sendBtn.disabled = false;
-sendPushViaFirestore(otherUid, t("dm_notif_title"), t("dm_notif_body",{ name: myName, text: txt.substring(0,60) }),
-{ k:"dm", uid: currentUser.uid });
+sendPushViaFirestore(otherUid, t("dm_notif_title"), t("dm_notif_body",{ name: myName, text: txt.substring(0,60) }));
 }).catch(function(e){
 console.error("dm send:", e);
 sendBtn.disabled = false;
@@ -13788,98 +13614,15 @@ return wrap;
 }
 
 
-// ---------- DOVE PORTA UNA NOTIFICA ----------
-// Una notifica che dice cos'e' successo e lascia cercare DOVE e' successo e'
-// una ricevuta, non un avviso: la cosa che serviva era arrivarci. Qui il
-// documento si traduce in un posto dove andare.
-// Due sorgenti, in ordine di fiducia:
-//   - `dest`, scritto dal server al momento dell'invio. Per una chat l'uid lo
-//     mette il server e non chi manda: una notifica che potesse dichiarare
-//     «apri la chat con X» scegliendo X sarebbe una porta aperta, la stessa
-//     che si e' chiusa il 17/08 mettendo `fromUid` lato server.
-//   - `adId`, che l'avviso delle ricerche salvate porta gia' con se'. Per
-//     quello non e' servito cambiare niente: c'era gia' e non lo leggeva
-//     nessuno.
-function destinazioneNotifica(n){
-if(!n) return null;
-var d = n.dest;
-if(d && d.k === "dm" && d.uid) return versoLaChat(d.uid);
-// L'annuncio PRIMA del mittente: l'avviso di una ricerca salvata ha tutti e
-// due — `adId` e il venditore — e quello che interessa e' l'arco, non il
-// venditore. Chi vuole scrivergli lo fa dalla scheda.
-var adId = (d && d.k === "annuncio" && d.id) ? d.id : n.adId;
-if(adId) return { etichetta: t("notif_open_ad"), k:"annuncio", val:adId };
-// TERZA STRADA, ed e' quella che regge quando le altre due non ci sono.
-// `dest` lo scrive CHI MANDA: una notifica arrivata prima del 17/08 sera, o
-// mandata da un telefono che non ha ancora ricaricato l'app, non ce l'ha e
-// non ce l'avra' mai. Ma `fromUid` c'e' su OGNI notifica scritta dal server,
-// da sempre.
-// Se con quella persona una conversazione esiste gia', portarci non e' mai
-// sbagliato: qualunque cosa annunciasse la notifica, e' li' che si risponde.
-// L'etichetta dice il nome invece di promettere «il messaggio»: cosi' e' vera
-// anche quando la notifica non era un messaggio.
-if(n.fromUid && currentUser && n.fromUid !== currentUser.uid && nomeDiChat(n.fromUid)) return versoLaChat(n.fromUid);
-return null;
-}
-function versoLaChat(uid){
-var nome = nomeDiChat(uid);
-return { etichetta: nome ? t("notif_open_chat", { name: nome }) : t("notif_open_msg"), k:"dm", val:uid };
-}
-
-// Il nome della persona non viaggia nella notifica, e va bene cosi': se
-// qualcuno ci ha scritto la conversazione esiste, quindi il nome ce l'abbiamo
-// gia' in casa. Il giro sui profili pubblici e' solo la rete di sicurezza.
-function nomeDiChat(uid){
-for(var i=0;i<myDirectChats.length;i++){
-var membri = myDirectChats[i].members || [];
-if(membri.indexOf(uid) !== -1) return dmOther(myDirectChats[i]).name;
-}
-return null;
-}
-function apriChatDaNotifica(uid){
-var nome = nomeDiChat(uid);
-if(nome){ openDirectChat(uid, nome); return; }
-loadPublicProfiles(function(tutti){
-var p = null;
-for(var i=0;i<tutti.length;i++){ if(tutti[i].uid === uid){ p = tutti[i]; break; } }
-openDirectChat(uid, p ? p.username : "?");
-});
-}
-
-// L'ANNUNCIO SI CONTROLLA PRIMA DI PARTIRE, NON DOPO.
-// Un annuncio venduto o tolto non c'e' piu': se si cambia pagina e poi si
-// scopre, la persona si ritrova nel mercatino senza sapere perche'. Il
-// controllo costa una lettura e si fa dove la persona sta guardando, cosi'
-// la risposta arriva sulla riga che ha toccato.
-function apriAnnuncioDaNotifica(adId, riga){
-if(!db){ vaiAlMercatino(adId); return; }
-db.collection("market_listings").doc(adId).get().then(function(doc){
-var d = doc.exists ? (doc.data() || {}) : null;
-if(!d || d.status !== "active"){
-var vai = riga.querySelector(".notif-vai");
-if(vai){ vai.textContent = t("notif_ad_gone"); }
-riga.classList.remove("apribile");
-return;
-}
-vaiAlMercatino(adId);
-}).catch(function(){ vaiAlMercatino(adId); });
-}
-// La scheda torna su "Tira" prima di uscire: al ritorno dal mercatino,
-// altrimenti, si ripartirebbe subito verso il mercatino, in cerchio.
-function vaiAlMercatino(adId){
-state.tab = "tira"; save();
-window.location.href = "marketplace.html?annuncio=" + encodeURIComponent(adId);
-}
-
 // ---------- CENTRO NOTIFICHE ----------
 function notificationsScreen(){
-var wrap = el('<div class="sotto-schermo"></div>');
+var wrap = el('<div style="padding-bottom:20px;"></div>');
 var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("notif_center_title")+'</h2>'));
-card.appendChild(el('<div class="notif-sub">'+t("notif_center_sub")+'</div>'));
+card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:12px;">'+t("notif_center_sub")+'</div>'));
 
 if(!myNotifications.length){
-card.appendChild(el('<div class="notif-vuoto">'+t("notif_center_empty")+'</div>'));
+card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("notif_center_empty")+'</div>'));
 } else {
 var locale = (LANG_META[state.lang]||LANG_META.it).locale;
 myNotifications.forEach(function(n){
@@ -13889,70 +13632,45 @@ var dt = n.createdAt.toDate();
 quando = dt.toLocaleDateString(locale) + " " + dt.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 }
 var nonLetta = (n.read !== true);
-var dove = destinazioneNotifica(n);
-var row = el('<div class="notif-riga'+(nonLetta?" nuova":"")+(dove?" apribile":"")+'"></div>');
-if(dove){ row.setAttribute("role","button"); row.setAttribute("tabindex","0"); }
+var row = el('<div style="border:1px solid '+(nonLetta?'var(--accent-soft)':'var(--line)')+';background:'+(nonLetta?'var(--bg-panel-2)':'transparent')+';border-radius:10px;padding:10px 12px;margin-bottom:8px;position:relative;"></div>');
 // Ogni notifica, letta o no, si puo' buttare via
-var delOne = el('<button class="notif-via" title="'+t("notif_delete_one")+'" aria-label="'+t("notif_delete_one")+'">&times;</button>');
-delOne.addEventListener("click", function(ev){
-// Senza questo, buttare via una notifica aprirebbe anche quello che
-// annunciava: il tasto sta DENTRO la riga che porta altrove.
-ev.stopPropagation();
+var delOne = el('<button title="'+t("notif_delete_one")+'" style="position:absolute;top:6px;right:8px;background:none;border:none;color:var(--muted);font-size:1.05rem;line-height:1;cursor:pointer;padding:2px 4px;">&times;</button>');
+delOne.addEventListener("click", function(){
 delOne.disabled = true;
 db.collection("notifications").doc(currentUser.uid).collection("items").doc(n.id).delete()
 .catch(function(e){ console.error("notif delete:", e); delOne.disabled = false; });
 });
 row.appendChild(delOne);
-row.appendChild(el('<div class="notif-titolo">'+escapeHtml(n.title||"ArcTrail 3D")+'</div>'));
-if(n.body){ row.appendChild(el('<div class="notif-testo">'+escapeHtml(n.body)+'</div>')); }
-if(quando){ row.appendChild(el('<div class="notif-quando">'+quando+'</div>')); }
-if(dove){
-row.appendChild(el('<div class="notif-vai">'+icon("vai",14)+'<span>'+escapeHtml(dove.etichetta)+'</span></div>'));
-var apri = function(){
-if(!row.classList.contains("apribile")) return;
-// Toccarla e' averla letta: segnarla e' il gesto che si e' appena
-// fatto, non un secondo compito da ricordarsi.
-if(nonLetta){
-db.collection("notifications").doc(currentUser.uid).collection("items").doc(n.id)
-.update({ read:true }).catch(function(){});
-}
-if(dove.k === "dm") apriChatDaNotifica(dove.val);
-else apriAnnuncioDaNotifica(dove.val, row);
-};
-row.addEventListener("click", apri);
-row.addEventListener("keydown", function(ev){
-if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); apri(); }
-});
-}
+row.appendChild(el('<div style="font-size:0.9rem;font-weight:'+(nonLetta?'800':'600')+';padding-right:22px;">'+escapeHtml(n.title||"ArcTrail 3D")+'</div>'));
+if(n.body){ row.appendChild(el('<div style="font-size:0.85rem;line-height:1.4;margin-top:2px;">'+escapeHtml(n.body)+'</div>')); }
+if(quando){ row.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:4px;">'+quando+'</div>')); }
 card.appendChild(row);
 });
-var azioni = el('<div class="notif-azioni"></div>');
 if(notifUnreadCount > 0){
-var readBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("notif_center_markall")+'</button>');
+var readBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:6px;">'+t("notif_center_markall")+'</button>');
 readBtn.addEventListener("click", function(){
 readBtn.disabled = true;
 markAllNotificationsRead(function(){ render(); });
 });
-azioni.appendChild(readBtn);
+card.appendChild(readBtn);
 }
 var lette = myNotifications.filter(function(x){ return x.read === true; });
 if(lette.length){
-var delReadBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("notif_center_delete_read")+' ('+lette.length+')</button>');
-azioni.appendChild(delReadBtn);
+var delReadBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;">'+t("notif_center_delete_read")+' ('+lette.length+')</button>');
+card.appendChild(delReadBtn);
 armDoubleConfirm(delReadBtn, t("notif_center_delete_confirm"), function(){
 deleteNotifications(lette);
 });
 }
-var delAllBtn = el('<button class="btn btn-ghost btn-block btn-sm pericolo">'+t("notif_center_delete_all")+'</button>');
-azioni.appendChild(delAllBtn);
+var delAllBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;color:var(--danger);border-color:var(--danger);">'+t("notif_center_delete_all")+'</button>');
+card.appendChild(delAllBtn);
 armDoubleConfirm(delAllBtn, t("notif_center_delete_confirm"), function(){
 deleteNotifications(myNotifications.slice());
 });
-card.appendChild(azioni);
 }
 wrap.appendChild(card);
 
-var backBtn = el('<button class="btn btn-ghost btn-block">'+t("cancel_btn")+'</button>');
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
 wrap.appendChild(backBtn);
 return wrap;
