@@ -223,15 +223,26 @@ color-scheme:light;
 --tone-train-bg:var(--green-200); --tone-train-fg:var(--green-800); --tone-train-solid:var(--lime-500);
 --tone-race-bg:var(--clay-200);  --tone-race-fg:var(--clay-600);   --tone-race-solid:var(--clay-400);
 --tone-prep-bg:var(--gold-200);  --tone-prep-fg:var(--gold-600);   --tone-prep-solid:var(--gold-400);
---tone-border:60%; --tone-ink:var(--sand-900);
+--tone-border:60%;
+/* L'INCHIOSTRO SOPRA UNA TINTA PIENA — uno solo, per tutto il tema.
+   Vale per la pastiglia dei tre comandi e per i cinque tasti del punteggio:
+   sono la stessa cosa, un fondo di colore con sopra un segno. Chiara la
+   tinta, scuro il segno. */
+--solid-ink:var(--sand-900);
 
 /* i cinque tasti del punteggio: l'unica cosa che conta davvero al campo.
-   Fondo pieno, cifra bianca. Il colore si legge da lontano, il numero da
-   vicino. Contrasto del bianco su ciascun fondo: 4,9 / 5,2 / 5,9 / 7,2 / 5,6.
+   Fondo VIVO, cifra scura — le stesse tinte del Sole, dal 17/08/2026.
+   Prima erano fondi scuri e cifra bianca (4,9 / 5,2 / 5,9 / 7,2 / 5,6); adesso
+   sono 8,3 / 8,9 / 4,8 / 6,2 / 15,1, cioe' meglio quasi ovunque e con la tinta
+   che resta tinta. Il ragionamento e' scritto per esteso nel tema Sole, sotto
+   «I CINQUE TASTI»: al sole lo schermo non fa piu' il bianco luminoso, e due
+   fondi scuri diventano due macchie fangose. E' la soluzione dei cartelli
+   stradali. Valeva anche qui: il chiaro e' il tema che si apre per primo, ed
+   e' quello che sta all'aperto piu' spesso.
    Le variabili delle zone del bersaglio non ci sono piu': disegnavano la
    sagoma, e la sagoma non si disegna piu'. Resta --qsag, che serve altrove. */
---score-ss:var(--clay-700); --score-spot:var(--green-success); --score-sag:var(--slate-600);
---score-perfect:var(--red-600); --score-zero:var(--sand-500); --score-ink:var(--sand-50);
+--score-ss:var(--clay-400); --score-spot:var(--lime-500); --score-sag:var(--slate-400);
+--score-perfect:var(--red-400); --score-zero:var(--sand-300);
 
 /* il timer. Da fermo ha un colore suo — ambra — che non e' nessuno dei tre
    codici dell'app, cosi' al sole non lo si confonde con "gara" o "prepara". */
@@ -297,10 +308,10 @@ color-scheme:dark;
 --tone-race-fg:var(--clay-400);   --tone-race-solid:var(--clay-500);
 --tone-prep-bg:color-mix(in srgb, var(--gold-500) 24%, var(--surface-1));
 --tone-prep-fg:var(--gold-400);   --tone-prep-solid:var(--gold-500);
---tone-border:55%; --tone-ink:var(--sand-50);
+--tone-border:55%; --solid-ink:var(--sand-50);
 
 --score-ss:var(--clay-500); --score-spot:var(--green-500); --score-sag:var(--slate-700);
---score-perfect:var(--red-600); --score-zero:var(--sand-700); --score-ink:var(--sand-50);
+--score-perfect:var(--red-600); --score-zero:var(--sand-700);
 
 --timer-idle-bg:linear-gradient(135deg,var(--moss-700),var(--moss-800));
 --timer-idle-bd:var(--border-strong); --timer-idle-fg:var(--text-1);
@@ -398,7 +409,7 @@ color-scheme:light;
 --tone-train-bg:var(--sand-50); --tone-train-fg:var(--green-900); --tone-train-solid:var(--lime-500);
 --tone-race-bg:var(--sand-50);  --tone-race-fg:var(--clay-800);   --tone-race-solid:var(--clay-400);
 --tone-prep-bg:var(--sand-50);  --tone-prep-fg:var(--gold-800);   --tone-prep-solid:var(--gold-400);
---tone-border:100%; --tone-ink:var(--sand-900);
+--tone-border:100%; --solid-ink:var(--sand-900);
 /* il vuoto del bersaglio e le superfici tenui non devono restare veli */
 --checkbox-border:var(--sand-900);
 
@@ -422,7 +433,7 @@ color-scheme:light;
    Nero su ciascun fondo: 8,3 / 8,9 / 4,8 / 6,2 / 15,1. Il quarto e il terzo
    stanno sotto il 7 ma sopra il 4,5, e queste sono cifre grandi e grasse. */
 --score-ss:var(--clay-400); --score-spot:var(--lime-500); --score-sag:var(--slate-400);
---score-perfect:var(--red-400); --score-zero:var(--sand-300); --score-ink:var(--sand-900);
+--score-perfect:var(--red-400); --score-zero:var(--sand-300);
 
 /* il timer perde il gradiente: due tinte che si mescolano al sole sono una
    tinta sola, e sporca */
@@ -660,11 +671,11 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
 /* L'inchiostro dentro la pastiglia SEGUE LA PASTIGLIA, non il tema: chiara
    la pastiglia, scuro il disegno; scura la pastiglia, chiaro il disegno.
    Erano tre bianchi scritti a mano, e con le pastiglie accese il bianco non
-   reggeva piu': 2,3 sul verde e 2,3 sull'oro. Con --tone-ink si sta fra 6 e
+   reggeva piu': 2,3 sul verde e 2,3 sull'oro. Con --solid-ink si sta fra 6 e
    8 in tutti e tre i temi. */
-.menu-btn.training .menu-icon{ background:var(--tone-train-solid); color:var(--tone-ink); }
-.menu-btn.gara .menu-icon{ background:var(--tone-race-solid); color:var(--tone-ink); }
-.menu-btn.prepara .menu-icon{ background:var(--tone-prep-solid); color:var(--tone-ink); }
+.menu-btn.training .menu-icon{ background:var(--tone-train-solid); color:var(--solid-ink); }
+.menu-btn.gara .menu-icon{ background:var(--tone-race-solid); color:var(--solid-ink); }
+.menu-btn.prepara .menu-icon{ background:var(--tone-prep-solid); color:var(--solid-ink); }
 .menu-btn .menu-txt{ color:var(--text-1); }
 .menu-btn .menu-sub{ color:var(--text-3); opacity:1; font-weight:500; }
 
@@ -834,11 +845,11 @@ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
    percorso per specificita', e gli 8px restavano nel file pronti a tornare il
    giorno in cui un .quick-btn fosse comparso fuori da .tastiera (15/08/2026). */
 .quick-btn .quick-lbl{ font-size:var(--t-xs); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:normal; line-height:1.15; text-wrap:pretty; max-width:100%; }
-.quick-btn .quick-pts{ font-size:1.55rem; font-weight:800; font-family:var(--font-num); font-variant-numeric:tabular-nums; color:var(--score-ink); }
+.quick-btn .quick-pts{ font-size:1.55rem; font-weight:800; font-family:var(--font-num); font-variant-numeric:tabular-nums; color:var(--solid-ink); }
 /* Fondo pieno, cifra bianca, in TUTTI i temi. Il ragionamento scritto per il
    chiaro ("il colore lo si legge da lontano, il numero da vicino") vale
    identico al buio: non c'e' motivo di avere due disegni. */
-.quick-btn{ color:var(--score-ink); border:1.5px solid rgba(0,0,0,0.12); box-shadow:none; }
+.quick-btn{ color:var(--solid-ink); border:1.5px solid rgba(0,0,0,0.12); box-shadow:none; }
 .quick-btn.superspot{ background:var(--score-ss); }
 .quick-btn.spot{ background:var(--score-spot); }
 .quick-btn.sagoma{ background:var(--score-sag); }
@@ -7502,8 +7513,6 @@ more: '<circle cx="12" cy="5" r="1.6" fill="currentColor" stroke="none"/><circle
 bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
 mail: '<rect x="3" y="5" width="18" height="14" rx="2.2"/><path d="M3.6 6.6 12 13l8.4-6.4"/>',
 warn: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
-cart: '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.5 12h11L21 7H6"/>',
-bow: '<path d="M6 3c-2 5-2 16 0 21"/><path d="M6 3c6 2 12 8 12 9s-6 7-12 9"/><path d="M4 12h15"/><path d="M15 8l4 4-4 4"/>',
 target: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v3M21 12h-3M3 12h3"/><path d="M17 3l-4.5 7.5"/><path d="M20 6l-6 6.5"/>',
 pin: '<path d="M12 21s7-6.8 7-12a7 7 0 0 0-14 0c0 5.2 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/>',
 scroll: '<path d="M6 4h11a2 2 0 0 1 2 2v13a1.5 1.5 0 0 1-3 0V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v.5"/><path d="M4.5 6.5A1.5 1.5 0 0 1 6 5h.5"/><path d="M8 9h7M8 12.5h7M8 16h4"/>',
@@ -7511,13 +7520,7 @@ users: '<circle cx="8.5" cy="8" r="3"/><path d="M2.5 20c0-3.5 2.7-6 6-6s6 2.5 6 
 printer: '<path d="M7 8V4h10v4"/><rect x="4.5" y="8" width="15" height="8" rx="1.5"/><path d="M7 15v5h10v-5"/><circle cx="16.5" cy="11" r="0.6" fill="currentColor"/>',
 share: '<circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M8.1 10.8l7.8-4.1M8.1 13.2l7.8 4.1"/>',
 search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/>',
-shuffle: '<path d="M3 6h3.5c2 0 3 1 4.5 3"/><path d="M14 6h3l3 3M17 3l3 3-3 3"/><path d="M3 18h3.5c2 0 3-1 4.5-3"/><path d="M14 18h3l3-3M17 21l3-3-3-3"/>',
-leaf: '<path d="M5 19c8 1 14-5 15-15C11 5 5 11 5 19z"/><path d="M6 18c3-4 6-7 12-11"/>',
-globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.8 2.3 4.3 5.3 4.3 8.5s-1.5 6.2-4.3 8.5c-2.8-2.3-4.3-5.3-4.3-8.5s1.5-6.2 4.3-8.5z"/>',
 info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"/>',
-clipboard: '<rect x="5" y="4" width="14" height="17" rx="1.5"/><rect x="8.5" y="2.5" width="7" height="3" rx="1"/><path d="M8.5 10.5h7M8.5 14h7M8.5 17.5h4"/>',
-mappin: '<path d="M12 21s7-6.8 7-12a7 7 0 0 0-14 0c0 5.2 7 12 7 12z"/><circle cx="12" cy="9" r="3.2"/><circle cx="12" cy="9" r="0.9" fill="currentColor" stroke="none"/>',
-emblem: '<path d="M12 2.5l7 2.5v6c0 5-3 8.3-7 10.5-4-2.2-7-5.5-7-10.5V5z"/><path d="M8.7 11l2.4 2.4L15.3 9"/>',
 clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.5l3.5 2"/>',
 undo: '<path d="M4 9h10a5.5 5.5 0 0 1 0 11h-6"/><path d="M8 4.5L3.5 9L8 13.5"/>',
 empty: '<circle cx="12" cy="12" r="8.5"/><path d="M6.5 6.5l11 11"/>',
@@ -7586,7 +7589,24 @@ s:'<path d="M130.54,76l-7.78,10.41a29.18,29.18,0,1,1-15-11.46l8-10.25A41.64,41.6
 a:'<path d="M110.44,94.49l32.14-42.94,14.21-1.15L173,29.12l-18.26-.27L149.69,11.3,133.45,32.58l2.64,14L103.15,88.93a15.22,15.22,0,1,0,7.29,5.56Z"/>' },
 azprepara: { t:'translate(100 100) scale(1.0031) translate(-100 -100) translate(0.00 12.25)',
 s:'<path d="M141.27,27.27h-8.09V38h8.09a4.17,4.17,0,0,1,4.16,4.16V154.46a4.18,4.18,0,0,1-4.16,4.18H58.73a4.17,4.17,0,0,1-4.16-4.18V42.2A4.16,4.16,0,0,1,58.73,38h8.09V27.27H58.73A15,15,0,0,0,43.8,42.2V154.46A15,15,0,0,0,58.73,169.4h82.54a15,15,0,0,0,14.93-14.94V42.2A15,15,0,0,0,141.27,27.27Z"/><rect x="68.7" y="70.81" width="62.6" height="8.6"/><rect x="68.7" y="100.26" width="62.6" height="8.6"/><rect x="68.7" y="129.71" width="39.43" height="8.6"/>',
-a:'<path d="M128.87,23.33v18a3.78,3.78,0,0,1-3.78,3.78H74.91a3.78,3.78,0,0,1-3.78-3.78v-18a3.78,3.78,0,0,1,3.78-3.78H93.67a7,7,0,1,0,12.65,0h18.77A3.78,3.78,0,0,1,128.87,23.33Z"/><path d="M115.92,19.55a16.18,16.18,0,0,0-31.85,0,16,16,0,0,0-.26,2.88,16.19,16.19,0,0,0,32.37,0A16,16,0,0,0,115.92,19.55ZM100,29.38a6.94,6.94,0,1,1,7-6.95A7,7,0,0,1,100,29.38Z"/>' }
+a:'<path d="M128.87,23.33v18a3.78,3.78,0,0,1-3.78,3.78H74.91a3.78,3.78,0,0,1-3.78-3.78v-18a3.78,3.78,0,0,1,3.78-3.78H93.67a7,7,0,1,0,12.65,0h18.77A3.78,3.78,0,0,1,128.87,23.33Z"/><path d="M115.92,19.55a16.18,16.18,0,0,0-31.85,0,16,16,0,0,0-.26,2.88,16.19,16.19,0,0,0,32.37,0A16,16,0,0,0,115.92,19.55ZM100,29.38a6.94,6.94,0,1,1,7-6.95A7,7,0,0,1,100,29.38Z"/>' },
+/* ── Le tre disegnate qui, sulla stessa griglia delle otto ──────────────
+   Non sono dell'illustratore. Sono state costruite con i suoi numeri, che
+   si leggono misurando le sue: finestra 200, inchiostro alto 164 e centrato
+   su 100/100, muro 10,5 per le superfici piene e 13 per le forme cave
+   (triangolo e anello, che a 10,5 sembravano gracili accanto agli anelli
+   del bersaglio), linee interne 8,6. Non serve la correzione "t" perche'
+   sono nate gia' al centro: resta a translate(0 0) per non avere due
+   formati di icona nello stesso elenco. */
+azdiario: { t:'translate(0 0)',
+s:'<path d="M18,18H28.5V171.5H182V182H18Z"/><rect x="44" y="121.5" width="32" height="50"/><rect x="92" y="91.5" width="32" height="80"/>',
+a:'<rect x="140" y="57.5" width="32" height="114"/>' },
+azavviso: { t:'translate(0 0)',
+s:'<path fill-rule="evenodd" d="M100,18L184,182H16ZM100,46.52L162.73,169H37.27Z"/>',
+a:'<rect x="93" y="74" width="14" height="50"/><circle cx="100" cy="141" r="8"/>' },
+azbloccati: { t:'translate(0 0)',
+s:'<path fill-rule="evenodd" d="M100,18a82,82 0 1,0 0.1,0ZM100,31a69,69 0 1,1 -0.1,0Z"/>',
+a:'<rect x="93" y="34" width="14" height="132" transform="rotate(45 100 100)"/>' }
 };
 
 /* Due modi di colorare, e dipende da dove sta l'icona.
@@ -10121,7 +10141,7 @@ menuCard.appendChild(pgBtn);
 // Stesso trattamento del Marketplace: invece di sparire senza spiegazione,
 // la funzione si mostra chiusa e dice a chi sara' aperta.
 var pgLock = el('<div style="margin-top:10px;padding:14px 12px;border:1px dashed var(--line);border-radius:14px;text-align:center;"></div>');
-pgLock.appendChild(el('<div style="color:var(--muted);opacity:0.75;line-height:1;">'+icon("clipboard",30)+'</div>'));
+pgLock.appendChild(el('<div style="color:var(--muted);opacity:0.75;line-height:1;">'+navIcon("azprepara",30,"unica")+'</div>'));
 pgLock.appendChild(el('<div style="font-weight:800;color:var(--muted);margin:8px 0 4px;">'+t("pg_menu_btn_label")+'</div>'));
 pgLock.appendChild(el('<div style="font-size:0.88rem;line-height:1.45;color:var(--muted);">'+t("pg_locked_body")+'</div>'));
 menuCard.appendChild(pgLock);
@@ -10151,12 +10171,12 @@ if(true){
 // Si apre da solo: premere "Marketplace" due volte non aveva senso.
 // La scheda torna su "Tira" PRIMA di uscire, altrimenti al ritorno dal
 // marketplace si ripartirebbe subito verso il marketplace, in cerchio.
-mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+icon("cart",34)+'</div>'));
+mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+navIcon("navmarket",34,"unica")+'</div>'));
 mktCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);text-align:center;">'+t("market_opening")+'</div>'));
 state.tab = "tira"; save();
 setTimeout(function(){ window.location.href = "marketplace.html"; }, 80);
 } else {
-mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+icon("cart",34)+'</div>'));
+mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+navIcon("navmarket",34,"unica")+'</div>'));
 mktCard.appendChild(el('<div style="font-size:0.88rem;line-height:1.45;text-align:center;color:var(--muted);">'+t("market_locked_body")+'</div>'));
 }
 wrap.appendChild(mktCard);
@@ -10223,7 +10243,7 @@ regCard.appendChild(el('<a href="'+mailHref+'" class="btn btn-primary btn-block"
 wrap.appendChild(regCard);
 
 if(currentUser && myClubCode()){
-var spaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("emblem",24)+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
+var spaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navclub",24,"unica")+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
 spaceBtn.addEventListener("click", function(){ state.clubSpaceCode = myClubCode(); state.screen = "club-space"; save(); render(); });
 wrap.appendChild(spaceBtn);
 }
@@ -10237,19 +10257,19 @@ else {
 var profCard = el('<div class="card"></div>');
 profCard.appendChild(el('<h2 class="section-title">'+t("nav_profile")+'</h2>'));
 
-var profileBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("users",24)+'</span><span class="menu-txt">'+t("menu_profile")+'<span class="menu-sub">'+((state.profile && state.profile.compagniaNome) ? escapeHtml(state.profile.compagniaNome) : t("profile_club_none"))+'</span></span></button>');
+var profileBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navprofile",24,"unica")+'</span><span class="menu-txt">'+t("menu_profile")+'<span class="menu-sub">'+((state.profile && state.profile.compagniaNome) ? escapeHtml(state.profile.compagniaNome) : t("profile_club_none"))+'</span></span></button>');
 profileBtn.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
 profCard.appendChild(profileBtn);
 
-var clubSpaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("emblem",24)+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
+var clubSpaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navclub",24,"unica")+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
 clubSpaceBtn.addEventListener("click", function(){ state.clubSpaceCode = myClubCode(); state.screen = "club-space"; save(); render(); });
 profCard.appendChild(clubSpaceBtn);
 
-var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("chart",24)+'</span><span class="menu-txt">'+t("journal_title")+'<span class="menu-sub">'+t("journal_sub")+'</span></span></button>');
+var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azdiario",24,"unica")+'</span><span class="menu-txt">'+t("journal_title")+'<span class="menu-sub">'+t("journal_sub")+'</span></span></button>');
 diarioBtn.addEventListener("click", function(){ state.screen = "diario"; save(); render(); });
 profCard.appendChild(diarioBtn);
 if(currentUser){
-var blockedBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("users",24)+'</span><span class="menu-txt">'+t("blk_list_title")+'<span class="menu-sub">'+t("blk_list_sub")+'</span></span></button>');
+var blockedBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azbloccati",24,"unica")+'</span><span class="menu-txt">'+t("blk_list_title")+'<span class="menu-sub">'+t("blk_list_sub")+'</span></span></button>');
 blockedBtn.addEventListener("click", function(){ state.screen = "blocked-users"; save(); render(); });
 profCard.appendChild(blockedBtn);
 }
@@ -10890,11 +10910,11 @@ wrap.appendChild(locCard);
 // La scelta del campo avviene dentro i rispettivi moduli, che hanno gia' la ricerca.
 if(currentUser){
 var actCard = el('<div class="card"></div>');
-var annBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+icon("bow",24)+'</span><span class="menu-txt">'+t("campi_announce_btn")+'<span class="menu-sub">'+t("ot_section_hint")+'</span></span></button>');
+var annBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azarco",24,"unica")+'</span><span class="menu-txt">'+t("campi_announce_btn")+'<span class="menu-sub">'+t("ot_section_hint")+'</span></span></button>');
 annBtn.addEventListener("click", function(){ state.screen = "open-training-create"; save(); render(); });
 actCard.appendChild(annBtn);
 
-var repBtn = el('<button class="btn btn-ghost btn-block menu-btn riga-attenzione"><span class="menu-icon">'+icon("warn",24)+'</span><span class="menu-txt">'+t("fr_report_open_btn")+'<span class="menu-sub">'+t("fr_report_sub")+'</span></span></button>');
+var repBtn = el('<button class="btn btn-ghost btn-block menu-btn riga-attenzione"><span class="menu-icon">'+navIcon("azavviso",24,"unica")+'</span><span class="menu-txt">'+t("fr_report_open_btn")+'<span class="menu-sub">'+t("fr_report_sub")+'</span></span></button>');
 repBtn.addEventListener("click", function(){ state.frFrom = "menu"; state.screen = "field-report"; save(); render(); });
 actCard.appendChild(repBtn);
 wrap.appendChild(actCard);
@@ -11657,7 +11677,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-icone-piene-c";
+var BUILD_STAMP = "2026-08-17-tinta-unica";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
