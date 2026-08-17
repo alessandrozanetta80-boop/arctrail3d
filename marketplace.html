@@ -777,7 +777,7 @@ section.active{display:block}
 /* ══════════════════ FINE RIFINITURA ══════════════════ */
 </style>
 </head>
-<body data-build="2026-08-17-mercatino-g-dove-porta">
+<body data-build="2026-08-17-mercatino-ricucitura">
 <div id="app">
 <header class="topbar">
   <div class="tb-left">
@@ -1142,7 +1142,6 @@ it:{
 accept:"Accetta",
 accept_offers:"Accetto offerte",
 active_ads:"Annunci attivi",
-ad_gone:"Questo annuncio non c’è più: è stato venduto, messo in pausa o tolto.",
 ad_type:"Tipo annuncio",
 add_photo:"Aggiungi foto",
 ago_d:"{n}g fa",
@@ -1448,7 +1447,6 @@ en:{
 accept:"Accept",
 accept_offers:"I accept offers",
 active_ads:"Active listings",
-ad_gone:"This listing is gone: it was sold, paused or removed.",
 ad_type:"Listing type",
 add_photo:"Add photo",
 ago_d:"{n}d ago",
@@ -1754,7 +1752,6 @@ fr:{
 accept:"Accepter",
 accept_offers:"J’accepte les offres",
 active_ads:"Annonces actives",
-ad_gone:"Cette annonce n’existe plus : vendue, mise en pause ou retirée.",
 ad_type:"Type d’annonce",
 add_photo:"Ajouter une photo",
 ago_d:"il y a {n}j",
@@ -2060,7 +2057,6 @@ de:{
 accept:"Annehmen",
 accept_offers:"Ich nehme Angebote an",
 active_ads:"Aktive Anzeigen",
-ad_gone:"Diese Anzeige gibt es nicht mehr: verkauft, pausiert oder entfernt.",
 ad_type:"Anzeigenart",
 add_photo:"Foto hinzufügen",
 ago_d:"vor {n}T.",
@@ -2366,7 +2362,6 @@ tr:{
 accept:"Kabul et",
 accept_offers:"Teklif kabul ederim",
 active_ads:"Aktif ilanlar",
-ad_gone:"Bu ilan artık yok: satıldı, duraklatıldı ya da kaldırıldı.",
 ad_type:"İlan türü",
 add_photo:"Fotoğraf ekle",
 ago_d:"{n}g önce",
@@ -2672,7 +2667,6 @@ ru:{
 accept:"Принять",
 accept_offers:"Принимаю предложения",
 active_ads:"Активные объявления",
-ad_gone:"Этого объявления больше нет: продано, на паузе или удалено.",
 ad_type:"Тип объявления",
 add_photo:"Добавить фото",
 ago_d:"{n} дн назад",
@@ -2978,7 +2972,6 @@ es:{
 accept:"Aceptar",
 accept_offers:"Acepto ofertas",
 active_ads:"Anuncios activos",
-ad_gone:"Este anuncio ya no está: vendido, en pausa o retirado.",
 ad_type:"Tipo de anuncio",
 add_photo:"Añadir foto",
 ago_d:"hace {n}d",
@@ -3284,7 +3277,6 @@ sv:{
 accept:"Acceptera",
 accept_offers:"Jag tar emot bud",
 active_ads:"Aktiva annonser",
-ad_gone:"Den här annonsen finns inte kvar: såld, pausad eller borttagen.",
 ad_type:"Annonstyp",
 add_photo:"Lägg till foto",
 ago_d:"{n}d sedan",
@@ -3590,7 +3582,6 @@ nl:{
 accept:"Accepteren",
 accept_offers:"Ik accepteer biedingen",
 active_ads:"Actieve advertenties",
-ad_gone:"Deze advertentie is weg: verkocht, gepauzeerd of verwijderd.",
 ad_type:"Type advertentie",
 add_photo:"Foto toevoegen",
 ago_d:"{n}d geleden",
@@ -4062,47 +4053,6 @@ function initMktNote(){
     if(ack.checked){saveIfAck();n.style.display="none";mktNoteDone=true;}
   });
 }
-/* ── ARRIVARE DA UNA NOTIFICA ───────────────────────────────────────────────
-   Un avviso delle ricerche salvate porta qui con l'annuncio nell'indirizzo:
-   marketplace.html?ad=xxxx. Senza questo pezzo la notifica scaricava la
-   persona sull'elenco generico, e l'annuncio se lo doveva ritrovare da sola —
-   cioe' l'avviso diceva «e' uscita la cosa che aspettavi» e poi non la dava.
-
-   TRE ESITI, e sono tutti e tre nominati apposta:
-   · l'annuncio e' fra quelli attivi -> si apre la scheda;
-   · esiste ma non e' piu' attivo (venduto, in pausa, oltre il tetto dei 200)
-     -> si legge il documento da solo e si apre lo stesso, perche' una scheda
-        venduta e' comunque la risposta alla domanda «dov'e' finito?»;
-   · non esiste piu' -> lo si DICE. Atterrare in silenzio su un elenco e'
-     peggio di un errore: sembra che l'avviso avesse mentito.
-
-   L'indirizzo si ripulisce subito con replaceState: un ricaricamento della
-   pagina non deve riaprire una scheda che la persona aveva gia' chiuso. */
-var adDaAprire = null;
-try{
-  var qp = new URLSearchParams(window.location.search);
-  var qad = qp.get("ad");
-  if(qad){
-    adDaAprire = qad.slice(0,128);
-    if(window.history && window.history.replaceState){
-      window.history.replaceState(null, "", window.location.pathname);
-    }
-  }
-}catch(e){}
-
-function apriAdRichiesto(){
-  if(!adDaAprire) return;
-  var id = adDaAprire; adDaAprire = null;
-  if(allAds.some(function(x){return x.id===id;})){ openDet(id); return; }
-  db.collection("market_listings").doc(id).get().then(function(d){
-    if(!d.exists){ toast(t("ad_gone")); return; }
-    /* Non e' nell'elenco perche' non e' attivo, o perche' e' oltre il tetto.
-       Si infila in allAds, che e' l'unico posto da cui openDet legge. */
-    allAds.push(Object.assign({id:d.id}, d.data()));
-    openDet(id);
-  }).catch(function(){ toast(t("ad_gone")); });
-}
-
 function enter(){
   showS("secMkt");document.getElementById("bnav").style.display="flex";document.body.classList.add("logged");
   initMktNote();
@@ -4186,8 +4136,36 @@ function applySnap(docs){
   allAds=docs.map(function(d){return Object.assign({id:d.id},d.data());});
   allAds.sort(function(a,b){return tms(b.createdAt)-tms(a.createdAt);});
   renderAds();
-  /* Qui e non prima: openDet legge da allAds, che esiste solo adesso. */
-  apriAdRichiesto();
+  apriDaIndirizzo();
+}
+/* ARRIVARE DIRETTAMENTE SU UN ANNUNCIO.
+   `marketplace.html?annuncio=<id>` apre la scheda invece di lasciare in mezzo
+   all'elenco. Lo usa la campanella dell'app: una notifica che dice che e'
+   uscito un arco e poi ti lascia cercarlo e' una ricevuta, non un avviso.
+   L'apertura vale UNA volta, e l'indirizzo si ripulisce subito: se restasse,
+   ogni ridisegno dell'elenco riaprirebbe la scheda addosso a chi l'ha appena
+   chiusa, e non ci sarebbe modo di uscirne.
+   Se l'annuncio non c'e' fra quelli attivi non si dice niente qui: chi
+   arriva dall'app ha gia' avuto la risposta li', prima di cambiare pagina. */
+var annuncioDaAprire=(function(){
+  try{return new URLSearchParams(window.location.search).get("annuncio")||null;}catch(e){return null;}
+})();
+function apriDaIndirizzo(){
+  if(!annuncioDaAprire)return;
+  var id=annuncioDaAprire;annuncioDaAprire=null;
+  try{history.replaceState(null,"",window.location.pathname);}catch(e){}
+  if(allAds.some(function(a){return a.id===id;})){openDet(id);return;}
+  /* NON E' NELL'ELENCO, MA PUO' ESISTERE LO STESSO: oltre il tetto dei 200
+     annunci attivi i piu' vecchi non vengono scaricati, e chi ci arriva da un
+     indirizzo si troverebbe davanti all'elenco generico senza sapere perche'.
+     Si legge il documento da solo e lo si infila in allAds, che e' l'unico
+     posto da cui openDet legge. Chi controlla se l'annuncio c'e' ancora e'
+     l'app, PRIMA di mandare qui: qui si arriva solo per annunci vivi. */
+  db.collection("market_listings").doc(id).get().then(function(d){
+    if(!d.exists)return;
+    allAds.push(Object.assign({id:d.id},d.data()));
+    openDet(id);
+  }).catch(function(){});
 }
 /* Il Marketplace scarica gli annunci e poi cerca/filtra/ordina lato client:
    oltre ADS_LIMIT annunci attivi i piu' vecchi smetterebbero di comparire
