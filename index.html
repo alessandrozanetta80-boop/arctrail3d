@@ -196,7 +196,15 @@ color-scheme:light;
 --border:var(--sand-300); --border-strong:var(--sand-400);
 /* marchio e codice colore */
 --brand:var(--green-800); --brand-soft:var(--green-800); --brand-ink:var(--sand-50);
---clay:var(--clay-600); --gold-role:var(--gold-700);
+--clay:var(--clay-600);
+/* --gold-role e' salito da --gold-700 a --gold-600 il 17/08, perche' il nome
+   della compagnia sembrava marrone. E' l'ultimo gradino possibile: l'oro sta
+   qui come INCHIOSTRO su foglio bianco, e un oro piu' acceso e' anche piu'
+   luminoso, quindi meno leggibile. gold-600 sta a 5,5:1 e regge anche le
+   scritte piccole; gold-500 scenderebbe a 3,6 e le romperebbe. Se serve un
+   oro davvero vivo, non puo' essere inchiostro: deve essere un fondo, con
+   sopra --solid-ink. Vedi Una cosa unica. */
+--gold-role:var(--gold-600);
 /* l'interruttore del Sole quando e' acceso: una coppia per tema, perche'
    l'oro cambia valore fra i tre e un fondo scritto a mano una volta sola
    sarebbe illeggibile in due casi su tre */
@@ -1494,6 +1502,18 @@ display:flex; flex-direction:column; align-items:center; gap:var(--s-1); }
 .tabn .tab-pill{ display:flex; align-items:center; justify-content:center;
 width:48px; height:32px; border-radius:16px; border:1px solid transparent; }
 .tabn .tab-lbl{ font-size:var(--t-xs); font-weight:600; text-align:center; }
+/* IL DISEGNO E' VERDE ANCHE DA SPENTO, LA PAROLA NO.
+   Prima l'icona prendeva --navbar-fg, cioe' il grigio della parola: cinque
+   disegni fatti apposta che arrivavano a schermo come cinque sagome grigie, e
+   l'accento arancio finiva su grigio invece che su verde.
+   Il verde e' --navbar-on, lo STESSO della pastiglia accesa. Non e' un colore
+   in piu': e' lo stesso colore, girato. Spenta la voce, il verde e' il
+   disegno sul foglio; accesa, il verde diventa il fondo e il disegno passa
+   chiaro. La parola resta grigia da spenta e verde grassa da accesa, quindi
+   quale sezione e' aperta si vede lo stesso — anzi meglio, perche' adesso la
+   differenza fra le due e' un'inversione, non una sfumatura di grigio. */
+.tabbar button > svg, .tabbar .tab-pill > svg{ color:var(--navbar-on); }
+.tabn.on .tab-pill > svg, .tabw.on > svg{ color:var(--navbar-pill-ink); }
 .tabn.on{ color:var(--navbar-pill-ink); }
 .tabn.on .tab-pill{ background:var(--navbar-pill); border-color:var(--navbar-on); }
 .tabn.on .tab-lbl{ font-weight:800; color:var(--navbar-on); }
@@ -11677,7 +11697,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-tinta-unica";
+var BUILD_STAMP = "2026-08-17-barra-verde";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
