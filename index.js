@@ -1,5 +1,6 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-17-dove-porta
+// Versione 2026-08-17-push-dove-porta
+// Nata da 2026-08-17-dove-porta
 //
 // Tre funzioni, con tre compiti diversi:
 //
@@ -137,7 +138,48 @@ function destPulito(d, mittente) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 2) PUSH ANCHE AD APP CHIUSA — invariata
+// DA `dest` A UN INDIRIZZO — cioe' dove porta l'avviso che compare in cima
+// allo schermo ad app chiusa.
+//
+// PERCHE' ESISTE (17/08/2026, notte). Dentro l'app il tasto che porta alla
+// chat o all'annuncio c'era gia'. Fuori no: toccare la striscia in cima allo
+// schermo apriva l'app e basta, sulla pagina iniziale. E il service worker
+// sapeva GIA' fare la cosa giusta — `notificationclick` legge `dati.link` e se
+// c'e' ci naviga invece di limitarsi a portare avanti la finestra. Solo che
+// nessuno glielo mandava, quel link.
+//
+// *Meta' del lavoro fatta e dalla parte sbagliata* e' lo stesso identico
+// difetto trovato stamattina al contrario: allora il server scriveva `dest` e
+// nessuno lo leggeva, qui c'e' chi legge e nessuno scrive. **Non e' una
+// coincidenza: e' la forma che prende un lavoro interrotto a meta'**, e in
+// tutti e due i casi e' rimasto cosi' per giorni senza che si vedesse niente
+// di rotto. Un pezzo che non c'e' non da' errore: da' silenzio.
+//
+// LE FORME SONO LE STESSE DI destPulito, E NON PER PIGRIZIA. Se qui nascesse
+// un terzo caso, esisterebbe un avviso che dentro l'app porta da una parte e
+// da fuori da un'altra. `dest` ha gia' un solo posto in cui si decide cosa e'
+// lecito: questa funzione traduce, non giudica.
+//
+// L'INDIRIZZO E' ASSOLUTO perche' `clients.openWindow` puo' partire senza
+// nessuna finestra aperta, e in quel caso non c'e' niente rispetto a cui un
+// indirizzo relativo abbia senso.
+const SITO = "https://arctrail3d.com";
+
+function linkDaDest(dest) {
+  if (!dest || typeof dest !== "object") return SITO;
+  if (dest.k === "annuncio" && dest.id) {
+    return SITO + "/marketplace.html?annuncio=" + encodeURIComponent(dest.id);
+  }
+  // Per la chat non c'e' ancora un indirizzo che apra la conversazione: l'app
+  // e' una pagina sola e la schermata non si sceglie da fuori. Si apre la
+  // pagina iniziale, come prima, e il tasto nel centro notifiche resta la
+  // strada buona. DICHIARATO qui perche' non sembri una dimenticanza: il
+  // giorno che l'app sapra' aprirsi su una chat, questa riga e' il posto.
+  return SITO;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 2) PUSH ANCHE AD APP CHIUSA
 // Si attiva da sola quando compare un documento in notifications/{uid}/items:
 // legge il token FCM dell'utente (salvato su users/{uid}.fcmToken quando attiva
 // le notifiche) e manda la push.
@@ -165,20 +207,31 @@ exports.pushNotifica = onDocumentCreated(
       // in `onBackgroundMessage` i campi di `notification` arrivano scremati
       // mentre `data` arriva sempre intero.
       const tag = event.params.itemId;
+      // Dove porta questo avviso. `d.dest` e' stato ripulito da destPulito
+      // prima di finire nel documento, quindi qui non serve controllarlo di
+      // nuovo: si traduce e basta.
+      const dove = linkDaDest(d.dest);
       await admin.messaging().send({
         token: token,
         notification: {
           title: d.title || "ArcTrail 3D",
           body: d.body || "",
         },
-        data: { tag: tag },
+        // `link` sta in `data` perche' e' li' che lo cerca il service worker:
+        // in `notificationclick` legge `event.notification.data.link`. Il
+        // campo `fcmOptions.link` qui sotto serve all'altro caso — quando la
+        // striscia la disegna l'SDK di Firebase invece del nostro codice.
+        // Sono due strade che portano allo stesso posto, e devono portare
+        // allo STESSO posto: percio' e' la stessa variabile, non due valori
+        // scritti a mano che un giorno divergono.
+        data: { tag: tag, link: dove },
         webpush: {
           notification: {
             icon: "/icon-192.png",
             badge: "/icon-192.png",
             tag: tag,
           },
-          fcmOptions: { link: "https://arctrail3d.com" },
+          fcmOptions: { link: dove },
         },
       });
     } catch (err) {

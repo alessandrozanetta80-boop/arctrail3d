@@ -11880,7 +11880,16 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-ricucitura";
+var BUILD_STAMP = "2026-08-17-push-dove-porta";
+// DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
+// controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
+// una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
+// file consegnato era piu' RECENTE dell'ultimo pubblicato — quindi da fuori
+// sembrava un aggiornamento normale e nessuno se n'e' accorto per sette ore.
+// Con questa riga non serve piu' indovinare: controlla-base.js confronta il
+// genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
+// un aggiornamento, e' una cancellazione.
+var BUILD_PARENT = "2026-08-17-ricucitura";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
