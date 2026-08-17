@@ -21,49 +21,71 @@ var messaging = firebase.messaging();
 // telefono. Se un giorno serve toccarlo, si tocca qui e basta: sw.js fa la
 // cache e non sa niente di notifiche.
 //
-// ── E POI L'AVVISO E' ARRIVATO DOPPIO LO STESSO. (17/08/2026, seconda passata.)
+// ── PRIMA CORREZIONE, E PERCHE' NON BASTAVA. (17/08, seconda passata.)
 //
-// Togliere la copia da sw.js era giusto ma non bastava, perche' il secondo
-// avviso non lo disegnava un secondo file: lo disegnava l'SDK, dentro questo.
-// Nel sorgente vero del pacchetto @firebase/messaging, la funzione che riceve
-// il push fa queste due cose UNA DOPO L'ALTRA:
+// Tolta la copia da sw.js, gli avvisi arrivavano doppi lo stesso. Nel sorgente
+// del pacchetto @firebase/messaging la funzione che riceve il push fa due cose
+// una dopo l'altra: se il messaggio ha un blocco "notification" la mostra LUI,
+// e poi chiama COMUNQUE onBackgroundMessage. In fila, non in alternativa.
+// Quindi il secondo avviso non lo disegnava un secondo file: lo disegnava
+// l'SDK, dentro questo.
 //
-//     se il messaggio ha un blocco "notification"  ->  la mostra LUI
-//     poi, comunque                                ->  chiama onBackgroundMessage
+// ── SECONDA CORREZIONE, E LA LEZIONE VERA. (17/08, terza passata.)
 //
-// In fila, non in alternativa. Il server manda un blocco "notification":
-// quindi l'SDK ne disegnava una, e la funzione qui sotto — che quel blocco lo
-// legge per ricavarne titolo e testo — ne disegnava un'altra. Due avvisi
-// identici. Nemmeno il tag poteva salvarci: quello dell'SDK non ce l'ha, e due
-// avvisi si sostituiscono solo se hanno LO STESSO tag.
+// La cura era una riga: «se c'e' il blocco notification, taci — l'ha gia'
+// mostrata l'SDK». Sul telefono di Alessandro il risultato e' stato ZERO
+// avvisi. Cioe': quella riga si FIDAVA di sapere cosa fa l'SDK, e su quel
+// telefono l'SDK non disegnava niente. Aver letto il sorgente rende una
+// certezza migliore, non una certezza.
 //
-// La correzione e' la prima riga della funzione. Ed e' scritta in modo da non
-// avere un ordine di pubblicazione: vale sia col server di oggi (che manda il
-// blocco, e allora si tace perche' ha gia' mostrato l'SDK) sia con un server
-// che un domani mandasse soli dati (e allora si mostra noi, col tag e tutto).
-// Un ordine di pubblicazione e' una cosa che qualcuno, prima o poi, sbaglia.
+// Adesso non si assume: SI GUARDA. Prima di disegnare si chiede al sistema
+// quali avvisi ci sono gia' in cima allo schermo. Se ce n'e' uno identico si
+// tace, se non c'e' si disegna. Non puo' finire a due, e — questa e' la parte
+// che mancava — NON PUO' FINIRE A ZERO.
+//
+// Regola, e vale oltre questo file: quando una decisione dipende da cosa ha
+// fatto qualcun altro, la si prende guardando il risultato, non ricordando la
+// regola. Un comportamento di libreria e' un'ipotesi anche quando e' scritto.
 messaging.onBackgroundMessage(function(payload){
-  // Se il messaggio porta un blocco "notification", l'ha GIA' mostrata l'SDK
-  // qui sopra. Disegnarla di nuovo vuol dire due avvisi per una notizia sola.
-  if (payload && payload.notification) return;
+  var p = payload || {};
+  var d = p.data || {};
+  var n = p.notification || {};
 
-  var d = (payload && payload.data) || {};
-  var title = d.title || "ArcTrail 3D";
-  var body = d.body || "";
+  // I dati vengono prima: arrivano interi. Il blocco "notification" arriva
+  // scremato, ma se e' l'unico che c'e' e' meglio di niente.
+  var title = d.title || n.title || "ArcTrail 3D";
+  var body  = d.body  || n.body  || "";
   // L'etichetta e' l'id del documento che ha fatto nascere l'avviso: con lo
   // stesso tag il sistema SOSTITUISCE invece di impilare, quindi la stessa
   // notizia non puo' comparire due volte nemmeno se arriva da due strade.
   // Senza tag, ripiego sul titolo: meglio raggruppare per argomento che non
   // raggruppare affatto.
   var tag = d.tag || d.notifId || title;
-  self.registration.showNotification(title, {
+
+  var opzioni = {
     body: body,
     icon: "icon-192.png",
     badge: "icon-192.png",
     tag: tag,
     renotify: false,
     data: { link: d.link || "/" }
-  });
+  };
+
+  function disegna(){ return self.registration.showNotification(title, opzioni); }
+
+  // Se il sistema non sa dire cosa c'e' gia' a schermo, si disegna e basta:
+  // meglio il rischio di due che la certezza di zero.
+  if (!self.registration.getNotifications) return disegna();
+
+  return self.registration.getNotifications().then(function(gia){
+    for (var i = 0; i < gia.length; i++){
+      // Stessa etichetta, o stesso testo: e' la stessa notizia, gia' mostrata
+      // da qualcun altro un istante fa. Non se ne aggiunge una seconda.
+      if (gia[i].tag === tag) return;
+      if (gia[i].title === title && (gia[i].body || "") === body) return;
+    }
+    return disegna();
+  }).catch(function(){ return disegna(); });
 });
 
 self.addEventListener("notificationclick", function(event){
