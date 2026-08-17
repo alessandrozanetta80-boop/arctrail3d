@@ -1,5 +1,5 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-17-avvisi-ricerche
+// Versione 2026-08-17-avvisi-doppi
 //
 // Tre funzioni, con tre compiti diversi:
 //
@@ -125,16 +125,28 @@ exports.pushNotifica = onDocumentCreated(
     if (!token) return; // l'utente non ha mai attivato le notifiche
 
     try {
+      // L'ETICHETTA. Ogni avviso porta l'id del documento che l'ha fatto
+      // nascere, e il service worker la passa a showNotification come `tag`.
+      // Con lo stesso tag il sistema operativo SOSTITUISCE invece di impilare:
+      // se per qualunque motivo la stessa notizia prendesse due strade — la
+      // push vera e la copia locale che l'app mostra da se' quando e' aperta —
+      // sullo schermo ne resta comunque UNA.
+      // Scritta anche in `data` e non solo in `webpush.notification`, perche'
+      // in `onBackgroundMessage` i campi di `notification` arrivano scremati
+      // mentre `data` arriva sempre intero.
+      const tag = event.params.itemId;
       await admin.messaging().send({
         token: token,
         notification: {
           title: d.title || "ArcTrail 3D",
           body: d.body || "",
         },
+        data: { tag: tag },
         webpush: {
           notification: {
             icon: "/icon-192.png",
             badge: "/icon-192.png",
+            tag: tag,
           },
           fcmOptions: { link: "https://arctrail3d.com" },
         },
