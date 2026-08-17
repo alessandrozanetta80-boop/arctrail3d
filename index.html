@@ -220,10 +220,10 @@ color-scheme:light;
 /* i tre comandi del menu: fondo tenue, pastiglia piena, testo scuro.
    Quando al sole la tinta sbiadisce, il quadretto pieno resta l'unico
    appiglio di colore. */
---tone-train-bg:var(--green-200); --tone-train-fg:var(--green-800); --tone-train-solid:var(--green-800);
---tone-race-bg:var(--clay-200);  --tone-race-fg:var(--clay-600);   --tone-race-solid:var(--clay-600);
---tone-prep-bg:var(--gold-200);  --tone-prep-fg:var(--gold-600);   --tone-prep-solid:var(--gold-500);
---tone-border:38%;
+--tone-train-bg:var(--green-200); --tone-train-fg:var(--green-800); --tone-train-solid:var(--lime-500);
+--tone-race-bg:var(--clay-200);  --tone-race-fg:var(--clay-600);   --tone-race-solid:var(--clay-400);
+--tone-prep-bg:var(--gold-200);  --tone-prep-fg:var(--gold-600);   --tone-prep-solid:var(--gold-400);
+--tone-border:60%; --tone-ink:var(--sand-900);
 
 /* i cinque tasti del punteggio: l'unica cosa che conta davvero al campo.
    Fondo pieno, cifra bianca. Il colore si legge da lontano, il numero da
@@ -297,7 +297,7 @@ color-scheme:dark;
 --tone-race-fg:var(--clay-400);   --tone-race-solid:var(--clay-500);
 --tone-prep-bg:color-mix(in srgb, var(--gold-500) 24%, var(--surface-1));
 --tone-prep-fg:var(--gold-400);   --tone-prep-solid:var(--gold-500);
---tone-border:55%;
+--tone-border:55%; --tone-ink:var(--sand-50);
 
 --score-ss:var(--clay-500); --score-spot:var(--green-500); --score-sag:var(--slate-700);
 --score-perfect:var(--red-600); --score-zero:var(--sand-700); --score-ink:var(--sand-50);
@@ -398,7 +398,7 @@ color-scheme:light;
 --tone-train-bg:var(--sand-50); --tone-train-fg:var(--green-900); --tone-train-solid:var(--lime-500);
 --tone-race-bg:var(--sand-50);  --tone-race-fg:var(--clay-800);   --tone-race-solid:var(--clay-400);
 --tone-prep-bg:var(--sand-50);  --tone-prep-fg:var(--gold-800);   --tone-prep-solid:var(--gold-400);
---tone-border:100%;
+--tone-border:100%; --tone-ink:var(--sand-900);
 /* il vuoto del bersaglio e le superfici tenui non devono restare veli */
 --checkbox-border:var(--sand-900);
 
@@ -657,9 +657,14 @@ border:1.5px solid color-mix(in srgb, var(--tone-train-solid) var(--tone-border)
 border:1.5px solid color-mix(in srgb, var(--tone-race-solid) var(--tone-border), transparent); box-shadow:none; }
 .menu-btn.prepara{ background:var(--tone-prep-bg); color:var(--tone-prep-fg);
 border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border), transparent); box-shadow:none; }
-.menu-btn.training .menu-icon{ background:var(--tone-train-solid); color:#FFFFFF; }
-.menu-btn.gara .menu-icon{ background:var(--tone-race-solid); color:#FFFFFF; }
-.menu-btn.prepara .menu-icon{ background:var(--tone-prep-solid); color:#FFFFFF; }
+/* L'inchiostro dentro la pastiglia SEGUE LA PASTIGLIA, non il tema: chiara
+   la pastiglia, scuro il disegno; scura la pastiglia, chiaro il disegno.
+   Erano tre bianchi scritti a mano, e con le pastiglie accese il bianco non
+   reggeva piu': 2,3 sul verde e 2,3 sull'oro. Con --tone-ink si sta fra 6 e
+   8 in tutti e tre i temi. */
+.menu-btn.training .menu-icon{ background:var(--tone-train-solid); color:var(--tone-ink); }
+.menu-btn.gara .menu-icon{ background:var(--tone-race-solid); color:var(--tone-ink); }
+.menu-btn.prepara .menu-icon{ background:var(--tone-prep-solid); color:var(--tone-ink); }
 .menu-btn .menu-txt{ color:var(--text-1); }
 .menu-btn .menu-sub{ color:var(--text-3); opacity:1; font-weight:500; }
 
@@ -1467,10 +1472,16 @@ font-family:inherit; color:var(--navbar-fg);
 transition:color var(--dur-2) var(--ease), background var(--dur-2) var(--ease); }
 .tabbar .tab-lbl{ line-height:1.1; }
 /* in fondo, sul telefono: icona sopra, parola sotto */
-.tabn{ flex:1; min-height:var(--hit); padding:7px var(--s-1) 9px;
-display:flex; flex-direction:column; align-items:center; gap:3px; }
+.tabn{ flex:1; min-height:var(--hit); padding:var(--s-2) var(--s-1);
+display:flex; flex-direction:column; align-items:center; gap:var(--s-1); }
+/* 48x32 e icona 24: tre misure della scala, dove prima erano 46x29 e 21.
+   Non e' vezzo di ordine. Le icone piene hanno l'inchiostro all'82% della
+   loro finestra, quindi a 21px erano 17 punti di disegno dentro una
+   pastiglia di 29: sembravano piccole, ed erano piccole. A 24 dentro 32
+   restano sei punti d'aria per parte, che e' quello che serve a una
+   pastiglia per leggersi come pastiglia. La barra cresce di 4px in tutto. */
 .tabn .tab-pill{ display:flex; align-items:center; justify-content:center;
-width:46px; height:29px; border-radius:15px; border:1px solid transparent; }
+width:48px; height:32px; border-radius:16px; border:1px solid transparent; }
 .tabn .tab-lbl{ font-size:var(--t-xs); font-weight:600; text-align:center; }
 .tabn.on{ color:var(--navbar-pill-ink); }
 .tabn.on .tab-pill{ background:var(--navbar-pill); border-color:var(--navbar-on); }
@@ -7592,7 +7603,7 @@ function navIcon(name, size, tinta){
 var o = ICONE_PIENE[name];
 if(!o) return "";
 var acc = (tinta === "unica") ? "currentColor" : "var(--navbar-accent)";
-var px = size || 21;
+var px = size || 24;
 return '<svg viewBox="0 0 200 200" width="'+px+'" height="'+px+'" fill="currentColor" aria-hidden="true">'+
 '<g transform="'+o.t+'">'+o.s+'<g fill="'+acc+'">'+o.a+'</g></g></svg>';
 }
@@ -10011,11 +10022,11 @@ if(wide){
 // In riga: icona e parola affiancate, e la pastiglia e' il pulsante intero.
 // In colonna, dentro una barra alta 40px, non ci starebbero.
 b = el('<button class="tabw'+(on?" on":"")+'" aria-current="'+(on?"page":"false")+'">'+
-navIcon(tb[1],20)+
+navIcon(tb[1],22)+
 '<span class="tab-lbl">'+tb[2]+'</span></button>');
 } else {
 b = el('<button class="tabn'+(on?" on":"")+'" aria-current="'+(on?"page":"false")+'">'+
-'<span class="tab-pill">'+navIcon(tb[1],21)+'</span>'+
+'<span class="tab-pill">'+navIcon(tb[1],24)+'</span>'+
 '<span class="tab-lbl">'+tb[2]+'</span></button>');
 }
 b.addEventListener("click", function(){ state.tab = key; state.screen = "menu"; homeOverride = false; clubShowAll = false; save(); forgetScroll(); render(); });
@@ -11646,7 +11657,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-icone-piene";
+var BUILD_STAMP = "2026-08-17-icone-piene-c";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
