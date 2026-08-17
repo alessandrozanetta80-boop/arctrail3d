@@ -264,7 +264,7 @@ color-scheme:light;
 --navbar-bg:var(--sand-50); --navbar-line:var(--sand-300); --navbar-fg:var(--sand-600);
 --navbar-on:var(--green-800); --navbar-pill:var(--green-800);
 --navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(30,45,34,0.14);
---navbar-accent:var(--clay-400);
+--icona-accento:var(--clay-400);
 --navbar-hover:rgba(18,22,15,0.05);
 
 /* zone del bersaglio: restano quelle che sono, e' anatomia, non stile */
@@ -333,7 +333,7 @@ color-scheme:dark;
 --navbar-bg:var(--surface-1); --navbar-line:var(--border); --navbar-fg:var(--text-3);
 --navbar-on:var(--green-400); --navbar-pill:color-mix(in srgb, var(--green-400) 18%, var(--surface-2));
 --navbar-pill-ink:var(--green-400); --navbar-shadow:rgba(0,0,0,0.45);
---navbar-accent:var(--clay-400);
+--icona-accento:var(--clay-400);
 --navbar-hover:rgba(255,255,255,0.06);
 
 --qsag:var(--slate-400);
@@ -454,7 +454,7 @@ color-scheme:light;
 --navbar-bg:var(--sand-50); --navbar-line:var(--sand-400); --navbar-fg:var(--sand-700);
 --navbar-on:var(--green-900); --navbar-pill:var(--green-900);
 --navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(18,22,15,0.22);
---navbar-accent:var(--clay-400);
+--icona-accento:var(--clay-400);
 --navbar-hover:rgba(18,22,15,0.08);
 
 --qsag:var(--slate-700);
@@ -702,14 +702,37 @@ background:none; border:none; box-shadow:none; border-radius:0;
 padding:var(--s-3) 0; margin-bottom:0; width:100%; gap:var(--s-3); }
 .card .menu-btn.btn-ghost + .menu-btn.btn-ghost{ border-top:1px solid var(--border); }
 .card .menu-btn.btn-ghost:active{ transform:none; background:var(--surface-2); }
-/* L'icona perde il quadretto: resta il segno, nel grigio del testo minore.
-   Un contenitore che non contiene niente e' peso. */
+/* L'icona perde il quadretto: resta il segno. Un contenitore che non
+   contiene niente e' peso.
+   IL SEGNO E' VERDE, NON GRIGIO (17/08). Prima prendeva --text-3, cioe' lo
+   stesso grigio del sottotitolo accanto: l'icona finiva dentro il blocco di
+   testo invece di marcare la riga. Il verde e' --brand, e la separa: da una
+   parte il segno che dice di che riga si tratta, dall'altra le due righe
+   scritte. Chi ha un colore suo se lo tiene: la riga d'attenzione resta
+   rossa, e la regola sta sotto questa perche' deve vincere. */
 .card .menu-btn.btn-ghost .menu-icon{
-background:none; width:auto; height:auto; color:var(--text-3); }
+background:none; width:auto; height:auto; }
 .card .menu-btn.btn-ghost .menu-txt{ flex:1 1 auto; min-width:0; }
-/* La freccia e' l'unica cosa che dichiara "questa riga porta da qualche
-   parte", ora che il rettangolo non lo dice piu'. */
-.card .menu-btn.btn-ghost.riga-attenzione .menu-icon{ color:var(--danger-role); }
+/* IL VERDE NON DIPENDE DALLA SCHEDA. La prima versione di questa regola era
+   scritta ".card .menu-btn.btn-ghost", e una riga uguale a queste ma appesa
+   fuori da una scheda (lo "Spazio compagnia" nella schermata Compagnie)
+   restava grigia. Il colore appartiene alla RIGA, non al posto dove la riga
+   capita di stare — la stessa cosa non puo' avere due colori a seconda del
+   contenitore. Il rettangolo tolto invece dipende dalla scheda davvero, e
+   quella regola resta sopra com'era. */
+/* LE RIGHE D'ELENCO PORTANO LE DUE TINTE DELL'ILLUSTRATORE (17/08, versione
+   5). La struttura segue il verde qui sotto; l'accento arancione e' cotto
+   dentro navIcon() come var(--icona-accento). Il token si chiamava
+   --navbar-accent finche' l'arancione viveva solo nella barra in basso: da
+   adesso vive anche in un elenco, e un nome che dice il posto invece della
+   cosa diventa una bugia il giorno che la cosa si sposta. */
+.menu-btn.btn-ghost .menu-icon{ color:var(--brand); }
+/* CHI HA GIA' UN SIGNIFICATO SE LO TIENE. "riga-attenzione" non vuol dire
+   "riga allarmante": vuol dire che il segno di quella riga porta gia' un
+   senso suo, e il verde glielo cancellerebbe. Vale per "segnala un problema"
+   e vale per "persone bloccate", il cui segno e' un divieto: un divieto
+   verde dice il contrario di quello che disegna. */
+.menu-btn.btn-ghost.riga-attenzione .menu-icon{ color:var(--danger-role); }
 
 /* ── chi tira, in cima al setup ── */
 .riga-arcieri{ padding-bottom:var(--s-3); }
@@ -7529,6 +7552,7 @@ return '<img class="brandmark" src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="
 var ICON_PATHS = {
 home: '<path d="M4 11.4 12 4l8 7.4"/><path d="M6.4 10.2V20h11.2v-9.8"/><path d="M10 20v-5h4v5"/>',
 sun: '<circle cx="12" cy="12" r="4.2" style="fill:var(--sun-dot)"/><path d="M12 2.6v2.4M12 19v2.4M2.6 12h2.4M19 12h2.4"/><path d="M5.4 5.4l1.7 1.7M16.9 16.9l1.7 1.7M18.6 5.4l-1.7 1.7M7.1 16.9l-1.7 1.7"/>',
+globe: '<circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2"/><path d="M12 3.4c2.35 2.3 3.66 5.4 3.66 8.6S14.35 18.3 12 20.6c-2.35-2.3-3.66-5.4-3.66-8.6S9.65 5.7 12 3.4Z"/>',
 more: '<circle cx="12" cy="5" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.6" fill="currentColor" stroke="none"/>',
 bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
 mail: '<rect x="3" y="5" width="18" height="14" rx="2.2"/><path d="M3.6 6.6 12 13l8.4-6.4"/>',
@@ -7600,7 +7624,7 @@ s:'<path d="M140.36,83.49l-7.55-20.72-7.43-20.45-15.09,6.25a29.22,29.22,0,0,0-2.
 a:'<path d="M135.84,81.62l-7.08-7a52.47,52.47,0,0,0,10.57-14.87,23.49,23.49,0,0,0,1-16.85c-2.83-9-7.9-12.59-15.93-11.34-6.73,1.05-12.78,5.37-16.59,11.86C96.26,63,110.17,83.54,110.31,83.74l-8.19,5.67c-.73-1-17.64-26-2.91-51,5.34-9.07,13.94-15.14,23.64-16.65,7.56-1.18,21.11-.39,27,18.18a33.45,33.45,0,0,1-1.43,24A62.07,62.07,0,0,1,135.84,81.62Z"/>' },
 navprofile: { t:'translate(100 100) scale(1.0719) translate(-100 -100) translate(0.00 -1.50)',
 s:'<path d="M120.7,102.23A41.94,41.94,0,1,0,95.39,109v.07H99.1a65.68,65.68,0,0,1,65.6,65.6v3.13h10v-3.13A75.73,75.73,0,0,0,120.7,102.23ZM97.78,99.07a32,32,0,1,1,32-32A32,32,0,0,1,97.78,99.07Z"/><path d="M60.34,110.37l5.37,8.43a66.16,66.16,0,0,1,12.11-6A51.27,51.27,0,0,1,68.21,106,75.43,75.43,0,0,0,60.34,110.37Z"/><path d="M45.92,122.29A75.29,75.29,0,0,0,25.3,174.18v3.13h10v-3.13a65.67,65.67,0,0,1,30.41-55.37l-5.38-8.44A76.54,76.54,0,0,0,45.92,122.29Z"/>',
-a:'<rect x="117.84" y="162.24" width="29.34" height="12.44"/>' },
+a:'<rect x="117.84" y="153.68" width="29.34" height="21"/>' },
 azarco: { t:'translate(100 100) scale(0.9880) translate(-100 -100) translate(0.00 -0.25)',
 s:'<path d="M146.16,92.37c-.59-33.18-34.61-53.59-34.61-53.59-8.27-5-10-9.24-10.18-11.69a7.63,7.63,0,0,0,.34-2.26,7.49,7.49,0,1,0-15,0C83,36.68,109,54.26,109,54.26a49,49,0,0,1,19.36,38.11Z"/><path d="M146.16,108.18c-.59,33.18-34.61,53.59-34.61,53.59-8.27,5-10,9.24-10.18,11.69a7.63,7.63,0,0,1,.34,2.26,7.49,7.49,0,0,1-15,0C83,163.87,109,146.29,109,146.29a49.05,49.05,0,0,0,19.36-38.11Z"/><path d="M85.34,38.63A12.63,12.63,0,0,0,88.89,42L55.62,88l-3.56-4Z"/><path d="M85.34,162.32a12.63,12.63,0,0,1,3.55-3.41l-33.27-46-3.56,4Z"/>',
 a:'<path d="M181.31,100l-23.7-13.23L159.1,97.5H29.65a2.77,2.77,0,0,0,0,5.53H159.22l-1,10.71Z"/><polygon points="46.04 84.86 18.69 84.86 30.44 100.27 18.69 115.67 46.04 115.67 60.85 100.27 46.04 84.86"/>' },
@@ -7642,7 +7666,7 @@ a:'<rect x="93" y="34" width="14" height="132" transform="rotate(45 100 100)"/>'
 function navIcon(name, size, tinta){
 var o = ICONE_PIENE[name];
 if(!o) return "";
-var acc = (tinta === "unica") ? "currentColor" : "var(--navbar-accent)";
+var acc = (tinta === "unica") ? "currentColor" : "var(--icona-accento)";
 var px = size || 24;
 return '<svg viewBox="0 0 200 200" width="'+px+'" height="'+px+'" fill="currentColor" aria-hidden="true">'+
 '<g transform="'+o.t+'">'+o.s+'<g fill="'+acc+'">'+o.a+'</g></g></svg>';
@@ -10263,7 +10287,7 @@ regCard.appendChild(el('<a href="'+mailHref+'" class="btn btn-primary btn-block"
 wrap.appendChild(regCard);
 
 if(currentUser && myClubCode()){
-var spaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navclub",24,"unica")+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
+var spaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navclub",24,"due")+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
 spaceBtn.addEventListener("click", function(){ state.clubSpaceCode = myClubCode(); state.screen = "club-space"; save(); render(); });
 wrap.appendChild(spaceBtn);
 }
@@ -10277,19 +10301,19 @@ else {
 var profCard = el('<div class="card"></div>');
 profCard.appendChild(el('<h2 class="section-title">'+t("nav_profile")+'</h2>'));
 
-var profileBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navprofile",24,"unica")+'</span><span class="menu-txt">'+t("menu_profile")+'<span class="menu-sub">'+((state.profile && state.profile.compagniaNome) ? escapeHtml(state.profile.compagniaNome) : t("profile_club_none"))+'</span></span></button>');
+var profileBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navprofile",24,"due")+'</span><span class="menu-txt">'+t("menu_profile")+'<span class="menu-sub">'+((state.profile && state.profile.compagniaNome) ? escapeHtml(state.profile.compagniaNome) : t("profile_club_none"))+'</span></span></button>');
 profileBtn.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
 profCard.appendChild(profileBtn);
 
-var clubSpaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navclub",24,"unica")+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
+var clubSpaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navclub",24,"due")+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
 clubSpaceBtn.addEventListener("click", function(){ state.clubSpaceCode = myClubCode(); state.screen = "club-space"; save(); render(); });
 profCard.appendChild(clubSpaceBtn);
 
-var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azdiario",24,"unica")+'</span><span class="menu-txt">'+t("journal_title")+'<span class="menu-sub">'+t("journal_sub")+'</span></span></button>');
+var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azdiario",24,"due")+'</span><span class="menu-txt">'+t("journal_title")+'<span class="menu-sub">'+t("journal_sub")+'</span></span></button>');
 diarioBtn.addEventListener("click", function(){ state.screen = "diario"; save(); render(); });
 profCard.appendChild(diarioBtn);
 if(currentUser){
-var blockedBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azbloccati",24,"unica")+'</span><span class="menu-txt">'+t("blk_list_title")+'<span class="menu-sub">'+t("blk_list_sub")+'</span></span></button>');
+var blockedBtn = el('<button class="btn btn-ghost btn-block menu-btn riga-attenzione"><span class="menu-icon">'+navIcon("azbloccati",24,"unica")+'</span><span class="menu-txt">'+t("blk_list_title")+'<span class="menu-sub">'+t("blk_list_sub")+'</span></span></button>');
 blockedBtn.addEventListener("click", function(){ state.screen = "blocked-users"; save(); render(); });
 profCard.appendChild(blockedBtn);
 }
@@ -10930,7 +10954,7 @@ wrap.appendChild(locCard);
 // La scelta del campo avviene dentro i rispettivi moduli, che hanno gia' la ricerca.
 if(currentUser){
 var actCard = el('<div class="card"></div>');
-var annBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azarco",24,"unica")+'</span><span class="menu-txt">'+t("campi_announce_btn")+'<span class="menu-sub">'+t("ot_section_hint")+'</span></span></button>');
+var annBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azarco",24,"due")+'</span><span class="menu-txt">'+t("campi_announce_btn")+'<span class="menu-sub">'+t("ot_section_hint")+'</span></span></button>');
 annBtn.addEventListener("click", function(){ state.screen = "open-training-create"; save(); render(); });
 actCard.appendChild(annBtn);
 
@@ -11697,7 +11721,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-barra-verde";
+var BUILD_STAMP = "2026-08-17-righe-due-tinte";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
