@@ -93,7 +93,7 @@
 --clay-800:#8A3F09; --clay-700:#BC4F0B; --clay-600:#BE530F; --clay-500:#C1571F;
 --clay-400:#E8722F; --clay-200:#FBE2D0;
 --gold-800:#6E4E0C; --gold-700:#7A5610; --gold-600:#8A6210; --gold-500:#B07E12;
---gold-400:#CBA35C; --gold-200:#F6E8C6; --gold-100:#FDF2D9;
+--gold-400:#CBA35C; --gold-200:#F6E8C6; --gold-150:#F9E9C4; --gold-100:#FDF2D9;
 --red-700:#8E0F14; --red-600:#A81319; --red-400:#E23D2E; --red-100:#F9DCDC;
 --blue-600:#2E5FA8; --blue-400:#5B8FD6;
 /* Il pallino del sole. E' l'UNICA tinta dell'app che non cambia fra i temi,
@@ -195,12 +195,12 @@ color-scheme:light;
 /* bordi */
 --border:var(--sand-300); --border-strong:var(--sand-400);
 /* marchio e codice colore */
---brand:var(--green-800); --brand-soft:var(--green-800); --brand-ink:#FFFFFF;
+--brand:var(--green-800); --brand-soft:var(--green-800); --brand-ink:var(--sand-50);
 --clay:var(--clay-600); --gold-role:var(--gold-700);
 /* l'interruttore del Sole quando e' acceso: una coppia per tema, perche'
    l'oro cambia valore fra i tre e un fondo scritto a mano una volta sola
    sarebbe illeggibile in due casi su tre */
---sun-on-bg:var(--gold-700); --sun-on-fg:#FFFFFF;
+--sun-on-bg:var(--gold-700); --sun-on-fg:var(--sand-50);
 --danger-role:var(--red-600); --success-role:var(--green-success);
 /* il bersaglio da anelli e le pastiglie d'arco: ruoli, non tinte a mano */
 --ring-bg-a:var(--straw-200); --ring-bg-b:var(--straw-500); --ring-ink:var(--straw-900);
@@ -235,7 +235,7 @@ color-scheme:light;
 
 /* il timer. Da fermo ha un colore suo — ambra — che non e' nessuno dei tre
    codici dell'app, cosi' al sole non lo si confonde con "gara" o "prepara". */
---timer-idle-bg:linear-gradient(135deg,var(--gold-100),#F9E9C4);
+--timer-idle-bg:linear-gradient(135deg,var(--gold-100),var(--gold-150));
 --timer-idle-bd:rgba(138,98,16,.55); --timer-idle-fg:#3A2A05;
 --timer-run-bg:var(--green-200);  --timer-run-bd:var(--green-800); --timer-run-fg:#1B4C22;
 --timer-warn-bg:var(--gold-200);  --timer-warn-bd:var(--gold-600); --timer-warn-fg:var(--gold-800);
@@ -244,7 +244,7 @@ color-scheme:light;
 /* insegna e sezioni */
 --navbar-bg:var(--sand-50); --navbar-line:var(--sand-300); --navbar-fg:var(--sand-600);
 --navbar-on:var(--green-800); --navbar-pill:var(--green-800);
---navbar-pill-ink:#FFFFFF; --navbar-shadow:rgba(30,45,34,0.14);
+--navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(30,45,34,0.14);
 --navbar-green:var(--green-800);
 --navbar-hover:rgba(18,22,15,0.05);
 
@@ -272,7 +272,7 @@ color-scheme:dark;
 --surface:var(--moss-900); --surface-1:var(--moss-800); --surface-2:var(--moss-700);
 --text-1:var(--moss-100); --text-2:var(--moss-200); --text-3:var(--moss-300);
 --border:var(--moss-600); --border-strong:var(--moss-500);
---brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:#FFFFFF;
+--brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:var(--sand-50);
 --clay:var(--clay-400); --gold-role:var(--gold-400);
 --sun-on-bg:var(--gold-400); --sun-on-fg:#1A1305;
 --danger-role:var(--red-400); --success-role:var(--green-success-dk);
@@ -376,7 +376,7 @@ color-scheme:light;
 /* marchio e codici: i gradini piu' scuri di ogni famiglia */
 --brand:var(--green-900); --brand-soft:var(--green-900); --brand-ink:var(--sand-50);
 --clay:var(--clay-800); --gold-role:var(--gold-800);
---sun-on-bg:var(--gold-800); --sun-on-fg:#FFFFFF;
+--sun-on-bg:var(--gold-800); --sun-on-fg:var(--sand-50);
 --danger-role:var(--red-700); --success-role:var(--green-800);
 
 /* il bersaglio da anelli e' paglia: al sole la paglia e' chiara, non fangosa */
@@ -11603,7 +11603,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-market-favs";
+var BUILD_STAMP = "2026-08-17-avvisi-ricerche";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13101,6 +13101,13 @@ jobs.push(deleteQueryDocs(db.collection("market_reviews").where("fromUid","==",u
 // residuo che Google verifica. Non e' una query, e' un documento: si cancella
 // per id.
 jobs.push(db.collection("market_favs").doc(uid).delete().catch(function(){}));
+// Marketplace: ricerche salvate, market_searches/{uid}. Stesso residuo dei
+// preferiti — un elenco di cosa uno stava cercando — ma qui c'e' un motivo in
+// piu': finche' il documento resta, la Cloud Function `avvisaRicerche`
+// continua a scrivere notifiche per un account che non esiste piu'.
+// Le tre domande di una raccolta nuova — chi la scrive, chi la legge, chi la
+// porta via — vanno fatte tutte e tre lo stesso giorno.
+jobs.push(db.collection("market_searches").doc(uid).delete().catch(function(){}));
 // Foto degli annunci caricate su Storage in market/{uid}/
 try{
 if(firebase.storage){

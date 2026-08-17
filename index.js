@@ -1,7 +1,7 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-13-notifiche
+// Versione 2026-08-17-avvisi-ricerche
 //
-// Due funzioni, con due compiti diversi:
+// Tre funzioni, con tre compiti diversi:
 //
 //  1) sendNotification  (callable)  — SCRIVE la notifica.
 //     Prima scriveva il telefono, direttamente in notifications/{uid}/items.
@@ -14,6 +14,14 @@
 //     Scatta quando il documento compare, esattamente come prima: non e' stata
 //     toccata. Non le importa chi ha scritto il documento, quindi continua a
 //     funzionare identica.
+//
+//  3) avvisaRicerche (trigger) — guarda chi stava ASPETTANDO un annuncio.
+//     Scatta alla nascita di un annuncio del mercatino. Non manda nessuna push
+//     da sola: scrive in notifications/{uid}/items, cioe' fa nascere il
+//     documento su cui scatta gia' la (2). Cosi' chi ha acceso le notifiche la
+//     riceve sul telefono, chi non le ha accese la trova comunque nell'elenco
+//     dentro l'app, e se un giorno la consegna cambia, cambia in un posto solo.
+//     Due strade per consegnare la stessa cosa divergono sempre, e in silenzio.
 //
 // ORDINE DI APPLICAZIONE, da rispettare:
 //   1) deploy di queste funzioni   (firebase deploy --only functions)
@@ -145,6 +153,134 @@ exports.pushNotifica = onDocumentCreated(
       } else {
         console.error("push fallita per", uid, err);
       }
+    }
+  }
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3) CHI STAVA ASPETTANDO QUESTO ANNUNCIO
+// Scatta alla nascita di market_listings/{adId}.
+//
+// PERCHE' NON MANDA LA PUSH DA SOLA. Scrive in notifications/{uid}/items e si
+// ferma li': su quel documento scatta gia' pushNotifica, che sa ripulire un
+// token scaduto, mettere l'icona e il link. Se avvisasse per conto suo
+// avremmo due strade per consegnare la stessa cosa, e due strade divergono
+// sempre — in silenzio. E' scritto quattro volte nelle note del mercatino,
+// ogni volta dopo averlo pagato.
+//
+// IL COSTO, DICHIARATO. Si leggono TUTTE le ricerche a ogni annuncio nuovo. La
+// ricerca e' per sottostringa — chi cerca "hoyt" vuole trovarlo dentro
+// "Ricurvo Hoyt Satori" — e una sottostringa non si indicizza: non esiste una
+// query Firestore che chieda "chi stava aspettando questo?". Con qualche
+// centinaio di persone e' una lettura da niente. RICERCHE_TANTE accende una
+// spia nei log il giorno in cui smette di esserlo, e allora servira' un indice
+// vero, non un giro piu' furbo su questo elenco.
+// Un tetto si dichiara e si conta, non si subisce.
+// ─────────────────────────────────────────────────────────────────────────────
+const RICERCHE_TANTE = 800;  // oltre questa soglia la lettura non e' piu' gratis
+const MAX_AVVISI = 200;      // per singolo annuncio; il resto si conta nei log
+
+// ══ INIZIO PAROLE GENERATE — da dizionario-c.py con genera.py: non correggere qui.
+// Le nove lingue hanno una sorgente sola. Per cambiare una di queste frasi
+// si cambia il .py e si rilancia genera.py.
+const PAROLE = {
+  push_sav_title: {
+    it: "Nuovo annuncio per «{q}»",
+    en: "New listing for “{q}”",
+    fr: "Nouvelle annonce pour « {q} »",
+    de: "Neue Anzeige für „{q}“",
+    tr: "«{q}» için yeni ilan",
+    ru: "Новое объявление по «{q}»",
+    es: "Nuevo anuncio para «{q}»",
+    sv: "Ny annons för ”{q}”",
+    nl: "Nieuwe advertentie voor ‘{q}’",
+  },
+};
+// ══ FINE PAROLE GENERATE
+
+/* LA STESSA DOMANDA, SCRITTA DUE VOLTE.
+   Questa e' la gemella di matchQ() in marketplace.html: una gira su Node,
+   l'altra dentro una pagina, e non c'e' modo di condividerle. Se divergono il
+   danno e' preciso e invisibile — uno riceve un avviso per un annuncio che
+   poi, entrando nel mercatino, non trova, e non ha nessun modo di capire
+   perche'. `banco-avvisi.js` le estrae dai due file veri e le mette una contro
+   l'altra su dodici casi: se un giorno una impara un campo in piu' e l'altra
+   no, lo dice il giorno stesso.
+   Il posto NON e' una corrispondenza: "Verbania" nella localita' non risponde
+   a chi cerca "verbania" fra gli oggetti. Vale di la', vale qui. */
+function combacia(a, q) {
+  q = String(q || "").trim().toLowerCase(); if (!q) return false;
+  return (a.title || "").toLowerCase().indexOf(q) >= 0
+      || (a.description || "").toLowerCase().indexOf(q) >= 0
+      || (a.marca || "").toLowerCase().indexOf(q) >= 0;
+}
+
+// Il corpo dice cos'e', dov'e' e quanto costa — in una riga, perche' una
+// notifica si legge di sfuggita. Un "Cerco" non ha un prezzo da stampare: il
+// budget di chi cerca non e' un'offerta, e metterlo li' lo farebbe sembrare
+// tale.
+function corpoAvviso(ad) {
+  const pezzi = [ad.title || ""];
+  if (ad.location) pezzi.push(ad.location);
+  if (ad.type !== "cerco" && Number(ad.price) > 0) pezzi.push("€ " + ad.price);
+  return pezzi.filter(Boolean).join(" · ");
+}
+
+exports.avvisaRicerche = onDocumentCreated(
+  "market_listings/{adId}",
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+    const ad = snap.data() || {};
+    const adId = event.params.adId;
+
+    // Un annuncio che non nasce in vendita non si annuncia.
+    if (ad.status !== "active") return;
+    const venditore = ad.sellerUid || "";
+
+    const db = admin.firestore();
+    const tutte = await db.collection("market_searches").get();
+    if (tutte.size >= RICERCHE_TANTE) {
+      console.warn("ricerche salvate: " + tutte.size + " — oltre " + RICERCHE_TANTE +
+                   ", la lettura per annuncio non e' piu' trascurabile: serve un indice vero");
+    }
+
+    // UN AVVISO PER PERSONA, non uno per ricerca. Tre ricerche che combaciano
+    // sullo stesso arco non sono tre notizie: sono la stessa detta tre volte,
+    // ed e' il modo piu' veloce per farsi spegnere la campanella.
+    const aspettavano = [];
+    tutte.forEach(function (d) {
+      if (d.id === venditore) return;              // il proprio annuncio non e' una notizia
+      const dati = d.data() || {};
+      const queries = Array.isArray(dati.queries) ? dati.queries : [];
+      const trovata = queries.find(function (q) { return combacia(ad, q); });
+      if (trovata) aspettavano.push({ uid: d.id, q: trovata, lang: dati.lang || "it" });
+    });
+    if (!aspettavano.length) return;
+
+    const quanti = Math.min(aspettavano.length, MAX_AVVISI);
+    if (aspettavano.length > MAX_AVVISI) {
+      console.warn("annuncio " + adId + ": " + aspettavano.length + " in attesa, ne avviso " +
+                   MAX_AVVISI + " — " + (aspettavano.length - MAX_AVVISI) + " restano senza avviso");
+    }
+
+    for (let i = 0; i < quanti; i++) {
+      const c = aspettavano[i];
+      // Un blocco che vale nelle chat e non negli avvisi non e' un blocco:
+      // e' un'impostazione decorativa.
+      const u = await db.collection("users").doc(c.uid).get().catch(function () { return null; });
+      const bloccati = (u && u.exists ? (u.data() || {}) : {}).blockedUsers || {};
+      if (venditore && bloccati[venditore]) continue;
+
+      const modello = PAROLE.push_sav_title[c.lang] || PAROLE.push_sav_title.it;
+      await db.collection("notifications").doc(c.uid).collection("items").add({
+        title: modello.replace("{q}", c.q),
+        body: corpoAvviso(ad),
+        read: false,
+        fromUid: venditore,
+        adId: adId,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      }).catch(function (err) { console.error("avviso non scritto per", c.uid, err); });
     }
   }
 );
