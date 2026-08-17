@@ -28,25 +28,125 @@
 //    Chi installava l'app a casa e la apriva la prima volta sul campo poteva
 //    trovarsi senza pezzi. Ora all'installazione si scarica il necessario.
 
-// --- Firebase Cloud Messaging: NON STA PIU' QUI ---
+// --- Firebase Cloud Messaging: STA DI NUOVO QUI, ED E' L'UNICO POSTO ---
 //
-// (17/08/2026.) Qui c'era una copia esatta di firebase-messaging-sw.js:
-// initializeApp, onBackgroundMessage e showNotification. Due service worker
-// registrati sullo stesso sito, tutti e due in ascolto sullo stesso messaggio,
-// tutti e due che mostravano la loro notifica. Risultato sul telefono: OGNI
-// avviso arrivava DOPPIO. Trovato il 17/08 alla prima push mai vista arrivare
-// davvero, e visibile solo li': nessun banco puo' contare quante notifiche
-// disegna un sistema operativo.
+// (17/08/2026, quarta passata. Le prime tre stanno in NOTE-DESIGN.md.)
 //
-// Le push le gestisce SOLO firebase-messaging-sw.js, che e' il file che
-// Firebase cerca per nome e a cui e' agganciato il token del dispositivo.
-// Questo service worker fa la cache, e basta.
+// Stamattina questo blocco e' stato tolto da qui, con questa motivazione: «le
+// push le gestisce solo firebase-messaging-sw.js, che e' il file che Firebase
+// cerca per nome». La motivazione era sbagliata, e il prezzo e' stato che per
+// mezz'ora le push non sono arrivate PIU' AFFATTO — mentre le notifiche dentro
+// l'app continuavano ad arrivare, il che rendeva il guasto quasi invisibile.
 //
-// Regola: due strade per consegnare la stessa cosa divergono sempre. Qui non
-// erano nemmeno divergenti — erano identiche, ed e' bastato quello.
+// PERCHE'. I due file, registrati senza indicare un ambito, prendono LO STESSO
+// ambito: la radice. Due registrazioni sullo stesso ambito non convivono — una
+// sostituisce l'altra. E index.html chiede
+//     navigator.serviceWorker.getRegistration("firebase-messaging-sw.js")
+// che NON risponde «il file con quel nome»: risponde con la registrazione il
+// cui AMBITO CONTIENE quell'indirizzo. L'ambito di sw.js e' la radice, quindi
+// contiene tutto. Quindi risponde sw.js, e il token del dispositivo — cioe' la
+// sottoscrizione a cui il push viene consegnato — e' agganciato a QUESTO file.
+// Toglierlo da qui voleva dire lasciare il push senza nessuno che lo ascolta.
+//
+// LA CURA NON E' INDOVINARE QUALE DEI DUE VINCE. E' farli comportare uguale:
+// firebase-messaging-sw.js adesso e' una riga sola che carica questo file.
+// Qualunque dei due sia attivo, il telefono si comporta allo stesso modo.
+// Un nome solo per file vale anche quando i file sono due: allora uno dei due
+// deve ESSERE l'altro.
+importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
+
+firebase.initializeApp({
+  apiKey: "AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",
+  authDomain: "arctrail3d.firebaseapp.com",
+  projectId: "arctrail3d",
+  messagingSenderId: "185889526349",
+  appId: "1:185889526349:web:0af3b386332664387c8204"
+});
+
+// GUARDARE, NON ASSUMERE.
+//
+// Il difetto di partenza: ogni avviso arrivava DOPPIO. Nel sorgente del
+// pacchetto @firebase/messaging, la funzione che riceve il push fa due cose
+// una dopo l'altra — se il messaggio ha un blocco "notification" la mostra
+// LUI, e poi chiama COMUNQUE onBackgroundMessage. In fila, non in
+// alternativa.
+//
+// La cura ovvia era tacere quando quel blocco c'e'. Provata: ZERO avvisi.
+// Perche' quella riga si FIDAVA di sapere cosa fa l'SDK, e su questo telefono
+// l'SDK non disegnava niente. Aver letto il sorgente rende una certezza
+// migliore, non una certezza: il sorgente dice cosa il codice INTENDE fare.
+//
+// Quindi adesso non si assume, si GUARDA: prima di disegnare si chiede al
+// sistema quali avvisi ci sono gia' in cima allo schermo. Uno identico c'e' ->
+// si tace. Non c'e' -> si disegna. Non puo' finire a due, e non puo' finire a
+// zero: se il sistema non sa nemmeno rispondere alla domanda, si disegna e
+// basta. Meglio il rischio di due che la certezza di zero.
+try {
+  var messaging = firebase.messaging();
+  messaging.onBackgroundMessage(function(payload){
+    var p = payload || {};
+    var d = p.data || {};
+    var n = p.notification || {};
+
+    // I dati vengono prima: arrivano interi. Il blocco "notification" arriva
+    // scremato, ma se e' l'unico che c'e' e' meglio di niente.
+    var title = d.title || n.title || "ArcTrail 3D";
+    var body  = d.body  || n.body  || "";
+    // L'etichetta e' l'id del documento che ha fatto nascere l'avviso: con lo
+    // stesso tag il sistema SOSTITUISCE invece di impilare, quindi la stessa
+    // notizia non puo' comparire due volte nemmeno se arriva da due strade.
+    var tag = d.tag || d.notifId || title;
+
+    var opzioni = {
+      body: body,
+      icon: "icon-192.png",
+      badge: "icon-192.png",
+      tag: tag,
+      renotify: false,
+      data: { link: d.link || "/" }
+    };
+
+    function disegna(){ return self.registration.showNotification(title, opzioni); }
+
+    if (!self.registration.getNotifications) return disegna();
+
+    return self.registration.getNotifications().then(function(gia){
+      for (var i = 0; i < gia.length; i++){
+        if (gia[i].tag === tag) return;
+        if (gia[i].title === title && (gia[i].body || "") === body) return;
+      }
+      return disegna();
+    }).catch(function(){ return disegna(); });
+  });
+} catch(e) {}
+
+self.addEventListener("notificationclick", function(event){
+  // Se l'avviso l'ha disegnato l'SDK, il suo gestore chiude l'evento prima di
+  // arrivare qui. Questo vale per quelli disegnati sopra.
+  var dati = event.notification.data || {};
+  var dove = dati.link || "/";
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type:"window", includeUncontrolled:true }).then(function(list){
+      for(var i=0;i<list.length;i++){
+        var c = list[i];
+        if("focus" in c){
+          // Una finestra c'e' gia': si porta davanti. Aprirne una seconda sullo
+          // stesso sito e' il modo piu' rapido per far perdere il giro in corso.
+          if(dove !== "/" && c.url.indexOf(dove) === -1 && "navigate" in c){
+            return c.focus().then(function(cl){ return cl.navigate(dove).catch(function(){ return cl; }); });
+          }
+          return c.focus();
+        }
+      }
+      if(clients.openWindow) return clients.openWindow(dove);
+    })
+  );
+});
 
 // ─────────────────────────── CACHE ───────────────────────────
-var CACHE_NAME = "arctrail3d-v5";
+var CACHE_NAME = "arctrail3d-v6";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
