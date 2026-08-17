@@ -777,7 +777,7 @@ section.active{display:block}
 /* ══════════════════ FINE RIFINITURA ══════════════════ */
 </style>
 </head>
-<body data-build="2026-08-17-mercatino-e">
+<body data-build="2026-08-17-mercatino-f">
 <div id="app">
 <header class="topbar">
   <div class="tb-left">
@@ -4134,6 +4134,25 @@ function applySnap(docs){
   allAds=docs.map(function(d){return Object.assign({id:d.id},d.data());});
   allAds.sort(function(a,b){return tms(b.createdAt)-tms(a.createdAt);});
   renderAds();
+  apriDaIndirizzo();
+}
+/* ARRIVARE DIRETTAMENTE SU UN ANNUNCIO.
+   `marketplace.html?annuncio=<id>` apre la scheda invece di lasciare in mezzo
+   all'elenco. Lo usa la campanella dell'app: una notifica che dice che e'
+   uscito un arco e poi ti lascia cercarlo e' una ricevuta, non un avviso.
+   L'apertura vale UNA volta, e l'indirizzo si ripulisce subito: se restasse,
+   ogni ridisegno dell'elenco riaprirebbe la scheda addosso a chi l'ha appena
+   chiusa, e non ci sarebbe modo di uscirne.
+   Se l'annuncio non c'e' fra quelli attivi non si dice niente qui: chi
+   arriva dall'app ha gia' avuto la risposta li', prima di cambiare pagina. */
+var annuncioDaAprire=(function(){
+  try{return new URLSearchParams(window.location.search).get("annuncio")||null;}catch(e){return null;}
+})();
+function apriDaIndirizzo(){
+  if(!annuncioDaAprire)return;
+  var id=annuncioDaAprire;annuncioDaAprire=null;
+  try{history.replaceState(null,"",window.location.pathname);}catch(e){}
+  if(allAds.some(function(a){return a.id===id;}))openDet(id);
 }
 /* Il Marketplace scarica gli annunci e poi cerca/filtra/ordina lato client:
    oltre ADS_LIMIT annunci attivi i piu' vecchi smetterebbero di comparire

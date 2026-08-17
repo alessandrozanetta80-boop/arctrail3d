@@ -1,5 +1,5 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-17-avvisi-doppi
+// Versione 2026-08-17-dove-porta
 //
 // Tre funzioni, con tre compiti diversi:
 //
@@ -56,6 +56,7 @@ exports.sendNotification = onCall({ cors: true }, async (req) => {
 
   const d = req.data || {};
   const toUid = typeof d.toUid === "string" ? d.toUid.trim() : "";
+  const dest = destPulito(d.dest, uid);
   const title = typeof d.title === "string" ? d.title.trim().slice(0, MAX_TITOLO) : "";
   const body  = typeof d.body  === "string" ? d.body.trim().slice(0, MAX_TESTO)  : "";
   if (!toUid || !title) {
@@ -95,16 +96,45 @@ exports.sendNotification = onCall({ cors: true }, async (req) => {
   }
 
   // fromUid lo mette il server: e' la firma vera, non quella dichiarata.
-  await db.collection("notifications").doc(toUid).collection("items").add({
+  const doc = {
     title: title,
     body: body,
     read: false,
     fromUid: uid,
     createdAt: admin.firestore.FieldValue.serverTimestamp()
-  });
+  };
+  if (dest) doc.dest = dest;
+  await db.collection("notifications").doc(toUid).collection("items").add(doc);
 
   return { ok: true };
 });
+
+// DOVE PORTA LA NOTIFICA, ripulito.
+// L'app scrive `dest` dentro il documento e il centro notifiche ci si
+// aggancia: toccare l'avviso apre la cosa che l'ha fatto nascere invece di
+// lasciarla cercare. Qui si decide cosa e' lecito scriverci.
+//
+// DUE FORME SOLE, e non una in piu'. Un campo libero che dice all'app dove
+// andare e' una superficie d'attacco: si accetta un elenco chiuso, tutto il
+// resto diventa `null` e la notifica arriva senza tasto — cioe' come prima.
+//
+// E PER LA CHAT L'UID LO METTE IL SERVER. Se lo scegliesse chi manda,
+// chiunque potrebbe recapitare un avviso che dice «apri la conversazione con
+// X» puntando a un altro: e' esattamente la porta che si e' chiusa mettendo
+// `fromUid` qui dentro invece che sul telefono. Il valore dichiarato dal
+// client si butta via senza guardarlo.
+function destPulito(d, mittente) {
+  // Il tetto sta DENTRO la regola che lo usa: e' l'unico posto che lo
+  // guarda, e cosi' il banco puo' prendersi la funzione da sola.
+  const MAX_ID = 128;
+  if (!d || typeof d !== "object") return null;
+  if (d.k === "dm") return { k: "dm", uid: mittente };
+  if (d.k === "annuncio") {
+    const id = typeof d.id === "string" ? d.id.trim().slice(0, MAX_ID) : "";
+    return id ? { k: "annuncio", id: id } : null;
+  }
+  return null;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2) PUSH ANCHE AD APP CHIUSA — invariata
@@ -291,6 +321,11 @@ exports.avvisaRicerche = onDocumentCreated(
         read: false,
         fromUid: venditore,
         adId: adId,
+        // `adId` c'era gia' e il centro notifiche lo legge ancora, per le
+        // notifiche scritte prima di oggi. `dest` e' la strada nuova, uguale
+        // per tutti i tipi di avviso: due letture diverse per la stessa cosa
+        // divergono sempre, quindi la vecchia resta solo come ripiego.
+        dest: { k: "annuncio", id: adId },
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       }).catch(function (err) { console.error("avviso non scritto per", c.uid, err); });
     }
