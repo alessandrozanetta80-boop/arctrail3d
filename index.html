@@ -1031,11 +1031,17 @@ background:radial-gradient(circle, rgba(96,169,102,0.20), transparent 70%); z-in
 /* ---------- LETTURA DA COMPUTER ----------
 Sul telefono non cambia nulla. Da 760px in su la colonna si allarga, perche'
 a 520px su un monitor l'app e' una striscia in mezzo al vuoto. Le schermate
-operative (percorso, riepilogo, moduli, chat) restano strette: un modulo largo
-900px e' peggio, non meglio. */
+operative (percorso, riepilogo, moduli, chat) tengono una colonna stretta: un
+modulo largo 900px e' peggio, non meglio.
+
+A STRINGERSI E' LA COLONNA, NON LA PAGINA (17/08/2026). Prima si stringeva
+`#app`, cioe' il guscio: entrando in un sottomenu da computer la finestra
+saltava da 1060 a 660 e si portava dietro testata, insegna e sfondo, che con la
+lunghezza della riga non c'entrano niente. Adesso il guscio ha una misura sola
+per tutte le schermate e la colonna di lettura vive dentro. */
 @media (min-width:760px){
 #app{ max-width:900px; padding:20px 26px 44px; }
-#app.narrow{ max-width:620px; }
+#app.narrow > :not(header.top){ width:100%; max-width:620px; margin-left:auto; margin-right:auto; }
 header.top{ height:72px; margin-bottom:20px; }
 header.top .logo{ width:56px; height:56px; }
 header.top h1{ font-size:1.2rem; }
@@ -1045,10 +1051,13 @@ header.top .sub{ font-size:0.76rem; }
 }
 /* Le due colonne sono state tolte il 13/08: menuScreen incorpora interi
 sotto-schermi, e spezzarli a meta' altezza sbilanciava la pagina. Colonna
-sola, piu' larga. */
-@media (min-width:1080px){
-#app{ max-width:960px; }
-}
+sola, piu' larga.
+
+Qui stava `@media (min-width:1080px){ #app{ max-width:960px } }`, tolta il
+17/08: piu' sotto, nel blocco dei 900px, #app viene rimesso a 1060px, e a
+parita' di specificita' vince chi arriva dopo. Era una regola senza effetto da
+settimane, e una regola che non fa niente e' peggio di una regola assente:
+chi legge crede che a 1080px la pagina si stringa, e non e' vero. */
 
 /* ══════════════ L'INSEGNA DA COMPUTER (dai 760px in su) ══════════════
    Qui NON si ridichiara piu' un solo colore. Prima questo blocco riscriveva
@@ -1075,11 +1084,12 @@ margin-top:0; margin-bottom:16px; margin-left:0; margin-right:0;
 /* il titolo non deve piu' mangiarsi la riga: lo spazio va alle sezioni */
 header.top .headtxt{ flex:0 0 auto; }
 .tabbar-wide{ flex:1 1 420px; flex-wrap:wrap; justify-content:center; gap:3px; }
-/* Colonna stretta (moduli, chat, percorso): le sezioni scendono su una riga
-loro, ma restano dentro la stessa insegna. I comandi di destra restano su
-in alto grazie a order. */
-#app.narrow header.top .head-actions{ order:1; }
-#app.narrow header.top .tabbar-wide{ order:2; flex-basis:100%; }
+/* Qui stavano due regole che mandavano le sezioni a capo quando la colonna era
+stretta (`#app.narrow header.top .head-actions{order:1}` e la gemella su
+.tabbar-wide). Tolte il 17/08 insieme al guscio che si stringeva: adesso
+l'insegna e' larga uguale su tutte le schermate, quindi le sezioni ci stanno
+in riga e non devono piu' scendere. Erano la conseguenza del difetto, non una
+scelta: se un giorno l'insegna tornasse a stringersi, tornerebbero anche loro. */
 }
 /* ══════════════ FINE INSEGNA DA COMPUTER ══════════════ */
 
@@ -1353,7 +1363,15 @@ body{
 html{ scroll-behavior:smooth; }
 html.no-smooth{ scroll-behavior:auto; }
 #app{ max-width:1060px; padding:20px 34px 76px; }
-#app.narrow{ max-width:660px; }
+/* La colonna di lettura, non il guscio: vedi la nota nel blocco dei 760px.
+   `> :not(header.top)` colpisce il nodo della schermata e basta — l'insegna
+   resta larga, e sotto i 760px la barra in fondo non e' toccata perche' vive
+   fuori da questo blocco.
+   IL `width:100%` NON E' DI TROPPO. Durante il percorso #app diventa un flex
+   in colonna, e li' un margine automatico spegne lo stretch: senza la
+   larghezza dichiarata la pista si stringeva sul contenuto — misurata a 8px,
+   cioe' la tastiera del giro ridotta a una scheggia. Provato, non dedotto. */
+#app.narrow > :not(header.top){ width:100%; max-width:660px; margin-left:auto; margin-right:auto; }
 
 /* ── 2. La testata: un'insegna, non una barra grigia ─────────────────── */
 /* L'insegna era un blocco verde scuro sopra una pagina chiara: due meta'
@@ -11880,7 +11898,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-push-dove-porta";
+var BUILD_STAMP = "2026-08-17-colonna-ferma";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -11889,7 +11907,7 @@ var BUILD_STAMP = "2026-08-17-push-dove-porta";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-17-ricucitura";
+var BUILD_PARENT = "2026-08-17-push-dove-porta";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
