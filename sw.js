@@ -146,7 +146,14 @@ self.addEventListener("notificationclick", function(event){
 });
 
 // ─────────────────────────── CACHE ───────────────────────────
-var CACHE_NAME = "arctrail3d-v6";
+// v7 (17/08/2026 sera). Il numero non si alza per abitudine: si alza perche'
+// cambiando nome, `activate` cancella tutte le cache vecchie. E stasera era
+// l'unico modo di buttare via una copia di `index.html` rimasta bloccata su
+// una versione di due ore prima — vedi il commento su fromNetwork.
+// Il service worker nuovo il telefono se lo prende da solo, perche' il
+// browser rilegge SEMPRE questo file dalla rete: e' l'unica cosa che non
+// passa dalla cache, ed e' per questo che la cura sta qui e non altrove.
+var CACHE_NAME = "arctrail3d-v7";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
@@ -196,15 +203,36 @@ self.addEventListener("activate", function(event){
 });
 
 // Rete con tempo massimo: passato quello, si va di cache.
+//
+// MA LA RISPOSTA ARRIVATA TARDI SI TIENE LO STESSO, e prima non era cosi'.
+// (Corretto il 17/08/2026 sera, dopo che un aggiornamento non arrivava sul
+// telefono per quante volte lo si riaprisse.)
+//
+// Il difetto, e perche' non si vedeva. Scaduti i tre secondi si serviva la
+// copia in cache — giusto — ma quando la rete rispondeva un attimo dopo, il
+// `if(done) return` buttava via la risposta SENZA METTERLA IN CACHE. Quindi
+// la copia salvata restava quella vecchia, e al lancio successivo succedeva
+// esattamente la stessa cosa. Su una connessione lenta l'aggiornamento non
+// arrivava PIU', mai: non era un ritardo, era un blocco definitivo.
+//
+// `index.html` pesa un megabyte. Tre secondi in campo, in 4G scarso, non
+// bastano quasi mai: e' proprio il file piu' importante quello che non
+// riusciva mai a vincere la corsa.
+//
+// Adesso la corsa decide solo COSA SI MOSTRA ADESSO. Chi arriva tardi non
+// vince il giro in corso, ma aggiorna la copia: al lancio dopo si apre la
+// versione nuova. Una cache che non si aggiorna mai non e' una cache, e'
+// una fotografia.
 function fromNetwork(request, cache, ms){
   return new Promise(function(resolve, reject){
     var done = false;
     var timer = setTimeout(function(){ if(!done){ done = true; reject(new Error("timeout")); } }, ms);
     fetch(request).then(function(response){
       clearTimeout(timer);
+      // PRIMA di guardare chi ha vinto: se e' roba buona, si tiene.
+      if(response && response.status === 200){ cache.put(request, response.clone()); }
       if(done) return;
       done = true;
-      if(response && response.status === 200){ cache.put(request, response.clone()); }
       resolve(response);
     }).catch(function(err){
       clearTimeout(timer);
