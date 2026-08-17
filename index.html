@@ -11603,7 +11603,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-avvisi-ricerche";
+var BUILD_STAMP = "2026-08-17-avvisi-doppi";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -12739,7 +12739,11 @@ function showLocalNotification(d){
 if(typeof Notification === "undefined" || Notification.permission !== "granted") return;
 // Il server ci manda gia' la push vera su questo dispositivo: tacere.
 if(pushRegisteredHere) return;
-var opts = { body: d.body || "", icon: "/icon-192.png", badge: "/icon-192.png" };
+// Stessa etichetta che mette il server (l'id del documento): se la push vera
+// e questa copia locale partissero tutte e due, il sistema ne mostra UNA.
+// La difesa di sopra (pushRegisteredHere) vale solo per questa pagina aperta;
+// il tag vale sempre, e il 17/08 si e' visto che serviva.
+var opts = { body: d.body || "", icon: "/icon-192.png", badge: "/icon-192.png", tag: d.id || (d.title || "at3d"), renotify: false };
 if(navigator.serviceWorker && navigator.serviceWorker.getRegistration){
 navigator.serviceWorker.getRegistration().then(function(reg){
 if(reg){ reg.showNotification(d.title || "ArcTrail 3D", opts); }

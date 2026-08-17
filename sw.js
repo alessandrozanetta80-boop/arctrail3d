@@ -28,41 +28,25 @@
 //    Chi installava l'app a casa e la apriva la prima volta sul campo poteva
 //    trovarsi senza pezzi. Ora all'installazione si scarica il necessario.
 
-// --- Firebase Cloud Messaging ---
-importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
-
-firebase.initializeApp({
-  apiKey: "AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",
-  authDomain: "arctrail3d.firebaseapp.com",
-  projectId: "arctrail3d",
-  messagingSenderId: "185889526349",
-  appId: "1:185889526349:web:0af3b386332664387c8204"
-});
-
-try {
-  var messaging = firebase.messaging();
-  messaging.onBackgroundMessage(function(payload){
-    var title = (payload.notification && payload.notification.title) || "ArcTrail 3D";
-    var body  = (payload.notification && payload.notification.body)  || "";
-    self.registration.showNotification(title, {
-      body: body, icon: "icon-192.png", badge: "icon-192.png"
-    });
-  });
-} catch(e) {}
-
-self.addEventListener("notificationclick", function(event){
-  event.notification.close();
-  event.waitUntil(
-    clients.matchAll({ type:"window", includeUncontrolled:true }).then(function(list){
-      for(var i=0;i<list.length;i++){ if("focus" in list[i]) return list[i].focus(); }
-      if(clients.openWindow) return clients.openWindow("/");
-    })
-  );
-});
+// --- Firebase Cloud Messaging: NON STA PIU' QUI ---
+//
+// (17/08/2026.) Qui c'era una copia esatta di firebase-messaging-sw.js:
+// initializeApp, onBackgroundMessage e showNotification. Due service worker
+// registrati sullo stesso sito, tutti e due in ascolto sullo stesso messaggio,
+// tutti e due che mostravano la loro notifica. Risultato sul telefono: OGNI
+// avviso arrivava DOPPIO. Trovato il 17/08 alla prima push mai vista arrivare
+// davvero, e visibile solo li': nessun banco puo' contare quante notifiche
+// disegna un sistema operativo.
+//
+// Le push le gestisce SOLO firebase-messaging-sw.js, che e' il file che
+// Firebase cerca per nome e a cui e' agganciato il token del dispositivo.
+// Questo service worker fa la cache, e basta.
+//
+// Regola: due strade per consegnare la stessa cosa divergono sempre. Qui non
+// erano nemmeno divergenti — erano identiche, ed e' bastato quello.
 
 // ─────────────────────────── CACHE ───────────────────────────
-var CACHE_NAME = "arctrail3d-v4";
+var CACHE_NAME = "arctrail3d-v5";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
