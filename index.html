@@ -11603,7 +11603,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-16-spazio-compagnia";
+var BUILD_STAMP = "2026-08-17-market-favs";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13094,6 +13094,13 @@ return Promise.all(ps);
 }).catch(function(){}));
 // Marketplace: recensioni che HO SCRITTO io (quelle ricevute non sono mie)
 jobs.push(deleteQueryDocs(db.collection("market_reviews").where("fromUid","==",uid).limit(100)));
+// Marketplace: preferiti. Un solo documento, market_favs/{uid}, scritto dal
+// mercatino da quando i preferiti seguono l'account invece del telefono.
+// Senza questa riga restava sul cloud dopo l'eliminazione dell'account: un
+// elenco di cosa uno stava cercando di comprare, cioe' esattamente il tipo di
+// residuo che Google verifica. Non e' una query, e' un documento: si cancella
+// per id.
+jobs.push(db.collection("market_favs").doc(uid).delete().catch(function(){}));
 // Foto degli annunci caricate su Storage in market/{uid}/
 try{
 if(firebase.storage){
