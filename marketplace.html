@@ -438,7 +438,38 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
 .det-bar{position:sticky;bottom:0;display:flex;gap:9px;padding:12px 18px calc(16px + env(safe-area-inset-bottom));background:var(--bg-p);border-top:1px solid var(--line);}
 .btn-fav-det{width:48px;height:48px;flex-shrink:0;border-radius:var(--r-s);background:var(--bg-p2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);}
 .btn-fav-det.on{color:var(--danger)}
-.report-link{font-size:12px;color:var(--muted);text-align:center;cursor:pointer;text-decoration:underline;text-underline-offset:2px;display:block;margin-top:12px;padding:12px 0;}
+/* SEGNALA ANNUNCIO — rifatto il 18/08/2026.
+   Era un <button> senza vestito: nessun `background`, nessun `border`, quindi
+   il browser gli metteva addosso il grigio di sistema. Sopra ci finiva una
+   sottolineatura, e il risultato era un rettangolo grigio con del testo
+   sottolineato dentro — la cosa piu' brutta della schermata, proprio in fondo
+   a un annuncio.
+   Il difetto vero non era la sottolineatura: era che a un <button> vanno
+   dichiarati `background` e `border`, sempre. Quello che non si dichiara lo
+   decide il sistema operativo, e il sistema operativo non ha visto il resto
+   della pagina.
+   COM'E' ADESSO. Discreto ma non nascosto: una segnalazione non deve gridare
+   — la stragrande maggioranza degli annunci e' onesta e mettere un tasto
+   d'allarme sotto ognuno insinua il contrario — ma deve trovarsi al primo
+   sguardo di chi la sta cercando. Testo piccolo, colore attenuato, una riga
+   sottile sopra che lo stacca dal venditore, e l'area toccabile larga tutta
+   la scheda anche se il testo e' corto. */
+.report-link{
+  display:block; width:100%;
+  /* 14px sopra e 15 sotto, non 4: cosi' l'altezza tocca i 44px che questo
+     file si e' dato come misura minima del dito (`--hit`). Con 4 in basso
+     l'aspetto era identico e il bersaglio era 33px — un difetto che si vede
+     solo misurando, e che si paga solo sul telefono di qualcun altro. */
+  margin-top:18px; padding:14px 0 15px; min-height:var(--hit);
+  background:none; border:none; border-top:1px solid var(--line);
+  font:inherit; font-size:12.5px; font-weight:600; letter-spacing:.01em;
+  color:var(--muted); text-align:center; text-decoration:none;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transition:color var(--dur-2) var(--ease);
+}
+.report-link:hover{ color:var(--cream) }
+.report-link:active{ color:var(--cream) }
+.report-link:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:var(--r-s) }
 .radio-row{display:flex;gap:8px;flex-wrap:wrap}
 .radio-pill{min-height:var(--hit);padding:0 16px;border-radius:var(--r-p);background:var(--bg-p2);border:1px solid var(--line);font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:background var(--dur-1),border-color var(--dur-1),color var(--dur-1);}
 .radio-pill.on{background:var(--accent);border-color:var(--accent);color:var(--brand-ink)}
@@ -832,7 +863,7 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
      dire se questo file e' UGUALE a quello online, non se e' avanti o
      indietro. Era la voce 7 delle cose aperte nel diario del mercatino, ed e'
      chiusa nella stessa mossa in cui il timbro e' salito. -->
-<body data-build="2026-08-18-mercatino-segnalazioni" data-parent="2026-08-17-mercatino-promessa-via">
+<body data-build="2026-08-18-mercatino-segnala-b" data-parent="2026-08-18-mercatino-segnalazioni">
 <div id="app">
 <header class="topbar">
   <div class="tb-left">
