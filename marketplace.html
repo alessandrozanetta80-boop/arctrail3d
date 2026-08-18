@@ -358,7 +358,7 @@ section.active{display:block}
 .empty{text-align:center;padding:52px 24px}
 .empty p{font-size:15px;font-weight:600;color:var(--muted)}
 .empty-sub{font-size:13px;color:var(--muted);margin-top:6px;opacity:.75;line-height:1.5;font-weight:400}
-/* LA BARRA STA SOPRA LE SEZIONI (17/08/2026 sera).
+/* LA BARRA STA SOPRA LE SEZIONI (notte fra il 17 e il 18/08/2026).
    Prima era a z-index 45, cioe' SOTTO le finestre di sezione (.fullscr, 100).
    Appena si apriva Preferiti o Messaggi le icone sparivano, e per passare da
    una sezione all'altra bisognava prima chiudere con la freccia e poi toccare.
@@ -757,7 +757,7 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
         transparent      calc(50% + var(--band) + 66px)),
       linear-gradient(180deg,var(--page-a) 0%,var(--page-b) 100%);
   }
-  /* UNA SOLA INSEGNA (17/08/2026 sera).
+  /* UNA SOLA INSEGNA (notte fra il 17 e il 18/08/2026).
      Qui la barra della sezione era vestita da insegna — stesso gradiente,
      stesso bordo oro, stesso raggio della testata — e stava sticky a 16px,
      cioe' ESATTAMENTE dove sta la testata. Finche' le sezioni coprivano la
@@ -832,7 +832,7 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
      dire se questo file e' UGUALE a quello online, non se e' avanti o
      indietro. Era la voce 7 delle cose aperte nel diario del mercatino, ed e'
      chiusa nella stessa mossa in cui il timbro e' salito. -->
-<body data-build="2026-08-17-mercatino-promessa-via" data-parent="2026-08-17-mercatino-barra">
+<body data-build="2026-08-18-mercatino-segnalazioni" data-parent="2026-08-17-mercatino-promessa-via">
 <div id="app">
 <header class="topbar">
   <div class="tb-left">
@@ -1162,6 +1162,16 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
 <div class="fullscr" id="fsSav" style="overflow-y:auto">
   <div class="fscr-tb"><button class="btn-icon" id="btnCSav" data-ta="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><h2 data-t="sav_title"></h2></div>
   <div style="padding:14px 16px" id="savList"></div>
+</div>
+
+<!-- SEGNALAZIONI — la vede solo chi tiene l'app.
+     Testi in italiano e senza data-t: la legge una persona sola, e non e' un
+     utente. Stessa scelta gia' fatta per il pannello Approvazioni dentro
+     index.html, e per la stessa ragione: nove traduzioni di una schermata che
+     apre una persona sono nove occasioni di divergere per niente. -->
+<div class="fullscr" id="fsRep" style="overflow-y:auto">
+  <div class="fscr-tb"><button class="btn-icon" id="btnCRep2" data-ta="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><h2>Segnalazioni</h2></div>
+  <div style="padding:14px 16px" id="repList"></div>
 </div>
 
 <!-- ACTION SHEET -->
@@ -4138,12 +4148,127 @@ function doSignOut(){
   });
 }
 document.getElementById("btnExit").addEventListener("click",function(){if(cu)doSignOut();});
+/* ══ SEGNALAZIONI — la meta' che mancava ═══════════════════════════════════
+   Fino al 18/08/2026 `doRep()` scriveva su `market_reports` e nessuno leggeva:
+   `grep market_reports` trovava UNA riga in tutto il progetto, quella che
+   scrive. Chi segnalava un annuncio riceveva «Segnalazione inviata, grazie»,
+   si fidava, e non succedeva niente.
+
+   Le segnalazioni si gestiscono QUI e non nel pannello Approvazioni dell'app,
+   per una ragione sola: per decidere se un annuncio e' un pacco bisogna
+   guardarlo, e qui e' a un tocco. Nel pannello dell'app bisognerebbe uscire,
+   aprire il mercatino e ritrovarlo — tre passi in un momento in cui i minuti
+   contano.
+
+   La campanella arriva comunque nell'app: la Cloud Function `avvisaSegnalazione`
+   scrive l'avviso e la push parte da li'. La notifica sveglia, questa
+   schermata risolve. */
+var ADMIN_EMAIL_MKT = "alessandro.zanetta80@gmail.com";
+function sonoAdmin(){ return !!(cu && cu.email === ADMIN_EMAIL_MKT); }
+
+var MOTIVI_IT = {
+  price:"prezzo non realistico", photo:"foto non veritiere",
+  forbidden:"articolo vietato", spam:"spam o truffa"
+};
+
+function quandoBreve(ts){
+  if(!ts) return "";
+  var d = ts.toDate ? ts.toDate() : new Date(ts);
+  var min = Math.round((Date.now() - d.getTime())/60000);
+  if(min < 1) return "adesso";
+  if(min < 60) return min + " min fa";
+  var h = Math.round(min/60);
+  if(h < 24) return h + (h===1 ? " ora fa" : " ore fa");
+  return d.toLocaleDateString("it-IT",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+}
+
+function openSegnalazioni(){
+  var el = document.getElementById("repList");
+  el.innerHTML = '<div class="empty"><p>Carico…</p></div>';
+  openFS("fsRep");
+  /* Le aperte per prime e le piu' recenti in cima: se ce n'e' una sola da
+     guardare, deve essere la prima riga senza scorrere. */
+  db.collection("market_reports").orderBy("createdAt","desc").limit(100).get()
+    .then(function(snap){
+      var righe = [];
+      snap.forEach(function(d){ var x = d.data()||{}; x.__id = d.id; righe.push(x); });
+      var aperte = righe.filter(function(x){ return x.stato !== "chiusa"; });
+      var chiuse = righe.filter(function(x){ return x.stato === "chiusa"; });
+      if(!righe.length){
+        el.innerHTML = '<div class="empty"><p>Nessuna segnalazione</p>'
+          + '<p class="empty-sub">Quando qualcuno segnala un annuncio compare qui, e intanto arriva una notifica.</p></div>';
+        return;
+      }
+      el.innerHTML =
+        (aperte.length ? aperte.map(rigaSegnalazione).join("") :
+          '<div class="empty"><p>Nessuna segnalazione aperta</p></div>')
+        + (chiuse.length ? '<p class="sav-nota" style="margin-top:18px">Gia' + "\u2019" + ' gestite (' + chiuse.length + ')</p>'
+             + chiuse.map(rigaSegnalazione).join("") : "");
+      el.querySelectorAll("[data-apri]").forEach(function(b){
+        b.addEventListener("click", function(){
+          var id = b.dataset.apri;
+          var c = (allAds||[]).find(function(x){ return x.id === id; });
+          if(c){ closeFS("fsRep"); openDet(id); return; }
+          /* L'annuncio non e' nell'elenco caricato: o e' stato tolto, o e' di
+             una pagina che non abbiamo. Si va a prenderlo, invece di dire
+             «non c'e'» quando magari c'e'. */
+          db.collection("market_listings").doc(id).get().then(function(doc){
+            if(!doc.exists){ toast("L" + "\u2019" + "annuncio non esiste piu" + "\u2019"); return; }
+            var a = doc.data(); a.id = doc.id;
+            allAds = (allAds||[]).concat([a]);
+            closeFS("fsRep"); openDet(id);
+          }).catch(function(e){ toast("Errore: " + (e.code||e.message)); });
+        });
+      });
+      el.querySelectorAll("[data-chiudi]").forEach(function(b){
+        b.addEventListener("click", function(){
+          db.collection("market_reports").doc(b.dataset.chiudi)
+            .update({ stato:"chiusa", chiusaIl: firebase.firestore.FieldValue.serverTimestamp() })
+            .then(function(){ toast("Segnata come gestita"); openSegnalazioni(); })
+            .catch(function(e){ toast("Errore: " + (e.code||e.message)); });
+        });
+      });
+    })
+    .catch(function(e){
+      /* Se la regola Firestore non lascia leggere, questa schermata resterebbe
+         vuota per sempre senza dire perche'. Meglio un errore brutto e vero
+         che una pagina bianca. */
+      el.innerHTML = '<div class="empty"><p>Non riesco a leggere le segnalazioni</p>'
+        + '<p class="empty-sub">' + esc(e.code||e.message) + '</p>'
+        + '<p class="empty-sub">Se dice permission-denied, manca la regola di lettura su market_reports.</p></div>';
+    });
+}
+
+function rigaSegnalazione(x){
+  var chiusa = x.stato === "chiusa";
+  var motivo = MOTIVI_IT[x.reason] || x.reason || "motivo non indicato";
+  var titolo = x.adTitle || "(annuncio senza titolo salvato)";
+  var sotto = [];
+  if(x.adSellerName) sotto.push(esc(x.adSellerName));
+  if(typeof x.adPrice === "number") sotto.push("\u20AC " + x.adPrice);
+  if(x.adStatus && x.adStatus !== "active") sotto.push(x.adStatus === "sold" ? "venduto" : x.adStatus);
+  sotto.push(quandoBreve(x.createdAt));
+  return '<div class="saved-card" style="' + (chiusa ? "opacity:.55" : "") + '">'
+    + '<div class="saved-body">'
+      + '<div class="saved-q">' + esc(titolo) + '</div>'
+      + '<div class="saved-meta"><b>' + esc(motivo) + '</b> \u00B7 ' + sotto.join(" \u00B7 ") + '</div>'
+    + '</div>'
+    + '<button class="btn-icon" title="Apri l' + "\u2019" + 'annuncio" aria-label="Apri l' + "\u2019" + 'annuncio" data-apri="' + esc(x.adId||"") + '">'
+      + '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>'
+    + (chiusa ? "" :
+       '<button class="btn-icon" title="Segna come gestita" aria-label="Segna come gestita" data-chiudi="' + esc(x.__id) + '">'
+       + '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></button>')
+    + '</div>';
+}
+
+document.getElementById("btnCRep2").addEventListener("click",function(){closeFS("fsRep");});
+
 document.getElementById("uav").addEventListener("click",function(){
   if(!cu)return;
-  openAS("",[
-    {l:t("sav_title"),fn:openSavSearches},
-    {l:t("exit")+" ("+cu.email+")",red:true,fn:doSignOut}
-  ]);
+  var voci = [{l:t("sav_title"),fn:openSavSearches}];
+  if(sonoAdmin()) voci.push({l:"Segnalazioni",fn:openSegnalazioni});
+  voci.push({l:t("exit")+" ("+cu.email+")",red:true,fn:doSignOut});
+  openAS("",voci);
 });
 
 /* ══ CHIEDI — una casella sola per la controproposta e per il link a una foto.
@@ -4903,7 +5028,31 @@ document.getElementById("btnCRev").addEventListener("click",function(){closeOv("
 
 /* ══ SEGNALAZIONI ══ */
 function reportAd(id){openAS(t("rep_title"),[{l:t("rep_price"),fn:function(){doRep(id,"price");}},{l:t("rep_photo"),fn:function(){doRep(id,"photo");}},{l:t("rep_forbidden"),fn:function(){doRep(id,"forbidden");}},{l:t("rep_spam"),red:true,fn:function(){doRep(id,"spam");}}]);}
-function doRep(id,reason){db.collection("market_reports").add({adId:id,reason:reason,fromUid:cu.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){closeOv("ovDet");toast(t("rep_sent"));}).catch(function(e){toast(t("error_short",{msg:(e.code||e.message)}));});}
+/* LA SEGNALAZIONE SI PORTA DIETRO L'ANNUNCIO (18/08/2026).
+   Prima salvava `adId`, `reason`, `fromUid`, `createdAt`: quattro campi, e
+   nessuno che dicesse COSA era stato segnalato. Chi tenta una truffa cancella
+   l'annuncio per primo, e allora restava una riga con un codice che non
+   rimandava piu' a niente — una segnalazione illeggibile e' una segnalazione
+   persa. Titolo, venditore e prezzo si copiano ADESSO, nel momento in cui si
+   scrive: dopo puo' essere troppo tardi.
+   `adStatus` serve a capire se l'annuncio era gia' stato tolto o venduto
+   quando e' arrivata la segnalazione: cambia cosa c'e' da fare. */
+function doRep(id,reason){
+  var a=(allAds||[]).find(function(x){return x.id===id;})||curAd||{};
+  db.collection("market_reports").add({
+    adId:id,
+    reason:reason,
+    fromUid:cu.uid,
+    adTitle:(a.title||"").slice(0,120),
+    adSellerUid:a.sellerUid||"",
+    adSellerName:(a.sellerName||"").slice(0,80),
+    adPrice:(typeof a.price==="number"?a.price:null),
+    adStatus:a.status||"",
+    stato:"aperta",
+    createdAt:firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){closeOv("ovDet");toast(t("rep_sent"));})
+    .catch(function(e){toast(t("error_short",{msg:(e.code||e.message)}));});
+}
 
 /* ══ FILTRI ══ */
 document.getElementById("chipFlt").addEventListener("click",function(){openOv("ovFlt");});
@@ -5288,7 +5437,7 @@ document.getElementById("navMsg").addEventListener("click",function(){vaiA("navM
 function setNav(id){document.querySelectorAll(".bnav-item").forEach(function(n){n.classList.toggle("on",n.id===id);});}
 
 /* DOVE VIVE LA BARRA DELLE ICONE — e perche' si sposta invece di stare ferma.
-   (17/08/2026 sera.)
+   (notte fra il 17 e il 18/08/2026.)
 
    Da computer le icone stanno DENTRO la testata, da telefono sono una barra
    fissa in fondo. Finora il nodo stava sempre dentro `<header class="topbar">`

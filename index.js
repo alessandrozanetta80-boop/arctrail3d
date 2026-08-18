@@ -1,8 +1,8 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-17-push-dove-porta
-// Nata da 2026-08-17-dove-porta
+// Versione 2026-08-18-segnalazioni-e-iscrizioni
+// Nata da: 2026-08-17-avvisi-doppi
 //
-// Tre funzioni, con tre compiti diversi:
+// Cinque funzioni, con cinque compiti diversi:
 //
 //  1) sendNotification  (callable)  — SCRIVE la notifica.
 //     Prima scriveva il telefono, direttamente in notifications/{uid}/items.
@@ -23,6 +23,17 @@
 //     riceve sul telefono, chi non le ha accese la trova comunque nell'elenco
 //     dentro l'app, e se un giorno la consegna cambia, cambia in un posto solo.
 //     Due strade per consegnare la stessa cosa divergono sempre, e in silenzio.
+//
+//  4) avvisaSegnalazione (trigger) — sveglia CHI TIENE L'APP quando qualcuno
+//     segnala un annuncio. Stessa strada della (3): non manda push da se',
+//     scrive la riga su cui scatta la (2). Aggiunta il 18/08/2026 perche' fino
+//     a quel giorno una segnalazione veniva scritta e non la leggeva nessuno:
+//     chi segnalava riceveva un ringraziamento e non succedeva niente.
+//
+//  5) avvisaIscrizione (trigger) — sveglia chi tiene l'app quando qualcuno si
+//     iscrive e resta in attesa. Aggiunta il 18/08/2026 insieme alla chiusura
+//     delle registrazioni: una porta richiusa senza campanello e' una porta
+//     murata, e chi aspetta non ha modo di farsi sentire.
 //
 // ORDINE DI APPLICAZIONE, da rispettare:
 //   1) deploy di queste funzioni   (firebase deploy --only functions)
@@ -57,7 +68,6 @@ exports.sendNotification = onCall({ cors: true }, async (req) => {
 
   const d = req.data || {};
   const toUid = typeof d.toUid === "string" ? d.toUid.trim() : "";
-  const dest = destPulito(d.dest, uid);
   const title = typeof d.title === "string" ? d.title.trim().slice(0, MAX_TITOLO) : "";
   const body  = typeof d.body  === "string" ? d.body.trim().slice(0, MAX_TESTO)  : "";
   if (!toUid || !title) {
@@ -97,89 +107,19 @@ exports.sendNotification = onCall({ cors: true }, async (req) => {
   }
 
   // fromUid lo mette il server: e' la firma vera, non quella dichiarata.
-  const doc = {
+  await db.collection("notifications").doc(toUid).collection("items").add({
     title: title,
     body: body,
     read: false,
     fromUid: uid,
     createdAt: admin.firestore.FieldValue.serverTimestamp()
-  };
-  if (dest) doc.dest = dest;
-  await db.collection("notifications").doc(toUid).collection("items").add(doc);
+  });
 
   return { ok: true };
 });
 
-// DOVE PORTA LA NOTIFICA, ripulito.
-// L'app scrive `dest` dentro il documento e il centro notifiche ci si
-// aggancia: toccare l'avviso apre la cosa che l'ha fatto nascere invece di
-// lasciarla cercare. Qui si decide cosa e' lecito scriverci.
-//
-// DUE FORME SOLE, e non una in piu'. Un campo libero che dice all'app dove
-// andare e' una superficie d'attacco: si accetta un elenco chiuso, tutto il
-// resto diventa `null` e la notifica arriva senza tasto — cioe' come prima.
-//
-// E PER LA CHAT L'UID LO METTE IL SERVER. Se lo scegliesse chi manda,
-// chiunque potrebbe recapitare un avviso che dice «apri la conversazione con
-// X» puntando a un altro: e' esattamente la porta che si e' chiusa mettendo
-// `fromUid` qui dentro invece che sul telefono. Il valore dichiarato dal
-// client si butta via senza guardarlo.
-function destPulito(d, mittente) {
-  // Il tetto sta DENTRO la regola che lo usa: e' l'unico posto che lo
-  // guarda, e cosi' il banco puo' prendersi la funzione da sola.
-  const MAX_ID = 128;
-  if (!d || typeof d !== "object") return null;
-  if (d.k === "dm") return { k: "dm", uid: mittente };
-  if (d.k === "annuncio") {
-    const id = typeof d.id === "string" ? d.id.trim().slice(0, MAX_ID) : "";
-    return id ? { k: "annuncio", id: id } : null;
-  }
-  return null;
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
-// DA `dest` A UN INDIRIZZO — cioe' dove porta l'avviso che compare in cima
-// allo schermo ad app chiusa.
-//
-// PERCHE' ESISTE (17/08/2026, notte). Dentro l'app il tasto che porta alla
-// chat o all'annuncio c'era gia'. Fuori no: toccare la striscia in cima allo
-// schermo apriva l'app e basta, sulla pagina iniziale. E il service worker
-// sapeva GIA' fare la cosa giusta — `notificationclick` legge `dati.link` e se
-// c'e' ci naviga invece di limitarsi a portare avanti la finestra. Solo che
-// nessuno glielo mandava, quel link.
-//
-// *Meta' del lavoro fatta e dalla parte sbagliata* e' lo stesso identico
-// difetto trovato stamattina al contrario: allora il server scriveva `dest` e
-// nessuno lo leggeva, qui c'e' chi legge e nessuno scrive. **Non e' una
-// coincidenza: e' la forma che prende un lavoro interrotto a meta'**, e in
-// tutti e due i casi e' rimasto cosi' per giorni senza che si vedesse niente
-// di rotto. Un pezzo che non c'e' non da' errore: da' silenzio.
-//
-// LE FORME SONO LE STESSE DI destPulito, E NON PER PIGRIZIA. Se qui nascesse
-// un terzo caso, esisterebbe un avviso che dentro l'app porta da una parte e
-// da fuori da un'altra. `dest` ha gia' un solo posto in cui si decide cosa e'
-// lecito: questa funzione traduce, non giudica.
-//
-// L'INDIRIZZO E' ASSOLUTO perche' `clients.openWindow` puo' partire senza
-// nessuna finestra aperta, e in quel caso non c'e' niente rispetto a cui un
-// indirizzo relativo abbia senso.
-const SITO = "https://arctrail3d.com";
-
-function linkDaDest(dest) {
-  if (!dest || typeof dest !== "object") return SITO;
-  if (dest.k === "annuncio" && dest.id) {
-    return SITO + "/marketplace.html?annuncio=" + encodeURIComponent(dest.id);
-  }
-  // Per la chat non c'e' ancora un indirizzo che apra la conversazione: l'app
-  // e' una pagina sola e la schermata non si sceglie da fuori. Si apre la
-  // pagina iniziale, come prima, e il tasto nel centro notifiche resta la
-  // strada buona. DICHIARATO qui perche' non sembri una dimenticanza: il
-  // giorno che l'app sapra' aprirsi su una chat, questa riga e' il posto.
-  return SITO;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 2) PUSH ANCHE AD APP CHIUSA
+// 2) PUSH ANCHE AD APP CHIUSA — invariata
 // Si attiva da sola quando compare un documento in notifications/{uid}/items:
 // legge il token FCM dell'utente (salvato su users/{uid}.fcmToken quando attiva
 // le notifiche) e manda la push.
@@ -207,31 +147,20 @@ exports.pushNotifica = onDocumentCreated(
       // in `onBackgroundMessage` i campi di `notification` arrivano scremati
       // mentre `data` arriva sempre intero.
       const tag = event.params.itemId;
-      // Dove porta questo avviso. `d.dest` e' stato ripulito da destPulito
-      // prima di finire nel documento, quindi qui non serve controllarlo di
-      // nuovo: si traduce e basta.
-      const dove = linkDaDest(d.dest);
       await admin.messaging().send({
         token: token,
         notification: {
           title: d.title || "ArcTrail 3D",
           body: d.body || "",
         },
-        // `link` sta in `data` perche' e' li' che lo cerca il service worker:
-        // in `notificationclick` legge `event.notification.data.link`. Il
-        // campo `fcmOptions.link` qui sotto serve all'altro caso — quando la
-        // striscia la disegna l'SDK di Firebase invece del nostro codice.
-        // Sono due strade che portano allo stesso posto, e devono portare
-        // allo STESSO posto: percio' e' la stessa variabile, non due valori
-        // scritti a mano che un giorno divergono.
-        data: { tag: tag, link: dove },
+        data: { tag: tag },
         webpush: {
           notification: {
             icon: "/icon-192.png",
             badge: "/icon-192.png",
             tag: tag,
           },
-          fcmOptions: { link: dove },
+          fcmOptions: { link: "https://arctrail3d.com" },
         },
       });
     } catch (err) {
@@ -374,13 +303,179 @@ exports.avvisaRicerche = onDocumentCreated(
         read: false,
         fromUid: venditore,
         adId: adId,
-        // `adId` c'era gia' e il centro notifiche lo legge ancora, per le
-        // notifiche scritte prima di oggi. `dest` e' la strada nuova, uguale
-        // per tutti i tipi di avviso: due letture diverse per la stessa cosa
-        // divergono sempre, quindi la vecchia resta solo come ripiego.
-        dest: { k: "annuncio", id: adId },
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       }).catch(function (err) { console.error("avviso non scritto per", c.uid, err); });
     }
+  }
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 4) QUALCUNO HA SEGNALATO UN ANNUNCIO
+// Scatta alla nascita di market_reports/{repId}.
+//
+// PERCHE' ESISTE. Fino al 18/08/2026 `doRep()` scriveva la segnalazione e
+// nessuno la leggeva: nessuna schermata, nessuna funzione, nessun avviso. La
+// persona che segnalava un annuncio truffaldino riceveva «Segnalazione
+// inviata, grazie», si fidava, e non succedeva niente. Un tasto rotto lo vedi
+// e lo aggiri; una promessa mantenuta a meta' no.
+//
+// LA VELOCITA' E' IL PUNTO. All'apertura, un annuncio pacco lasciato in piedi
+// mezza giornata costa piu' di dieci difetti di grafica: la prima volta che
+// qualcuno viene truffato, la voce gira e non torna indietro. Percio' la
+// segnalazione non aspetta che qualcuno apra una schermata: arriva addosso.
+//
+// UNA PUSH PER ANNUNCIO, NON UNA PER SEGNALAZIONE. La notizia e' «questo
+// annuncio ha un problema», e detta cinque volte resta una notizia sola: cinque
+// campanelle per lo stesso annuncio sono il modo piu' rapido per farsi spegnere
+// le notifiche, e allora non arriva piu' nemmeno la prima. Quindi il documento
+// dell'avviso ha un id FISSO ricavato dall'annuncio: la prima segnalazione lo
+// crea — e solo la creazione fa scattare la (2) — le successive aggiornano il
+// conteggio in silenzio. Quando la segnalazione viene archiviata, la riga
+// sparisce e un'eventuale segnalazione nuova torna a suonare.
+//
+// TESTI IN ITALIANO, senza PAROLE[lang]. Questa notifica la legge una persona
+// sola, e non e' un utente: e' chi tiene l'app. Stessa scelta gia' fatta per il
+// pannello Approvazioni dentro index.html.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ADMIN_EMAIL = "alessandro.zanetta80@gmail.com";
+
+// Il motivo arriva come codice dal telefono: qui diventa una frase leggibile.
+// Se un giorno nasce un motivo nuovo nel mercatino e qui non viene aggiunto,
+// la notifica mostra il codice grezzo invece di rompersi — brutta ma leggibile.
+const MOTIVI = {
+  price: "prezzo non realistico",
+  photo: "foto non veritiere",
+  forbidden: "articolo vietato",
+  spam: "spam o truffa"
+};
+
+exports.avvisaSegnalazione = onDocumentCreated(
+  "market_reports/{repId}",
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+    const r = snap.data() || {};
+    const adId = r.adId || "";
+    if (!adId) return;
+
+    const db = admin.firestore();
+
+    // Chi tiene l'app. Cercato per email invece che scritto a mano come uid:
+    // un uid copiato in un file e' una cosa che nessuno ricorda di cambiare.
+    let adminUid = "";
+    try {
+      const u = await admin.auth().getUserByEmail(ADMIN_EMAIL);
+      adminUid = u.uid;
+    } catch (err) {
+      console.error("segnalazione " + event.params.repId +
+                    ": nessun account per " + ADMIN_EMAIL + ", avviso non mandato", err);
+      return;
+    }
+
+    // Il titolo dell'annuncio: da oggi il telefono lo copia dentro la
+    // segnalazione, cosi' resta leggibile anche se l'annuncio viene cancellato
+    // — ed e' la prima cosa che fa chi tenta una truffa. Il ripiego serve alle
+    // segnalazioni scritte prima di oggi.
+    let titolo = r.adTitle || "";
+    if (!titolo) {
+      const ad = await db.collection("market_listings").doc(adId).get().catch(function () { return null; });
+      titolo = (ad && ad.exists ? (ad.data() || {}).title : "") || "annuncio non piu' disponibile";
+    }
+
+    const motivo = MOTIVI[r.reason] || r.reason || "motivo non indicato";
+    const rif = db.collection("notifications").doc(adminUid).collection("items").doc("rep-" + adId);
+
+    try {
+      // `create` fallisce se il documento esiste gia': e' proprio quello che
+      // serve per distinguere «prima segnalazione» da «ennesima».
+      await rif.create({
+        title: "Annuncio segnalato",
+        body: "«" + titolo + "» — " + motivo,
+        read: false,
+        adId: adId,
+        apri: "marketplace",       // dice all'app dove porta il tocco
+        quante: 1,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+    } catch (err) {
+      // Esisteva: stesso annuncio, segnalazione successiva. Si aggiorna il
+      // conteggio e NON si suona di nuovo.
+      await rif.update({
+        quante: admin.firestore.FieldValue.increment(1),
+        body: "«" + titolo + "» — piu' segnalazioni, l'ultima: " + motivo,
+        read: false,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      }).catch(function (e) {
+        console.error("segnalazione su " + adId + ": avviso non aggiornato", e);
+      });
+    }
+  }
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 5) QUALCUNO SI E' ISCRITTO E STA ASPETTANDO
+// Scatta alla nascita di users/{uid}.
+//
+// PERCHE' STA QUI E NON NEL TELEFONO. L'avviso lo mandava index.html con
+// `notifyAdminNewSignup()`, e aveva due buchi.
+// Il primo: un account nasce in DUE punti di quel file — la registrazione col
+// modulo e il documento creato al primo accesso quando non esiste — e solo il
+// primo avvisava. Dal secondo si poteva restare in attesa per giorni senza che
+// nessuno lo sapesse.
+// Il secondo: cercava l'uid dell'admin dentro `app_config/admin` e, se quel
+// documento non c'era, faceva `return` in silenzio. Un avviso che non parte e
+// non lo dice e' peggio di un avviso che manca: si crede che funzioni.
+// Qui il trigger e' sul documento, quindi copre tutte le strade — anche
+// quelle che verranno.
+//
+// SOLO CHI ASPETTA DAVVERO. Se un giorno le registrazioni tornano aperte
+// (`approved: true` alla nascita), questa funzione smette di suonare da sola,
+// senza che nessuno debba ricordarsi di spegnerla.
+// ─────────────────────────────────────────────────────────────────────────────
+
+exports.avvisaIscrizione = onDocumentCreated(
+  "users/{uid}",
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+    const u = snap.data() || {};
+
+    // Gia' attivo: non c'e' niente da approvare, quindi niente da svegliare.
+    if (u.approved === true) return;
+
+    let adminUid = "";
+    try {
+      const a = await admin.auth().getUserByEmail(ADMIN_EMAIL);
+      adminUid = a.uid;
+    } catch (err) {
+      console.error("iscrizione " + event.params.uid +
+                    ": nessun account per " + ADMIN_EMAIL + ", avviso non mandato", err);
+      return;
+    }
+    if (adminUid === event.params.uid) return; // il primo account e' il suo
+
+    // Il nome migliore che c'e', e sotto quello che aggiunge qualcosa. Senza
+    // il controllo sul doppione, chi si iscrive senza nome riceveva un avviso
+    // che diceva due volte la stessa email: visto nel banco, non nel codice.
+    const chi = u.nomeCognome || u.username || u.email || "senza nome";
+    const dettaglio = [
+      (u.username && u.username !== chi) ? "@" + u.username : "",
+      (u.email && u.email !== chi) ? u.email : ""
+    ].filter(Boolean).join(" \u00B7 ");
+
+    await admin.firestore()
+      .collection("notifications").doc(adminUid).collection("items")
+      .doc("isc-" + event.params.uid)   // id fisso: un'iscrizione, una campanella
+      .create({
+        title: "Nuova iscrizione da approvare",
+        body: chi + (dettaglio ? " \u2014 " + dettaglio : ""),
+        read: false,
+        apri: "admin",
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      })
+      .catch(function (err) {
+        console.error("avviso iscrizione non scritto per " + event.params.uid, err);
+      });
   }
 );

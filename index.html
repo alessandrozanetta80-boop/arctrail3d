@@ -1053,8 +1053,8 @@ header.top .sub{ font-size:0.76rem; }
 sotto-schermi, e spezzarli a meta' altezza sbilanciava la pagina. Colonna
 sola, piu' larga.
 
-Qui stava `@media (min-width:1080px){ #app{ max-width:960px } }`, tolta il
-17/08: piu' sotto, nel blocco dei 900px, #app viene rimesso a 1060px, e a
+Qui stava `@media (min-width:1080px){ #app{ max-width:960px } }`, tolta nella
+notte fra il 17 e il 18/08: piu' sotto, nel blocco dei 900px, #app viene rimesso a 1060px, e a
 parita' di specificita' vince chi arriva dopo. Era una regola senza effetto da
 settimane, e una regola che non fa niente e' peggio di una regola assente:
 chi legge crede che a 1080px la pagina si stringa, e non e' vero. */
@@ -1086,7 +1086,7 @@ header.top .headtxt{ flex:0 0 auto; }
 .tabbar-wide{ flex:1 1 420px; flex-wrap:wrap; justify-content:center; gap:3px; }
 /* Qui stavano due regole che mandavano le sezioni a capo quando la colonna era
 stretta (`#app.narrow header.top .head-actions{order:1}` e la gemella su
-.tabbar-wide). Tolte il 17/08 insieme al guscio che si stringeva: adesso
+.tabbar-wide). Tolte nella notte fra il 17 e il 18/08 insieme al guscio che si stringeva: adesso
 l'insegna e' larga uguale su tutte le schermate, quindi le sezioni ci stanno
 in riga e non devono piu' scendere. Erano la conseguenza del difetto, non una
 scelta: se un giorno l'insegna tornasse a stringersi, tornerebbero anche loro. */
@@ -2183,10 +2183,23 @@ try{ pendingProfileRaw = window.localStorage.getItem(PENDING_PROFILE_KEY); }catc
 var pendingProfile = null;
 if(pendingProfileRaw){ try{ pendingProfile = JSON.parse(pendingProfileRaw); }catch(e){ pendingProfile = null; } }
 var newDoc = {
-// Dal 14/08 le registrazioni sono aperte: l'account nasce gia' attivo.
-// Il filtro non e' piu' l'approvazione a mano ma la conferma dell'email.
+// PORTA RICHIUSA IL 18/08/2026. Dal 14/08 l'account nasceva gia' attivo e
+// chiunque confermasse l'email entrava. Si torna all'approvazione a mano:
+// prima si guarda se l'app regge con chi la usa davvero, poi si apre.
+//
+// LA VIA SCELTA E' QUELLA REVERSIBILE. L'altra — rimettere il filtro sul
+// campo `betaTester` — avrebbe buttato fuori in blocco TUTTI quelli entrati
+// fra il 14 e il 18, perche' nessuno di loro ha quel campo. Cosi' invece non
+// cambia niente per chi c'e' gia': cambia solo che i nuovi aspettano.
+// Per riaprire basta rimettere `true` qui: una riga, nessuna migrazione.
+//
+// Chi resta in attesa vede `pendingApprovalScreen()`, che esiste da sempre e
+// non e' mai stata tolta. Chi approva lo fa dal pannello Approvazioni, che
+// c'e' gia'. L'unico pezzo che mancava — accorgersi che qualcuno sta
+// aspettando — lo fa `avvisaIscrizione` in index.js: senza quello la porta
+// richiusa diventa una porta murata, e la gente aspetta per giorni.
 email: user.email,
-approved: true,
+approved: false,
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 };
 if(pendingProfile){
@@ -8923,10 +8936,22 @@ auth.createUserWithEmailAndPassword(email, password).then(function(result){
 currentUser = result.user;
 try{ result.user.sendEmailVerification(); }catch(e){}
 db.collection("users").doc(result.user.uid).set({
-email: email, approved: true, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+// `approved: false` dal 18/08, come nell'altra strada qui sopra: un account
+// puo' nascere in due punti diversi del file, e due punti che rispondono in
+// modo diverso alla stessa domanda sono un difetto che si vede solo a meta'.
+email: email, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, federazioni: federazioni, arco: arcoSel, privacy: true, terms: true
 }).then(function(){
-notifyAdminNewSignup({ nomeCognome: nomeCognome, username: username, email: email });
+// L'avviso non lo manda piu' il telefono: lo manda `avvisaIscrizione` in
+// index.js, che scatta alla nascita del documento. Due ragioni.
+// Primo: un account nasce in DUE punti di questo file, e dall'altro non
+// avvisava nessuno — una persona poteva restare in attesa per giorni senza
+// che si sapesse.
+// Secondo: `notifyAdminNewSignup` cercava l'uid dell'admin dentro
+// `app_config/admin` e, se quel documento non c'era, usciva in silenzio: un
+// avviso che non parte e non lo dice e' peggio di un avviso che manca.
+// La funzione lasciata qui sotto non e' piu' chiamata da nessuno; resta
+// finche' non si e' visto arrivare almeno un avviso dalla strada nuova.
 // Non si entra subito: prima va aperto il link di conferma dell'email.
 authState = "verifyEmail";
 save(); render();
@@ -11898,7 +11923,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-17-colonna-ferma";
+var BUILD_STAMP = "2026-08-18-porta-e-segnalazioni";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -11907,7 +11932,7 @@ var BUILD_STAMP = "2026-08-17-colonna-ferma";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-17-push-dove-porta";
+var BUILD_PARENT = "2026-08-17-colonna-ferma";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13955,7 +13980,7 @@ if(d && d.k === "dm" && d.uid) return versoLaChat(d.uid);
 var adId = (d && d.k === "annuncio" && d.id) ? d.id : n.adId;
 if(adId) return { etichetta: t("notif_open_ad"), k:"annuncio", val:adId };
 // TERZA STRADA, ed e' quella che regge quando le altre due non ci sono.
-// `dest` lo scrive CHI MANDA: una notifica arrivata prima del 17/08 sera, o
+// `dest` lo scrive CHI MANDA: una notifica arrivata prima del notte fra il 17 e il 18/08, o
 // mandata da un telefono che non ha ancora ricaricato l'app, non ce l'ha e
 // non ce l'avra' mai. Ma `fromUid` c'e' su OGNI notifica scritta dal server,
 // da sempre.

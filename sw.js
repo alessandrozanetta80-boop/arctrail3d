@@ -146,19 +146,19 @@ self.addEventListener("notificationclick", function(event){
 });
 
 // ─────────────────────────── CACHE ───────────────────────────
-// v7 (17/08/2026 sera). Il numero non si alza per abitudine: si alza perche'
+// v7 (notte fra il 17 e il 18/08/2026). Il numero non si alza per abitudine: si alza perche'
 // cambiando nome, `activate` cancella tutte le cache vecchie. E stasera era
 // l'unico modo di buttare via una copia di `index.html` rimasta bloccata su
 // una versione di due ore prima — vedi il commento su fromNetwork.
 // Il service worker nuovo il telefono se lo prende da solo, perche' il
 // browser rilegge SEMPRE questo file dalla rete: e' l'unica cosa che non
 // passa dalla cache, ed e' per questo che la cura sta qui e non altrove.
-var CACHE_NAME = "arctrail3d-v8";
-// Nata da: arctrail3d-v7. Alzata il 17/08 sera perche' e' cambiato
+var CACHE_NAME = "arctrail3d-v9";
+// Nata da: arctrail3d-v7. Alzata il notte fra il 17 e il 18/08 perche' e' cambiato
 // `index.html`, che sta in APP_SHELL: senza il nome nuovo il telefono
 // continuerebbe a servire la copia di prima e la correzione non si
 // vedrebbe. Stessa regola del BUILD_STAMP, stesso motivo.
-var CACHE_PARENT = "arctrail3d-v7";
+var CACHE_PARENT = "arctrail3d-v8";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
@@ -210,7 +210,7 @@ self.addEventListener("activate", function(event){
 // Rete con tempo massimo: passato quello, si va di cache.
 //
 // MA LA RISPOSTA ARRIVATA TARDI SI TIENE LO STESSO, e prima non era cosi'.
-// (Corretto il 17/08/2026 sera, dopo che un aggiornamento non arrivava sul
+// (Corretto il notte fra il 17 e il 18/08/2026, dopo che un aggiornamento non arrivava sul
 // telefono per quante volte lo si riaprisse.)
 //
 // Il difetto, e perche' non si vedeva. Scaduti i tre secondi si serviva la
