@@ -1,6 +1,6 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-18-segnalazioni-e-iscrizioni
-// Nata da: 2026-08-17-avvisi-doppi
+// Versione 2026-08-19-la-campanella-torna-a-suonare
+// Nata da: 2026-08-18-segnalazioni-e-iscrizioni
 //
 // Cinque funzioni, con cinque compiti diversi:
 //
@@ -386,6 +386,40 @@ exports.avvisaSegnalazione = onDocumentCreated(
     const motivo = MOTIVI[r.reason] || r.reason || "motivo non indicato";
     const rif = db.collection("notifications").doc(adminUid).collection("items").doc("rep-" + adId);
 
+    /* DUE DIFETTI CORRETTI IL 19/08/2026, e sono la ragione per cui la push
+       non arrivava mai.
+
+       PRIMO: IL CATCH ERA CIECO. Qualunque errore di `create` — non solo
+       «esiste gia'», ma anche un campo rifiutato, una quota, un problema di
+       rete — finiva nel ramo `update`, cioe' nel ramo che di proposito NON fa
+       suonare niente. Un difetto che si travestiva da comportamento voluto:
+       da fuori sembrava «la seconda segnalazione non suona, giusto cosi'»,
+       mentre poteva essere «non ha mai suonato nessuna». Adesso solo
+       ALREADY_EXISTS (codice 6) porta all'aggiornamento silenzioso; ogni
+       altro errore si scrive nei log con la sua faccia.
+
+       SECONDO, PIU' GRAVE: L'AVVISO GIA' LETTO NON SUONAVA PIU'. L'id fisso
+       serve a non suonare cinque volte per lo stesso annuncio, e finche'
+       l'avviso e' li' NON LETTO va bene cosi': la campanella e' gia' suonata,
+       chi deve intervenire lo sa. Ma se l'avviso e' stato letto, la storia per
+       chi legge e' chiusa — e una segnalazione nuova su quello stesso annuncio
+       e' una notizia nuova, non un aggiornamento. Prima restava muta per
+       sempre. Adesso l'avviso letto viene cancellato e rifatto, e cosi' torna
+       a suonare. */
+    let esisteva = null;
+    try {
+      const gia = await rif.get();
+      if (gia.exists) esisteva = gia.data() || {};
+    } catch (e) { /* se non si riesce a guardare, si prova comunque a creare */ }
+
+    if (esisteva && esisteva.read === true) {
+      // Gia' letto: storia chiusa, questa e' una notizia nuova.
+      await rif.delete().catch(function (e) {
+        console.error("segnalazione su " + adId + ": avviso vecchio non tolto", e);
+      });
+      esisteva = null;
+    }
+
     try {
       // `create` fallisce se il documento esiste gia': e' proprio quello che
       // serve per distinguere «prima segnalazione» da «ennesima».
@@ -398,9 +432,20 @@ exports.avvisaSegnalazione = onDocumentCreated(
         quante: 1,
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       });
+      console.log("segnalazione su " + adId + ": avviso CREATO, la push parte");
     } catch (err) {
-      // Esisteva: stesso annuncio, segnalazione successiva. Si aggiorna il
-      // conteggio e NON si suona di nuovo.
+      const codice = err && (err.code !== undefined ? err.code : err.status);
+      if (codice !== 6 && codice !== "already-exists" && codice !== "ALREADY_EXISTS") {
+        // NON e' «esiste gia'»: qui la push non partira', e va detto forte
+        // invece di finire nel ramo silenzioso come succedeva prima.
+        console.error("segnalazione su " + adId +
+                      ": avviso NON creato per un motivo diverso da «esiste gia'»." +
+                      " La push non partira'.", err);
+        return;
+      }
+      // Esisteva e non era ancora letto: la campanella e' gia' suonata, chi
+      // deve intervenire lo sa. Si aggiorna il conteggio e non si suona.
+      console.log("segnalazione su " + adId + ": avviso gia' presente e non letto, aggiornato in silenzio");
       await rif.update({
         quante: admin.firestore.FieldValue.increment(1),
         body: "«" + titolo + "» — piu' segnalazioni, l'ultima: " + motivo,

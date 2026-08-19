@@ -1209,6 +1209,11 @@ color:var(--text-3); font-size:var(--t-lg); line-height:1; }
 .notif-vai{
 display:flex; align-items:center; gap:4px; margin-top:8px;
 font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
+/* Il rifiuto di Firestore, detto dentro la riga che non se n'e' andata.
+   Sta qui e non in un avviso volante di proposito: il messaggio deve restare
+   attaccato alla cosa che non ha funzionato, e va letto con calma — su un
+   telefono nessuno apre la console per scoprire un permission-denied. */
+.notif-errore{ font-size:var(--t-xs); color:var(--danger-role); margin-top:6px; }
 .notif-vuoto{ font-size:var(--t-sm); color:var(--text-3); }
 .notif-sub{ font-size:var(--t-sm); color:var(--text-3); margin-bottom:12px; }
 .notif-azioni{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
@@ -2549,6 +2554,7 @@ notif_center_delete_read: "Elimina le notifiche lette",
 notif_center_delete_all: "Elimina tutte le notifiche",
 notif_center_delete_confirm: "Confermi? Le notifiche vengono cancellate per sempre.",
 notif_delete_one: "Elimina",
+error_short: "Errore: {msg}",
 msg_delete_mine: "Elimina il mio messaggio",
 market_opening: "Apro il Marketplace\u2026",
 hist_delete_one: "Elimina questo giro",
@@ -3032,6 +3038,7 @@ notif_center_delete_read: "Delete read notifications",
 notif_center_delete_all: "Delete all notifications",
 notif_center_delete_confirm: "Are you sure? The notifications are deleted for good.",
 notif_delete_one: "Delete",
+error_short: "Error: {msg}",
 msg_delete_mine: "Delete my message",
 market_opening: "Opening the Marketplace\u2026",
 hist_delete_one: "Delete this round",
@@ -3537,6 +3544,7 @@ notif_center_delete_read: "Supprimer les notifications lues",
 notif_center_delete_all: "Supprimer toutes les notifications",
 notif_center_delete_confirm: "Confirmer\u00a0? Les notifications sont supprim\u00e9es d\u00e9finitivement.",
 notif_delete_one: "Supprimer",
+error_short: "Erreur : {msg}",
 msg_delete_mine: "Supprimer mon message",
 market_opening: "Ouverture du Marketplace\u2026",
 hist_delete_one: "Supprimer ce tour",
@@ -4042,6 +4050,7 @@ notif_center_delete_read: "Gelesene Benachrichtigungen l\u00f6schen",
 notif_center_delete_all: "Alle Benachrichtigungen l\u00f6schen",
 notif_center_delete_confirm: "Best\u00e4tigen? Die Benachrichtigungen werden endg\u00fcltig gel\u00f6scht.",
 notif_delete_one: "L\u00f6schen",
+error_short: "Fehler: {msg}",
 msg_delete_mine: "Meine Nachricht l\u00f6schen",
 market_opening: "Marketplace wird ge\u00f6ffnet\u2026",
 hist_delete_one: "Diese Runde l\u00f6schen",
@@ -4547,6 +4556,7 @@ notif_center_delete_read: "Okunmu\u015f bildirimleri sil",
 notif_center_delete_all: "B\u00fct\u00fcn bildirimleri sil",
 notif_center_delete_confirm: "Onayl\u0131yor musun? Bildirimler kal\u0131c\u0131 olarak silinir.",
 notif_delete_one: "Sil",
+error_short: "Hata: {msg}",
 msg_delete_mine: "Mesaj\u0131m\u0131 sil",
 market_opening: "Pazar yeri a\u00e7\u0131l\u0131yor\u2026",
 hist_delete_one: "Bu turu sil",
@@ -5066,6 +5076,7 @@ notif_center_delete_read: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u043f\u04
 notif_center_delete_all: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0432\u0441\u0435 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f",
 notif_center_delete_confirm: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u0435\u0442\u0435? \u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f \u0443\u0434\u0430\u043b\u044f\u044e\u0442\u0441\u044f \u043d\u0430\u0432\u0441\u0435\u0433\u0434\u0430.",
 notif_delete_one: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c",
+error_short: "\u041e\u0448\u0438\u0431\u043a\u0430: {msg}",
 msg_delete_mine: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u043c\u043e\u0451 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435",
 market_opening: "\u041e\u0442\u043a\u0440\u044b\u0432\u0430\u044e \u0431\u0430\u0440\u0430\u0445\u043e\u043b\u043a\u0443\u2026",
 hist_delete_one: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u044d\u0442\u043e\u0442 \u043a\u0440\u0443\u0433",
@@ -5585,6 +5596,7 @@ notif_center_delete_read: "Eliminar las notificaciones le\u00eddas",
 notif_center_delete_all: "Eliminar todas las notificaciones",
 notif_center_delete_confirm: "\u00bfConfirmas? Las notificaciones se borran para siempre.",
 notif_delete_one: "Eliminar",
+error_short: "Error: {msg}",
 msg_delete_mine: "Eliminar mi mensaje",
 market_opening: "Abriendo el Marketplace\u2026",
 hist_delete_one: "Eliminar esta ronda",
@@ -6104,6 +6116,7 @@ notif_center_delete_read: "Radera l\u00e4sta notiser",
 notif_center_delete_all: "Radera alla notiser",
 notif_center_delete_confirm: "Bekr\u00e4ftar du? Notiserna raderas f\u00f6r alltid.",
 notif_delete_one: "Radera",
+error_short: "Fel: {msg}",
 msg_delete_mine: "Radera mitt meddelande",
 market_opening: "\u00d6ppnar Marketplace\u2026",
 hist_delete_one: "Radera den h\u00e4r rundan",
@@ -6623,6 +6636,7 @@ notif_center_delete_read: "Gelezen meldingen verwijderen",
 notif_center_delete_all: "Alle meldingen verwijderen",
 notif_center_delete_confirm: "Bevestig je? De meldingen worden definitief verwijderd.",
 notif_delete_one: "Verwijderen",
+error_short: "Fout: {msg}",
 msg_delete_mine: "Mijn bericht verwijderen",
 market_opening: "Marketplace wordt geopend\u2026",
 hist_delete_one: "Deze ronde verwijderen",
@@ -11923,7 +11937,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-18-porta-e-segnalazioni";
+var BUILD_STAMP = "2026-08-19-la-x-parla";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -11932,7 +11946,7 @@ var BUILD_STAMP = "2026-08-18-porta-e-segnalazioni";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-17-colonna-ferma";
+var BUILD_PARENT = "2026-08-18-porta-e-segnalazioni";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -14070,7 +14084,20 @@ delOne.addEventListener("click", function(ev){
 ev.stopPropagation();
 delOne.disabled = true;
 db.collection("notifications").doc(currentUser.uid).collection("items").doc(n.id).delete()
-.catch(function(e){ console.error("notif delete:", e); delOne.disabled = false; });
+.catch(function(e){
+// IL SILENZIO ERA IL DIFETTO (19/08/2026). Qui c'era solo un console.error:
+// se Firestore rifiutava la cancellazione — cosa che fa se la regola su
+// notifications non prevede `delete` — la X si spegneva un istante e la riga
+// restava li'. Da fuori: "la X non funziona". Nessun modo di sapere perche',
+// e su un telefono la console non la apre nessuno.
+// Adesso il rifiuto si dichiara. Una funzione che fallisce in silenzio fa
+// perdere piu' tempo di una che si rompe forte.
+console.error("notif delete:", e);
+delOne.disabled = false;
+var avviso = row.querySelector(".notif-errore");
+if(!avviso){ avviso = el('<div class="notif-errore"></div>'); row.appendChild(avviso); }
+avviso.textContent = t("error_short", { msg: (e && (e.code || e.message)) || "?" });
+});
 });
 row.appendChild(delOne);
 row.appendChild(el('<div class="notif-titolo">'+escapeHtml(n.title||"ArcTrail 3D")+'</div>'));

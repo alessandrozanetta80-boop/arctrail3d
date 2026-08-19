@@ -863,7 +863,7 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
      dire se questo file e' UGUALE a quello online, non se e' avanti o
      indietro. Era la voce 7 delle cose aperte nel diario del mercatino, ed e'
      chiusa nella stessa mossa in cui il timbro e' salito. -->
-<body data-build="2026-08-18-mercatino-segnala-b" data-parent="2026-08-18-mercatino-segnalazioni">
+<body data-build="2026-08-19-mercatino-cerchio" data-parent="2026-08-18-mercatino-segnala-b">
 <div id="app">
 <header class="topbar">
   <div class="tb-left">
@@ -4253,9 +4253,29 @@ function openSegnalazioni(){
       });
       el.querySelectorAll("[data-chiudi]").forEach(function(b){
         b.addEventListener("click", function(){
+          var adId = b.dataset.ad || "";
           db.collection("market_reports").doc(b.dataset.chiudi)
             .update({ stato:"chiusa", chiusaIl: firebase.firestore.FieldValue.serverTimestamp() })
-            .then(function(){ toast("Segnata come gestita"); openSegnalazioni(); })
+            .then(function(){
+              /* IL CERCHIO SI CHIUDE QUI, ed e' un difetto trovato il 19/08.
+                 L'avviso della segnalazione ha un id fisso ricavato
+                 dall'annuncio (`rep-{adId}`), perche' cinque segnalazioni
+                 sullo stesso annuncio non devono suonare cinque volte. Ma la
+                 conseguenza e' che finche' quell'avviso ESISTE, la campanella
+                 non suona mai piu' per quell'annuncio — nemmeno fra un mese,
+                 nemmeno dopo che la faccenda e' stata sistemata.
+                 Quindi archiviare la segnalazione deve portarsi via anche
+                 l'avviso: e' il gesto che dice «questa storia e' finita», e da
+                 quel momento una segnalazione nuova torna a essere una
+                 notizia. Se la cancellazione fallisce non si blocca niente —
+                 la segnalazione risulta gestita comunque — ma si dice. */
+              if(adId && cu){
+                db.collection("notifications").doc(cu.uid).collection("items")
+                  .doc("rep-" + adId).delete()
+                  .catch(function(e){ toast("Gestita, ma l" + "\u2019" + "avviso resta: " + (e.code||e.message)); });
+              }
+              toast("Segnata come gestita"); openSegnalazioni();
+            })
             .catch(function(e){ toast("Errore: " + (e.code||e.message)); });
         });
       });
@@ -4287,7 +4307,7 @@ function rigaSegnalazione(x){
     + '<button class="btn-icon" title="Apri l' + "\u2019" + 'annuncio" aria-label="Apri l' + "\u2019" + 'annuncio" data-apri="' + esc(x.adId||"") + '">'
       + '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>'
     + (chiusa ? "" :
-       '<button class="btn-icon" title="Segna come gestita" aria-label="Segna come gestita" data-chiudi="' + esc(x.__id) + '">'
+       '<button class="btn-icon" title="Segna come gestita" aria-label="Segna come gestita" data-chiudi="' + esc(x.__id) + '" data-ad="' + esc(x.adId||"") + '">'
        + '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></button>')
     + '</div>';
 }
