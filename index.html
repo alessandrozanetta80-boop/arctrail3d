@@ -2220,23 +2220,29 @@ try{ pendingProfileRaw = window.localStorage.getItem(PENDING_PROFILE_KEY); }catc
 var pendingProfile = null;
 if(pendingProfileRaw){ try{ pendingProfile = JSON.parse(pendingProfileRaw); }catch(e){ pendingProfile = null; } }
 var newDoc = {
-// PORTA RICHIUSA IL 18/08/2026. Dal 14/08 l'account nasceva gia' attivo e
-// chiunque confermasse l'email entrava. Si torna all'approvazione a mano:
-// prima si guarda se l'app regge con chi la usa davvero, poi si apre.
+// PORTA RIAPERTA IL 19/08/2026, la sera stessa in cui era stata trovata la
+// prima crepa. Torna a valere quello che era stato deciso il 14/08 e non era
+// mai stato disdetto: PER ENTRARE BASTA REGISTRARSI E CONFERMARE L'EMAIL.
+// Nessuno aspetta un via libera dato a mano.
 //
-// LA VIA SCELTA E' QUELLA REVERSIBILE. L'altra — rimettere il filtro sul
-// campo `betaTester` — avrebbe buttato fuori in blocco TUTTI quelli entrati
-// fra il 14 e il 18, perche' nessuno di loro ha quel campo. Cosi' invece non
-// cambia niente per chi c'e' gia': cambia solo che i nuovi aspettano.
-// Per riaprire basta rimettere `true` qui: una riga, nessuna migrazione.
+// La chiusura del 18 era stata scritta come reversibile apposta — «per
+// riaprire basta rimettere `true` qui: una riga, nessuna migrazione». Questa
+// e' quella riga. Chi e' entrato in questi giorni non se ne accorge.
 //
-// Chi resta in attesa vede `pendingApprovalScreen()`, che esiste da sempre e
-// non e' mai stata tolta. Chi approva lo fa dal pannello Approvazioni, che
-// c'e' gia'. L'unico pezzo che mancava — accorgersi che qualcuno sta
-// aspettando — lo fa `avvisaIscrizione` in index.js: senza quello la porta
-// richiusa diventa una porta murata, e la gente aspetta per giorni.
+// COSA RESTA IN PIEDI DELLA CHIUSURA, e non e' un residuo dimenticato:
+//  - `pendingApprovalScreen()` NON si tocca. Serve ancora a chi si e' iscritto
+//    fra il 18 e il 19 col documento a `approved:false`: quelli restano fermi
+//    finche' non li si approva dal pannello Approvazioni. L'app non li puo'
+//    sbloccare da se', e non e' una mancanza: le regole vietano all'utente di
+//    cambiarsi `approved`, che e' l'unica ragione per cui quel campo protegge
+//    qualcosa.
+//  - Il campo `approved` resta, e resta l'interruttore dell'admin. Cambia a
+//    cosa serve: non piu' a far entrare, ma a poter sospendere qualcuno.
+//
+// La conferma dell'email resta obbligatoria, e resta PRIMA dell'approvazione:
+// vedi la riga di `needsEmailVerification` piu' sotto e il perche' accanto.
 email: user.email,
-approved: false,
+approved: true,
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 };
 if(pendingProfile){
@@ -9139,10 +9145,11 @@ auth.createUserWithEmailAndPassword(email, password).then(function(result){
 currentUser = result.user;
 try{ conRitorno(function(opt){ return result.user.sendEmailVerification(opt); }).catch(function(){}); }catch(e){}
 db.collection("users").doc(result.user.uid).set({
-// `approved: false` dal 18/08, come nell'altra strada qui sopra: un account
+// `approved: true` dal 19/08, come nell'altra strada qui sopra: un account
 // puo' nascere in due punti diversi del file, e due punti che rispondono in
 // modo diverso alla stessa domanda sono un difetto che si vede solo a meta'.
-email: email, approved: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+// Chi si registra entra: manca solo il link di conferma dell'email.
+email: email, approved: true, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, federazioni: federazioni, arco: arcoSel, privacy: true, terms: true
 }).then(function(){
 // L'avviso non lo manda piu' il telefono: lo manda `avvisaIscrizione` in
@@ -10665,8 +10672,23 @@ armDoubleConfirm(resetBtn, t("reset_confirm"), hardResetAll);
 else if(state.tab === "market"){
 var mktCard = el('<div class="card"></div>');
 mktCard.appendChild(el('<h2 class="section-title">'+t("market_btn_label")+'</h2>'));
-// Aperto a tutti dal 14/08: il vecchio gating su IS_BETA_TESTER e' stato tolto.
-if(true){
+// IL MERCATINO E' DEI COLLAUDATORI. (19/08/2026, sera.)
+// Il 14/08 era stato aperto a tutti e il gating tolto; il 18/08 Alessandro ha
+// chiesto di richiuderlo a chi non e' in beta — «vorrei che stesse in beta e
+// prima tiriamo la gente che usa l'app». Quella richiesta riguardava QUESTO,
+// non le registrazioni, che restano aperte a chiunque confermi l'email.
+//
+// Il ramo `else` non e' mai stato tolto: la schermata chiusa con
+// `market_locked_body` e' rimasta li' dal 14/08, tradotta in nove lingue, ad
+// aspettare questa riga. E' il motivo per cui richiudere costa una condizione
+// invece di una schermata nuova.
+//
+// LA VERA PORTA SONO LE REGOLE, non questa riga: qui si decide cosa si vede,
+// non cosa si puo' leggere. Chi arriva a `marketplace.html` per link diretto
+// lo ferma il suo controllo in cima al file, e chi provasse dalla console lo
+// ferma `isMarket()` in firestore.rules. Tre punti, e il solo che conta e' il
+// terzo.
+if(IS_BETA_TESTER === true){
 // Si apre da solo: premere "Marketplace" due volte non aveva senso.
 // La scheda torna su "Tira" PRIMA di uscire, altrimenti al ritorno dal
 // marketplace si ripartirebbe subito verso il marketplace, in cerchio.
@@ -12176,7 +12198,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-19-lingua-porta";
+var BUILD_STAMP = "2026-08-19-porta-e-mercatino";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12185,7 +12207,7 @@ var BUILD_STAMP = "2026-08-19-lingua-porta";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-19-porta-conferma";
+var BUILD_PARENT = "2026-08-19-lingua-porta";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
