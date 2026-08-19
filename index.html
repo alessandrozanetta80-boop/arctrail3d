@@ -1214,6 +1214,11 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    attaccato alla cosa che non ha funzionato, e va letto con calma — su un
    telefono nessuno apre la console per scoprire un permission-denied. */
 .notif-errore{ font-size:var(--t-xs); color:var(--danger-role); margin-top:6px; }
+/* La prova della campanella, nel profilo. `pre-line` perche' l'esito e' fatto
+   di righe corte una sotto l'altra — l'anello e il suo stato — e sono piu'
+   leggibili incolonnate che infilate in un paragrafo. */
+.prova-campanella{ margin-bottom:12px; }
+.prova-esito{ font-size:var(--t-xs); color:var(--text-3); margin-top:8px; white-space:pre-line; }
 .notif-vuoto{ font-size:var(--t-sm); color:var(--text-3); }
 .notif-sub{ font-size:var(--t-sm); color:var(--text-3); margin-bottom:12px; }
 .notif-azioni{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
@@ -2555,6 +2560,14 @@ notif_center_delete_all: "Elimina tutte le notifiche",
 notif_center_delete_confirm: "Confermi? Le notifiche vengono cancellate per sempre.",
 notif_delete_one: "Elimina",
 error_short: "Errore: {msg}",
+notif_test_btn: "Prova la campanella",
+notif_test_perm: "Permesso del telefono",
+notif_test_token: "Token di questo dispositivo",
+notif_test_wait: "Mando…",
+notif_test_nofn: "Le funzioni non rispondono. Riprova fra poco.",
+notif_test_title: "Prova",
+notif_test_body: "Se leggi questo, la campanella funziona.",
+notif_test_sent: "Mandata. Se non compare entro un minuto con l\u2019app chiusa, il guasto \u00e8 dopo il server.",
 msg_delete_mine: "Elimina il mio messaggio",
 market_opening: "Apro il Marketplace\u2026",
 hist_delete_one: "Elimina questo giro",
@@ -3039,6 +3052,14 @@ notif_center_delete_all: "Delete all notifications",
 notif_center_delete_confirm: "Are you sure? The notifications are deleted for good.",
 notif_delete_one: "Delete",
 error_short: "Error: {msg}",
+notif_test_btn: "Test the bell",
+notif_test_perm: "Phone permission",
+notif_test_token: "Token on this device",
+notif_test_wait: "Sending…",
+notif_test_nofn: "Functions are not responding. Try again shortly.",
+notif_test_title: "Test",
+notif_test_body: "If you read this, the bell works.",
+notif_test_sent: "Sent. If nothing shows within a minute with the app closed, the fault is past the server.",
 msg_delete_mine: "Delete my message",
 market_opening: "Opening the Marketplace\u2026",
 hist_delete_one: "Delete this round",
@@ -3545,6 +3566,14 @@ notif_center_delete_all: "Supprimer toutes les notifications",
 notif_center_delete_confirm: "Confirmer\u00a0? Les notifications sont supprim\u00e9es d\u00e9finitivement.",
 notif_delete_one: "Supprimer",
 error_short: "Erreur : {msg}",
+notif_test_btn: "Tester la sonnerie",
+notif_test_perm: "Autorisation du t\u00e9l\u00e9phone",
+notif_test_token: "Jeton de cet appareil",
+notif_test_wait: "Envoi…",
+notif_test_nofn: "Les fonctions ne r\u00e9pondent pas. R\u00e9essayez bient\u00f4t.",
+notif_test_title: "Test",
+notif_test_body: "Si vous lisez ceci, la sonnerie fonctionne.",
+notif_test_sent: "Envoy\u00e9. Si rien n\u2019appara\u00eet en une minute avec l\u2019appli ferm\u00e9e, la panne est apr\u00e8s le serveur.",
 msg_delete_mine: "Supprimer mon message",
 market_opening: "Ouverture du Marketplace\u2026",
 hist_delete_one: "Supprimer ce tour",
@@ -4051,6 +4080,14 @@ notif_center_delete_all: "Alle Benachrichtigungen l\u00f6schen",
 notif_center_delete_confirm: "Best\u00e4tigen? Die Benachrichtigungen werden endg\u00fcltig gel\u00f6scht.",
 notif_delete_one: "L\u00f6schen",
 error_short: "Fehler: {msg}",
+notif_test_btn: "Klingel testen",
+notif_test_perm: "Berechtigung des Telefons",
+notif_test_token: "Token dieses Ger\u00e4ts",
+notif_test_wait: "Senden…",
+notif_test_nofn: "Die Funktionen antworten nicht. Bitte sp\u00e4ter erneut versuchen.",
+notif_test_title: "Test",
+notif_test_body: "Wenn du das liest, funktioniert die Klingel.",
+notif_test_sent: "Gesendet. Erscheint bei geschlossener App binnen einer Minute nichts, liegt der Fehler hinter dem Server.",
 msg_delete_mine: "Meine Nachricht l\u00f6schen",
 market_opening: "Marketplace wird ge\u00f6ffnet\u2026",
 hist_delete_one: "Diese Runde l\u00f6schen",
@@ -4557,6 +4594,14 @@ notif_center_delete_all: "B\u00fct\u00fcn bildirimleri sil",
 notif_center_delete_confirm: "Onayl\u0131yor musun? Bildirimler kal\u0131c\u0131 olarak silinir.",
 notif_delete_one: "Sil",
 error_short: "Hata: {msg}",
+notif_test_btn: "Zili dene",
+notif_test_perm: "Telefon izni",
+notif_test_token: "Bu cihaz\u0131n jetonu",
+notif_test_wait: "G\u00f6nderiliyor…",
+notif_test_nofn: "\u0130\u015flevler yan\u0131t vermiyor. Birazdan tekrar deneyin.",
+notif_test_title: "Deneme",
+notif_test_body: "Bunu okuyorsan zil \u00e7al\u0131\u015f\u0131yor.",
+notif_test_sent: "G\u00f6nderildi. Uygulama kapal\u0131yken bir dakika i\u00e7inde g\u00f6r\u00fcnmezse ar\u0131za sunucudan sonrad\u0131r.",
 msg_delete_mine: "Mesaj\u0131m\u0131 sil",
 market_opening: "Pazar yeri a\u00e7\u0131l\u0131yor\u2026",
 hist_delete_one: "Bu turu sil",
@@ -5077,6 +5122,14 @@ notif_center_delete_all: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0432\u044
 notif_center_delete_confirm: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u0435\u0442\u0435? \u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f \u0443\u0434\u0430\u043b\u044f\u044e\u0442\u0441\u044f \u043d\u0430\u0432\u0441\u0435\u0433\u0434\u0430.",
 notif_delete_one: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c",
 error_short: "\u041e\u0448\u0438\u0431\u043a\u0430: {msg}",
+notif_test_btn: "\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f",
+notif_test_perm: "\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u0442\u0435\u043b\u0435\u0444\u043e\u043d\u0430",
+notif_test_token: "\u0422\u043e\u043a\u0435\u043d \u044d\u0442\u043e\u0433\u043e \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u0430",
+notif_test_wait: "\u041e\u0442\u043f\u0440\u0430\u0432\u043a\u0430…",
+notif_test_nofn: "\u0424\u0443\u043d\u043a\u0446\u0438\u0438 \u043d\u0435 \u043e\u0442\u0432\u0435\u0447\u0430\u044e\u0442. \u041f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u043f\u043e\u0437\u0436\u0435.",
+notif_test_title: "\u041f\u0440\u043e\u0432\u0435\u0440\u043a\u0430",
+notif_test_body: "\u0415\u0441\u043b\u0438 \u0432\u044b \u044d\u0442\u043e \u0447\u0438\u0442\u0430\u0435\u0442\u0435 — \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0442.",
+notif_test_sent: "\u041e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e. \u0415\u0441\u043b\u0438 \u0437\u0430 \u043c\u0438\u043d\u0443\u0442\u0443 \u043d\u0438\u0447\u0435\u0433\u043e \u043d\u0435 \u043f\u043e\u044f\u0432\u0438\u043b\u043e\u0441\u044c \u043f\u0440\u0438 \u0437\u0430\u043a\u0440\u044b\u0442\u043e\u043c \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0438, \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u0430 \u043f\u043e\u0441\u043b\u0435 \u0441\u0435\u0440\u0432\u0435\u0440\u0430.",
 msg_delete_mine: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u043c\u043e\u0451 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435",
 market_opening: "\u041e\u0442\u043a\u0440\u044b\u0432\u0430\u044e \u0431\u0430\u0440\u0430\u0445\u043e\u043b\u043a\u0443\u2026",
 hist_delete_one: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u044d\u0442\u043e\u0442 \u043a\u0440\u0443\u0433",
@@ -5597,6 +5650,14 @@ notif_center_delete_all: "Eliminar todas las notificaciones",
 notif_center_delete_confirm: "\u00bfConfirmas? Las notificaciones se borran para siempre.",
 notif_delete_one: "Eliminar",
 error_short: "Error: {msg}",
+notif_test_btn: "Probar el aviso",
+notif_test_perm: "Permiso del tel\u00e9fono",
+notif_test_token: "Token de este dispositivo",
+notif_test_wait: "Enviando…",
+notif_test_nofn: "Las funciones no responden. Int\u00e9ntalo dentro de poco.",
+notif_test_title: "Prueba",
+notif_test_body: "Si lees esto, el aviso funciona.",
+notif_test_sent: "Enviado. Si no aparece en un minuto con la app cerrada, el fallo est\u00e1 despu\u00e9s del servidor.",
 msg_delete_mine: "Eliminar mi mensaje",
 market_opening: "Abriendo el Marketplace\u2026",
 hist_delete_one: "Eliminar esta ronda",
@@ -6117,6 +6178,14 @@ notif_center_delete_all: "Radera alla notiser",
 notif_center_delete_confirm: "Bekr\u00e4ftar du? Notiserna raderas f\u00f6r alltid.",
 notif_delete_one: "Radera",
 error_short: "Fel: {msg}",
+notif_test_btn: "Testa signalen",
+notif_test_perm: "Telefonens till\u00e5telse",
+notif_test_token: "Token f\u00f6r den h\u00e4r enheten",
+notif_test_wait: "Skickar…",
+notif_test_nofn: "Funktionerna svarar inte. F\u00f6rs\u00f6k igen strax.",
+notif_test_title: "Test",
+notif_test_body: "L\u00e4ser du det h\u00e4r fungerar signalen.",
+notif_test_sent: "Skickat. Syns inget inom en minut med appen st\u00e4ngd sitter felet efter servern.",
 msg_delete_mine: "Radera mitt meddelande",
 market_opening: "\u00d6ppnar Marketplace\u2026",
 hist_delete_one: "Radera den h\u00e4r rundan",
@@ -6637,6 +6706,14 @@ notif_center_delete_all: "Alle meldingen verwijderen",
 notif_center_delete_confirm: "Bevestig je? De meldingen worden definitief verwijderd.",
 notif_delete_one: "Verwijderen",
 error_short: "Fout: {msg}",
+notif_test_btn: "Test het belletje",
+notif_test_perm: "Toestemming van de telefoon",
+notif_test_token: "Token van dit apparaat",
+notif_test_wait: "Versturen…",
+notif_test_nofn: "De functies reageren niet. Probeer het zo opnieuw.",
+notif_test_title: "Test",
+notif_test_body: "Als je dit leest, werkt het belletje.",
+notif_test_sent: "Verstuurd. Verschijnt er binnen een minuut niets met de app dicht, dan zit de fout na de server.",
 msg_delete_mine: "Mijn bericht verwijderen",
 market_opening: "Marketplace wordt geopend\u2026",
 hist_delete_one: "Deze ronde verwijderen",
@@ -9190,6 +9267,56 @@ notifStatus.textContent = t("notif_denied");
 notifBtn.addEventListener("click", function(){ enableNotifications(notifStatus, notifBtn); });
 notifRow.appendChild(notifBtn); notifRow.appendChild(notifStatus);
 card.appendChild(notifRow);
+
+// LA PROVA DELLA CAMPANELLA (19/08/2026).
+// «Non arriva finche' non apro l'app» e' un sintomo che nessuno puo'
+// verificare da una chat: la catena ha cinque anelli — permesso del telefono,
+// token salvato, funzione sul server, consegna di FCM, service worker che
+// disegna — e da fuori si vede solo che non suona.
+// Questo tasto la percorre tutta, dall'inizio alla fine, senza bisogno di un
+// secondo account e senza aspettare che qualcuno segnali qualcosa. Sotto
+// mostra anche lo stato dei due anelli che si possono controllare da qui,
+// perche' «non funziona» diventa un'informazione solo quando si sa DOVE si
+// interrompe.
+var provaRow = el('<div class="prova-campanella"></div>');
+var provaBtn = el('<button class="btn btn-ghost btn-block">'+t("notif_test_btn")+'</button>');
+var provaEsito = el('<div class="prova-esito"></div>');
+
+function statoAnelli(){
+  var righe = [];
+  righe.push(t("notif_test_perm") + ": " +
+    ((typeof Notification === "undefined") ? "—" : Notification.permission));
+  righe.push(t("notif_test_token") + ": " + (pushRegisteredHere ? "\u2713" : "\u2717"));
+  return righe.join("\n");
+}
+provaEsito.textContent = statoAnelli();
+
+provaBtn.addEventListener("click", function(){
+  provaBtn.disabled = true;
+  provaEsito.textContent = t("notif_test_wait");
+  // Il token si rinfresca prima di provare: se era scaduto, questa e' anche
+  // la mossa che lo rimette, e la prova dice la verita' su ADESSO.
+  refreshPushToken();
+  setTimeout(function(){
+    // `fns` e non `firebase.functions()`: le funzioni stanno in europe-west1,
+    // e senza la regione la chiamata va a cercarle negli Stati Uniti dove non
+    // c'e' niente. Un tasto di prova che fallisce per conto suo direbbe una
+    // bugia peggiore del silenzio che deve diagnosticare.
+    if(!fns){ provaEsito.textContent = t("notif_test_nofn") + "\n" + statoAnelli(); provaBtn.disabled = false; return; }
+    fns.httpsCallable("sendNotification")({ toUid: currentUser.uid, title: t("notif_test_title"), body: t("notif_test_body") })
+      .then(function(){
+        provaEsito.textContent = t("notif_test_sent") + "\n" + statoAnelli();
+        provaBtn.disabled = false;
+      })
+      .catch(function(e){
+        provaEsito.textContent = t("error_short", { msg: (e && (e.code || e.message)) || "?" })
+          + "\n" + statoAnelli();
+        provaBtn.disabled = false;
+      });
+  }, 1500);
+});
+provaRow.appendChild(provaBtn); provaRow.appendChild(provaEsito);
+card.appendChild(provaRow);
 }
 
 var savedMsg = el('<div style="color:var(--accent-soft);font-size:0.8rem;margin:6px 0;min-height:1.2em;"></div>');
@@ -11937,7 +12064,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-19-primo-giro-muto";
+var BUILD_STAMP = "2026-08-19-prova-campanella";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -11946,7 +12073,7 @@ var BUILD_STAMP = "2026-08-19-primo-giro-muto";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-19-la-x-cancella";
+var BUILD_PARENT = "2026-08-19-primo-giro-muto";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
