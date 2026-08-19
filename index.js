@@ -1,6 +1,6 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-19-la-campanella-torna-a-suonare
-// Nata da: 2026-08-18-segnalazioni-e-iscrizioni
+// Versione 2026-08-19-token-che-parla
+// Nata da: 2026-08-19-la-campanella-torna-a-suonare
 //
 // Cinque funzioni, con cinque compiti diversi:
 //
@@ -134,7 +134,17 @@ exports.pushNotifica = onDocumentCreated(
 
     const userSnap = await admin.firestore().collection("users").doc(uid).get();
     const token = userSnap.exists ? userSnap.get("fcmToken") : null;
-    if (!token) return; // l'utente non ha mai attivato le notifiche
+    if (!token) {
+      // Prima era un `return` muto. Ma «non ha mai attivato le notifiche» e
+      // «il token e' stato cancellato qui sotto perche' era scaduto» sono due
+      // situazioni molto diverse che finivano nello stesso silenzio: nel
+      // secondo caso l'utente CREDE di avere le notifiche accese e non riceve
+      // piu' niente, finche' non riapre l'app e il token si rinnova da solo.
+      // Nei log adesso si vede, e si vede anche quante ne sono andate perse.
+      console.log("push per " + uid + ": nessun token, avviso «" +
+                  (d.title || "?") + "» non consegnato");
+      return;
+    }
 
     try {
       // L'ETICHETTA. Ogni avviso porta l'id del documento che l'ha fatto
@@ -171,6 +181,9 @@ exports.pushNotifica = onDocumentCreated(
         code === "messaging/registration-token-not-registered" ||
         code === "messaging/invalid-registration-token"
       ) {
+        console.warn("push per " + uid + ": token scaduto o revocato, lo tolgo." +
+                     " Da adesso questo utente NON ricevera' push finche' non" +
+                     " riapre l'app (refreshPushToken lo rimette da solo).");
         await admin.firestore().collection("users").doc(uid)
           .update({ fcmToken: admin.firestore.FieldValue.delete() })
           .catch(() => {});

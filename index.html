@@ -11937,7 +11937,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-19-la-x-cancella";
+var BUILD_STAMP = "2026-08-19-primo-giro-muto";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -11946,7 +11946,7 @@ var BUILD_STAMP = "2026-08-19-la-x-cancella";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-19-la-x-parla";
+var BUILD_PARENT = "2026-08-19-la-x-cancella";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13135,14 +13135,38 @@ notificationsListenerStarted = true;
 // non esiste, la query fallisce in silenzio e NESSUNA notifica arriva mai.
 var ref = db.collection("notifications").doc(currentUser.uid).collection("items")
 .orderBy("createdAt","desc").limit(40);
+// IL PRIMO ELENCO NON SUONA (19/08/2026).
+// Il primo giro di onSnapshot non porta notizie: porta lo STORICO. Prima
+// veniva trattato come tutti gli altri, quindi all'apertura dell'app ogni
+// avviso non ancora letto diventava una notifica di sistema. Dal campo: «la
+// push non e' arrivata finche' non ho aperto l'app» — quella che arrivava
+// all'apertura non era la push, era l'app che se la mostrava da sola.
+//
+// C'era anche una corsa, ed e' la ragione per cui la difesa gia' presente
+// (`pushRegisteredHere`) non bastava: il listener parte una riga PRIMA di
+// `refreshPushToken()`, ma quello e' asincrono — deve trovare il service
+// worker, chiedere il token a FCM, scriverlo. Il primo elenco arriva molto
+// prima, quando `pushRegisteredHere` e' ancora falso, e l'app concludeva «qui
+// la push vera non arriva, mostro la mia». Non era vero: non era ancora
+// arrivata la risposta.
+//
+// Con il primo giro muto la corsa non esiste piu': quando arrivera' un avviso
+// nuovo, il token sara' stato deciso da un pezzo.
+var primoGiro = true;
 ref.onSnapshot(function(snap){
 var arr = [], nuove = [];
 snap.forEach(function(doc){
 var d = doc.data() || {};
 d.id = doc.id;
 arr.push(d);
-if(d.read !== true && notifShownIds().indexOf(doc.id) === -1) nuove.push(d);
+if(!primoGiro && d.read !== true && notifShownIds().indexOf(doc.id) === -1) nuove.push(d);
 });
+// Lo storico si segna come gia' visto: cosi' non riemerge come notifica al
+// prossimo giro, e restano candidati solo gli avvisi arrivati da adesso.
+if(primoGiro){
+arr.forEach(function(d){ if(d.read !== true) markNotifShown(d.id); });
+primoGiro = false;
+}
 myNotifications = arr;
 var unread = arr.filter(function(x){ return x.read !== true; }).length;
 // La notifica di sistema si mostra una volta sola per documento: la lettura
