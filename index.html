@@ -2247,7 +2247,20 @@ authState = data.approved ? "ready" : "pendingApproval";
 // o di compagnia fatto altrove non lascia l'elenco arcieri indietro.
 if(data.approved) syncMyPublicProfile(data);
 }
-if(authState === "ready" && needsEmailVerification(user)){ authState = "verifyEmail"; }
+// LA CONFERMA EMAIL VIENE PRIMA DELL'APPROVAZIONE. (19/08/2026.)
+// Prima diceva `authState === "ready" && ...`, e quell'AND era un vicolo
+// cieco: chi si registra dal 18/08 nasce `approved:false`, quindi finiva su
+// pendingApproval e la schermata di conferma non compariva MAI. Se il link
+// dell'email scadeva, il tasto «Invia di nuovo» era irraggiungibile: non
+// poteva confermare, non poteva richiedere, non poteva rifare la
+// registrazione (email gia' in uso). L'unica uscita era dall'altra parte,
+// a mano. E' successo davvero, a una collaudatrice.
+//
+// La regola e': fra due attese, si mostra per prima quella che l'utente puo'
+// chiudere da solo. La conferma dipende da lei, l'approvazione da me. Adesso
+// le due schermate si mettono in fila nell'ordine giusto — conferma, poi
+// attesa — perche' il tasto «Ho confermato» richiama onAuthReady().
+if(needsEmailVerification(user)){ authState = "verifyEmail"; }
 if(authState === "ready"){
 startIncomingSessionsListener();
 loadOpenTrainings();
@@ -8577,7 +8590,7 @@ wrap.appendChild(logo);
 wrap.appendChild(el('<div class="onboard-title display">Accesso in attesa di approvazione</div>'));
 var emailTxt = currentUser ? currentUser.email : "";
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Il tuo accesso ('+escapeHtml(emailTxt)+') deve ancora essere approvato. Riprova tra un po\u2019.</div>'));
-wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;font-size:0.78rem;color:var(--muted);">Ti abbiamo anche mandato un\u2019email di conferma iscrizione: se non la vedi, controlla anche nella cartella spam.</div>'));
+wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;font-size:0.78rem;color:var(--muted);">La tua email \u00e8 confermata: manca solo il via libera. Ti avviso appena \u00e8 pronto.</div>'));
 var refreshBtn = el('<button class="btn btn-primary" style="margin-top:10px;">Ricontrolla</button>');
 refreshBtn.addEventListener("click", function(){
 authState = "loading"; render();
@@ -12064,7 +12077,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-19-prova-campanella";
+var BUILD_STAMP = "2026-08-19-porta-conferma";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12073,7 +12086,7 @@ var BUILD_STAMP = "2026-08-19-prova-campanella";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-19-primo-giro-muto";
+var BUILD_PARENT = "2026-08-19-prova-campanella";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

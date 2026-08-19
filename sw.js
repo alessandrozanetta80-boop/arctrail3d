@@ -153,12 +153,12 @@ self.addEventListener("notificationclick", function(event){
 // Il service worker nuovo il telefono se lo prende da solo, perche' il
 // browser rilegge SEMPRE questo file dalla rete: e' l'unica cosa che non
 // passa dalla cache, ed e' per questo che la cura sta qui e non altrove.
-var CACHE_NAME = "arctrail3d-v13";
+var CACHE_NAME = "arctrail3d-v14";
 // Nata da: arctrail3d-v7. Alzata il notte fra il 17 e il 18/08 perche' e' cambiato
 // `index.html`, che sta in APP_SHELL: senza il nome nuovo il telefono
 // continuerebbe a servire la copia di prima e la correzione non si
 // vedrebbe. Stessa regola del BUILD_STAMP, stesso motivo.
-var CACHE_PARENT = "arctrail3d-v12";
+var CACHE_PARENT = "arctrail3d-v13";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
