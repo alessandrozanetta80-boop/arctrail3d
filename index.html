@@ -11937,7 +11937,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-19-la-x-parla";
+var BUILD_STAMP = "2026-08-19-la-x-cancella";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -11946,7 +11946,7 @@ var BUILD_STAMP = "2026-08-19-la-x-parla";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-18-porta-e-segnalazioni";
+var BUILD_PARENT = "2026-08-19-la-x-parla";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13112,6 +13112,22 @@ try{ new Notification(d.title || "ArcTrail 3D", opts); }catch(e){}
 }
 }
 
+/* La firma dell'elenco delle notifiche: cambia se cambia una riga, se ne
+   sparisce una, se ne arriva una, o se una viene letta. Non cambia se non e'
+   cambiato niente, cosi' non si ridisegna per nulla.
+   Le lunghezze vanno dentro la firma insieme agli id: senza, due elenchi
+   diversi in cui un id finisce dove ne cominciava un altro darebbero la
+   stessa stringa. */
+var notifFirma = "";
+function firmaNotifiche(arr){
+  var s = arr.length + "|";
+  for(var i = 0; i < arr.length; i++){
+    var id = String(arr[i].id || "");
+    s += id.length + ":" + id + (arr[i].read === true ? "L" : "n") + ";";
+  }
+  return s;
+}
+
 function startNotificationsListener(){
 if(notificationsListenerStarted || !db || !currentUser) return;
 notificationsListenerStarted = true;
@@ -13132,7 +13148,22 @@ var unread = arr.filter(function(x){ return x.read !== true; }).length;
 // La notifica di sistema si mostra una volta sola per documento: la lettura
 // resta in mano all'utente nel centro notifiche, non si azzera da sola.
 nuove.forEach(function(d){ showLocalNotification(d); markNotifShown(d.id); });
-if(unread !== notifUnreadCount || nuove.length){
+// SI RIDISEGNA QUANDO CAMBIA L'ELENCO, NON QUANDO CAMBIA IL CONTEGGIO.
+// (19/08/2026.) Qui la condizione era `unread !== notifUnreadCount ||
+// nuove.length`: cancellando una notifica GIA' LETTA il numero delle non
+// lette non cambia e non ci sono nuove, quindi non si ridisegnava niente. La
+// riga spariva da Firestore e restava sullo schermo — dal campo: «la X non
+// cancella, devo fare un refresh». Il dato era giusto, era lo schermo a
+// mentire, che e' il difetto peggiore dei due.
+// Il conteggio e' un riassunto, e un riassunto non basta a decidere se
+// ridisegnare: due elenchi diversi possono avere lo stesso numero di non
+// lette. Serve una firma dell'elenco intero — stessa idea di `dipingiPista`,
+// e la domanda giusta e' quella del banco firme: due contenuti diversi
+// possono produrre la stessa firma? Con id e stato di lettura di ogni riga,
+// in ordine, no.
+var firma = firmaNotifiche(arr);
+if(firma !== notifFirma || nuove.length){
+notifFirma = firma;
 notifUnreadCount = unread;
 render();
 }
