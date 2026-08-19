@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-build="2026-08-19-legale-bilingue" data-parent="2026-08-14-legale-it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -7,6 +7,9 @@
 <meta name="description" content="Le regole per usare ArcTrail 3D: account, contenuti, Marketplace, segnalazioni.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://arctrail3d.com/termini.html">
+<link rel="alternate" hreflang="it" href="https://arctrail3d.com/termini.html?lang=it">
+<link rel="alternate" hreflang="en" href="https://arctrail3d.com/termini.html?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://arctrail3d.com/termini.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="ArcTrail 3D">
 <meta property="og:title" content="Termini d'uso — ArcTrail 3D">
@@ -51,6 +54,17 @@ a{color:var(--teal)}
 footer{border-top:1px solid var(--line); margin-top:44px; padding-top:18px; color:var(--muted); font-size:14px}
 footer a{margin-right:16px}
 @media (min-width:760px){ h1{font-size:32px} main{padding-top:34px} }
+/* Scelta della lingua e avviso di prevalenza — 19/08/2026 */
+.langpick{display:flex; gap:6px; margin-left:12px}
+.langpick button{background:transparent; color:#fff; border:1px solid rgba(255,255,255,.35);
+  border-radius:999px; padding:5px 11px; font:inherit; font-size:13px; font-weight:700;
+  letter-spacing:.04em; cursor:pointer}
+.langpick button[aria-current="true"]{background:#fff; color:var(--ink); border-color:#fff}
+.prevale{background:#FFF6E9; border:1px solid #E8CFA6; border-left:4px solid var(--amber);
+  border-radius:12px; padding:13px 16px; margin:0 0 26px; font-size:14.5px; line-height:1.55}
+.prevale p{margin:0}
+[data-l]{display:none}
+[data-l].on{display:block}
 </style>
 </head>
 <body>
@@ -58,11 +72,16 @@ footer a{margin-right:16px}
 <header>
   <div class="hwrap">
     <div class="brand">ArcTrail<span> 3D</span></div>
-    <a class="back" href="https://arctrail3d.com">Torna all'app</a>
+    <div class="langpick">
+      <button type="button" data-pick="it" lang="it">IT</button>
+      <button type="button" data-pick="en" lang="en">EN</button>
+    </div>
+    <a class="back" href="https://arctrail3d.com" data-back>Torna all'app</a>
   </div>
 </header>
 
 <main>
+<div data-l="it">
   <h1>Termini d'uso</h1>
   <p class="dateline">Ultimo aggiornamento: 14 agosto 2026</p>
 
@@ -139,7 +158,168 @@ footer a{margin-right:16px}
     <a href="/elimina-account.html">Elimina account</a>
     <p>ArcTrail 3D — Alessandro Zanetta, Italia — info@arctrail3d.com</p>
   </footer>
+</div>
+
+<div data-l="en" lang="en">
+  <h1>Terms of use</h1>
+  <p class="dateline">Last updated: 14 August 2026</p>
+
+  <div class="prevale">
+    <p>This is a courtesy translation. ArcTrail 3D is run from Italy and the <a href="?lang=it">Italian text</a> is the binding one: if the two versions differ, the Italian wording prevails.</p>
+  </div>
+
+  <div class="lead">
+    <p>By using ArcTrail 3D you accept these rules. They exist to keep the app useful and civil: a real account, clean content, and a Marketplace where serious people deal with each other. If you don't agree, don't use the app.</p>
+  </div>
+
+  <h2><span class="n">1</span>What ArcTrail 3D is</h2>
+  <p>ArcTrail 3D is an application for recording 3D archery scores, keeping your own training diary, organising open training sessions, talking to other archers and trading equipment between private individuals. The service is run by Alessandro Zanetta (Italy) and is free of charge today; any paid features will be clearly marked before you use them.</p>
+  <p>The app is a support tool. <strong>It does not replace your federation's official rulebook, nor the official scorecards of a competition:</strong> where they differ, the federation's rulebook and the official card of the event prevail.</p>
+
+  <h2><span class="n">2</span>Your account</h2>
+  <ul>
+    <li>You must be at least 16 to register.</li>
+    <li>The details you enter must be true: your name, club and federation are how other users recognise you. From your profile you can choose to <strong>hide your first and last name from other archers</strong>: they will then see only your username, but the details you entered must still be true.</li>
+    <li>An account belongs to one person. Don't hand it over and don't share your credentials.</li>
+    <li>To get in you must <strong>confirm your email address</strong>: when you register you receive a message with a link, and until you open it the account stays inactive.</li>
+    <li>Some features are reserved for club representatives or are still being built, so they are not available to everyone.</li>
+    <li>You are responsible for what is done from your account.</li>
+  </ul>
+
+  <h2><span class="n">3</span>Content published by users</h2>
+  <p>Listings, messages, open training sessions, reports and reviews are written by users. They stay the property of whoever writes them: by publishing them you only authorise us to show them inside the app to the people they are meant for.</p>
+  <p><strong>You may not publish or send:</strong></p>
+  <ul>
+    <li>insults, harassment, threats, or incitement to hatred or violence against people or groups;</li>
+    <li>sexual or pornographic content;</li>
+    <li>illegal content, or content that infringes other people's copyright or trade marks;</li>
+    <li>other people's personal data without their consent, including photos in which they are recognisable;</li>
+    <li>spam, unsolicited advertising, chain messages and scams;</li>
+    <li>content that misleads about the real condition of an item for sale.</li>
+  </ul>
+  <p>We do not check everything before it is published, but we act on reports.</p>
+
+  <h2><span class="n">4</span>Reporting and blocking</h2>
+  <p>Every listing, message and user can be reported from within the app. Reports are looked at within a few days and can lead to the content being removed or the account being closed.</p>
+  <p>You can also block another user: if you do, they can no longer write to you or reply to your listings, and their content is hidden from you.</p>
+  <p>To report abuse from outside the app: <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a>.</p>
+
+  <h2><span class="n">5</span>The Marketplace</h2>
+  <p>The Marketplace puts archers who are selling and buying used equipment in touch with each other. <strong>Deals happen directly between users.</strong> ArcTrail 3D is not a party to the sale, does not hold the items, does not handle payments or shipping, and gives no warranty on the quality of what is traded.</p>
+  <p>Sellers must be the lawful owner of the item, describe its real condition and comply with the laws that apply to sales between private individuals.</p>
+  <div class="warn">
+    <p><strong>No weapons and no licensed materials may be sold.</strong> Bows are allowed, crossbows only where local law permits, along with arrows, points, protective gear, sights, stabilisers, targets and accessories. Firearms, ammunition, restricted bladed weapons, and any item whose trade between private individuals requires a permit are forbidden.</p>
+  </div>
+  <p>Before closing a deal, size up the other party carefully and prefer traceable payment methods. Any dispute between users is settled between the people involved.</p>
+
+  <h2><span class="n">6</span>Proper use of the app</h2>
+  <p>You may not try to reach other users' data, get around the access rules, overload the services, extract content in bulk or create automated accounts.</p>
+
+  <h2><span class="n">7</span>Suspension and closure</h2>
+  <p>An account that breaks these terms can be suspended or closed, and the content published removed. In less serious cases we warn you first. You can delete your own account whenever you like from the <a href="/elimina-account.html">dedicated page</a>.</p>
+
+  <h2><span class="n">8</span>Availability of the service</h2>
+  <p><strong>ArcTrail 3D is under development</strong>: some features are new or incomplete and may change or be suspended. The app is offered as it is. We do what we can to keep it working, but we do not guarantee that the service will be continuous or free of errors, and features may change over time. Save anything you care about regularly. To the extent the law allows, we are not liable for indirect damages arising from use of the app, and the rights the law gives consumers are unaffected.</p>
+
+  <h2><span class="n">9</span>Personal data</h2>
+  <p>How data is handled is described in the <a href="/privacy.html">Privacy policy</a>, which forms part of these terms.</p>
+
+  <h2><span class="n">10</span>Changes to these terms</h2>
+  <p>If we change these rules we update the page and the date at the top, and we flag significant changes inside the app. By continuing to use ArcTrail 3D you accept the updated version.</p>
+
+  <h2><span class="n">11</span>Applicable law</h2>
+  <p>Italian law applies. For consumers, the court of their place of residence or domicile remains competent.</p>
+
+  <h2><span class="n">12</span>Contact</h2>
+  <p>Alessandro Zanetta — Italy<br>
+  <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a></p>
+
+  <footer>
+    <a href="/">App</a>
+    <a href="/presentazione.html">Overview</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/elimina-account.html">Delete account</a>
+    <p>ArcTrail 3D — Alessandro Zanetta, Italy — info@arctrail3d.com</p>
+  </footer>
+</div>
 </main>
 
+<script>
+/* ══ LINGUA DELLA PAGINA LEGALE — 19/08/2026 ═══════════════════════════════
+   Il documento vive due volte nella stessa pagina: <div data-l="it"> e
+   <div data-l="en">. Se ne mostra uno solo.
+
+   PERCHE' NON UNA PAGINA PER LINGUA. Un file per lingua vuol dire nove
+   indirizzi che divergono in silenzio: si corregge una frase e le altre otto
+   restano com'erano, e nessuno se ne accorge finche' non e' un problema
+   legale. Qui il testo sta in un posto solo, e la differenza fra le due
+   versioni si vede aprendo il file.
+
+   COME SI SCEGLIE, in quest'ordine:
+     1. ?lang=xx nell'indirizzo — e' quello che passa l'app quando apre il link
+     2. la lingua scelta dentro l'app, letta dal suo stato salvato: le due
+        pagine stanno sullo stesso dominio, quindi la memoria e' condivisa
+     3. la lingua del browser
+     4. italiano, se non c'e' nessun indizio
+
+   LA REGOLA VERA E' L'ULTIMA RIGA di scegli(): tutto quello che non e'
+   italiano finisce in inglese, non in italiano. Un olandese che non trova la
+   sua lingua deve trovare una lingua che legge, non quella di casa nostra.
+   Le altre sette si aggiungono un <div data-l="xx"> alla volta, e questa
+   funzione non cambia.
+
+   L'INGLESE PORTA UNA FASCIA che dice che il testo italiano prevale. Non e'
+   una formalita': una traduzione di cortesia non riletta da un legale non puo'
+   essere il testo che vincola, e dirlo e' piu' onesto che nasconderlo. */
+(function(){
+  var pagina = document.documentElement;
+  var blocchi = {};
+  Array.prototype.forEach.call(document.querySelectorAll("[data-l]"), function(b){
+    blocchi[b.getAttribute("data-l")] = b;
+  });
+  function corta(v){ return (v || "").slice(0,2).toLowerCase(); }
+  function daUrl(){ var m = /[?&]lang=([a-zA-Z-]{2,5})/.exec(location.search); return m ? corta(m[1]) : ""; }
+  function daApp(){
+    try{
+      var raw = localStorage.getItem("arctrail3d_state_v3");
+      if(!raw) return "";
+      var st = JSON.parse(raw);
+      return (st && st.lang) ? corta(st.lang) : "";
+    }catch(e){ return ""; }
+  }
+  function daBrowser(){ try{ return corta(navigator.language); }catch(e){ return ""; } }
+  function scegli(){
+    var c = daUrl() || daApp() || daBrowser();
+    if(!c) return "it";
+    if(blocchi[c]) return c;
+    return c === "it" ? "it" : "en";
+  }
+  function mostra(l){
+    if(!blocchi[l]) l = "en";
+    for(var k in blocchi){ blocchi[k].className = (k === l) ? "on" : ""; }
+    pagina.setAttribute("lang", l);
+    var h1 = blocchi[l].querySelector("h1");
+    if(h1) document.title = h1.textContent + " — ArcTrail 3D";
+    Array.prototype.forEach.call(document.querySelectorAll("[data-pick]"), function(b){
+      b.setAttribute("aria-current", b.getAttribute("data-pick") === l ? "true" : "false");
+    });
+    var back = document.querySelector("[data-back]");
+    if(back) back.textContent = (l === "it") ? "Torna all'app" : "Back to the app";
+    /* I collegamenti fra le pagine legali si portano dietro la lingua: senza,
+       si passa dai Termini in inglese alla Privacy in italiano. */
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="/"]'), function(a){
+      var h = a.getAttribute("href");
+      if(!/\.html$/.test(h) && h !== "/") return;
+      a.setAttribute("href", h.split("?")[0] + "?lang=" + l);
+    });
+    try{ history.replaceState(null, "", location.pathname + "?lang=" + l); }catch(e){}
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-pick]"), function(b){
+    b.addEventListener("click", function(){ mostra(b.getAttribute("data-pick")); });
+  });
+  mostra(scegli());
+})();
+</script>
 </body>
+
 </html>

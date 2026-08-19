@@ -2027,6 +2027,33 @@ var IS_PREMIUM = false;
 // prima di entrare. Chi si era registrato PRIMA non viene toccato, altrimenti
 // l'apertura sbatterebbe fuori tutti quelli che sono gia' dentro.
 var EMAIL_VERIFY_SINCE = Date.parse("2026-08-14T00:00:00Z");
+// DOVE SI TORNA DOPO AVER APERTO IL LINK DI UN'EMAIL. (19/08/2026.)
+// Senza queste impostazioni la pagina di Firebase, dopo il cambio password o
+// la conferma dell'indirizzo, si ferma su una schermata bianca che dice
+// «operazione riuscita» e non porta da nessuna parte: chi arriva li' deve
+// sapere da solo che l'app si riapre altrove. Con `url` compare invece il
+// tasto che riporta qui, e si atterra sul login con la password nuova in mano.
+//
+// IL DOMINIO DEVE ESSERE FRA QUELLI AUTORIZZATI in Firebase → Authentication →
+// Settings → Domini autorizzati. Se non lo e', Firebase rifiuta l'invio con
+// `auth/unauthorized-continue-uri` — e allora l'email non partirebbe proprio.
+// Percio' ogni chiamata ha una seconda strada: se il rifiuto e' quello, si
+// rimanda l'email senza ritorno. Meglio un'email spoglia che nessuna email.
+function actionSettings(){
+try{ return { url: window.location.origin + "/", handleCodeInApp: false }; }
+catch(e){ return null; }
+}
+function conRitorno(invia){
+// `invia(opt)` deve restituire la promessa di Firebase.
+return invia(actionSettings()).catch(function(err){
+if(err && err.code === "auth/unauthorized-continue-uri"){
+console.warn("dominio non autorizzato per il ritorno: mando l'email senza.");
+return invia(undefined);
+}
+throw err;
+});
+}
+
 function needsEmailVerification(user){
 if(!user || user.emailVerified) return false;
 // Vale solo per chi entra con email e password: gli altri metodi di accesso
@@ -2709,6 +2736,14 @@ history_clear: "Cancella storico",
 clear_confirm: "Tocca di nuovo per confermare",
 targets_word: "piazzole",
 ordinal_1: "1\u00aa", ordinal_2: "2\u00aa", ordinal_3: "3\u00aa",
+pend_title: "Accesso in attesa di approvazione",
+pend_body: "Il tuo accesso ({email}) deve ancora essere approvato. Riprova tra un po\u2019.",
+pend_note: "La tua email \u00e8 confermata: manca solo il via libera. Ti avviso appena \u00e8 pronto.",
+pend_recheck: "Ricontrolla",
+login_bad_email: "Inserisci un\u2019email valida.",
+login_need_email_first: "Inserisci prima la tua email qui sopra.",
+login_bad_credentials: "Email o password non corretti.",
+login_reset_error: "Non sono riuscito a inviare l\u2019email, riprova.",
 logout_word: "Esci",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letale", zone_ffta_spot: "Vitale", zone_ffta_sagoma: "Corpo",
@@ -3224,6 +3259,14 @@ history_clear: "Clear history",
 clear_confirm: "Tap again to confirm",
 targets_word: "targets",
 ordinal_1: "1st", ordinal_2: "2nd", ordinal_3: "3rd",
+pend_title: "Access awaiting approval",
+pend_body: "Your access ({email}) still has to be approved. Try again shortly.",
+pend_note: "Your email is confirmed: only the go-ahead is missing. I\u2019ll let you know as soon as it\u2019s ready.",
+pend_recheck: "Check again",
+login_bad_email: "Enter a valid email address.",
+login_need_email_first: "Enter your email address above first.",
+login_bad_credentials: "Email or password is not correct.",
+login_reset_error: "I couldn\u2019t send the email, please try again.",
 logout_word: "Log out",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Center", zone_ffta_superspot: "Kill", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Body",
@@ -3738,6 +3781,14 @@ history_clear: "Effacer l\u2019historique",
 clear_confirm: "Appuyez \u00e0 nouveau pour confirmer",
 targets_word: "cibles",
 ordinal_1: "1\u00e8re", ordinal_2: "2e", ordinal_3: "3e",
+pend_title: "Acc\u00e8s en attente d\u2019approbation",
+pend_body: "Votre acc\u00e8s ({email}) doit encore \u00eatre approuv\u00e9. R\u00e9essayez dans un moment.",
+pend_note: "Votre e-mail est confirm\u00e9 : il ne manque que le feu vert. Je vous pr\u00e9viens d\u00e8s que c\u2019est pr\u00eat.",
+pend_recheck: "V\u00e9rifier \u00e0 nouveau",
+login_bad_email: "Saisissez une adresse e-mail valide.",
+login_need_email_first: "Saisissez d\u2019abord votre e-mail ci-dessus.",
+login_bad_credentials: "E-mail ou mot de passe incorrect.",
+login_reset_error: "Je n\u2019ai pas pu envoyer l\u2019e-mail, r\u00e9essayez.",
 logout_word: "D\u00e9connexion",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Petit tu\u00e9", zone_ffta_superspot: "Tu\u00e9", zone_ffta_spot: "Zone vitale", zone_ffta_sagoma: "Corps",
@@ -4252,6 +4303,14 @@ history_clear: "Verlauf l\u00f6schen",
 clear_confirm: "Zum Best\u00e4tigen erneut tippen",
 targets_word: "Ziele",
 ordinal_1: "1.", ordinal_2: "2.", ordinal_3: "3.",
+pend_title: "Zugang wartet auf Freigabe",
+pend_body: "Dein Zugang ({email}) muss noch freigegeben werden. Versuch es gleich noch einmal.",
+pend_note: "Deine E-Mail ist best\u00e4tigt: es fehlt nur noch die Freigabe. Ich melde mich, sobald es so weit ist.",
+pend_recheck: "Erneut pr\u00fcfen",
+login_bad_email: "Gib eine g\u00fcltige E-Mail-Adresse ein.",
+login_need_email_first: "Gib zuerst oben deine E-Mail-Adresse ein.",
+login_bad_credentials: "E-Mail oder Passwort ist falsch.",
+login_reset_error: "Die E-Mail konnte nicht gesendet werden, versuch es noch einmal.",
 logout_word: "Abmelden",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Kern", zone_ffta_superspot: "T\u00f6dlich", zone_ffta_spot: "Vital", zone_ffta_sagoma: "K\u00f6rper",
@@ -4786,6 +4845,14 @@ history_clear: "Ge\u00e7mi\u015fi sil",
 clear_confirm: "Onaylamak i\u00e7in tekrar dokun",
 targets_word: "hedef",
 ordinal_1: "1.", ordinal_2: "2.", ordinal_3: "3.",
+pend_title: "Eri\u015fim onay bekliyor",
+pend_body: "Eri\u015fimin ({email}) hen\u00fcz onaylanmad\u0131. Birazdan tekrar dene.",
+pend_note: "E-postan do\u011fruland\u0131: sadece onay eksik. Haz\u0131r olur olmaz haber verece\u011fim.",
+pend_recheck: "Tekrar kontrol et",
+login_bad_email: "Ge\u00e7erli bir e-posta adresi gir.",
+login_need_email_first: "\u00d6nce yukar\u0131ya e-posta adresini gir.",
+login_bad_credentials: "E-posta veya \u015fifre do\u011fru de\u011fil.",
+login_reset_error: "E-postay\u0131 g\u00f6nderemedim, tekrar dene.",
 logout_word: "\u00c7\u0131k\u0131\u015f",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Siluet", zone_perfect: "Perfect",
 zone_ffta_perfect: "Merkez", zone_ffta_superspot: "\u00d6ld\u00fcr\u00fcc\u00fc", zone_ffta_spot: "Hayati", zone_ffta_sagoma: "G\u00f6vde",
@@ -5314,6 +5381,14 @@ history_clear: "Очистить историю",
 clear_confirm: "Нажмите ещё раз для подтверждения",
 targets_word: "мишеней",
 ordinal_1: "1-я", ordinal_2: "2-я", ordinal_3: "3-я",
+pend_title: "Доступ ожидает одобрения",
+pend_body: "Ваш доступ ({email}) ещё не одобрен. Попробуйте чуть позже.",
+pend_note: "Ваша почта подтверждена: осталось только одобрение. Сообщу, как только всё будет готово.",
+pend_recheck: "Проверить снова",
+login_bad_email: "Введите корректный адрес электронной почты.",
+login_need_email_first: "Сначала введите свою почту выше.",
+login_bad_credentials: "Неверная почта или пароль.",
+login_reset_error: "Не удалось отправить письмо, попробуйте ещё раз.",
 logout_word: "Выйти",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Силуэт", zone_perfect: "Perfect",
 zone_ffta_perfect: "Центр", zone_ffta_superspot: "Смертельная", zone_ffta_spot: "Жизненная", zone_ffta_sagoma: "Тело",
@@ -5842,6 +5917,14 @@ history_clear: "Borrar historial",
 clear_confirm: "Toca de nuevo para confirmar",
 targets_word: "dianas",
 ordinal_1: "1\u00aa", ordinal_2: "2\u00aa", ordinal_3: "3\u00aa",
+pend_title: "Acceso pendiente de aprobaci\u00f3n",
+pend_body: "Tu acceso ({email}) todav\u00eda tiene que aprobarse. Int\u00e9ntalo de nuevo dentro de un rato.",
+pend_note: "Tu email est\u00e1 confirmado: solo falta el visto bueno. Te aviso en cuanto est\u00e9 listo.",
+pend_recheck: "Volver a comprobar",
+login_bad_email: "Introduce un email v\u00e1lido.",
+login_need_email_first: "Introduce antes tu email aqu\u00ed arriba.",
+login_bad_credentials: "Email o contrase\u00f1a incorrectos.",
+login_reset_error: "No he podido enviar el email, int\u00e9ntalo de nuevo.",
 logout_word: "Salir",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silueta", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letal", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Cuerpo",
@@ -6370,6 +6453,14 @@ history_clear: "Rensa historik",
 clear_confirm: "Tryck igen f\u00f6r att bekr\u00e4fta",
 targets_word: "m\u00e5l",
 ordinal_1: "1:a", ordinal_2: "2:a", ordinal_3: "3:e",
+pend_title: "\u00c5tkomsten v\u00e4ntar p\u00e5 godk\u00e4nnande",
+pend_body: "Din \u00e5tkomst ({email}) m\u00e5ste fortfarande godk\u00e4nnas. F\u00f6rs\u00f6k igen om en stund.",
+pend_note: "Din e-postadress \u00e4r bekr\u00e4ftad: bara klartecknet saknas. Jag h\u00f6r av mig s\u00e5 snart det \u00e4r klart.",
+pend_recheck: "Kontrollera igen",
+login_bad_email: "Ange en giltig e-postadress.",
+login_need_email_first: "Ange f\u00f6rst din e-postadress h\u00e4r ovanf\u00f6r.",
+login_bad_credentials: "Fel e-postadress eller l\u00f6senord.",
+login_reset_error: "Jag kunde inte skicka e-postmeddelandet, f\u00f6rs\u00f6k igen.",
 logout_word: "Logga ut",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhuett", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centrum", zone_ffta_superspot: "D\u00f6dlig", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Kropp",
@@ -6898,6 +6989,14 @@ history_clear: "Geschiedenis wissen",
 clear_confirm: "Tik nogmaals om te bevestigen",
 targets_word: "doelen",
 ordinal_1: "1e", ordinal_2: "2e", ordinal_3: "3e",
+pend_title: "Toegang wacht op goedkeuring",
+pend_body: "Je toegang ({email}) moet nog goedgekeurd worden. Probeer het straks opnieuw.",
+pend_note: "Je e-mailadres is bevestigd: alleen het groene licht ontbreekt nog. Ik laat het weten zodra het zover is.",
+pend_recheck: "Opnieuw controleren",
+login_bad_email: "Voer een geldig e-mailadres in.",
+login_need_email_first: "Voer eerst hierboven je e-mailadres in.",
+login_bad_credentials: "E-mailadres of wachtwoord klopt niet.",
+login_reset_error: "Het is niet gelukt de e-mail te versturen, probeer het opnieuw.",
 logout_word: "Uitloggen",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouet", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centrum", zone_ffta_superspot: "Dodelijk", zone_ffta_spot: "Vitaal", zone_ffta_sagoma: "Lichaam",
@@ -8444,7 +8543,7 @@ function trySend(){
 var email = document.getElementById("loginEmailInput").value.trim();
 var password = document.getElementById("loginPasswordInput").value;
 if(!email || email.indexOf("@") < 0){
-errorMsg.textContent = "Inserisci un'email valida.";
+errorMsg.textContent = t("login_bad_email");
 return;
 }
 if(!password){
@@ -8456,23 +8555,23 @@ auth.signInWithEmailAndPassword(email, password).then(function(result){
 onAuthReady(result.user);
 }).catch(function(err){
 sendBtn.disabled = false;
-errorMsg.textContent = (err && err.message) ? err.message : "Email o password non corretti.";
+errorMsg.textContent = t("login_bad_credentials");
 });
 }
 sendBtn.addEventListener("click", trySend);
 forgotLink.addEventListener("click", function(){
 var email = document.getElementById("loginEmailInput").value.trim();
 if(!email || email.indexOf("@") < 0){
-errorMsg.textContent = "Inserisci prima la tua email qui sopra.";
+errorMsg.textContent = t("login_need_email_first");
 return;
 }
 auth.languageCode = state.lang || "it";
-auth.sendPasswordResetEmail(email).then(function(){
+conRitorno(function(opt){ return auth.sendPasswordResetEmail(email, opt); }).then(function(){
 errorMsg.style.color = "var(--accent-soft)";
 errorMsg.textContent = t("login_reset_sent");
 }).catch(function(err){
 errorMsg.style.color = "var(--danger)";
-errorMsg.textContent = (err && err.message) ? err.message : "Non sono riuscito a inviare l'email, riprova.";
+errorMsg.textContent = t("login_reset_error");
 });
 });
 setTimeout(function(){
@@ -8564,7 +8663,7 @@ if(left > 0){ msg.textContent = t("verify_wait",{sec:left}); return; }
 if(!auth.currentUser){ authState = "needLogin"; render(); return; }
 resendBtn.disabled = true;
 try{ auth.languageCode = state.lang || "it"; }catch(e){}
-auth.currentUser.sendEmailVerification().then(function(){
+conRitorno(function(opt){ return auth.currentUser.sendEmailVerification(opt); }).then(function(){
 verifyResendAt = Date.now() + 60000;
 msg.textContent = t("verify_resent");
 setTimeout(function(){ resendBtn.disabled = false; }, 60000);
@@ -8574,7 +8673,7 @@ msg.textContent = t("verify_error");
 });
 });
 wrap.appendChild(resendBtn);
-var outBtn = el('<button class="btn btn-ghost" style="margin-top:10px;">Esci</button>');
+var outBtn = el('<button class="btn btn-ghost" style="margin-top:10px;">'+escapeHtml(t("logout_word"))+'</button>');
 outBtn.addEventListener("click", function(){
 auth.signOut().then(function(){ authState = "needLogin"; currentUser = null; render(); });
 });
@@ -8587,17 +8686,17 @@ var wrap = el('<div class="splash-wrap"></div>');
 var logo = el('<div class="splash-logo"></div>');
 logo.innerHTML = logoSVG(150);
 wrap.appendChild(logo);
-wrap.appendChild(el('<div class="onboard-title display">Accesso in attesa di approvazione</div>'));
+wrap.appendChild(el('<div class="onboard-title display">'+escapeHtml(t("pend_title"))+'</div>'));
 var emailTxt = currentUser ? currentUser.email : "";
-wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Il tuo accesso ('+escapeHtml(emailTxt)+') deve ancora essere approvato. Riprova tra un po\u2019.</div>'));
-wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;font-size:0.78rem;color:var(--muted);">La tua email \u00e8 confermata: manca solo il via libera. Ti avviso appena \u00e8 pronto.</div>'));
-var refreshBtn = el('<button class="btn btn-primary" style="margin-top:10px;">Ricontrolla</button>');
+wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">'+escapeHtml(t("pend_body",{email:emailTxt}))+'</div>'));
+wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;font-size:0.78rem;color:var(--muted);">'+escapeHtml(t("pend_note"))+'</div>'));
+var refreshBtn = el('<button class="btn btn-primary" style="margin-top:10px;">'+escapeHtml(t("pend_recheck"))+'</button>');
 refreshBtn.addEventListener("click", function(){
 authState = "loading"; render();
 onAuthReady(currentUser);
 });
 wrap.appendChild(refreshBtn);
-var logoutBtn = el('<button class="btn btn-ghost" style="margin-top:10px;">Esci</button>');
+var logoutBtn = el('<button class="btn btn-ghost" style="margin-top:10px;">'+escapeHtml(t("logout_word"))+'</button>');
 logoutBtn.addEventListener("click", function(){
 auth.signOut().then(function(){ authState = "needLogin"; currentUser = null; render(); });
 });
@@ -8978,7 +9077,7 @@ var privacyRow = el('<label class="checkbox-row prima-serrata"><input type="chec
 card.appendChild(privacyRow);
 var termsRow = el('<label class="checkbox-row serrata"><input type="checkbox" id="pfTerms"><span>'+t("profile_terms")+'</span></label>');
 card.appendChild(termsRow);
-card.appendChild(el('<div style="font-size:0.76rem;margin:0 0 8px;"><a href="/privacy.html" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_privacy")+'</a> &middot; <a href="/termini.html" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_terms")+'</a></div>'));
+card.appendChild(el('<div style="font-size:0.76rem;margin:0 0 8px;"><a href="/privacy.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_privacy")+'</a> &middot; <a href="/termini.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_terms")+'</a></div>'));
 
 var errorMsg = el('<div style="color:var(--danger);font-size:0.8rem;margin:6px 0;min-height:1.2em;"></div>');
 card.appendChild(errorMsg);
@@ -9038,7 +9137,7 @@ return;
 auth.languageCode = state.lang || "it";
 auth.createUserWithEmailAndPassword(email, password).then(function(result){
 currentUser = result.user;
-try{ result.user.sendEmailVerification(); }catch(e){}
+try{ conRitorno(function(opt){ return result.user.sendEmailVerification(opt); }).catch(function(){}); }catch(e){}
 db.collection("users").doc(result.user.uid).set({
 // `approved: false` dal 18/08, come nell'altra strada qui sopra: un account
 // puo' nascere in due punti diversi del file, e due punti che rispondono in
@@ -10699,8 +10798,8 @@ setCard.appendChild(adminBtn);
 }
 // Privacy e termini: devono essere raggiungibili dall'app, non solo dallo store
 var legalRow = el('<div style="display:flex;gap:8px;margin-top:10px;"></div>');
-legalRow.appendChild(el('<a class="btn btn-ghost btn-sm" href="/privacy.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_privacy")+'</a>'));
-legalRow.appendChild(el('<a class="btn btn-ghost btn-sm" href="/termini.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_terms")+'</a>'));
+legalRow.appendChild(el('<a class="btn btn-ghost btn-sm" href="/privacy.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_privacy")+'</a>'));
+legalRow.appendChild(el('<a class="btn btn-ghost btn-sm" href="/termini.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_terms")+'</a>'));
 setCard.appendChild(legalRow);
 
 if(currentUser){
@@ -12077,7 +12176,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-19-porta-conferma";
+var BUILD_STAMP = "2026-08-19-lingua-porta";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12086,7 +12185,7 @@ var BUILD_STAMP = "2026-08-19-porta-conferma";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-19-prova-campanella";
+var BUILD_PARENT = "2026-08-19-porta-conferma";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -12172,8 +12271,8 @@ mailBtn.addEventListener("click", function(){ openAdminChat(); });
 contactCard.appendChild(mailBtn);
 contactCard.appendChild(el('<a class="btn btn-ghost btn-block btn-sm" href="/presentazione.html" target="_blank" rel="noopener" style="margin-top:10px;text-align:center;text-decoration:none;">'+t("legal_about")+'</a>'));
 var legalRow2 = el('<div style="display:flex;gap:8px;margin-top:10px;"></div>');
-legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/privacy.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_privacy")+'</a>'));
-legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/termini.html" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_terms")+'</a>'));
+legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/privacy.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_privacy")+'</a>'));
+legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/termini.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_terms")+'</a>'));
 contactCard.appendChild(legalRow2);
 wrap.appendChild(contactCard);
 

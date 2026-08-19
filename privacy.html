@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-build="2026-08-19-legale-bilingue" data-parent="2026-08-14-legale-it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -7,6 +7,9 @@
 <meta name="description" content="Come ArcTrail 3D raccoglie, usa e protegge i tuoi dati personali.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://arctrail3d.com/privacy.html">
+<link rel="alternate" hreflang="it" href="https://arctrail3d.com/privacy.html?lang=it">
+<link rel="alternate" hreflang="en" href="https://arctrail3d.com/privacy.html?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://arctrail3d.com/privacy.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="ArcTrail 3D">
 <meta property="og:title" content="Informativa sulla privacy — ArcTrail 3D">
@@ -55,6 +58,17 @@ th{background:#EFEEE9; font-weight:700}
 footer{border-top:1px solid var(--line); margin-top:44px; padding-top:18px; color:var(--muted); font-size:14px}
 footer a{margin-right:16px}
 @media (min-width:760px){ h1{font-size:32px} main{padding-top:34px} }
+/* Scelta della lingua e avviso di prevalenza — 19/08/2026 */
+.langpick{display:flex; gap:6px; margin-left:12px}
+.langpick button{background:transparent; color:#fff; border:1px solid rgba(255,255,255,.35);
+  border-radius:999px; padding:5px 11px; font:inherit; font-size:13px; font-weight:700;
+  letter-spacing:.04em; cursor:pointer}
+.langpick button[aria-current="true"]{background:#fff; color:var(--ink); border-color:#fff}
+.prevale{background:#FFF6E9; border:1px solid #E8CFA6; border-left:4px solid var(--amber);
+  border-radius:12px; padding:13px 16px; margin:0 0 26px; font-size:14.5px; line-height:1.55}
+.prevale p{margin:0}
+[data-l]{display:none}
+[data-l].on{display:block}
 </style>
 </head>
 <body>
@@ -62,11 +76,16 @@ footer a{margin-right:16px}
 <header>
   <div class="hwrap">
     <div class="brand">ArcTrail<span> 3D</span></div>
-    <a class="back" href="https://arctrail3d.com">Torna all'app</a>
+    <div class="langpick">
+      <button type="button" data-pick="it" lang="it">IT</button>
+      <button type="button" data-pick="en" lang="en">EN</button>
+    </div>
+    <a class="back" href="https://arctrail3d.com" data-back>Torna all'app</a>
   </div>
 </header>
 
 <main>
+<div data-l="it">
   <h1>Informativa sulla privacy</h1>
   <p class="dateline">Ultimo aggiornamento: 14 agosto 2026</p>
 
@@ -151,7 +170,7 @@ footer a{margin-right:16px}
   <h2><span class="n">9</span>I tuoi diritti</h2>
   <p>Puoi in ogni momento chiedere l'accesso ai tuoi dati, la loro rettifica o cancellazione, la limitazione del trattamento, la portabilità in un formato leggibile, e opporti a un trattamento fondato sul legittimo interesse. Molte di queste operazioni le fai da solo dall'app: modificando il profilo, nascondendo nome e cognome, cancellando i giri, gli annunci e i messaggi, o eliminando l'account.</p>
   <p>Per esercitare gli altri diritti scrivi a <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a>: rispondiamo entro 30 giorni.</p>
-  <p>Se ritieni che i tuoi dati siano trattati in modo scorretto puoi presentare reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">garanteprivacy.it</a>).</p>
+  <p>Se ritieni che i tuoi dati siano trattati in modo scorretto puoi presentare reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">garanteprivacy.it</a>) oppure, se risiedi in un altro paese dello Spazio Economico Europeo, all’autorità di controllo del tuo paese.</p>
 
   <h2><span class="n">10</span>Eliminare l'account</h2>
   <p>Puoi eliminare l'account e tutti i dati collegati direttamente dall'app, oppure inviando una richiesta dalla pagina dedicata.</p>
@@ -170,7 +189,195 @@ footer a{margin-right:16px}
     <a href="/elimina-account.html">Elimina account</a>
     <p>ArcTrail 3D — Alessandro Zanetta, Italia — info@arctrail3d.com</p>
   </footer>
+</div>
+
+<div data-l="en" lang="en">
+  <h1>Privacy policy</h1>
+  <p class="dateline">Last updated: 14 August 2026</p>
+
+  <div class="prevale">
+    <p>This is a courtesy translation. ArcTrail 3D is run from Italy and the <a href="?lang=it">Italian text</a> is the binding one: if the two versions differ, the Italian wording prevails.</p>
+  </div>
+
+  <div class="lead">
+    <p>ArcTrail 3D is an app for scoring 3D archery. We collect only the data needed to make it work: your account, your rounds and the content you publish. <strong>We do not sell your data, we show no advertising and we use no advertising trackers.</strong></p>
+  </div>
+
+  <h2><span class="n">1</span>Who processes your data</h2>
+  <p>The data controller is Alessandro Zanetta, author and operator of ArcTrail 3D, based in Italy.</p>
+  <p>For any question about this policy or about your data: <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a></p>
+
+  <h2><span class="n">2</span>What data we collect</h2>
+
+  <h3>Data you give us when you register</h3>
+  <ul>
+    <li>Email address and password. The password is handled and encrypted by the authentication service: the controller cannot see it.</li>
+    <li>First and last name, which are required, and a username. <strong>From your profile you can choose to hide your first and last name from other users:</strong> other archers then see only your username, while your name stays recorded and visible to you and to the controller alone. Competitions are the exception: if you enter one, your first and last name are passed to the organiser, because official rankings are drawn up with them.</li>
+    <li>Archery club, country, federation, membership number and bow class.</li>
+  </ul>
+
+  <h3>Content you create by using the app</h3>
+  <ul>
+    <li>Scores, rounds, statistics and diary notes.</li>
+    <li>Open training sessions you publish, and sign-ups to them.</li>
+    <li>Reports on the condition of courses.</li>
+    <li>Marketplace listings, with their photos, reviews and ratings.</li>
+    <li>Messages sent in private chats, in training chats and in Marketplace conversations.</li>
+  </ul>
+
+  <h3>Technical data</h3>
+  <ul>
+    <li>The device token needed to deliver push notifications, if you have allowed them.</li>
+    <li>The app's error log: when something goes wrong we store the error message, the point in the program where it happened, the open screen, the app version, the language, the network state, the browser and device type, and your user id. It is used only to fix faults.</li>
+    <li>Date and time of access and IP address, processed by our technical providers for security and abuse prevention.</li>
+    <li>Data saved in your device's local storage, which lets the app work without a connection. It stays on the device and is removed by clearing your browser data or uninstalling the app.</li>
+  </ul>
+  <p>We do not collect your GPS position and we do not access your phone's contacts.</p>
+
+  <h2><span class="n">3</span>Why we use your data</h2>
+  <div class="wrapper">
+  <table>
+    <tr><th>Purpose</th><th>Legal basis</th></tr>
+    <tr><td>Creating and running your account, saving your rounds and syncing them across your devices</td><td>Performance of the service you asked for (Art. 6(1)(b) GDPR)</td></tr>
+    <tr><td>Running the social sections: clubs, open training sessions, chats, Marketplace</td><td>Performance of the service (Art. 6(1)(b) GDPR)</td></tr>
+    <tr><td>Sending push notifications about messages, training sessions and reports</td><td>Your consent, which you can withdraw at any time from your device settings (Art. 6(1)(a) GDPR)</td></tr>
+    <tr><td>Checking requests to manage a club and approving new users</td><td>Performance of the service and legitimate interest in preventing fake accounts (Art. 6(1)(b) and 6(1)(f) GDPR)</td></tr>
+    <tr><td>Logging technical errors in the app so they can be found and fixed</td><td>Legitimate interest in the service working properly (Art. 6(1)(f) GDPR)</td></tr>
+    <tr><td>Handling abuse reports and protecting the app from misuse</td><td>Legitimate interest in the security of the service (Art. 6(1)(f) GDPR)</td></tr>
+  </table>
+  </div>
+
+  <h2><span class="n">4</span>What other users can see</h2>
+  <p>In the archer list and in the social sections of the app, other registered users can see: your username, your first and last name (unless you have chosen to hide them, as explained in section 2) and your club. They can also see the listings you publish with their photos, the open training sessions you publish and the reviews you leave.</p>
+  <p>Private chat messages are visible only to you and to the person you wrote to. Your scores and diary notes are personal and are not shown to other users.</p>
+  <p>Your email address is never shown to other users and never appears in your public profile. It reaches another user only if you write it in a message yourself.</p>
+
+  <h2><span class="n">5</span>Who we share data with</h2>
+  <p>We do not sell your data and we do not pass it to third parties for commercial purposes. It is processed on our behalf only by the technical providers that make the service possible:</p>
+  <ul>
+    <li><strong>Google Firebase</strong> (Google Ireland Limited / Google LLC): authentication, database, photo storage and push notification delivery. The data is hosted on servers in the European Union.</li>
+    <li><strong>GitHub</strong> (GitHub Inc., Microsoft group): delivery of the app's pages.</li>
+    <li><strong>Aruba S.p.A.</strong>: domain registration and mailbox.</li>
+  </ul>
+  <p>Any transfer of data outside the European Economic Area takes place on the basis of the standard contractual clauses approved by the European Commission and of the EU–U.S. Data Privacy Framework.</p>
+  <p>Data may also be disclosed to judicial authorities where the law requires it.</p>
+
+  <h2><span class="n">6</span>How long we keep it</h2>
+  <ul>
+    <li>Account data and the content you have created stay for as long as your account exists.</li>
+    <li>When you delete your account, the data is erased within 30 days.</li>
+    <li>Rounds you delete one by one are removed from the cloud and from your devices straight away. A minimal technical reference remains, with no scores, whose only job is to stop a deleted round reappearing from another device.</li>
+    <li>Error logs are emptied periodically and are in any case deleted together with the account.</li>
+    <li>Messages you have sent to another user remain in that person's copy, as happens in any messaging service.</li>
+  </ul>
+
+  <h2><span class="n">7</span>Push notifications</h2>
+  <p>Notifications are sent only if you have given permission to the browser or the operating system. You can withdraw it whenever you like from your device settings: the app keeps working and messages stay readable in the in-app notification centre.</p>
+
+  <h2><span class="n">8</span>Minimum age</h2>
+  <p>You must be at least 16 to register with ArcTrail 3D. Younger archers can use the app through the account of a parent or guardian, who remains responsible for the content published.</p>
+
+  <h2><span class="n">9</span>Your rights</h2>
+  <p>At any time you can ask for access to your data, its correction or erasure, restriction of processing, portability in a readable format, and you can object to processing based on legitimate interest. Many of these things you can do yourself from within the app: editing your profile, hiding your first and last name, deleting rounds, listings and messages, or deleting your account.</p>
+  <p>To exercise the other rights write to <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a>: we reply within 30 days.</p>
+  <p>If you believe your data is being handled improperly you can lodge a complaint with the Italian data protection authority (<a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">garanteprivacy.it</a>) or, if you live in another country of the European Economic Area, with the supervisory authority of your own country.</p>
+
+  <h2><span class="n">10</span>Deleting your account</h2>
+  <p>You can delete your account and all the data linked to it directly from the app, or by sending a request from the dedicated page.</p>
+  <p><a class="cta" href="/elimina-account.html">How to delete your account</a></p>
+
+  <h2><span class="n">11</span>Security</h2>
+  <p>Access takes place over an encrypted connection. Data is protected by access rules that limit every user to their own content and to what is meant for them. No system is a hundred per cent secure: if you spot a security problem, report it to <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a>.</p>
+
+  <h2><span class="n">12</span>Changes to this policy</h2>
+  <p>If we change the way we handle data we will update this page and the date at the top. If the change is significant, we will tell you inside the app.</p>
+
+  <footer>
+    <a href="/">App</a>
+    <a href="/presentazione.html">Overview</a>
+    <a href="/termini.html">Terms of use</a>
+    <a href="/elimina-account.html">Delete account</a>
+    <p>ArcTrail 3D — Alessandro Zanetta, Italy — info@arctrail3d.com</p>
+  </footer>
+</div>
 </main>
 
+<script>
+/* ══ LINGUA DELLA PAGINA LEGALE — 19/08/2026 ═══════════════════════════════
+   Il documento vive due volte nella stessa pagina: <div data-l="it"> e
+   <div data-l="en">. Se ne mostra uno solo.
+
+   PERCHE' NON UNA PAGINA PER LINGUA. Un file per lingua vuol dire nove
+   indirizzi che divergono in silenzio: si corregge una frase e le altre otto
+   restano com'erano, e nessuno se ne accorge finche' non e' un problema
+   legale. Qui il testo sta in un posto solo, e la differenza fra le due
+   versioni si vede aprendo il file.
+
+   COME SI SCEGLIE, in quest'ordine:
+     1. ?lang=xx nell'indirizzo — e' quello che passa l'app quando apre il link
+     2. la lingua scelta dentro l'app, letta dal suo stato salvato: le due
+        pagine stanno sullo stesso dominio, quindi la memoria e' condivisa
+     3. la lingua del browser
+     4. italiano, se non c'e' nessun indizio
+
+   LA REGOLA VERA E' L'ULTIMA RIGA di scegli(): tutto quello che non e'
+   italiano finisce in inglese, non in italiano. Un olandese che non trova la
+   sua lingua deve trovare una lingua che legge, non quella di casa nostra.
+   Le altre sette si aggiungono un <div data-l="xx"> alla volta, e questa
+   funzione non cambia.
+
+   L'INGLESE PORTA UNA FASCIA che dice che il testo italiano prevale. Non e'
+   una formalita': una traduzione di cortesia non riletta da un legale non puo'
+   essere il testo che vincola, e dirlo e' piu' onesto che nasconderlo. */
+(function(){
+  var pagina = document.documentElement;
+  var blocchi = {};
+  Array.prototype.forEach.call(document.querySelectorAll("[data-l]"), function(b){
+    blocchi[b.getAttribute("data-l")] = b;
+  });
+  function corta(v){ return (v || "").slice(0,2).toLowerCase(); }
+  function daUrl(){ var m = /[?&]lang=([a-zA-Z-]{2,5})/.exec(location.search); return m ? corta(m[1]) : ""; }
+  function daApp(){
+    try{
+      var raw = localStorage.getItem("arctrail3d_state_v3");
+      if(!raw) return "";
+      var st = JSON.parse(raw);
+      return (st && st.lang) ? corta(st.lang) : "";
+    }catch(e){ return ""; }
+  }
+  function daBrowser(){ try{ return corta(navigator.language); }catch(e){ return ""; } }
+  function scegli(){
+    var c = daUrl() || daApp() || daBrowser();
+    if(!c) return "it";
+    if(blocchi[c]) return c;
+    return c === "it" ? "it" : "en";
+  }
+  function mostra(l){
+    if(!blocchi[l]) l = "en";
+    for(var k in blocchi){ blocchi[k].className = (k === l) ? "on" : ""; }
+    pagina.setAttribute("lang", l);
+    var h1 = blocchi[l].querySelector("h1");
+    if(h1) document.title = h1.textContent + " — ArcTrail 3D";
+    Array.prototype.forEach.call(document.querySelectorAll("[data-pick]"), function(b){
+      b.setAttribute("aria-current", b.getAttribute("data-pick") === l ? "true" : "false");
+    });
+    var back = document.querySelector("[data-back]");
+    if(back) back.textContent = (l === "it") ? "Torna all'app" : "Back to the app";
+    /* I collegamenti fra le pagine legali si portano dietro la lingua: senza,
+       si passa dai Termini in inglese alla Privacy in italiano. */
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="/"]'), function(a){
+      var h = a.getAttribute("href");
+      if(!/\.html$/.test(h) && h !== "/") return;
+      a.setAttribute("href", h.split("?")[0] + "?lang=" + l);
+    });
+    try{ history.replaceState(null, "", location.pathname + "?lang=" + l); }catch(e){}
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-pick]"), function(b){
+    b.addEventListener("click", function(){ mostra(b.getAttribute("data-pick")); });
+  });
+  mostra(scegli());
+})();
+</script>
 </body>
+
 </html>
