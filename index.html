@@ -215,6 +215,14 @@ color-scheme:light;
 --border:var(--sand-300); --border-strong:var(--sand-400);
 /* marchio e codice colore */
 --brand:var(--green-800); --brand-soft:var(--green-800); --brand-ink:var(--sand-50);
+/* LA LINEA DEL GRAFICO NON E' IL VERDE DEL MARCHIO, E NON E' UN CAPRICCIO.
+   Al buio `--brand` (#315B35) sul fondo scuro (#16201C) fa 2,13:1 di
+   contrasto: la linea c'e' e non si vede. Non si vedeva nemmeno a occhio —
+   l'ha detto lo strumento che misura, prima di scrivere una riga di grafico.
+   Quindi la linea ha un ruolo suo, scelto tema per tema e verificato: 3:1
+   passato in tutti e tre. *Un colore che va bene in due temi su tre e' un
+   colore sbagliato, e il terzo tema e' sempre quello che nessuno guarda.* */
+--chart-line:var(--green-800);
 --clay:var(--clay-600);
 /* --gold-role e' salito da --gold-700 a --gold-600 il 17/08, perche' il nome
    della compagnia sembrava marrone. E' l'ultimo gradino possibile: l'oro sta
@@ -311,6 +319,7 @@ color-scheme:dark;
 --text-1:var(--moss-100); --text-2:var(--moss-200); --text-3:var(--moss-300);
 --border:var(--moss-600); --border-strong:var(--moss-500);
 --brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:var(--sand-50);
+--chart-line:var(--green-400);   /* al buio serve il verde chiaro: 3:1 */
 --clay:var(--clay-400); --gold-role:var(--gold-400);
 --sun-on-bg:var(--gold-400); --sun-on-fg:#1A1305;
 --danger-role:var(--red-400); --success-role:var(--green-success-dk);
@@ -413,6 +422,7 @@ color-scheme:light;
 
 /* marchio e codici: i gradini piu' scuri di ogni famiglia */
 --brand:var(--green-900); --brand-soft:var(--green-900); --brand-ink:var(--sand-50);
+--chart-line:var(--green-900);   /* al sole il verde piu' scuro, sul bianco */
 --clay:var(--clay-800); --gold-role:var(--gold-800);
 --sun-on-bg:var(--gold-800); --sun-on-fg:var(--sand-50);
 --danger-role:var(--red-700); --success-role:var(--green-800);
@@ -1392,6 +1402,38 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    linea, e uno stile in linea non si puo' ridisegnare da nessuna parte. */
 .home-riprendi{ background:var(--clay); color:var(--solid-ink); }
 .home-record{ color:var(--gold); font-weight:700; }
+/* IL GRAFICO DELL'ANDAMENTO.
+   Una serie sola, quindi nessuna legenda: il titolo dice gia' cos'e'.
+   La griglia e' recessiva e la linea e' sottile — su un grafico e' il dato
+   che deve pesare, non la scatola che lo contiene. */
+.home-tempo{ display:flex; gap:var(--s-1); background:var(--surface-2);
+  padding:var(--s-1); border-radius:var(--r-pill); margin-bottom:var(--s-3); }
+.home-tempo button{ flex:1 1 0; min-height:36px; padding:var(--s-2) var(--s-1);
+  border:0; background:transparent; border-radius:var(--r-pill);
+  font-size:var(--t-xs); font-weight:700; color:var(--text-2); cursor:pointer; }
+.home-tempo button[aria-pressed="true"]{ background:var(--surface-1);
+  color:var(--text-1); box-shadow:var(--elev-1); }
+.home-tela{ position:relative; }
+.home-tela svg{ display:block; width:100%; height:auto; touch-action:pan-y; }
+/* Le due misure agli estremi dell'asse: una linea che non dice fra che
+   numeri si muove puo' far sembrare enorme uno scarto di tre punti. */
+.home-assey{ position:absolute; top:0; bottom:var(--s-4); left:0;
+  display:flex; flex-direction:column; justify-content:space-between;
+  font-size:var(--t-2xs); color:var(--text-3); pointer-events:none;
+  font-variant-numeric:tabular-nums; }
+.home-assex{ display:flex; justify-content:space-between; font-size:var(--t-2xs);
+  color:var(--text-3); margin-top:var(--s-1); }
+/* L'etichetta che compare toccando. Su un telefono non c'e' il passaggio del
+   mouse: o si tocca o non si legge niente. */
+/* Il mirino: comparire e sparire e' presentazione, e sta nel foglio. Prima
+   era `setAttribute("opacity", …)` dal codice — funzionava, ed era una
+   regola di stile scritta dove nessuno la cerca. */
+.home-mira, .home-mira-p{ opacity:0; pointer-events:none; }
+.home-tela.legge .home-mira{ opacity:0.35; }
+.home-tela.legge .home-mira-p{ opacity:1; }
+.home-letto{ min-height:var(--s-5); margin-top:var(--s-2); font-size:var(--t-sm);
+  color:var(--text-2); font-variant-numeric:tabular-nums; }
+.home-letto b{ color:var(--text-1); font-weight:700; }
 .home-scorciatoie{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
   gap:var(--s-2); }
 .prova-campanella{ margin-bottom:var(--s-3); }
@@ -3285,6 +3327,8 @@ cp_admin_email_label: "Email compagnia",
 cp_admin_sito: "Sito web",
 home_pitch_title: "Il segnapunti per il tiro con l’arco 3D", home_pitch_body: "Segni le frecce sul percorso anche dove non prende, e ritrovi tutto nel diario. Conosce i regolamenti della tua federazione.",
 home_greet_m: "Buongiorno", home_greet_p: "Buon pomeriggio", home_greet_s: "Buonasera",
+home_trend: "Andamento", home_range_3: "3 mesi", home_range_y: "Stagione",
+home_trend_few: "Servono almeno quattro giri per vedere un andamento.",
 home_ready: "Pronto a tirare?", home_start: "Inizia un giro", home_find: "Trova un campo",
 home_resume_title: "Riprendi il tuo giro", home_month: "Questo mese", home_rounds_word: "Giri",
 home_target_of: "Piazzola {n} di {tot}", home_saved_here: "Salvato sul telefono", nav_home: "Home",
@@ -3799,6 +3843,8 @@ home_install_generic_text: "Look for the install icon in the address bar (at the
 home_install_ios_text: "<b>On iPhone:</b> tap the <b>Share</b> button at the bottom of the browser (the square with an upward arrow), then choose <b>\u201cAdd to Home Screen\u201d</b>. An icon will appear just like any other app.",
 home_login_link: "Already have an account?", home_login_link_word: "Log in", home_pitch_title: "The scorecard for 3D archery", home_pitch_body: "Score your arrows on the course even with no signal, and find it all again in your journal. It knows your federation’s rules.",
 home_greet_m: "Good morning", home_greet_p: "Good afternoon", home_greet_s: "Good evening",
+home_trend: "Trend", home_range_3: "3 months", home_range_y: "Season",
+home_trend_few: "It takes at least four rounds to show a trend.",
 home_ready: "Ready to shoot?", home_start: "Start a round", home_find: "Find a field",
 home_resume_title: "Resume your round", home_month: "This month", home_rounds_word: "Rounds",
 home_target_of: "Target {n} of {tot}", home_saved_here: "Saved on this phone", nav_home: "Home",
@@ -4332,6 +4378,8 @@ home_install_generic_text: "Cherchez l’ic\u00f4ne d’installation dans la bar
 home_install_ios_text: "<b>Sur iPhone :</b> appuyez sur le bouton <b>Partager</b> en bas du navigateur (le carr\u00e9 avec une fl\u00e8che vers le haut), puis choisissez <b>\u00ab Sur l’\u00e9cran d’accueil \u00bb</b>. Une ic\u00f4ne appara\u00eetra comme pour toute autre application.",
 home_login_link: "Vous avez d\u00e9j\u00e0 un compte\u00a0?", home_login_link_word: "Se connecter", home_pitch_title: "Le marqueur pour le tir à l’arc 3D", home_pitch_body: "Note tes flèches sur le parcours même sans réseau, et retrouve tout dans ton carnet. Il connaît le règlement de ta fédération.",
 home_greet_m: "Bonjour", home_greet_p: "Bon après-midi", home_greet_s: "Bonsoir",
+home_trend: "Évolution", home_range_3: "3 mois", home_range_y: "Saison",
+home_trend_few: "Il faut au moins quatre parcours pour voir une évolution.",
 home_ready: "Prêt à tirer ?", home_start: "Commencer un parcours", home_find: "Trouver un terrain",
 home_resume_title: "Reprendre ton parcours", home_month: "Ce mois-ci", home_rounds_word: "Parcours",
 home_target_of: "Cible {n} sur {tot}", home_saved_here: "Enregistré sur ce téléphone", nav_home: "Accueil",
@@ -4865,6 +4913,8 @@ home_install_generic_text: "Suche das Installationssymbol in der Adressleiste (o
 home_install_ios_text: "<b>Auf dem iPhone:</b> Tippe unten im Browser auf <b>Teilen</b> (das Quadrat mit dem Pfeil nach oben), dann w\u00e4hle <b>\u201eZum Home-Bildschirm\u201c</b>. Ein Symbol erscheint wie bei jeder anderen App.",
 home_login_link: "Hast du schon ein Konto?", home_login_link_word: "Anmelden", home_pitch_title: "Der Punktezähler für 3D-Bogenschießen", home_pitch_body: "Trag deine Pfeile auf dem Parcours ein, auch ohne Empfang, und finde alles im Tagebuch wieder. Er kennt die Regeln deines Verbands.",
 home_greet_m: "Guten Morgen", home_greet_p: "Guten Tag", home_greet_s: "Guten Abend",
+home_trend: "Verlauf", home_range_3: "3 Monate", home_range_y: "Saison",
+home_trend_few: "Für einen Verlauf braucht es mindestens vier Runden.",
 home_ready: "Bereit zu schießen?", home_start: "Runde starten", home_find: "Parcours finden",
 home_resume_title: "Runde fortsetzen", home_month: "Diesen Monat", home_rounds_word: "Runden",
 home_target_of: "Ziel {n} von {tot}", home_saved_here: "Auf diesem Handy gespeichert", nav_home: "Start",
@@ -5430,6 +5480,8 @@ compagnie_piazzole_word: "hedef", compagnie_punteggi_word: "kaydedilen puan", co
 cp_admin_claim_btn: "🔑 Bu kulübün yöneticisi ol", cp_admin_claim_pending: "Gönderildi.", cp_admin_map_error: "Hata.", cp_admin_tel: "Telefon", cp_admin_email_label: "E-posta", cp_admin_sito: "Web sitesi", 
 home_pitch_title: "3D okçuluk için skor defteri", home_pitch_body: "Parkurda çekim olmasa bile oklarını kaydet, hepsini günlüğünde yeniden bul. Federasyonunun kurallarını bilir.",
 home_greet_m: "Günaydın", home_greet_p: "İyi günler", home_greet_s: "İyi akşamlar",
+home_trend: "Gidişat", home_range_3: "3 ay", home_range_y: "Sezon",
+home_trend_few: "Bir gidişat görmek için en az dört tur gerekir.",
 home_ready: "Atışa hazır mısın?", home_start: "Tura başla", home_find: "Parkur bul",
 home_resume_title: "Turuna devam et", home_month: "Bu ay", home_rounds_word: "Tur",
 home_target_of: "Hedef {n} / {tot}", home_saved_here: "Bu telefonda kayıtlı", nav_home: "Ana sayfa",
@@ -5976,6 +6028,8 @@ compagnie_piazzole_word: "мишеней", compagnie_punteggi_word: "запис�
 cp_admin_claim_btn: "🔑 Запросить администрирование клуба", cp_admin_claim_pending: "Запрос отправлен — ожидайте подтверждения.", cp_admin_map_error: "Ошибка сохранения.", cp_admin_tel: "Телефон", cp_admin_email_label: "Email клуба", cp_admin_sito: "Сайт", 
 home_pitch_title: "Счётчик очков для 3D-стрельбы из лука", home_pitch_body: "Записывай стрелы на трассе даже без связи и находи всё в дневнике. Он знает правила твоей федерации.",
 home_greet_m: "Доброе утро", home_greet_p: "Добрый день", home_greet_s: "Добрый вечер",
+home_trend: "Динамика", home_range_3: "3 месяца", home_range_y: "Сезон",
+home_trend_few: "Чтобы увидеть динамику, нужно хотя бы четыре круга.",
 home_ready: "Готов стрелять?", home_start: "Начать круг", home_find: "Найти площадку",
 home_resume_title: "Продолжить круг", home_month: "В этом месяце", home_rounds_word: "Круги",
 home_target_of: "Мишень {n} из {tot}", home_saved_here: "Сохранено на телефоне", nav_home: "Главная",
@@ -6522,6 +6576,8 @@ cp_admin_claim_btn: "🔑 Solicitar administración de este club", cp_admin_clai
 compagnie_piazzole_word: "dianas", compagnie_punteggi_word: "puntuaciones registradas", compagnie_tutti: "Todos",
 home_pitch_title: "El marcador para el tiro con arco 3D", home_pitch_body: "Anota tus flechas en el recorrido aunque no haya cobertura, y encuéntralo todo en tu diario. Conoce el reglamento de tu federación.",
 home_greet_m: "Buenos días", home_greet_p: "Buenas tardes", home_greet_s: "Buenas noches",
+home_trend: "Evolución", home_range_3: "3 meses", home_range_y: "Temporada",
+home_trend_few: "Hacen falta al menos cuatro recorridos para ver una evolución.",
 home_ready: "¿Listo para tirar?", home_start: "Empezar un recorrido", home_find: "Buscar un campo",
 home_resume_title: "Reanudar tu recorrido", home_month: "Este mes", home_rounds_word: "Recorridos",
 home_target_of: "Diana {n} de {tot}", home_saved_here: "Guardado en este teléfono", nav_home: "Inicio",
@@ -7068,6 +7124,8 @@ compagnie_empty_msg: "\u00c4nnu inga po\u00e4ng h\u00e4r \u2014 var f\u00f6rst m
 compagnie_piazzole_word: "m\u00e5l", compagnie_punteggi_word: "registrerade po\u00e4ng", compagnie_tutti: "Alla",
 home_pitch_title: "Poängräknaren för 3D-bågskytte", home_pitch_body: "Skriv in dina pilar på banan även utan täckning, och hitta allt igen i din dagbok. Den kan ditt förbunds regler.",
 home_greet_m: "God morgon", home_greet_p: "God eftermiddag", home_greet_s: "God kväll",
+home_trend: "Utveckling", home_range_3: "3 månader", home_range_y: "Säsong",
+home_trend_few: "Det krävs minst fyra rundor för att visa en utveckling.",
 home_ready: "Redo att skjuta?", home_start: "Starta en runda", home_find: "Hitta en bana",
 home_resume_title: "Återuppta din runda", home_month: "Den här månaden", home_rounds_word: "Rundor",
 home_target_of: "Mål {n} av {tot}", home_saved_here: "Sparat på den här telefonen", nav_home: "Hem",
@@ -7614,6 +7672,8 @@ cp_admin_claim_btn: "🔑 Beheer van deze club aanvragen", cp_admin_claim_pendin
 compagnie_piazzole_word: "doelen", compagnie_punteggi_word: "geregistreerde scores", compagnie_tutti: "Alle",
 home_pitch_title: "De scoreteller voor 3D-boogschieten", home_pitch_body: "Noteer je pijlen op het parcours, ook zonder bereik, en vind alles terug in je dagboek. Hij kent de regels van jouw bond.",
 home_greet_m: "Goedemorgen", home_greet_p: "Goedemiddag", home_greet_s: "Goedenavond",
+home_trend: "Verloop", home_range_3: "3 maanden", home_range_y: "Seizoen",
+home_trend_few: "Er zijn minstens vier rondes nodig om een verloop te tonen.",
 home_ready: "Klaar om te schieten?", home_start: "Start een ronde", home_find: "Zoek een parcours",
 home_resume_title: "Hervat je ronde", home_month: "Deze maand", home_rounds_word: "Rondes",
 home_target_of: "Doel {n} van {tot}", home_saved_here: "Opgeslagen op deze telefoon", nav_home: "Home",
@@ -11147,6 +11207,132 @@ return t("home_greet_s");
 /* LA HOME. Risponde a «qual e' la cosa piu' utile che posso fare adesso».
    Due stati, e la differenza non e' cosmetica: con un giro aperto non c'e'
    niente da scegliere, c'e' una cosa da riprendere. */
+/* L'ANDAMENTO DEL PUNTEGGIO. (20/08/2026, dal PRD v2.1 §10.6.)
+
+   TRE REGOLE, E LA PRIMA E' LA PIU' IMPORTANTE:
+
+   1. SOTTO QUATTRO GIRI NON SI DISEGNA NIENTE. Due punti uniti da una retta
+      sembrano una tendenza e non lo sono: e' la bugia piu' facile che un
+      grafico sappia dire. Si scrive che servono quattro giri e basta.
+
+   2. L'ASSE NON PARTE DA ZERO, MA DICE DOVE PARTE. Per un punteggio di tiro
+      partire da zero appiattisce tutto e non si legge piu' niente; ma una
+      linea che sale senza dire fra che numeri si muove fa sembrare enorme
+      uno scarto di tre punti. Quindi minimo e massimo scritti sull'asse.
+
+   3. SI TOCCA. Su un telefono non esiste il passaggio del mouse: senza il
+      tocco, dieci punti sono un disegno e non un dato. Toccando si legge la
+      data e il punteggio di quel giro.
+
+   La linea usa `--chart-line`, che e' scelto tema per tema e verificato a
+   3:1 su tutti e tre — vedi il commento accanto ai ruoli. */
+var homeFinestra = "m";   // m = mese, 3 = tre mesi, y = stagione. Fuori da render().
+
+function homeSerie(){
+var lista = [];
+try{ lista = loadHistory() || []; }catch(e){ lista = []; }
+var punti = [];
+lista.forEach(function(g){
+var io = (g.results || []).filter(function(r){ return r.isSelf === true; })[0];
+if(!io) return;
+var d = null;
+try{ d = new Date(g.date); }catch(e){}
+if(!d || isNaN(d.getTime())) return;
+punti.push({ q: d.getTime(), data: d, v: io.total || 0, dove: g.campo || g.modeLabel || "" });
+});
+punti.sort(function(a,b){ return a.q - b.q; });   // il tempo va da sinistra a destra
+var ora = Date.now();
+var da = 0;
+if(homeFinestra === "m") da = ora - 31 * 86400000;
+else if(homeFinestra === "3") da = ora - 92 * 86400000;
+else { var g0 = new Date(); g0.setMonth(0,1); g0.setHours(0,0,0,0); da = g0.getTime(); }
+return punti.filter(function(p){ return p.q >= da; });
+}
+
+function homeGrafico(){
+var card = el('<div class="card"></div>');
+
+var barra = el('<div class="home-tempo" role="group"></div>');
+[["m", t("home_month")], ["3", t("home_range_3")], ["y", t("home_range_y")]].forEach(function(v){
+var b = el('<button></button>');
+b.textContent = v[1];
+b.setAttribute("aria-pressed", String(homeFinestra === v[0]));
+b.addEventListener("click", function(){ homeFinestra = v[0]; render(); });
+barra.appendChild(b);
+});
+card.appendChild(barra);
+
+var serie = homeSerie();
+if(serie.length < 4){
+card.appendChild(el('<div class="nota">'+escapeHtml(t("home_trend_few"))+'</div>'));
+return card;
+}
+
+var W = 320, H = 132, PL = 34, PR = 8, PT = 10, PB = 8;
+var min = serie[0].v, max = serie[0].v;
+serie.forEach(function(p){ if(p.v < min) min = p.v; if(p.v > max) max = p.v; });
+if(max === min){ max = min + 1; }   // una serie piatta non deve dividere per zero
+var passo = (W - PL - PR) / Math.max(1, serie.length - 1);
+function X(i){ return PL + i * passo; }
+function Y(v){ return PT + (H - PT - PB) * (1 - (v - min) / (max - min)); }
+
+var d = "", area = "";
+serie.forEach(function(p, i){ d += (i ? " L" : "M") + X(i).toFixed(1) + " " + Y(p.v).toFixed(1); });
+area = d + " L" + X(serie.length - 1).toFixed(1) + " " + H + " L" + X(0).toFixed(1) + " " + H + " Z";
+
+var tela = el('<div class="home-tela"></div>');
+var svg = el('<svg viewBox="0 0 '+W+' '+H+'" role="img"></svg>');
+svg.setAttribute("aria-label", t("home_trend"));
+var g = '';
+[0, 0.5, 1].forEach(function(k){
+var y = (PT + (H - PT - PB) * k).toFixed(1);
+g += '<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="var(--border)" stroke-width="1"></line>';
+});
+g += '<path d="'+area+'" fill="var(--chart-line)" opacity="0.08"></path>';
+g += '<path d="'+d+'" fill="none" stroke="var(--chart-line)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>';
+// L'ultimo punto e' l'unico segnato: e' quello che si sta cercando.
+g += '<circle cx="'+X(serie.length-1).toFixed(1)+'" cy="'+Y(serie[serie.length-1].v).toFixed(1)+'" r="4.5" fill="var(--chart-line)"></circle>';
+g += '<line class="home-mira" x1="0" y1="'+PT+'" x2="0" y2="'+(H-PB)+'" stroke="var(--chart-line)" stroke-width="1"></line>';
+g += '<circle class="home-mira-p" r="5" fill="var(--chart-line)" stroke="var(--surface-1)" stroke-width="2"></circle>';
+svg.innerHTML = g;
+tela.appendChild(svg);
+tela.appendChild(el('<div class="home-assey"><span>'+max+'</span><span>'+min+'</span></div>'));
+card.appendChild(tela);
+
+function quando(p){
+try{ return p.data.toLocaleDateString(state.lang || "it", { day:"numeric", month:"short" }); }catch(e){ return ""; }
+}
+var ax = el('<div class="home-assex"><span>'+escapeHtml(quando(serie[0]))+'</span><span>'+escapeHtml(quando(serie[serie.length-1]))+'</span></div>');
+card.appendChild(ax);
+
+var letto = el('<div class="home-letto"></div>');
+card.appendChild(letto);
+
+// IL TOCCO. Si prende il punto piu' vicino al dito, non quello sotto: un
+// dito e' largo come dieci punti del grafico.
+var mira = svg.querySelector(".home-mira"), miraP = svg.querySelector(".home-mira-p");
+function leggi(clientX){
+var r = svg.getBoundingClientRect();
+if(!r.width) return;
+var xv = (clientX - r.left) / r.width * W;
+var i = Math.round((xv - PL) / passo);
+if(i < 0) i = 0; if(i > serie.length - 1) i = serie.length - 1;
+var p = serie[i];
+mira.setAttribute("x1", X(i).toFixed(1)); mira.setAttribute("x2", X(i).toFixed(1));
+miraP.setAttribute("cx", X(i).toFixed(1)); miraP.setAttribute("cy", Y(p.v).toFixed(1));
+tela.classList.add("legge");
+letto.innerHTML = '<b>'+p.v+'</b> \u00b7 ' + escapeHtml(quando(p)) + (p.dove ? ' \u00b7 ' + escapeHtml(p.dove) : '');
+}
+function spegni(){ tela.classList.remove("legge"); letto.innerHTML = ""; }
+["pointerdown", "pointermove"].forEach(function(ev){
+svg.addEventListener(ev, function(e){ if(ev === "pointermove" && !e.pressure && e.pointerType !== "mouse") return; leggi(e.clientX); });
+});
+svg.addEventListener("pointerleave", spegni);
+svg.addEventListener("pointerup", function(){ setTimeout(spegni, 2500); });
+
+return card;
+}
+
 function homeScreen(){
 var wrap = el('<div class="menu-cols"></div>');
 var inCorso = (state.roundActive === true) || (state.screen === "round");
@@ -11202,6 +11388,16 @@ g.appendChild(el('<div class="home-num"><b>'+n.meglio+'</b><span>'+escapeHtml(t(
 g.appendChild(el('<div class="home-num"><b>'+n.piazzole+'</b><span>'+escapeHtml(t("diario_targets_word"))+'</span></div>'));
 sez.appendChild(g);
 wrap.appendChild(sez);
+}
+
+// L'andamento sta SOTTO i quattro numeri e SOPRA gli allenamenti: i numeri
+// dicono dove sei, la linea dice dove stai andando, e solo dopo viene quello
+// che fanno gli altri.
+if(n){
+var gsez = el('<div class="home-sezione"></div>');
+gsez.appendChild(el('<div class="home-titolo"><h2>'+escapeHtml(t("home_trend"))+'</h2></div>'));
+gsez.appendChild(homeGrafico());
+wrap.appendChild(gsez);
 }
 
 // Chi si allena vicino a te: la scheda esiste gia' ed e' viva. Riusarla vuol
@@ -13215,7 +13411,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-dove-si-tira";
+var BUILD_STAMP = "2026-08-20-andamento";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -13224,7 +13420,7 @@ var BUILD_STAMP = "2026-08-20-dove-si-tira";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-la-home";
+var BUILD_PARENT = "2026-08-20-dove-si-tira";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
