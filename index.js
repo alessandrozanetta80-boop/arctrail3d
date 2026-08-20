@@ -1,8 +1,8 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-20-richiesta-che-suona
-// Nata da: 2026-08-19-token-che-parla
+// Versione 2026-08-20-percorso-proposto
+// Nata da: 2026-08-20-richiesta-che-suona
 //
-// Sei funzioni, con sei compiti diversi:
+// Sette funzioni, con sette compiti diversi:
 //
 //  1) sendNotification  (callable)  — SCRIVE la notifica.
 //     Prima scriveva il telefono, direttamente in notifications/{uid}/items.
@@ -41,6 +41,26 @@
 //     un pannello che bisognava SAPERE di dover aprire. Un pannello che nessuno
 //     apre e' un cassetto, non un avviso — e la persona dall'altra parte
 //     aspetta senza sapere se qualcuno ha visto.
+//
+//  7) avvisaPercorso (trigger) — un arciere ha PROPOSTO un percorso, e la
+//     compagnia deve confermare che esiste. Aggiunta il 20/08/2026.
+//     Sveglia due porte diverse perche' sono due persone diverse: il
+//     referente della compagnia (avviso dentro l'app, quindi anche push) e
+//     chi tiene l'app (avviso + posta). E mette in coda una email alla
+//     compagnia, se il referente ne ha lasciata una.
+//
+//     PERCHE' DUE STRADE E NON UNA. L'avviso dentro l'app arriva solo a chi
+//     l'app ce l'ha. Una compagnia su 663 che non ha ancora un referente non
+//     ha nessuno da svegliare: quella la sveglia la posta, all'indirizzo che
+//     conosce gia'. *Un percorso proposto che non raggiunge nessuno non e'
+//     una proposta: e' una riga in un cassetto.*
+//
+// LA POSTA NON PARTE DA SOLA. Questa funzione SCRIVE il documento nella
+// raccolta `mail`, nel formato che l'estensione Firebase "Trigger Email" si
+// aspetta ({to, message:{subject, text, html}}). Se l'estensione non e'
+// installata i documenti si accumulano e non parte niente — percio' il
+// pannello conta quanti ce ne sono in coda: una coda che cresce si vede,
+// una posta che non parte in silenzio no.
 //
 // ORDINE DI APPLICAZIONE, da rispettare:
 //   1) deploy di queste funzioni   (firebase deploy --only functions)
@@ -598,5 +618,128 @@ exports.avvisaIscrizione = onDocumentCreated(
       .catch(function (err) {
         console.error("avviso iscrizione non scritto per " + event.params.uid, err);
       });
+  }
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 7) UN PERCORSO PROPOSTO — sveglia la compagnia e chi tiene l'app
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Il nome che si legge in un avviso: quello che c'e', non un posto vuoto.
+function chiHaProposto(p) {
+  return p.createdByName || p.createdByEmail || "un arciere";
+}
+
+// Il testo dell'avviso lo scrive il server, quindi e' in italiano: lo leggono
+// il referente della compagnia e chi tiene l'app, e per adesso sono italiani.
+// Il giorno che non lo saranno, questa e' la riga da cambiare — insieme alle
+// altre sei, che hanno lo stesso problema e non e' stato risolto per nessuna.
+function rigaPercorso(p) {
+  const piazzole = Number(p.piazzole) || 0;
+  return (p.nome || "senza nome") +
+         (piazzole ? " \u2014 " + piazzole + " piazzole" : "") +
+         " \u00B7 " + chiHaProposto(p);
+}
+
+exports.avvisaPercorso = onDocumentCreated(
+  "percorsi_campo/{percId}",
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+    const p = snap.data() || {};
+
+    // Un percorso gia' confermato lo ha scritto il referente o l'admin: non
+    // c'e' niente da confermare, e nessuno da svegliare per farselo dire.
+    if (p.stato !== "proposto") return;
+
+    const codice = String(p.clubCode || "");
+    if (!codice) return;
+
+    const dbf = admin.firestore();
+    const id = event.params.percId;
+
+    // ── Chi risponde di questa compagnia, se c'e' ────────────────────────
+    let referenteUid = "";
+    let emailComp = "";
+    try {
+      const doc = await dbf.collection("compagnie_admin").doc(codice).get();
+      if (doc.exists) {
+        const d = doc.data() || {};
+        referenteUid = d.adminUid || "";
+        emailComp = String(d.emailComp || "").trim();
+      }
+    } catch (err) {
+      console.error("percorso " + id + ": compagnie_admin/" + codice + " non letto", err);
+    }
+
+    let adminUid = "";
+    try {
+      const a = await admin.auth().getUserByEmail(ADMIN_EMAIL);
+      adminUid = a.uid;
+    } catch (err) {
+      console.error("percorso " + id + ": nessun account per " + ADMIN_EMAIL, err);
+    }
+
+    const riga = rigaPercorso(p);
+
+    // ── L'avviso dentro l'app (e quindi la push, che scatta sul documento) ─
+    // Al referente arriva con `apri:"club-space"`: il tocco che ha gia' fatto
+    // per leggerlo lo porta dove si conferma. Un avviso che dice «c'e' una
+    // cosa da fare» e non porta dove si fa e' meta' avviso.
+    const scrivi = (uid, apri) =>
+      dbf.collection("notifications").doc(uid).collection("items")
+        .doc("perc-" + id)   // un percorso, una campanella
+        .create({
+          title: "Percorso da confermare",
+          body: codice + " \u2014 " + riga,
+          read: false,
+          apri: apri,
+          clubCode: codice,
+          createdAt: admin.firestore.FieldValue.serverTimestamp()
+        })
+        .catch((err) => console.error("avviso percorso non scritto per " + uid, err));
+
+    const lavori = [];
+    if (referenteUid && referenteUid !== p.createdBy) lavori.push(scrivi(referenteUid, "club-space"));
+    if (adminUid && adminUid !== p.createdBy && adminUid !== referenteUid) lavori.push(scrivi(adminUid, "admin"));
+
+    // ── La posta ─────────────────────────────────────────────────────────
+    // Gli indirizzi: chi tiene l'app sempre, la compagnia se ne ha lasciato
+    // uno. Non si prende l'email pubblica della federazione perche' questa
+    // funzione non ha l'elenco delle 663 compagnie, e farsela passare dal
+    // telefono vorrebbe dire lasciar scegliere al telefono a chi scrivere.
+    const a = [ADMIN_EMAIL];
+    if (emailComp && emailComp.indexOf("@") > 0 && emailComp !== ADMIN_EMAIL) a.push(emailComp);
+
+    const oggetto = "ArcTrail 3D \u2014 percorso da confermare (" + codice + ")";
+    const corpo = [
+      chiHaProposto(p) + " ha proposto un percorso per la compagnia " + codice + ".",
+      "",
+      "Percorso: " + (p.nome || "senza nome"),
+      "Piazzole: " + (Number(p.piazzole) || "non indicate"),
+      p.note ? ("Note: " + p.note) : "",
+      "",
+      "Il percorso NON compare agli altri arcieri finche' non lo confermate.",
+      "Per confermarlo: aprite ArcTrail 3D, scheda Compagnie \u2192 Gestisci.",
+      "",
+      "Se il percorso non esiste, rifiutatelo: sparisce dall'elenco."
+    ].filter(Boolean).join("\n");
+
+    lavori.push(
+      dbf.collection("mail").doc("perc-" + id).create({
+        to: a,
+        message: {
+          subject: oggetto,
+          text: corpo,
+          html: "<pre style=\"font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif\">" +
+                corpo.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</pre>"
+        },
+        clubCode: codice,
+        percorsoId: id,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      }).catch((err) => console.error("posta percorso non messa in coda per " + id, err))
+    );
+
+    await Promise.all(lavori);
   }
 );
