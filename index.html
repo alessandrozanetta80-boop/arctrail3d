@@ -1311,6 +1311,89 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   border-radius:var(--r-md); border:2px solid var(--setup-line-strong);
   background:var(--setup-card); color:var(--setup-ink); font-family:inherit;
   font-weight:600; }
+/* LA HOME. (20/08/2026, dal PRD v2.1.)
+
+   La schermata che risponde a UNA domanda: «qual e' la cosa piu' utile che
+   posso fare adesso?». Prima non esisteva — si apriva su «cosa vuoi fare»,
+   che e' una domanda girata all'utente invece di una risposta.
+
+   I COLORI NON SONO QUELLI DEL DISEGNO, ED E' VOLUTO. Il mockup e' chiaro e
+   basta; l'app ha tre temi. Scriverci dentro gli esadecimali del PRD avrebbe
+   fatto una Home bellissima al chiaro e rotta al buio e al sole. I ruoli
+   dell'app SONO gia' quei colori — verde bosco, sabbia, argilla — tema per
+   tema. *Un colore giusto in un tema solo e' un colore sbagliato.* */
+.home-saluto{ font-size:var(--t-sm); color:var(--text-3); margin:0 0 var(--s-1); }
+.home-domanda{ font-size:var(--t-2xl); font-weight:800; line-height:1.1;
+  letter-spacing:-0.02em; margin:0 0 var(--s-4); text-wrap:balance; }
+.home-azioni{ display:flex; flex-direction:column; gap:var(--s-3); }
+.home-vicino{ display:flex; align-items:center; gap:var(--s-2);
+  margin-top:var(--s-4); font-size:var(--t-sm); color:var(--text-3); }
+.home-vicino b{ color:var(--text-2); font-weight:600; }
+
+/* LO STATO B: il giro in corso si prende la scena, e non e' decorazione.
+   Chi ha un giro aperto ha UNA cosa da fare, e non e' scegliere. */
+.home-ripresa{ background:var(--brand); color:var(--brand-ink);
+  border-radius:var(--r-xl); padding:var(--s-5); display:flex;
+  flex-direction:column; gap:var(--s-4); }
+.home-vivo{ display:inline-flex; align-items:center; gap:var(--s-2);
+  align-self:flex-start; padding:var(--s-1) var(--s-3); border-radius:var(--r-pill);
+  background:color-mix(in srgb, var(--brand-ink) 16%, transparent);
+  font-size:var(--t-2xs); font-weight:700; letter-spacing:0.06em;
+  text-transform:uppercase; }
+.home-vivo i{ width:7px; height:7px; border-radius:var(--r-pill);
+  background:var(--clay); display:block; }
+.home-ripresa h2{ font-size:var(--t-xl); font-weight:800; letter-spacing:-0.01em;
+  margin:0; line-height:1.15; }
+.home-ripresa .dove{ font-size:var(--t-sm); opacity:0.85; margin:0; }
+.home-binario{ height:8px; border-radius:var(--r-pill);
+  background:color-mix(in srgb, var(--brand-ink) 22%, transparent); overflow:hidden; }
+.home-binario i{ display:block; height:100%; border-radius:var(--r-pill);
+  background:var(--clay); width:var(--avanz,0%); }
+.home-avanz{ display:flex; align-items:baseline; font-size:var(--t-sm); }
+.home-avanz b{ font-weight:700; }
+.home-avanz span{ margin-left:auto; opacity:0.85; }
+.home-salvato{ display:flex; align-items:center; gap:6px; font-size:var(--t-xs);
+  opacity:0.85; }
+
+/* I QUATTRO NUMERI. Solo dati veri: se non ci sono giri, la fascia non c'e'.
+   *Un cruscotto che mostra zero non informa: scoraggia.* */
+.home-numeri{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--s-2); }
+.home-num{ background:var(--surface-1); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:var(--s-3) var(--s-4); }
+.home-num b{ display:block; font-size:var(--t-xl); font-weight:800;
+  letter-spacing:-0.02em; line-height:1.1; font-variant-numeric:tabular-nums; }
+.home-num span{ display:block; font-size:var(--t-xs); color:var(--text-3);
+  margin-top:2px; }
+.home-num .su{ color:var(--success); font-weight:700; }
+
+.home-sezione{ margin-top:var(--s-6); }
+.home-titolo{ display:flex; align-items:baseline; gap:var(--s-3);
+  margin:0 0 var(--s-3); }
+.home-titolo h2{ font-size:var(--t-xl); font-weight:800; letter-spacing:-0.01em;
+  margin:0; }
+.home-titolo button{ margin-left:auto; background:none; border:0; padding:0;
+  min-height:0; font-size:var(--t-sm); font-weight:600; color:var(--accent-soft);
+  cursor:pointer; }
+
+.home-giro{ display:flex; align-items:center; gap:var(--s-3); }
+.home-giro .dove{ flex:1 1 auto; min-width:0; }
+.home-giro .dove b{ display:block; font-size:var(--t-md); font-weight:700;
+  line-height:1.25; }
+.home-giro .dove span{ display:block; font-size:var(--t-sm); color:var(--text-3);
+  margin-top:2px; }
+.home-giro .punti{ text-align:right; flex:0 0 auto; }
+.home-giro .punti b{ display:block; font-size:var(--t-xl); font-weight:800;
+  font-variant-numeric:tabular-nums; line-height:1.1; }
+.home-giro .punti span{ font-size:var(--t-sm); font-weight:700; }
+.home-su{ color:var(--success); } .home-giu{ color:var(--text-3); }
+
+/* Il tasto che riprende il giro e il segno del record: erano due stili in
+   linea, e uno stile in linea non si puo' ridisegnare da nessuna parte. */
+.home-riprendi{ background:var(--clay); color:var(--solid-ink); }
+.home-record{ color:var(--gold); font-weight:700; }
+.home-scorciatoie{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--s-2); }
 .prova-campanella{ margin-bottom:var(--s-3); }
 /* I DUE MENU A TENDINA DEGLI ALLENAMENTI. (20/08/2026, chiesti dal campo:
    «se un giorno saranno tanti sara' impossibile capirci qualcosa».)
@@ -2644,7 +2727,9 @@ state.percorsi = state.percorsi || []; // percorsi gara salvati (Prepara Gara)
 // banner nella scheda Tira): si azzera solo il punto in cui si era rimasti.
 // Serve anche a non rientrare nel Marketplace, che si aprirebbe da solo.
 state.screen = "menu";
-state.tab = "tira";
+// SI RIAPRE SULLA HOME, non su «cosa vuoi fare». (20/08/2026.)
+// La decisione di ripartire dalla home non cambia: cambia cos'e' la home.
+state.tab = "home";
 // Un pannello e' un MODO, non un LUOGO: chi chiude l'app con la classifica
 // aperta non deve riaprire dentro la classifica.
 // E la striscia dell'annulla e' un RIMEDIO: deve stare vicino all'errore nel
@@ -3198,6 +3283,10 @@ cp_admin_tel: "Telefono",
 cp_admin_email_label: "Email compagnia",
 cp_admin_sito: "Sito web",
 home_pitch_title: "Il segnapunti per il tiro con l’arco 3D", home_pitch_body: "Segni le frecce sul percorso anche dove non prende, e ritrovi tutto nel diario. Conosce i regolamenti della tua federazione.",
+home_greet_m: "Buongiorno", home_greet_p: "Buon pomeriggio", home_greet_s: "Buonasera",
+home_ready: "Pronto a tirare?", home_start: "Inizia un giro", home_find: "Trova un campo",
+home_resume_title: "Riprendi il tuo giro", home_month: "Questo mese", home_rounds_word: "Giri",
+home_target_of: "Piazzola {n} di {tot}", home_saved_here: "Salvato sul telefono", nav_home: "Home",
 home_register_btn: "Registrati", home_login_link: "Hai gi\u00e0 un account?", home_login_link_word: "Accedi",
 home_install_btn: "Installa l'app sul telefono",
 home_install_ios_text: "<b>Su iPhone:</b> tocca il pulsante <b>Condividi</b> in basso nel browser (il quadrato con la freccia verso l'alto), poi scegli <b>\u201cAggiungi alla schermata Home\u201d</b>. Comparir\u00e0 un'icona come per qualsiasi altra app.",
@@ -3707,6 +3796,10 @@ home_dev_title: "\u26a0\ufe0f App under development", home_install_btn: "Install
 home_install_generic_text: "Look for the install icon in the address bar (at the top), or open the browser menu (usually the three dots top right) and look for <b>\u201cInstall app\u201d</b>.",
 home_install_ios_text: "<b>On iPhone:</b> tap the <b>Share</b> button at the bottom of the browser (the square with an upward arrow), then choose <b>\u201cAdd to Home Screen\u201d</b>. An icon will appear just like any other app.",
 home_login_link: "Already have an account?", home_login_link_word: "Log in", home_pitch_title: "The scorecard for 3D archery", home_pitch_body: "Score your arrows on the course even with no signal, and find it all again in your journal. It knows your federation’s rules.",
+home_greet_m: "Good morning", home_greet_p: "Good afternoon", home_greet_s: "Good evening",
+home_ready: "Ready to shoot?", home_start: "Start a round", home_find: "Find a field",
+home_resume_title: "Resume your round", home_month: "This month", home_rounds_word: "Rounds",
+home_target_of: "Target {n} of {tot}", home_saved_here: "Saved on this phone", nav_home: "Home",
 home_register_btn: "Sign up",
 login_forgot: "Forgot your password?", login_password: "Password",
 login_reset_sent: "We've sent you an email to reset your password. If you don't see it, check your spam folder too.",
@@ -4235,6 +4328,10 @@ home_dev_title: "\u26a0\ufe0f Application en cours de d\u00e9veloppement", home_
 home_install_generic_text: "Cherchez l’ic\u00f4ne d’installation dans la barre d’adresse (en haut), ou ouvrez le menu du navigateur (g\u00e9n\u00e9ralement les trois points en haut \u00e0 droite) et cherchez <b>\u00ab Installer l’application \u00bb</b>.",
 home_install_ios_text: "<b>Sur iPhone :</b> appuyez sur le bouton <b>Partager</b> en bas du navigateur (le carr\u00e9 avec une fl\u00e8che vers le haut), puis choisissez <b>\u00ab Sur l’\u00e9cran d’accueil \u00bb</b>. Une ic\u00f4ne appara\u00eetra comme pour toute autre application.",
 home_login_link: "Vous avez d\u00e9j\u00e0 un compte\u00a0?", home_login_link_word: "Se connecter", home_pitch_title: "Le marqueur pour le tir à l’arc 3D", home_pitch_body: "Note tes flèches sur le parcours même sans réseau, et retrouve tout dans ton carnet. Il connaît le règlement de ta fédération.",
+home_greet_m: "Bonjour", home_greet_p: "Bon après-midi", home_greet_s: "Bonsoir",
+home_ready: "Prêt à tirer ?", home_start: "Commencer un parcours", home_find: "Trouver un terrain",
+home_resume_title: "Reprendre ton parcours", home_month: "Ce mois-ci", home_rounds_word: "Parcours",
+home_target_of: "Cible {n} sur {tot}", home_saved_here: "Enregistré sur ce téléphone", nav_home: "Accueil",
 home_register_btn: "S’inscrire",
 login_forgot: "Mot de passe oubli\u00e9\u00a0?", login_password: "Mot de passe",
 login_reset_sent: "Nous vous avons envoy\u00e9 un e-mail pour r\u00e9initialiser votre mot de passe. Si vous ne le voyez pas, v\u00e9rifiez aussi vos courriers ind\u00e9sirables.",
@@ -4763,6 +4860,10 @@ home_dev_title: "\u26a0\ufe0f App in Entwicklung", home_install_btn: "App auf de
 home_install_generic_text: "Suche das Installationssymbol in der Adressleiste (oben), oder \u00f6ffne das Browsermen\u00fc (meist die drei Punkte oben rechts) und suche <b>\u201eApp installieren\u201c</b>.",
 home_install_ios_text: "<b>Auf dem iPhone:</b> Tippe unten im Browser auf <b>Teilen</b> (das Quadrat mit dem Pfeil nach oben), dann w\u00e4hle <b>\u201eZum Home-Bildschirm\u201c</b>. Ein Symbol erscheint wie bei jeder anderen App.",
 home_login_link: "Hast du schon ein Konto?", home_login_link_word: "Anmelden", home_pitch_title: "Der Punktezähler für 3D-Bogenschießen", home_pitch_body: "Trag deine Pfeile auf dem Parcours ein, auch ohne Empfang, und finde alles im Tagebuch wieder. Er kennt die Regeln deines Verbands.",
+home_greet_m: "Guten Morgen", home_greet_p: "Guten Tag", home_greet_s: "Guten Abend",
+home_ready: "Bereit zu schießen?", home_start: "Runde starten", home_find: "Parcours finden",
+home_resume_title: "Runde fortsetzen", home_month: "Diesen Monat", home_rounds_word: "Runden",
+home_target_of: "Ziel {n} von {tot}", home_saved_here: "Auf diesem Handy gespeichert", nav_home: "Start",
 home_register_btn: "Registrieren",
 login_forgot: "Passwort vergessen?", login_password: "Passwort",
 login_reset_sent: "Wir haben dir eine E-Mail zum Zur\u00fccksetzen deines Passworts geschickt. Falls du sie nicht siehst, schau auch im Spam-Ordner nach.",
@@ -5323,6 +5424,10 @@ compagnie_empty_msg: "Burada hen\u00fcz puan yok \u2014 ilkini sen kaydet.", com
 compagnie_piazzole_word: "hedef", compagnie_punteggi_word: "kaydedilen puan", compagnie_tutti: "T\u00fcm\u00fc",
 cp_admin_claim_btn: "🔑 Bu kulübün yöneticisi ol", cp_admin_claim_pending: "Gönderildi.", cp_admin_map_error: "Hata.", cp_admin_tel: "Telefon", cp_admin_email_label: "E-posta", cp_admin_sito: "Web sitesi", 
 home_pitch_title: "3D okçuluk için skor defteri", home_pitch_body: "Parkurda çekim olmasa bile oklarını kaydet, hepsini günlüğünde yeniden bul. Federasyonunun kurallarını bilir.",
+home_greet_m: "Günaydın", home_greet_p: "İyi günler", home_greet_s: "İyi akşamlar",
+home_ready: "Atışa hazır mısın?", home_start: "Tura başla", home_find: "Parkur bul",
+home_resume_title: "Turuna devam et", home_month: "Bu ay", home_rounds_word: "Tur",
+home_target_of: "Hedef {n} / {tot}", home_saved_here: "Bu telefonda kayıtlı", nav_home: "Ana sayfa",
 home_register_btn: "Kay\u0131t ol", home_login_link: "Zaten hesab\u0131n var m\u0131?", home_login_link_word: "Giri\u015f yap",
 home_install_btn: "Uygulamay\u0131 telefona kur",
 home_install_ios_text: "<b>iPhone\u2019da:</b> taray\u0131c\u0131n\u0131n altındaki <b>Payla\u015f</b> d\u00fc\u011fmesine (yukar\u0131 ok i\u015faretli kare) dokun, sonra <b>\u201cAna Ekrana Ekle\u201d</b>y\u0131 se\u00e7. Di\u011fer uygulamalar gibi bir simge belirir.",
@@ -5864,6 +5969,10 @@ compagnie_empty_msg: "Здесь пока нет результатов — ст
 compagnie_piazzole_word: "мишеней", compagnie_punteggi_word: "записанных результатов", compagnie_tutti: "Все",
 cp_admin_claim_btn: "🔑 Запросить администрирование клуба", cp_admin_claim_pending: "Запрос отправлен — ожидайте подтверждения.", cp_admin_map_error: "Ошибка сохранения.", cp_admin_tel: "Телефон", cp_admin_email_label: "Email клуба", cp_admin_sito: "Сайт", 
 home_pitch_title: "Счётчик очков для 3D-стрельбы из лука", home_pitch_body: "Записывай стрелы на трассе даже без связи и находи всё в дневнике. Он знает правила твоей федерации.",
+home_greet_m: "Доброе утро", home_greet_p: "Добрый день", home_greet_s: "Добрый вечер",
+home_ready: "Готов стрелять?", home_start: "Начать круг", home_find: "Найти площадку",
+home_resume_title: "Продолжить круг", home_month: "В этом месяце", home_rounds_word: "Круги",
+home_target_of: "Мишень {n} из {tot}", home_saved_here: "Сохранено на телефоне", nav_home: "Главная",
 home_register_btn: "Зарегистрироваться", home_login_link: "Уже есть аккаунт?", home_login_link_word: "Войти",
 home_install_btn: "Установить приложение на телефон",
 home_install_ios_text: "<b>На iPhone:</b> нажмите кнопку <b>Поделиться</b> внизу браузера (квадрат со стрелкой вверх), затем выберите <b>«Добавить на экран Домой»</b>. Появится значок, как у любого другого приложения.",
@@ -6405,6 +6514,10 @@ compagnie_empty_msg: "A\u00fan no hay ninguna puntuaci\u00f3n aqu\u00ed \u2014 s
 cp_admin_claim_btn: "🔑 Solicitar administración de este club", cp_admin_claim_pending: "Solicitud enviada — esperando aprobación.", cp_admin_map_error: "Error al guardar.", cp_admin_tel: "Teléfono", cp_admin_email_label: "Email del club", cp_admin_sito: "Sitio web", 
 compagnie_piazzole_word: "dianas", compagnie_punteggi_word: "puntuaciones registradas", compagnie_tutti: "Todos",
 home_pitch_title: "El marcador para el tiro con arco 3D", home_pitch_body: "Anota tus flechas en el recorrido aunque no haya cobertura, y encuéntralo todo en tu diario. Conoce el reglamento de tu federación.",
+home_greet_m: "Buenos días", home_greet_p: "Buenas tardes", home_greet_s: "Buenas noches",
+home_ready: "¿Listo para tirar?", home_start: "Empezar un recorrido", home_find: "Buscar un campo",
+home_resume_title: "Reanudar tu recorrido", home_month: "Este mes", home_rounds_word: "Recorridos",
+home_target_of: "Diana {n} de {tot}", home_saved_here: "Guardado en este teléfono", nav_home: "Inicio",
 home_register_btn: "Registrarse", home_login_link: "\u00bfYa tienes una cuenta?", home_login_link_word: "Iniciar sesi\u00f3n",
 home_install_btn: "Instalar la app en el tel\u00e9fono",
 home_install_ios_text: "<b>En iPhone:</b> toca el bot\u00f3n <b>Compartir</b> en la parte inferior del navegador (el cuadrado con la flecha hacia arriba), luego elige <b>\u201cA\u00f1adir a pantalla de inicio\u201d</b>. Aparecer\u00e1 un icono como el de cualquier otra app.",
@@ -6946,6 +7059,10 @@ compagnie_arciere: "Sk\u00e4ttens namn", compagnie_punteggio: "Po\u00e4ng", comp
 compagnie_empty_msg: "\u00c4nnu inga po\u00e4ng h\u00e4r \u2014 var f\u00f6rst med att registrera en.", compagnie_classifica_empty: "Inga po\u00e4ng f\u00f6r detta filter.",
 compagnie_piazzole_word: "m\u00e5l", compagnie_punteggi_word: "registrerade po\u00e4ng", compagnie_tutti: "Alla",
 home_pitch_title: "Poängräknaren för 3D-bågskytte", home_pitch_body: "Skriv in dina pilar på banan även utan täckning, och hitta allt igen i din dagbok. Den kan ditt förbunds regler.",
+home_greet_m: "God morgon", home_greet_p: "God eftermiddag", home_greet_s: "God kväll",
+home_ready: "Redo att skjuta?", home_start: "Starta en runda", home_find: "Hitta en bana",
+home_resume_title: "Återuppta din runda", home_month: "Den här månaden", home_rounds_word: "Rundor",
+home_target_of: "Mål {n} av {tot}", home_saved_here: "Sparat på den här telefonen", nav_home: "Hem",
 home_register_btn: "Registrera dig", home_login_link: "Har du redan ett konto?", home_login_link_word: "Logga in",
 home_install_btn: "Installera appen p\u00e5 telefonen",
 home_install_ios_text: "<b>P\u00e5 iPhone:</b> tryck p\u00e5 knappen <b>Dela</b> l\u00e4ngst ner i webbl\u00e4saren (fyrkanten med pilen upp\u00e5t), v\u00e4lj sedan <b>\u201dL\u00e4gg till p\u00e5 hemsk\u00e4rmen\u201d</b>. En ikon dyker upp precis som f\u00f6r vilken annan app som helst.",
@@ -7487,6 +7604,10 @@ compagnie_empty_msg: "Hier nog geen score \u2014 wees de eerste die er een regis
 cp_admin_claim_btn: "🔑 Beheer van deze club aanvragen", cp_admin_claim_pending: "Verzoek verzonden — wacht op goedkeuring.", cp_admin_map_error: "Fout bij opslaan.", cp_admin_tel: "Telefoon", cp_admin_email_label: "Club e-mail", cp_admin_sito: "Website", 
 compagnie_piazzole_word: "doelen", compagnie_punteggi_word: "geregistreerde scores", compagnie_tutti: "Alle",
 home_pitch_title: "De scoreteller voor 3D-boogschieten", home_pitch_body: "Noteer je pijlen op het parcours, ook zonder bereik, en vind alles terug in je dagboek. Hij kent de regels van jouw bond.",
+home_greet_m: "Goedemorgen", home_greet_p: "Goedemiddag", home_greet_s: "Goedenavond",
+home_ready: "Klaar om te schieten?", home_start: "Start een ronde", home_find: "Zoek een parcours",
+home_resume_title: "Hervat je ronde", home_month: "Deze maand", home_rounds_word: "Rondes",
+home_target_of: "Doel {n} van {tot}", home_saved_here: "Opgeslagen op deze telefoon", nav_home: "Home",
 home_register_btn: "Registreren", home_login_link: "Heb je al een account?", home_login_link_word: "Inloggen",
 home_install_btn: "Installeer de app op je telefoon",
 home_install_ios_text: "<b>Op iPhone:</b> tik op de knop <b>Delen</b> onderaan de browser (het vierkant met de pijl omhoog), kies dan <b>\u201cZet op beginscherm\u201d</b>. Er verschijnt een icoon zoals bij elke andere app.",
@@ -10960,6 +11081,161 @@ return { reg: (c && c.regione) ? c.regione : null, prov: (c && c.provincia) ? c.
 }
 var otReg = "", otProv = "";   // fuori dalla funzione: sopravvivono a render()
 
+/* I QUATTRO NUMERI DELLA HOME, dallo storico vero. (20/08/2026.)
+   Nessun dato inventato: se non ci sono giri questa funzione restituisce
+   null e la fascia non viene disegnata. *Un cruscotto pieno di zeri non
+   informa: scoraggia, e per giunta mente sul fatto che l'app sia gia' stata
+   usata.* */
+function homeNumeri(){
+var lista = [];
+try{ lista = loadHistory() || []; }catch(e){ lista = []; }
+var miei = [];
+lista.forEach(function(g){
+var io = (g.results || []).filter(function(r){ return r.isSelf === true; })[0];
+if(!io) return;
+var d = null;
+try{ d = new Date(g.date); }catch(e){}
+if(!d || isNaN(d.getTime())) return;
+miei.push({ data:d, punti: io.total || 0, piazzole: (io.perTarget || []).length || g.format || 0,
+            dove: g.modeLabel || "", formato: g.format || 0 });
+});
+if(!miei.length) return null;
+var ora = new Date();
+var mese = miei.filter(function(x){
+return x.data.getFullYear() === ora.getFullYear() && x.data.getMonth() === ora.getMonth();
+});
+// La media e' del MESE: un numero che non si muove mai non e' una notizia.
+// Se questo mese non si e' ancora tirato, si prende tutto lo storico e lo
+// si dice cambiando etichetta, invece di mostrare un vuoto.
+var base = mese.length ? mese : miei;
+var somma = 0; base.forEach(function(x){ somma += x.punti; });
+var piazz = 0; base.forEach(function(x){ piazz += x.piazzole; });
+var meglio = 0; miei.forEach(function(x){ if(x.punti > meglio) meglio = x.punti; });
+var ultimo = miei[0];
+var precedente = miei[1] || null;
+return {
+media: Math.round(somma / base.length),
+giri: base.length,
+piazzole: piazz,
+meglio: meglio,
+nelMese: mese.length > 0,
+ultimo: ultimo,
+delta: (ultimo && precedente) ? (ultimo.punti - precedente.punti) : null,
+eRecord: !!(ultimo && ultimo.punti >= meglio && miei.length > 1)
+};
+}
+
+// Buongiorno / buon pomeriggio / buonasera: l'ora la sa il telefono, e una
+// riga che sa che ore sono costa una chiave in piu' e si nota.
+function homeSaluto(){
+var h = new Date().getHours();
+if(h < 13) return t("home_greet_m");
+if(h < 18) return t("home_greet_p");
+return t("home_greet_s");
+}
+
+/* LA HOME. Risponde a «qual e' la cosa piu' utile che posso fare adesso».
+   Due stati, e la differenza non e' cosmetica: con un giro aperto non c'e'
+   niente da scegliere, c'e' una cosa da riprendere. */
+function homeScreen(){
+var wrap = el('<div class="menu-cols"></div>');
+var inCorso = (state.roundActive === true) || (state.screen === "round");
+
+if(inCorso){
+var fatte = Math.max(1, state.target || 1);
+var tot = state.format || 24;
+var pct = Math.min(100, Math.round((fatte - 1) / tot * 100));
+var rip = el('<div class="home-ripresa"></div>');
+rip.appendChild(el('<span class="home-vivo"><i></i> '+escapeHtml(t("resume_btn"))+'</span>'));
+rip.appendChild(el('<h2>'+escapeHtml(t("home_resume_title"))+'</h2>'));
+rip.appendChild(el('<p class="dove">'+escapeHtml(modeLabel(state.mode))+'</p>'));
+var av = el('<div></div>');
+av.appendChild(el('<div class="home-avanz"><b>'+escapeHtml(t("home_target_of",{n:fatte,tot:tot}))+'</b></div>'));
+var bin = el('<div class="home-binario"><i></i></div>');
+bin.style.setProperty("--avanz", pct + "%");
+av.appendChild(bin);
+rip.appendChild(av);
+var vai = el('<button class="btn btn-block home-riprendi">'+escapeHtml(t("resume_btn"))+'</button>');
+vai.addEventListener("click", function(){ homeOverride = false; state.screen = "round"; save(); render(); });
+rip.appendChild(vai);
+// Niente icona: fra quelle disponibili non c'e un segno di spunta, e
+// icon() con un nome che non esiste disegna un SVG VUOTO senza dire niente.
+rip.appendChild(el('<div class="home-salvato">'+escapeHtml(t("home_saved_here"))+'</div>'));
+wrap.appendChild(rip);
+} else {
+var eroe = el('<div></div>');
+var nome = (state.profile && (state.profile.username || state.profile.nomeCognome)) || "";
+eroe.appendChild(el('<p class="home-saluto">'+escapeHtml(homeSaluto() + (nome ? ", " + nome : ""))+'.</p>'));
+eroe.appendChild(el('<h1 class="home-domanda">'+escapeHtml(t("home_ready"))+'</h1>'));
+var az = el('<div class="home-azioni"></div>');
+var bTira = el('<button class="btn btn-primary btn-block">'+navIcon("azarco",20,"unica")+' '+escapeHtml(t("home_start"))+'</button>');
+bTira.addEventListener("click", function(){ state.tab = "tira"; save(); render(); });
+var bCampi = el('<button class="btn btn-ghost btn-block">'+navIcon("navfield",20,"due")+' '+escapeHtml(t("home_find"))+'</button>');
+bCampi.addEventListener("click", function(){ state.tab = "campi"; save(); render(); });
+az.appendChild(bTira); az.appendChild(bCampi);
+eroe.appendChild(az);
+wrap.appendChild(eroe);
+}
+
+var n = homeNumeri();
+if(n){
+var sez = el('<div class="home-sezione"></div>');
+var tit = el('<div class="home-titolo"><h2>'+escapeHtml(n.nelMese ? t("home_month") : t("journal_title"))+'</h2></div>');
+// Nessun link qui: la sezione «Ultimi giri» sta gia' qui sotto e il diario
+// ha la sua scorciatoia in fondo. *Tre porte per la stessa stanza non sono
+// tre comodita': sono tre volte la stessa domanda.*
+sez.appendChild(tit);
+var g = el('<div class="home-numeri"></div>');
+g.appendChild(el('<div class="home-num"><b>'+n.media+'</b><span>'+escapeHtml(t("diario_media"))+'</span></div>'));
+g.appendChild(el('<div class="home-num"><b>'+n.giri+'</b><span>'+escapeHtml(t("home_rounds_word"))+'</span></div>'));
+g.appendChild(el('<div class="home-num"><b>'+n.meglio+'</b><span>'+escapeHtml(t("diario_record"))+'</span></div>'));
+g.appendChild(el('<div class="home-num"><b>'+n.piazzole+'</b><span>'+escapeHtml(t("diario_targets_word"))+'</span></div>'));
+sez.appendChild(g);
+wrap.appendChild(sez);
+}
+
+// Chi si allena vicino a te: la scheda esiste gia' ed e' viva. Riusarla vuol
+// dire che i filtri e la riga di quello che manca valgono anche qui.
+var vic = el('<div class="home-sezione"></div>');
+vic.appendChild(otSectionCard(true));
+wrap.appendChild(vic);
+
+if(n && n.ultimo){
+var ul = el('<div class="home-sezione"></div>');
+ul.appendChild(el('<div class="home-titolo"><h2>'+escapeHtml(t("diario_last_rounds"))+'</h2></div>'));
+var card = el('<div class="card"></div>');
+var riga = el('<div class="home-giro"></div>');
+var quando = "";
+try{ quando = n.ultimo.data.toLocaleDateString(state.lang || "it", { day:"numeric", month:"long" }); }catch(e){}
+riga.appendChild(el('<div class="dove"><b>'+escapeHtml(n.ultimo.dove)+'</b><span>'+escapeHtml(quando + " \u00b7 " + n.ultimo.piazzole + " " + t("diario_targets_word"))+'</span></div>'));
+var d = (n.delta === null) ? "" : ((n.delta >= 0 ? "+" : "") + n.delta);
+riga.appendChild(el('<div class="punti"><b>'+n.ultimo.punti+'</b>'+(d ? '<span class="'+(n.delta >= 0 ? "home-su" : "home-giu")+'">'+d+'</span>' : '')+'</div>'));
+card.appendChild(riga);
+if(n.eRecord){
+card.appendChild(el('<div class="nota dopo home-record">'+escapeHtml(t("diario_record_badge"))+'</div>'));
+}
+ul.appendChild(card);
+wrap.appendChild(ul);
+}
+
+var sc = el('<div class="home-sezione"></div>');
+var sg = el('<div class="home-scorciatoie"></div>');
+var bDia = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("chart",16)+' '+escapeHtml(t("journal_title"))+'</button>');
+bDia.addEventListener("click", function(){ state.screen = "diario"; save(); render(); });
+sg.appendChild(bDia);
+// Il mercatino lascia la barra in fondo per far posto a Tira al centro: qui
+// resta la sua porta, e la vede solo chi ce l'ha aperto.
+if(IS_BETA_TESTER){
+var bMkt = el('<button class="btn btn-ghost btn-block btn-sm">'+navIcon("navmarket",16,"due")+' '+escapeHtml(t("nav_market"))+'</button>');
+bMkt.addEventListener("click", function(){ state.tab = "market"; save(); render(); });
+sg.appendChild(bMkt);
+}
+sc.appendChild(sg);
+wrap.appendChild(sc);
+
+return wrap;
+}
+
 function otSectionCard(compact){
 assicuraNomi();
 var otCard = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
@@ -11113,10 +11389,21 @@ function tabBar(wide){
 // !important — che sono poi il motivo per cui la sezione aperta finiva verde
 // su verde e diventava l'unica illeggibile.
 var bar = el('<nav class="tabbar'+(wide?' tabbar-wide':' tabbar-bottom')+'" aria-label="'+t("nav_shoot")+'"></nav>');
-[["campi","navfield",t("nav_fields")],
+// CINQUE DESTINAZIONI, TIRA AL CENTRO. (20/08/2026, dal PRD v2.1.)
+// Prima erano cinque SEZIONI in ordine alfabetico di comodo, e quella per cui
+// l'app esiste stava seconda. Adesso l'ordine e' quello del giro sportivo —
+// Home, dove si tira, TIRA, chi c'e', tu — e il pollice trova al centro la
+// cosa che fa piu' spesso.
+//
+// IL MERCATINO ESCE DALLA BARRA, e non e' una retrocessione: e' chiuso ai
+// non collaudatori dal 19/08, quindi per quasi tutti era una voce che porta
+// a una porta chiusa. La sua porta resta, in una scorciatoia sulla Home, e
+// la vede chi ce l'ha aperto. *Una voce di navigazione che non si puo'
+// aprire non e' una scorciatoia: e' un promemoria di essere esclusi.*
+[["home","navshoot",t("nav_home")],
+ ["campi","navfield",t("nav_fields")],
  ["tira","navshoot",t("nav_shoot")],
  ["compagnie","navclub",t("nav_clubs")],
- ["market","navmarket",t("nav_market")],
  ["profilo","navprofile",t("nav_profile")]].forEach(function(tb){
 var key = tb[0], on = (state.tab === key);
 // La voce attiva ha una pastiglia piena: sul telefono, al sole, il solo
@@ -11145,7 +11432,7 @@ var wrap = el('<div class="menu-cols"></div>');
 // Il percorso resta "in corso" anche se apri Storico o Diario: prima dipendeva
 // dalla schermata aperta, quindi il banner spariva e il percorso era irraggiungibile.
 var hasActiveRound = (state.roundActive === true) || (state.screen === "round");
-if(!state.tab || state.tab === "community") state.tab = "tira";
+if(!state.tab || state.tab === "community") state.tab = "home";
 
 // ── Cose urgenti: sempre in cima, in qualunque sezione ────────────────────
 // Il banner del percorso in corso ha senso solo dove si tira: nello spazio
@@ -11183,7 +11470,11 @@ render();
 });
 
 // ══════════════════════ SEZIONE: TIRA ══════════════════════
-if(state.tab === "tira"){
+if(state.tab === "home"){
+wrap.appendChild(homeScreen());
+}
+
+else if(state.tab === "tira"){
 // PRIMA COSA PUOI FARE, POI COSA FANNO GLI ALTRI. (20/08/2026.)
 // «Allenamenti aperti» stava in cima, ed e' quasi sempre vuoto: la prima
 // cosa che si vedeva aprendo l'app era **un'assenza**, nel posto migliore
@@ -12847,7 +13138,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-vetrina-e-nomi";
+var BUILD_STAMP = "2026-08-20-la-home";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12856,7 +13147,7 @@ var BUILD_STAMP = "2026-08-20-vetrina-e-nomi";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-vetrina-e-scala";
+var BUILD_PARENT = "2026-08-20-vetrina-e-nomi";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
