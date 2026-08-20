@@ -249,7 +249,14 @@ color-scheme:light;
    passato in tutti e tre. *Un colore che va bene in due temi su tre e' un
    colore sbagliato, e il terzo tema e' sempre quello che nessuno guarda.* */
 --chart-line:var(--green-800);
---clay:var(--clay-600);
+/* L'INCHIOSTRO SOPRA L'ARANCIO. (20/08/2026 — e ieri l'avevo sbagliato.)
+   Le pastiglie arancioni scrivevano con --solid-ink, che e' l'inchiostro
+   "scuro dove il fondo e' chiaro". Sul tema Sole l'arancio DIVENTA scuro
+   (clay-800) e l'inchiostro resta scuro: 2,44:1, cioe' illeggibile.
+   *L'errore non era il colore: era aver dato per scontato che un ruolo
+   giusto in due temi su tre lo fosse anche nel terzo.*
+   Misure vere: chiaro 4,74 - scuro 6,00 - sole 7,51. */
+--clay:var(--clay-600); --clay-ink:var(--sand-50);
 /* --gold-role e' salito da --gold-700 a --gold-600 il 17/08, perche' il nome
    della compagnia sembrava marrone. E' l'ultimo gradino possibile: l'oro sta
    qui come INCHIOSTRO su foglio bianco, e un oro piu' acceso e' anche piu'
@@ -346,7 +353,7 @@ color-scheme:dark;
 --border:var(--moss-600); --border-strong:var(--moss-500);
 --brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:var(--sand-50);
 --chart-line:var(--green-400);   /* al buio serve il verde chiaro: 3:1 */
---clay:var(--clay-400); --gold-role:var(--gold-400);
+--clay:var(--clay-400); --clay-ink:var(--sand-900); --gold-role:var(--gold-400);
 --sun-on-bg:var(--gold-400); --sun-on-fg:#1A1305;
 --danger-role:var(--red-400); --success-role:var(--green-success-dk);
 /* Al buio la paglia resta paglia — e' l'oggetto — ma il vuoto segue la
@@ -449,7 +456,7 @@ color-scheme:light;
 /* marchio e codici: i gradini piu' scuri di ogni famiglia */
 --brand:var(--green-900); --brand-soft:var(--green-900); --brand-ink:var(--sand-50);
 --chart-line:var(--green-900);   /* al sole il verde piu' scuro, sul bianco */
---clay:var(--clay-800); --gold-role:var(--gold-800);
+--clay:var(--clay-800); --clay-ink:var(--sand-50); --gold-role:var(--gold-800);
 --sun-on-bg:var(--gold-800); --sun-on-fg:var(--sand-50);
 --danger-role:var(--red-700); --success-role:var(--green-800);
 
@@ -620,7 +627,7 @@ border-color:var(--danger); color:var(--danger); }
    consuma: quando arriva un errore vero, non ha piu' niente da dire.
    Verificato a 3:1 sui tre temi. */
 .bar-badge{ position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 var(--s-1);
-border-radius:var(--r-sm); background:var(--clay); color:var(--solid-ink); font-size:var(--t-2xs); font-weight:800;
+border-radius:var(--r-sm); background:var(--clay); color:var(--clay-ink); font-size:var(--t-2xs); font-weight:800;
 display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
 .bar-dot{ position:absolute; top:4px; right:4px; width:10px; height:10px; border-radius:50%;
 background:var(--clay); border:2px solid var(--bg-panel); }   /* arancio come la pastiglia */
@@ -680,7 +687,7 @@ color:var(--cream); font-family:inherit; font-size:var(--t-md); font-weight:600;
 .bar-menu-item:active{ background:var(--bg-panel-2); }
 .bar-menu-item > svg{ flex:0 0 auto; color:var(--muted); }
 .bar-menu-count{ margin-left:auto; min-width:20px; height:20px; padding:0 var(--s-1); border-radius:var(--r-sm);
-background:var(--clay); color:var(--solid-ink); font-size:var(--t-xs); font-weight:800;
+background:var(--clay); color:var(--clay-ink); font-size:var(--t-xs); font-weight:800;
 display:flex; align-items:center; justify-content:center; }
 header.top .brand-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-sm); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
 header.top .brandblock{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
@@ -1266,6 +1273,20 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
 .pf-tessera.show{ display:block; }
 .pf-tessera label{ font-size:var(--t-xs); color:var(--muted); font-weight:700; margin-bottom:var(--s-1); display:block; text-transform:uppercase; letter-spacing:.05em; }
 .pf-tessera input{ width:100%; padding:var(--s-2) var(--s-2); border-radius:var(--r-xs); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:var(--t-sm); }
+/* Le due tendine stanno su una riga sola: sono la stessa domanda in due
+   gradini, non due domande. */
+.cp-due{ display:flex; gap:var(--s-3); }
+.cp-due > *{ flex:1 1 0; min-width:0; }
+/* La riga di una compagnia nell'elenco: un segno, il nome, dove sta.
+   E' un tasto, non una voce di menu — si tocca e si apre qui sotto. */
+.comp-riga{ display:flex; align-items:center; gap:var(--s-3); width:100%;
+  padding:var(--s-2) var(--s-3); margin-bottom:var(--s-2); min-height:var(--hit);
+  background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-md);
+  text-align:left; font:inherit; color:inherit; cursor:pointer; }
+.comp-riga .mini{ flex:0 0 auto; width:var(--s-6); height:var(--s-6); border-radius:var(--r-sm);
+  background:var(--surface-1); border:1px solid var(--border); display:flex;
+  align-items:center; justify-content:center; color:var(--accent-soft); }
+.comp-riga.on{ border-color:var(--accent); background:var(--surface-1); }
 .cp-vuoto{ font-size:var(--t-sm); color:var(--text-3); line-height:1.5; margin:0 0 var(--s-3); }
 
 /* ---------- IL CAMPO CON L'OCCHIO ----------
@@ -1432,7 +1453,7 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
 
 /* Il tasto che riprende il giro e il segno del record: erano due stili in
    linea, e uno stile in linea non si puo' ridisegnare da nessuna parte. */
-.home-riprendi{ background:var(--clay); color:var(--solid-ink); }
+.home-riprendi{ background:var(--clay); color:var(--clay-ink); }
 .home-record{ color:var(--gold); font-weight:700; }
 /* IL GRAFICO DELL'ANDAMENTO.
    Una serie sola, quindi nessuna legenda: il titolo dice gia' cos'e'.
@@ -1485,8 +1506,125 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    due direzioni della stessa cosa, e in fila si legge quale e' quella in
    corso. */
 .notif-spegni{ margin-top:var(--s-1); }
-/* Il tasto che ti unisce a un allenamento di qualcun altro. */
-.ot-partecipa{ background:var(--clay); color:var(--solid-ink); border-color:var(--clay); }
+/* L'ARANCIO DEL PRD (9.3: «Orange: event / join / publish»). Si chiamava
+   `.ot-partecipa`, e il nome mentiva da quando lo usa anche «Annuncia
+   allenamento»: pubblicare non e' partecipare. Il colore pero' e' lo stesso,
+   perche' il PRD mette le due cose nella stessa famiglia — sono i due gesti
+   con cui un arciere entra in quello che fanno gli altri. */
+.btn-arancio{ background:var(--clay); color:var(--clay-ink); border-color:var(--clay); }
+
+/* ══════════ L'ALLENAMENTO COME NELLA BOZZA (20/08/2026) ══════════
+   Prima ogni allenamento era una colonna alta mezzo schermo: titolo, data
+   scritta 2026-08-23, organizzatore, nota, posti, elenco dei presenti, una
+   frase di spiegazione, un tasto a tutta larghezza e altri due tasti sotto.
+   Con tre allenamenti in elenco non se ne vedeva nemmeno uno per intero.
+   *Un allenamento a cui non vai deve costare una riga, non una schermata:
+   l'elenco serve a scegliere, e per scegliere bisogna poter confrontare.*
+   Adesso la riga dice le quattro cose che servono per decidere — quando,
+   dove, quanti sono, ci vado — e tutto il resto sta un tocco piu' sotto. */
+.al-blocco{ border-bottom:1px solid var(--line); }
+.al-blocco:last-child{ border-bottom:none; }
+.al-riga{ display:flex; align-items:center; gap:var(--s-2); padding:var(--s-3) 0; }
+/* IL QUADRATO DELLA DATA. `2026-08-23` non e' una data: e' un dato. Il
+   giorno grosso e il mese sotto si leggono senza contare i trattini, e in
+   un elenco ordinato per data sono anche la colonna che lo tiene insieme. */
+.al-quando{ flex:0 0 auto; width:var(--s-7); min-height:var(--s-7); border-radius:var(--r-md);
+  background:var(--brand); color:var(--brand-ink); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; line-height:1.05; }
+.al-quando b{ font-size:var(--t-lg); font-weight:800; font-variant-numeric:tabular-nums; }
+.al-quando i{ font-size:var(--t-2xs); font-style:normal; text-transform:uppercase;
+  letter-spacing:.08em; opacity:.85; margin-top:2px; }
+/* Tutta la parte sinistra e' UN tasto solo: il bersaglio da toccare per
+   aprire e' largo mezzo schermo, non un chevron da otto pixel. */
+.al-tocca{ flex:1 1 auto; min-width:0; display:flex; align-items:center; gap:var(--s-3);
+  /* fra il testo e il chevron basta un respiro: ogni pixel qui e' una lettera
+     in meno del nome del campo. */
+  background:none; border:none; padding:0; margin:0; text-align:left; color:inherit;
+  font:inherit; cursor:pointer; min-height:var(--hit); }
+.al-dove{ flex:1 1 auto; min-width:0; }
+.al-dove b{ display:block; font-size:var(--t-md); font-weight:700; line-height:1.25;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.al-dove span{ display:block; font-size:var(--t-sm); color:var(--muted); margin-top:2px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.al-chev{ flex:0 0 auto; color:var(--muted); font-size:var(--t-md); line-height:1;
+  transition:transform var(--dur-2) var(--ease); }
+.al-blocco.aperta .al-chev{ transform:rotate(90deg); color:var(--accent-soft); }
+.al-dove + .al-chev{ margin-left:var(--s-1); }
+/* La pastiglia sparisce quando la riga si apre: sotto c'e' lo stesso gesto
+   scritto per esteso, e la stessa azione due volte sullo stesso schermo non
+   e' una seconda occasione, e' un dubbio su quale sia quella giusta. */
+.al-azione{ flex:0 0 auto; }
+.al-blocco.aperta .al-azione{ display:none; }
+.al-pill{ min-height:var(--hit); padding:0 var(--s-3); border-radius:var(--r-pill);
+  border:1px solid transparent; font-weight:700; font-size:var(--t-xs); cursor:pointer;
+  display:inline-flex; align-items:center; white-space:nowrap; font-family:inherit; }
+/* Unirsi e' arancio (PRD 9.3), esserci gia' e' un contorno verde: uno
+   chiede, l'altro conferma, e non devono pesare uguale. */
+.al-pill.va{ background:var(--clay); color:var(--clay-ink); border-color:var(--clay); }
+.al-pill.dentro{ background:transparent; color:var(--success); border-color:var(--success); }
+/* «Al completo» non e' un tasto e non deve sembrarlo: niente contorno, solo
+   il grigio di chi dice come stanno le cose. */
+.al-pill[disabled],.al-pill[aria-disabled="true"]{ background:transparent; color:var(--muted);
+  border-color:transparent; cursor:default; }
+/* Il dettaglio rientra sotto il testo, non sotto il quadrato della data:
+   cosi' la colonna delle date resta una colonna anche quando una riga e'
+   aperta. */
+.al-piu{ display:none; padding:0 0 var(--s-3) calc(var(--s-7) + var(--s-3)); }
+.al-blocco.aperta .al-piu{ display:block; }
+.al-tag{ display:inline-block; font-size:var(--t-2xs); font-weight:700; letter-spacing:.04em;
+  text-transform:uppercase; border-radius:var(--r-pill); padding:2px var(--s-2);
+  background:var(--surface-2); border:1px solid var(--line); color:var(--muted); }
+.al-tag.invito{ background:var(--clay); border-color:var(--clay); color:var(--clay-ink); }
+.al-ferri{ display:flex; gap:var(--s-2); margin-top:var(--s-2); flex-wrap:wrap; }
+.al-ferri .btn{ flex:1 1 auto; }
+
+/* ══════════ L'AREA COMPAGNIA (20/08/2026) ══════════
+   Chi non e' referente — cioe' quasi tutti — apriva «Compagnie» e trovava:
+   una scheda per REGISTRARE una compagnia, un tasto di menu, e tre tendine
+   vuote da compilare. La sua compagnia, che sta scritta nel profilo e che
+   l'app conosce, non compariva da nessuna parte.
+   *La schermata chiedeva di cercare quello che gia' sapeva.* */
+.comp-testa{ border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--border);
+  background:var(--surface-1); margin-bottom:var(--s-4); }
+.comp-fascia{ position:relative; height:calc(var(--s-7) + var(--s-4)); background:var(--brand); }
+.comp-fascia svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+.comp-stemma{ position:absolute; left:var(--s-4); bottom:calc(var(--s-5) * -1); width:var(--s-7);
+  height:var(--s-7); border-radius:var(--r-md); background:var(--surface-1);
+  border:3px solid var(--surface-1); display:flex; align-items:center; justify-content:center;
+  color:var(--accent-soft); box-shadow:var(--elev-2); }
+.comp-dentro{ padding:var(--s-6) var(--s-4) var(--s-4); display:flex; flex-direction:column;
+  gap:var(--s-3); }
+.comp-nome{ margin:0; font-size:var(--t-lg); font-weight:800; line-height:1.2; }
+.comp-sotto{ display:flex; align-items:center; gap:var(--s-2); flex-wrap:wrap;
+  font-size:var(--t-sm); color:var(--muted); }
+/* I NUMERI SONO SOLO QUELLI VERI. Non c'e' «iscritti» perche' l'app non sa
+   quanti sono: un numero inventato in un cruscotto e' peggio di un buco,
+   perche' il buco lo vedi. */
+.comp-conti{ display:flex; gap:var(--s-5); padding:var(--s-3) 0;
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.comp-conti b{ display:block; font-size:var(--t-lg); font-weight:800; line-height:1.1;
+  font-variant-numeric:tabular-nums; }
+.comp-conti span{ display:block; font-size:var(--t-xs); color:var(--muted); margin-top:2px; }
+/* I contatti in fila invece che in colonna: quattro righe da leggere
+   diventano quattro cose da toccare, e occupano una riga sola. */
+.comp-ferri{ display:flex; gap:var(--s-2); flex-wrap:wrap; }
+.comp-ferro{ display:inline-flex; align-items:center; gap:var(--s-1); min-height:var(--hit);
+  padding:0 var(--s-3); border-radius:var(--r-pill); border:1px solid var(--line);
+  background:transparent; color:var(--accent-soft); font-size:var(--t-sm); font-weight:700;
+  text-decoration:none; cursor:pointer; font-family:inherit; }
+/* Tre classi nate togliendo stile in linea dalla scheda «Gestisci»: erano
+   tre righe di `style="…"` copiate da altrove, e una di loro (il select)
+   ripeteva a mano il colore di sfondo che il ruolo sa gia'. */
+.scelta-piena{ width:100%; font-size:var(--t-md); padding:var(--s-3);
+  border-radius:var(--r-sm); border:1px solid var(--line);
+  background:var(--bg-panel); color:var(--cream); }
+.passo-numero{ flex-shrink:0; width:22px; height:22px; border-radius:50%;
+  background:var(--sun-on-bg); color:var(--sun-on-fg); font-weight:800;
+  font-size:var(--t-sm); display:flex; align-items:center; justify-content:center; }
+.link-tasto{ text-decoration:none; display:flex; align-items:center;
+  justify-content:center; margin-top:var(--s-1); }
+.comp-eti{ font-size:var(--t-xs); font-weight:700; text-transform:uppercase;
+  letter-spacing:.04em; color:var(--gold); margin-bottom:var(--s-1); }
 /* La riga che dice a cosa serve la prova. Senza, il tasto e' un enigma: se
    uno deve chiedere «che senso ha», la risposta andava scritta accanto. */
 .prova-nota{ font-size:var(--t-xs); color:var(--muted); line-height:1.45; margin-bottom:var(--s-2); }
@@ -1878,10 +2016,10 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
    arriva da una push: cioe' proprio quando si ha fretta.
    La striscia scorre in orizzontale invece di andare a capo: cinque etichette
    su due righe si leggono come due gruppi di cose diverse. */
-.adm-tabs{display:flex;gap:var(--s-2);overflow-x:auto;margin-bottom:var(--s-4);padding-bottom:var(--s-1);scrollbar-width:none;}
-.adm-tabs::-webkit-scrollbar{display:none;}
-.adm-tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--s-2);border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:var(--r-pill);padding:var(--s-2) var(--s-4);font-size:var(--t-sm);font-weight:700;cursor:pointer;white-space:nowrap;min-height:38px;}
-.adm-tab.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.adm-tabs,.schede{display:flex;gap:var(--s-2);overflow-x:auto;margin-bottom:var(--s-4);padding-bottom:var(--s-1);scrollbar-width:none;}
+.adm-tabs::-webkit-scrollbar,.schede::-webkit-scrollbar{display:none;}
+.adm-tab,.scheda{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--s-2);border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:var(--r-pill);padding:var(--s-2) var(--s-4);font-size:var(--t-sm);font-weight:700;cursor:pointer;white-space:nowrap;min-height:38px;}
+.adm-tab.on,.scheda.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
 /* Il numero compare solo quando c'e' qualcosa che aspetta: un pallino con
    zero dentro e' rumore, e insegna a non guardarlo. */
 .adm-tab .n{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 var(--s-1);border-radius:var(--r-pill);background:var(--bark);color:var(--accent-ink);font-size:var(--t-2xs);font-weight:700;line-height:1;}
@@ -2837,6 +2975,17 @@ var LANG_ORDER = ["it","en","fr","de","tr","ru","es","sv","nl"];
 
 var STRINGS = {
 it: {
+/* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
+comp_tab_mia: "La mia",
+comp_tab_scopri: "Scopri",
+comp_tab_gestisci: "Gestisci",
+comp_no_club: "La tua compagnia non è ancora impostata. Scegliela nel profilo: da lì in poi la ritrovi qui, con i suoi allenamenti.",
+comp_set_club: "Scegli la mia compagnia",
+comp_qui_prossimi: "In programma qui",
+comp_niente_prossimi: "Nessun allenamento in programma in questa compagnia.",
+comp_w_percorsi: "percorsi",
+comp_w_punteggi: "punteggi",
+comp_w_prossimi: "in programma",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Conferma email",
 profile_error_email_mismatch: "Le due email non coincidono.",
@@ -3424,6 +3573,17 @@ notif_token_error: "Impossibile ottenere il token. Riprova.", notif_enabled: "No
 notif_save_error: "Errore nel salvataggio: {err}", notif_generic_error: "Errore: {err}", notif_not_configured: "Notifiche non ancora configurate (manca la chiave sul server).",
 },
 en: {
+/* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
+comp_tab_mia: "Mine",
+comp_tab_scopri: "Discover",
+comp_tab_gestisci: "Manage",
+comp_no_club: "Your club isn’t set yet. Choose it in your profile: from then on you’ll find it here, with its trainings.",
+comp_set_club: "Choose my club",
+comp_qui_prossimi: "Coming up here",
+comp_niente_prossimi: "No trainings scheduled at this club.",
+comp_w_percorsi: "courses",
+comp_w_punteggi: "scores",
+comp_w_prossimi: "coming up",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Confirm email",
 profile_error_email_mismatch: "The two email addresses don’t match.",
@@ -3960,6 +4120,17 @@ profile_hide_name: "Hide my first and last name from other archers", profile_hid
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 },
 fr: {
+/* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
+comp_tab_mia: "La mienne",
+comp_tab_scopri: "Découvrir",
+comp_tab_gestisci: "Gérer",
+comp_no_club: "Ton club n’est pas encore renseigné. Choisis-le dans ton profil : ensuite tu le retrouves ici, avec ses entraînements.",
+comp_set_club: "Choisir mon club",
+comp_qui_prossimi: "À venir ici",
+comp_niente_prossimi: "Aucun entraînement prévu dans ce club.",
+comp_w_percorsi: "parcours",
+comp_w_punteggi: "scores",
+comp_w_prossimi: "à venir",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Confirmez l’e-mail",
 profile_error_email_mismatch: "Les deux adresses e-mail ne correspondent pas.",
@@ -4496,6 +4667,17 @@ profile_hide_name: "Masquer mes nom et pr\u00e9nom aux autres archers", profile_
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 },
 de: {
+/* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
+comp_tab_mia: "Meiner",
+comp_tab_scopri: "Entdecken",
+comp_tab_gestisci: "Verwalten",
+comp_no_club: "Dein Verein ist noch nicht eingetragen. Wähle ihn im Profil: danach findest du ihn hier, mit seinen Trainings.",
+comp_set_club: "Meinen Verein wählen",
+comp_qui_prossimi: "Hier geplant",
+comp_niente_prossimi: "Keine Trainings in diesem Verein geplant.",
+comp_w_percorsi: "Parcours",
+comp_w_punteggi: "Ergebnisse",
+comp_w_prossimi: "geplant",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "E-Mail bestätigen",
 profile_error_email_mismatch: "Die beiden E-Mail-Adressen stimmen nicht überein.",
@@ -5032,6 +5214,17 @@ profile_hide_name: "Vor- und Nachnamen vor anderen Sch\u00fctzen verbergen", pro
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 },
 tr: {
+/* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
+comp_tab_mia: "Benimki",
+comp_tab_scopri: "Keşfet",
+comp_tab_gestisci: "Yönet",
+comp_no_club: "Kulübün henüz seçilmedi. Profilinden seç: ondan sonra antrenmanlarıyla birlikte burada bulursun.",
+comp_set_club: "Kulübümü seç",
+comp_qui_prossimi: "Burada planlanan",
+comp_niente_prossimi: "Bu kulüpte planlanmış antrenman yok.",
+comp_w_percorsi: "parkurlar",
+comp_w_punteggi: "puanlar",
+comp_w_prossimi: "planlanan",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "E-postayı doğrula",
 profile_error_email_mismatch: "İki e-posta adresi eşleşmiyor.",
@@ -5581,6 +5774,17 @@ notif_token_error: "Token al\u0131namad\u0131. Tekrar dene.", notif_enabled: "Bu
 notif_save_error: "Kaydetme hatas\u0131: {err}", notif_generic_error: "Hata: {err}", notif_not_configured: "Bildirimler hen\u00fcz yap\u0131land\u0131r\u0131lmad\u0131 (sunucuda anahtar eksik).",
 },
 ru: {
+/* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
+comp_tab_mia: "Мой",
+comp_tab_scopri: "Найти",
+comp_tab_gestisci: "Управление",
+comp_no_club: "Клуб ещё не указан. Выберите его в профиле: после этого он будет здесь, вместе с тренировками.",
+comp_set_club: "Выбрать мой клуб",
+comp_qui_prossimi: "Здесь запланировано",
+comp_niente_prossimi: "В этом клубе нет запланированных тренировок.",
+comp_w_percorsi: "маршруты",
+comp_w_punteggi: "результаты",
+comp_w_prossimi: "запланировано",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Подтвердите email",
 profile_error_email_mismatch: "Адреса email не совпадают.",
@@ -6130,6 +6334,17 @@ notif_token_error: "Не удалось получить токен. Попро�
 notif_save_error: "Ошибка сохранения: {err}", notif_generic_error: "Ошибка: {err}", notif_not_configured: "Уведомления ещё не настроены (на сервере отсутствует ключ).",
 },
 es: {
+/* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
+comp_tab_mia: "El mío",
+comp_tab_scopri: "Descubrir",
+comp_tab_gestisci: "Gestionar",
+comp_no_club: "Tu club aún no está definido. Elígelo en tu perfil: a partir de ahí lo encuentras aquí, con sus entrenamientos.",
+comp_set_club: "Elegir mi club",
+comp_qui_prossimi: "Próximos aquí",
+comp_niente_prossimi: "No hay entrenamientos previstos en este club.",
+comp_w_percorsi: "recorridos",
+comp_w_punteggi: "puntuaciones",
+comp_w_prossimi: "próximos",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Confirma el correo",
 profile_error_email_mismatch: "Los dos correos no coinciden.",
@@ -6679,6 +6894,17 @@ notif_token_error: "No se pudo obtener el token. Int\u00e9ntalo de nuevo.", noti
 notif_save_error: "Error al guardar: {err}", notif_generic_error: "Error: {err}", notif_not_configured: "Notificaciones a\u00fan no configuradas (falta la clave en el servidor).",
 },
 sv: {
+/* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
+comp_tab_mia: "Min",
+comp_tab_scopri: "Upptäck",
+comp_tab_gestisci: "Hantera",
+comp_no_club: "Din klubb är inte vald ännu. Välj den i profilen: därefter hittar du den här, med sina träningar.",
+comp_set_club: "Välj min klubb",
+comp_qui_prossimi: "Planerat här",
+comp_niente_prossimi: "Inga träningar planerade i den här klubben.",
+comp_w_percorsi: "banor",
+comp_w_punteggi: "resultat",
+comp_w_prossimi: "planerat",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Bekräfta e-post",
 profile_error_email_mismatch: "De två e-postadresserna stämmer inte överens.",
@@ -7228,6 +7454,17 @@ notif_token_error: "Kunde inte h\u00e4mta token. F\u00f6rs\u00f6k igen.", notif_
 notif_save_error: "Fel vid sparande: {err}", notif_generic_error: "Fel: {err}", notif_not_configured: "Notiser \u00e4nnu inte konfigurerade (nyckel saknas p\u00e5 servern).",
 },
 nl: {
+/* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
+comp_tab_mia: "Mijn",
+comp_tab_scopri: "Ontdekken",
+comp_tab_gestisci: "Beheren",
+comp_no_club: "Je vereniging is nog niet ingesteld. Kies hem in je profiel: daarna vind je hem hier terug, met zijn trainingen.",
+comp_set_club: "Mijn vereniging kiezen",
+comp_qui_prossimi: "Hier gepland",
+comp_niente_prossimi: "Geen trainingen gepland bij deze vereniging.",
+comp_w_percorsi: "parcours",
+comp_w_punteggi: "scores",
+comp_w_prossimi: "gepland",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Bevestig e-mail",
 profile_error_email_mismatch: "De twee e-mailadressen komen niet overeen.",
@@ -8483,6 +8720,9 @@ return '<img class="brandmark" src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="
 }
 
 var ICON_PATHS = {
+/* Il telefono: mancava, e i contatti della compagnia sono tre pastiglie in
+   fila — due con un segno e una senza sarebbero due pastiglie e un buco. */
+phone:'<path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5z"/>',
 /* UNA CHAT, NON UNA BUSTA. (20/08/2026, dal campo.) I messaggi portavano
    l'icona della posta, e la posta e' un'altra cosa: si scrive, si aspetta,
    si risponde domani. Qui si parla. La nuvoletta coi tre puntini lo dice in
@@ -9466,7 +9706,18 @@ var COMPAGNIE_REGIONI = ["Piemonte", "Valle d'Aosta", "Liguria", "Lombardia", "V
 var compagnieAdminCache = null; // { codice: { adminUid, lat, lng, tel, email, sito } }
 // Vale solo per la sessione: se restasse in state, il referente si ritroverebbe
 // per sempre davanti la schermata di registrazione dopo averla aperta una volta.
-var clubShowAll = false;
+/* QUALE SCHEDA DELL'AREA COMPAGNIA e' aperta. `null` vuol dire «scegli tu»:
+   chi ha una compagnia nel profilo parte da «La mia», chi non ce l'ha parte
+   da «Scopri», che e' l'unica delle tre che ha qualcosa da dirgli.
+   Vive fuori da render() perche' iscriversi a un allenamento ridisegna la
+   schermata, e tornare alla prima scheda dopo ogni gesto sarebbe peggio. */
+var compTab = null;
+
+/* TOCCATA UNA COMPAGNIA, LA SUA SCHEDA E' FUORI SCHERMO. L'elenco puo'
+   essere lungo quindici righe, e la scheda si apre in fondo: da fuori sembra
+   che toccare non abbia fatto niente. Questo segna «l'ho appena scelta» e
+   dopo il ridisegno la porta sotto gli occhi, una volta sola. */
+var compVaiGiu = false;
 
 function loadCompagnieAdmin(cb){
 if(compagnieAdminCache){ cb(compagnieAdminCache); return; }
@@ -11102,93 +11353,148 @@ console.error("OT join error:", e);
 });
 }
 
+/* QUANDO. (20/08/2026.) `2026-08-23` non e' una data: e' un dato. Il giorno
+   grosso e il mese sotto si leggono senza contare i trattini — e in un elenco
+   ordinato per data sono anche la colonna che lo tiene insieme.
+   Il mese lo scrive il browser nella lingua scelta: nessuna tabella di nomi
+   dei mesi da tenere allineata in nove lingue. */
+function alQuando(ot){
+var d = null;
+try{ d = ot.datetime ? new Date(ot.datetime) : new Date(String(ot.date || "") + "T00:00"); }catch(e){}
+if(!d || isNaN(d.getTime())) return { giorno:"?", mese:"" };
+var mese = "";
+try{ mese = d.toLocaleDateString(state.lang || "it", { month:"short" }).split(".").join(""); }catch(e){}
+if(!mese) mese = String(d.getMonth() + 1);
+return { giorno: String(d.getDate()), mese: mese };
+}
+
+/* QUALE RIGA E' APERTA. Vive FUORI dalla funzione perche' deve sopravvivere a
+   render(): iscriversi a un allenamento ridisegna la schermata, e ritrovarsi
+   l'elenco richiuso dopo ogni gesto sarebbe peggio di prima. */
+var alAperto = null;
+
+/* SOLO LA PAROLA. Il tasto largo si chiama «✔ Partecipo», e il segno di
+   spunta davanti ci sta bene: e' largo tutto lo schermo. Nella pastiglia
+   della riga no — ogni carattere in piu' lo paga il nome del campo, che
+   viene tagliato prima. Qui si toglie il segno e resta la parola, in tutte
+   e nove le lingue («Unirme», «Gå med», «Doe mee»: nessuna ha un segno
+   suo, quindi non si rompe niente). */
+function soloParole(txt){
+txt = String(txt || "");
+var SEGNI = "+\u2714\u2713\u2795 ";
+while(txt.length && SEGNI.indexOf(txt.charAt(0)) !== -1){ txt = txt.slice(1); }
+return txt;
+}
+
+/* L'ALLENAMENTO IN UNA RIGA. (20/08/2026, dalle bozze del PRD.)
+   Prima ogni allenamento era una colonna alta mezzo schermo. Con tre in
+   elenco non se ne vedeva uno per intero, e per confrontarli — che e' l'unica
+   cosa che si fa in un elenco di allenamenti — bisognava ricordarseli.
+   Adesso la riga dice le quattro cose che servono per decidere (quando, dove,
+   quanti sono, ci vado) e tutto il resto sta un tocco piu' sotto. */
 function otRowEl(ot){
 var myUid = currentUser && currentUser.uid;
 var isOwner = ot.ownerUid === myUid;
 var joined = myUid && (ot.participantUids||[]).indexOf(myUid) !== -1;
-var total = 1 + (ot.spots||2); // owner + posti
+var total = 1 + (ot.spots||2); // organizzatore + posti
 var taken = 1 + (ot.participantUids||[]).length;
 var full = taken >= total;
 var spotsLeft = total - taken;
-
 var isInvited = myUid && (ot.invitedUids||[]).indexOf(myUid) !== -1;
-var otRow = el(
-'<div style="padding:var(--s-2) 0;border-bottom:1px solid var(--line);">'+
-(isInvited&&!joined?'<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);margin-bottom:var(--s-1);">⭐ '+t("ot_invite_label").replace(" (opzionale)","").replace(" (optional)","").replace(" (optionnel)","").replace(" (optional)","").replace(" (isteğe bağlı)","").replace(" (необязательно)","").replace(" (opcional)","").replace(" (valfritt)","").replace(" (optioneel)","")+' ← tu</div>':'')+
-(ot.visibility === "all" ? '<div style="display:inline-block;font-size:var(--t-xs);font-weight:700;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--muted);border-radius:var(--r-pill);padding:2px var(--s-2);margin-bottom:var(--s-1);">'+t("ot_badge_open")+'</div>' : '')+
-'<div style="font-weight:700;font-size:var(--t-md);">'+escapeHtml(ot.field||"?")+'</div>'+
-'<div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;">'+escapeHtml(ot.date||"")+(ot.time?" · "+escapeHtml(ot.time):"")+'</div>'+
-'<div class="nota">'+t("ot_by",{name:escapeHtml(nomeVivo(ot.ownerUid) || ot.ownerName || "?")})+'</div>'+
-(ot.note?'<div style="font-size:var(--t-sm);color:var(--cream);margin-top:2px;">'+escapeHtml(ot.note)+'</div>':'')+
-'<div style="font-size:var(--t-sm);margin-top:var(--s-1);color:'+(full&&!joined?'var(--danger)':'var(--accent-soft)')+';">'+
-(full&&!joined?t("ot_full_label"):t("ot_spots_left",{n:spotsLeft}))+
-'</div></div>'
-);
+var aperta = (alAperto === ot.id);
+var q = alQuando(ot);
+var chiOrganizza = escapeHtml(nomeVivo(ot.ownerUid) || ot.ownerName || "?");
 
-// Chi partecipa: senza vedere nessun nome non si capiva che ci si
-// potesse aggiungere. L'organizzatore c'e' sempre.
-var chiCe = [escapeHtml(nomeVivo(ot.ownerUid) || ot.ownerName || "?")];
+var blocco = el('<div class="al-blocco'+(aperta ? ' aperta' : '')+'"></div>');
+var riga = el('<div class="al-riga"></div>');
+
+// La riga sotto il nome del campo: l'ora, quanti sono, chi organizza. Tre
+// cose che si leggono in un colpo — e sono le tre che fanno decidere.
+var meta = [];
+if(ot.time) meta.push(escapeHtml(ot.time));
+meta.push(taken + "/" + total);
+meta.push(chiOrganizza);
+
+var tocca = el('<button class="al-tocca" aria-expanded="'+(aperta ? 'true' : 'false')+'">'
++ '<span class="al-quando"><b>'+q.giorno+'</b><i>'+escapeHtml(q.mese)+'</i></span>'
++ '<span class="al-dove"><b>'+escapeHtml(ot.field||"?")+'</b>'
++ '<span>'+meta.join(" \u00b7 ")+'</span></span>'
++ '<span class="al-chev" aria-hidden="true">\u203a</span></button>');
+(function(otId){ tocca.addEventListener("click", function(){
+alAperto = (alAperto === otId) ? null : otId;
+render();
+}); })(ot.id);
+riga.appendChild(tocca);
+
+// LA PASTIGLIA. Non e' il vecchio pulsantino accanto al testo che i primi
+// lettori non trovavano: e' alta come un dito (--hit) ed e' l'unica cosa
+// premibile a destra della riga. Quando la riga si apre sparisce, perche'
+// sotto c'e' lo stesso gesto scritto per esteso.
+var azione = el('<span class="al-azione"></span>');
+var pillErr = el('<div class="nota dopo" style="color:var(--danger);display:none;"></div>');
+if(currentUser && !isOwner){
+if(joined){
+azione.appendChild(el('<span class="al-pill dentro">'+soloParole(t("ot_joined_label"))+'</span>'));
+} else if(full){
+azione.appendChild(el('<span class="al-pill" aria-disabled="true">'+t("ot_full_label")+'</span>'));
+} else {
+var pill = el('<button class="al-pill va">'+soloParole(t("ot_join_btn"))+'</button>');
+(function(otId){ pill.addEventListener("click", function(){ otSetJoin(otId, true, pill, pillErr); }); })(ot.id);
+azione.appendChild(pill);
+}
+}
+riga.appendChild(azione);
+blocco.appendChild(riga);
+
+// ── Il resto, un tocco piu' sotto ────────────────────────────────────────
+var piu = el('<div class="al-piu"></div>');
+
+var tag = el('<div></div>');
+if(isInvited && !joined){ tag.appendChild(el('<span class="al-tag invito">\u2b50 '+t("ot_invite_added").split(":").join("")+'</span> ')); }
+if(ot.visibility === "all"){ tag.appendChild(el('<span class="al-tag">'+t("ot_badge_open")+'</span>')); }
+if(tag.childNodes.length) piu.appendChild(tag);
+
+if(ot.note){ piu.appendChild(el('<div style="font-size:var(--t-sm);margin-top:2px;">'+escapeHtml(ot.note)+'</div>')); }
+piu.appendChild(el('<div style="font-size:var(--t-sm);margin-top:var(--s-1);color:'+((full && !joined) ? 'var(--danger)' : 'var(--accent-soft)')+';">'
++ ((full && !joined) ? t("ot_full_label") : t("ot_spots_left",{n:spotsLeft})) + '</div>'));
+
+// Chi partecipa: senza vedere nessun nome non si capiva che ci si potesse
+// aggiungere. L'organizzatore c'e' sempre.
+var chiCe = [chiOrganizza];
 (ot.participants||[]).forEach(function(p){ if(p && (p.uid || p.name)) chiCe.push(escapeHtml(nomeVivo(p.uid) || p.name || "?")); });
-otRow.appendChild(el('<div class="nota dopo">'+t("ot_participants")+' ('+taken+'/'+total+'): '+chiCe.join(", ")+'</div>'));
+piu.appendChild(el('<div class="nota dopo">'+t("ot_participants")+' ('+taken+'/'+total+'): '+chiCe.join(", ")+'</div>'));
 
 if(!isOwner && currentUser){
-// Pulsante di conferma a tutta larghezza, con la spiegazione sopra:
-// il vecchio pulsantino accanto al testo non veniva trovato dai tester.
-var actionBox = el('<div style="margin-top:var(--s-2);"></div>');
 var actErr = el('<div style="font-size:var(--t-sm);color:var(--danger);margin-top:var(--s-1);display:none;"></div>');
 if(joined){
-actionBox.appendChild(el('<div style="border-radius:var(--r-sm);padding:var(--s-2) var(--s-3);font-weight:800;font-size:var(--t-sm);background:color-mix(in srgb, var(--success) 16%, var(--bg-panel));border:1px solid color-mix(in srgb, var(--success) 55%, transparent);color:var(--cream);">'+t("ot_joined_label")+'</div>'));
-actionBox.appendChild(el('<div class="nota dopo">'+t("ot_joined_hint")+'</div>'));
 var leaveBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);">'+t("ot_leave_btn")+'</button>');
 (function(otId){ leaveBtn.addEventListener("click", function(){ otSetJoin(otId, false, leaveBtn, actErr); }); })(ot.id);
-actionBox.appendChild(leaveBtn);
-} else if(full){
-actionBox.appendChild(el('<button class="btn btn-block btn-sm" disabled>'+t("ot_full_label")+'</button>'));
-} else {
-actionBox.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-1);">'+t("ot_join_hint")+'</div>'));
-// UNIRSI E' ARANCIO. (PRD §9.3: «Orange: event / join / publish».) Il verde
-// e' l'azione sportiva — tirare. Partecipare a quello che fa un altro e' una
-// cosa diversa, e in una schermata dove il verde e' gia' il tasto principale
-// un secondo verde non e' una seconda scelta: e' la stessa scelta due volte.
-var joinBtn = el('<button class="btn btn-block ot-partecipa">'+t("ot_join_btn")+'</button>');
+piu.appendChild(el('<div class="nota dopo">'+t("ot_joined_hint")+'</div>'));
+piu.appendChild(leaveBtn);
+} else if(!full){
+// IL TASTO LARGO RESTA. La pastiglia della riga e' una scorciatoia; questo
+// e' il gesto spiegato, con la frase sopra che dice cosa succede dopo.
+piu.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:var(--s-2);margin-bottom:var(--s-1);">'+t("ot_join_hint")+'</div>'));
+var joinBtn = el('<button class="btn btn-block btn-arancio">'+t("ot_join_btn")+'</button>');
 (function(otId){ joinBtn.addEventListener("click", function(){ otSetJoin(otId, true, joinBtn, actErr); }); })(ot.id);
-actionBox.appendChild(joinBtn);
+piu.appendChild(joinBtn);
 }
-actionBox.appendChild(actErr);
-otRow.appendChild(actionBox);
-}
-if(isOwner){
-var delBtn = el('<button style="margin-top:var(--s-1);padding:var(--s-1) var(--s-2);border-radius:var(--r-xs);border:none;cursor:pointer;font-size:var(--t-sm);background:var(--danger);color:#fff;">'+t("ot_delete_btn")+'</button>');
-(function(otId){
-delBtn.addEventListener("click", function(){
-if(!confirm(t("ot_confirm_delete"))) return;
-// Non serve piu' ricaricare a mano: l'elenco e' in ascolto e si accorge da se'.
-db.collection("open_trainings").doc(otId).delete().catch(function(){});
-});
-})(ot.id);
-otRow.appendChild(delBtn);
+piu.appendChild(actErr);
 }
 
-// Pulsanti extra: mappa mini + indicazioni + messaggio
-var extraBtns = el('<div style="display:flex;gap:var(--s-2);margin-top:var(--s-2);flex-wrap:wrap;"></div>');
-
+// Indicazioni e messaggi: due tasti in fila, non due righe in colonna.
+var ferri = el('<div class="al-ferri"></div>');
 if(ot.lat && ot.lng){
-// nessuna mappa mini
-
-var dirBtn = el('<button style="flex:1;padding:var(--s-1) var(--s-2);border-radius:var(--r-xs);border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:var(--t-sm);cursor:pointer;">'+t("ot_directions_btn")+'</button>');
-(function(lat,lng){ dirBtn.addEventListener("click",function(){ window.open("https://www.google.com/maps/dir/?api=1&destination="+lat+","+lng,"_blank"); }); })(ot.lat,ot.lng);
-extraBtns.appendChild(dirBtn);
+var dirBtn = el('<button class="btn btn-ghost btn-sm">'+t("ot_directions_btn")+'</button>');
+(function(lat,lng){ dirBtn.addEventListener("click", function(){ window.open("https://www.google.com/maps/dir/?api=1&destination="+lat+","+lng, "_blank"); }); })(ot.lat, ot.lng);
+ferri.appendChild(dirBtn);
 }
-
-// IL TASTO C'E' ANCHE PER L'ORGANIZZATORE. (19/08/2026.)
-// Prima era `if(!isOwner && currentUser)`: chi organizzava l'allenamento non
-// aveva NESSUN modo di aprire la chat del proprio allenamento. Riceveva un
-// avviso «Nuovo messaggio» che non portava da nessuna parte, e i messaggi
-// restavano su Firestore senza una schermata che li mostrasse.
-// L'etichetta cambia perche' cambia il verso: chi non e' l'organizzatore
-// «scrive all'organizzatore», l'organizzatore apre i «Messaggi».
+// IL TASTO C'E' ANCHE PER L'ORGANIZZATORE. (19/08/2026.) Prima era
+// `if(!isOwner)`: chi organizzava non aveva NESSUN modo di aprire la chat del
+// proprio allenamento. Riceveva un avviso «Nuovo messaggio» che non portava
+// da nessuna parte. L'etichetta cambia perche' cambia il verso.
 if(currentUser){
-var msgBtn = el('<button style="flex:1;padding:var(--s-1) var(--s-2);border-radius:var(--r-xs);border:1px solid var(--accent);background:transparent;color:var(--accent-soft);font-size:var(--t-sm);cursor:pointer;font-weight:700;">'+(isOwner ? ("\uD83D\uDCAC " + t("dm_title")) : t("ot_msg_btn"))+'</button>');
+var msgBtn = el('<button class="btn btn-ghost btn-sm">'+(isOwner ? (icon("chat",16) + " " + t("dm_title")) : t("ot_msg_btn"))+'</button>');
 (function(otId, ownerName, ownerUid){
 msgBtn.addEventListener("click", function(){
 state.otChatId = otId;
@@ -11198,11 +11504,24 @@ state.screen = "ot-chat";
 save(); render();
 });
 })(ot.id, ot.ownerName||"?", ot.ownerUid);
-extraBtns.appendChild(msgBtn);
+ferri.appendChild(msgBtn);
 }
+if(isOwner){
+var delBtn = el('<button class="btn btn-ghost btn-sm" style="color:var(--danger);border-color:var(--danger);">'+t("ot_delete_btn")+'</button>');
+(function(otId){
+delBtn.addEventListener("click", function(){
+if(!confirm(t("ot_confirm_delete"))) return;
+// Non serve ricaricare a mano: l'elenco e' in ascolto e si accorge da se'.
+db.collection("open_trainings").doc(otId).delete().catch(function(){});
+});
+})(ot.id);
+ferri.appendChild(delBtn);
+}
+if(ferri.childNodes.length) piu.appendChild(ferri);
 
-otRow.appendChild(extraBtns);
-return otRow;
+blocco.appendChild(piu);
+blocco.appendChild(pillErr);
+return blocco;
 }
 
 // compact = true -> versione ridotta per la scheda "Tira" (max 2, con "vedi tutti")
@@ -11655,7 +11974,9 @@ otCard.appendChild(el('<div class="ot-nascosti">'+escapeHtml(t("ot_hidden_head")
 }
 
 if(currentUser){
-var createBtn = el('<button class="btn btn-primary btn-block" style="margin-top:var(--s-2);font-size:var(--t-sm);">'+t("ot_create_btn")+'</button>');
+// Arancione come nell'area compagnia: lo stesso gesto non puo' avere due
+// colori in due schermate. Verde e' tirare; annunciare e' un'altra cosa.
+var createBtn = el('<button class="btn btn-block btn-arancio" style="margin-top:var(--s-2);font-size:var(--t-sm);">'+t("ot_create_btn")+'</button>');
 createBtn.addEventListener("click", function(){ state.screen="open-training-create"; save(); render(); });
 otCard.appendChild(createBtn);
 }
@@ -11713,7 +12034,7 @@ b = el('<button class="tabn'+(on?" on":"")+'" aria-current="'+(on?"page":"false"
 '<span class="tab-pill">'+navIcon(tb[1],24)+'</span>'+
 '<span class="tab-lbl">'+tb[2]+'</span></button>');
 }
-b.addEventListener("click", function(){ state.tab = key; state.screen = "menu"; homeOverride = false; clubShowAll = false; save(); forgetScroll(); render(); });
+b.addEventListener("click", function(){ state.tab = key; state.screen = "menu"; homeOverride = false; compTab = null; save(); forgetScroll(); render(); });
 bar.appendChild(b);
 });
 return bar;
@@ -11879,22 +12200,57 @@ wrap.appendChild(campiScreen());
 }
 
 // ═════════════════════ SEZIONE: COMPAGNIE ═════════════════════
+// A SCHEDE. (20/08/2026, dalle bozze del PRD.)
+//
+// Prima questa sezione decideva da sola cosa mostrare, e decideva male: chi
+// gestiva una compagnia vedeva SOLO il pannello del referente (con un tasto
+// «Vedi tutte» per uscirne), e chi non ne gestiva nessuna — cioe' quasi
+// tutti — vedeva per prima cosa un modulo per REGISTRARE una compagnia,
+// poi un tasto di menu, poi tre tendine vuote.
+//
+// *Nessuno dei due vedeva la propria compagnia*, che sta scritta nel profilo.
+//
+// Tre schede dicono le tre cose che si vengono a fare qui, e la porta non e'
+// piu' una supposizione sull'utente: e' una scelta sua, visibile, che resta.
 else if(state.tab === "compagnie"){
 var mineClubs = myAdminClubCodes();
-// Chi gestisce gia' una compagnia non deve piu' vedere la schermata di
-// registrazione: entra direttamente nel suo spazio.
+var mioCod = myClubCode();
+if(compTab === null){ compTab = mioCod ? "mia" : "scopri"; }
+
+var SCHEDE = [["mia", t("comp_tab_mia")], ["scopri", t("comp_tab_scopri")], ["gestisci", t("comp_tab_gestisci")]];
+var barra = el('<div class="schede" role="tablist" aria-label="'+escapeHtml(t("compagnie_title"))+'"></div>');
+SCHEDE.forEach(function(sc){
+var acceso = (compTab === sc[0]);
+var classe = "scheda" + (acceso ? " on" : "");
+var b = el('<button class="'+classe+'" role="tab" aria-selected="'+acceso+'">'+escapeHtml(sc[1])+'</button>');
+b.addEventListener("click", function(){ compTab = sc[0]; save(); render(); });
+barra.appendChild(b);
+});
+wrap.appendChild(barra);
+
+if(compTab === "mia"){
+wrap.appendChild(compagniaMiaCard(mioCod));
+}
+else if(compTab === "scopri"){
+wrap.appendChild(compagnieScreen());
+}
+else {
 if(mineClubs === null){
 wrap.appendChild(el('<div class="card"><div class="nota">'+t("admin_loading")+'</div></div>'));
 }
-else if(mineClubs.length && !clubShowAll){
+else if(mineClubs.length){
+// Chi gestisce gia' una compagnia: qui c'e' il suo spazio, e basta.
 if(mineClubs.indexOf(state.clubSpaceCode) === -1) state.clubSpaceCode = mineClubs[0];
 if(mineClubs.length > 1){
 var pickCard = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
 pickCard.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("club_pick_space")+'</label>'));
-var pickSel = el('<select style="width:100%;font-size:var(--t-md);padding:var(--s-3);border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);"></select>');
+var pickSel = el('<select class="scelta-piena"></select>');
 mineClubs.forEach(function(c){
 var nmC = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[c]) ? COMPAGNIE[c].nome : c;
-pickSel.appendChild(el('<option value="'+c+'"'+(c === state.clubSpaceCode ? ' selected' : '')+'>'+escapeHtml(nmC)+'</option>'));
+var opt = el('<option></option>');
+opt.value = c; opt.textContent = nmC;
+if(c === state.clubSpaceCode) opt.setAttribute("selected", "selected");
+pickSel.appendChild(opt);
 });
 pickSel.addEventListener("change", function(){ state.clubSpaceCode = pickSel.value; save(); render(); });
 pickCard.appendChild(pickSel);
@@ -11902,25 +12258,23 @@ wrap.appendChild(pickCard);
 }
 wrap.appendChild(el('<div class="card" style="margin-bottom:var(--s-3);border-top-color:var(--gold);"><div style="font-size:var(--t-sm);color:var(--muted);line-height:1.45;">'+t("club_only_space_hint")+'</div></div>'));
 wrap.appendChild(clubSpaceScreen(true));
-var seeAllBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);">'+t("club_see_all")+'</button>');
-seeAllBtn.addEventListener("click", function(){ clubShowAll = true; save(); render(); });
-wrap.appendChild(seeAllBtn);
 }
 else {
-if(mineClubs.length){
-var backSpaceBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:var(--s-3);">'+t("club_back_to_space")+'</button>');
-backSpaceBtn.addEventListener("click", function(){ clubShowAll = false; save(); render(); });
-wrap.appendChild(backSpaceBtn);
+// Chi NON gestisce niente. Se ha una compagnia nel profilo, la prima cosa
+// utile e' poter chiedere di diventarne referente: quello lo fa gia'
+// clubSpaceScreen. La registrazione di una compagnia NUOVA viene dopo,
+// perche' e' il caso raro.
+if(currentUser && mioCod){
+state.clubSpaceCode = mioCod;
+wrap.appendChild(clubSpaceScreen(true));
 }
-// Registrazione: la richiesta parte dall'app ma va confermata via email
-// da un indirizzo ufficiale, altrimenti chiunque potrebbe intestarsi una compagnia.
 var regCard = el('<div class="card" style="margin-bottom:var(--s-3);border-top-color:var(--gold);"></div>');
 regCard.appendChild(el('<h2 class="section-title">'+t("club_reg_title")+'</h2>'));
 regCard.appendChild(el('<div class="nota stacco-3">'+t("club_reg_hint")+'</div>'));
 
 function passo(n, testo){
 var r = el('<div style="display:flex;gap:var(--s-2);align-items:flex-start;margin-bottom:var(--s-2);"></div>');
-r.appendChild(el('<span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#1A2620;font-weight:800;font-size:var(--t-sm);display:flex;align-items:center;justify-content:center;">'+n+'</span>'));
+r.appendChild(el('<span class="passo-numero">'+n+'</span>'));
 r.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.4;">'+testo+'</div>'));
 regCard.appendChild(r);
 }
@@ -11931,16 +12285,9 @@ passo(3, t("club_reg_s3"));
 var mailHref = "mailto:"+CONTACT_EMAIL
 +"?subject="+encodeURIComponent(t("club_reg_mail_subject"))
 +"&body="+encodeURIComponent(t("club_reg_mail_body"));
-regCard.appendChild(el('<a href="'+mailHref+'" class="btn btn-primary btn-block" style="text-decoration:none;display:flex;align-items:center;justify-content:center;margin-top:var(--s-1);">'+t("club_reg_mail_btn")+'</a>'));
+regCard.appendChild(el('<a href="'+mailHref+'" class="btn btn-primary btn-block link-tasto">'+t("club_reg_mail_btn")+'</a>'));
 wrap.appendChild(regCard);
-
-if(currentUser && myClubCode()){
-var spaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navclub",24,"due")+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
-spaceBtn.addEventListener("click", function(){ state.clubSpaceCode = myClubCode(); state.screen = "club-space"; save(); render(); });
-wrap.appendChild(spaceBtn);
 }
-
-wrap.appendChild(compagnieScreen());
 }
 }
 
@@ -12281,6 +12628,130 @@ if(typeof COMPAGNIE === "undefined") return [];
 return Object.keys(COMPAGNIE).filter(compagniaVisibile);
 }
 
+/* ══════════ LA MIA COMPAGNIA (20/08/2026, dalle bozze del PRD) ══════════
+
+   Chi non e' referente — cioe' quasi tutti — apriva «Compagnie» e trovava:
+   una scheda per REGISTRARE una compagnia, un tasto di menu, e tre tendine
+   vuote da compilare. La SUA compagnia, che sta scritta nel profilo e che
+   l'app conosce gia', non compariva da nessuna parte.
+
+   *La schermata chiedeva di cercare quello che gia' sapeva.*
+
+   I NUMERI SONO SOLO QUELLI VERI. Nella bozza c'era «48 iscritti»: l'app non
+   sa quanti sono e non ha nessun modo di saperlo, quindi quel numero non c'e'.
+   Ci sono percorsi, punteggi e allenamenti in programma, che si contano.
+   E se sono tutti e tre a zero la fascia dei numeri non viene disegnata:
+   un cruscotto pieno di zeri non informa, scoraggia. */
+function compagniaMiaCard(cod){
+var wrap = el('<div></div>');
+
+if(!cod){
+var vuota = el('<div class="card"></div>');
+vuota.appendChild(el('<h2 class="section-title">'+t("comp_tab_mia")+'</h2>'));
+vuota.appendChild(el('<div class="nota stacco-3">'+t("comp_no_club")+'</div>'));
+var vaiProf = el('<button class="btn btn-primary btn-block">'+t("comp_set_club")+'</button>');
+vaiProf.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
+vuota.appendChild(vaiProf);
+wrap.appendChild(vuota);
+return wrap;
+}
+
+var c = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[cod]) ? COMPAGNIE[cod] : null;
+var nome = c ? c.nome : ((state.profile && state.profile.compagniaNome) || cod);
+
+var testa = el('<div class="comp-testa"></div>');
+
+// LA FASCIA. Gli anelli sono arancioni con `--clay-400`, il primitivo e non
+// il ruolo: il ruolo al sole diventa `--clay-800`, che su un verde scuro non
+// si vede piu'. Qui sotto c'e' SEMPRE il verde della fascia, quindi il colore
+// giusto e' sempre lo stesso e non dipende dal tema.
+var fascia = el('<div class="comp-fascia"></div>');
+fascia.innerHTML = '<svg viewBox="0 0 360 64" preserveAspectRatio="none" aria-hidden="true">'
++ '<path d="M0 40 Q90 20 180 34 T360 26 V64 H0 Z" fill="var(--brand-ink)" opacity="0.10"></path>'
++ '<circle cx="310" cy="24" r="17" fill="none" stroke="var(--clay-400)" stroke-width="1.6" opacity="0.75"></circle>'
++ '<circle cx="310" cy="24" r="9" fill="none" stroke="var(--clay-400)" stroke-width="1.6" opacity="0.75"></circle>'
++ '</svg>';
+var stemma = el('<span class="comp-stemma"></span>');
+stemma.innerHTML = navIcon("navclub", 26, "due");
+fascia.appendChild(stemma);
+testa.appendChild(fascia);
+
+var dentro = el('<div class="comp-dentro"></div>');
+dentro.appendChild(el('<h2 class="comp-nome">'+escapeHtml(nome)+'</h2>'));
+
+var sotto = el('<div class="comp-sotto"></div>');
+// CHI E', su una riga sola. Prima qui c'era anche `luogo`, e `luogo` non e'
+// un luogo: e' un indirizzo («Fornasona/Cascina Ronco, Cerrione (BI)»).
+// Insieme al resto mandava a capo tre volte una riga che serve a colpo
+// d'occhio. L'indirizzo ha una riga sua, qui sotto, con lo spillo davanti:
+// e' un'altra cosa e si legge in un altro momento.
+var pezzi = [];
+if(c && c.regione) pezzi.push(escapeHtml(c.regione));
+if(c && c.provincia && c.provincia !== "\u2014") pezzi.push(escapeHtml(c.provincia));
+pezzi.push(escapeHtml(cod));
+sotto.innerHTML = pezzi.join(' <span aria-hidden="true">\u00b7</span> ');
+dentro.appendChild(sotto);
+if(c && c.luogo){
+dentro.appendChild(el('<div class="comp-sotto">'+icon("pin",16)+' '+escapeHtml(c.luogo)+'</div>'));
+}
+
+// ── I tre numeri, e solo se ce n'e' almeno uno ────────────────────────────
+var cd = ensureCompagniaData(cod);
+var quiOra = (openTrainings || []).filter(function(ot){ return ot.clubCode === cod; });
+var numeri = [
+[cd.percorsi.length, t("comp_w_percorsi")],
+[cd.risultati.length, t("comp_w_punteggi")],
+[quiOra.length, t("comp_w_prossimi")]
+].filter(function(n){ return n[0] > 0; });
+// Da DUE in su. Un numero solo dentro una fascia con due righe intorno non
+// e' un cruscotto: e' un numero con due righe intorno. E quello che dice lo
+// dice gia' la sezione qui sotto, per esteso.
+if(numeri.length > 1){
+var conti = el('<div class="comp-conti"></div>');
+numeri.forEach(function(n){
+conti.appendChild(el('<div><b>'+n[0]+'</b><span>'+escapeHtml(n[1])+'</span></div>'));
+});
+dentro.appendChild(conti);
+}
+
+// ── I contatti in fila: quattro righe da leggere diventano quattro cose da
+//    toccare, e stanno su una riga sola. ─────────────────────────────────
+if(c && c.completa){
+var ferri = el('<div class="comp-ferri"></div>');
+if(c.telefono){ ferri.appendChild(el('<a class="comp-ferro" href="tel:'+c.telefono.split(" ").join("")+'">'+icon("phone",16)+' '+t("cp_admin_tel")+'</a>')); }
+if(c.email){ ferri.appendChild(el('<a class="comp-ferro" href="mailto:'+escapeHtml(c.email)+'">'+icon("mail",16)+' '+t("cp_admin_email_label")+'</a>')); }
+if(c.sito){ ferri.appendChild(el('<a class="comp-ferro" href="https://'+escapeHtml(c.sito)+'" target="_blank" rel="noopener">'+icon("globe",16)+' '+t("cp_admin_sito")+'</a>')); }
+if(ferri.childNodes.length) dentro.appendChild(ferri);
+}
+
+testa.appendChild(dentro);
+wrap.appendChild(testa);
+
+// ── Quello che succede qui, adesso ────────────────────────────────────────
+var prossimi = el('<div class="card"></div>');
+prossimi.appendChild(el('<div class="comp-eti">'+escapeHtml(t("comp_qui_prossimi"))+'</div>'));
+if(quiOra.length){
+assicuraNomi();
+quiOra.forEach(function(ot){ prossimi.appendChild(otRowEl(ot)); });
+} else {
+prossimi.appendChild(el('<div class="nota">'+t("comp_niente_prossimi")+'</div>'));
+}
+if(currentUser){
+// PIENO SOLO QUANDO NON C'E' ALTRO. Annunciare e' arancio (PRD 9.3: «event /
+// join / publish»), ma un blocco arancione a tutta larghezza sotto un elenco
+// di allenamenti pesa piu' degli allenamenti: e l'elenco e' il motivo per cui
+// si e' aperta la scheda. Quando l'elenco e' vuoto, invece, annunciare e'
+// l'unica cosa da fare, e allora il tasto puo' prendersi tutto lo spazio.
+var classeAnn = quiOra.length ? "btn btn-ghost btn-block btn-sm" : "btn btn-block btn-arancio";
+var annBtn = el('<button class="'+classeAnn+'" style="margin-top:var(--s-3);">'+t("ot_create_btn")+'</button>');
+annBtn.addEventListener("click", function(){ state.screen = "open-training-create"; save(); render(); });
+prossimi.appendChild(annBtn);
+}
+wrap.appendChild(prossimi);
+
+return wrap;
+}
+
 function compagnieScreen(){
 initCompagnieData();
 if(state.compagniaAttiva && !compagniaVisibile(state.compagniaAttiva)){
@@ -12306,6 +12777,17 @@ wrap.appendChild(selCard);
 return wrap;
 }
 
+// LA REGIONE DI PARTENZA. Chi ha una compagnia nel profilo ha anche una
+// regione, e chiedergliela come se non si sapesse e' far compilare due volte
+// la stessa cosa. Si preseleziona solo se non ha ancora scelto: appena tocca
+// la tendina comanda lui.
+if(!state.compagniaRegione){
+var mioC = myClubCode();
+var mioReg = (mioC && typeof COMPAGNIE !== "undefined" && COMPAGNIE[mioC]) ? COMPAGNIE[mioC].regione : null;
+if(mioReg) state.compagniaRegione = mioReg;
+}
+
+var righeSel = el('<div class="cp-due"></div>');
 var regRow = el('<div class="cp-select-row"><label>'+t("compagnie_regione")+'</label><select id="cpSelRegione"></select></div>');
 var regSel = regRow.querySelector("select");
 regSel.appendChild(el('<option value="">'+t("compagnie_pick_regione")+'</option>'));
@@ -12318,7 +12800,7 @@ var opt = el('<option value="'+r+'">'+r+'</option>');
 if(state.compagniaRegione === r) opt.setAttribute("selected","selected");
 regSel.appendChild(opt);
 });
-selCard.appendChild(regRow);
+righeSel.appendChild(regRow);
 
 if(state.compagniaRegione){
 var provinceSet = {};
@@ -12352,24 +12834,52 @@ var optNS = el('<option value="\u2014">'+t("compagnie_provincia_non_specificata"
 if(state.compagniaProvincia === "\u2014") optNS.setAttribute("selected","selected");
 provSel.appendChild(optNS);
 }
-selCard.appendChild(provRow);
+righeSel.appendChild(provRow);
 }
 }
+selCard.appendChild(righeSel);
 
-if(state.compagniaRegione && state.compagniaProvincia){
-var luogoRow = el('<div class="cp-select-row"><label>'+t("compagnie_luogo")+'</label><select id="cpSelLuogo"></select></div>');
-var luogoSel = luogoRow.querySelector("select");
-luogoSel.appendChild(el('<option value="">'+t("compagnie_pick_luogo")+'</option>'));
-Object.keys(COMPAGNIE).forEach(function(cod){
+// LA TERZA TENDINA DIVENTA UN ELENCO. (20/08/2026.)
+//
+// Erano tre tendine in fila, e la terza chiedeva di scegliere una compagnia
+// dentro un menu a scomparsa: per vedere le compagnie bisognava aprire una
+// cosa, per confrontarle bisognava tenerle a mente, e per cambiare idea
+// bisognava riaprirla. *Un elenco che si guarda serve meglio di un elenco
+// che si apre — e questa schermata, senza, era alta un dito e vuota sotto.*
+//
+// Compare appena si sceglie la regione, senza aspettare la provincia: la
+// provincia adesso e' un modo di accorciare l'elenco, non un pedaggio.
+if(state.compagniaRegione){
+var elenco = el('<div></div>');
+var quante = 0;
+Object.keys(COMPAGNIE).sort(function(x,y){
+return String(COMPAGNIE[x].luogo || "").localeCompare(String(COMPAGNIE[y].luogo || ""), "it");
+}).forEach(function(cod){
 var c = COMPAGNIE[cod];
-if(c.regione === state.compagniaRegione && c.provincia === state.compagniaProvincia && compagniaVisibile(cod)){
-var label = c.luogo + " \u2014 " + c.nome + " (" + cod + ")" + (c.completa ? " \u2b50" : "");
-var opt = el('<option value="'+cod+'">'+label+'</option>');
-if(state.compagniaAttiva === cod) opt.setAttribute("selected","selected");
-luogoSel.appendChild(opt);
-}
+if(c.regione !== state.compagniaRegione) return;
+if(state.compagniaProvincia && c.provincia !== state.compagniaProvincia) return;
+if(!compagniaVisibile(cod)) return;
+quante++;
+var scelta = (state.compagniaAttiva === cod);
+var classe = "comp-riga" + (scelta ? " on" : "");
+var riga = el('<button class="'+classe+'"><span class="mini">'+navIcon("navclub",20,"due")+'</span>'
+// Il codice sta nella riga di sotto, non in una pastiglia a destra: a destra
+// costava venti caratteri del nome, che e' la cosa che si legge per prima.
++ '<span class="al-dove"><b>'+escapeHtml(c.nome)+'</b>'
++ '<span>'+escapeHtml((c.luogo && c.luogo !== "—") ? (c.luogo +" \u00b7 "+ cod) : cod)+'</span></span>'
++ '</button>');
+riga.addEventListener("click", function(){
+state.compagniaAttiva = scelta ? null : cod;
+state.compagniaForm = null;
+compVaiGiu = !scelta;
+save(); render();
 });
-selCard.appendChild(luogoRow);
+elenco.appendChild(riga);
+});
+if(quante === 0){
+elenco.appendChild(el('<div class="nota">'+t("compagnie_classifica_empty")+'</div>'));
+}
+selCard.appendChild(elenco);
 }
 
 wrap.appendChild(selCard);
@@ -12377,7 +12887,7 @@ wrap.appendChild(selCard);
 var compagnia = state.compagniaAttiva ? COMPAGNIE[state.compagniaAttiva] : null;
 
 if(compagnia){
-var infoCard = el('<div class="card"></div>');
+var infoCard = el('<div class="card" id="cp-scheda"></div>');
 infoCard.appendChild(el('<h2 class="section-title">'+escapeHtml(compagnia.nome)+' <span style="color:var(--muted);font-weight:600;font-size:var(--t-sm);">('+escapeHtml(state.compagniaAttiva)+')</span></h2>'));
 if(compagnia.completa){
 infoCard.appendChild(el('<div class="cp-info-row">'+icon("pin",16)+' '+escapeHtml(compagnia.luogo)+'</div>'));
@@ -12442,7 +12952,10 @@ wrap.appendChild(adminCard);
 if(compagnia.completa){
 var cd = ensureCompagniaData(state.compagniaAttiva);
 var percCard = el('<div class="card"></div>');
-percCard.appendChild(el('<h2 class="section-title">'+t("menu_compagnie_label")+'</h2>'));
+// Diceva «Compagnie» sopra un elenco di PERCORSI, dentro la scheda di una
+// compagnia. Un titolo che ripete il nome del contenitore non dice niente
+// del contenuto: qui sotto ci sono i percorsi, e adesso c'e' scritto.
+percCard.appendChild(el('<h2 class="section-title">'+t("comp_w_percorsi")+'</h2>'));
 if(cd.percorsi.length === 0){
 percCard.appendChild(el('<div class="empty-hint">'+t("compagnie_no_percorsi")+'</div>'));
 }
@@ -12491,6 +13004,13 @@ if(state.compagniaForm === "classifica"){ wrap.appendChild(compagnieClassificaCa
 
 
 setTimeout(function(){
+if(compVaiGiu){
+compVaiGiu = false;
+var sch = document.getElementById("cp-scheda");
+if(sch && sch.scrollIntoView){
+try{ sch.scrollIntoView({ block:"start", behavior:"smooth" }); }catch(e){ sch.scrollIntoView(); }
+}
+}
 var rs = document.getElementById("cpSelRegione");
 if(rs) rs.addEventListener("change", function(){
 state.compagniaRegione = rs.value || null;
@@ -12506,10 +13026,7 @@ state.compagniaAttiva = null;
 state.compagniaForm = null;
 save(); render();
 });
-var ls = document.getElementById("cpSelLuogo");
-if(ls) ls.addEventListener("change", function(){
-if(ls.value){ state.compagniaAttiva = ls.value; state.compagniaForm = null; save(); render(); }
-});
+
 },0);
 
 return wrap;
@@ -13496,7 +14013,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-casetta-e-arancio";
+var BUILD_STAMP = "2026-08-20-area-compagnia";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -13505,7 +14022,7 @@ var BUILD_STAMP = "2026-08-20-casetta-e-arancio";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-corpo-16";
+var BUILD_PARENT = "2026-08-20-casetta-e-arancio";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
