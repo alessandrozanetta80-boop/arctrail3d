@@ -699,35 +699,27 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
    Erano tre bianchi scritti a mano, e con le pastiglie accese il bianco non
    reggeva piu': 2,3 sul verde e 2,3 sull'oro. Con --solid-ink si sta fra 6 e
    8 in tutti e tre i temi. */
-/* LE TRE AZIONI NON PESANO UGUALE. (20/08/2026, deciso guardando le foto.)
+/* LE TRE AZIONI PESANO UGUALE, ED E' UNA DECISIONE PRESA DUE VOLTE.
+   (20/08/2026.)
 
-   L'allenamento e' quello che si fa nove volte su dieci, e lo schermo lo deve
-   dire: pieno di verde, il nome un gradino piu' grande. *La primazia la fa il
-   pieno, non la mole* — una prima versione lo aveva anche fatto piu' alto, e
-   il risultato era un vuoto morto dentro il verde e una colonna PIU' LUNGA di
-   prima, che per una mano sola e' un peggioramento.
+   Per mezza giornata l'allenamento e' stato PIENO di verde e col nome piu'
+   grande: l'idea era che quello che si fa nove volte su dieci lo dicesse la
+   forma. Sulla carta regge. Sullo schermo no, e Alessandro l'ha detto in due
+   righe: «lo start training cosi' grosso mi disturba» e «e' troppo verde».
 
-   LA GARA TIENE IL SUO ARANCIO, MA SUL CONTORNO. Toglierlo del tutto era la
-   proposta, e Alessandro ha detto che gli mancava: aveva ragione, l'arancio
-   e' la gara e si e' imparato a riconoscerlo. Ma pieno contro pieno i due
-   colori litigavano e non c'era piu' nessuna gerarchia. Sul contorno dice
-   «gara» senza gridare piu' forte di quello che si fa sempre.
-   *Il colore non era il problema: era il peso.* */
-.menu-btn.training{ background:var(--brand); border-color:var(--brand); }
-.menu-btn.training .menu-txt, .menu-btn.training .menu-sub{ color:var(--brand-ink); }
-.menu-cols .card > .menu-btn.training{ justify-content:center; }
-.menu-cols .card > .menu-btn.training .menu-txt{ font-size:var(--t-xl); }
-.menu-btn.training .menu-icon{
-  background:color-mix(in srgb, var(--brand-ink) 20%, transparent);
-  color:var(--brand-ink);
-  border:1px solid color-mix(in srgb, var(--brand-ink) 40%, transparent); }
-.menu-btn.gara{ background:transparent;
-  border-color:color-mix(in srgb, var(--tone-race-solid) 72%, transparent); }
-/* L'icona della gara resta PIENA di arancio, e non e' una svista: un solo
-   elemento arancio dentro un contorno arancio dice «gara» con forza, senza
-   che l'intera piastrella gridi. Una versione col contorno vuoto era stata
-   scritta e non si applicava nemmeno (la regola qui sotto la vinceva): tolta,
-   perche' una regola morta racconta una bugia a chi legge dopo. */
+   Aveva ragione su tutte e due, e sono la stessa cosa. Un pieno grande non
+   dice «questo viene prima»: dice «guarda qui», e lo dice ogni volta che si
+   apre l'app, anche le volte in cui si voleva fare l'altra cosa.
+   *Una gerarchia si legge una volta; un pieno grande si subisce sempre.*
+
+   E il verde e' gia' il colore della casa: la testata, il marchio, il fondo.
+   Aggiungerne un blocco pieno non aggiungeva enfasi, toglieva il resto.
+
+   Le tre pastiglie tornano alle loro tinte, uguali di peso. Quello che NON
+   torna indietro e' il resto del giro — niente riquadro attorno, niente riga
+   d'oro, ombra leggera, raggio sulla scala: *quella parte non e' stata
+   contestata, ed e' quella che ha tolto un quarto di schermo.* */
+.menu-btn.training .menu-icon{ background:var(--tone-train-solid); color:var(--solid-ink); }
 
 /* UN AVVISO DI CHIUSURA NON DEVE PESARE COME UN'AZIONE APERTA. (20/08/2026.)
    «Prepara gara» chiuso era una cornice tratteggiata alta quanto l'azione
@@ -12490,7 +12482,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-linguaggio-b";
+var BUILD_STAMP = "2026-08-20-tasti-pari";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12499,7 +12491,7 @@ var BUILD_STAMP = "2026-08-20-linguaggio-b";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-spazi-sulla-scala";
+var BUILD_PARENT = "2026-08-20-linguaggio-b";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
