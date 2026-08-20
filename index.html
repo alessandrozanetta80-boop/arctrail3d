@@ -2338,6 +2338,52 @@ archersDirectory = null;
 
 // Unico punto di lettura dell'elenco pubblico, con cache condivisa: prima le
 // stesse righe erano ripetute in quattro schermate diverse.
+/* IL NOME VERO, NON QUELLO DI QUANDO E' STATO SCRITTO. (20/08/2026, dal
+   campo: «un utente ha cambiato username ma nella chat aperta rimane
+   uguale».)
+
+   Il nome viene COPIATO dentro ogni messaggio al momento dell'invio
+   (`senderName`), dentro la testata della conversazione (`memberNames`) e
+   dentro l'allenamento (`ownerName`). E' una scelta giusta: senza, per
+   disegnare un elenco di venti messaggi servirebbero venti letture in piu'.
+   Ma una copia non si aggiorna da sola, e chi cambia username resta chiamato
+   col nome vecchio per sempre, da tutti.
+
+   RIFARE LE COPIE NON E' LA STRADA: vorrebbe dire riscrivere ogni messaggio
+   di ogni conversazione a cui quella persona ha partecipato — cose che il
+   client non ha nemmeno il diritto di toccare.
+
+   La strada e' l'altra: **la copia resta, ma non e' piu' lei a comandare.**
+   `public_profiles` ha il nome vero e l'app lo carica gia' per l'elenco
+   arcieri. Qui si legge quello, e la copia diventa il RIPIEGO — per chi ha
+   tolto il profilo pubblico, per un messaggio di qualcuno che non c'e' piu',
+   e per quando la rete non ha ancora risposto.
+
+   *Un dato copiato per andare veloce va bene finche' non e' l'unica cosa che
+   si guarda: allora smette di essere una copia e diventa la verita' di ieri.*
+
+   La mappa si rifa' da sola quando la cache viene azzerata (basta che
+   `publicProfilesCache` cambi identita'): cosi' chi cambia nome lo vede
+   aggiornato senza che nessuno debba ricordarsi di svuotare due cose. */
+var nomiVivi = null, nomiDaCache = null;
+function nomeVivo(uid){
+if(!uid) return null;
+// Il mio nome lo so senza chiedere a nessuno, e lo so anche appena cambiato.
+if(currentUser && uid === currentUser.uid) return myDisplayName();
+if(publicProfilesCache !== nomiDaCache){
+nomiDaCache = publicProfilesCache;
+nomiVivi = {};
+(publicProfilesCache || []).forEach(function(p){ if(p && p.uid && p.username) nomiVivi[p.uid] = p.username; });
+}
+return (nomiVivi && nomiVivi[uid]) || null;
+}
+// Da chiamare dove i nomi contano. Se la lista non c'e' la chiede e ridisegna
+// una volta: senza, il nome giusto comparirebbe solo alla schermata dopo.
+function assicuraNomi(){
+if(publicProfilesCache || !db) return;
+loadPublicProfiles(function(){ render(); });
+}
+
 function loadPublicProfiles(cb){
 if(publicProfilesCache){ cb(publicProfilesCache); return; }
 if(!db){ cb([]); return; }
@@ -10706,7 +10752,7 @@ var otRow = el(
 (ot.visibility === "all" ? '<div style="display:inline-block;font-size:var(--t-xs);font-weight:700;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--muted);border-radius:var(--r-pill);padding:2px 8px;margin-bottom:var(--s-1);">'+t("ot_badge_open")+'</div>' : '')+
 '<div style="font-weight:700;font-size:var(--t-md);">'+escapeHtml(ot.field||"?")+'</div>'+
 '<div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;">'+escapeHtml(ot.date||"")+(ot.time?" · "+escapeHtml(ot.time):"")+'</div>'+
-'<div style="font-size:var(--t-sm);color:var(--muted);">'+t("ot_by",{name:escapeHtml(ot.ownerName||"?")})+'</div>'+
+'<div style="font-size:var(--t-sm);color:var(--muted);">'+t("ot_by",{name:escapeHtml(nomeVivo(ot.ownerUid) || ot.ownerName || "?")})+'</div>'+
 (ot.note?'<div style="font-size:var(--t-sm);color:var(--cream);margin-top:2px;">'+escapeHtml(ot.note)+'</div>':'')+
 '<div style="font-size:var(--t-sm);margin-top:var(--s-1);color:'+(full&&!joined?'var(--danger)':'var(--accent-soft)')+';">'+
 (full&&!joined?t("ot_full_label"):t("ot_spots_left",{n:spotsLeft}))+
@@ -10715,8 +10761,8 @@ var otRow = el(
 
 // Chi partecipa: senza vedere nessun nome non si capiva che ci si
 // potesse aggiungere. L'organizzatore c'e' sempre.
-var chiCe = [escapeHtml(ot.ownerName||"?")];
-(ot.participants||[]).forEach(function(p){ if(p && p.name) chiCe.push(escapeHtml(p.name)); });
+var chiCe = [escapeHtml(nomeVivo(ot.ownerUid) || ot.ownerName || "?")];
+(ot.participants||[]).forEach(function(p){ if(p && (p.uid || p.name)) chiCe.push(escapeHtml(nomeVivo(p.uid) || p.name || "?")); });
 otRow.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:var(--s-1);">'+t("ot_participants")+' ('+taken+'/'+total+'): '+chiCe.join(", ")+'</div>'));
 
 if(!isOwner && currentUser){
@@ -10806,6 +10852,7 @@ return { reg: (c && c.regione) ? c.regione : null, prov: (c && c.provincia) ? c.
 var otReg = "", otProv = "";   // fuori dalla funzione: sopravvivono a render()
 
 function otSectionCard(compact){
+assicuraNomi();
 var otCard = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
 // Il conto nel titolo: si vede quanti ce ne sono prima di leggerli, e si
 // nota subito se ne manca uno.
@@ -12691,7 +12738,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-tendine-visibili";
+var BUILD_STAMP = "2026-08-20-nome-vero";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12700,7 +12747,7 @@ var BUILD_STAMP = "2026-08-20-tendine-visibili";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-tendine-e-filtri";
+var BUILD_PARENT = "2026-08-20-tendine-visibili";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13607,8 +13654,9 @@ return wrap;
 
 // ── CHAT ALLENAMENTO APERTO ─────────────────────────────────────────────────
 function otChatScreen(){
+assicuraNomi();
 var otId = state.otChatId;
-var ownerName = state.otChatOwnerName || "?";
+var ownerName = nomeVivo(state.otChatOwnerUid) || state.otChatOwnerName || "?";
 var wrap = el('<div></div>');
 var card = el('<div class="card"></div>');
 // L'organizzatore vede la stessa chat, ma il titolo non puo' essere
@@ -13643,7 +13691,7 @@ if(isUserBlocked(d.senderUid)) return;   // messaggi di chi hai bloccato: non li
 var isMine = currentUser && d.senderUid === currentUser.uid;
 var bubble = el(
 '<div style="display:flex;flex-direction:column;align-items:'+(isMine?"flex-end":"flex-start")+';">'+
-'<div style="font-size:var(--t-xs);color:var(--muted);margin-bottom:2px;">'+escapeHtml(d.senderName||"?")+'</div>'+
+'<div style="font-size:var(--t-xs);color:var(--muted);margin-bottom:2px;">'+escapeHtml(nomeVivo(d.senderUid) || d.senderName || "?")+'</div>'+
 '<div style="max-width:80%;background:'+(isMine?"var(--accent)":"var(--bg-panel-2)")+';color:'+(isMine?"var(--accent-ink)":"var(--cream)")+';border-radius:var(--r-md);padding:8px 12px;font-size:0.9rem;">'+escapeHtml(d.text||"")+'</div>'+
 '</div>'
 );
@@ -14512,7 +14560,7 @@ var members = chat.members || [];
 var otherUid = null;
 for(var i=0;i<members.length;i++){ if(members[i] !== meUid){ otherUid = members[i]; break; } }
 if(!otherUid) otherUid = meUid;
-return { uid: otherUid, name: (chat.memberNames && chat.memberNames[otherUid]) || "?" };
+return { uid: otherUid, name: nomeVivo(otherUid) || (chat.memberNames && chat.memberNames[otherUid]) || "?" };
 }
 
 // UNA RICEVUTA IN VIAGGIO E' GIA' UNA RICEVUTA.
@@ -14787,8 +14835,11 @@ return wrap;
 
 // ---------- CONVERSAZIONE ----------
 function dmChatScreen(){
+assicuraNomi();
 var otherUid = state.dmUid;
-var otherName = state.dmName || "?";
+// Anche questo era una copia: il nome preso quando la conversazione e stata
+// aperta. Chi cambia username restava col vecchio anche nel titolo.
+var otherName = nomeVivo(state.dmUid) || state.dmName || "?";
 var wrap = el('<div style="padding-bottom:20px;"></div>');
 var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("dm_chat_with",{name:escapeHtml(otherName)})+'</h2>'));
@@ -14832,7 +14883,7 @@ messaggiInOrdine(snap).forEach(function(doc){
 var d = doc.data() || {};
 var isMine = d.senderUid === currentUser.uid;
 var bubble = el('<div style="display:flex;flex-direction:column;align-items:'+(isMine?"flex-end":"flex-start")+';"></div>');
-bubble.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-bottom:2px;">'+escapeHtml(isMine?myDisplayName():(d.senderName||otherName))+'</div>'));
+bubble.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-bottom:2px;">'+escapeHtml(isMine ? myDisplayName() : (nomeVivo(d.senderUid) || d.senderName || otherName))+'</div>'));
 bubble.appendChild(el('<div style="max-width:82%;background:'+(isMine?"var(--accent)":"var(--bg-panel-2)")+';color:'+(isMine?"var(--accent-ink)":"var(--cream)")+';border-radius:var(--r-md);padding:8px 12px;font-size:0.9rem;white-space:pre-wrap;word-break:break-word;">'+escapeHtml(d.text||"")+'</div>'));
 // Ogni messaggio proprio si puo' cancellare, come nelle altre chat dell'app
 if(isMine){
