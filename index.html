@@ -1265,6 +1265,18 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    di righe corte una sotto l'altra — l'anello e il suo stato — e sono piu'
    leggibili incolonnate che infilate in un paragrafo. */
 .prova-campanella{ margin-bottom:var(--s-3); }
+/* I DUE MENU A TENDINA DEGLI ALLENAMENTI. (20/08/2026, chiesti dal campo:
+   «se un giorno saranno tanti sara' impossibile capirci qualcosa».)
+   Compaiono solo quando servono davvero — con due allenamenti in una regione
+   sola un filtro e' un ostacolo, non un aiuto. */
+.ot-filtri{ display:flex; gap:var(--s-2); margin-bottom:var(--s-3); }
+.ot-filtri select{ flex:1 1 0; min-width:0; font-size:var(--t-sm); }
+/* LA RIGA CHE DICE COSA NON C'E'. Tre filtri voluti — sette giorni,
+   compagnia, blocchi — toglievano allenamenti dall'elenco SENZA DIRLO, e da
+   fuori si racconta come «ne abbiamo registrati due e se ne vede uno».
+   *Un elenco che nasconde senza dirlo non e' un elenco: e' un'opinione.* */
+.ot-nascosti{ font-size:var(--t-xs); color:var(--muted); line-height:1.45;
+  margin-top:var(--s-2); padding-top:var(--s-2); border-top:1px dashed var(--line); }
 /* Il tasto per spegnere sta sotto quello per accendere, non accanto: sono
    due direzioni della stessa cosa, e in fila si legge quale e' quella in
    corso. */
@@ -2658,6 +2670,7 @@ ot_vis_club: "Solo la mia compagnia",
 ot_vis_all: "Aperto a tutti",
 ot_vis_hint_club: "Lo vedono solo gli arcieri della tua compagnia.",
 ot_vis_hint_all: "Lo vedono tutti gli arcieri: usalo per i campi a pagamento o quando accetti visitatori.",
+ot_all_f: "Tutte", ot_place_none: "Fuori compagnia", ot_hidden_head: "Non in elenco:", ot_why_far: "oltre i 7 giorni", ot_why_club: "altra compagnia", ot_why_blocked: "persone bloccate", ot_why_filter: "nascosti dal filtro",
 ot_group_club: "Nella tua compagnia",
 ot_group_open: "Aperti a tutti",
 ot_no_club_warn: "Imposta la tua compagnia nel profilo per pubblicare un allenamento riservato.",
@@ -3161,6 +3174,7 @@ ot_vis_club: "Only my club",
 ot_vis_all: "Open to everyone",
 ot_vis_hint_club: "Only archers from your club can see it.",
 ot_vis_hint_all: "All archers can see it: use it for pay-to-shoot courses or when you welcome visitors.",
+ot_all_f: "All", ot_place_none: "No club", ot_hidden_head: "Not listed:", ot_why_far: "beyond 7 days", ot_why_club: "another club", ot_why_blocked: "blocked people", ot_why_filter: "hidden by the filter",
 ot_group_club: "In your club",
 ot_group_open: "Open to everyone",
 ot_no_club_warn: "Set your club in your profile to post a training for club members only.",
@@ -3687,6 +3701,7 @@ ot_vis_club: "Seulement mon club",
 ot_vis_all: "Ouvert \u00e0 tous",
 ot_vis_hint_club: "Seuls les archers de votre club le voient.",
 ot_vis_hint_all: "Tous les archers le voient : \u00e0 utiliser pour les parcours payants ou quand vous acceptez des visiteurs.",
+ot_all_f: "Toutes", ot_place_none: "Hors club", ot_hidden_head: "Non affichés :", ot_why_far: "au-delà de 7 jours", ot_why_club: "autre club", ot_why_blocked: "personnes bloquées", ot_why_filter: "masqués par le filtre",
 ot_group_club: "Dans votre club",
 ot_group_open: "Ouverts \u00e0 tous",
 ot_no_club_warn: "Indiquez votre club dans le profil pour publier un entra\u00eenement r\u00e9serv\u00e9.",
@@ -4213,6 +4228,7 @@ ot_vis_club: "Nur mein Verein",
 ot_vis_all: "F\u00fcr alle offen",
 ot_vis_hint_club: "Nur Sch\u00fctzen aus deinem Verein sehen es.",
 ot_vis_hint_all: "Alle Sch\u00fctzen sehen es: nutze das f\u00fcr kostenpflichtige Parcours oder wenn du G\u00e4ste zul\u00e4sst.",
+ot_all_f: "Alle", ot_place_none: "Ohne Verein", ot_hidden_head: "Nicht gelistet:", ot_why_far: "später als 7 Tage", ot_why_club: "anderer Verein", ot_why_blocked: "blockierte Personen", ot_why_filter: "vom Filter ausgeblendet",
 ot_group_club: "In deinem Verein",
 ot_group_open: "F\u00fcr alle offen",
 ot_no_club_warn: "Trage deinen Verein im Profil ein, um ein vereinsinternes Training zu ver\u00f6ffentlichen.",
@@ -4739,6 +4755,7 @@ ot_vis_club: "Sadece kul\u00fcb\u00fcm",
 ot_vis_all: "Herkese a\u00e7\u0131k",
 ot_vis_hint_club: "Sadece kul\u00fcb\u00fcndeki ok\u00e7ular g\u00f6r\u00fcr.",
 ot_vis_hint_all: "B\u00fct\u00fcn ok\u00e7ular g\u00f6r\u00fcr: \u00fccretli parkurlar i\u00e7in ya da misafir kabul etti\u011finde kullan.",
+ot_all_f: "Tümü", ot_place_none: "Kulüp dışı", ot_hidden_head: "Listede yok:", ot_why_far: "7 günden uzak", ot_why_club: "başka kulüp", ot_why_blocked: "engellenen kişiler", ot_why_filter: "filtre gizledi",
 ot_group_club: "Kul\u00fcb\u00fcnde",
 ot_group_open: "Herkese a\u00e7\u0131k",
 ot_no_club_warn: "Kul\u00fcbe \u00f6zel antrenman yay\u0131nlamak i\u00e7in profilinde kul\u00fcb\u00fcn\u00fc se\u00e7.",
@@ -5278,6 +5295,7 @@ ot_vis_club: "\u0422\u043e\u043b\u044c\u043a\u043e \u043c\u043e\u0439 \u043a\u04
 ot_vis_all: "\u041e\u0442\u043a\u0440\u044b\u0442\u043e \u0434\u043b\u044f \u0432\u0441\u0435\u0445",
 ot_vis_hint_club: "\u042d\u0442\u043e \u0432\u0438\u0434\u044f\u0442 \u0442\u043e\u043b\u044c\u043a\u043e \u0441\u0442\u0440\u0435\u043b\u043a\u0438 \u0432\u0430\u0448\u0435\u0433\u043e \u043a\u043b\u0443\u0431\u0430.",
 ot_vis_hint_all: "\u042d\u0442\u043e \u0432\u0438\u0434\u044f\u0442 \u0432\u0441\u0435 \u0441\u0442\u0440\u0435\u043b\u043a\u0438: \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0439\u0442\u0435 \u0434\u043b\u044f \u043f\u043b\u0430\u0442\u043d\u044b\u0445 \u043c\u0430\u0440\u0448\u0440\u0443\u0442\u043e\u0432 \u0438\u043b\u0438 \u043a\u043e\u0433\u0434\u0430 \u043f\u0440\u0438\u043d\u0438\u043c\u0430\u0435\u0442\u0435 \u0433\u043e\u0441\u0442\u0435\u0439.",
+ot_all_f: "Все", ot_place_none: "Вне клуба", ot_hidden_head: "Не в списке:", ot_why_far: "дальше 7 дней", ot_why_club: "другой клуб", ot_why_blocked: "заблокированные", ot_why_filter: "скрыты фильтром",
 ot_group_club: "\u0412 \u0432\u0430\u0448\u0435\u043c \u043a\u043b\u0443\u0431\u0435",
 ot_group_open: "\u041e\u0442\u043a\u0440\u044b\u0442\u044b\u0435 \u0434\u043b\u044f \u0432\u0441\u0435\u0445",
 ot_no_club_warn: "\u0423\u043a\u0430\u0436\u0438\u0442\u0435 \u0441\u0432\u043e\u0439 \u043a\u043b\u0443\u0431 \u0432 \u043f\u0440\u043e\u0444\u0438\u043b\u0435, \u0447\u0442\u043e\u0431\u044b \u043e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u0442\u044c \u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0443 \u0442\u043e\u043b\u044c\u043a\u043e \u0434\u043b\u044f \u043a\u043b\u0443\u0431\u0430.",
@@ -5817,6 +5835,7 @@ ot_vis_club: "Solo mi club",
 ot_vis_all: "Abierto a todos",
 ot_vis_hint_club: "Solo lo ven los arqueros de tu club.",
 ot_vis_hint_all: "Lo ven todos los arqueros: \u00fasalo para los recorridos de pago o cuando aceptas visitantes.",
+ot_all_f: "Todas", ot_place_none: "Sin club", ot_hidden_head: "No listados:", ot_why_far: "más de 7 días", ot_why_club: "otro club", ot_why_blocked: "personas bloqueadas", ot_why_filter: "ocultos por el filtro",
 ot_group_club: "En tu club",
 ot_group_open: "Abiertos a todos",
 ot_no_club_warn: "Indica tu club en el perfil para publicar un entrenamiento reservado.",
@@ -6356,6 +6375,7 @@ ot_vis_club: "Bara min klubb",
 ot_vis_all: "\u00d6ppen f\u00f6r alla",
 ot_vis_hint_club: "Bara skyttar i din klubb ser den.",
 ot_vis_hint_all: "Alla skyttar ser den: anv\u00e4nd det f\u00f6r banor med avgift eller n\u00e4r du tar emot bes\u00f6kare.",
+ot_all_f: "Alla", ot_place_none: "Utan klubb", ot_hidden_head: "Visas inte:", ot_why_far: "mer än 7 dagar", ot_why_club: "annan klubb", ot_why_blocked: "blockerade personer", ot_why_filter: "dolda av filtret",
 ot_group_club: "I din klubb",
 ot_group_open: "\u00d6ppna f\u00f6r alla",
 ot_no_club_warn: "Ange din klubb i profilen f\u00f6r att l\u00e4gga upp en tr\u00e4ning bara f\u00f6r klubben.",
@@ -6895,6 +6915,7 @@ ot_vis_club: "Alleen mijn vereniging",
 ot_vis_all: "Open voor iedereen",
 ot_vis_hint_club: "Alleen boogschutters van je vereniging zien het.",
 ot_vis_hint_all: "Alle boogschutters zien het: gebruik dit voor betaalde parcoursen of als je bezoekers toelaat.",
+ot_all_f: "Alle", ot_place_none: "Zonder club", ot_hidden_head: "Niet in de lijst:", ot_why_far: "verder dan 7 dagen", ot_why_club: "andere club", ot_why_blocked: "geblokkeerde personen", ot_why_filter: "verborgen door het filter",
 ot_group_club: "Bij jouw vereniging",
 ot_group_open: "Open voor iedereen",
 ot_no_club_warn: "Stel je vereniging in je profiel in om een training alleen voor de vereniging te plaatsen.",
@@ -10769,13 +10790,92 @@ return otRow;
 }
 
 // compact = true -> versione ridotta per la scheda "Tira" (max 2, con "vedi tutti")
+// DOVE SI ALLENA. (20/08/2026.)
+// L'allenamento non porta la regione: porta il codice della compagnia del
+// campo. Ma tutte e 663 le compagnie hanno regione e provincia, quindi il
+// luogo si SA senza chiederlo a nessuno e senza aggiungere un campo nuovo —
+// e vale anche per gli allenamenti gia' pubblicati, che un campo nuovo non
+// avrebbe.
+// Chi ha scritto il campo a mano non ha un codice: quello non ha regione, e
+// **non deve sparire per questo**. Ha una voce sua nella tendina.
+function otLuogo(ot){
+var c = null;
+try{ c = (ot.clubCode && typeof COMPAGNIE !== "undefined") ? COMPAGNIE[ot.clubCode] : null; }catch(e){}
+return { reg: (c && c.regione) ? c.regione : null, prov: (c && c.provincia) ? c.provincia : null };
+}
+var otReg = "", otProv = "";   // fuori dalla funzione: sopravvivono a render()
+
 function otSectionCard(compact){
 var otCard = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
 otCard.appendChild(el('<div><div style="font-weight:800;font-size:var(--t-md);">'+t("ot_section_title")+'</div><div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;margin-bottom:var(--s-2);">'+t("ot_section_hint")+'</div></div>'));
 
 var mio = myClubCode();
+var base = (openTrainings || []).slice();
+var nascostiFiltro = 0;
+
+if(!compact){
+// LE TENDINE COMPAIONO SOLO QUANDO C'E' QUALCOSA DA SCEGLIERE.
+// Con due allenamenti nella stessa regione un filtro non aiuta: e' un
+// ostacolo con l'aria di uno strumento. *Un comando che ha una risposta
+// sola non e' un comando.*
+var regioni = {}, province = {};
+base.forEach(function(ot){
+var L = otLuogo(ot);
+var kr = L.reg || "";
+regioni[kr] = (regioni[kr] || 0) + 1;
+if(L.reg && L.prov){
+if(!province[L.reg]) province[L.reg] = {};
+province[L.reg][L.prov] = (province[L.reg][L.prov] || 0) + 1;
+}
+});
+var elencoReg = Object.keys(regioni).sort();
+if(elencoReg.length > 1){
+var fRow = el('<div class="ot-filtri"></div>');
+
+var selReg = el('<select aria-label="'+escapeHtml(t("compagnie_regione"))+'"></select>');
+selReg.appendChild(el('<option value="">'+escapeHtml(t("compagnie_regione")+": "+t("ot_all_f"))+'</option>'));
+elencoReg.forEach(function(r){
+var eti = (r || t("ot_place_none")) + " (" + regioni[r] + ")";
+var o = el('<option></option>');
+o.value = r; o.textContent = eti;
+if(otReg === r) o.setAttribute("selected","selected");
+selReg.appendChild(o);
+});
+selReg.addEventListener("change", function(){ otReg = selReg.value; otProv = ""; render(); });
+fRow.appendChild(selReg);
+
+// La provincia dipende dalla regione: offrire tutte le province d'Italia
+// quando se ne usano due sarebbe un elenco da leggere per trovare il nulla.
+var provQui = (otReg && province[otReg]) ? Object.keys(province[otReg]).sort() : [];
+if(provQui.length > 1){
+var selProv = el('<select aria-label="'+escapeHtml(t("compagnie_provincia"))+'"></select>');
+selProv.appendChild(el('<option value="">'+escapeHtml(t("compagnie_provincia")+": "+t("ot_all_f"))+'</option>'));
+provQui.forEach(function(p){
+var o2 = el('<option></option>');
+o2.value = p; o2.textContent = p + " (" + province[otReg][p] + ")";
+if(otProv === p) o2.setAttribute("selected","selected");
+selProv.appendChild(o2);
+});
+selProv.addEventListener("change", function(){ otProv = selProv.value; render(); });
+fRow.appendChild(selProv);
+}
+otCard.appendChild(fRow);
+}
+
+// Il filtro si applica QUI e si conta: quello che toglie va detto in fondo,
+// non sparito.
+if(otReg || otProv){
+base = base.filter(function(ot){
+var L = otLuogo(ot);
+if(otReg && (L.reg || "") !== otReg){ nascostiFiltro++; return false; }
+if(otProv && L.prov !== otProv){ nascostiFiltro++; return false; }
+return true;
+});
+}
+}
+
 var gruppoClub = [], gruppoOpen = [];
-(openTrainings||[]).forEach(function(ot){
+base.forEach(function(ot){
 if(ot.visibility === "all") gruppoOpen.push(ot);
 else if(mio && ot.clubCode === mio) gruppoClub.push(ot);
 else gruppoOpen.push(ot);
@@ -10804,6 +10904,22 @@ gruppoClub.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 if(gruppoOpen.length){
 otCard.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 2px;">'+t("ot_group_open")+'</div>'));
 gruppoOpen.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
+}
+}
+
+// COSA NON C'E', E PERCHE'. Tre filtri voluti — sette giorni, compagnia,
+// blocchi — toglievano allenamenti dall'elenco senza dirlo. Da fuori si
+// racconta cosi': «ne abbiamo registrati due e se ne vede solo uno».
+// Non e' un difetto da correggere togliendo i filtri: sono giusti. E' un
+// difetto da correggere DICENDOLO.
+if(!compact){
+var perche = [];
+if(otNascosti.far)  perche.push(otNascosti.far  + " " + t("ot_why_far"));
+if(otNascosti.club) perche.push(otNascosti.club + " " + t("ot_why_club"));
+if(otNascosti.blk)  perche.push(otNascosti.blk  + " " + t("ot_why_blocked"));
+if(nascostiFiltro)  perche.push(nascostiFiltro  + " " + t("ot_why_filter"));
+if(perche.length){
+otCard.appendChild(el('<div class="ot-nascosti">'+escapeHtml(t("ot_hidden_head")+" "+perche.join(" \u00b7 "))+'</div>'));
 }
 }
 
@@ -12562,7 +12678,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-cinque-dal-campo";
+var BUILD_STAMP = "2026-08-20-tendine-e-filtri";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12571,7 +12687,7 @@ var BUILD_STAMP = "2026-08-20-cinque-dal-campo";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-tasti-pari";
+var BUILD_PARENT = "2026-08-20-cinque-dal-campo";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -13636,6 +13752,10 @@ return (state.profile && state.profile.compagnia) || null;
 //
 // `onSnapshot` la tiene aperta. Il listener e' uno solo e non si riapre: la
 // funzione si puo' chiamare quante volte si vuole senza moltiplicarlo.
+// QUELLI CHE RESTANO FUORI SI CONTANO. Vedi `.ot-nascosti` nel foglio: un
+// elenco che toglie senza dirlo fa dubitare di aver scritto, non di non aver
+// letto.
+var otNascosti = { far:0, club:0, blk:0 };
 var otUnsub = null;
 function loadOpenTrainings(){
 if(!db) return;
@@ -13646,6 +13766,7 @@ otUnsub = db.collection("open_trainings")
 .limit(50)
 .onSnapshot(function(snap){
 var list = [];
+otNascosti = { far:0, club:0, blk:0 };   // si riconta a ogni notizia
 snap.forEach(function(doc){
 var d = doc.data(); d.id = doc.id;
 // Rimuovi automaticamente quelli scaduti (data/ora passata)
@@ -13654,15 +13775,15 @@ doc.ref.update({status:"closed"}).catch(function(){});
 return;
 }
 // Finestra: solo i prossimi 7 giorni, altrimenti la lista si riempie di annunci lontani
-if(d.datetime && d.datetime > Date.now() + OT_WINDOW_MS) return;
+if(d.datetime && d.datetime > Date.now() + OT_WINDOW_MS){ otNascosti.far++; return; }
 // Visibilita': "club" lo vede solo chi e' della stessa compagnia
 // (l'organizzatore e gli invitati lo vedono sempre)
 var myUid = currentUser && currentUser.uid;
-if(isUserBlocked(d.ownerUid)) return;
+if(isUserBlocked(d.ownerUid)){ otNascosti.blk++; return; }
 var mine = d.ownerUid === myUid;
 var invited = myUid && (d.invitedUids||[]).indexOf(myUid) !== -1;
 if(d.visibility === "club" && !mine && !invited){
-if(!myClubCode() || d.clubCode !== myClubCode()) return;
+if(!myClubCode() || d.clubCode !== myClubCode()){ otNascosti.club++; return; }
 }
 list.push(d);
 });
