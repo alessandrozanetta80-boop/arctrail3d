@@ -134,6 +134,15 @@
 /* ───── RAGGI · cinque, non nove ───── */
 --r-xs:8px; --r-sm:10px; --r-md:12px; --r-lg:16px; --r-xl:20px; --r-pill:999px;
 
+/* ───── LA PRIMA SCHERMATA ─────
+   Si apre a casa, non in mezzo al bosco: fondo chiaro e testo scuro,
+   INDIPENDENTI dal tema del resto dell'app — chi la vede non ha ancora
+   scelto niente, nemmeno la lingua.
+   Per questo non sono ruoli: un ruolo cambia col tema, e qui non deve.
+   Erano sei esadecimali scritti a mano dentro sei stili in linea. */
+--setup-bg:#F5F4F0; --setup-card:#FFFFFF; --setup-ink:#1A1D1B;
+--setup-ink-2:#5A6B5F; --setup-line:#DDE2DA; --setup-line-strong:#C9CFC7;
+
 /* ───── BERSAGLIO MINIMO ─────
    44 Apple, 48 Material. Sul percorso si tocca con la mano sudata e spesso
    in piedi: 44 e' il pavimento, non il traguardo. */
@@ -165,6 +174,16 @@
    clamp() al posto delle media query: la misura cresce con lo schermo senza
    scalini, e resta in rem, quindi chi ha ingrandito il testo di sistema
    continua a vederlo ingrandito. */
+/* --t-2xs NON ESISTEVA, e dieci regole lo chiedevano. (20/08/2026.)
+   La scala partiva da --t-xs (0.66-0.72): sotto non c'era niente, e dieci
+   punti del foglio erano fermi fra 0.58 e 0.64 — le pastiglie, le
+   etichette maiuscole, i conti piccoli accanto a un nome.
+   E' lo stesso caso di --r-xs coi raggi: non e' un token inventato per non
+   cambiare niente, e' un gradino VERO che il sistema non sapeva nominare.
+   La differenza fra un gradino mancante e del rumore resta quella: quante
+   volte torna, e se si distingue dal vicino. 0.60 e 0.72 su una pastiglia
+   si distinguono; 0.78 e 0.80 no. */
+--t-2xs:clamp(0.58rem,0.56rem + 0.10vw,0.64rem);
 --t-xs:clamp(0.66rem,0.63rem + 0.15vw,0.72rem);
 --t-sm:clamp(0.78rem,0.75rem + 0.18vw,0.86rem);
 --t-md:clamp(0.92rem,0.89rem + 0.18vw,1rem);
@@ -559,7 +578,7 @@ header.top .home-btn.pericolo:active,
 header.top .home-btn.pericolo.armato{
 border-color:var(--danger); color:var(--danger); }
 .bar-badge{ position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 4px;
-border-radius:var(--r-sm); background:var(--danger); color:#fff; font-size:0.64rem; font-weight:800;
+border-radius:var(--r-sm); background:var(--danger); color:#fff; font-size:var(--t-2xs); font-weight:800;
 display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
 .bar-dot{ position:absolute; top:4px; right:4px; width:10px; height:10px; border-radius:50%;
 background:var(--danger); border:2px solid var(--bg-panel); }
@@ -615,22 +634,22 @@ box-shadow:0 12px 28px -16px rgba(30,45,34,0.55); z-index:80; }
 .bar-menu[hidden]{ display:none; }
 .bar-menu-item{ display:flex; align-items:center; gap:var(--s-3); width:100%; min-height:44px;
 padding:0 12px; background:none; border:none; border-radius:var(--r-xs); cursor:pointer;
-color:var(--cream); font-family:inherit; font-size:0.92rem; font-weight:600; text-align:left; }
+color:var(--cream); font-family:inherit; font-size:var(--t-md); font-weight:600; text-align:left; }
 .bar-menu-item:active{ background:var(--bg-panel-2); }
 .bar-menu-item > svg{ flex:0 0 auto; color:var(--muted); }
 .bar-menu-count{ margin-left:auto; min-width:20px; height:20px; padding:0 4px; border-radius:var(--r-sm);
-background:var(--danger); color:#fff; font-size:0.66rem; font-weight:800;
+background:var(--danger); color:#fff; font-size:var(--t-xs); font-weight:800;
 display:flex; align-items:center; justify-content:center; }
 header.top .brand-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-sm); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
 header.top .brandblock{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-header.top h1{ font-size:1.1rem; margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-soft); }
-header.top .sub{ font-size:0.72rem; color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
+header.top h1{ font-size:var(--t-lg); margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-soft); }
+header.top .sub{ font-size:var(--t-xs); color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
 .home-btn{ background:var(--bark); border:none; color:#fff; border-radius:var(--r-pill);
-height:44px; padding:0 16px; font-size:0.88rem; font-weight:700; cursor:pointer;
+height:44px; padding:0 16px; font-size:var(--t-sm); font-weight:700; cursor:pointer;
 display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; flex:0 0 auto;
 line-height:1; letter-spacing:0.01em; }
 .home-btn:active{ transform:scale(0.97); }
-.home-btn.small{ font-size:0.8rem; padding:0 12px; }
+.home-btn.small{ font-size:var(--t-sm); padding:0 12px; }
 /* IL RIQUADRO. (Rivisto il 20/08/2026, guardando l'app invece di leggerla.)
    ATTENZIONE A DOVE SI SCRIVE: questa e' la regola che comanda SUL TELEFONO.
    Piu' sotto ce n'e' un'altra uguale dentro `@media (min-width:900px)`, ed e'
@@ -653,7 +672,7 @@ position:relative; z-index:1; }
    annidate. Qui, di primo livello, vale anche sul telefono. */
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
   background:transparent; border:0; box-shadow:none; padding:0; }
-h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 12px; }
+h2.section-title{ font-size:var(--t-sm); text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 12px; }
 .btn{ display:inline-flex; align-items:center; justify-content:center; gap:var(--s-2);
 border-radius:var(--r-md); padding:14px var(--s-4); min-height:var(--hit);
 font-family:inherit; font-size:var(--t-md); font-weight:700; cursor:pointer;
@@ -670,7 +689,7 @@ transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--eas
    disattivati. Superficie propria + bordo forte, in tutti i temi. */
 .btn-ghost{ background:var(--surface-2); border:1.5px solid var(--border-strong); color:var(--text-1); }
 .btn-ghost .menu-sub{ color:var(--text-3); }
-.btn-sm{ padding:8px 12px; font-size:0.85rem; }
+.btn-sm{ padding:8px 12px; font-size:var(--t-sm); }
 .btn-danger{ background:var(--danger); border-color:transparent; color:#fff; }
 .btn-ghost-danger{ background:color-mix(in srgb, var(--danger-role) 12%, var(--surface-1)); border:1.5px solid color-mix(in srgb, var(--danger-role) 55%, transparent); color:var(--danger-role); }
 .btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
@@ -680,12 +699,12 @@ color:var(--gold-role); font-weight:800; box-shadow:none; }
 .menu-btn{ padding:var(--s-4); font-size:var(--t-lg); justify-content:flex-start; text-align:left; margin-bottom:var(--s-3); position:relative; overflow:hidden; }
 /* L'icona dentro una pastiglia: quando al sole la tinta del fondo sbiadisce,
    il quadretto pieno resta l'unico appiglio di colore. */
-.menu-btn .menu-icon{ font-size:1.4rem; position:relative; z-index:1;
+.menu-btn .menu-icon{ font-size:var(--t-xl); position:relative; z-index:1;
 display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
 width:var(--hit); height:var(--hit); border-radius:var(--r-md);
 background:color-mix(in srgb, currentColor 16%, transparent); }
 .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; position:relative; z-index:1; }
-.menu-btn .menu-sub{ font-size:0.7rem; font-weight:400; opacity:0.85; margin-top:2px; }
+.menu-btn .menu-sub{ font-size:var(--t-xs); font-weight:400; opacity:0.85; margin-top:2px; }
 /* I tre comandi: fondo tenue, bordo della stessa famiglia, pastiglia piena.
    Un solo disegno per tutti i temi — cambiano solo le tre coppie --tone-*. */
 .menu-btn.training{ background:var(--tone-train-bg); color:var(--tone-train-fg);
@@ -810,20 +829,20 @@ border-color:color-mix(in srgb, currentColor 62%, transparent); }
 .btn-standings:hover{ border-color:var(--gold-role); }
 .bar-menu-item:hover, .bar-btn:hover{ border-color:var(--brand-soft); background:var(--surface-2); }
 }
-.chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
+.chip .chip-sub{ display:block; font-size:var(--t-2xs); font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
 .lang-chip{ min-width:60px; }
-.lang-pick-btn{ display:flex; align-items:center; gap:var(--s-3); width:100%; padding:16px 20px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; transition:transform .12s ease, border-color .12s ease; }
+.lang-pick-btn{ display:flex; align-items:center; gap:var(--s-3); width:100%; padding:16px 20px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:var(--t-lg); color:var(--cream); cursor:pointer; text-align:left; transition:transform .12s ease, border-color .12s ease; }
 .lang-pick-btn:active{ transform:scale(0.98); }
-.lang-pick-btn .flag{ font-size:1.6rem; line-height:1; }
+.lang-pick-btn .flag{ font-size:var(--t-xl); line-height:1; }
 .lang-pick-btn:hover, .lang-pick-btn:focus{ border-color:var(--accent-soft); }
-.onboard-title{ font-size:1.35rem; color:var(--accent-soft); margin:2px 0 4px; }
-.onboard-sub{ color:var(--muted); font-size:0.82rem; margin-bottom:var(--s-5); }
+.onboard-title{ font-size:var(--t-xl); color:var(--accent-soft); margin:2px 0 4px; }
+.onboard-sub{ color:var(--muted); font-size:var(--t-sm); margin-bottom:var(--s-5); }
 .onboard-stack{ display:flex; flex-direction:column; gap:var(--s-2); width:100%; max-width:300px; }
 .grid-stack{ display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s-2); width:100%; max-width:320px; }
-.grid-pick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s-1); padding:16px 4px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:0.8rem; color:var(--cream); cursor:pointer; text-align:center; transition:transform .12s ease, border-color .12s ease; }
+.grid-pick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s-1); padding:16px 4px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:var(--t-sm); color:var(--cream); cursor:pointer; text-align:center; transition:transform .12s ease, border-color .12s ease; }
 .grid-pick-btn:active{ transform:scale(0.95); }
 .grid-pick-btn:hover, .grid-pick-btn:focus{ border-color:var(--accent-soft); }
-.grid-pick-btn .flag{ font-size:1.7rem; line-height:1; }
+.grid-pick-btn .flag{ font-size:var(--t-xl); line-height:1; }
 input[type=text], input[type=number], input[type=email], input[type=tel],
 input[type=password], input[type=search], textarea, select{
 width:100%; padding:12px 12px; min-height:var(--hit); border-radius:var(--r-sm);
@@ -878,7 +897,7 @@ textarea.input-field{ resize:none; }
 .archer-list{ margin-top:var(--s-3); display:flex; flex-direction:column; gap:var(--s-2); }
 .archer-row{ display:flex; align-items:center; justify-content:space-between; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-xs); padding:8px 12px; }
 .archer-row .name{ font-weight:600; }
-.remove-x{ background:none;border:none;color:var(--danger);font-size:1.2rem;cursor:pointer;line-height:1; padding:4px 4px; }
+.remove-x{ background:none;border:none;color:var(--danger);font-size:var(--t-lg);cursor:pointer;line-height:1; padding:4px 4px; }
 .progress-wrap{ display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--s-1); }
 .progress-track{ height:8px; background:var(--bg-panel-2); border-radius:var(--r-xs); overflow:hidden; margin-bottom:var(--s-3); position:relative; }
 /* Il riflesso che scorreva in eterno e' stato tolto: diceva "sto caricando"
@@ -887,19 +906,19 @@ textarea.input-field{ resize:none; }
 .progress-fill{ height:100%; width:var(--pct,0%); background:linear-gradient(90deg,var(--brand-soft),var(--gold-role));
 border-radius:var(--r-sm); transition:width var(--dur-3) var(--ease); }
 .partial-card{ padding:12px 12px; margin-bottom:var(--s-3); }
-.partial-title{ font-size:0.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:var(--s-2); }
-.partial-row{ display:flex; justify-content:space-between; align-items:center; padding:4px 0; font-size:0.92rem; }
+.partial-title{ font-size:var(--t-xs); text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:var(--s-2); }
+.partial-row{ display:flex; justify-content:space-between; align-items:center; padding:4px 0; font-size:var(--t-md); }
 .partial-row + .partial-row{ border-top:1px solid var(--line); }
 .partial-row .pname{ font-weight:600; }
 .partial-row.leader .pname{ color:var(--accent-soft); }
 .partial-row .ptot{ font-weight:800; color:var(--gold-role); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
 .target-stage{ text-align:center; }
-.archer-turn{ font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
+.archer-turn{ font-size:var(--t-sm); text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
 .archer-name-big{ font-size:var(--t-xl); margin-bottom:var(--s-2); font-family:var(--font-display); font-weight:700; letter-spacing:0.01em; text-wrap:balance; }
-.arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:4px 8px; border-radius:var(--r-pill); margin-bottom:var(--s-3); }
-.mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:4px 8px; border-radius:var(--r-pill); margin-bottom:var(--s-2); text-transform:uppercase; letter-spacing:.05em; }
+.arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:var(--t-xs); font-weight:800; padding:4px 8px; border-radius:var(--r-pill); margin-bottom:var(--s-3); }
+.mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:var(--t-xs); font-weight:600; padding:4px 8px; border-radius:var(--r-pill); margin-bottom:var(--s-2); text-transform:uppercase; letter-spacing:.05em; }
 .piazzola-hero{ margin-bottom:var(--s-1); }
-.piazzola-hero-lbl{ font-size:0.7rem; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin-bottom:0px; }
+.piazzola-hero-lbl{ font-size:var(--t-xs); text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin-bottom:0px; }
 .piazzola-num{ font-size:var(--t-2xl); font-weight:800; color:var(--clay); font-family:var(--font-num); font-variant-numeric:tabular-nums; line-height:1; position:relative; display:inline-block; }
 .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
 background:radial-gradient(circle, rgba(232,114,47,0.16), transparent 70%); z-index:-1; }
@@ -923,7 +942,7 @@ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
    percorso per specificita', e gli 8px restavano nel file pronti a tornare il
    giorno in cui un .quick-btn fosse comparso fuori da .tastiera (15/08/2026). */
 .quick-btn .quick-lbl{ font-size:var(--t-xs); font-weight:700; text-transform:uppercase; letter-spacing:.02em; white-space:normal; line-height:1.15; text-wrap:pretty; max-width:100%; }
-.quick-btn .quick-pts{ font-size:1.55rem; font-weight:800; font-family:var(--font-num); font-variant-numeric:tabular-nums; color:var(--solid-ink); }
+.quick-btn .quick-pts{ font-size:var(--t-xl); font-weight:800; font-family:var(--font-num); font-variant-numeric:tabular-nums; color:var(--solid-ink); }
 /* Fondo pieno, cifra bianca, in TUTTI i temi. Il ragionamento scritto per il
    chiaro ("il colore lo si legge da lontano, il numero da vicino") vale
    identico al buio: non c'e' motivo di avere due disegni. */
@@ -933,11 +952,11 @@ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
 .quick-btn.sagoma{ background:var(--score-sag); }
 .quick-btn.perfect{ background:var(--score-perfect); }
 .quick-btn.zero{ background:var(--score-zero); }
-.quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
+.quick-hint{ text-align:center; font-size:var(--t-xs); color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
 .stats-row{ display:flex; gap:var(--s-2); margin-bottom:var(--s-3); }
 .stat-box{ flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:8px 4px; }
-.stat-box .stat-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.5rem; color:var(--brand-soft); }
-.stat-box .stat-lbl{ font-size:0.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:2px; }
+.stat-box .stat-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:var(--t-xl); color:var(--brand-soft); }
+.stat-box .stat-lbl{ font-size:var(--t-2xs); text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:2px; }
 .timer-box{ margin:var(--s-2) 0 var(--s-5); }
 /* Da fermo ha un colore suo (ambra sul chiaro): non e' nessuno dei tre codici
    dell'app, quindi al sole non lo si scambia per "gara" o "prepara". */
@@ -966,21 +985,21 @@ margin-bottom:var(--s-4); transition:color var(--dur-3) var(--ease); }
 .timer-num.timer-danger{ color:var(--timer-dgr-fg); }
 .timer-pause-btn{ width:100%; }
 .shots-strip{ display:flex; gap:var(--s-1); justify-content:center; flex-wrap:wrap; margin:12px 0 4px; }
-.shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-pill); padding:4px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
-table.score-table{ width:100%; border-collapse:collapse; font-size:0.85rem; }
+.shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-pill); padding:4px 12px; font-size:var(--t-sm); font-weight:700; color:var(--cream); }
+table.score-table{ width:100%; border-collapse:collapse; font-size:var(--t-sm); }
 table.score-table th, table.score-table td{ padding:8px 4px; text-align:center; border-bottom:1px solid var(--line); }
-table.score-table th{ color:var(--muted); font-weight:600; font-size:0.7rem; text-transform:uppercase; letter-spacing:.05em; }
+table.score-table th{ color:var(--muted); font-weight:600; font-size:var(--t-xs); text-transform:uppercase; letter-spacing:.05em; }
 table.score-table td.name-col, table.score-table th.name-col{ text-align:left; }
 .piazz-flow{ display:flex; flex-direction:column; gap:var(--s-2); }
 .piazz-card{ display:flex; align-items:center; gap:var(--s-3); background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--r-lg); padding:12px 16px; box-shadow:0 2px 8px rgba(0,0,0,0.18); }
-.piazz-card-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.25rem; color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
+.piazz-card-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:var(--t-lg); color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
 .piazz-card-right{ display:flex; flex-wrap:wrap; gap:var(--s-3); flex:1; }
 .ring-item{ display:flex; flex-direction:column; align-items:center; gap:var(--s-1); }
-.ring-badge{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.92rem; color:var(--ring-ink);
+.ring-badge{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:var(--t-md); color:var(--ring-ink);
 background: repeating-radial-gradient(circle at center, var(--ring-bg-a) 0px, var(--ring-bg-a) 4px, var(--ring-bg-b) 4px, var(--ring-bg-b) 7px, var(--ring-bg-a) 7px, var(--ring-bg-a) 11px, var(--ring-bg-b) 11px 14px, var(--ring-bg-a) 14px 17px);
 border:2px solid var(--bark); flex:0 0 auto; }
 .ring-badge.empty{ opacity:0.35; background:var(--ring-empty-bg); border-color:var(--ring-empty-bd); color:var(--muted); }
-.ring-name{ font-size:0.62rem; color:var(--muted); max-width:56px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ring-name{ font-size:var(--t-2xs); color:var(--muted); max-width:56px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .rank-row.first td{ color:var(--accent-soft); font-weight:700; }
 .total-col{ font-weight:800; color:var(--gold-role); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
 /* ── LA SCHEDA: si firma, e poi passa di mano ──────────────────────────────
@@ -1028,32 +1047,32 @@ align-items:center; text-align:center; padding:var(--s-3) 0; }
 font-family:var(--font-display); font-size:var(--t-lg); font-weight:700;
 color:var(--success-role); }
 .scheda-fatta .sf-quando{ font-size:var(--t-xs); color:var(--text-3); }
-.footer-note{ text-align:center; color:var(--muted); font-size:0.72rem; margin-top:var(--s-4); line-height:1.5; }
-.rules-panel{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 12px; margin-top:var(--s-3); font-size:0.78rem; line-height:1.6; }
+.footer-note{ text-align:center; color:var(--muted); font-size:var(--t-xs); margin-top:var(--s-4); line-height:1.5; }
+.rules-panel{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 12px; margin-top:var(--s-3); font-size:var(--t-sm); line-height:1.6; }
 .rules-panel .rp-title{ font-weight:700; color:var(--cream); margin-bottom:var(--s-1); }
-.resume-banner{ background:var(--bg-panel-2); border:1px dashed var(--accent-soft); border-radius:var(--r-md); padding:var(--s-3); margin-bottom:var(--s-4); font-size:0.88rem; }
-.install-hint{ background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:var(--r-xs); padding:12px 12px; font-size:0.8rem; line-height:1.5; color:var(--cream); margin-bottom:var(--s-4); }
+.resume-banner{ background:var(--bg-panel-2); border:1px dashed var(--accent-soft); border-radius:var(--r-md); padding:var(--s-3); margin-bottom:var(--s-4); font-size:var(--t-sm); }
+.install-hint{ background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:var(--r-xs); padding:12px 12px; font-size:var(--t-sm); line-height:1.5; color:var(--cream); margin-bottom:var(--s-4); }
 .install-hint b{ color:var(--accent-soft); }
-.empty-hint{ color:var(--muted); font-size:0.85rem; text-align:center; padding:8px 0; }
+.empty-hint{ color:var(--muted); font-size:var(--t-sm); text-align:center; padding:8px 0; }
 .empty-state-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-left:3px solid var(--accent-soft); border-radius:14px; padding:20px 16px; }
 .empty-state-icon{ width:40px; height:40px; border-radius:50%; background:rgba(96,169,102,0.20); color:var(--accent-soft); display:flex; align-items:center; justify-content:center; margin-bottom:var(--s-3); }
 .empty-state-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-lg); margin-bottom:var(--s-2); text-wrap:balance; }
-.empty-state-body{ font-size:0.85rem; color:var(--muted); line-height:1.55; margin-bottom:var(--s-4); }
+.empty-state-body{ font-size:var(--t-sm); color:var(--muted); line-height:1.55; margin-bottom:var(--s-4); }
 .editorial-block{ text-align:center; padding:20px 8px; }
 .editorial-icon{ width:44px; height:44px; border-radius:50%; background:var(--qsag); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; }
 .editorial-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-lg); line-height:1.45; margin-bottom:var(--s-3); text-wrap:balance; }
-.editorial-body{ font-size:0.84rem; color:var(--muted); line-height:1.6; max-width:360px; margin:0 auto; }
+.editorial-body{ font-size:var(--t-sm); color:var(--muted); line-height:1.6; max-width:360px; margin:0 auto; }
 .timeline-row{ display:flex; align-items:center; gap:var(--s-3); padding:8px 12px; background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:var(--r-sm); margin-bottom:var(--s-2); }
 .timeline-icon{ width:30px; height:30px; border-radius:50%; background:rgba(96,169,102,0.20); color:var(--accent-soft); display:flex; align-items:center; justify-content:center; flex:none; }
 .timeline-content{ flex:1; display:flex; flex-direction:column; min-width:0; }
-.timeline-meta{ font-size:0.78rem; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.timeline-result{ font-size:0.85rem; font-weight:800; color:var(--gold); flex:none; }
-.section-block-header{ font-size:0.68rem; text-transform:uppercase; letter-spacing:.08em; font-weight:800; padding:4px 8px; border-radius:var(--r-pill); display:inline-block; margin-bottom:var(--s-2); }
+.timeline-meta{ font-size:var(--t-sm); color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.timeline-result{ font-size:var(--t-sm); font-weight:800; color:var(--gold); flex:none; }
+.section-block-header{ font-size:var(--t-xs); text-transform:uppercase; letter-spacing:.08em; font-weight:800; padding:4px 8px; border-radius:var(--r-pill); display:inline-block; margin-bottom:var(--s-2); }
 .splash-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:82dvh; text-align:center; gap:var(--s-1); }
 .splash-logo{ width:160px; height:160px; margin-bottom:var(--s-3); filter:drop-shadow(0 8px 20px color-mix(in srgb, var(--brand) 35%, transparent)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
-.splash-title{ font-size:2.1rem; color:var(--accent-soft); margin:0; animation:splashUp .6s ease .15s both; }
-.splash-tag{ color:var(--muted); font-size:0.85rem; margin-bottom:var(--s-5); letter-spacing:.03em; animation:splashUp .6s ease .3s both; }
-.splash-wrap .btn{ min-width:200px; padding:16px 24px; font-size:1.05rem; animation:splashUp .6s ease .45s both; }
+.splash-title{ font-size:var(--t-2xl); color:var(--accent-soft); margin:0; animation:splashUp .6s ease .15s both; }
+.splash-tag{ color:var(--muted); font-size:var(--t-sm); margin-bottom:var(--s-5); letter-spacing:.03em; animation:splashUp .6s ease .3s both; }
+.splash-wrap .btn{ min-width:200px; padding:16px 24px; font-size:var(--t-lg); animation:splashUp .6s ease .45s both; }
 @keyframes splashLogo{ 0%{ opacity:0; transform:scale(0.6) rotate(-8deg); } 100%{ opacity:1; transform:scale(1) rotate(0deg); } }
 @keyframes splashUp{ 0%{ opacity:0; transform:translateY(14px); } 100%{ opacity:1; transform:translateY(0); } }
 .big-target-num{ font-size:var(--t-3xl); font-weight:800; color:var(--brand-soft); font-family:var(--font-num); font-variant-numeric:tabular-nums; margin:4px 0 8px; line-height:1; position:relative; display:inline-block; }
@@ -1091,8 +1110,8 @@ per tutte le schermate e la colonna di lettura vive dentro. */
 #app.narrow > :not(header.top){ width:100%; max-width:620px; margin-left:auto; margin-right:auto; }
 header.top{ height:72px; margin-bottom:20px; }
 header.top .logo{ width:56px; height:56px; }
-header.top h1{ font-size:1.2rem; }
-header.top .sub{ font-size:0.76rem; }
+header.top h1{ font-size:var(--t-lg); }
+header.top .sub{ font-size:var(--t-sm); }
 .card{ padding:20px 20px; }
 .editorial-body{ max-width:520px; }
 }
@@ -1168,21 +1187,21 @@ table.score-table th, table.score-table td{ border:1px solid #999 !important; }
 .print-signatures, .print-header{ display:none; }
 /* ---------- COMPAGNIE ---------- */
 .cp-select-row{ margin-bottom:var(--s-3); }
-.cp-select-row label{ display:block; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:var(--s-1); }
-.cp-select-row select{ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.95rem; }
-.cp-info-row{ display:flex; align-items:center; gap:var(--s-2); font-size:0.82rem; color:var(--cream); padding:4px 0; }
+.cp-select-row label{ display:block; font-size:var(--t-xs); font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:var(--s-1); }
+.cp-select-row select{ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:var(--t-md); }
+.cp-info-row{ display:flex; align-items:center; gap:var(--s-2); font-size:var(--t-sm); color:var(--cream); padding:4px 0; }
 .cp-info-row a{ color:var(--accent-soft); text-decoration:none; font-weight:600; }
 .cp-info-row.placeholder{ color:var(--muted); font-style:italic; }
 .cp-percorso-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-lg); padding:12px 16px; margin-bottom:var(--s-2); cursor:pointer; }
 .cp-percorso-top{ display:flex; justify-content:space-between; align-items:center; }
-.cp-percorso-top h3{ margin:0; font-size:1rem; }
-.cp-percorso-meta{ font-size:0.72rem; color:var(--muted); margin-top:2px; }
+.cp-percorso-top h3{ margin:0; font-size:var(--t-md); }
+.cp-percorso-meta{ font-size:var(--t-xs); color:var(--muted); margin-top:2px; }
 .cp-chev{ color:var(--muted); transition:transform .15s; }
 .cp-percorso-card.open .cp-chev{ transform:rotate(90deg); color:var(--accent-soft); }
 .cp-risultati{ margin-top:var(--s-2); border-top:1px solid var(--line); padding-top:var(--s-2); display:none; }
 .cp-percorso-card.open .cp-risultati{ display:block; }
-.cp-risultato-row{ display:flex; justify-content:space-between; align-items:center; padding:4px 0; font-size:0.85rem; }
-.cp-bow-chip{ font-size:0.6rem; font-weight:800; padding:2px 8px; border-radius:var(--r-xs); color:#fff; text-transform:uppercase; margin-left:var(--s-1); }
+.cp-risultato-row{ display:flex; justify-content:space-between; align-items:center; padding:4px 0; font-size:var(--t-sm); }
+.cp-bow-chip{ font-size:var(--t-2xs); font-weight:800; padding:2px 8px; border-radius:var(--r-xs); color:#fff; text-transform:uppercase; margin-left:var(--s-1); }
 .cp-bow-chip.compound{ background:var(--accent); color:var(--accent-ink); }
 .cp-bow-chip.ricurvo{ background:var(--bark); }
 .cp-bow-chip.longbow{ background:var(--bow-longbow); }
@@ -1190,21 +1209,21 @@ table.score-table th, table.score-table td{ border:1px solid #999 !important; }
 .cp-class-tabs{ display:flex; gap:var(--s-1); margin-bottom:var(--s-3); flex-wrap:wrap; }
 .cp-class-row{ display:flex; align-items:center; gap:var(--s-2); background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-sm); padding:8px 12px; margin-bottom:var(--s-2); }
 .cp-class-row .cp-pos{ width:22px; text-align:center; font-weight:800; color:var(--muted); flex:0 0 auto; }
-.cp-class-row .cp-nome{ flex:1; font-weight:700; font-size:0.85rem; }
+.cp-class-row .cp-nome{ flex:1; font-weight:700; font-size:var(--t-sm); }
 .cp-class-row .cp-punti{ font-weight:800; color:var(--gold); flex:0 0 auto; }
-.cp-tag{ font-size:0.6rem; font-weight:700; color:var(--accent-soft); background:var(--bg-panel); border:1px solid var(--line); padding:1px 4px; border-radius:var(--r-xs); margin-left:var(--s-1); }
-.cp-percorso-title{ font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:12px 0 4px; }
+.cp-tag{ font-size:var(--t-2xs); font-weight:700; color:var(--accent-soft); background:var(--bg-panel); border:1px solid var(--line); padding:1px 4px; border-radius:var(--r-xs); margin-left:var(--s-1); }
+.cp-percorso-title{ font-size:var(--t-xs); font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:12px 0 4px; }
 /* ---------- HOME / PROFILO ---------- */
 .cp-select-row select, .cp-select-row input[type=text], .cp-select-row input[type=email]{
-width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.95rem;
+width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:var(--t-md);
 }
 .pf-fed-row{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:8px 12px; margin-bottom:var(--s-2); }
-.pf-fed-check{ display:flex; align-items:center; gap:var(--s-2); font-size:0.9rem; font-weight:600; cursor:pointer; }
+.pf-fed-check{ display:flex; align-items:center; gap:var(--s-2); font-size:var(--t-sm); font-weight:600; cursor:pointer; }
 .pf-fed-check input{ width:17px; height:17px; accent-color:var(--accent-soft); outline:1.5px solid var(--checkbox-border); outline-offset:2px; border-radius:3px; }
 .pf-tessera{ margin-top:var(--s-2); display:none; }
 .pf-tessera.show{ display:block; }
-.pf-tessera label{ font-size:0.68rem; color:var(--muted); font-weight:700; margin-bottom:var(--s-1); display:block; text-transform:uppercase; letter-spacing:.05em; }
-.pf-tessera input{ width:100%; padding:8px 8px; border-radius:var(--r-xs); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.85rem; }
+.pf-tessera label{ font-size:var(--t-xs); color:var(--muted); font-weight:700; margin-bottom:var(--s-1); display:block; text-transform:uppercase; letter-spacing:.05em; }
+.pf-tessera input{ width:100%; padding:8px 8px; border-radius:var(--r-xs); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:var(--t-sm); }
 .cp-vuoto{ font-size:var(--t-sm); color:var(--text-3); line-height:1.5; margin:0 0 var(--s-3); }
 
 /* ---------- IL CAMPO CON L'OCCHIO ----------
@@ -1264,6 +1283,34 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
 /* La prova della campanella, nel profilo. `pre-line` perche' l'esito e' fatto
    di righe corte una sotto l'altra — l'anello e il suo stato — e sono piu'
    leggibili incolonnate che infilate in un paragrafo. */
+/* LA VETRINA. (20/08/2026.) Chi apriva l'app la prima volta vedeva il
+   marchio, un blocco «1 · Lingua / Language» con la tendina vuota, e due
+   terzi di schermo bianchi. Nessuna riga diceva cosa fosse questa cosa ne'
+   cosa si guadagnasse a proseguire: *il primo passo chiedeva di scegliere
+   prima di aver capito dove si e'.* */
+.vetrina{ max-width:420px; margin:0 auto; background:var(--setup-bg);
+  border-radius:var(--r-lg); padding:var(--s-4) var(--s-4) var(--s-5);
+  color:var(--setup-ink); }
+/* flex e non text-align: il marchio e un SVG a blocco, e su un blocco
+   text-align non fa niente. Si vedeva solo guardando. */
+.vetrina .marchio{ display:flex; justify-content:center;
+  margin:var(--s-1) 0 var(--s-3); }
+.vetrina h1{ font-family:var(--font-display); font-weight:700;
+  font-size:var(--t-xl); line-height:1.15; letter-spacing:0.01em;
+  text-align:center; text-wrap:balance; margin:0 0 var(--s-2); }
+/* Il corpo e' piu' stretto del riquadro: una riga lunga quanto la scatola
+   si legge male, e questa e' la prima riga che qualcuno legge dell'app. */
+.vetrina .pitch{ max-width:32ch; margin:0 auto var(--s-5); text-align:center;
+  font-size:var(--t-sm); line-height:1.55; color:var(--setup-ink-2); }
+.vetrina .passo{ background:var(--setup-card); border:1px solid var(--setup-line);
+  border-radius:14px; padding:var(--s-4); margin-bottom:var(--s-3); }
+.vetrina .passo > label{ display:block; font-size:var(--t-sm); font-weight:800;
+  text-transform:uppercase; letter-spacing:0.08em; color:var(--setup-ink-2);
+  margin-bottom:var(--s-2); }
+.vetrina select{ width:100%; font-size:var(--t-lg); padding:var(--s-4) var(--s-3);
+  border-radius:var(--r-md); border:2px solid var(--setup-line-strong);
+  background:var(--setup-card); color:var(--setup-ink); font-family:inherit;
+  font-weight:600; }
 .prova-campanella{ margin-bottom:var(--s-3); }
 /* I DUE MENU A TENDINA DEGLI ALLENAMENTI. (20/08/2026, chiesti dal campo:
    «se un giorno saranno tanti sara' impossibile capirci qualcosa».)
@@ -1459,7 +1506,7 @@ header.top{
   margin-bottom:20px; position:sticky; top:12px; z-index:70; isolation:isolate;
 }
 header.top::after{ display:none; }
-header.top .brand-title{ font-size:1.1rem; font-weight:700; letter-spacing:0.13em; color:#FFFFFF; }
+header.top .brand-title{ font-size:var(--t-lg); font-weight:700; letter-spacing:0.13em; color:#FFFFFF; }
 /* I tre bottoni arancioni in fila erano la cosa piu' pesante della pagina:
    ora sono pastiglie di vetro sul verde scuro, e resta arancione solo il
    comando vero e proprio ("Cambia"). */
@@ -1498,7 +1545,7 @@ header.top .home-btn.small:hover{ background:color-mix(in srgb, var(--clay) 88%,
 }
 h2.section-title{
   display:flex; align-items:center; gap:var(--s-3);
-  font-size:0.72rem; letter-spacing:0.18em; margin-bottom:var(--s-4);
+  font-size:var(--t-xs); letter-spacing:0.18em; margin-bottom:var(--s-4);
 }
 h2.section-title::after{
   content:""; flex:1 1 auto; height:1px;
@@ -1536,8 +1583,8 @@ h2.section-title::after{
   background:color-mix(in srgb, currentColor 13%, transparent);
   border:1px solid color-mix(in srgb, currentColor 30%, transparent);
 }
-.menu-cols .card > .menu-btn .menu-txt{ font-size:1.12rem; line-height:1.2; }
-.menu-cols .card > .menu-btn .menu-sub{ font-size:0.78rem; line-height:1.5; margin-top:var(--s-2); font-weight:400; }
+.menu-cols .card > .menu-btn .menu-txt{ font-size:var(--t-lg); line-height:1.2; }
+.menu-cols .card > .menu-btn .menu-sub{ font-size:var(--t-sm); line-height:1.5; margin-top:var(--s-2); font-weight:400; }
 .menu-cols .card > .menu-btn:hover{
   transform:translateY(-3px); box-shadow:0 20px 34px -22px rgba(30,45,34,0.55);
   border-color:color-mix(in srgb, currentColor 62%, transparent);
@@ -1567,7 +1614,7 @@ h2.section-title::after{
 .menu-cols > .btn.btn-ghost.btn-block{ max-width:340px; margin:0 auto var(--s-4); display:flex; }
 /* La riga di spiegazione sopra un tasto dentro un riquadro. Era scritta in
    linea in più punti, con 10px che non stanno sulla scala. */
-.card-hint{ font-size:0.8rem; color:var(--muted); line-height:1.5; margin-bottom:var(--s-3); }
+.card-hint{ font-size:var(--t-sm); color:var(--muted); line-height:1.5; margin-bottom:var(--s-3); }
 .btn-ghost:hover{
   background:var(--surface-1); border-color:var(--brand-soft); color:var(--brand);
   transform:translateY(-1px);
@@ -1584,14 +1631,14 @@ input[type=password], input[type=search], input[type=date], input[type=time], te
 }
 
 /* ── 8. Respiro e dettagli ───────────────────────────────────────────── */
-.footer-note{ margin-top:28px; font-size:0.74rem; }
-.empty-hint{ font-size:0.88rem; padding:12px 0; }
+.footer-note{ margin-top:28px; font-size:var(--t-sm); }
+.empty-hint{ font-size:var(--t-sm); padding:12px 0; }
 .archer-row, .timeline-row, .cp-class-row{ transition:border-color .15s ease, background .15s ease; }
 .archer-row:hover, .cp-class-row:hover{ border-color:var(--border-strong); }
 .stat-box{ padding:12px 8px; border-radius:14px; }
-.stat-box .stat-num{ font-size:1.7rem; }
+.stat-box .stat-num{ font-size:var(--t-xl); }
 .piazz-card{ border-radius:var(--r-xl); box-shadow:var(--elev-2); }
-table.score-table{ font-size:0.9rem; }
+table.score-table{ font-size:var(--t-sm); }
 table.score-table th{ letter-spacing:.09em; }
 table.score-table tbody tr{ transition:background .15s ease; }
 table.score-table tbody tr:hover{ background:color-mix(in srgb, var(--brand) 6%, transparent); }
@@ -1614,33 +1661,33 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
    Solo l'admin vede questa roba: testi in italiano, niente t().          */
 .adm-tot{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-1);margin:2px 0 12px;}
 .adm-tot > div{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 4px;text-align:center;}
-.adm-tot b{display:block;font-size:1.15rem;line-height:1.1;}
-.adm-tot span{display:block;font-size:0.58rem;color:var(--muted);margin-top:var(--s-1);letter-spacing:0.04em;line-height:1.25;}
-.adm-search{width:100%;font-size:0.85rem;padding:8px 8px;margin-bottom:var(--s-2);}
+.adm-tot b{display:block;font-size:var(--t-lg);line-height:1.1;}
+.adm-tot span{display:block;font-size:var(--t-2xs);color:var(--muted);margin-top:var(--s-1);letter-spacing:0.04em;line-height:1.25;}
+.adm-search{width:100%;font-size:var(--t-sm);padding:8px 8px;margin-bottom:var(--s-2);}
 .adm-filtri{display:flex;gap:var(--s-1);flex-wrap:wrap;margin-bottom:var(--s-3);}
-.adm-f{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:var(--r-pill);padding:4px 12px;font-size:0.74rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.adm-f{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:var(--r-pill);padding:4px 12px;font-size:var(--t-sm);font-weight:700;cursor:pointer;white-space:nowrap;}
 .adm-f.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
 .adm-row{border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:var(--s-2);overflow:hidden;background:var(--bg-panel-2);}
 .adm-row.open{border-color:var(--accent-soft);}
 .adm-head{display:flex;align-items:center;gap:var(--s-2);padding:8px 8px;cursor:pointer;}
-.adm-ini{flex:0 0 34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;}
+.adm-ini{flex:0 0 34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:var(--t-sm);}
 .adm-who{flex:1;min-width:0;}
-.adm-name{font-weight:700;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.adm-sub{font-size:0.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
-.adm-badge{font-size:0.58rem;font-weight:700;padding:2px 4px;border-radius:5px;white-space:nowrap;margin-left:var(--s-1);letter-spacing:0.03em;}
-.adm-chev{color:var(--muted);font-size:0.95rem;margin-left:var(--s-1);transition:transform .18s;}
+.adm-name{font-weight:700;font-size:var(--t-sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.adm-sub{font-size:var(--t-xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.adm-badge{font-size:var(--t-2xs);font-weight:700;padding:2px 4px;border-radius:5px;white-space:nowrap;margin-left:var(--s-1);letter-spacing:0.03em;}
+.adm-chev{color:var(--muted);font-size:var(--t-md);margin-left:var(--s-1);transition:transform .18s;}
 .adm-row.open .adm-chev{transform:rotate(90deg);}
 .adm-body{display:none;padding:0 8px 8px;}
 .adm-row.open .adm-body{display:block;}
-.adm-grp{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:12px 0 2px;}
+.adm-grp{font-size:var(--t-2xs);letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:12px 0 2px;}
 .adm-dl{display:grid;grid-template-columns:auto 1fr;border-top:1px solid var(--line);}
-.adm-dl > div{padding:4px 0;border-bottom:1px solid var(--line);min-width:0;font-size:0.8rem;line-height:1.4;}
-.adm-dl .k{color:var(--muted);padding-right:var(--s-3);white-space:nowrap;font-size:0.74rem;}
+.adm-dl > div{padding:4px 0;border-bottom:1px solid var(--line);min-width:0;font-size:var(--t-sm);line-height:1.4;}
+.adm-dl .k{color:var(--muted);padding-right:var(--s-3);white-space:nowrap;font-size:var(--t-sm);}
 .adm-dl .v{word-break:break-word;}
 .adm-si{color:var(--accent-soft);font-weight:700;}
 .adm-no{color:var(--bark);font-weight:700;}
 .adm-nd{color:var(--text-3);}
-.adm-note{width:100%;font-size:0.8rem;padding:8px 8px;}
+.adm-note{width:100%;font-size:var(--t-sm);padding:8px 8px;}
 .adm-act{display:flex;gap:var(--s-1);flex-wrap:wrap;margin-top:var(--s-2);}
 .adm-act .btn{flex:1;min-width:96px;}
 /* Le cinque schede del pannello admin. (20/08/2026.) Erano cinque compiti in
@@ -1651,11 +1698,11 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
    su due righe si leggono come due gruppi di cose diverse. */
 .adm-tabs{display:flex;gap:var(--s-2);overflow-x:auto;margin-bottom:var(--s-4);padding-bottom:var(--s-1);scrollbar-width:none;}
 .adm-tabs::-webkit-scrollbar{display:none;}
-.adm-tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--s-2);border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:var(--r-pill);padding:8px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap;min-height:38px;}
+.adm-tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--s-2);border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:var(--r-pill);padding:8px 16px;font-size:var(--t-sm);font-weight:700;cursor:pointer;white-space:nowrap;min-height:38px;}
 .adm-tab.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
 /* Il numero compare solo quando c'e' qualcosa che aspetta: un pallino con
    zero dentro e' rumore, e insegna a non guardarlo. */
-.adm-tab .n{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border-radius:var(--r-pill);background:var(--bark);color:var(--accent-ink);font-size:0.62rem;font-weight:700;line-height:1;}
+.adm-tab .n{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border-radius:var(--r-pill);background:var(--bark);color:var(--accent-ink);font-size:var(--t-2xs);font-weight:700;line-height:1;}
 .adm-tab.on .n{background:var(--accent-ink);color:var(--accent);}
 .card[hidden]{display:none;}
 @media(min-width:700px){.adm-dl{grid-template-columns:180px 1fr;}}
@@ -2032,7 +2079,7 @@ margin-bottom:var(--s-3); flex:0 0 auto; }
 .pannello-chiudi{ margin-left:auto; width:36px; height:36px; flex:0 0 auto;
 display:inline-flex; align-items:center; justify-content:center;
 background:none; border:1.5px solid var(--border-strong); border-radius:var(--r-sm);
-color:var(--text-2); font-size:1.1rem; line-height:1; cursor:pointer; }
+color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer; }
 .pannello-sotto{ margin-top:auto; padding-top:var(--s-3); flex:0 0 auto; }
 </style>
 </head>
@@ -3128,6 +3175,7 @@ cp_admin_map_error: "Errore nel salvataggio.",
 cp_admin_tel: "Telefono",
 cp_admin_email_label: "Email compagnia",
 cp_admin_sito: "Sito web",
+home_pitch_title: "Il segnapunti per il tiro con l’arco 3D", home_pitch_body: "Segni le frecce sul percorso anche dove non prende, e ritrovi tutto nel diario. Conosce i regolamenti della tua federazione.",
 home_register_btn: "Registrati", home_login_link: "Hai gi\u00e0 un account?", home_login_link_word: "Accedi",
 home_install_btn: "Installa l'app sul telefono",
 home_install_ios_text: "<b>Su iPhone:</b> tocca il pulsante <b>Condividi</b> in basso nel browser (il quadrato con la freccia verso l'alto), poi scegli <b>\u201cAggiungi alla schermata Home\u201d</b>. Comparir\u00e0 un'icona come per qualsiasi altra app.",
@@ -3636,7 +3684,8 @@ home_dev_text: "To report bugs or issues: {email} — {sito}. Data entered at th
 home_dev_title: "\u26a0\ufe0f App under development", home_install_btn: "Install the app on your phone",
 home_install_generic_text: "Look for the install icon in the address bar (at the top), or open the browser menu (usually the three dots top right) and look for <b>\u201cInstall app\u201d</b>.",
 home_install_ios_text: "<b>On iPhone:</b> tap the <b>Share</b> button at the bottom of the browser (the square with an upward arrow), then choose <b>\u201cAdd to Home Screen\u201d</b>. An icon will appear just like any other app.",
-home_login_link: "Already have an account?", home_login_link_word: "Log in", home_register_btn: "Sign up",
+home_login_link: "Already have an account?", home_login_link_word: "Log in", home_pitch_title: "The scorecard for 3D archery", home_pitch_body: "Score your arrows on the course even with no signal, and find it all again in your journal. It knows your federation’s rules.",
+home_register_btn: "Sign up",
 login_forgot: "Forgot your password?", login_password: "Password",
 login_reset_sent: "We've sent you an email to reset your password. If you don't see it, check your spam folder too.",
 menu_admin: "Approvals", menu_compagnie_label: "Clubs", menu_profile: "My profile",
@@ -4163,7 +4212,8 @@ home_dev_text: "Pour signaler un bug ou un problème : {email} — {sito}. Les d
 home_dev_title: "\u26a0\ufe0f Application en cours de d\u00e9veloppement", home_install_btn: "Installer l’application sur le t\u00e9l\u00e9phone",
 home_install_generic_text: "Cherchez l’ic\u00f4ne d’installation dans la barre d’adresse (en haut), ou ouvrez le menu du navigateur (g\u00e9n\u00e9ralement les trois points en haut \u00e0 droite) et cherchez <b>\u00ab Installer l’application \u00bb</b>.",
 home_install_ios_text: "<b>Sur iPhone :</b> appuyez sur le bouton <b>Partager</b> en bas du navigateur (le carr\u00e9 avec une fl\u00e8che vers le haut), puis choisissez <b>\u00ab Sur l’\u00e9cran d’accueil \u00bb</b>. Une ic\u00f4ne appara\u00eetra comme pour toute autre application.",
-home_login_link: "Vous avez d\u00e9j\u00e0 un compte\u00a0?", home_login_link_word: "Se connecter", home_register_btn: "S’inscrire",
+home_login_link: "Vous avez d\u00e9j\u00e0 un compte\u00a0?", home_login_link_word: "Se connecter", home_pitch_title: "Le marqueur pour le tir à l’arc 3D", home_pitch_body: "Note tes flèches sur le parcours même sans réseau, et retrouve tout dans ton carnet. Il connaît le règlement de ta fédération.",
+home_register_btn: "S’inscrire",
 login_forgot: "Mot de passe oubli\u00e9\u00a0?", login_password: "Mot de passe",
 login_reset_sent: "Nous vous avons envoy\u00e9 un e-mail pour r\u00e9initialiser votre mot de passe. Si vous ne le voyez pas, v\u00e9rifiez aussi vos courriers ind\u00e9sirables.",
 menu_admin: "Approbations", menu_compagnie_label: "Clubs", menu_profile: "Mon profil",
@@ -4690,7 +4740,8 @@ home_dev_text: "Um Fehler oder Probleme zu melden: {email} — {sito}. In dieser
 home_dev_title: "\u26a0\ufe0f App in Entwicklung", home_install_btn: "App auf dem Handy installieren",
 home_install_generic_text: "Suche das Installationssymbol in der Adressleiste (oben), oder \u00f6ffne das Browsermen\u00fc (meist die drei Punkte oben rechts) und suche <b>\u201eApp installieren\u201c</b>.",
 home_install_ios_text: "<b>Auf dem iPhone:</b> Tippe unten im Browser auf <b>Teilen</b> (das Quadrat mit dem Pfeil nach oben), dann w\u00e4hle <b>\u201eZum Home-Bildschirm\u201c</b>. Ein Symbol erscheint wie bei jeder anderen App.",
-home_login_link: "Hast du schon ein Konto?", home_login_link_word: "Anmelden", home_register_btn: "Registrieren",
+home_login_link: "Hast du schon ein Konto?", home_login_link_word: "Anmelden", home_pitch_title: "Der Punktezähler für 3D-Bogenschießen", home_pitch_body: "Trag deine Pfeile auf dem Parcours ein, auch ohne Empfang, und finde alles im Tagebuch wieder. Er kennt die Regeln deines Verbands.",
+home_register_btn: "Registrieren",
 login_forgot: "Passwort vergessen?", login_password: "Passwort",
 login_reset_sent: "Wir haben dir eine E-Mail zum Zur\u00fccksetzen deines Passworts geschickt. Falls du sie nicht siehst, schau auch im Spam-Ordner nach.",
 menu_admin: "Freigaben", menu_compagnie_label: "Vereine", menu_profile: "Mein Profil",
@@ -5249,6 +5300,7 @@ compagnie_arciere: "Ok\u00e7u ad\u0131", compagnie_punteggio: "Puan", compagnie_
 compagnie_empty_msg: "Burada hen\u00fcz puan yok \u2014 ilkini sen kaydet.", compagnie_classifica_empty: "Bu filtre i\u00e7in puan yok.",
 compagnie_piazzole_word: "hedef", compagnie_punteggi_word: "kaydedilen puan", compagnie_tutti: "T\u00fcm\u00fc",
 cp_admin_claim_btn: "🔑 Bu kulübün yöneticisi ol", cp_admin_claim_pending: "Gönderildi.", cp_admin_map_error: "Hata.", cp_admin_tel: "Telefon", cp_admin_email_label: "E-posta", cp_admin_sito: "Web sitesi", 
+home_pitch_title: "3D okçuluk için skor defteri", home_pitch_body: "Parkurda çekim olmasa bile oklarını kaydet, hepsini günlüğünde yeniden bul. Federasyonunun kurallarını bilir.",
 home_register_btn: "Kay\u0131t ol", home_login_link: "Zaten hesab\u0131n var m\u0131?", home_login_link_word: "Giri\u015f yap",
 home_install_btn: "Uygulamay\u0131 telefona kur",
 home_install_ios_text: "<b>iPhone\u2019da:</b> taray\u0131c\u0131n\u0131n altındaki <b>Payla\u015f</b> d\u00fc\u011fmesine (yukar\u0131 ok i\u015faretli kare) dokun, sonra <b>\u201cAna Ekrana Ekle\u201d</b>y\u0131 se\u00e7. Di\u011fer uygulamalar gibi bir simge belirir.",
@@ -5789,6 +5841,7 @@ compagnie_arciere: "Имя стрелка", compagnie_punteggio: "Результ
 compagnie_empty_msg: "Здесь пока нет результатов — станьте первым.", compagnie_classifica_empty: "Нет результатов по этому фильтру.",
 compagnie_piazzole_word: "мишеней", compagnie_punteggi_word: "записанных результатов", compagnie_tutti: "Все",
 cp_admin_claim_btn: "🔑 Запросить администрирование клуба", cp_admin_claim_pending: "Запрос отправлен — ожидайте подтверждения.", cp_admin_map_error: "Ошибка сохранения.", cp_admin_tel: "Телефон", cp_admin_email_label: "Email клуба", cp_admin_sito: "Сайт", 
+home_pitch_title: "Счётчик очков для 3D-стрельбы из лука", home_pitch_body: "Записывай стрелы на трассе даже без связи и находи всё в дневнике. Он знает правила твоей федерации.",
 home_register_btn: "Зарегистрироваться", home_login_link: "Уже есть аккаунт?", home_login_link_word: "Войти",
 home_install_btn: "Установить приложение на телефон",
 home_install_ios_text: "<b>На iPhone:</b> нажмите кнопку <b>Поделиться</b> внизу браузера (квадрат со стрелкой вверх), затем выберите <b>«Добавить на экран Домой»</b>. Появится значок, как у любого другого приложения.",
@@ -6329,6 +6382,7 @@ compagnie_arciere: "Nombre del arquero", compagnie_punteggio: "Puntuaci\u00f3n",
 compagnie_empty_msg: "A\u00fan no hay ninguna puntuaci\u00f3n aqu\u00ed \u2014 s\u00e9 el primero en registrarla.", compagnie_classifica_empty: "No hay puntuaciones para este filtro.",
 cp_admin_claim_btn: "🔑 Solicitar administración de este club", cp_admin_claim_pending: "Solicitud enviada — esperando aprobación.", cp_admin_map_error: "Error al guardar.", cp_admin_tel: "Teléfono", cp_admin_email_label: "Email del club", cp_admin_sito: "Sitio web", 
 compagnie_piazzole_word: "dianas", compagnie_punteggi_word: "puntuaciones registradas", compagnie_tutti: "Todos",
+home_pitch_title: "El marcador para el tiro con arco 3D", home_pitch_body: "Anota tus flechas en el recorrido aunque no haya cobertura, y encuéntralo todo en tu diario. Conoce el reglamento de tu federación.",
 home_register_btn: "Registrarse", home_login_link: "\u00bfYa tienes una cuenta?", home_login_link_word: "Iniciar sesi\u00f3n",
 home_install_btn: "Instalar la app en el tel\u00e9fono",
 home_install_ios_text: "<b>En iPhone:</b> toca el bot\u00f3n <b>Compartir</b> en la parte inferior del navegador (el cuadrado con la flecha hacia arriba), luego elige <b>\u201cA\u00f1adir a pantalla de inicio\u201d</b>. Aparecer\u00e1 un icono como el de cualquier otra app.",
@@ -6869,6 +6923,7 @@ compagnie_nome_percorso: "Rundans namn", compagnie_num_piazzole: "Antal m\u00e5l
 compagnie_arciere: "Sk\u00e4ttens namn", compagnie_punteggio: "Po\u00e4ng", compagnie_data: "Datum", compagnie_arco: "Anv\u00e4nd b\u00e5ge",
 compagnie_empty_msg: "\u00c4nnu inga po\u00e4ng h\u00e4r \u2014 var f\u00f6rst med att registrera en.", compagnie_classifica_empty: "Inga po\u00e4ng f\u00f6r detta filter.",
 compagnie_piazzole_word: "m\u00e5l", compagnie_punteggi_word: "registrerade po\u00e4ng", compagnie_tutti: "Alla",
+home_pitch_title: "Poängräknaren för 3D-bågskytte", home_pitch_body: "Skriv in dina pilar på banan även utan täckning, och hitta allt igen i din dagbok. Den kan ditt förbunds regler.",
 home_register_btn: "Registrera dig", home_login_link: "Har du redan ett konto?", home_login_link_word: "Logga in",
 home_install_btn: "Installera appen p\u00e5 telefonen",
 home_install_ios_text: "<b>P\u00e5 iPhone:</b> tryck p\u00e5 knappen <b>Dela</b> l\u00e4ngst ner i webbl\u00e4saren (fyrkanten med pilen upp\u00e5t), v\u00e4lj sedan <b>\u201dL\u00e4gg till p\u00e5 hemsk\u00e4rmen\u201d</b>. En ikon dyker upp precis som f\u00f6r vilken annan app som helst.",
@@ -7409,6 +7464,7 @@ compagnie_arciere: "Naam boogschutter", compagnie_punteggio: "Score", compagnie_
 compagnie_empty_msg: "Hier nog geen score \u2014 wees de eerste die er een registreert.", compagnie_classifica_empty: "Geen scores voor dit filter.",
 cp_admin_claim_btn: "🔑 Beheer van deze club aanvragen", cp_admin_claim_pending: "Verzoek verzonden — wacht op goedkeuring.", cp_admin_map_error: "Fout bij opslaan.", cp_admin_tel: "Telefoon", cp_admin_email_label: "Club e-mail", cp_admin_sito: "Website", 
 compagnie_piazzole_word: "doelen", compagnie_punteggi_word: "geregistreerde scores", compagnie_tutti: "Alle",
+home_pitch_title: "De scoreteller voor 3D-boogschieten", home_pitch_body: "Noteer je pijlen op het parcours, ook zonder bereik, en vind alles terug in je dagboek. Hij kent de regels van jouw bond.",
 home_register_btn: "Registreren", home_login_link: "Heb je al een account?", home_login_link_word: "Inloggen",
 home_install_btn: "Installeer de app op je telefoon",
 home_install_ios_text: "<b>Op iPhone:</b> tik op de knop <b>Delen</b> onderaan de browser (het vierkant met de pijl omhoog), kies dan <b>\u201cZet op beginscherm\u201d</b>. Er verschijnt een icoon zoals bij elke andere app.",
@@ -7466,6 +7522,26 @@ notif_token_error: "Kan geen token ophalen. Probeer opnieuw.", notif_enabled: "M
 notif_save_error: "Fout bij opslaan: {err}", notif_generic_error: "Fout: {err}", notif_not_configured: "Meldingen nog niet geconfigureerd (sleutel ontbreekt op de server).",
 }
 };
+
+/* PRIMA CHE LA LINGUA SIA SCELTA. (20/08/2026.)
+   La primissima schermata e' quella che CHIEDE la lingua: `t()` li' non ha
+   niente su cui appoggiarsi e cadrebbe sull'italiano, cioe' parlerebbe
+   italiano a un tedesco nella riga che deve convincerlo a proseguire.
+   Il telefono la sua lingua ce l'ha: si legge quella, e se non e' una delle
+   nove si cade sull'inglese — non sull'italiano, perche' fra due lingue che
+   non capisci l'inglese e' quella che qualcuno capisce.
+   *Una porta d'ingresso che parla la lingua di chi l'ha costruita e' chiusa
+   per tutti gli altri.* */
+function linguaProbabile(){
+if(state.lang) return state.lang;
+var b = "";
+try{ b = String(navigator.language || navigator.userLanguage || "").toLowerCase().slice(0,2); }catch(e){}
+return (LANG_META && LANG_META[b]) ? b : "en";
+}
+function tPrima(key){
+var d = STRINGS[linguaProbabile()] || STRINGS.en || STRINGS.it;
+return (d[key] !== undefined) ? d[key] : (STRINGS.en && STRINGS.en[key] !== undefined ? STRINGS.en[key] : key);
+}
 
 function t(key, vars){
 var dict = STRINGS[state.lang] || STRINGS.it;
@@ -8975,19 +9051,30 @@ var setupCountry = null;
 function setupScreen(){
 // Questa schermata si apre a casa, non in mezzo al bosco: fondo chiaro e
 // testo scuro, indipendente dal tema del resto dell'app.
-var wrap = el('<div style="max-width:420px;margin:0 auto;background:#F5F4F0;border-radius:var(--r-lg);padding:16px 16px 20px;color:#1A1D1B;"></div>');
+var wrap = el('<div class="vetrina"></div>');
 
-var logo = el('<div style="text-align:center;margin:4px 0 16px;"></div>');
+var logo = el('<div class="marchio"></div>');
 logo.innerHTML = logoSVG(110);
 wrap.appendChild(logo);
 
-var etichettaStile = 'display:block;font-size:0.82rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#5A6B5F;margin-bottom:var(--s-2);';
-var tendinaStile = 'width:100%;font-size:1.05rem;padding:16px 12px;border-radius:var(--r-md);border:2px solid #C9CFC7;background:#FFFFFF;color:#1A1D1B;font-family:inherit;font-weight:600;';
+// CHE COS'E' QUESTA COSA, E PERCHE' PROSEGUIRE. (20/08/2026.)
+// Due righe, e nessuna e' un aggettivo. Dicono le due cose che un arciere
+// riconosce come vere e che nessun'altra app gli ha mai promesso: che segna
+// i punti DOVE NON PRENDE, e che conosce il regolamento della sua
+// federazione. *Chi apre l'app in casa la sera prima della gara sta
+// decidendo se fidarsi: la fiducia si compra con una cosa specifica, non
+// con «bella, semplice e veloce».*
+// Si mostra solo al primo passo: da quando la lingua c'e', chi torna qui
+// sta cambiando un'impostazione e la vetrina gli ruberebbe lo spazio.
+if(!state.lang){
+wrap.appendChild(el('<h1>'+escapeHtml(tPrima("home_pitch_title"))+'</h1>'));
+wrap.appendChild(el('<p class="pitch">'+escapeHtml(tPrima("home_pitch_body"))+'</p>'));
+}
 
 // ---- 1. lingua ----
-var c1 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:var(--s-4);margin-bottom:var(--s-3);"></div>');
-c1.appendChild(el('<label style="'+etichettaStile+'">1 &middot; '+(state.lang ? t("setup_lang_label") : "Lingua / Language")+'</label>'));
-var selLang = el('<select style="'+tendinaStile+'"></select>');
+var c1 = el('<div class="passo"></div>');
+c1.appendChild(el('<label>1 &middot; '+(state.lang ? t("setup_lang_label") : "Lingua / Language")+'</label>'));
+var selLang = el('<select></select>');
 if(!state.lang) selLang.appendChild(el('<option value="" disabled selected>\u2014</option>'));
 LANG_ORDER.forEach(function(code){
 var meta = LANG_META[code];
@@ -9008,9 +9095,9 @@ if(!state.lang) return wrap;
 // ---- 2. nazione ----
 if(setupCountry === null) setupCountry = state.country || LANG_TO_COUNTRY[state.lang] || null;
 
-var c2 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:var(--s-4);margin-bottom:var(--s-3);"></div>');
-c2.appendChild(el('<label style="'+etichettaStile+'">2 &middot; '+t("setup_country_label")+'</label>'));
-var selPaese = el('<select style="'+tendinaStile+'"></select>');
+var c2 = el('<div class="passo"></div>');
+c2.appendChild(el('<label>2 &middot; '+t("setup_country_label")+'</label>'));
+var selPaese = el('<select></select>');
 if(!setupCountry) selPaese.appendChild(el('<option value="" disabled selected>'+t("setup_country_placeholder")+'</option>'));
 COUNTRY_LIST.slice().sort(function(a,b){ return t(a.key).localeCompare(t(b.key), state.lang || "it"); })
 .forEach(function(c){
@@ -9028,8 +9115,8 @@ wrap.appendChild(c2);
 // ---- 3. federazioni della nazione scelta ----
 if(setupCountry){
 var feds = COUNTRY_FEDERATIONS[setupCountry] || [];
-var c3 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:var(--s-4);margin-bottom:var(--s-3);"></div>');
-c3.appendChild(el('<label style="'+etichettaStile+'">3 &middot; '+t("setup_fed_label")+'</label>'));
+var c3 = el('<div class="passo"></div>');
+c3.appendChild(el('<label>3 &middot; '+t("setup_fed_label")+'</label>'));
 
 if(feds.length === 0){
 c3.appendChild(el('<div style="font-size:var(--t-sm);color:#5A6B5F;padding:8px 0;">'+t("coming_soon")+'</div>'));
@@ -12738,7 +12825,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-nome-vero";
+var BUILD_STAMP = "2026-08-20-vetrina-e-scala";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12747,7 +12834,7 @@ var BUILD_STAMP = "2026-08-20-nome-vero";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-tendine-visibili";
+var BUILD_PARENT = "2026-08-20-nome-vero";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
