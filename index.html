@@ -1418,7 +1418,7 @@ header.top .home-btn.small:hover{ background:color-mix(in srgb, var(--clay) 88%,
 
 /* ── 4. I riquadri ───────────────────────────────────────────────────── */
 .card{
-  border-radius:18px; padding:22px 24px; margin-bottom:18px;
+  border-radius:18px; padding:22px 24px; margin-bottom:16px;
   border:1px solid var(--border);
   border-top:2px solid color-mix(in srgb, var(--gold-role) 42%, transparent);
   box-shadow:var(--elev-3);
@@ -1439,7 +1439,7 @@ h2.section-title::after{
    compilare resta tutto incolonnato. */
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
   display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:14px; align-items:stretch;
+  gap:16px; align-items:stretch;
 }
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)) > h2.section-title,
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)) > div{
@@ -1477,7 +1477,18 @@ h2.section-title::after{
   background:color-mix(in srgb, var(--brand) 88%, white); transform:translateY(-1px);
 }
 .menu-cols .card > .btn.btn-primary.btn-block{ max-width:380px; }
-.menu-cols > .btn.btn-ghost.btn-block{ max-width:340px; margin:0 auto; display:flex; }
+/* I TASTI SFUSI FRA UN RIQUADRO E L'ALTRO. (20/08/2026.)
+   `margin:0 auto` li centrava e insieme azzerava il margine verticale: sopra
+   restavano i 18px del riquadro, sotto zero. Il ritmo del fondo pagina era
+   18 → 0 → 10 → 0, e un tasto senza aria sotto **si incolla al riquadro che
+   viene dopo** — cioè sembra appartenere alla cosa sbagliata.
+   Restano sfusi di proposito: sono azioni secondarie, e un riquadro intorno
+   darebbe loro il peso di quelle primarie. Quello che mancava non era il
+   contenitore, era il respiro. */
+.menu-cols > .btn.btn-ghost.btn-block{ max-width:340px; margin:0 auto 16px; display:flex; }
+/* La riga di spiegazione sopra un tasto dentro un riquadro. Era scritta in
+   linea in più punti, con 10px che non stanno sulla scala. */
+.card-hint{ font-size:0.8rem; color:var(--muted); line-height:1.5; margin-bottom:12px; }
 .btn-ghost:hover{
   background:var(--surface-1); border-color:var(--brand-soft); color:var(--brand);
   transform:translateY(-1px);
@@ -8582,7 +8593,7 @@ var ov = el('<div id="welcomeNote" style="position:fixed;inset:0;z-index:200;bac
 var box = el('<div class="card" style="max-width:400px;width:100%;max-height:86vh;overflow:auto;margin:0;"></div>');
 box.appendChild(el('<h2 class="section-title" style="margin-top:0;">'+escapeHtml(t("welcome_note_title"))+'</h2>'));
 [t("welcome_note_p1"), t("welcome_note_p2"), t("welcome_note_p3")].forEach(function(txt){
-box.appendChild(el('<p style="font-size:0.86rem;line-height:1.5;color:var(--muted);margin:0 0 10px;">'+escapeHtml(txt)+'</p>'));
+box.appendChild(el('<p style="font-size:var(--t-sm);line-height:1.5;color:var(--muted);margin:0 0 10px;">'+escapeHtml(txt)+'</p>'));
 });
 var reportBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:4px;">'+escapeHtml(t("welcome_note_report"))+'</button>');
 reportBtn.addEventListener("click", function(){
@@ -8632,12 +8643,12 @@ var passBox = campoPassword("loginPasswordInput", "current-password");
 passBox.classList.add("in-mezzo");
 passBox.querySelector("input").setAttribute("placeholder", t("login_password"));
 wrap.appendChild(passBox);
-var errorMsg = el('<div style="color:var(--danger);font-size:0.8rem;margin-top:8px;min-height:1.2em;"></div>');
+var errorMsg = el('<div style="color:var(--danger);font-size:var(--t-sm);margin-top:8px;min-height:1.2em;"></div>');
 if(authErrorMsg){ errorMsg.textContent = authErrorMsg; }
 wrap.appendChild(errorMsg);
 var sendBtn = el('<button class="btn btn-primary" style="margin-top:14px;">Accedi \u2192</button>');
 wrap.appendChild(sendBtn);
-var forgotLink = el('<div style="font-size:0.78rem;color:var(--accent-soft);margin-top:14px;cursor:pointer;text-decoration:underline;">'+t("login_forgot")+'</div>');
+var forgotLink = el('<div style="font-size:var(--t-sm);color:var(--accent-soft);margin-top:14px;cursor:pointer;text-decoration:underline;">'+t("login_forgot")+'</div>');
 wrap.appendChild(forgotLink);
 
 function trySend(){
@@ -8734,8 +8745,8 @@ wrap.appendChild(logo);
 wrap.appendChild(el('<div class="onboard-title display">'+escapeHtml(t("verify_title"))+'</div>'));
 var mail = currentUser ? currentUser.email : "";
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:300px;">'+escapeHtml(t("verify_body",{email:mail}))+'</div>'));
-wrap.appendChild(el('<div class="onboard-sub" style="max-width:300px;font-size:0.78rem;color:var(--muted);">'+escapeHtml(t("verify_spam"))+'</div>'));
-var msg = el('<div style="min-height:18px;font-size:0.8rem;color:var(--accent-soft);text-align:center;margin-top:6px;max-width:300px;"></div>');
+wrap.appendChild(el('<div class="onboard-sub" style="max-width:300px;font-size:var(--t-sm);color:var(--muted);">'+escapeHtml(t("verify_spam"))+'</div>'));
+var msg = el('<div style="min-height:18px;font-size:var(--t-sm);color:var(--accent-soft);text-align:center;margin-top:6px;max-width:300px;"></div>');
 wrap.appendChild(msg);
 var doneBtn = el('<button class="btn btn-primary" style="margin-top:10px;">'+escapeHtml(t("verify_done_btn"))+'</button>');
 doneBtn.addEventListener("click", function(){
@@ -8790,7 +8801,7 @@ wrap.appendChild(logo);
 wrap.appendChild(el('<div class="onboard-title display">'+escapeHtml(t("pend_title"))+'</div>'));
 var emailTxt = currentUser ? currentUser.email : "";
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">'+escapeHtml(t("pend_body",{email:emailTxt}))+'</div>'));
-wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;font-size:0.78rem;color:var(--muted);">'+escapeHtml(t("pend_note"))+'</div>'));
+wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;font-size:var(--t-sm);color:var(--muted);">'+escapeHtml(t("pend_note"))+'</div>'));
 var refreshBtn = el('<button class="btn btn-primary" style="margin-top:10px;">'+escapeHtml(t("pend_recheck"))+'</button>');
 refreshBtn.addEventListener("click", function(){
 authState = "loading"; render();
@@ -8871,15 +8882,15 @@ var c3 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radi
 c3.appendChild(el('<label style="'+etichettaStile+'">3 &middot; '+t("setup_fed_label")+'</label>'));
 
 if(feds.length === 0){
-c3.appendChild(el('<div style="font-size:0.9rem;color:#5A6B5F;padding:8px 0;">'+t("coming_soon")+'</div>'));
+c3.appendChild(el('<div style="font-size:var(--t-sm);color:#5A6B5F;padding:8px 0;">'+t("coming_soon")+'</div>'));
 } else {
 feds.forEach(function(f){
 var scelta = (state.country === setupCountry && state.federation === f.code);
-var b = el('<button style="width:100%;min-height:56px;display:flex;align-items:center;gap:10px;padding:14px 16px;margin-bottom:10px;border-radius:12px;cursor:pointer;text-align:left;font-family:inherit;font-size:1.05rem;font-weight:700;'+
+var b = el('<button style="width:100%;min-height:56px;display:flex;align-items:center;gap:10px;padding:14px 16px;margin-bottom:10px;border-radius:12px;cursor:pointer;text-align:left;font-family:inherit;font-size:var(--t-lg);font-weight:700;'+
 (scelta
 ? 'background:#315B35;border:2px solid #315B35;color:#fff;'
 : 'background:#FFFFFF;border:2px solid #C9CFC7;color:#1A1D1B;')+'"></button>');
-b.innerHTML = '<span style="flex:1;">'+escapeHtml(f.label)+'</span>'+(scelta ? '<span style="font-size:1.2rem;">\u2713</span>' : '');
+b.innerHTML = '<span style="flex:1;">'+escapeHtml(f.label)+'</span>'+(scelta ? '<span style="font-size:var(--t-lg);">\u2713</span>' : '');
 b.addEventListener("click", function(){
 state.country = setupCountry;
 state.federation = f.code;
@@ -8893,7 +8904,7 @@ wrap.appendChild(c3);
 
 // ---- conferma: appare solo quando la scelta e' completa ----
 if(state.country && state.federation){
-var ok = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("setup_done_btn")+'</button>');
+var ok = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:var(--t-lg);">'+t("setup_done_btn")+'</button>');
 ok.addEventListener("click", function(){
 setupCountry = null;
 state.screen = "menu";
@@ -9163,7 +9174,7 @@ var card = el('<div class="card"></div>');
 var header = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><h2 class="section-title" style="margin:0;">'+t("profile_title")+'</h2></div>');
 card.appendChild(header);
 
-var goLoginLink = el('<div style="font-size:0.82rem;color:var(--muted);margin:-8px 0 16px;">'+t("home_login_link")+' <span id="regGoLoginLink" style="color:var(--accent-soft);font-weight:700;cursor:pointer;text-decoration:underline;">'+t("home_login_link_word")+'</span></div>');
+var goLoginLink = el('<div style="font-size:var(--t-sm);color:var(--muted);margin:-8px 0 16px;">'+t("home_login_link")+' <span id="regGoLoginLink" style="color:var(--accent-soft);font-weight:700;cursor:pointer;text-decoration:underline;">'+t("home_login_link_word")+'</span></div>');
 card.appendChild(goLoginLink);
 
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="pfNome"></div>'));
@@ -9217,9 +9228,9 @@ var privacyRow = el('<label class="checkbox-row prima-serrata"><input type="chec
 card.appendChild(privacyRow);
 var termsRow = el('<label class="checkbox-row serrata"><input type="checkbox" id="pfTerms"><span>'+t("profile_terms")+'</span></label>');
 card.appendChild(termsRow);
-card.appendChild(el('<div style="font-size:0.76rem;margin:0 0 8px;"><a href="/privacy.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_privacy")+'</a> &middot; <a href="/termini.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_terms")+'</a></div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);margin:0 0 8px;"><a href="/privacy.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_privacy")+'</a> &middot; <a href="/termini.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_terms")+'</a></div>'));
 
-var errorMsg = el('<div style="color:var(--danger);font-size:0.8rem;margin:6px 0;min-height:1.2em;"></div>');
+var errorMsg = el('<div style="color:var(--danger);font-size:var(--t-sm);margin:6px 0;min-height:1.2em;"></div>');
 card.appendChild(errorMsg);
 
 var submitBtn = el('<button class="btn btn-primary btn-block" style="margin-top:8px;">'+t("profile_submit")+'</button>');
@@ -9376,7 +9387,7 @@ card.appendChild(header);
 var profile = state.profile || {};
 
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_email")+'</label><input type="email" value="'+escapeHtml(profile.email||"")+'" disabled style="opacity:0.6;"></div>'));
-card.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:-10px 0 14px;">'+t("profile_edit_email_note")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin:-10px 0 14px;">'+t("profile_edit_email_note")+'</div>'));
 
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="peNome" value="'+escapeHtml(profile.nomeCognome||"")+'"></div>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+' <span style="font-weight:400;color:var(--muted);">'+t("profile_username_hint")+'</span></label><input type="text" id="peUsername" value="'+escapeHtml(profile.username||"")+'"></div>'));
@@ -9403,12 +9414,12 @@ card.appendChild(fedWrap);
 
 // Compagnia di appartenenza: serve per filtrare gli allenamenti riservati
 card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_club_title")+'</h2>'));
-card.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;">'+t("profile_club_hint")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:8px;">'+t("profile_club_hint")+'</div>'));
 var clubCod = profile.compagnia || null;
 var clubNome = profile.compagniaNome || "";
 var clubSelDiv = el('<div style="background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:10px 14px;margin-bottom:8px;justify-content:space-between;align-items:center;"></div>');
-var clubSelName = el('<span style="font-weight:700;font-size:0.92rem;"></span>');
-var clubClear = el('<button style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
+var clubSelName = el('<span style="font-weight:700;font-size:var(--t-md);"></span>');
+var clubClear = el('<button style="background:none;border:none;color:#fff;font-size:var(--t-lg);cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
 clubSelDiv.appendChild(clubSelName); clubSelDiv.appendChild(clubClear);
 var clubSearch = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("profile_club_search"))+'">');
 var clubList = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;display:none;"></div>');
@@ -9436,7 +9447,7 @@ var c = COMPAGNIE[cod];
 var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "");
 if(label.toLowerCase().indexOf(q) === -1) return;
 found++;
-var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:0.88rem;cursor:pointer;">'+escapeHtml(label)+'</div>');
+var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(label)+'</div>');
 row.addEventListener("click", function(){ clubCod = cod; clubNome = label; clubSearch.value=""; refreshClub(); if(savedMsg) savedMsg.textContent = ""; });
 clubList.appendChild(row);
 });
@@ -9493,7 +9504,7 @@ if(!DEV_MODE && currentUser){
 card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("notif_section_title")+'</h2>'));
 var notifRow = el('<div style="margin-bottom:6px;"></div>');
 var notifBtn = el('<button class="btn btn-ghost btn-block">'+t("notif_enable_btn")+'</button>');
-var notifStatus = el('<div style="font-size:0.78rem;color:var(--muted);margin-top:6px;"></div>');
+var notifStatus = el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:6px;"></div>');
 // IL TASTO NON GUARDAVA MAI SE ERANO GIA' ATTIVE. *(16/08/2026, dal campo:
 // "ogni volta che vado sul profilo mi chiede di attivare le notifiche ma l'ho
 // fatto 1000 volte".)* Chiedere una cosa gia' fatta non e' solo inutile: fa
@@ -9572,7 +9583,7 @@ provaRow.appendChild(provaBtn); provaRow.appendChild(provaEsito);
 card.appendChild(provaRow);
 }
 
-var savedMsg = el('<div style="color:var(--accent-soft);font-size:0.8rem;margin:6px 0;min-height:1.2em;"></div>');
+var savedMsg = el('<div style="color:var(--accent-soft);font-size:var(--t-sm);margin:6px 0;min-height:1.2em;"></div>');
 card.appendChild(savedMsg);
 
 var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-top:8px;">'+t("profile_edit_save")+'</button>');
@@ -9763,7 +9774,7 @@ return wrap;
 
 function langSwitcher(){
 var wrap = el('<div style="margin-bottom:14px;"></div>');
-var select = el('<select style="width:100%;font-size:0.85rem;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);"></select>');
+var select = el('<select style="width:100%;font-size:var(--t-sm);padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);"></select>');
 LANG_ORDER.forEach(function(code){
 var meta = LANG_META[code];
 var opt = el('<option value="'+code+'"'+(state.lang===code?' selected':'')+'>'+meta.flag+' '+meta.name+'</option>');
@@ -9820,14 +9831,14 @@ list.appendChild(row);
 });
 card2.appendChild(list);
 if((state.federation || "fiarc") === "fiarc"){
-card2.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:8px;">'+t("rotation_note")+'</div>'));
+card2.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:8px;">'+t("rotation_note")+'</div>'));
 }
 wrap.appendChild(card2);
 
 // Se si arriva qui da "Arcieri salvati" si sta solo gestendo la rubrica,
 // quindi il pulsante non deve far credere che si stia avviando una gara.
 var soloRubrica = (state.registrationNext === "menu");
-var continueBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t(soloRubrica ? "reg_done_btn" : "continue_btn")+'</button>');
+var continueBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:var(--t-lg);">'+t(soloRubrica ? "reg_done_btn" : "continue_btn")+'</button>');
 if(pendingArchers.length === 0) continueBtn.setAttribute("disabled","disabled");
 continueBtn.addEventListener("click", function(){
 if((state.pendingArchers||[]).length === 0) return;
@@ -9915,7 +9926,7 @@ function pgGruppoLabel(pcfg, k){ for(var i=0;i<pcfg.gruppi.length;i++){ if(pcfg.
 function preparaGaraScreen(){
 if(!state.pgScreen) state.pgScreen = "pick";
 var wrap = el('<div></div>');
-wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:var(--font-display);color:var(--gold);font-size:1.15rem;">'+t("pg_title")+'</h2></div>'));
+wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:var(--font-display);color:var(--gold);font-size:var(--t-lg);">'+t("pg_title")+'</h2></div>'));
 if(state.pgScreen === "pick") wrap.appendChild(pgPickScreen());
 else if(state.pgScreen === "elenco") wrap.appendChild(pgElencoScreen());
 else if(state.pgScreen === "setup") wrap.appendChild(pgSetupScreen());
@@ -9955,7 +9966,7 @@ function pgElencoScreen(){
 var d = el('<div class="card"></div>');
 d.appendChild(el('<h3 class="section-title">'+t("pg_saved_routes_title")+'</h3>'));
 if(state.pgElenco === null){
-d.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);">'+t("pg_loading")+'</div>'));
+d.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("pg_loading")+'</div>'));
 db.collection("percorsi").where("createdBy","==",currentUser.uid).get().then(function(snap){
 var list = [];
 snap.forEach(function(doc){ list.push(Object.assign({id:doc.id}, doc.data())); });
@@ -9974,11 +9985,11 @@ render();
 return d;
 }
 if(state.pgElencoError){
-d.appendChild(el('<div style="font-size:0.82rem;color:var(--bark);">'+t("pg_error_loading",{err:escapeHtml(state.pgElencoError)})+'</div>'));
+d.appendChild(el('<div style="font-size:var(--t-sm);color:var(--bark);">'+t("pg_error_loading",{err:escapeHtml(state.pgElencoError)})+'</div>'));
 return d;
 }
 if(!state.pgElenco.length){
-d.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);">'+t("pg_no_routes_saved")+'</div>'));
+d.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("pg_no_routes_saved")+'</div>'));
 return d;
 }
 state.pgElenco.forEach(function(p){
@@ -9991,7 +10002,7 @@ compagnia: p.compagnia ? escapeHtml(p.compagnia)+' \u00b7 ' : '',
 iscritti: p.iscritti ? p.iscritti.length : 0,
 squadre: p.squadre ? p.squadre.length : 0
 });
-card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">'+summary+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:8px;">'+summary+'</div>'));
 var useBtn = el('<button class="btn btn-ghost btn-sm" style="margin-bottom:8px;">'+t("pg_use_route_btn")+'</button>');
 useBtn.addEventListener("click", function(){
 state.pgDraft = JSON.parse(JSON.stringify(p));
@@ -10001,7 +10012,7 @@ save(); render();
 card.appendChild(useBtn);
 if(p.squadre && p.squadre.length){
 p.squadre.forEach(function(s, gIdx){
-card.appendChild(el('<div style="font-size:0.76rem;background:var(--bg-panel-2);border-radius:8px;padding:6px 8px;margin-bottom:4px;"><b style="color:var(--gold);">'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);background:var(--bg-panel-2);border-radius:8px;padding:6px 8px;margin-bottom:4px;"><b style="color:var(--gold);">'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
 });
 }
 d.appendChild(card);
@@ -10046,15 +10057,15 @@ var card = el('<div class="card"></div>');
 card.appendChild(el('<h3 class="section-title">'+t("pg_section_piazzole",{gara:pcfg.label})+'</h3>'));
 var doneCount = state.pgDraft.piazzole.filter(function(p){return p;}).length;
 var totFrecce = state.pgDraft.piazzole.reduce(function(a,p){ return a+(p?p.frecce:0); },0);
-card.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">'+t("pg_configured_label")+': <b style="color:var(--gold);">'+doneCount+' / '+state.pgDraft.piazzole.length+'</b> \u00b7 '+t("pg_total_arrows_label")+': <b style="color:var(--gold);">'+totFrecce+'</b></div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("pg_configured_label")+': <b style="color:var(--gold);">'+doneCount+' / '+state.pgDraft.piazzole.length+'</b> \u00b7 '+t("pg_total_arrows_label")+': <b style="color:var(--gold);">'+totFrecce+'</b></div>'));
 
 state.pgDraft.piazzole.forEach(function(p, idx){
 if(state.pgEditingIndex === idx){
 card.appendChild(pgPiazzolaEditor(pcfg, idx));
 } else {
 var row = el('<div style="display:flex;align-items:center;gap:10px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:7px;cursor:pointer;"></div>');
-row.innerHTML = '<div style="width:28px;height:28px;border-radius:50%;background:var(--bg-panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;flex-shrink:0;">'+(idx+1)+'</div>' +
-'<div style="flex:1;font-size:0.82rem;">' + (p ? (pcfg.hasTipo ? p.tipoLabel : pgGruppoLabel(pcfg,p.gruppo)) + ' \u00b7 '+p.frecce+' '+t("pg_frecce_word") + (p.ginocchio?' \u00b7 '+t("pg_knee_suffix"):'') + (p.tempo?' \u00b7 '+t("pg_timed_suffix"):'') + (p.mobile?' \u00b7 '+t("pg_mobile_suffix"):'') + (p.descrizione?' \u00b7 '+escapeHtml(p.descrizione):'') : '<span style="color:var(--muted);">'+t("pg_to_configure")+'</span>') + '</div>';
+row.innerHTML = '<div style="width:28px;height:28px;border-radius:50%;background:var(--bg-panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:var(--t-sm);flex-shrink:0;">'+(idx+1)+'</div>' +
+'<div style="flex:1;font-size:var(--t-sm);">' + (p ? (pcfg.hasTipo ? p.tipoLabel : pgGruppoLabel(pcfg,p.gruppo)) + ' \u00b7 '+p.frecce+' '+t("pg_frecce_word") + (p.ginocchio?' \u00b7 '+t("pg_knee_suffix"):'') + (p.tempo?' \u00b7 '+t("pg_timed_suffix"):'') + (p.mobile?' \u00b7 '+t("pg_mobile_suffix"):'') + (p.descrizione?' \u00b7 '+escapeHtml(p.descrizione):'') : '<span style="color:var(--muted);">'+t("pg_to_configure")+'</span>') + '</div>';
 row.addEventListener("click", function(){ state.pgEditingIndex = idx; state.pgEditDraft = null; render(); });
 card.appendChild(row);
 }
@@ -10073,13 +10084,13 @@ state.pgEditDraft = JSON.parse(JSON.stringify(state.pgDraft.piazzole[idx] || { t
 }
 var draft = state.pgEditDraft;
 var box = el('<div style="background:var(--bg-panel);border:1px solid var(--accent-soft);border-radius:16px;padding:14px;margin-bottom:10px;"></div>');
-box.appendChild(el('<h4 style="font-size:0.9rem;color:var(--gold);margin-bottom:10px;">'+t("pg_piazzola_n",{n:idx+1})+'</h4>'));
+box.appendChild(el('<h4 style="font-size:var(--t-sm);color:var(--gold);margin-bottom:10px;">'+t("pg_piazzola_n",{n:idx+1})+'</h4>'));
 
 if(pcfg.hasTipo){
-box.appendChild(el('<div style="font-size:0.68rem;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">'+t("pg_type_label")+'</div>'));
+box.appendChild(el('<div style="font-size:var(--t-xs);text-transform:uppercase;color:var(--muted);margin-bottom:6px;">'+t("pg_type_label")+'</div>'));
 var tipoRow = el('<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>');
 getPgTipi().forEach(function(tp){
-var b = el('<button type="button" class="btn '+(draft.tipo===tp.key?'btn-primary':'btn-ghost')+'" style="padding:8px 12px;font-size:0.8rem;">'+tp.label+'</button>');
+var b = el('<button type="button" class="btn '+(draft.tipo===tp.key?'btn-primary':'btn-ghost')+'" style="padding:8px 12px;font-size:var(--t-sm);">'+tp.label+'</button>');
 b.addEventListener("click", function(){ draft.tipo=tp.key; draft.frecce=tp.frecce; if(tp.key==="tempo") draft.ginocchio=false; render(); });
 tipoRow.appendChild(b);
 });
@@ -10089,10 +10100,10 @@ draft.frecce = pcfg.frecceFixed;
 }
 
 if(pcfg.gruppi.length > 1){
-box.appendChild(el('<div style="font-size:0.68rem;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">'+t("pg_distance_group_label")+'</div>'));
+box.appendChild(el('<div style="font-size:var(--t-xs);text-transform:uppercase;color:var(--muted);margin-bottom:6px;">'+t("pg_distance_group_label")+'</div>'));
 var gruppoRow = el('<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>');
 pcfg.gruppi.forEach(function(g, gi){
-var b = el('<button type="button" class="btn '+(draft.gruppo===g[0]?'btn-primary':'btn-ghost')+'" style="padding:8px 12px;font-size:0.8rem;">'+t("pg_group_n",{n:gi+1})+' \u00b7 '+g[1]+'</button>');
+var b = el('<button type="button" class="btn '+(draft.gruppo===g[0]?'btn-primary':'btn-ghost')+'" style="padding:8px 12px;font-size:var(--t-sm);">'+t("pg_group_n",{n:gi+1})+' \u00b7 '+g[1]+'</button>');
 b.addEventListener("click", function(){ draft.gruppo=g[0]; render(); });
 gruppoRow.appendChild(b);
 });
@@ -10100,19 +10111,19 @@ box.appendChild(gruppoRow);
 }
 
 if(!pcfg.hasTipo){
-box.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">'+t("pg_arrows_on_this")+' <b style="color:var(--cream);">'+pcfg.frecceFixed+'</b></div>'));
+box.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("pg_arrows_on_this")+' <b style="color:var(--cream);">'+pcfg.frecceFixed+'</b></div>'));
 }
 
 var togglesRow = el('<div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;"></div>');
 if(pcfg.hasTempo){
-var tempoLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;cursor:pointer;"></label>');
+var tempoLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:var(--t-sm);cursor:pointer;"></label>');
 var tempoChk = el('<input type="checkbox" '+(draft.tempo?'checked':'')+'>');
 tempoChk.onchange = function(){ draft.tempo=this.checked; if(draft.tempo) draft.ginocchio=false; render(); };
 tempoLbl.appendChild(tempoChk); tempoLbl.appendChild(document.createTextNode(t("pg_timed_toggle")));
 togglesRow.appendChild(tempoLbl);
 }
 if(pcfg.hasMobileToggle){
-var mobLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;cursor:pointer;"></label>');
+var mobLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:var(--t-sm);cursor:pointer;"></label>');
 var mobChk = el('<input type="checkbox" '+(draft.mobile?'checked':'')+'>');
 mobChk.onchange = function(){ draft.mobile=this.checked; render(); };
 mobLbl.appendChild(mobChk); mobLbl.appendChild(document.createTextNode(t("pg_mobile_toggle")));
@@ -10120,13 +10131,13 @@ togglesRow.appendChild(mobLbl);
 }
 if(!pcfg.hideGinocchio){
 if(pcfg.ginocchioAllowed){
-var ginLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;cursor:'+(draft.tempo?'not-allowed':'pointer')+';color:'+(draft.tempo?'var(--muted)':'var(--cream)')+';"></label>');
+var ginLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:var(--t-sm);cursor:'+(draft.tempo?'not-allowed':'pointer')+';color:'+(draft.tempo?'var(--muted)':'var(--cream)')+';"></label>');
 var ginChk = el('<input type="checkbox" '+(draft.ginocchio?'checked':'')+(draft.tempo?' disabled':'')+'>');
 ginChk.onchange = function(){ draft.ginocchio=this.checked; render(); };
 ginLbl.appendChild(ginChk); ginLbl.appendChild(document.createTextNode(draft.tempo?t("pg_knee_not_allowed_timed"):t("pg_knee_toggle")));
 togglesRow.appendChild(ginLbl);
 } else {
-togglesRow.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);">'+t("pg_knee_not_allowed_gara")+'</div>'));
+togglesRow.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("pg_knee_not_allowed_gara")+'</div>'));
 }
 }
 if(pcfg.hideGinocchio){ draft.ginocchio = true; }
@@ -10531,13 +10542,13 @@ var spotsLeft = total - taken;
 var isInvited = myUid && (ot.invitedUids||[]).indexOf(myUid) !== -1;
 var otRow = el(
 '<div style="padding:10px 0;border-bottom:1px solid var(--line);">'+
-(isInvited&&!joined?'<div style="font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:4px;">⭐ '+t("ot_invite_label").replace(" (opzionale)","").replace(" (optional)","").replace(" (optionnel)","").replace(" (optional)","").replace(" (isteğe bağlı)","").replace(" (необязательно)","").replace(" (opcional)","").replace(" (valfritt)","").replace(" (optioneel)","")+' ← tu</div>':'')+
-(ot.visibility === "all" ? '<div style="display:inline-block;font-size:0.68rem;font-weight:700;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:2px 8px;margin-bottom:4px;">'+t("ot_badge_open")+'</div>' : '')+
-'<div style="font-weight:700;font-size:0.95rem;">'+escapeHtml(ot.field||"?")+'</div>'+
-'<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">'+escapeHtml(ot.date||"")+(ot.time?" · "+escapeHtml(ot.time):"")+'</div>'+
-'<div style="font-size:0.82rem;color:var(--muted);">'+t("ot_by",{name:escapeHtml(ot.ownerName||"?")})+'</div>'+
-(ot.note?'<div style="font-size:0.82rem;color:var(--cream);margin-top:2px;">'+escapeHtml(ot.note)+'</div>':'')+
-'<div style="font-size:0.82rem;margin-top:4px;color:'+(full&&!joined?'var(--danger)':'var(--accent-soft)')+';">'+
+(isInvited&&!joined?'<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);margin-bottom:4px;">⭐ '+t("ot_invite_label").replace(" (opzionale)","").replace(" (optional)","").replace(" (optionnel)","").replace(" (optional)","").replace(" (isteğe bağlı)","").replace(" (необязательно)","").replace(" (opcional)","").replace(" (valfritt)","").replace(" (optioneel)","")+' ← tu</div>':'')+
+(ot.visibility === "all" ? '<div style="display:inline-block;font-size:var(--t-xs);font-weight:700;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:2px 8px;margin-bottom:4px;">'+t("ot_badge_open")+'</div>' : '')+
+'<div style="font-weight:700;font-size:var(--t-md);">'+escapeHtml(ot.field||"?")+'</div>'+
+'<div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;">'+escapeHtml(ot.date||"")+(ot.time?" · "+escapeHtml(ot.time):"")+'</div>'+
+'<div style="font-size:var(--t-sm);color:var(--muted);">'+t("ot_by",{name:escapeHtml(ot.ownerName||"?")})+'</div>'+
+(ot.note?'<div style="font-size:var(--t-sm);color:var(--cream);margin-top:2px;">'+escapeHtml(ot.note)+'</div>':'')+
+'<div style="font-size:var(--t-sm);margin-top:4px;color:'+(full&&!joined?'var(--danger)':'var(--accent-soft)')+';">'+
 (full&&!joined?t("ot_full_label"):t("ot_spots_left",{n:spotsLeft}))+
 '</div></div>'
 );
@@ -10546,23 +10557,23 @@ var otRow = el(
 // potesse aggiungere. L'organizzatore c'e' sempre.
 var chiCe = [escapeHtml(ot.ownerName||"?")];
 (ot.participants||[]).forEach(function(p){ if(p && p.name) chiCe.push(escapeHtml(p.name)); });
-otRow.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-top:4px;">'+t("ot_participants")+' ('+taken+'/'+total+'): '+chiCe.join(", ")+'</div>'));
+otRow.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:4px;">'+t("ot_participants")+' ('+taken+'/'+total+'): '+chiCe.join(", ")+'</div>'));
 
 if(!isOwner && currentUser){
 // Pulsante di conferma a tutta larghezza, con la spiegazione sopra:
 // il vecchio pulsantino accanto al testo non veniva trovato dai tester.
 var actionBox = el('<div style="margin-top:10px;"></div>');
-var actErr = el('<div style="font-size:0.78rem;color:var(--danger);margin-top:6px;display:none;"></div>');
+var actErr = el('<div style="font-size:var(--t-sm);color:var(--danger);margin-top:6px;display:none;"></div>');
 if(joined){
-actionBox.appendChild(el('<div style="border-radius:10px;padding:10px 12px;font-weight:800;font-size:0.9rem;background:color-mix(in srgb, var(--success) 16%, var(--bg-panel));border:1px solid color-mix(in srgb, var(--success) 55%, transparent);color:var(--cream);">'+t("ot_joined_label")+'</div>'));
-actionBox.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-top:4px;">'+t("ot_joined_hint")+'</div>'));
+actionBox.appendChild(el('<div style="border-radius:10px;padding:10px 12px;font-weight:800;font-size:var(--t-sm);background:color-mix(in srgb, var(--success) 16%, var(--bg-panel));border:1px solid color-mix(in srgb, var(--success) 55%, transparent);color:var(--cream);">'+t("ot_joined_label")+'</div>'));
+actionBox.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:4px;">'+t("ot_joined_hint")+'</div>'));
 var leaveBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;">'+t("ot_leave_btn")+'</button>');
 (function(otId){ leaveBtn.addEventListener("click", function(){ otSetJoin(otId, false, leaveBtn, actErr); }); })(ot.id);
 actionBox.appendChild(leaveBtn);
 } else if(full){
 actionBox.appendChild(el('<button class="btn btn-block btn-sm" disabled>'+t("ot_full_label")+'</button>'));
 } else {
-actionBox.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px;">'+t("ot_join_hint")+'</div>'));
+actionBox.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:6px;">'+t("ot_join_hint")+'</div>'));
 var joinBtn = el('<button class="btn btn-primary btn-block">'+t("ot_join_btn")+'</button>');
 (function(otId){ joinBtn.addEventListener("click", function(){ otSetJoin(otId, true, joinBtn, actErr); }); })(ot.id);
 actionBox.appendChild(joinBtn);
@@ -10571,7 +10582,7 @@ actionBox.appendChild(actErr);
 otRow.appendChild(actionBox);
 }
 if(isOwner){
-var delBtn = el('<button style="margin-top:6px;padding:4px 10px;border-radius:8px;border:none;cursor:pointer;font-size:0.8rem;background:var(--danger);color:#fff;">'+t("ot_delete_btn")+'</button>');
+var delBtn = el('<button style="margin-top:6px;padding:4px 10px;border-radius:8px;border:none;cursor:pointer;font-size:var(--t-sm);background:var(--danger);color:#fff;">'+t("ot_delete_btn")+'</button>');
 (function(otId){
 delBtn.addEventListener("click", function(){
 if(!confirm(t("ot_confirm_delete"))) return;
@@ -10587,7 +10598,7 @@ var extraBtns = el('<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wr
 if(ot.lat && ot.lng){
 // nessuna mappa mini
 
-var dirBtn = el('<button style="flex:1;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:0.82rem;cursor:pointer;">'+t("ot_directions_btn")+'</button>');
+var dirBtn = el('<button style="flex:1;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:var(--t-sm);cursor:pointer;">'+t("ot_directions_btn")+'</button>');
 (function(lat,lng){ dirBtn.addEventListener("click",function(){ window.open("https://www.google.com/maps/dir/?api=1&destination="+lat+","+lng,"_blank"); }); })(ot.lat,ot.lng);
 extraBtns.appendChild(dirBtn);
 }
@@ -10600,7 +10611,7 @@ extraBtns.appendChild(dirBtn);
 // L'etichetta cambia perche' cambia il verso: chi non e' l'organizzatore
 // «scrive all'organizzatore», l'organizzatore apre i «Messaggi».
 if(currentUser){
-var msgBtn = el('<button style="flex:1;padding:6px 10px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent-soft);font-size:0.82rem;cursor:pointer;font-weight:700;">'+(isOwner ? ("\uD83D\uDCAC " + t("dm_title")) : t("ot_msg_btn"))+'</button>');
+var msgBtn = el('<button style="flex:1;padding:6px 10px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent-soft);font-size:var(--t-sm);cursor:pointer;font-weight:700;">'+(isOwner ? ("\uD83D\uDCAC " + t("dm_title")) : t("ot_msg_btn"))+'</button>');
 (function(otId, ownerName, ownerUid){
 msgBtn.addEventListener("click", function(){
 state.otChatId = otId;
@@ -10620,7 +10631,7 @@ return otRow;
 // compact = true -> versione ridotta per la scheda "Tira" (max 2, con "vedi tutti")
 function otSectionCard(compact){
 var otCard = el('<div class="card" style="margin-bottom:14px;"></div>');
-otCard.appendChild(el('<div><div style="font-weight:800;font-size:1rem;">'+t("ot_section_title")+'</div><div style="font-size:0.8rem;color:var(--muted);margin-top:2px;margin-bottom:8px;">'+t("ot_section_hint")+'</div></div>'));
+otCard.appendChild(el('<div><div style="font-weight:800;font-size:var(--t-md);">'+t("ot_section_title")+'</div><div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;margin-bottom:8px;">'+t("ot_section_hint")+'</div></div>'));
 
 var mio = myClubCode();
 var gruppoClub = [], gruppoOpen = [];
@@ -10633,7 +10644,7 @@ else gruppoOpen.push(ot);
 if(compact){
 var tutti = gruppoClub.concat(gruppoOpen);
 if(tutti.length === 0){
-otCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">'+t("ot_no_trainings")+'</div>'));
+otCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("ot_no_trainings")+'</div>'));
 } else {
 tutti.slice(0,2).forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 if(tutti.length > 2){
@@ -10644,20 +10655,20 @@ otCard.appendChild(allBtn);
 }
 } else {
 if(gruppoClub.length === 0 && gruppoOpen.length === 0){
-otCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">'+t("ot_no_trainings")+'</div>'));
+otCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("ot_no_trainings")+'</div>'));
 }
 if(gruppoClub.length){
-otCard.appendChild(el('<div style="font-size:0.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 2px;">'+t("ot_group_club")+'</div>'));
+otCard.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 2px;">'+t("ot_group_club")+'</div>'));
 gruppoClub.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 }
 if(gruppoOpen.length){
-otCard.appendChild(el('<div style="font-size:0.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 2px;">'+t("ot_group_open")+'</div>'));
+otCard.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 2px;">'+t("ot_group_open")+'</div>'));
 gruppoOpen.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 }
 }
 
 if(currentUser){
-var createBtn = el('<button class="btn btn-primary btn-block" style="margin-top:10px;font-size:0.9rem;">'+t("ot_create_btn")+'</button>');
+var createBtn = el('<button class="btn btn-primary btn-block" style="margin-top:10px;font-size:var(--t-sm);">'+t("ot_create_btn")+'</button>');
 createBtn.addEventListener("click", function(){ state.screen="open-training-create"; save(); render(); });
 otCard.appendChild(createBtn);
 }
@@ -10724,9 +10735,9 @@ wrap.appendChild(el(
 (incomingSessions||[]).forEach(function(sess){
 var sessBanner = el(
 '<div class="resume-banner" style="border-color:var(--accent-soft);position:relative;">'+
-'<button id="dismissBtn_'+sess.id+'" style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;line-height:1;padding:0;">&#x2715;</button>'+
+'<button id="dismissBtn_'+sess.id+'" style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);font-size:var(--t-lg);cursor:pointer;line-height:1;padding:0;">&#x2715;</button>'+
 '<div style="font-weight:800;">'+t("session_banner_title")+'</div>'+
-'<div style="font-size:0.85rem;margin-top:4px;">'+t("session_banner_body",{name:escapeHtml(sess.ownerName||"?")})+'</div>'+
+'<div style="font-size:var(--t-sm);margin-top:4px;">'+t("session_banner_body",{name:escapeHtml(sess.ownerName||"?")})+'</div>'+
 '<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="followBtn_'+sess.id+'">'+t("session_banner_btn")+'</button></div></div>'
 );
 wrap.appendChild(sessBanner);
@@ -10791,7 +10802,7 @@ menuCard.appendChild(pgBtn);
 var pgLock = el('<div style="margin-top:10px;padding:14px 12px;border:1px dashed var(--line);border-radius:14px;text-align:center;"></div>');
 pgLock.appendChild(el('<div style="color:var(--muted);opacity:0.75;line-height:1;">'+navIcon("azprepara",30,"unica")+'</div>'));
 pgLock.appendChild(el('<div style="font-weight:800;color:var(--muted);margin:8px 0 4px;">'+t("pg_menu_btn_label")+'</div>'));
-pgLock.appendChild(el('<div style="font-size:0.88rem;line-height:1.45;color:var(--muted);">'+t("pg_locked_body")+'</div>'));
+pgLock.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.45;color:var(--muted);">'+t("pg_locked_body")+'</div>'));
 menuCard.appendChild(pgLock);
 }
 }
@@ -10804,7 +10815,7 @@ histBtn.addEventListener("click", function(){ state.screen = "diario"; save(); r
 wrap.appendChild(histBtn);
 
 if(hasActiveRound){
-var resetBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("reset_full_btn")+'</button>');
+var resetBtn = el('<button class="btn btn-ghost btn-block">'+t("reset_full_btn")+'</button>');
 wrap.appendChild(resetBtn);
 armDoubleConfirm(resetBtn, t("reset_confirm"), hardResetAll);
 }
@@ -10835,12 +10846,12 @@ if(IS_BETA_TESTER === true){
 // La scheda torna su "Tira" PRIMA di uscire, altrimenti al ritorno dal
 // marketplace si ripartirebbe subito verso il marketplace, in cerchio.
 mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+navIcon("navmarket",34,"unica")+'</div>'));
-mktCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);text-align:center;">'+t("market_opening")+'</div>'));
+mktCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);text-align:center;">'+t("market_opening")+'</div>'));
 state.tab = "tira"; save();
 setTimeout(function(){ window.location.href = "marketplace.html"; }, 80);
 } else {
 mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+navIcon("navmarket",34,"unica")+'</div>'));
-mktCard.appendChild(el('<div style="font-size:0.88rem;line-height:1.45;text-align:center;color:var(--muted);">'+t("market_locked_body")+'</div>'));
+mktCard.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.45;text-align:center;color:var(--muted);">'+t("market_locked_body")+'</div>'));
 }
 wrap.appendChild(mktCard);
 }
@@ -10855,14 +10866,14 @@ var mineClubs = myAdminClubCodes();
 // Chi gestisce gia' una compagnia non deve piu' vedere la schermata di
 // registrazione: entra direttamente nel suo spazio.
 if(mineClubs === null){
-wrap.appendChild(el('<div class="card"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>'));
+wrap.appendChild(el('<div class="card"><div style="font-size:var(--t-sm);color:var(--muted);">'+t("admin_loading")+'</div></div>'));
 }
 else if(mineClubs.length && !clubShowAll){
 if(mineClubs.indexOf(state.clubSpaceCode) === -1) state.clubSpaceCode = mineClubs[0];
 if(mineClubs.length > 1){
 var pickCard = el('<div class="card" style="margin-bottom:14px;"></div>');
-pickCard.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:6px;">'+t("club_pick_space")+'</label>'));
-var pickSel = el('<select style="width:100%;font-size:0.95rem;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);"></select>');
+pickCard.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:6px;">'+t("club_pick_space")+'</label>'));
+var pickSel = el('<select style="width:100%;font-size:var(--t-md);padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);"></select>');
 mineClubs.forEach(function(c){
 var nmC = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[c]) ? COMPAGNIE[c].nome : c;
 pickSel.appendChild(el('<option value="'+c+'"'+(c === state.clubSpaceCode ? ' selected' : '')+'>'+escapeHtml(nmC)+'</option>'));
@@ -10871,7 +10882,7 @@ pickSel.addEventListener("change", function(){ state.clubSpaceCode = pickSel.val
 pickCard.appendChild(pickSel);
 wrap.appendChild(pickCard);
 }
-wrap.appendChild(el('<div class="card" style="margin-bottom:14px;border-top-color:var(--gold);"><div style="font-size:0.82rem;color:var(--muted);line-height:1.45;">'+t("club_only_space_hint")+'</div></div>'));
+wrap.appendChild(el('<div class="card" style="margin-bottom:14px;border-top-color:var(--gold);"><div style="font-size:var(--t-sm);color:var(--muted);line-height:1.45;">'+t("club_only_space_hint")+'</div></div>'));
 wrap.appendChild(clubSpaceScreen(true));
 var seeAllBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t("club_see_all")+'</button>');
 seeAllBtn.addEventListener("click", function(){ clubShowAll = true; save(); render(); });
@@ -10887,12 +10898,12 @@ wrap.appendChild(backSpaceBtn);
 // da un indirizzo ufficiale, altrimenti chiunque potrebbe intestarsi una compagnia.
 var regCard = el('<div class="card" style="margin-bottom:14px;border-top-color:var(--gold);"></div>');
 regCard.appendChild(el('<h2 class="section-title">'+t("club_reg_title")+'</h2>'));
-regCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">'+t("club_reg_hint")+'</div>'));
+regCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:12px;">'+t("club_reg_hint")+'</div>'));
 
 function passo(n, testo){
 var r = el('<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;"></div>');
-r.appendChild(el('<span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#1A2620;font-weight:800;font-size:0.78rem;display:flex;align-items:center;justify-content:center;">'+n+'</span>'));
-r.appendChild(el('<div style="font-size:0.84rem;line-height:1.4;">'+testo+'</div>'));
+r.appendChild(el('<span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#1A2620;font-weight:800;font-size:var(--t-sm);display:flex;align-items:center;justify-content:center;">'+n+'</span>'));
+r.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.4;">'+testo+'</div>'));
 regCard.appendChild(r);
 }
 passo(1, t("club_reg_s1"));
@@ -10984,7 +10995,7 @@ wrap.appendChild(setCard);
 // dopo aver chiuso l'avviso di benvenuto.
 if(currentUser){
 var repCard = el('<div class="card"></div>');
-repCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);line-height:1.5;margin-bottom:10px;">'+t("report_admin_hint")+'</div>'));
+repCard.appendChild(el('<div class="card-hint">'+t("report_admin_hint")+'</div>'));
 var repBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("welcome_note_report")+'</button>');
 repBtn.addEventListener("click", function(){ openAdminChat(); });
 repCard.appendChild(repBtn);
@@ -11014,8 +11025,8 @@ var card1 = el('<div class="card"></div>');
 card1.appendChild(el('<h2 class="section-title">'+t("train_setup_title")+'</h2>'));
 var numInput = el('<input type="number" id="formatInput" min="'+mode.minFormat+'" max="'+mode.maxFormat+'" value="'+(state.pendingFormat||14)+'">');
 card1.appendChild(numInput);
-card1.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:6px;">'+t("train_setup_hint",{max:mode.maxFormat})+'</div>'));
-card1.appendChild(el('<div style="font-size:0.7rem;color:var(--gold);margin-top:4px;">'+t("train_free_hint")+'</div>'));
+card1.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:6px;">'+t("train_setup_hint",{max:mode.maxFormat})+'</div>'));
+card1.appendChild(el('<div style="font-size:var(--t-xs);color:var(--gold);margin-top:4px;">'+t("train_free_hint")+'</div>'));
 wrap.appendChild(card1);
 
 var isFiarcTraining = (trainKey === "training");
@@ -11030,24 +11041,24 @@ c.addEventListener("click", function(){ state.trainingArrowsChoice = n; save(); 
 arrowsGrid.appendChild(c);
 });
 arrowsCard.appendChild(arrowsGrid);
-arrowsCard.appendChild(el('<div style="font-size:0.7rem;color:var(--muted);margin-top:6px;">'+t("train_arrows_hint")+'</div>'));
+arrowsCard.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:6px;">'+t("train_arrows_hint")+'</div>'));
 wrap.appendChild(arrowsCard);
 }
 
 if(hasInvitedArchers() && !DEV_MODE && db && currentUser){
 var sharedCard = el('<div class="card"></div>');
 sharedCard.appendChild(el('<h2 class="section-title">'+t("train_shared_title")+'</h2>'));
-sharedCard.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">'+t("train_shared_hint")+'</div>'));
+sharedCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("train_shared_hint")+'</div>'));
 var dcRow = el('<label class="checkbox-row principale"><input type="checkbox" id="doubleConfirmChk"><span>'+t("train_double_confirm_label")+'</span></label>');
 var dcChk = dcRow.querySelector("#doubleConfirmChk");
 dcChk.checked = !!state.doubleConfirm;
 dcChk.addEventListener("change", function(){ state.doubleConfirm = dcChk.checked; save(); });
 sharedCard.appendChild(dcRow);
-sharedCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:6px;">'+t("train_double_confirm_hint")+'</div>'));
+sharedCard.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:6px;">'+t("train_double_confirm_hint")+'</div>'));
 wrap.appendChild(sharedCard);
 }
 
-var startBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("start_round_btn")+'</button>');
+var startBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:var(--t-lg);">'+t("start_round_btn")+'</button>');
 startBtn.addEventListener("click", function(){
 var n = clamp(parseInt(document.getElementById("formatInput").value,10), mode.minFormat, mode.maxFormat);
 state.pendingFormat = n;
@@ -11141,7 +11152,7 @@ modeDesc(modeKey)+'<br><br>'+footerParts.join("<br>")+provisionalHtml+'</div>'
 ));
 wrap.appendChild(modeCard);
 
-var startBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.05rem;">'+t("start_gara_btn")+'</button>');
+var startBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:var(--t-lg);">'+t("start_gara_btn")+'</button>');
 startBtn.addEventListener("click", function(){ beginRound(modeKey); });
 wrap.appendChild(startBtn);
 
@@ -11288,7 +11299,7 @@ var compagnia = state.compagniaAttiva ? COMPAGNIE[state.compagniaAttiva] : null;
 
 if(compagnia){
 var infoCard = el('<div class="card"></div>');
-infoCard.appendChild(el('<h2 class="section-title">'+escapeHtml(compagnia.nome)+' <span style="color:var(--muted);font-weight:600;font-size:0.8rem;">('+escapeHtml(state.compagniaAttiva)+')</span></h2>'));
+infoCard.appendChild(el('<h2 class="section-title">'+escapeHtml(compagnia.nome)+' <span style="color:var(--muted);font-weight:600;font-size:var(--t-sm);">('+escapeHtml(state.compagniaAttiva)+')</span></h2>'));
 if(compagnia.completa){
 infoCard.appendChild(el('<div class="cp-info-row">'+icon("pin",16)+' '+escapeHtml(compagnia.luogo)+'</div>'));
 if(compagnia.telefono){
@@ -11317,8 +11328,8 @@ if(!isAppAdmin && !isAdmin){
 // Mostra pulsante "richiedi admin" per chi non è ancora admin
 if(currentUser){
 var claimCard = el('<div class="card" style="margin-bottom:10px;"></div>');
-var claimBtn = el('<button class="btn btn-ghost btn-block" style="font-size:0.88rem;">'+t("cp_admin_claim_btn")+'</button>');
-var claimStatus = el('<div style="font-size:0.8rem;color:var(--muted);margin-top:6px;min-height:16px;"></div>');
+var claimBtn = el('<button class="btn btn-ghost btn-block" style="font-size:var(--t-sm);">'+t("cp_admin_claim_btn")+'</button>');
+var claimStatus = el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:6px;min-height:16px;"></div>');
 claimBtn.addEventListener("click", function(){
 claimBtn.disabled = true;
 requestAdminCompagnia(codice, function(esito){
@@ -11437,7 +11448,7 @@ card.appendChild(percRow);
 card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_arciere")+'</label><input type="text" id="cpFNome" placeholder="'+t("compagnie_arciere")+'"></div>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_punteggio")+'</label><input type="number" id="cpFPunteggio" min="0"></div>'));
 var todayIso = new Date().toISOString().slice(0,10);
-card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_data")+'</label><input type="date" id="cpFData" value="'+todayIso+'" style="width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);font-size:1rem;"></div>'));
+card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_data")+'</label><input type="date" id="cpFData" value="'+todayIso+'" style="width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);font-size:var(--t-md);"></div>'));
 
 card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_arco")+'</label></div>'));
 var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;"></div>');
@@ -11570,7 +11581,7 @@ apriMaps(t("campi_maps_query"));
 setTimeout(function(){ locBtn.innerHTML = icon("pin",18)+' '+t("campi_btn"); }, 2500);
 });
 locCard.appendChild(locBtn);
-locCard.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin:8px 0 14px;">'+t("campi_hint")+'</div>'));
+locCard.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin:8px 0 14px;">'+t("campi_hint")+'</div>'));
 
 // Le due ricerche separate (campi / compagnie) davano quasi sempre gli stessi
 // risultati: in Italia il campo e' della compagnia. Ne resta una sola.
@@ -11603,7 +11614,7 @@ var codice = state.clubSpaceCode || myClubCode();
 if(!codice){
 var noCard = el('<div class="card"></div>');
 noCard.appendChild(el('<h2 class="section-title">'+t("club_space_title")+'</h2>'));
-noCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">'+t("club_space_need_club")+'</div>'));
+noCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:12px;">'+t("club_space_need_club")+'</div>'));
 var goProf = el('<button class="btn btn-primary btn-block">'+t("menu_profile")+'</button>');
 goProf.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
 noCard.appendChild(goProf);
@@ -11617,7 +11628,7 @@ var nomeComp = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[codice])
 
 var head = el('<div class="card"></div>');
 head.appendChild(el('<h2 class="section-title">'+t("club_space_title")+'</h2>'));
-head.appendChild(el('<div style="font-weight:800;font-size:1rem;color:var(--gold);">'+escapeHtml(nomeComp)+'</div>'));
+head.appendChild(el('<div style="font-weight:800;font-size:var(--t-md);color:var(--gold);">'+escapeHtml(nomeComp)+'</div>'));
 // Il sottotitolo "i dati che gli arcieri vedono e dove arrivano le
 // segnalazioni" e' stato tolto (16/08): la scheda subito sotto si presenta gia'
 // da sola — "DATI DI RIFERIMENTO · compaiono agli arcieri nella scheda della
@@ -11638,9 +11649,9 @@ body.innerHTML = "";
 // ── Chi non e' referente: puo' solo chiedere di diventarlo ────────────────
 if(!isAdmin){
 var claimCard = el('<div class="card"></div>');
-claimCard.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">'+t("club_space_claim_hint")+'</div>'));
+claimCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("club_space_claim_hint")+'</div>'));
 var claimBtn = el('<button class="btn btn-primary btn-block">'+t("club_space_claim")+'</button>');
-var claimMsg = el('<div style="font-size:0.82rem;color:var(--accent-soft);margin-top:8px;min-height:16px;text-align:center;"></div>');
+var claimMsg = el('<div style="font-size:var(--t-sm);color:var(--accent-soft);margin-top:8px;min-height:16px;text-align:center;"></div>');
 claimBtn.addEventListener("click", function(){
 claimBtn.disabled = true;
 requestAdminCompagnia(codice, function(esito){
@@ -11661,10 +11672,10 @@ return;
 // ── Dati di riferimento ──────────────────────────────────────────────────
 var infoCard = el('<div class="card"></div>');
 infoCard.appendChild(el('<h2 class="section-title">'+t("club_contacts_title")+'</h2>'));
-infoCard.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);margin-bottom:12px;">'+t("club_contacts_hint")+'</div>'));
+infoCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:12px;">'+t("club_contacts_hint")+'</div>'));
 
 function campo(label, tipo, valore, ph){
-infoCard.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">'+label+'</label>'));
+infoCard.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+label+'</label>'));
 var inp = el('<input type="'+tipo+'" class="input-field in-modulo" placeholder="'+escapeHtml(ph||label)+'" value="'+escapeHtml(valore||"")+'">');
 infoCard.appendChild(inp);
 return inp;
@@ -11675,13 +11686,13 @@ var telInp   = campo(t("cp_admin_tel"), "tel", info.tel, "+39 333 1234567");
 var sitoInp  = campo(t("cp_admin_sito"), "text", info.sito, "www.compagnia.it");
 var addrInp  = campo(t("club_addr"), "text", info.indirizzo, "Via A. Alberti, Vignone (VB)");
 
-infoCard.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("club_notes")+'</label>'));
+infoCard.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("club_notes")+'</label>'));
 var noteInp = el('<textarea class="input-field in-modulo" rows="3"></textarea>');
 noteInp.value = info.note || "";
 infoCard.appendChild(noteInp);
 
 var saveBtn = el('<button class="btn btn-primary btn-block">'+t("club_save")+'</button>');
-var saveMsg = el('<div style="font-size:0.82rem;margin-top:8px;min-height:16px;text-align:center;"></div>');
+var saveMsg = el('<div style="font-size:var(--t-sm);margin-top:8px;min-height:16px;text-align:center;"></div>');
 saveBtn.addEventListener("click", function(){
 saveBtn.disabled = true;
 saveMsg.style.color = "var(--muted)";
@@ -11710,7 +11721,7 @@ body.appendChild(infoCard);
 // ── Segnalazioni ricevute ────────────────────────────────────────────────
 var repCard = el('<div class="card"></div>');
 repCard.appendChild(el('<h2 class="section-title">'+t("club_reports_title")+'</h2>'));
-var repList = el('<div><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
+var repList = el('<div><div style="font-size:var(--t-sm);color:var(--muted);">'+t("admin_loading")+'</div></div>');
 repCard.appendChild(repList);
 body.appendChild(repCard);
 
@@ -11732,17 +11743,17 @@ repList.innerHTML = "";
 var chiuse = arr.filter(function(x){ return x.status === "closed"; });
 var mostra = state.clubShowClosed ? arr : arr.filter(function(x){ return x.status !== "closed"; });
 if(mostra.length === 0){
-repList.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("club_reports_empty")+'</div>'));
+repList.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("club_reports_empty")+'</div>'));
 }
 mostra.forEach(function(r){
 var chiuso = (r.status === "closed");
 var row = el('<div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;'+(chiuso?'opacity:.55;':'')+'"></div>');
 var testa = el('<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px;"></div>');
-testa.appendChild(el('<span style="font-size:0.72rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.03em;">'+(TIPI[r.type]||TIPI.other)+(r.piazzola ? ' \u00b7 '+t("club_piazzola_word")+' '+r.piazzola : '')+'</span>'));
-if(chiuso){ testa.appendChild(el('<span style="font-size:0.7rem;font-weight:700;color:var(--accent-soft);">'+t("club_report_resolved")+'</span>')); }
+testa.appendChild(el('<span style="font-size:var(--t-xs);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.03em;">'+(TIPI[r.type]||TIPI.other)+(r.piazzola ? ' \u00b7 '+t("club_piazzola_word")+' '+r.piazzola : '')+'</span>'));
+if(chiuso){ testa.appendChild(el('<span style="font-size:var(--t-xs);font-weight:700;color:var(--accent-soft);">'+t("club_report_resolved")+'</span>')); }
 row.appendChild(testa);
-row.appendChild(el('<div style="font-size:0.9rem;line-height:1.35;">'+escapeHtml(r.description||"")+'</div>'));
-row.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">'+t("club_report_by",{name:escapeHtml(r.reporterName||"?")})+'</div>'));
+row.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.35;">'+escapeHtml(r.description||"")+'</div>'));
+row.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:4px;">'+t("club_report_by",{name:escapeHtml(r.reporterName||"?")})+'</div>'));
 if(!chiuso){
 var okBtn = el('<button class="btn btn-ghost btn-sm btn-block" style="margin-top:8px;">'+t("club_report_resolve")+'</button>');
 okBtn.addEventListener("click", function(){
@@ -11768,12 +11779,12 @@ armDoubleConfirm(pulisciBtn, t("club_reports_clear_confirm"), function(){
 var batch = db.batch();
 chiuse.forEach(function(x){ batch.delete(db.collection("field_reports").doc(x.id)); });
 batch.commit().then(caricaSegnalazioni).catch(function(e){
-repList.appendChild(el('<div style="font-size:0.82rem;color:var(--danger);margin-top:6px;">'+escapeHtml(e && e.message ? e.message : "Errore")+'</div>'));
+repList.appendChild(el('<div style="font-size:var(--t-sm);color:var(--danger);margin-top:6px;">'+escapeHtml(e && e.message ? e.message : "Errore")+'</div>'));
 });
 });
 }
 }).catch(function(err){
-repList.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
+repList.innerHTML = '<div style="font-size:var(--t-sm);color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
 });
 }
 caricaSegnalazioni();
@@ -11946,7 +11957,7 @@ try{ nBloc = d.blockedUsers ? Object.keys(d.blockedUsers).length : 0; }catch(e){
 body.appendChild(el(admDl([
 ["Notifiche push",  d.fcmToken ? admSi("Attive su un dispositivo") : admNd("Nessun dispositivo")],
 ["Utenti bloccati", String(nBloc)],
-["Identificativo",  '<span style="font-family:monospace;font-size:0.68rem;color:var(--muted);word-break:break-all;">'+escapeHtml(row.id)+'</span>']
+["Identificativo",  '<span style="font-family:monospace;font-size:var(--t-xs);color:var(--muted);word-break:break-all;">'+escapeHtml(row.id)+'</span>']
 ])));
 
 body.appendChild(el('<div class="adm-grp">Nota (solo admin)</div>'));
@@ -12015,14 +12026,14 @@ return ((d.username||"")+" "+(d.nomeCognome||"")+" "+(r.email||"")).toLowerCase(
 });
 admWrap.innerHTML = "";
 if(!list.length){
-admWrap.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);padding:8px 0;">Nessun utente corrisponde alla ricerca.</div>'));
+admWrap.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);padding:8px 0;">Nessun utente corrisponde alla ricerca.</div>'));
 return;
 }
 list.forEach(function(r){ admWrap.appendChild(admUserRow(r)); });
 }
 var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("admin_title")+'</h2>'));
-var listWrap = el('<div id="adminListWrap"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
+var listWrap = el('<div id="adminListWrap"><div style="font-size:var(--t-sm);color:var(--muted);">'+t("admin_loading")+'</div></div>');
 card.appendChild(listWrap);
 
 // ── Allineamento profili pubblici ──────────────────────────────────
@@ -12034,8 +12045,8 @@ card.appendChild(listWrap);
 // lingue non avrebbe senso.
 var ppCard = el('<div class="card"></div>');
 ppCard.appendChild(el('<h2 class="section-title">Profili pubblici</h2>'));
-ppCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Ricostruisce public_profiles a partire dagli utenti approvati. Da lanciare al passaggio alle nuove regole, poi solo se qualcuno non compare nell\'elenco arcieri.</div>'));
-var ppStatus = el('<div style="font-size:0.85rem;min-height:20px;margin-bottom:8px;"></div>');
+ppCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;line-height:1.5;">Ricostruisce public_profiles a partire dagli utenti approvati. Da lanciare al passaggio alle nuove regole, poi solo se qualcuno non compare nell\'elenco arcieri.</div>'));
+var ppStatus = el('<div style="font-size:var(--t-sm);min-height:20px;margin-bottom:8px;"></div>');
 var ppBtn = el('<button class="btn btn-ghost btn-block btn-sm">Allinea profili pubblici</button>');
 ppBtn.addEventListener("click", function(){
 ppBtn.disabled = true;
@@ -12085,8 +12096,8 @@ ppCard.appendChild(ppBtn);
 // Solo orderBy, nessun where: niente indice composito da creare.
 var erCard = el('<div class="card"></div>');
 erCard.appendChild(el('<h2 class="section-title">Errori registrati</h2>'));
-erCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Ultimi 30 errori raccolti sui dispositivi. Ogni riga dice dove, in quale schermata e con quale versione del file.</div>'));
-var erList = el('<div style="font-size:0.78rem;line-height:1.5;"></div>');
+erCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;line-height:1.5;">Ultimi 30 errori raccolti sui dispositivi. Ogni riga dice dove, in quale schermata e con quale versione del file.</div>'));
+var erList = el('<div style="font-size:var(--t-sm);line-height:1.5;"></div>');
 var erRow  = el('<div style="display:flex;gap:8px;margin-top:10px;"></div>');
 var erBtn  = el('<button class="btn btn-ghost btn-sm" style="flex:1;">Carica errori</button>');
 var erDel  = el('<button class="btn btn-ghost btn-sm" style="flex:1;">Svuota</button>');
@@ -12100,10 +12111,10 @@ box.appendChild(el('<div style="color:var(--muted);">'+escapeHtml(data+" \u00b7 
 if(d.extra) box.appendChild(el('<div style="color:var(--muted);word-break:break-all;">'+escapeHtml(String(d.extra))+'</div>'));
 if(d.stack){
 var det = el('<details style="margin-top:4px;"><summary style="cursor:pointer;color:var(--muted);">dettaglio</summary></details>');
-det.appendChild(el('<div style="white-space:pre-wrap;word-break:break-all;color:var(--muted);font-size:0.72rem;margin-top:4px;">'+escapeHtml(String(d.stack))+'</div>'));
+det.appendChild(el('<div style="white-space:pre-wrap;word-break:break-all;color:var(--muted);font-size:var(--t-xs);margin-top:4px;">'+escapeHtml(String(d.stack))+'</div>'));
 box.appendChild(det);
 }
-if(d.ua) box.appendChild(el('<div style="color:var(--muted);font-size:0.7rem;margin-top:4px;word-break:break-all;">'+escapeHtml(String(d.ua))+'</div>'));
+if(d.ua) box.appendChild(el('<div style="color:var(--muted);font-size:var(--t-xs);margin-top:4px;word-break:break-all;">'+escapeHtml(String(d.ua))+'</div>'));
 return box;
 }
 
@@ -12162,10 +12173,10 @@ admBadge("accessi", pending.length);
 listWrap.innerHTML = "";
 listWrap.appendChild(el('<div style="font-weight:700;margin-bottom:8px;">'+t("admin_pending_title")+' ('+pending.length+')</div>'));
 if(pending.length === 0){
-listWrap.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;">'+t("admin_empty_pending")+'</div>'));
+listWrap.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:16px;">'+t("admin_empty_pending")+'</div>'));
 }
 pending.forEach(function(row){
-var rowEl = el('<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);"><span style="font-size:0.9rem;word-break:break-all;">'+escapeHtml(row.email)+'</span></div>');
+var rowEl = el('<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);"><span style="font-size:var(--t-sm);word-break:break-all;">'+escapeHtml(row.email)+'</span></div>');
 var btn = el('<button class="btn btn-primary btn-sm">'+t("admin_approve_btn")+'</button>');
 btn.addEventListener("click", function(){
 btn.disabled = true;
@@ -12220,7 +12231,7 @@ admWrap = el('<div></div>');
 listWrap.appendChild(admWrap);
 drawApproved();
 }).catch(function(err){
-listWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
+listWrap.innerHTML = '<div style="font-size:var(--t-sm);color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
 });
 }
 setTimeout(loadList, 0);
@@ -12230,7 +12241,7 @@ setTimeout(loadList, 0);
 // senza questo pannello nessuna compagnia poteva essere attivata.
 var reqCard = el('<div class="card"></div>');
 reqCard.appendChild(el('<h2 class="section-title">'+t("admin_club_requests_title")+'</h2>'));
-var reqWrap = el('<div><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
+var reqWrap = el('<div><div style="font-size:var(--t-sm);color:var(--muted);">'+t("admin_loading")+'</div></div>');
 reqCard.appendChild(reqWrap);
 admPanel("richieste", reqCard);
 
@@ -12240,15 +12251,15 @@ db.collection("compagnie_admin_requests").where("stato","==","pending").limit(50
 admBadge("richieste", snap.size);
 reqWrap.innerHTML = "";
 if(snap.empty){
-reqWrap.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("admin_club_requests_empty")+'</div>'));
+reqWrap.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("admin_club_requests_empty")+'</div>'));
 return;
 }
 snap.forEach(function(doc){
 var r = doc.data();
 var nomeComp = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[r.codice]) ? COMPAGNIE[r.codice].nome : r.codice;
 var row = el('<div style="border-bottom:1px solid var(--line);padding:10px 0;"></div>');
-row.appendChild(el('<div style="font-size:0.9rem;font-weight:700;">'+escapeHtml(nomeComp)+' <span style="color:var(--muted);font-weight:600;font-size:0.78rem;">('+escapeHtml(r.codice||"")+')</span></div>'));
-row.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:6px;">'+escapeHtml(r.richiedenteName||"?")+'</div>'));
+row.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;">'+escapeHtml(nomeComp)+' <span style="color:var(--muted);font-weight:600;font-size:var(--t-sm);">('+escapeHtml(r.codice||"")+')</span></div>'));
+row.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:6px;">'+escapeHtml(r.richiedenteName||"?")+'</div>'));
 var btnRow = el('<div class="row"></div>');
 var ok = el('<button class="btn btn-primary btn-sm btn-block">'+t("admin_club_approve")+'</button>');
 ok.addEventListener("click", function(){
@@ -12271,18 +12282,18 @@ row.appendChild(btnRow);
 reqWrap.appendChild(row);
 });
 }).catch(function(err){
-reqWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
+reqWrap.innerHTML = '<div style="font-size:var(--t-sm);color:var(--danger);">'+escapeHtml(err && err.message ? err.message : "Errore")+'</div>';
 });
 }
 setTimeout(loadClubRequests, 0);
 
 var sessCard = el('<div class="card"></div>');
 sessCard.appendChild(el('<h2 class="section-title">'+t("admin_sessions_title")+'</h2>'));
-var sessListWrap = el('<div id="adminSessListWrap"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
+var sessListWrap = el('<div id="adminSessListWrap"><div style="font-size:var(--t-sm);color:var(--muted);">'+t("admin_loading")+'</div></div>');
 sessCard.appendChild(sessListWrap);
 admPanel("sessioni", sessCard);
 
-var closeAllBtn = el('<button class="btn" style="width:100%;margin-bottom:10px;background:var(--danger);color:#fff;font-size:0.85rem;">&#128465; Chiudi tutte le sessioni attive</button>');
+var closeAllBtn = el('<button class="btn" style="width:100%;margin-bottom:10px;background:var(--danger);color:#fff;font-size:var(--t-sm);">&#128465; Chiudi tutte le sessioni attive</button>');
 closeAllBtn.addEventListener("click", function(){
 if(!confirm("Chiudere TUTTE le sessioni attive?")) return;
 db.collection("sessions").where("status","==","active").get().then(function(snap){
@@ -12298,7 +12309,7 @@ db.collection("sessions").where("status","==","active").get().then(function(snap
 admBadge("sessioni", snap.size);
 sessListWrap.innerHTML = "";
 if(snap.empty){
-sessListWrap.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("admin_sessions_empty")+'</div>'));
+sessListWrap.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("admin_sessions_empty")+'</div>'));
 return;
 }
 snap.forEach(function(doc){
@@ -12306,14 +12317,14 @@ var d = doc.data();
 var names = (d.participants||[]).map(function(p){ return escapeHtml(p.name||"?"); }).join(", ");
 var dcLabel = d.doubleConfirm ? t("admin_sessions_double_confirm") : t("admin_sessions_single");
 var row = el(
-'<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:0.85rem;">'+
+'<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:var(--t-sm);">'+
 '<div style="font-weight:700;">'+escapeHtml(d.ownerName||"?")+'</div>'+
 '<div style="color:var(--muted);margin-top:2px;">'+t("admin_sessions_participants")+': '+names+'</div>'+
 '<div style="color:var(--muted);margin-top:2px;">'+dcLabel+'</div>'+
 '</div>'
 );
 sessListWrap.appendChild(row);
-var closeBtn = el('<button style="margin-top:4px;background:var(--danger);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:0.8rem;cursor:pointer;">Chiudi sessione</button>');
+var closeBtn = el('<button style="margin-top:4px;background:var(--danger);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:var(--t-sm);cursor:pointer;">Chiudi sessione</button>');
 (function(docRef, docId){
 closeBtn.addEventListener("click", function(){
 docRef.update({status:"closed", updatedAt: firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
@@ -12327,7 +12338,7 @@ row.appendChild(closeBtn);
 sessListWrap.appendChild(row);
 });
 }).catch(function(err){
-sessListWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escapeHtml(err&&err.message?err.message:"Errore")+'</div>';
+sessListWrap.innerHTML = '<div style="font-size:var(--t-sm);color:var(--danger);">'+escapeHtml(err&&err.message?err.message:"Errore")+'</div>';
 });
 }
 setTimeout(loadSessions, 0);
@@ -12350,12 +12361,12 @@ var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("session_follow_title")+'</h2>'));
 
 if(!data){
-card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("admin_loading")+'</div>'));
 wrap.appendChild(card);
 } else {
-card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);margin-bottom:10px;">'+t("session_follow_owner",{name:escapeHtml(data.ownerName||"?")})+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("session_follow_owner",{name:escapeHtml(data.ownerName||"?")})+'</div>'));
 if(data.status !== "active"){
-card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("session_closed_note")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("session_closed_note")+'</div>'));
 }
 var archerNames = data.archerNames || [];
 var confirms = data.confirms || {};
@@ -12365,7 +12376,7 @@ var entries = sessionShots(data, an.id);
 var block = el('<div style="margin-bottom:14px;"></div>');
 block.appendChild(el('<div style="font-weight:700;margin-bottom:6px;">'+escapeHtml(an.name)+'</div>'));
 if(entries.length === 0){
-block.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);">'+t("session_no_data")+'</div>'));
+block.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("session_no_data")+'</div>'));
 }
 entries.forEach(function(entry){
 hasAny = true;
@@ -12378,9 +12389,9 @@ var statusColor = firmato ? "var(--accent-soft)" : "var(--bark)";
 // gia' dovuto togliere di mezzo sulla pista.
 var dove = entry.target ? (t("target_inline")+' '+entry.target+' \u00b7 ') : '';
 var row = el(
-'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:0.85rem;">'+
+'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:var(--t-sm);">'+
 '<span>'+dove+escapeHtml(entry.arrows.join(", "))+' &middot; <b class="num">'+entry.total+'</b></span>'+
-'<span style="color:'+statusColor+';font-size:0.75rem;">'+statusLabel+'</span></div>'
+'<span style="color:'+statusColor+';font-size:var(--t-sm);">'+statusLabel+'</span></div>'
 );
 block.appendChild(row);
 if(canConfirm){
@@ -12406,7 +12417,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-ritorno-dall-email";
+var BUILD_STAMP = "2026-08-20-caratteri-sulla-scala";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12415,7 +12426,7 @@ var BUILD_STAMP = "2026-08-20-ritorno-dall-email";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-avvio-senza-lampo";
+var BUILD_PARENT = "2026-08-20-ritorno-dall-email";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -12495,7 +12506,7 @@ wrap.appendChild(editorial);
 
 var contactCard = el('<div class="card" style="margin-top:14px;"></div>');
 contactCard.appendChild(el('<h2 class="section-title">'+t("contact_title")+'</h2>'));
-contactCard.appendChild(el('<div style="font-size:0.85rem;line-height:1.6;">'+t("contact_text")+'</div>'));
+contactCard.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.6;">'+t("contact_text")+'</div>'));
 var mailBtn = el('<button class="btn btn-primary btn-block" style="margin-top:10px;">'+t("welcome_note_report")+'</button>');
 mailBtn.addEventListener("click", function(){ openAdminChat(); });
 contactCard.appendChild(mailBtn);
@@ -12506,7 +12517,7 @@ legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/termini.html?la
 contactCard.appendChild(legalRow2);
 wrap.appendChild(contactCard);
 
-wrap.appendChild(el('<div style="font-size:0.68rem;color:var(--muted);text-align:center;margin-top:16px;">Versione file: '+BUILD_STAMP+'</div>'));
+wrap.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);text-align:center;margin-top:16px;">Versione file: '+BUILD_STAMP+'</div>'));
 wrap.appendChild(riquadroMisure());
 
 return wrap;
@@ -12551,7 +12562,7 @@ if(!state.journalTab) state.journalTab = "trend";
 
 var head = el('<div class="card" style="margin-bottom:14px;"></div>');
 head.appendChild(el('<h2 class="section-title">'+t("journal_title")+'</h2>'));
-head.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:12px;">'+t("journal_sub")+'</div>'));
+head.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:12px;">'+t("journal_sub")+'</div>'));
 var seg = el('<div style="display:flex;gap:8px;"></div>');
 [["trend",t("journal_tab_trend")],["rounds",t("journal_tab_rounds")]].forEach(function(pair){
 var k = pair[0], on = (state.journalTab === k);
@@ -12587,7 +12598,7 @@ var head = el('<div class="card"></div>');
 
 
 if(mine.length === 0){
-head.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);line-height:1.5;">'+t("diario_empty")+'</div>'));
+head.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.5;">'+t("diario_empty")+'</div>'));
 wrap.appendChild(head);
 } else {
 var best = mine[0], sum = 0;
@@ -12622,10 +12633,10 @@ if(d !== 0){ trend = t("diario_trend",{d:(d>0?"+":"")+d}); trendUp = (d>0); }
 }
 
 var grid = el('<div style="display:flex;gap:10px;margin-bottom:4px;"></div>');
-grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;"><div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div><div style="font-size:1.7rem;font-weight:800;color:var(--gold);line-height:1.2;">'+bestTotal+'</div><div style="font-size:0.68rem;color:var(--muted);">'+escapeHtml(bestLabel||"")+'</div></div>'));
-grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;"><div style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div><div style="font-size:1.7rem;font-weight:800;color:var(--cream);line-height:1.2;">'+media+'</div><div style="font-size:0.68rem;color:var(--muted);">'+t("diario_on_rounds",{n:roundsCount})+'</div></div>'));
+grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;"><div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div><div style="font-size:var(--t-xl);font-weight:800;color:var(--gold);line-height:1.2;">'+bestTotal+'</div><div style="font-size:var(--t-xs);color:var(--muted);">'+escapeHtml(bestLabel||"")+'</div></div>'));
+grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;"><div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div><div style="font-size:var(--t-xl);font-weight:800;color:var(--cream);line-height:1.2;">'+media+'</div><div style="font-size:var(--t-xs);color:var(--muted);">'+t("diario_on_rounds",{n:roundsCount})+'</div></div>'));
 head.appendChild(grid);
-if(trend){ head.appendChild(el('<div style="font-size:0.75rem;color:'+(trendUp?"var(--success)":"var(--muted)")+';margin-top:8px;font-weight:700;">'+escapeHtml(trend)+'</div>')); }
+if(trend){ head.appendChild(el('<div style="font-size:var(--t-sm);color:'+(trendUp?"var(--success)":"var(--muted)")+';margin-top:8px;font-weight:700;">'+escapeHtml(trend)+'</div>')); }
 wrap.appendChild(head);
 
 var listCard = el('<div class="card"></div>');
@@ -12642,9 +12653,9 @@ state.screen = "history-detail";
 save(); render();
 });
 row.innerHTML =
-'<div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:0.9rem;color:var(--cream);">'+escapeHtml(m.modeLabel||"")+(isBest?' <span style="color:var(--gold);">'+t("diario_record_badge")+'</span>':'')+'</div>'+
-'<div style="font-size:0.72rem;color:var(--muted);margin-top:2px;">'+dStr+' \u00b7 '+m.format+' '+t("diario_targets_word")+(m.tot>1?' \u00b7 '+t("diario_position",{pos:m.pos, tot:m.tot}):'')+'</div></div>'+
-'<div style="font-weight:800;font-size:1.15rem;color:var(--gold);">'+m.total+'</div>';
+'<div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:var(--t-sm);color:var(--cream);">'+escapeHtml(m.modeLabel||"")+(isBest?' <span style="color:var(--gold);">'+t("diario_record_badge")+'</span>':'')+'</div>'+
+'<div style="font-size:var(--t-xs);color:var(--muted);margin-top:2px;">'+dStr+' \u00b7 '+m.format+' '+t("diario_targets_word")+(m.tot>1?' \u00b7 '+t("diario_position",{pos:m.pos, tot:m.tot}):'')+'</div></div>'+
+'<div style="font-weight:800;font-size:var(--t-lg);color:var(--gold);">'+m.total+'</div>';
 listCard.appendChild(row);
 });
 wrap.appendChild(listCard);
@@ -12672,21 +12683,21 @@ var modiList = Object.keys(perModo).map(function(k){ return perModo[k]; })
 if(modiList.length > 1){
 var modiCard = el('<div class="card"></div>');
 modiCard.appendChild(el('<h2 class="section-title">'+t("diario_by_mode_title")+'</h2>'));
-modiCard.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);line-height:1.5;margin-bottom:12px;">'+t("diario_by_mode_hint")+'</div>'));
+modiCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.5;margin-bottom:12px;">'+t("diario_by_mode_hint")+'</div>'));
 modiList.forEach(function(g){
 var avg = g.rounds ? Math.round(g.sum / g.rounds) : 0;
 var row = el('<div style="background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;"></div>');
 row.innerHTML =
-'<div style="font-weight:600;font-size:0.9rem;color:var(--cream);margin-bottom:8px;">'+escapeHtml(g.label)+'</div>'+
+'<div style="font-weight:600;font-size:var(--t-sm);color:var(--cream);margin-bottom:8px;">'+escapeHtml(g.label)+'</div>'+
 '<div style="display:flex;gap:10px;">'+
 '<div style="flex:1;text-align:center;background:var(--bg-panel);border-radius:8px;padding:8px 4px;">'+
-'<div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div>'+
-'<div style="font-size:1.25rem;font-weight:800;color:var(--gold);">'+g.best+'</div></div>'+
+'<div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div>'+
+'<div style="font-size:var(--t-lg);font-weight:800;color:var(--gold);">'+g.best+'</div></div>'+
 '<div style="flex:1;text-align:center;background:var(--bg-panel);border-radius:8px;padding:8px 4px;">'+
-'<div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div>'+
-'<div style="font-size:1.25rem;font-weight:800;color:var(--cream);">'+avg+'</div></div>'+
+'<div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div>'+
+'<div style="font-size:var(--t-lg);font-weight:800;color:var(--cream);">'+avg+'</div></div>'+
 '</div>'+
-'<div style="font-size:0.7rem;color:var(--muted);margin-top:8px;text-align:center;">'+t("diario_on_rounds",{n:g.rounds})+'</div>';
+'<div style="font-size:var(--t-xs);color:var(--muted);margin-top:8px;text-align:center;">'+t("diario_on_rounds",{n:g.rounds})+'</div>';
 modiCard.appendChild(row);
 });
 wrap.appendChild(modiCard);
@@ -12694,11 +12705,11 @@ wrap.appendChild(modiCard);
 
 var cloudCard = el('<div class="card"></div>');
 cloudCard.appendChild(el('<h2 class="section-title">'+t("diario_cloud_title")+'</h2>'));
-cloudCard.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:12px;">'+t("diario_cloud_hint")+'</div>'));
+cloudCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.5;margin-bottom:12px;">'+t("diario_cloud_hint")+'</div>'));
 if(DEV_MODE || !db || !currentUser){
-cloudCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);">'+t("diario_cloud_offline")+'</div>'));
+cloudCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("diario_cloud_offline")+'</div>'));
 } else {
-var cloudMsg = el('<div style="font-size:0.8rem;color:var(--muted);min-height:1.2em;margin-bottom:10px;"></div>');
+var cloudMsg = el('<div style="font-size:var(--t-sm);color:var(--muted);min-height:1.2em;margin-bottom:10px;"></div>');
 if(lastCloudRestoreMsg){ cloudMsg.textContent = lastCloudRestoreMsg; lastCloudRestoreMsg = ""; }
 cloudCard.appendChild(cloudMsg);
 var upBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:8px;">'+t("diario_cloud_backup")+'</button>');
@@ -12787,7 +12798,7 @@ state.historyIndex = hIdx;
 state.screen = "history-detail";
 save(); render();
 });
-var delRound = el('<button title="'+t("hist_delete_one")+'" style="position:absolute;top:50%;right:2px;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:1.05rem;line-height:1;cursor:pointer;padding:4px 6px;">&times;</button>');
+var delRound = el('<button title="'+t("hist_delete_one")+'" style="position:absolute;top:50%;right:2px;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:var(--t-lg);line-height:1;cursor:pointer;padding:4px 6px;">&times;</button>');
 delRound.addEventListener("click", function(ev){
 ev.stopPropagation();
 if(delRound.dataset.armed === "1"){
@@ -12841,7 +12852,7 @@ var d = new Date(h.date);
 var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 
 var card = el('<div class="card"></div>');
-card.appendChild(el('<div class="print-header"><h2 style="margin:0;">ArcTrail 3D \u2014 '+escapeHtml(mLabel)+'</h2><div style="font-size:0.85rem;">'+dateStr+'</div></div>'));
+card.appendChild(el('<div class="print-header"><h2 style="margin:0;">ArcTrail 3D \u2014 '+escapeHtml(mLabel)+'</h2><div style="font-size:var(--t-sm);">'+dateStr+'</div></div>'));
 card.appendChild(el('<h2 class="section-title">'+t("classifica_title",{mode:escapeHtml(mLabel)})+'</h2>'));
 
 var table = el('<table class="score-table"><thead><tr><th class="name-col">'+t("th_archer")+'</th><th>'+t("th_targets")+'</th><th>'+t("th_total")+'</th></tr></thead><tbody></tbody></table>');
@@ -12869,7 +12880,7 @@ var item = el('<div class="ring-item"></div>');
 if(tot !== undefined && tot !== null){
 item.appendChild(el('<div class="ring-badge">'+tot+'</div>'));
 if(arrows && arrows.length > 1){
-item.appendChild(el('<span style="font-size:0.58rem;color:var(--muted);">'+arrows.join('+')+'</span>'));
+item.appendChild(el('<span style="font-size:var(--t-xs);color:var(--muted);">'+arrows.join('+')+'</span>'));
 }
 } else {
 item.appendChild(el('<div class="ring-badge empty">&ndash;</div>'));
@@ -13146,18 +13157,18 @@ var card = el('<div class="card"></div>');
 // Intestazione: cosa stai facendo e dove finisce la segnalazione
 var head = el('<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;"></div>');
 head.appendChild(el('<span style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:color-mix(in srgb, var(--danger) 18%, transparent);border:1px solid color-mix(in srgb, var(--danger) 45%, transparent);color:var(--danger);display:flex;align-items:center;justify-content:center;">'+icon("warn",20)+'</span>'));
-head.appendChild(el('<div><div style="font-weight:800;font-size:1.05rem;color:var(--cream);line-height:1.25;">'+t("fr_report_title")+'</div><div style="font-size:0.78rem;color:var(--muted);margin-top:3px;">'+t("fr_report_sub")+'</div></div>'));
+head.appendChild(el('<div><div style="font-weight:800;font-size:var(--t-lg);color:var(--cream);line-height:1.25;">'+t("fr_report_title")+'</div><div style="font-size:var(--t-sm);color:var(--muted);margin-top:3px;">'+t("fr_report_sub")+'</div></div>'));
 card.appendChild(head);
 
 // ── Campo: stessa selezione da elenco usata per gli allenamenti ────────────
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_report_field")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_report_field")+'</label>'));
 var frCod = null, frLabel = "";
 // Precompilo con la compagnia dell'utente: quasi sempre e' il campo dove sta tirando
 if(state.profile && state.profile.compagnia){ frCod = state.profile.compagnia; frLabel = state.profile.compagniaNome || state.profile.compagnia; }
 
 var selDiv = el('<div style="background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:10px 14px;margin-bottom:8px;justify-content:space-between;align-items:center;"></div>');
-var selName = el('<span style="font-weight:700;font-size:0.92rem;"></span>');
-var selClear = el('<button style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
+var selName = el('<span style="font-weight:700;font-size:var(--t-md);"></span>');
+var selClear = el('<button style="background:none;border:none;color:#fff;font-size:var(--t-lg);cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
 selDiv.appendChild(selName); selDiv.appendChild(selClear);
 var searchInp = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("fr_field_search"))+'">');
 var listDiv = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;display:none;"></div>');
@@ -13180,7 +13191,7 @@ var c = COMPAGNIE[cod];
 var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "");
 if(label.toLowerCase().indexOf(q) === -1) return;
 found++;
-var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:0.88rem;cursor:pointer;">'+escapeHtml(label)+'</div>');
+var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(label)+'</div>');
 row.addEventListener("click", function(){ frCod = cod; frLabel = label; searchInp.value = ""; refreshField(); });
 listDiv.appendChild(row);
 });
@@ -13189,13 +13200,13 @@ listDiv.style.display = found ? "block" : "none";
 refreshField();
 
 // ── Tipo di problema ──────────────────────────────────────────────────────
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px;">'+t("fr_type_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:6px;">'+t("fr_type_label")+'</label>'));
 var tipo = "target";
 var tipoWrap = el('<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;"></div>');
 var tipoBtns = {};
 [["target",t("fr_type_target")],["stake",t("fr_type_stake")],["path",t("fr_type_path")],["other",t("fr_type_other")]].forEach(function(pair){
 var k = pair[0];
-var b = el('<button style="padding:12px 8px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:0.82rem;font-weight:700;cursor:pointer;line-height:1.25;">'+pair[1]+'</button>');
+var b = el('<button style="padding:12px 8px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:var(--t-sm);font-weight:700;cursor:pointer;line-height:1.25;">'+pair[1]+'</button>');
 tipoBtns[k] = b;
 b.addEventListener("click", function(){ tipo = k; refreshTipo(); });
 tipoWrap.appendChild(b);
@@ -13212,7 +13223,7 @@ card.appendChild(tipoWrap);
 refreshTipo();
 
 // ── Piazzola: precompilata con quella dove sei se il giro e' in corso ──────
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_piazzola_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_piazzola_label")+'</label>'));
 var pzSel = el('<select class="input-field in-modulo corto"></select>');
 pzSel.appendChild(el('<option value="">'+t("fr_piazzola_none")+'</option>'));
 for(var pz=1; pz<=40; pz++){ pzSel.appendChild(el('<option value="'+pz+'">'+pz+'</option>')); }
@@ -13220,11 +13231,11 @@ if(state.roundActive && state.target){ pzSel.value = String(state.target); }
 card.appendChild(pzSel);
 
 // ── Descrizione ───────────────────────────────────────────────────────────
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_report_desc")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("fr_report_desc")+'</label>'));
 var descInp = el('<textarea class="input-field in-modulo" placeholder="'+escapeHtml(t("fr_report_desc_ph"))+'" rows="4"></textarea>');
 card.appendChild(descInp);
 
-var status = el('<div style="font-size:0.85rem;margin-bottom:10px;min-height:20px;text-align:center;"></div>');
+var status = el('<div style="font-size:var(--t-sm);margin-bottom:10px;min-height:20px;text-align:center;"></div>');
 card.appendChild(status);
 
 var backTo = state.frFrom || "menu";
@@ -13275,7 +13286,7 @@ status.textContent = adminUid ? t("fr_sent_to",{name:frLabel}) : t("fr_no_admin_
 // nell'app di posta dell'utente, che deve solo premere invia.
 sendBtn.style.display = "none";
 var mailWrap = el('<div style="margin-bottom:10px;"></div>');
-mailWrap.appendChild(el('<div style="font-size:0.76rem;color:var(--muted);margin-bottom:8px;">'+t("fr_email_hint")+'</div>'));
+mailWrap.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:8px;">'+t("fr_email_hint")+'</div>'));
 if(adm.emailComp){
 var corpo = [
 t("fr_report_field")+": "+frLabel,
@@ -13291,7 +13302,7 @@ var href = "mailto:"+adm.emailComp
 +"&body="+encodeURIComponent(corpo);
 mailWrap.appendChild(el('<a href="'+href+'" class="btn btn-ghost btn-block" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">'+t("fr_email_btn")+'</a>'));
 } else {
-mailWrap.appendChild(el('<div style="font-size:0.78rem;color:var(--gold);">'+t("fr_email_none")+'</div>'));
+mailWrap.appendChild(el('<div style="font-size:var(--t-sm);color:var(--gold);">'+t("fr_email_none")+'</div>'));
 }
 card.insertBefore(mailWrap, cancelBtn);
 cancelBtn.textContent = t("fr_report_close");
@@ -13358,13 +13369,13 @@ if(isUserBlocked(d.senderUid)) return;   // messaggi di chi hai bloccato: non li
 var isMine = currentUser && d.senderUid === currentUser.uid;
 var bubble = el(
 '<div style="display:flex;flex-direction:column;align-items:'+(isMine?"flex-end":"flex-start")+';">'+
-'<div style="font-size:0.72rem;color:var(--muted);margin-bottom:2px;">'+escapeHtml(d.senderName||"?")+'</div>'+
+'<div style="font-size:var(--t-xs);color:var(--muted);margin-bottom:2px;">'+escapeHtml(d.senderName||"?")+'</div>'+
 '<div style="max-width:80%;background:'+(isMine?"var(--accent)":"var(--bg-panel-2)")+';color:'+(isMine?"var(--accent-ink)":"var(--cream)")+';border-radius:12px;padding:8px 12px;font-size:0.9rem;">'+escapeHtml(d.text||"")+'</div>'+
 '</div>'
 );
 // I propri messaggi si possono cancellare, come le notifiche
 if(isMine){
-var delMsg = el('<button title="'+t("msg_delete_mine")+'" style="align-self:flex-end;background:none;border:none;color:var(--muted);font-size:0.7rem;cursor:pointer;padding:2px 0;">'+t("notif_delete_one")+'</button>');
+var delMsg = el('<button title="'+t("msg_delete_mine")+'" style="align-self:flex-end;background:none;border:none;color:var(--muted);font-size:var(--t-xs);cursor:pointer;padding:2px 0;">'+t("notif_delete_one")+'</button>');
 delMsg.addEventListener("click", function(){
 delMsg.disabled = true;
 doc.ref.delete().catch(function(e){ console.error("msg delete:", e); delMsg.disabled = false; });
@@ -13385,7 +13396,7 @@ inputRow.appendChild(textInp);
 inputRow.appendChild(sendBtn);
 card.appendChild(inputRow);
 
-var statusEl = el('<div style="font-size:0.8rem;margin-top:6px;min-height:18px;"></div>');
+var statusEl = el('<div style="font-size:var(--t-sm);margin-top:6px;min-height:18px;"></div>');
 card.appendChild(statusEl);
 
 sendBtn.addEventListener("click", function(){
@@ -13823,12 +13834,12 @@ function moderationBar(ctx, onChange){
 var box = el('<div style="margin:-2px 0 12px;"></div>');
 var row = el('<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"></div>');
 
-var repBtn = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:0.76rem;">\u26a0 '+t("rep_btn")+'</button>');
+var repBtn = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:var(--t-sm);">\u26a0 '+t("rep_btn")+'</button>');
 row.appendChild(repBtn);
 
 if(ctx.uid && currentUser && ctx.uid !== currentUser.uid){
 var bloccato = isUserBlocked(ctx.uid);
-var blkBtn = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:0.76rem;'+(bloccato?"":"color:var(--danger);border-color:var(--danger);")+'">'+(bloccato ? t("blk_unblock_btn") : t("blk_block_btn"))+'</button>');
+var blkBtn = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:var(--t-sm);'+(bloccato?"":"color:var(--danger);border-color:var(--danger);")+'">'+(bloccato ? t("blk_unblock_btn") : t("blk_block_btn"))+'</button>');
 if(bloccato){
 blkBtn.addEventListener("click", function(){
 blkBtn.disabled = true;
@@ -13845,13 +13856,13 @@ row.appendChild(blkBtn);
 box.appendChild(row);
 
 var panel = el('<div style="display:none;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg-panel-2);margin-top:8px;"></div>');
-panel.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:8px;">'+t("rep_sub")+'</div>'));
+panel.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.5;margin-bottom:8px;">'+t("rep_sub")+'</div>'));
 
 var motivi = [t("rep_reason_offense"), t("rep_reason_spam"), t("rep_reason_sexual"), t("rep_reason_illegal"), t("rep_reason_other")];
 var scelto = null;
 var chipRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:8px;"></div>');
 motivi.forEach(function(m){
-var chip = el('<div class="chip" style="font-size:0.78rem;">'+escapeHtml(m)+'</div>');
+var chip = el('<div class="chip" style="font-size:var(--t-sm);">'+escapeHtml(m)+'</div>');
 chip.addEventListener("click", function(){
 Array.prototype.forEach.call(chipRow.querySelectorAll(".chip"), function(c){ c.classList.remove("active"); });
 chip.classList.add("active");
@@ -13861,18 +13872,18 @@ chipRow.appendChild(chip);
 });
 panel.appendChild(chipRow);
 
-panel.appendChild(el('<label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("rep_note_label")+'</label>'));
+panel.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("rep_note_label")+'</label>'));
 var notaInp = el('<textarea class="input-field" rows="2"></textarea>');
 panel.appendChild(notaInp);
 
 var alsoBlock = null;
 if(ctx.uid && currentUser && ctx.uid !== currentUser.uid && !isUserBlocked(ctx.uid)){
-var alsoRow = el('<label style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--muted);margin:8px 0 0;"><input type="checkbox" style="width:auto;"><span>'+t("rep_also_block")+'</span></label>');
+var alsoRow = el('<label style="display:flex;align-items:center;gap:8px;font-size:var(--t-sm);color:var(--muted);margin:8px 0 0;"><input type="checkbox" style="width:auto;"><span>'+t("rep_also_block")+'</span></label>');
 alsoBlock = alsoRow.querySelector("input");
 panel.appendChild(alsoRow);
 }
 
-var statusEl = el('<div style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>');
+var statusEl = el('<div style="font-size:var(--t-sm);margin-top:8px;min-height:18px;"></div>');
 var sendBtn = el('<button class="btn btn-primary btn-block btn-sm" style="margin-top:8px;">'+t("rep_send")+'</button>');
 sendBtn.addEventListener("click", function(){
 if(!scelto){
@@ -13923,16 +13934,16 @@ function blockedUsersScreen(){
 var wrap = el('<div></div>');
 var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("blk_list_title")+'</h2>'));
-card.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);line-height:1.5;margin-bottom:12px;">'+t("blk_list_sub")+' '+t("blk_list_hint")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.5;margin-bottom:12px;">'+t("blk_list_sub")+' '+t("blk_list_hint")+'</div>'));
 
 var uids = Object.keys(blockedUsers || {});
 if(!uids.length){
-card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("blk_list_empty")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("blk_list_empty")+'</div>'));
 } else {
 uids.forEach(function(u){
 var riga = el('<div style="display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px;"></div>');
-riga.appendChild(el('<span style="flex:1;font-size:0.9rem;font-weight:700;">@'+escapeHtml(blockedUsers[u]||"?")+'</span>'));
-var sbl = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:0.78rem;">'+t("blk_unblock_btn")+'</button>');
+riga.appendChild(el('<span style="flex:1;font-size:var(--t-sm);font-weight:700;">@'+escapeHtml(blockedUsers[u]||"?")+'</span>'));
+var sbl = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:var(--t-sm);">'+t("blk_unblock_btn")+'</button>');
 sbl.addEventListener("click", function(){
 sbl.disabled = true;
 setUserBlocked(u, blockedUsers[u], false, function(){ render(); });
@@ -14078,7 +14089,7 @@ var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("acc_delete_title")+'</h2>'));
 
 if(!currentUser || !db){
-card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("acc_delete_error")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("acc_delete_error")+'</div>'));
 wrap.appendChild(card);
 var b0 = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
 b0.addEventListener("click", function(){ state.screen = "menu"; state.tab = "profilo"; save(); render(); });
@@ -14086,20 +14097,20 @@ wrap.appendChild(b0);
 return wrap;
 }
 
-card.appendChild(el('<div style="border:1px solid var(--danger);border-radius:12px;padding:12px 14px;font-size:0.86rem;line-height:1.55;color:var(--cream);margin-bottom:12px;">'+t("acc_delete_warn")+'</div>'));
-card.appendChild(el('<div style="font-size:0.84rem;color:var(--muted);line-height:1.55;margin-bottom:8px;">'+t("acc_delete_what")+'</div>'));
-card.appendChild(el('<div style="font-size:0.84rem;color:var(--muted);line-height:1.55;margin-bottom:14px;">'+t("acc_delete_keep")+'</div>'));
+card.appendChild(el('<div style="border:1px solid var(--danger);border-radius:12px;padding:12px 14px;font-size:var(--t-sm);line-height:1.55;color:var(--cream);margin-bottom:12px;">'+t("acc_delete_warn")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.55;margin-bottom:8px;">'+t("acc_delete_what")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.55;margin-bottom:14px;">'+t("acc_delete_keep")+'</div>'));
 
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("acc_delete_pwd")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("acc_delete_pwd")+'</label>'));
 var pwdInp = el('<input type="password" class="input-field" autocomplete="current-password">');
 card.appendChild(pwdInp);
-card.appendChild(el('<div style="font-size:0.75rem;color:var(--muted);margin:4px 0 12px;">'+t("acc_delete_pwd_hint")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin:4px 0 12px;">'+t("acc_delete_pwd_hint")+'</div>'));
 
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("acc_delete_word_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("acc_delete_word_label")+'</label>'));
 var wordInp = el('<input type="text" class="input-field" autocapitalize="characters" autocomplete="off">');
 card.appendChild(wordInp);
 
-var statusEl = el('<div style="font-size:0.85rem;margin:10px 0 0;min-height:20px;line-height:1.45;"></div>');
+var statusEl = el('<div style="font-size:var(--t-sm);margin:10px 0 0;min-height:20px;line-height:1.45;"></div>');
 card.appendChild(statusEl);
 
 var goBtn = el('<button class="btn btn-block" style="margin-top:10px;background:var(--danger);color:#fff;border:none;">'+t("acc_delete_do")+'</button>');
@@ -14367,10 +14378,10 @@ stopDmMessages();
 var wrap = el('<div style="padding-bottom:20px;"></div>');
 var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("dm_title")+'</h2>'));
-card.appendChild(el('<div style="font-size:0.78rem;color:var(--muted);margin-bottom:12px;">'+t("dm_sub")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:12px;">'+t("dm_sub")+'</div>'));
 
 // Cerca un arciere
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("dm_search_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("dm_search_label")+'</label>'));
 var searchInp = el('<input type="text" class="input-field cerca" placeholder="\ud83d\udd0d '+escapeHtml(t("dm_search_placeholder"))+'">');
 card.appendChild(searchInp);
 var results = el('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"></div>');
@@ -14384,11 +14395,11 @@ var matches = list.filter(function(u){
 return u.username.toLowerCase().indexOf(q) !== -1 || (u.nomeCognome||"").toLowerCase().indexOf(q) !== -1;
 }).slice(0,6);
 if(!matches.length){
-results.appendChild(el('<span style="font-size:0.8rem;color:var(--muted);">'+t("dm_search_empty")+'</span>'));
+results.appendChild(el('<span style="font-size:var(--t-sm);color:var(--muted);">'+t("dm_search_empty")+'</span>'));
 return;
 }
 matches.forEach(function(u){
-var chip = el('<button style="background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:8px;padding:5px 10px;font-size:0.82rem;cursor:pointer;">@'+escapeHtml(u.username)+(u.nomeCognome?" \u00b7 "+escapeHtml(u.nomeCognome):"")+'</button>');
+var chip = el('<button style="background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:8px;padding:5px 10px;font-size:var(--t-sm);cursor:pointer;">@'+escapeHtml(u.username)+(u.nomeCognome?" \u00b7 "+escapeHtml(u.nomeCognome):"")+'</button>');
 chip.addEventListener("click", function(){ openDirectChat(u.uid, u.username); });
 results.appendChild(chip);
 });
@@ -14396,9 +14407,9 @@ results.appendChild(chip);
 });
 
 // Conversazioni gia' aperte
-card.appendChild(el('<h3 style="font-size:0.9rem;font-weight:800;margin:0 0 8px;">'+t("dm_list_title")+'</h3>'));
+card.appendChild(el('<h3 style="font-size:var(--t-sm);font-weight:800;margin:0 0 8px;">'+t("dm_list_title")+'</h3>'));
 if(!myDirectChats.length){
-card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("dm_empty")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("dm_empty")+'</div>'));
 } else {
 var locale = (LANG_META[state.lang]||LANG_META.it).locale;
 myDirectChats.forEach(function(c){
@@ -14413,11 +14424,11 @@ quando = oggi ? dt.toLocaleTimeString(locale,{hour:"2-digit",minute:"2-digit"}) 
 }
 var row = el('<button style="width:100%;text-align:left;background:'+(nuovo?"var(--bg-panel-2)":"transparent")+';border:1px solid '+(nuovo?"var(--accent-soft)":"var(--line)")+';border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;color:var(--cream);"></button>');
 row.appendChild(el('<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">'+
-'<span style="font-weight:'+(nuovo?"800":"700")+';font-size:0.92rem;">@'+escapeHtml(altro.name)+(nuovo?' <span style="font-size:0.66rem;background:var(--danger);color:#fff;border-radius:999px;padding:1px 6px;vertical-align:middle;">'+t("dm_new_badge")+'</span>':'')+'</span>'+
-'<span style="font-size:0.7rem;color:var(--muted);white-space:nowrap;">'+quando+'</span></div>'));
+'<span style="font-weight:'+(nuovo?"800":"700")+';font-size:0.92rem;">@'+escapeHtml(altro.name)+(nuovo?' <span style="font-size:var(--t-xs);background:var(--danger);color:#fff;border-radius:999px;padding:1px 6px;vertical-align:middle;">'+t("dm_new_badge")+'</span>':'')+'</span>'+
+'<span style="font-size:var(--t-xs);color:var(--muted);white-space:nowrap;">'+quando+'</span></div>'));
 if(c.lastText){
 var prefisso = (c.lastSenderUid === (currentUser&&currentUser.uid)) ? "\u2192 " : "";
-row.appendChild(el('<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+prefisso+escapeHtml(c.lastText)+'</div>'));
+row.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+prefisso+escapeHtml(c.lastText)+'</div>'));
 }
 row.addEventListener("click", function(){ openDirectChat(altro.uid, altro.name); });
 card.appendChild(row);
@@ -14440,11 +14451,11 @@ var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("dm_chat_with",{name:escapeHtml(otherName)})+'</h2>'));
 
 if(!otherUid || !currentUser || !db){
-card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("dm_empty")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("dm_empty")+'</div>'));
 wrap.appendChild(card);
 return wrap;
 }
-var dmSub = el('<div style="font-size:0.8rem;color:var(--muted);margin:-6px 0 12px;line-height:1.4;"></div>');
+var dmSub = el('<div style="font-size:var(--t-sm);color:var(--muted);margin:-6px 0 12px;line-height:1.4;"></div>');
 card.appendChild(dmSub);
 fillDmSubtitle(dmSub, otherUid);
 
@@ -14454,7 +14465,7 @@ var chatId = dmChatId(currentUser.uid, otherUid);
 card.appendChild(moderationBar({ uid: otherUid, name: otherName, what: t("dm_chat_with", { name: otherName }) }, function(){ render(); }));
 
 if(isUserBlocked(otherUid)){
-card.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);line-height:1.5;">'+t("blk_blocked_note")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.5;">'+t("blk_blocked_note")+'</div>'));
 wrap.appendChild(card);
 var backBlocked = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("dm_back")+'</button>');
 backBlocked.addEventListener("click", function(){ stopDmMessages(); state.screen = "messaggi"; save(); render(); });
@@ -14472,17 +14483,17 @@ dmMsgUnsub = db.collection("direct_chats").doc(chatId).collection("messages")
 .onSnapshot(function(snap){
 msgList.innerHTML = "";
 if(snap.empty){
-msgList.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("dm_no_messages")+'</div>'));
+msgList.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("dm_no_messages")+'</div>'));
 }
 snap.forEach(function(doc){
 var d = doc.data() || {};
 var isMine = d.senderUid === currentUser.uid;
 var bubble = el('<div style="display:flex;flex-direction:column;align-items:'+(isMine?"flex-end":"flex-start")+';"></div>');
-bubble.appendChild(el('<div style="font-size:0.72rem;color:var(--muted);margin-bottom:2px;">'+escapeHtml(isMine?myDisplayName():(d.senderName||otherName))+'</div>'));
+bubble.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-bottom:2px;">'+escapeHtml(isMine?myDisplayName():(d.senderName||otherName))+'</div>'));
 bubble.appendChild(el('<div style="max-width:82%;background:'+(isMine?"var(--accent)":"var(--bg-panel-2)")+';color:'+(isMine?"var(--accent-ink)":"var(--cream)")+';border-radius:12px;padding:8px 12px;font-size:0.9rem;white-space:pre-wrap;word-break:break-word;">'+escapeHtml(d.text||"")+'</div>'));
 // Ogni messaggio proprio si puo' cancellare, come nelle altre chat dell'app
 if(isMine){
-var delMsg = el('<button title="'+t("msg_delete_mine")+'" style="align-self:flex-end;background:none;border:none;color:var(--muted);font-size:0.7rem;cursor:pointer;padding:2px 0;">'+t("notif_delete_one")+'</button>');
+var delMsg = el('<button title="'+t("msg_delete_mine")+'" style="align-self:flex-end;background:none;border:none;color:var(--muted);font-size:var(--t-xs);cursor:pointer;padding:2px 0;">'+t("notif_delete_one")+'</button>');
 delMsg.addEventListener("click", function(){
 delMsg.disabled = true;
 doc.ref.delete().catch(function(e){ console.error("dm msg delete:", e); delMsg.disabled = false; });
@@ -14503,7 +14514,7 @@ inputRow.appendChild(textInp);
 inputRow.appendChild(sendBtn);
 card.appendChild(inputRow);
 
-var statusEl = el('<div style="font-size:0.8rem;margin-top:6px;min-height:18px;"></div>');
+var statusEl = el('<div style="font-size:var(--t-sm);margin-top:6px;min-height:18px;"></div>');
 card.appendChild(statusEl);
 
 sendBtn.addEventListener("click", function(){
@@ -14809,11 +14820,11 @@ var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("ot_create_title")+'</h2>'));
 
 // Selezione campo
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_field_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_field_label")+'</label>'));
 
 var fieldSelectedDiv = el('<div style="display:none;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"></div>');
-var fieldSelectedName = el('<span style="font-weight:700;font-size:0.95rem;"></span>');
-var fieldClearBtn = el('<button style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;">×</button>');
+var fieldSelectedName = el('<span style="font-weight:700;font-size:var(--t-md);"></span>');
+var fieldClearBtn = el('<button style="background:none;border:none;color:#fff;font-size:var(--t-lg);cursor:pointer;padding:0;line-height:1;">×</button>');
 fieldSelectedDiv.appendChild(fieldSelectedName);
 fieldSelectedDiv.appendChild(fieldClearBtn);
 fieldSelectedDiv.style.display = "none";
@@ -14864,12 +14875,12 @@ if(label.toLowerCase().indexOf(q.toLowerCase()) !== -1) matches.push({ label:lab
 });
 }
 if(matches.length === 0){
-fieldListDiv.appendChild(el('<div style="padding:10px;font-size:0.85rem;color:var(--muted);">'+t("search_username_empty")+'</div>'));
+fieldListDiv.appendChild(el('<div style="padding:10px;font-size:var(--t-sm);color:var(--muted);">'+t("search_username_empty")+'</div>'));
 fieldListDiv.style.display = "block";
 return;
 }
 matches.slice(0,30).forEach(function(m){
-var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:0.88rem;cursor:pointer;">'+escapeHtml(m.label)+'</div>');
+var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(m.label)+'</div>');
 row.addEventListener("click", function(){
 fieldInp.value = m.label;
 fieldInp.setAttribute("data-cod", m.cod);
@@ -14890,13 +14901,13 @@ fieldSearchInp.addEventListener("focus", function(){ if(fieldSearchInp.value) re
 var otLat = null, otLng = null;
 
 // Data
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_date_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_date_label")+'</label>'));
 var dateInp = el('<input type="date" class="input-field in-modulo data">');
 var today = new Date(); dateInp.value = today.toISOString().slice(0,10);
 card.appendChild(dateInp);
 
 // Ora — due tendine (niente orologio nativo illeggibile)
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_time_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_time_label")+'</label>'));
 var timeRow = el('<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;"></div>');
 var hSel = el('<select class="input-field stretto"></select>');
 var mSel = el('<select class="input-field stretto"></select>');
@@ -14911,17 +14922,17 @@ var mv = (mm<10?"0":"")+mm;
 mSel.appendChild(el('<option value="'+mv+'">'+mv+'</option>'));
 });
 timeRow.appendChild(hSel);
-timeRow.appendChild(el('<span style="font-weight:700;font-size:1.1rem;color:var(--cream);">:</span>'));
+timeRow.appendChild(el('<span style="font-weight:700;font-size:var(--t-lg);color:var(--cream);">:</span>'));
 timeRow.appendChild(mSel);
 card.appendChild(timeRow);
 var timeInp = { get value(){ return (hSel.value && mSel.value) ? hSel.value+":"+mSel.value : ""; } };
 
 // Posti
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_spots_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_spots_label")+'</label>'));
 var spotsWrap = el('<div style="display:flex;gap:10px;margin-bottom:12px;"></div>');
 var spotsVal = 3;
 [1,2,3,4].forEach(function(n){
-var btn = el('<button style="flex:1;padding:10px 0;border-radius:10px;border:2px solid '+(n===3?'var(--accent)':'var(--line)')+';background:'+(n===3?'var(--accent)':'transparent')+';color:'+(n===3?'var(--accent-ink)':'var(--cream)')+';font-weight:700;font-size:1rem;cursor:pointer;">'+n+'</button>');
+var btn = el('<button style="flex:1;padding:10px 0;border-radius:10px;border:2px solid '+(n===3?'var(--accent)':'var(--line)')+';background:'+(n===3?'var(--accent)':'transparent')+';color:'+(n===3?'var(--accent-ink)':'var(--cream)')+';font-weight:700;font-size:var(--t-md);cursor:pointer;">'+n+'</button>');
 btn.addEventListener("click", function(){
 spotsVal = n;
 spotsWrap.querySelectorAll("button").forEach(function(b,i){ b.style.borderColor=(i+1===n?'var(--accent)':'var(--line)'); b.style.background=(i+1===n?'var(--accent)':'transparent'); b.style.color=(i+1===n?'var(--accent-ink)':'var(--cream)'); });
@@ -14931,21 +14942,21 @@ spotsWrap.appendChild(btn);
 card.appendChild(spotsWrap);
 
 // Note
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_note_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_note_label")+'</label>'));
 var noteInp = el('<textarea class="input-field in-modulo" placeholder="'+escapeHtml(t("ot_note_placeholder"))+'" rows="2"></textarea>');
 card.appendChild(noteInp);
 
 // Visibilita': riservato alla compagnia oppure aperto a tutti.
 // E' chi pubblica a deciderlo, cosi' la lista di chi legge resta corta.
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_vis_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_vis_label")+'</label>'));
 var visVal = myClubCode() ? "club" : "all";
 var visWrap = el('<div style="margin-bottom:6px;"></div>');
 var visRow = el('<div style="display:flex;gap:8px;margin-bottom:6px;"></div>');
-var visHint = el('<div style="font-size:0.75rem;color:var(--muted);margin-bottom:16px;"></div>');
+var visHint = el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:16px;"></div>');
 var visBtns = {};
 [["club", t("ot_vis_club")], ["all", t("ot_vis_all")]].forEach(function(pair){
 var k = pair[0];
-var b = el('<button style="flex:1;padding:10px 6px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:0.82rem;font-weight:700;cursor:pointer;">'+pair[1]+'</button>');
+var b = el('<button style="flex:1;padding:10px 6px;border-radius:10px;border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:var(--t-sm);font-weight:700;cursor:pointer;">'+pair[1]+'</button>');
 visBtns[k] = b;
 b.addEventListener("click", function(){
 if(k === "club" && !myClubCode()){ visHint.style.color = "var(--danger)"; visHint.textContent = t("ot_no_club_warn"); return; }
@@ -14970,7 +14981,7 @@ card.appendChild(visWrap);
 refreshVis();
 
 // Inviti nominativi
-card.appendChild(el('<label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_invite_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:4px;">'+t("ot_invite_label")+'</label>'));
 var inviteWrap = el('<div style="margin-bottom:16px;"></div>');
 var inviteSearch = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("ot_invite_placeholder"))+'">');
 var inviteResults = el('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;"></div>');
@@ -14985,10 +14996,10 @@ var invitedUsers = []; // [{uid, username, nomeCognome}]
 function renderInviteChips(){
 inviteChips.innerHTML = "";
 if(invitedUsers.length === 0) return;
-var lbl = el('<span style="font-size:0.8rem;color:var(--muted);">'+t("ot_invite_added")+'</span>');
+var lbl = el('<span style="font-size:var(--t-sm);color:var(--muted);">'+t("ot_invite_added")+'</span>');
 inviteChips.appendChild(lbl);
 invitedUsers.forEach(function(u, idx){
-var chip = el('<span style="display:inline-flex;align-items:center;gap:4px;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:3px 10px;font-size:0.82rem;">@'+escapeHtml(u.username)+'<button style="background:none;border:none;color:var(--accent-ink);cursor:pointer;font-size:1rem;padding:0;line-height:1;">×</button></span>');
+var chip = el('<span style="display:inline-flex;align-items:center;gap:4px;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:3px 10px;font-size:var(--t-sm);">@'+escapeHtml(u.username)+'<button style="background:none;border:none;color:var(--accent-ink);cursor:pointer;font-size:var(--t-md);padding:0;line-height:1;">×</button></span>');
 chip.querySelector("button").addEventListener("click", function(){ invitedUsers.splice(idx,1); renderInviteChips(); });
 inviteChips.appendChild(chip);
 });
@@ -15006,9 +15017,9 @@ inviteResults.innerHTML = "";
 if(!q || q.length < 2) return;
 loadApprovedUsersForInvite(function(list){
 var matches = list.filter(function(u){ return u.username.toLowerCase().indexOf(q) !== -1 && !invitedUsers.find(function(i){ return i.uid===u.uid; }); }).slice(0,5);
-if(matches.length === 0){ inviteResults.appendChild(el('<span style="font-size:0.8rem;color:var(--muted);">'+t("search_username_empty")+'</span>')); return; }
+if(matches.length === 0){ inviteResults.appendChild(el('<span style="font-size:var(--t-sm);color:var(--muted);">'+t("search_username_empty")+'</span>')); return; }
 matches.forEach(function(u){
-var chip = el('<button style="background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:8px;padding:4px 10px;font-size:0.82rem;cursor:pointer;">@'+escapeHtml(u.username)+(u.nomeCognome?" · "+escapeHtml(u.nomeCognome):"")+'</button>');
+var chip = el('<button style="background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:8px;padding:4px 10px;font-size:var(--t-sm);cursor:pointer;">@'+escapeHtml(u.username)+(u.nomeCognome?" · "+escapeHtml(u.nomeCognome):"")+'</button>');
 chip.addEventListener("click", function(){ invitedUsers.push(u); inviteSearch.value=""; inviteResults.innerHTML=""; renderInviteChips(); });
 inviteResults.appendChild(chip);
 });
@@ -15017,7 +15028,7 @@ inviteResults.appendChild(chip);
 
 // Pulsanti
 var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-bottom:10px;">'+t("ot_save_btn")+'</button>');
-var saveStatus = el('<div style="font-size:0.85rem;margin-bottom:8px;min-height:18px;text-align:center;"></div>');
+var saveStatus = el('<div style="font-size:var(--t-sm);margin-bottom:8px;min-height:18px;text-align:center;"></div>');
 card.appendChild(saveStatus);
 function setStatus(msg, color){ saveStatus.style.color = color||"var(--muted)"; saveStatus.textContent = msg; }
 
@@ -15840,7 +15851,7 @@ if(ent){ strip.appendChild(el('<span class="shot-pill">'+escapeHtml(a.name)+': '
 card.appendChild(strip);
 wrap.appendChild(card);
 
-var nextBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:1.08rem;">'+(isLast ? t("view_final_btn") : t("next_target_btn"))+'</button>');
+var nextBtn = el('<button class="btn btn-primary btn-block" style="padding:16px;font-size:var(--t-lg);">'+(isLast ? t("view_final_btn") : t("next_target_btn"))+'</button>');
 nextBtn.addEventListener("click", advanceToNextTarget);
 wrap.appendChild(nextBtn);
 
@@ -16251,7 +16262,7 @@ function summaryScreen(){
 var wrap = el('<div></div>');
 var mLabel = modeLabel(state.mode);
 var card = el('<div class="card"></div>');
-card.appendChild(el('<div class="print-header"><h2 style="margin:0;">ArcTrail 3D \u2014 '+escapeHtml(mLabel)+'</h2><div style="font-size:0.85rem;">'+new Date().toLocaleDateString(state.lang||'it')+'</div></div>'));
+card.appendChild(el('<div class="print-header"><h2 style="margin:0;">ArcTrail 3D \u2014 '+escapeHtml(mLabel)+'</h2><div style="font-size:var(--t-sm);">'+new Date().toLocaleDateString(state.lang||'it')+'</div></div>'));
 card.appendChild(el('<h2 class="section-title">'+t("classifica_title",{mode:escapeHtml(mLabel)})+'</h2>'));
 var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
 
@@ -16331,7 +16342,7 @@ var item = el('<div class="ring-item"></div>');
 if(ent){
 item.appendChild(el('<div class="ring-badge">'+ent.total+'</div>'));
 if(ent.arrows.length > 1){
-item.appendChild(el('<span style="font-size:0.58rem;color:var(--muted);">'+ent.arrows.join('+')+'</span>'));
+item.appendChild(el('<span style="font-size:var(--t-xs);color:var(--muted);">'+ent.arrows.join('+')+'</span>'));
 }
 } else {
 item.appendChild(el('<div class="ring-badge empty">&ndash;</div>'));
