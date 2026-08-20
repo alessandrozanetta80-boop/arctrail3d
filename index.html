@@ -1553,6 +1553,21 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
 .adm-note{width:100%;font-size:0.8rem;padding:7px 9px;}
 .adm-act{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
 .adm-act .btn{flex:1;min-width:96px;}
+/* Le cinque schede del pannello admin. (20/08/2026.) Erano cinque compiti in
+   una colonna sola — accessi, profili, errori, richieste, sessioni — e per
+   arrivare all'ultimo si scorreva tutto il resto. Dal 20/08 all'ultimo ci si
+   arriva da una push: cioe' proprio quando si ha fretta.
+   La striscia scorre in orizzontale invece di andare a capo: cinque etichette
+   su due righe si leggono come due gruppi di cose diverse. */
+.adm-tabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px;scrollbar-width:none;}
+.adm-tabs::-webkit-scrollbar{display:none;}
+.adm-tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:8px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap;min-height:38px;}
+.adm-tab.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+/* Il numero compare solo quando c'e' qualcosa che aspetta: un pallino con
+   zero dentro e' rumore, e insegna a non guardarlo. */
+.adm-tab .n{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:var(--bark);color:var(--accent-ink);font-size:0.62rem;font-weight:700;line-height:1;}
+.adm-tab.on .n{background:var(--accent-ink);color:var(--accent);}
+.card[hidden]{display:none;}
 @media(min-width:700px){.adm-dl{grid-template-columns:180px 1fr;}}
 @media(prefers-reduced-motion:reduce){.adm-chev{transition:none;}}
 /* ══════════════ RIFINITURA, NATA DAL TEMA CHIARO (15/08/2026) ══════════════
@@ -2556,6 +2571,8 @@ fr_notif_title: "Nuova segnalazione sul percorso",
 fr_notif_body: "{name}: {desc}",
 admin_club_requests_title: "Richieste gestione compagnia",
 admin_club_requests_empty: "Nessuna richiesta in attesa.",
+club_claim_already: "Una richiesta per questa compagnia è già in attesa: la guardiamo appena possibile.",
+club_claim_error: "Non sono riuscito a mandare la richiesta ({msg}). Riprova.",
 admin_club_approve: "Approva",
 admin_club_reject: "Rifiuta",
 nav_clubs: "Compagnie",
@@ -3057,6 +3074,8 @@ fr_notif_title: "New course report",
 fr_notif_body: "{name}: {desc}",
 admin_club_requests_title: "Club management requests",
 admin_club_requests_empty: "No pending requests.",
+club_claim_already: "A request for this club is already pending: we will look at it as soon as we can.",
+club_claim_error: "I could not send the request ({msg}). Please try again.",
 admin_club_approve: "Approve",
 admin_club_reject: "Reject",
 nav_clubs: "Clubs",
@@ -3095,6 +3114,7 @@ notif_center_markall: "Mark all as read",
 notif_open_msg: "Open the message",
 notif_open_chat: "Open the conversation with {name}",
 notif_open_ad: "Open the listing",
+admin_title: "Access management",
 notif_ad_gone: "The listing is gone: it was sold, paused or removed.",
 notif_chat_gone: "This conversation is gone: the training was cancelled or removed.",
 pw_show: "Show the password",
@@ -3580,6 +3600,8 @@ fr_notif_title: "Nouveau signalement sur le parcours",
 fr_notif_body: "{name} : {desc}",
 admin_club_requests_title: "Demandes de gestion de club",
 admin_club_requests_empty: "Aucune demande en attente.",
+club_claim_already: "Une demande pour ce club est déjà en attente : nous la regardons dès que possible.",
+club_claim_error: "Je n’ai pas pu envoyer la demande ({msg}). Réessayez.",
 admin_club_approve: "Approuver",
 admin_club_reject: "Refuser",
 nav_clubs: "Clubs",
@@ -3618,6 +3640,7 @@ notif_center_markall: "Tout marquer comme lu",
 notif_open_msg: "Ouvrir le message",
 notif_open_chat: "Ouvrir la conversation avec {name}",
 notif_open_ad: "Ouvrir l'annonce",
+admin_title: "Gestion des accès",
 notif_ad_gone: "L'annonce n'est plus l\u00e0\u00a0: vendue, mise en pause ou retir\u00e9e.",
 notif_chat_gone: "Cette conversation n’existe plus : l’entraînement a été annulé ou supprimé.",
 pw_show: "Afficher le mot de passe",
@@ -4103,6 +4126,8 @@ fr_notif_title: "Neue Meldung zum Parcours",
 fr_notif_body: "{name}: {desc}",
 admin_club_requests_title: "Antr\u00e4ge auf Vereinsverwaltung",
 admin_club_requests_empty: "Keine offenen Antr\u00e4ge.",
+club_claim_already: "Für diesen Verein liegt bereits ein Antrag vor: wir sehen ihn uns so bald wie möglich an.",
+club_claim_error: "Der Antrag konnte nicht gesendet werden ({msg}). Bitte erneut versuchen.",
 admin_club_approve: "Genehmigen",
 admin_club_reject: "Ablehnen",
 nav_clubs: "Vereine",
@@ -4141,6 +4166,7 @@ notif_center_markall: "Alle als gelesen markieren",
 notif_open_msg: "Nachricht \u00f6ffnen",
 notif_open_chat: "Unterhaltung mit {name} \u00f6ffnen",
 notif_open_ad: "Anzeige \u00f6ffnen",
+admin_title: "Zugangsverwaltung",
 notif_ad_gone: "Die Anzeige ist nicht mehr da: verkauft, pausiert oder entfernt.",
 notif_chat_gone: "Diese Unterhaltung gibt es nicht mehr: das Training wurde abgesagt oder entfernt.",
 pw_show: "Passwort anzeigen",
@@ -4626,6 +4652,8 @@ fr_notif_title: "Parkurda yeni bildirim",
 fr_notif_body: "{name}: {desc}",
 admin_club_requests_title: "Kul\u00fcp y\u00f6netim ba\u015fvurular\u0131",
 admin_club_requests_empty: "Bekleyen ba\u015fvuru yok.",
+club_claim_already: "Bu kulüp için zaten bekleyen bir istek var: en kısa sürede bakacağız.",
+club_claim_error: "İstek gönderilemedi ({msg}). Tekrar deneyin.",
 admin_club_approve: "Onayla",
 admin_club_reject: "Reddet",
 nav_clubs: "Kul\u00fcpler",
@@ -5163,6 +5191,8 @@ fr_notif_title: "\u041d\u043e\u0432\u043e\u0435 \u0441\u043e\u043e\u0431\u0449\u
 fr_notif_body: "{name}: {desc}",
 admin_club_requests_title: "\u0417\u0430\u043f\u0440\u043e\u0441\u044b \u043d\u0430 \u0443\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u043a\u043b\u0443\u0431\u043e\u043c",
 admin_club_requests_empty: "\u041e\u0436\u0438\u0434\u0430\u044e\u0449\u0438\u0445 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u043d\u0435\u0442.",
+club_claim_already: "Заявка по этому клубу уже ожидает: мы рассмотрим её как можно скорее.",
+club_claim_error: "Не удалось отправить заявку ({msg}). Повторите.",
 admin_club_approve: "\u041e\u0434\u043e\u0431\u0440\u0438\u0442\u044c",
 admin_club_reject: "\u041e\u0442\u043a\u043b\u043e\u043d\u0438\u0442\u044c",
 nav_clubs: "\u041a\u043b\u0443\u0431\u044b",
@@ -5700,6 +5730,8 @@ fr_notif_title: "Nuevo aviso sobre el recorrido",
 fr_notif_body: "{name}: {desc}",
 admin_club_requests_title: "Solicitudes de gesti\u00f3n de club",
 admin_club_requests_empty: "No hay solicitudes pendientes.",
+club_claim_already: "Ya hay una solicitud pendiente para este club: la revisaremos lo antes posible.",
+club_claim_error: "No he podido enviar la solicitud ({msg}). Inténtalo de nuevo.",
 admin_club_approve: "Aprobar",
 admin_club_reject: "Rechazar",
 nav_clubs: "Clubes",
@@ -6237,6 +6269,8 @@ fr_notif_title: "Ny rapport om banan",
 fr_notif_body: "{name}: {desc}",
 admin_club_requests_title: "Ans\u00f6kningar om klubbadministration",
 admin_club_requests_empty: "Inga v\u00e4ntande ans\u00f6kningar.",
+club_claim_already: "En förfrågan för den här klubben väntar redan: vi tittar på den så snart vi kan.",
+club_claim_error: "Jag kunde inte skicka förfrågan ({msg}). Försök igen.",
 admin_club_approve: "Godk\u00e4nn",
 admin_club_reject: "Avsl\u00e5",
 nav_clubs: "Klubbar",
@@ -6774,6 +6808,8 @@ fr_notif_title: "Nieuwe melding over het parcours",
 fr_notif_body: "{name}: {desc}",
 admin_club_requests_title: "Aanvragen verenigingsbeheer",
 admin_club_requests_empty: "Geen openstaande aanvragen.",
+club_claim_already: "Er staat al een aanvraag voor deze club open: we kijken er zo snel mogelijk naar.",
+club_claim_error: "Ik kon de aanvraag niet versturen ({msg}). Probeer opnieuw.",
 admin_club_approve: "Goedkeuren",
 admin_club_reject: "Afwijzen",
 nav_clubs: "Verenigingen",
@@ -8913,15 +8949,54 @@ onDone();
 }).catch(onErr);
 }
 
-function requestAdminCompagnia(codice, onDone){
-if(!db || !currentUser) return;
-db.collection("compagnie_admin_requests").doc(codice + "_" + currentUser.uid).set({
+// LA RICHIESTA DICEVA SEMPRE DI SI', ANCHE QUANDO NON PARTIVA. (20/08/2026.)
+//
+// Com'era: `.then(onDone).catch(onDone)`. Le due strade finivano nello stesso
+// posto, quindi la schermata scriveva «Richiesta inviata» **identica** che
+// Firestore avesse accettato o rifiutato. Da fuori: la richiesta non arriva
+// mai e non si sa perche'. *Un errore mandato nello stesso posto del successo
+// non e' gestito: e' nascosto, ed e' peggio di un errore che si vede.*
+//
+// E il rifiuto c'era davvero, per una ragione che non si vede leggendo questa
+// funzione da sola. `set()` su un documento CHE ESISTE GIA' e' un update, e in
+// firestore.rules `compagnie_admin_requests` ha `allow update: if isAdmin()`.
+// Quindi:
+//   · la PRIMA richiesta passava (create);
+//   · ogni richiesta successiva dello stesso utente per la stessa compagnia
+//     veniva RIFIUTATA — e la piu' comune di tutte e' la seconda, perche' la
+//     prima e' gia' stata guardata e magari respinta (`stato:"rejected"`, il
+//     documento resta li').
+//
+// La cura: si guarda prima cosa c'e'. Se una richiesta e' gia' in attesa lo si
+// dice, invece di rifarla. Se era stata respinta, si CANCELLA e si ricrea —
+// il delete al richiedente le regole lo permettono gia', quindi non serve
+// toccare le regole per rimettere in piedi il caso normale.
+function requestAdminCompagnia(codice, onDone, onErr){
+if(!db || !currentUser){ if(onErr) onErr(new Error("offline")); return; }
+var ref = db.collection("compagnie_admin_requests").doc(codice + "_" + currentUser.uid);
+var doc = {
 codice: codice,
 richiedenteUid: currentUser.uid,
 richiedenteName: myDisplayName(),
+richiedenteEmail: (currentUser.email || ""),
 stato: "pending",
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
-}).then(onDone).catch(onDone);
+};
+ref.get().then(function(snap){
+if(snap.exists && (snap.data()||{}).stato === "pending"){
+// Gia' in coda: ripeterla non aggiunge niente e sovrascriverebbe la data.
+if(onDone) onDone({ gia: true });
+return null;
+}
+if(snap.exists) return ref.delete().then(function(){ return ref.set(doc); });
+return ref.set(doc);
+}).then(function(r){
+if(r === null) return;
+if(onDone) onDone({ gia: false });
+}).catch(function(err){
+console.error("richiesta compagnia:", err && err.code, err && err.message);
+if(onErr) onErr(err);
+});
 }
 
 
@@ -10382,7 +10457,8 @@ if(join){ uids.push(currentUser.uid); arr.push({ uid: currentUser.uid, name: myN
 return ref.update({ participantUids: uids, participants: arr, updatedAt: Date.now() }).then(function(){
 if(join && d.ownerUid){
 sendPushViaFirestore(d.ownerUid, t("ot_notif_join_title"),
-t("ot_notif_join_body", { name: myName, date: d.date||"", field: d.field||"" }));
+t("ot_notif_join_body", { name: myName, date: d.date||"", field: d.field||"" }),
+{ k:"ot", id: otId });
 }
 loadOpenTrainings();
 });
@@ -10831,7 +10907,7 @@ setCard.appendChild(infoBtn);
 
 if(currentUser && currentUser.email === ADMIN_EMAIL){
 var adminBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("users",16)+' '+t("menu_admin")+'</button>');
-adminBtn.addEventListener("click", function(){ state.screen = "admin"; save(); render(); });
+adminBtn.addEventListener("click", function(){ adminTab = "accessi"; state.screen = "admin"; save(); render(); });
 setCard.appendChild(adminBtn);
 }
 // Privacy e termini: devono essere raggiungibili dall'app, non solo dallo store
@@ -11195,8 +11271,15 @@ var claimBtn = el('<button class="btn btn-ghost btn-block" style="font-size:0.88
 var claimStatus = el('<div style="font-size:0.8rem;color:var(--muted);margin-top:6px;min-height:16px;"></div>');
 claimBtn.addEventListener("click", function(){
 claimBtn.disabled = true;
-requestAdminCompagnia(codice, function(){
-claimStatus.textContent = t("cp_admin_claim_pending");
+requestAdminCompagnia(codice, function(esito){
+claimStatus.style.color = "var(--muted)";
+claimStatus.textContent = (esito && esito.gia) ? t("club_claim_already") : t("cp_admin_claim_pending");
+}, function(err){
+// Il tasto torna premibile: un errore che non lascia riprovare e' un vicolo
+// cieco, e di vicoli ciechi questa settimana ne abbiamo gia' visto uno.
+claimBtn.disabled = false;
+claimStatus.style.color = "var(--danger)";
+claimStatus.textContent = t("club_claim_error", { msg: (err && (err.code || err.message)) || "?" });
 });
 });
 claimCard.appendChild(claimBtn);
@@ -11510,7 +11593,14 @@ var claimBtn = el('<button class="btn btn-primary btn-block">'+t("club_space_cla
 var claimMsg = el('<div style="font-size:0.82rem;color:var(--accent-soft);margin-top:8px;min-height:16px;text-align:center;"></div>');
 claimBtn.addEventListener("click", function(){
 claimBtn.disabled = true;
-requestAdminCompagnia(codice, function(){ claimMsg.textContent = t("club_space_claim_sent"); });
+requestAdminCompagnia(codice, function(esito){
+claimMsg.style.color = "var(--accent-soft)";
+claimMsg.textContent = (esito && esito.gia) ? t("club_claim_already") : t("club_space_claim_sent");
+}, function(err){
+claimBtn.disabled = false;
+claimMsg.style.color = "var(--danger)";
+claimMsg.textContent = t("club_claim_error", { msg: (err && (err.code || err.message)) || "?" });
+});
 });
 claimCard.appendChild(claimBtn);
 claimCard.appendChild(claimMsg);
@@ -11649,8 +11739,56 @@ return wrap;
 }
 
 // ---------- AMMINISTRAZIONE ACCESSI ----------
+// Quale scheda si vede. Vive FUORI dalla funzione perche' deve sopravvivere
+// a render(): chiudere una sessione o approvare un utente ridisegna la
+// schermata intera, e ritrovarsi sulla prima scheda dopo ogni gesto sarebbe
+// peggio di prima. Chi entra dal menu riparte da "accessi" (lo azzera il
+// tasto); chi entra da un avviso arriva sulla scheda che l'avviso riguarda.
+var adminTab = "accessi";
+
 function adminScreen(){
 var wrap = el('<div></div>');
+
+// ── Le cinque schede ────────────────────────────────────
+// Le sezioni si CARICANO tutte come prima, non solo quella che si guarda.
+// Caricare solo la scheda aperta risparmierebbe letture e costerebbe la cosa
+// per cui il pannello esiste: il numero sulla scheda deve poter dire «qui ti
+// aspetta qualcosa» mentre stai guardando altrove. Una scheda che si carica
+// solo quando la tocchi e' un cassetto in piu', non uno in meno.
+// Le etichette sono in italiano, come «Profili pubblici» e «Errori
+// registrati» che ci sono gia': questa schermata la vede una persona sola.
+var ADM_TABS = [["accessi","Accessi"],["richieste","Richieste"],["sessioni","Sessioni"],["profili","Profili"],["errori","Errori"]];
+var admTabsBar = el('<div class="adm-tabs" role="tablist" aria-label="Sezioni del pannello"></div>');
+var admPanels  = el('<div></div>');
+wrap.appendChild(admTabsBar);
+wrap.appendChild(admPanels);
+var admPan = {}, admCount = {};
+
+function admPanel(k, nodo){
+admPan[k] = nodo;
+nodo.id = "adm-pan-" + k;
+nodo.setAttribute("role", "tabpanel");
+nodo.hidden = (k !== adminTab);
+admPanels.appendChild(nodo);
+}
+function admDrawTabs(){
+admTabsBar.innerHTML = "";
+ADM_TABS.forEach(function(tb){
+var attiva = (adminTab === tb[0]);
+var n = admCount[tb[0]] || 0;
+var b = el('<button class="adm-tab'+(attiva ? ' on' : '')+'" role="tab" aria-selected="'+attiva+'" aria-controls="adm-pan-'+tb[0]+'">'+tb[1]+(n > 0 ? ' <span class="n">'+n+'</span>' : '')+'</button>');
+b.addEventListener("click", function(){ admGoTab(tb[0]); });
+admTabsBar.appendChild(b);
+});
+}
+function admGoTab(k){
+adminTab = k;
+Object.keys(admPan).forEach(function(x){ admPan[x].hidden = (x !== k); });
+admDrawTabs();
+}
+// Il numero sulla scheda lo scrive chi ha appena contato: nessuna lettura in
+// piu', e non puo' dire una cifra diversa da quella dell'elenco sotto.
+function admBadge(k, n){ admCount[k] = n; admDrawTabs(); }
 // ── Elenco utenti: stato della vista ──────────────────────────────────
 // Vivono qui e non dentro loadList: ricerca, filtro e schede aperte devono
 // sopravvivere al ridisegno che parte dopo ogni Premium/Beta/Revoca.
@@ -11844,7 +11982,7 @@ card.appendChild(listWrap);
 // users nelle regole. Resta poi a disposizione come pulizia.
 // Testo in italiano e non con t(): lo vede solo l'admin, tradurlo in nove
 // lingue non avrebbe senso.
-var ppCard = el('<div class="card" style="margin-top:14px;"></div>');
+var ppCard = el('<div class="card"></div>');
 ppCard.appendChild(el('<h2 class="section-title">Profili pubblici</h2>'));
 ppCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Ricostruisce public_profiles a partire dagli utenti approvati. Da lanciare al passaggio alle nuove regole, poi solo se qualcuno non compare nell\'elenco arcieri.</div>'));
 var ppStatus = el('<div style="font-size:0.85rem;min-height:20px;margin-bottom:8px;"></div>');
@@ -11895,7 +12033,7 @@ ppCard.appendChild(ppBtn);
 // ── Errori registrati ───────────────────────────────────────
 // Non si carica da sola: sono letture in piu' a ogni apertura del pannello.
 // Solo orderBy, nessun where: niente indice composito da creare.
-var erCard = el('<div class="card" style="margin-top:14px;"></div>');
+var erCard = el('<div class="card"></div>');
 erCard.appendChild(el('<h2 class="section-title">Errori registrati</h2>'));
 erCard.appendChild(el('<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Ultimi 30 errori raccolti sui dispositivi. Ogni riga dice dove, in quale schermata e con quale versione del file.</div>'));
 var erList = el('<div style="font-size:0.78rem;line-height:1.5;"></div>');
@@ -11952,9 +12090,9 @@ erDel.disabled = false;
 erRow.appendChild(erBtn); erRow.appendChild(erDel);
 erCard.appendChild(erList); erCard.appendChild(erRow);
 
-wrap.appendChild(card);
-wrap.appendChild(ppCard);
-wrap.appendChild(erCard);
+admPanel("accessi", card);
+admPanel("profili", ppCard);
+admPanel("errori", erCard);
 
 // Note personali dell'admin (perche' uno e' premium, chi lo ha presentato, ecc.).
 // Vivono in admin_notes, non su users: cosi' l'interessato non le legge mai.
@@ -11970,6 +12108,7 @@ var d = doc.data();
 var row = { id: doc.id, email: d.email || "?", approved: !!d.approved, betaTester: d.betaTester === true, premium: d.premium === true, data: d };
 (row.approved ? approved : pending).push(row);
 });
+admBadge("accessi", pending.length);
 listWrap.innerHTML = "";
 listWrap.appendChild(el('<div style="font-weight:700;margin-bottom:8px;">'+t("admin_pending_title")+' ('+pending.length+')</div>'));
 if(pending.length === 0){
@@ -12039,15 +12178,16 @@ setTimeout(loadList, 0);
 // ── Richieste di gestione compagnia ───────────────────────────────────────
 // Venivano scritte su compagnie_admin_requests ma nessuno le leggeva:
 // senza questo pannello nessuna compagnia poteva essere attivata.
-var reqCard = el('<div class="card" style="margin-top:14px;"></div>');
+var reqCard = el('<div class="card"></div>');
 reqCard.appendChild(el('<h2 class="section-title">'+t("admin_club_requests_title")+'</h2>'));
 var reqWrap = el('<div><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
 reqCard.appendChild(reqWrap);
-wrap.appendChild(reqCard);
+admPanel("richieste", reqCard);
 
 function loadClubRequests(){
 if(!db) return;
 db.collection("compagnie_admin_requests").where("stato","==","pending").limit(50).get().then(function(snap){
+admBadge("richieste", snap.size);
 reqWrap.innerHTML = "";
 if(snap.empty){
 reqWrap.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("admin_club_requests_empty")+'</div>'));
@@ -12086,11 +12226,11 @@ reqWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+escap
 }
 setTimeout(loadClubRequests, 0);
 
-var sessCard = el('<div class="card" style="margin-top:14px;"></div>');
+var sessCard = el('<div class="card"></div>');
 sessCard.appendChild(el('<h2 class="section-title">'+t("admin_sessions_title")+'</h2>'));
 var sessListWrap = el('<div id="adminSessListWrap"><div style="font-size:0.85rem;color:var(--muted);">'+t("admin_loading")+'</div></div>');
 sessCard.appendChild(sessListWrap);
-wrap.appendChild(sessCard);
+admPanel("sessioni", sessCard);
 
 var closeAllBtn = el('<button class="btn" style="width:100%;margin-bottom:10px;background:var(--danger);color:#fff;font-size:0.85rem;">&#128465; Chiudi tutte le sessioni attive</button>');
 closeAllBtn.addEventListener("click", function(){
@@ -12105,6 +12245,7 @@ sessCard.appendChild(closeAllBtn);
 
 function loadSessions(){
 db.collection("sessions").where("status","==","active").get().then(function(snap){
+admBadge("sessioni", snap.size);
 sessListWrap.innerHTML = "";
 if(snap.empty){
 sessListWrap.appendChild(el('<div style="font-size:0.85rem;color:var(--muted);">'+t("admin_sessions_empty")+'</div>'));
@@ -12141,6 +12282,7 @@ sessListWrap.innerHTML = '<div style="font-size:0.85rem;color:var(--danger);">'+
 }
 setTimeout(loadSessions, 0);
 
+admDrawTabs();
 return wrap;
 }
 
@@ -12214,7 +12356,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-19-chat-allenamento";
+var BUILD_STAMP = "2026-08-20-admin-a-schede";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12223,7 +12365,7 @@ var BUILD_STAMP = "2026-08-19-chat-allenamento";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-19-porta-e-mercatino";
+var BUILD_PARENT = "2026-08-19-chat-allenamento";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -14390,6 +14532,18 @@ return wrap;
 //   - `adId`, che l'avviso delle ricerche salvate porta gia' con se'. Per
 //     quello non e' servito cambiare niente: c'era gia' e non lo leggeva
 //     nessuno.
+// QUALE DELLE CINQUE SCHEDE. (20/08/2026.) Il pannello e' diviso in schede:
+// portare all'admin e basta lascerebbe la richiesta appena arrivata dietro
+// un secondo tocco, che e' esattamente il tocco che la push doveva togliere.
+// L'id dell'avviso lo scrive la funzione che l'ha creato — `club-{codice}_{uid}`
+// per una richiesta di compagnia, `isc-{uid}` per un'iscrizione da approvare —
+// e leggerlo qui evita di ripubblicare le funzioni per aggiungere un campo
+// che l'id contiene gia'. Se un giorno arriva un avviso di admin d'altro
+// tipo finisce su "accessi", che e' la scheda che si sarebbe aperta comunque.
+function admTabDaAvviso(id){
+return String(id || "").indexOf("club-") === 0 ? "richieste" : "accessi";
+}
+
 function destinazioneNotifica(n){
 if(!n) return null;
 var d = n.dest;
@@ -14397,6 +14551,17 @@ if(d && d.k === "dm" && d.uid) return versoLaChat(d.uid);
 // La chat di un allenamento non e' una conversazione fra due: sta sotto
 // l'allenamento, e ci si torna con il suo id.
 if(d && d.k === "ot" && d.id) return { etichetta: t("notif_open_msg"), k:"ot", val:d.id };
+// LA STRADA DEL PANNELLO. (20/08/2026.) Le funzioni scrivono `apri:"admin"`
+// dal 18/08 — iscrizioni, segnalazioni, e da oggi le richieste di gestione
+// compagnia — ma qui nessuno lo leggeva: l'avviso arrivava e restava fermo.
+// Chi deve rispondere in fretta non puo' cercarsi il pannello a mano ogni
+// volta: il tocco che ha gia' fatto per leggere l'avviso deve portarcelo.
+// Il controllo sull'email non e' una difesa (il pannello e' chiuso dalle
+// regole): e' per non offrire una porta che si aprirebbe su una schermata
+// vuota.
+if(n.apri === "admin" && currentUser && currentUser.email === ADMIN_EMAIL){
+return { etichetta: t("admin_title"), k:"admin", val:"admin" };
+}
 // L'annuncio PRIMA del mittente: l'avviso di una ricerca salvata ha tutti e
 // due — `adId` e il venditore — e quello che interessa e' l'arco, non il
 // venditore. Chi vuole scrivergli lo fa dalla scheda.
@@ -14545,6 +14710,7 @@ db.collection("notifications").doc(currentUser.uid).collection("items").doc(n.id
 }
 if(dove.k === "dm") apriChatDaNotifica(dove.val);
 else if(dove.k === "ot") apriChatAllenamentoDaNotifica(dove.val, row);
+else if(dove.k === "admin"){ adminTab = admTabDaAvviso(n.id); state.screen = "admin"; save(); render(); }
 else apriAnnuncioDaNotifica(dove.val, row);
 };
 row.addEventListener("click", apri);
@@ -14858,9 +15024,14 @@ openTrainings.unshift(localCopy);
 // Notifiche agli invitati
 var timeStr = timeInp.value ? " alle "+timeInp.value : "";
 invitedUsers.forEach(function(u){
+// IL `dest` MANCAVA ANCHE QUI. (20/08/2026.) L'invito arrivava come titolo e
+// basta: toccarlo non apriva niente, perche' destinazioneNotifica non aveva
+// nessuna delle sue strade. Chi era invitato doveva cercarsi l'allenamento
+// nell'elenco per rispondere — e infatti «dall'invito la chat non funziona».
 sendPushViaFirestore(u.uid,
 t("ot_notif_invite_title"),
-t("ot_notif_invite_body",{name:myName, date:dateInp.value, time:timeStr, field:fieldVal})+" "+t("ot_notif_where")
+t("ot_notif_invite_body",{name:myName, date:dateInp.value, time:timeStr, field:fieldVal})+" "+t("ot_notif_where"),
+{ k:"ot", id: newRef.id }
 );
 });
 // Copia a chi invita: conferma che gli inviti sono partiti
