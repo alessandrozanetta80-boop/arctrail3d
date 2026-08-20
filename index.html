@@ -2049,6 +2049,7 @@ firebaseReady = false;
 }
 }
 
+var arrivaDaEmail = false;   // acceso da leggiRitornoEmail(), all'avvio
 var authState = DEV_MODE ? "ready" : (firebaseReady ? "loading" : "firebaseError"); // loading | needLogin | linkSent | pendingApproval | authError | firebaseError | ready
 var authErrorMsg = "";
 var currentUser = null;
@@ -2082,8 +2083,21 @@ var EMAIL_VERIFY_SINCE = Date.parse("2026-08-14T00:00:00Z");
 // `auth/unauthorized-continue-uri` — e allora l'email non partirebbe proprio.
 // Percio' ogni chiamata ha una seconda strada: se il rifiuto e' quello, si
 // rimanda l'email senza ritorno. Meglio un'email spoglia che nessuna email.
+// IL RITORNO SI PORTA DIETRO QUELLO CHE SERVE. (20/08/2026.)
+// Prima l'indirizzo di ritorno era `origin + "/"` e basta. Il link della
+// verifica lo apre l'app della posta, quasi sempre in un browser suo, dove
+// `localStorage` e' VUOTO: niente lingua, niente paese, niente profilo. Quindi
+// chi cliccava si ritrovava al primo passo dell'impostazione — e la lingua
+// l'aveva gia' scelta, solo che l'aveva scelta in un altro browser.
+// *Non l'aveva dimenticata l'app: non poteva vederla.*
+// Due cose viaggiano nell'indirizzo, e sono le due che servono per non
+// ricominciare da capo: la lingua, e il fatto che si arrivi da un'email.
 function actionSettings(){
-try{ return { url: window.location.origin + "/", handleCodeInApp: false }; }
+try{
+var q = "?da=email";
+if(state && state.lang) q += "&lang=" + encodeURIComponent(state.lang);
+return { url: window.location.origin + "/" + q, handleCodeInApp: false };
+}
 catch(e){ return null; }
 }
 function conRitorno(invia){
@@ -8495,6 +8509,14 @@ if(authState === "authError"){ app.appendChild(authErrorScreen()); return; }
 if(authState === "firebaseError"){ app.appendChild(firebaseErrorScreen()); return; }
 if(authState === "verifyEmail"){ app.appendChild(verifyEmailScreen()); return; }
 if(authState === "pendingApproval"){ app.appendChild(pendingApprovalScreen()); return; }
+// CHI ARRIVA DA UN'EMAIL HA GIA' UN ACCOUNT. (20/08/2026.)
+// La schermata di benvenuto — «Registrati» / «Accedi» — e' per chi non si e'
+// mai iscritto. Chi ha appena verificato la sua email, o ha appena rifatto la
+// password, si e' iscritto eccome: offrirgli «Registrati» come primo tasto e'
+// mandarlo a rifare la cosa che ha appena finito di fare.
+// Sta PRIMA del controllo sul profilo e non al posto suo: quel controllo resta
+// giusto per tutti gli altri.
+if(arrivaDaEmail && authState === "needLogin"){ app.appendChild(loginScreen()); return; }
 if(!state.profile && !state.profileSkipped){
 if(state.screen === "profile-registration"){ app.appendChild(profileRegistrationScreen()); return; }
 app.appendChild(welcomeScreen()); return;
@@ -12384,7 +12406,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-avvio-senza-lampo";
+var BUILD_STAMP = "2026-08-20-ritorno-dall-email";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12393,7 +12415,7 @@ var BUILD_STAMP = "2026-08-20-avvio-senza-lampo";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-admin-a-schede";
+var BUILD_PARENT = "2026-08-20-avvio-senza-lampo";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -16454,6 +16476,33 @@ save(); render();
 pushNavGuard();
 }
 });
+
+// SI LEGGE L'INDIRIZZO PRIMA DI DISEGNARE. (20/08/2026.)
+// Fino a oggi `index.html` non leggeva NESSUN parametro dall'indirizzo: zero
+// `location.search` in tutto il file. Adesso ne legge due, e solo quelli che
+// ha scritto lui stesso in `actionSettings()`.
+function leggiRitornoEmail(){
+var q;
+try{ q = new URLSearchParams(window.location.search); }catch(e){ return false; }
+var lang = q.get("lang");
+// La lingua dell'indirizzo vale SOLO se qui non ce n'e' gia' una. Chi ha
+// gia' scelto in questo browser ha deciso piu' di recente di chi ha spedito
+// l'email: un indirizzo vecchio in un preferito non deve poter rigirare la
+// lingua a chi sta usando l'app.
+if(!state.lang && lang && Object.prototype.hasOwnProperty.call(LANG_TO_COUNTRY, lang)){
+state.lang = lang;
+try{ save(); }catch(e){}
+}
+var da = (q.get("da") === "email");
+// L'indirizzo si pulisce sempre, anche quando non c'era niente da prendere:
+// un `?da=email` che resta attaccato tornerebbe a ogni ricarica e a ogni
+// preferito, e manderebbe al login chi sta gia' usando l'app.
+if(lang || da){
+try{ window.history.replaceState({}, document.title, window.location.pathname); }catch(e){}
+}
+return da;
+}
+arrivaDaEmail = leggiRitornoEmail();
 
 // SI DISEGNA SUBITO, POI SI CHIEDE A FIREBASE CHI SEI. (20/08/2026.)
 // Prima l'unico render() dell'avvio arrivava da onAuthStateChanged, che va in
