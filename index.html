@@ -1957,6 +1957,34 @@ color:var(--text-2); font-size:1.1rem; line-height:1; cursor:pointer; }
 <a href="/termini.html" style="color:#315B35">Termini d'uso</a></p>
 </div>
 </noscript>
+
+<!-- IL TEMA PRIMA DELLA PRIMA PENNELLATA. (20/08/2026.)
+     `:root` E' il tema chiaro: senza classe su <body> la pagina nasce chiara.
+     Chi ha scuro o sole la vedeva nascere chiara e poi girare, perche'
+     applyTheme() sta DENTRO render(), cioe' dopo che il browser ha gia'
+     dipinto. Da fuori sono due caricamenti; da dentro e' una pennellata di
+     troppo.
+     Sta qui e non nel copione grosso perche' deve girare PRIMA che il
+     browser dipinga: il copione grosso parte a DOMContentLoaded, che e' gia'
+     tardi. Fa una cosa sola e non ne sa nessun'altra.
+     LA CHIAVE E' SCRITTA DUE VOLTE, qui e in `var STORAGE_KEY` piu' sotto, e
+     non c'e' modo di averne una sola: questo copione gira prima che quella
+     riga esista. Che le due combacino lo controlla `banco-avvio.js`, non la
+     memoria di chi legge. -->
+<script>
+(function(){
+try{
+var raw = localStorage.getItem("arctrail3d_state_v3");
+var th = raw ? (JSON.parse(raw) || {}).theme : null;
+// La stessa migrazione di normalizeTheme(): "elegante" e "satura" sono nomi
+// di temi che non esistono piu', e sul telefono di qualcuno sono ancora li'.
+if(th === "elegante" || th === "satura") th = "dark";
+if(th !== "dark" && th !== "sole") th = "light";
+document.body.classList.add("theme-" + th);
+}catch(e){ document.body.classList.add("theme-light"); }
+})();
+</script>
+
 <div id="app"></div>
 
 <script>
@@ -12356,7 +12384,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-admin-a-schede";
+var BUILD_STAMP = "2026-08-20-avvio-senza-lampo";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12365,7 +12393,7 @@ var BUILD_STAMP = "2026-08-20-admin-a-schede";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-19-chat-allenamento";
+var BUILD_PARENT = "2026-08-20-admin-a-schede";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -16427,6 +16455,16 @@ pushNavGuard();
 }
 });
 
+// SI DISEGNA SUBITO, POI SI CHIEDE A FIREBASE CHI SEI. (20/08/2026.)
+// Prima l'unico render() dell'avvio arrivava da onAuthStateChanged, che va in
+// rete: fino a quel momento #app era VUOTO. Chi apriva l'app vedeva una
+// pagina bianca, aspettava, e poi compariva tutto in una volta — che e'
+// esattamente come si racconta «sembra che si carichi due volte».
+// authState parte gia' a "loading", quindi questa riga disegna la schermata
+// d'attesa col marchio; e chi apre l'app per la prima volta non passa nemmeno
+// di li', perche' senza state.lang paintScreen() va dritto al primo passo.
+// *Un'attesa dichiarata e' un'attesa; un'attesa bianca e' un guasto.*
+render();
 initAuthFlow();
 });
 </script>
