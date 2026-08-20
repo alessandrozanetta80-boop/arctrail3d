@@ -1,8 +1,8 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-19-token-che-parla
-// Nata da: 2026-08-19-la-campanella-torna-a-suonare
+// Versione 2026-08-20-richiesta-che-suona
+// Nata da: 2026-08-19-token-che-parla
 //
-// Cinque funzioni, con cinque compiti diversi:
+// Sei funzioni, con sei compiti diversi:
 //
 //  1) sendNotification  (callable)  — SCRIVE la notifica.
 //     Prima scriveva il telefono, direttamente in notifications/{uid}/items.
@@ -34,6 +34,13 @@
 //     iscrive e resta in attesa. Aggiunta il 18/08/2026 insieme alla chiusura
 //     delle registrazioni: una porta richiusa senza campanello e' una porta
 //     murata, e chi aspetta non ha modo di farsi sentire.
+//
+//  6) avvisaRichiestaClub (trigger) — sveglia chi tiene l'app quando qualcuno
+//     chiede di gestire una compagnia. Aggiunta il 20/08/2026, e la ragione e'
+//     la stessa della (4) e della (5): la richiesta veniva scritta e finiva in
+//     un pannello che bisognava SAPERE di dover aprire. Un pannello che nessuno
+//     apre e' un cassetto, non un avviso — e la persona dall'altra parte
+//     aspetta senza sapere se qualcuno ha visto.
 //
 // ORDINE DI APPLICAZIONE, da rispettare:
 //   1) deploy di queste funzioni   (firebase deploy --only functions)
@@ -491,6 +498,62 @@ exports.avvisaSegnalazione = onDocumentCreated(
 // (`approved: true` alla nascita), questa funzione smette di suonare da sola,
 // senza che nessuno debba ricordarsi di spegnerla.
 // ─────────────────────────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6) RICHIESTA DI GESTIONE COMPAGNIA — la campanella di chi deve rispondere
+//
+// Scatta alla nascita di compagnie_admin_requests/{id}. Come la (3), la (4) e
+// la (5) NON manda una push da se': scrive la riga in notifications/{uid}/items
+// e lascia che sia la (2) a consegnarla. Una sola strada per consegnare, un
+// solo posto da cambiare se la consegna cambia.
+//
+// L'ID DEL DOCUMENTO E' QUELLO DELLA RICHIESTA, non uno nuovo. Il documento
+// della richiesta e' `{codice}_{uid}`, quindi due richieste della stessa
+// persona per la stessa compagnia danno lo stesso avviso: se una viene
+// respinta e rifatta, il campanello suona di nuovo (il create fallisce se la
+// riga c'e' gia', e non e' un errore da gridare — e' il doppione che non
+// vogliamo).
+// ─────────────────────────────────────────────────────────────────────────────
+
+exports.avvisaRichiestaClub = onDocumentCreated(
+  "compagnie_admin_requests/{reqId}",
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+    const r = snap.data() || {};
+
+    // Solo le richieste in attesa: una gia' approvata non ha niente da chiedere.
+    if (r.stato && r.stato !== "pending") return;
+
+    let adminUid = "";
+    try {
+      const a = await admin.auth().getUserByEmail(ADMIN_EMAIL);
+      adminUid = a.uid;
+    } catch (err) {
+      console.error("richiesta club " + event.params.reqId +
+                    ": nessun account per " + ADMIN_EMAIL + ", avviso non mandato", err);
+      return;
+    }
+    if (adminUid === r.richiedenteUid) return; // se la chiede lui, non si sveglia da solo
+
+    const chi = r.richiedenteName || r.richiedenteEmail || "senza nome";
+    const dettaglio = (r.richiedenteEmail && r.richiedenteEmail !== chi) ? r.richiedenteEmail : "";
+
+    await admin.firestore()
+      .collection("notifications").doc(adminUid).collection("items")
+      .doc("club-" + event.params.reqId)   // una richiesta, una campanella
+      .create({
+        title: "Richiesta gestione compagnia",
+        body: (r.codice || "?") + " \u2014 " + chi + (dettaglio ? " \u00B7 " + dettaglio : ""),
+        read: false,
+        apri: "admin",
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      })
+      .catch(function (err) {
+        console.error("avviso richiesta club non scritto per " + event.params.reqId, err);
+      });
+  }
+);
 
 exports.avvisaIscrizione = onDocumentCreated(
   "users/{uid}",

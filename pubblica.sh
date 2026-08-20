@@ -30,7 +30,7 @@ FUNZ="$CASA/functions"
 
 # Le funzioni che devono esserci. Se il file scaricato non le contiene tutte,
 # non e' il file giusto e il deploy cancellerebbe quelle mancanti.
-ATTESE="sendNotification pushNotifica avvisaRicerche avvisaSegnalazione avvisaIscrizione"
+ATTESE="sendNotification pushNotifica avvisaRicerche avvisaSegnalazione avvisaIscrizione avvisaRichiestaClub"
 
 rosso()  { printf '\033[31m%s\033[0m\n' "$*"; }
 verde()  { printf '\033[32m%s\033[0m\n' "$*"; }
