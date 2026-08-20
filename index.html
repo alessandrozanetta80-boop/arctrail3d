@@ -494,7 +494,7 @@ font-variant-numeric:tabular-nums slashed-zero; }
    mano e tutto il resto non ne aveva. */
 :where(button,a,input,select,textarea,[tabindex]):focus-visible{
 outline:2px solid var(--brand-soft); outline-offset:2px; border-radius:var(--r-sm); }
-#app{ max-width:520px; margin:0 auto; padding:18px 16px 32px; min-height:100dvh; position:relative; }
+#app{ max-width:520px; margin:0 auto; padding:16px 16px 32px; min-height:100dvh; position:relative; }
 /* ══════════════ LA BARRA IN ALTO ══════════════
    Tre regole, e da queste discende tutto il resto. Non c'e' una soglia
    per modello di telefono: se ne serve una, vuol dire che la regola e'
@@ -618,7 +618,7 @@ padding:0 12px; background:none; border:none; border-radius:var(--r-xs); cursor:
 color:var(--cream); font-family:inherit; font-size:0.92rem; font-weight:600; text-align:left; }
 .bar-menu-item:active{ background:var(--bg-panel-2); }
 .bar-menu-item > svg{ flex:0 0 auto; color:var(--muted); }
-.bar-menu-count{ margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:var(--r-sm);
+.bar-menu-count{ margin-left:auto; min-width:20px; height:20px; padding:0 4px; border-radius:var(--r-sm);
 background:var(--danger); color:#fff; font-size:0.66rem; font-weight:800;
 display:flex; align-items:center; justify-content:center; }
 header.top .brand-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-sm); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
@@ -630,11 +630,29 @@ height:44px; padding:0 16px; font-size:0.88rem; font-weight:700; cursor:pointer;
 display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; flex:0 0 auto;
 line-height:1; letter-spacing:0.01em; }
 .home-btn:active{ transform:scale(0.97); }
-.home-btn.small{ font-size:0.8rem; padding:0 13px; }
+.home-btn.small{ font-size:0.8rem; padding:0 12px; }
+/* IL RIQUADRO. (Rivisto il 20/08/2026, guardando l'app invece di leggerla.)
+   ATTENZIONE A DOVE SI SCRIVE: questa e' la regola che comanda SUL TELEFONO.
+   Piu' sotto ce n'e' un'altra uguale dentro `@media (min-width:900px)`, ed e'
+   solo per lo schermo largo. La prima stesura di queste decisioni era finita
+   li' dentro: nel file sembrava giusta e sul telefono non faceva niente.
+   *Una regola scritta nel media sbagliato non e' un errore che si legge: e'
+   un errore che si fotografa.*
+
+   - La riga d'oro stava in cima a OGNI riquadro. Un accento che c'e' sempre
+     non e' un accento: e' una cornice.
+   - L'ombra passa da --elev-2 a --elev-1: la profondita' viene dalla
+     superficie e dal filo, non dal buio sotto ogni cosa. */
 .card{ background:var(--surface-1); border:1px solid var(--border); border-radius:var(--r-lg);
-padding:var(--s-4); margin-bottom:var(--s-4); box-shadow:var(--elev-2);
-border-top:2px solid color-mix(in srgb, var(--gold-role) 45%, transparent);
+padding:var(--s-4); margin-bottom:var(--s-4); box-shadow:var(--elev-1);
 position:relative; z-index:1; }
+
+/* IL RIQUADRO ATTORNO ALLE AZIONI NON C'E' PIU'. (20/08/2026.)
+   Le piastrelle hanno gia' un bordo loro, e stavano dentro un riquadro che ne
+   aveva un altro; con l'icona, che ne ha un terzo, erano TRE cornici
+   annidate. Qui, di primo livello, vale anche sul telefono. */
+.menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
+  background:transparent; border:0; box-shadow:none; padding:0; }
 h2.section-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 12px; }
 .btn{ display:inline-flex; align-items:center; justify-content:center; gap:var(--s-2);
 border-radius:var(--r-md); padding:14px var(--s-4); min-height:var(--hit);
@@ -652,7 +670,7 @@ transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--eas
    disattivati. Superficie propria + bordo forte, in tutti i temi. */
 .btn-ghost{ background:var(--surface-2); border:1.5px solid var(--border-strong); color:var(--text-1); }
 .btn-ghost .menu-sub{ color:var(--text-3); }
-.btn-sm{ padding:9px 14px; font-size:0.85rem; }
+.btn-sm{ padding:8px 12px; font-size:0.85rem; }
 .btn-danger{ background:var(--danger); border-color:transparent; color:#fff; }
 .btn-ghost-danger{ background:color-mix(in srgb, var(--danger-role) 12%, var(--surface-1)); border:1.5px solid color-mix(in srgb, var(--danger-role) 55%, transparent); color:var(--danger-role); }
 .btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
@@ -681,7 +699,44 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
    Erano tre bianchi scritti a mano, e con le pastiglie accese il bianco non
    reggeva piu': 2,3 sul verde e 2,3 sull'oro. Con --solid-ink si sta fra 6 e
    8 in tutti e tre i temi. */
-.menu-btn.training .menu-icon{ background:var(--tone-train-solid); color:var(--solid-ink); }
+/* LE TRE AZIONI NON PESANO UGUALE. (20/08/2026, deciso guardando le foto.)
+
+   L'allenamento e' quello che si fa nove volte su dieci, e lo schermo lo deve
+   dire: pieno di verde, il nome un gradino piu' grande. *La primazia la fa il
+   pieno, non la mole* — una prima versione lo aveva anche fatto piu' alto, e
+   il risultato era un vuoto morto dentro il verde e una colonna PIU' LUNGA di
+   prima, che per una mano sola e' un peggioramento.
+
+   LA GARA TIENE IL SUO ARANCIO, MA SUL CONTORNO. Toglierlo del tutto era la
+   proposta, e Alessandro ha detto che gli mancava: aveva ragione, l'arancio
+   e' la gara e si e' imparato a riconoscerlo. Ma pieno contro pieno i due
+   colori litigavano e non c'era piu' nessuna gerarchia. Sul contorno dice
+   «gara» senza gridare piu' forte di quello che si fa sempre.
+   *Il colore non era il problema: era il peso.* */
+.menu-btn.training{ background:var(--brand); border-color:var(--brand); }
+.menu-btn.training .menu-txt, .menu-btn.training .menu-sub{ color:var(--brand-ink); }
+.menu-cols .card > .menu-btn.training{ justify-content:center; }
+.menu-cols .card > .menu-btn.training .menu-txt{ font-size:var(--t-xl); }
+.menu-btn.training .menu-icon{
+  background:color-mix(in srgb, var(--brand-ink) 20%, transparent);
+  color:var(--brand-ink);
+  border:1px solid color-mix(in srgb, var(--brand-ink) 40%, transparent); }
+.menu-btn.gara{ background:transparent;
+  border-color:color-mix(in srgb, var(--tone-race-solid) 72%, transparent); }
+/* L'icona della gara resta PIENA di arancio, e non e' una svista: un solo
+   elemento arancio dentro un contorno arancio dice «gara» con forza, senza
+   che l'intera piastrella gridi. Una versione col contorno vuoto era stata
+   scritta e non si applicava nemmeno (la regola qui sotto la vinceva): tolta,
+   perche' una regola morta racconta una bugia a chi legge dopo. */
+
+/* UN AVVISO DI CHIUSURA NON DEVE PESARE COME UN'AZIONE APERTA. (20/08/2026.)
+   «Prepara gara» chiuso era una cornice tratteggiata alta quanto l'azione
+   principale, centrata, con l'icona grande: diceva «guardami», e non c'e'
+   niente da guardare. Adesso e' una nota, e sta a sinistra come si legge. */
+.riga-chiusa{ margin-top:var(--s-2); padding:var(--s-3);
+  border:1px dashed var(--line); border-radius:var(--r-md);
+  font-size:var(--t-sm); line-height:1.45; color:var(--muted); }
+.riga-chiusa b{ display:block; font-weight:700; color:var(--text-2); margin-bottom:var(--s-1); }
 .menu-btn.gara .menu-icon{ background:var(--tone-race-solid); color:var(--solid-ink); }
 .menu-btn.prepara .menu-icon{ background:var(--tone-prep-solid); color:var(--solid-ink); }
 .menu-btn .menu-txt{ color:var(--text-1); }
@@ -751,7 +806,7 @@ font-size:var(--t-sm); font-weight:600; }
 .card .menu-btn.btn-ghost::after{
 content:"\203a"; flex:0 0 auto; color:var(--text-3);
 font-size:var(--t-lg); line-height:1; }
-.row{ display:flex; gap:10px; }
+.row{ display:flex; gap:var(--s-2); }
 .chip-group{ display:flex; gap:var(--s-2); flex-wrap:wrap; }
 .chip{ flex:1 1 0; min-width:0; min-height:var(--hit); text-align:center; padding:12px var(--s-1); border-radius:var(--r-sm); border:1.5px solid var(--border-strong); background:var(--surface-2); color:var(--text-1); font-family:inherit; font-weight:700; cursor:pointer; white-space:normal; overflow-wrap:break-word; line-height:1.2; transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
 .chip.active{ background:var(--brand); color:var(--brand-ink); border-color:var(--brand); }
@@ -765,21 +820,21 @@ border-color:color-mix(in srgb, currentColor 62%, transparent); }
 }
 .chip .chip-sub{ display:block; font-size:0.62rem; font-weight:500; text-transform:none; letter-spacing:0; margin-top:2px; opacity:0.8; }
 .lang-chip{ min-width:60px; }
-.lang-pick-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:16px 20px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; transition:transform .12s ease, border-color .12s ease; }
+.lang-pick-btn{ display:flex; align-items:center; gap:var(--s-3); width:100%; padding:16px 20px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:1.05rem; color:var(--cream); cursor:pointer; text-align:left; transition:transform .12s ease, border-color .12s ease; }
 .lang-pick-btn:active{ transform:scale(0.98); }
 .lang-pick-btn .flag{ font-size:1.6rem; line-height:1; }
 .lang-pick-btn:hover, .lang-pick-btn:focus{ border-color:var(--accent-soft); }
-.onboard-title{ font-size:1.35rem; color:var(--accent-soft); margin:2px 0 6px; }
-.onboard-sub{ color:var(--muted); font-size:0.82rem; margin-bottom:26px; }
-.onboard-stack{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px; }
-.grid-stack{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; width:100%; max-width:320px; }
+.onboard-title{ font-size:1.35rem; color:var(--accent-soft); margin:2px 0 4px; }
+.onboard-sub{ color:var(--muted); font-size:0.82rem; margin-bottom:var(--s-5); }
+.onboard-stack{ display:flex; flex-direction:column; gap:var(--s-2); width:100%; max-width:300px; }
+.grid-stack{ display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s-2); width:100%; max-width:320px; }
 .grid-pick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--s-1); padding:16px 4px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); font-weight:700; font-size:0.8rem; color:var(--cream); cursor:pointer; text-align:center; transition:transform .12s ease, border-color .12s ease; }
 .grid-pick-btn:active{ transform:scale(0.95); }
 .grid-pick-btn:hover, .grid-pick-btn:focus{ border-color:var(--accent-soft); }
 .grid-pick-btn .flag{ font-size:1.7rem; line-height:1; }
 input[type=text], input[type=number], input[type=email], input[type=tel],
 input[type=password], input[type=search], textarea, select{
-width:100%; padding:13px 14px; min-height:var(--hit); border-radius:var(--r-sm);
+width:100%; padding:12px 12px; min-height:var(--hit); border-radius:var(--r-sm);
 border:1.5px solid var(--border-strong); background:var(--surface-1); color:var(--text-1);
 font-family:inherit; font-size:var(--t-md);
 transition:border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
@@ -829,19 +884,19 @@ textarea.input-field{ resize:none; }
 .gruppo-card h4{ margin:0 0 4px; }
 
 .archer-list{ margin-top:var(--s-3); display:flex; flex-direction:column; gap:var(--s-2); }
-.archer-row{ display:flex; align-items:center; justify-content:space-between; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-xs); padding:10px 12px; }
+.archer-row{ display:flex; align-items:center; justify-content:space-between; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-xs); padding:8px 12px; }
 .archer-row .name{ font-weight:600; }
-.remove-x{ background:none;border:none;color:var(--danger);font-size:1.2rem;cursor:pointer;line-height:1; padding:4px 6px; }
-.progress-wrap{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
-.progress-track{ height:8px; background:var(--bg-panel-2); border-radius:var(--r-xs); overflow:hidden; margin-bottom:14px; position:relative; }
+.remove-x{ background:none;border:none;color:var(--danger);font-size:1.2rem;cursor:pointer;line-height:1; padding:4px 4px; }
+.progress-wrap{ display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--s-1); }
+.progress-track{ height:8px; background:var(--bg-panel-2); border-radius:var(--r-xs); overflow:hidden; margin-bottom:var(--s-3); position:relative; }
 /* Il riflesso che scorreva in eterno e' stato tolto: diceva "sto caricando"
    a una barra che non carica niente — misura quanti bersagli hai fatto.
    Il movimento resta dov'e' l'informazione: la larghezza che cresce. */
 .progress-fill{ height:100%; width:var(--pct,0%); background:linear-gradient(90deg,var(--brand-soft),var(--gold-role));
 border-radius:var(--r-sm); transition:width var(--dur-3) var(--ease); }
-.partial-card{ padding:12px 14px; margin-bottom:14px; }
+.partial-card{ padding:12px 12px; margin-bottom:var(--s-3); }
 .partial-title{ font-size:0.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:var(--s-2); }
-.partial-row{ display:flex; justify-content:space-between; align-items:center; padding:5px 0; font-size:0.92rem; }
+.partial-row{ display:flex; justify-content:space-between; align-items:center; padding:4px 0; font-size:0.92rem; }
 .partial-row + .partial-row{ border-top:1px solid var(--line); }
 .partial-row .pname{ font-weight:600; }
 .partial-row.leader .pname{ color:var(--accent-soft); }
@@ -849,9 +904,9 @@ border-radius:var(--r-sm); transition:width var(--dur-3) var(--ease); }
 .target-stage{ text-align:center; }
 .archer-turn{ font-size:0.75rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
 .archer-name-big{ font-size:var(--t-xl); margin-bottom:var(--s-2); font-family:var(--font-display); font-weight:700; letter-spacing:0.01em; text-wrap:balance; }
-.arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:var(--r-pill); margin-bottom:var(--s-3); }
-.mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:3px 10px; border-radius:var(--r-pill); margin-bottom:7px; text-transform:uppercase; letter-spacing:.05em; }
-.piazzola-hero{ margin-bottom:6px; }
+.arrow-badge{ display:inline-block; background:var(--bg-panel-2); border:2px solid var(--line); color:var(--gold); font-size:0.72rem; font-weight:800; padding:4px 8px; border-radius:var(--r-pill); margin-bottom:var(--s-3); }
+.mode-badge{ display:inline-block; background:var(--bg-panel-2); border:1px solid var(--line); color:var(--muted); font-size:0.68rem; font-weight:600; padding:4px 8px; border-radius:var(--r-pill); margin-bottom:var(--s-2); text-transform:uppercase; letter-spacing:.05em; }
+.piazzola-hero{ margin-bottom:var(--s-1); }
 .piazzola-hero-lbl{ font-size:0.7rem; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin-bottom:0px; }
 .piazzola-num{ font-size:var(--t-2xl); font-weight:800; color:var(--clay); font-family:var(--font-num); font-variant-numeric:tabular-nums; line-height:1; position:relative; display:inline-block; }
 .piazzola-num::before{ content:""; position:absolute; left:50%; top:50%; width:120px; height:120px; transform:translate(-50%,-50%); border-radius:50%;
@@ -867,7 +922,7 @@ background:radial-gradient(circle, rgba(232,114,47,0.16), transparent 70%); z-in
    Vale per i comandi, MAI per i campi di testo: li' selezionare serve. */
 button, .btn, .quick-btn, .firma-riga, .turno-badge, .fatta, .menu-btn{
 user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
-.quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:92px; padding:var(--s-2) var(--s-1); gap:3px; position:relative; overflow:visible; border-radius:var(--r-lg); line-height:1.15; font-family:inherit; cursor:pointer; transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease); }
+.quick-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:92px; padding:var(--s-2) var(--s-1); gap:var(--s-1); position:relative; overflow:visible; border-radius:var(--r-lg); line-height:1.15; font-family:inherit; cursor:pointer; transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease); }
 .quick-btn:active{ transform:scale(0.94) translateY(2px); }
 /* Erano clamp(0.5rem, …): otto pixel, in maiuscoletto, sul controllo piu'
    importante dell'app — quello pensato per essere letto al sole, in piedi.
@@ -887,8 +942,8 @@ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
 .quick-btn.perfect{ background:var(--score-perfect); }
 .quick-btn.zero{ background:var(--score-zero); }
 .quick-hint{ text-align:center; font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
-.stats-row{ display:flex; gap:var(--s-2); margin-bottom:14px; }
-.stat-box{ flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:10px 6px; }
+.stats-row{ display:flex; gap:var(--s-2); margin-bottom:var(--s-3); }
+.stat-box{ flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:8px 4px; }
 .stat-box .stat-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.5rem; color:var(--brand-soft); }
 .stat-box .stat-lbl{ font-size:0.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:2px; }
 .timer-box{ margin:var(--s-2) 0 var(--s-5); }
@@ -896,8 +951,8 @@ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
    dell'app, quindi al sole non lo si scambia per "gara" o "prepara". */
 .timer-idle{ background:var(--timer-idle-bg); border:1.5px solid var(--timer-idle-bd);
 border-radius:var(--r-xl); padding:var(--s-5); text-align:center; }
-.timer-idle-row{ display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:14px; }
-.timer-idle .btn-sm{ padding:4px 9px; min-width:0; }
+.timer-idle-row{ display:flex; align-items:center; justify-content:center; gap:var(--s-2); margin-bottom:var(--s-3); }
+.timer-idle .btn-sm{ padding:4px 8px; min-width:0; }
 .timer-dur{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:700; font-size:var(--t-xl); color:var(--timer-idle-fg); min-width:80px; text-align:center; }
 .timer-start-btn{ width:100%; }
 /* In corsa: tinta piena, non un alone. L'alone era una box-shadow di 34px che
@@ -918,17 +973,17 @@ margin-bottom:var(--s-4); transition:color var(--dur-3) var(--ease); }
 .timer-num.timer-warn{ color:var(--timer-warn-fg); }
 .timer-num.timer-danger{ color:var(--timer-dgr-fg); }
 .timer-pause-btn{ width:100%; }
-.shots-strip{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:14px 0 4px; }
-.shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-pill); padding:5px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
+.shots-strip{ display:flex; gap:var(--s-1); justify-content:center; flex-wrap:wrap; margin:12px 0 4px; }
+.shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-pill); padding:4px 12px; font-size:0.8rem; font-weight:700; color:var(--cream); }
 table.score-table{ width:100%; border-collapse:collapse; font-size:0.85rem; }
-table.score-table th, table.score-table td{ padding:8px 6px; text-align:center; border-bottom:1px solid var(--line); }
+table.score-table th, table.score-table td{ padding:8px 4px; text-align:center; border-bottom:1px solid var(--line); }
 table.score-table th{ color:var(--muted); font-weight:600; font-size:0.7rem; text-transform:uppercase; letter-spacing:.05em; }
 table.score-table td.name-col, table.score-table th.name-col{ text-align:left; }
-.piazz-flow{ display:flex; flex-direction:column; gap:10px; }
-.piazz-card{ display:flex; align-items:center; gap:14px; background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--r-lg); padding:12px 16px; box-shadow:0 2px 8px rgba(0,0,0,0.18); }
+.piazz-flow{ display:flex; flex-direction:column; gap:var(--s-2); }
+.piazz-card{ display:flex; align-items:center; gap:var(--s-3); background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--r-lg); padding:12px 16px; box-shadow:0 2px 8px rgba(0,0,0,0.18); }
 .piazz-card-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:1.25rem; color:var(--bark); min-width:30px; text-align:center; flex:0 0 auto; }
-.piazz-card-right{ display:flex; flex-wrap:wrap; gap:14px; flex:1; }
-.ring-item{ display:flex; flex-direction:column; align-items:center; gap:3px; }
+.piazz-card-right{ display:flex; flex-wrap:wrap; gap:var(--s-3); flex:1; }
+.ring-item{ display:flex; flex-direction:column; align-items:center; gap:var(--s-1); }
 .ring-badge{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.92rem; color:var(--ring-ink);
 background: repeating-radial-gradient(circle at center, var(--ring-bg-a) 0px, var(--ring-bg-a) 4px, var(--ring-bg-b) 4px, var(--ring-bg-b) 7px, var(--ring-bg-a) 7px, var(--ring-bg-a) 11px, var(--ring-bg-b) 11px 14px, var(--ring-bg-a) 14px 17px);
 border:2px solid var(--bark); flex:0 0 auto; }
@@ -981,35 +1036,35 @@ align-items:center; text-align:center; padding:var(--s-3) 0; }
 font-family:var(--font-display); font-size:var(--t-lg); font-weight:700;
 color:var(--success-role); }
 .scheda-fatta .sf-quando{ font-size:var(--t-xs); color:var(--text-3); }
-.footer-note{ text-align:center; color:var(--muted); font-size:0.72rem; margin-top:18px; line-height:1.5; }
-.rules-panel{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 14px; margin-top:var(--s-3); font-size:0.78rem; line-height:1.6; }
+.footer-note{ text-align:center; color:var(--muted); font-size:0.72rem; margin-top:var(--s-4); line-height:1.5; }
+.rules-panel{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 12px; margin-top:var(--s-3); font-size:0.78rem; line-height:1.6; }
 .rules-panel .rp-title{ font-weight:700; color:var(--cream); margin-bottom:var(--s-1); }
-.resume-banner{ background:var(--bg-panel-2); border:1px dashed var(--accent-soft); border-radius:var(--r-md); padding:14px; margin-bottom:var(--s-4); font-size:0.88rem; }
-.install-hint{ background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:var(--r-xs); padding:12px 14px; font-size:0.8rem; line-height:1.5; color:var(--cream); margin-bottom:var(--s-4); }
+.resume-banner{ background:var(--bg-panel-2); border:1px dashed var(--accent-soft); border-radius:var(--r-md); padding:var(--s-3); margin-bottom:var(--s-4); font-size:0.88rem; }
+.install-hint{ background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:var(--r-xs); padding:12px 12px; font-size:0.8rem; line-height:1.5; color:var(--cream); margin-bottom:var(--s-4); }
 .install-hint b{ color:var(--accent-soft); }
-.empty-hint{ color:var(--muted); font-size:0.85rem; text-align:center; padding:10px 0; }
-.empty-state-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-left:3px solid var(--accent-soft); border-radius:14px; padding:20px 18px; }
+.empty-hint{ color:var(--muted); font-size:0.85rem; text-align:center; padding:8px 0; }
+.empty-state-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-left:3px solid var(--accent-soft); border-radius:14px; padding:20px 16px; }
 .empty-state-icon{ width:40px; height:40px; border-radius:50%; background:rgba(96,169,102,0.20); color:var(--accent-soft); display:flex; align-items:center; justify-content:center; margin-bottom:var(--s-3); }
 .empty-state-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-lg); margin-bottom:var(--s-2); text-wrap:balance; }
 .empty-state-body{ font-size:0.85rem; color:var(--muted); line-height:1.55; margin-bottom:var(--s-4); }
-.editorial-block{ text-align:center; padding:22px 10px; }
-.editorial-icon{ width:44px; height:44px; border-radius:50%; background:var(--qsag); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.editorial-block{ text-align:center; padding:20px 8px; }
+.editorial-icon{ width:44px; height:44px; border-radius:50%; background:var(--qsag); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; }
 .editorial-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-lg); line-height:1.45; margin-bottom:var(--s-3); text-wrap:balance; }
 .editorial-body{ font-size:0.84rem; color:var(--muted); line-height:1.6; max-width:360px; margin:0 auto; }
-.timeline-row{ display:flex; align-items:center; gap:var(--s-3); padding:10px 12px; background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:var(--r-sm); margin-bottom:var(--s-2); }
+.timeline-row{ display:flex; align-items:center; gap:var(--s-3); padding:8px 12px; background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:var(--r-sm); margin-bottom:var(--s-2); }
 .timeline-icon{ width:30px; height:30px; border-radius:50%; background:rgba(96,169,102,0.20); color:var(--accent-soft); display:flex; align-items:center; justify-content:center; flex:none; }
 .timeline-content{ flex:1; display:flex; flex-direction:column; min-width:0; }
 .timeline-meta{ font-size:0.78rem; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .timeline-result{ font-size:0.85rem; font-weight:800; color:var(--gold); flex:none; }
-.section-block-header{ font-size:0.68rem; text-transform:uppercase; letter-spacing:.08em; font-weight:800; padding:4px 10px; border-radius:var(--r-pill); display:inline-block; margin-bottom:10px; }
-.splash-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:82dvh; text-align:center; gap:6px; }
+.section-block-header{ font-size:0.68rem; text-transform:uppercase; letter-spacing:.08em; font-weight:800; padding:4px 8px; border-radius:var(--r-pill); display:inline-block; margin-bottom:var(--s-2); }
+.splash-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:82dvh; text-align:center; gap:var(--s-1); }
 .splash-logo{ width:160px; height:160px; margin-bottom:var(--s-3); filter:drop-shadow(0 8px 20px color-mix(in srgb, var(--brand) 35%, transparent)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
 .splash-title{ font-size:2.1rem; color:var(--accent-soft); margin:0; animation:splashUp .6s ease .15s both; }
-.splash-tag{ color:var(--muted); font-size:0.85rem; margin-bottom:26px; letter-spacing:.03em; animation:splashUp .6s ease .3s both; }
+.splash-tag{ color:var(--muted); font-size:0.85rem; margin-bottom:var(--s-5); letter-spacing:.03em; animation:splashUp .6s ease .3s both; }
 .splash-wrap .btn{ min-width:200px; padding:16px 24px; font-size:1.05rem; animation:splashUp .6s ease .45s both; }
 @keyframes splashLogo{ 0%{ opacity:0; transform:scale(0.6) rotate(-8deg); } 100%{ opacity:1; transform:scale(1) rotate(0deg); } }
 @keyframes splashUp{ 0%{ opacity:0; transform:translateY(14px); } 100%{ opacity:1; transform:translateY(0); } }
-.big-target-num{ font-size:var(--t-3xl); font-weight:800; color:var(--brand-soft); font-family:var(--font-num); font-variant-numeric:tabular-nums; margin:4px 0 10px; line-height:1; position:relative; display:inline-block; }
+.big-target-num{ font-size:var(--t-3xl); font-weight:800; color:var(--brand-soft); font-family:var(--font-num); font-variant-numeric:tabular-nums; margin:4px 0 8px; line-height:1; position:relative; display:inline-block; }
 .big-target-num::before{ content:""; position:absolute; left:50%; top:50%; width:180px; height:180px; transform:translate(-50%,-50%); border-radius:50%;
 background:radial-gradient(circle, rgba(96,169,102,0.20), transparent 70%); z-index:-1; }
 .leaf-burst{ position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:5; }
@@ -1040,13 +1095,13 @@ saltava da 1060 a 660 e si portava dietro testata, insegna e sfondo, che con la
 lunghezza della riga non c'entrano niente. Adesso il guscio ha una misura sola
 per tutte le schermate e la colonna di lettura vive dentro. */
 @media (min-width:760px){
-#app{ max-width:900px; padding:20px 26px 44px; }
+#app{ max-width:900px; padding:20px 24px 44px; }
 #app.narrow > :not(header.top){ width:100%; max-width:620px; margin-left:auto; margin-right:auto; }
 header.top{ height:72px; margin-bottom:20px; }
 header.top .logo{ width:56px; height:56px; }
 header.top h1{ font-size:1.2rem; }
 header.top .sub{ font-size:0.76rem; }
-.card{ padding:20px 22px; }
+.card{ padding:20px 20px; }
 .editorial-body{ max-width:520px; }
 }
 /* Le due colonne sono state tolte il 13/08: menuScreen incorpora interi
@@ -1083,7 +1138,7 @@ margin-top:0; margin-bottom:var(--s-4); margin-left:0; margin-right:0;
 .tabbar-wide > button{ min-height:var(--hit); }
 /* il titolo non deve piu' mangiarsi la riga: lo spazio va alle sezioni */
 header.top .headtxt{ flex:0 0 auto; }
-.tabbar-wide{ flex:1 1 420px; flex-wrap:wrap; justify-content:center; gap:3px; }
+.tabbar-wide{ flex:1 1 420px; flex-wrap:wrap; justify-content:center; gap:var(--s-1); }
 /* Qui stavano due regole che mandavano le sezioni a capo quando la colonna era
 stretta (`#app.narrow header.top .head-actions{order:1}` e la gemella su
 .tabbar-wide). Tolte nella notte fra il 17 e il 18/08 insieme al guscio che si stringeva: adesso
@@ -1115,49 +1170,49 @@ table.score-table{ font-size:0.8rem; }
 table.score-table th, table.score-table td{ border:1px solid #999 !important; }
 .ring-badge, .piazz-card-num{ border:1px solid #999 !important; background:#f2f2f2 !important; }
 .print-signatures{ display:flex !important; gap:var(--s-5); margin-top:28px; }
-.print-signatures div{ flex:1; border-top:1px solid #333; padding-top:6px; font-size:0.78rem; text-align:center; }
-.print-header{ display:block !important; text-align:center; margin-bottom:14px; }
+.print-signatures div{ flex:1; border-top:1px solid #333; padding-top:var(--s-1); font-size:0.78rem; text-align:center; }
+.print-header{ display:block !important; text-align:center; margin-bottom:var(--s-3); }
 }
 .print-signatures, .print-header{ display:none; }
 /* ---------- COMPAGNIE ---------- */
 .cp-select-row{ margin-bottom:var(--s-3); }
-.cp-select-row label{ display:block; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:5px; }
+.cp-select-row label{ display:block; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:var(--s-1); }
 .cp-select-row select{ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.95rem; }
 .cp-info-row{ display:flex; align-items:center; gap:var(--s-2); font-size:0.82rem; color:var(--cream); padding:4px 0; }
 .cp-info-row a{ color:var(--accent-soft); text-decoration:none; font-weight:600; }
 .cp-info-row.placeholder{ color:var(--muted); font-style:italic; }
-.cp-percorso-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-lg); padding:14px 16px; margin-bottom:10px; cursor:pointer; }
+.cp-percorso-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-lg); padding:12px 16px; margin-bottom:var(--s-2); cursor:pointer; }
 .cp-percorso-top{ display:flex; justify-content:space-between; align-items:center; }
 .cp-percorso-top h3{ margin:0; font-size:1rem; }
 .cp-percorso-meta{ font-size:0.72rem; color:var(--muted); margin-top:2px; }
 .cp-chev{ color:var(--muted); transition:transform .15s; }
 .cp-percorso-card.open .cp-chev{ transform:rotate(90deg); color:var(--accent-soft); }
-.cp-risultati{ margin-top:10px; border-top:1px solid var(--line); padding-top:10px; display:none; }
+.cp-risultati{ margin-top:var(--s-2); border-top:1px solid var(--line); padding-top:var(--s-2); display:none; }
 .cp-percorso-card.open .cp-risultati{ display:block; }
-.cp-risultato-row{ display:flex; justify-content:space-between; align-items:center; padding:6px 0; font-size:0.85rem; }
-.cp-bow-chip{ font-size:0.6rem; font-weight:800; padding:2px 7px; border-radius:var(--r-xs); color:#fff; text-transform:uppercase; margin-left:6px; }
+.cp-risultato-row{ display:flex; justify-content:space-between; align-items:center; padding:4px 0; font-size:0.85rem; }
+.cp-bow-chip{ font-size:0.6rem; font-weight:800; padding:2px 8px; border-radius:var(--r-xs); color:#fff; text-transform:uppercase; margin-left:var(--s-1); }
 .cp-bow-chip.compound{ background:var(--accent); color:var(--accent-ink); }
 .cp-bow-chip.ricurvo{ background:var(--bark); }
 .cp-bow-chip.longbow{ background:var(--bow-longbow); }
 .cp-bow-chip.storico{ background:var(--bow-storico); }
-.cp-class-tabs{ display:flex; gap:6px; margin-bottom:var(--s-3); flex-wrap:wrap; }
-.cp-class-row{ display:flex; align-items:center; gap:10px; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-sm); padding:9px 12px; margin-bottom:7px; }
+.cp-class-tabs{ display:flex; gap:var(--s-1); margin-bottom:var(--s-3); flex-wrap:wrap; }
+.cp-class-row{ display:flex; align-items:center; gap:var(--s-2); background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-sm); padding:8px 12px; margin-bottom:var(--s-2); }
 .cp-class-row .cp-pos{ width:22px; text-align:center; font-weight:800; color:var(--muted); flex:0 0 auto; }
 .cp-class-row .cp-nome{ flex:1; font-weight:700; font-size:0.85rem; }
 .cp-class-row .cp-punti{ font-weight:800; color:var(--gold); flex:0 0 auto; }
-.cp-tag{ font-size:0.6rem; font-weight:700; color:var(--accent-soft); background:var(--bg-panel); border:1px solid var(--line); padding:1px 5px; border-radius:var(--r-xs); margin-left:5px; }
-.cp-percorso-title{ font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:14px 0 6px; }
+.cp-tag{ font-size:0.6rem; font-weight:700; color:var(--accent-soft); background:var(--bg-panel); border:1px solid var(--line); padding:1px 4px; border-radius:var(--r-xs); margin-left:var(--s-1); }
+.cp-percorso-title{ font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:12px 0 4px; }
 /* ---------- HOME / PROFILO ---------- */
 .cp-select-row select, .cp-select-row input[type=text], .cp-select-row input[type=email]{
 width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.95rem;
 }
-.pf-fed-row{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:10px 12px; margin-bottom:var(--s-2); }
+.pf-fed-row{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:8px 12px; margin-bottom:var(--s-2); }
 .pf-fed-check{ display:flex; align-items:center; gap:var(--s-2); font-size:0.9rem; font-weight:600; cursor:pointer; }
 .pf-fed-check input{ width:17px; height:17px; accent-color:var(--accent-soft); outline:1.5px solid var(--checkbox-border); outline-offset:2px; border-radius:3px; }
 .pf-tessera{ margin-top:var(--s-2); display:none; }
 .pf-tessera.show{ display:block; }
 .pf-tessera label{ font-size:0.68rem; color:var(--muted); font-weight:700; margin-bottom:var(--s-1); display:block; text-transform:uppercase; letter-spacing:.05em; }
-.pf-tessera input{ width:100%; padding:9px 10px; border-radius:var(--r-xs); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.85rem; }
+.pf-tessera input{ width:100%; padding:8px 8px; border-radius:var(--r-xs); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:0.85rem; }
 .cp-vuoto{ font-size:var(--t-sm); color:var(--text-3); line-height:1.5; margin:0 0 var(--s-3); }
 
 /* ---------- IL CAMPO CON L'OCCHIO ----------
@@ -1213,7 +1268,7 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    Sta qui e non in un avviso volante di proposito: il messaggio deve restare
    attaccato alla cosa che non ha funzionato, e va letto con calma — su un
    telefono nessuno apre la console per scoprire un permission-denied. */
-.notif-errore{ font-size:var(--t-xs); color:var(--danger-role); margin-top:6px; }
+.notif-errore{ font-size:var(--t-xs); color:var(--danger-role); margin-top:var(--s-1); }
 /* La prova della campanella, nel profilo. `pre-line` perche' l'esito e' fatto
    di righe corte una sotto l'altra — l'anello e il suo stato — e sono piu'
    leggibili incolonnate che infilate in un paragrafo. */
@@ -1372,7 +1427,7 @@ body{
 }
 html{ scroll-behavior:smooth; }
 html.no-smooth{ scroll-behavior:auto; }
-#app{ max-width:1060px; padding:20px 34px 76px; }
+#app{ max-width:1060px; padding:20px 32px 76px; }
 /* La colonna di lettura, non il guscio: vedi la nota nel blocco dei 760px.
    `> :not(header.top)` colpisce il nodo della schermata e basta — l'insegna
    resta larga, e sotto i 760px la barra in fondo non e' toccata perche' vive
@@ -1417,11 +1472,17 @@ header.top .home-btn.small:hover{ background:color-mix(in srgb, var(--clay) 88%,
 .tabbar-wide button:hover > svg{ transform:translateY(-1px); }
 
 /* ── 4. I riquadri ───────────────────────────────────────────────────── */
+/* IL RIQUADRO, secondo giro. (20/08/2026, dopo aver GUARDATO la schermata
+   invece di contarla.)
+   - La riga d'oro stava in cima a OGNI riquadro. *Un accento che c'e' sempre
+     non e' un accento: e' una cornice.* Adesso e' un filo come gli altri.
+   - L'ombra era 44px di sfocatura sotto ogni cosa. La profondita' viene dalla
+     superficie e dal filo, non dal buio.
+   - Il raggio era 18: fra --r-lg (16) e --r-xl (20), cioe' su nessun gradino. */
 .card{
-  border-radius:18px; padding:22px 24px; margin-bottom:var(--s-4);
+  border-radius:var(--r-lg); padding:20px 24px; margin-bottom:var(--s-4);
   border:1px solid var(--border);
-  border-top:2px solid color-mix(in srgb, var(--gold-role) 42%, transparent);
-  box-shadow:var(--elev-3);
+  box-shadow:var(--elev-1);
   transition:box-shadow var(--dur-2) var(--ease);
 }
 h2.section-title{
@@ -1437,9 +1498,16 @@ h2.section-title::after{
    In colonna, uno sotto l'altro, sprecavano mezzo schermo. La griglia si
    applica solo ai riquadri di soli pulsanti: dove ci sono campi da
    compilare resta tutto incolonnato. */
+/* IL RIQUADRO ATTORNO ALLE AZIONI NON C'E' PIU'. (20/08/2026.)
+   Le piastrelle hanno gia' un bordo loro, e stavano dentro un riquadro che ne
+   aveva un altro; con l'icona, che ne ha un terzo, erano TRE cornici
+   annidate. Adesso stanno sulla pagina.
+   La griglia resta: quella e' la decisione del 13/08 e non cambia. */
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
   display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap:var(--s-4); align-items:stretch;
+  /* trasparenza e niente bordo li dichiara la regola di primo livello: qui
+     serve solo la griglia, che e' l'unica cosa che riguarda lo schermo largo. */
 }
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)) > h2.section-title,
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)) > div{
@@ -1447,7 +1515,7 @@ h2.section-title::after{
 }
 .menu-cols .card > .menu-btn{
   flex-direction:column; align-items:flex-start; justify-content:flex-start;
-  gap:14px; padding:22px 20px; min-height:150px; margin-bottom:0;
+  gap:var(--s-3); padding:20px 20px; min-height:150px; margin-bottom:0;
   border-radius:var(--r-lg); text-align:left;
   transition:transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s ease, border-color .18s ease;
 }
@@ -1458,7 +1526,7 @@ h2.section-title::after{
   border:1px solid color-mix(in srgb, currentColor 30%, transparent);
 }
 .menu-cols .card > .menu-btn .menu-txt{ font-size:1.12rem; line-height:1.2; }
-.menu-cols .card > .menu-btn .menu-sub{ font-size:0.78rem; line-height:1.5; margin-top:7px; font-weight:400; }
+.menu-cols .card > .menu-btn .menu-sub{ font-size:0.78rem; line-height:1.5; margin-top:var(--s-2); font-weight:400; }
 .menu-cols .card > .menu-btn:hover{
   transform:translateY(-3px); box-shadow:0 20px 34px -22px rgba(30,45,34,0.55);
   border-color:color-mix(in srgb, currentColor 62%, transparent);
@@ -1499,17 +1567,17 @@ h2.section-title::after{
    accanto ai campi normali. */
 input[type=text], input[type=number], input[type=email], input[type=tel],
 input[type=password], input[type=search], input[type=date], input[type=time], textarea{
-  width:100%; padding:13px 14px; border-radius:var(--r-sm); border:1px solid var(--line);
+  width:100%; padding:12px 12px; border-radius:var(--r-sm); border:1px solid var(--line);
   background:var(--surface-1); color:var(--text-1); font-size:var(--t-md); font-family:inherit;
   transition:border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
 }
 
 /* ── 8. Respiro e dettagli ───────────────────────────────────────────── */
 .footer-note{ margin-top:28px; font-size:0.74rem; }
-.empty-hint{ font-size:0.88rem; padding:14px 0; }
+.empty-hint{ font-size:0.88rem; padding:12px 0; }
 .archer-row, .timeline-row, .cp-class-row{ transition:border-color .15s ease, background .15s ease; }
 .archer-row:hover, .cp-class-row:hover{ border-color:var(--border-strong); }
-.stat-box{ padding:14px 8px; border-radius:14px; }
+.stat-box{ padding:12px 8px; border-radius:14px; }
 .stat-box .stat-num{ font-size:1.7rem; }
 .piazz-card{ border-radius:var(--r-xl); box-shadow:var(--elev-2); }
 table.score-table{ font-size:0.9rem; }
@@ -1533,36 +1601,36 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
 }
 /* ── Pannello admin: elenco utenti ──────────────────────────────────────
    Solo l'admin vede questa roba: testi in italiano, niente t().          */
-.adm-tot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:2px 0 12px;}
-.adm-tot > div{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 3px;text-align:center;}
+.adm-tot{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-1);margin:2px 0 12px;}
+.adm-tot > div{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 4px;text-align:center;}
 .adm-tot b{display:block;font-size:1.15rem;line-height:1.1;}
-.adm-tot span{display:block;font-size:0.58rem;color:var(--muted);margin-top:3px;letter-spacing:0.04em;line-height:1.25;}
-.adm-search{width:100%;font-size:0.85rem;padding:8px 10px;margin-bottom:var(--s-2);}
-.adm-filtri{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:var(--s-3);}
-.adm-f{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:var(--r-pill);padding:5px 11px;font-size:0.74rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.adm-tot span{display:block;font-size:0.58rem;color:var(--muted);margin-top:var(--s-1);letter-spacing:0.04em;line-height:1.25;}
+.adm-search{width:100%;font-size:0.85rem;padding:8px 8px;margin-bottom:var(--s-2);}
+.adm-filtri{display:flex;gap:var(--s-1);flex-wrap:wrap;margin-bottom:var(--s-3);}
+.adm-f{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:var(--r-pill);padding:4px 12px;font-size:0.74rem;font-weight:700;cursor:pointer;white-space:nowrap;}
 .adm-f.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
 .adm-row{border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:var(--s-2);overflow:hidden;background:var(--bg-panel-2);}
 .adm-row.open{border-color:var(--accent-soft);}
-.adm-head{display:flex;align-items:center;gap:10px;padding:9px 10px;cursor:pointer;}
+.adm-head{display:flex;align-items:center;gap:var(--s-2);padding:8px 8px;cursor:pointer;}
 .adm-ini{flex:0 0 34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;}
 .adm-who{flex:1;min-width:0;}
 .adm-name{font-weight:700;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .adm-sub{font-size:0.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
-.adm-badge{font-size:0.58rem;font-weight:700;padding:2px 6px;border-radius:5px;white-space:nowrap;margin-left:var(--s-1);letter-spacing:0.03em;}
-.adm-chev{color:var(--muted);font-size:0.95rem;margin-left:6px;transition:transform .18s;}
+.adm-badge{font-size:0.58rem;font-weight:700;padding:2px 4px;border-radius:5px;white-space:nowrap;margin-left:var(--s-1);letter-spacing:0.03em;}
+.adm-chev{color:var(--muted);font-size:0.95rem;margin-left:var(--s-1);transition:transform .18s;}
 .adm-row.open .adm-chev{transform:rotate(90deg);}
-.adm-body{display:none;padding:0 10px 10px;}
+.adm-body{display:none;padding:0 8px 8px;}
 .adm-row.open .adm-body{display:block;}
 .adm-grp{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:12px 0 2px;}
 .adm-dl{display:grid;grid-template-columns:auto 1fr;border-top:1px solid var(--line);}
-.adm-dl > div{padding:6px 0;border-bottom:1px solid var(--line);min-width:0;font-size:0.8rem;line-height:1.4;}
+.adm-dl > div{padding:4px 0;border-bottom:1px solid var(--line);min-width:0;font-size:0.8rem;line-height:1.4;}
 .adm-dl .k{color:var(--muted);padding-right:var(--s-3);white-space:nowrap;font-size:0.74rem;}
 .adm-dl .v{word-break:break-word;}
 .adm-si{color:var(--accent-soft);font-weight:700;}
 .adm-no{color:var(--bark);font-weight:700;}
 .adm-nd{color:var(--text-3);}
-.adm-note{width:100%;font-size:0.8rem;padding:7px 9px;}
-.adm-act{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.adm-note{width:100%;font-size:0.8rem;padding:8px 8px;}
+.adm-act{display:flex;gap:var(--s-1);flex-wrap:wrap;margin-top:var(--s-2);}
 .adm-act .btn{flex:1;min-width:96px;}
 /* Le cinque schede del pannello admin. (20/08/2026.) Erano cinque compiti in
    una colonna sola — accessi, profili, errori, richieste, sessioni — e per
@@ -1655,8 +1723,8 @@ width:48px; height:32px; border-radius:var(--r-lg); border:1px solid transparent
 .tabn.on .tab-pill{ background:var(--navbar-pill); border-color:var(--navbar-on); }
 .tabn.on .tab-lbl{ font-weight:800; color:var(--navbar-on); }
 /* in riga, dentro l'insegna: la pastiglia E' il pulsante intero */
-.tabw{ flex:0 1 auto; min-width:0; min-height:var(--hit); padding:6px 11px;
-border-radius:var(--r-md); display:flex; align-items:center; gap:7px; }
+.tabw{ flex:0 1 auto; min-width:0; min-height:var(--hit); padding:4px 12px;
+border-radius:var(--r-md); display:flex; align-items:center; gap:var(--s-2); }
 .tabw .tab-lbl{ font-size:var(--t-sm); font-weight:600; white-space:nowrap; }
 .tabw.on{ background:var(--navbar-pill); border-color:var(--navbar-on); color:var(--navbar-pill-ink); }
 .tabw.on .tab-lbl{ font-weight:800; }
@@ -8589,11 +8657,11 @@ if(document.getElementById("welcomeNote")) return;
 var seen = false;
 try{ seen = window.localStorage.getItem(WELCOME_NOTE_KEY) === "1"; }catch(e){}
 if(seen) return;
-var ov = el('<div id="welcomeNote" style="position:fixed;inset:0;z-index:200;background:rgba(6,12,10,.72);display:flex;align-items:center;justify-content:center;padding:18px;"></div>');
+var ov = el('<div id="welcomeNote" style="position:fixed;inset:0;z-index:200;background:rgba(6,12,10,.72);display:flex;align-items:center;justify-content:center;padding:var(--s-4);"></div>');
 var box = el('<div class="card" style="max-width:400px;width:100%;max-height:86vh;overflow:auto;margin:0;"></div>');
 box.appendChild(el('<h2 class="section-title" style="margin-top:0;">'+escapeHtml(t("welcome_note_title"))+'</h2>'));
 [t("welcome_note_p1"), t("welcome_note_p2"), t("welcome_note_p3")].forEach(function(txt){
-box.appendChild(el('<p style="font-size:var(--t-sm);line-height:1.5;color:var(--muted);margin:0 0 10px;">'+escapeHtml(txt)+'</p>'));
+box.appendChild(el('<p style="font-size:var(--t-sm);line-height:1.5;color:var(--muted);margin:0 0 8px;">'+escapeHtml(txt)+'</p>'));
 });
 var reportBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-1);">'+escapeHtml(t("welcome_note_report"))+'</button>');
 reportBtn.addEventListener("click", function(){
@@ -8605,7 +8673,7 @@ openAdminChat();
 });
 box.appendChild(reportBtn);
 box.appendChild(el('<label class="checkbox-row"><input type="checkbox" id="welcomeNoteAck"><span>'+escapeHtml(t("welcome_note_ack"))+'</span></label>'));
-var okBtn = el('<button class="btn btn-primary btn-block" style="margin-top:10px;">'+escapeHtml(t("welcome_note_start"))+'</button>');
+var okBtn = el('<button class="btn btn-primary btn-block" style="margin-top:var(--s-2);">'+escapeHtml(t("welcome_note_start"))+'</button>');
 okBtn.addEventListener("click", function(){
 var ack = document.getElementById("welcomeNoteAck");
 if(ack && ack.checked){ try{ window.localStorage.setItem(WELCOME_NOTE_KEY, "1"); }catch(e){} }
@@ -8646,9 +8714,9 @@ wrap.appendChild(passBox);
 var errorMsg = el('<div style="color:var(--danger);font-size:var(--t-sm);margin-top:var(--s-2);min-height:1.2em;"></div>');
 if(authErrorMsg){ errorMsg.textContent = authErrorMsg; }
 wrap.appendChild(errorMsg);
-var sendBtn = el('<button class="btn btn-primary" style="margin-top:14px;">Accedi \u2192</button>');
+var sendBtn = el('<button class="btn btn-primary" style="margin-top:var(--s-3);">Accedi \u2192</button>');
 wrap.appendChild(sendBtn);
-var forgotLink = el('<div style="font-size:var(--t-sm);color:var(--accent-soft);margin-top:14px;cursor:pointer;text-decoration:underline;">'+t("login_forgot")+'</div>');
+var forgotLink = el('<div style="font-size:var(--t-sm);color:var(--accent-soft);margin-top:var(--s-3);cursor:pointer;text-decoration:underline;">'+t("login_forgot")+'</div>');
 wrap.appendChild(forgotLink);
 
 function trySend(){
@@ -8701,7 +8769,7 @@ logo.innerHTML = logoSVG(150);
 wrap.appendChild(logo);
 wrap.appendChild(el('<div class="onboard-title display">Controlla la tua email \uD83D\uDCE7</div>'));
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Ti abbiamo mandato un link di accesso. Aprilo dallo stesso telefono/browser dove hai fatto la richiesta.</div>'));
-var backBtn = el('<button class="btn btn-ghost" style="margin-top:10px;">'+t("back_step")+'</button>');
+var backBtn = el('<button class="btn btn-ghost" style="margin-top:var(--s-2);">'+t("back_step")+'</button>');
 backBtn.addEventListener("click", function(){ authState = "needLogin"; render(); });
 wrap.appendChild(backBtn);
 return wrap;
@@ -8714,7 +8782,7 @@ logo.innerHTML = logoSVG(150);
 wrap.appendChild(logo);
 wrap.appendChild(el('<div class="onboard-title display">Qualcosa non ha funzionato</div>'));
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;color:var(--danger);">'+escapeHtml(authErrorMsg)+'</div>'));
-var retryBtn = el('<button class="btn btn-primary" style="margin-top:10px;">Riprova</button>');
+var retryBtn = el('<button class="btn btn-primary" style="margin-top:var(--s-2);">Riprova</button>');
 retryBtn.addEventListener("click", function(){ authState = "needLogin"; authErrorMsg = ""; render(); });
 wrap.appendChild(retryBtn);
 return wrap;
@@ -8727,7 +8795,7 @@ logo.innerHTML = logoSVG(150);
 wrap.appendChild(logo);
 wrap.appendChild(el('<div class="onboard-title display">Connessione non riuscita</div>'));
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Non sono riuscito a collegarmi al servizio di accesso. Controlla la connessione internet e riprova.</div>'));
-var retryBtn = el('<button class="btn btn-primary" style="margin-top:10px;">Riprova</button>');
+var retryBtn = el('<button class="btn btn-primary" style="margin-top:var(--s-2);">Riprova</button>');
 retryBtn.addEventListener("click", function(){ window.location.reload(); });
 wrap.appendChild(retryBtn);
 return wrap;
@@ -8746,9 +8814,9 @@ wrap.appendChild(el('<div class="onboard-title display">'+escapeHtml(t("verify_t
 var mail = currentUser ? currentUser.email : "";
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:300px;">'+escapeHtml(t("verify_body",{email:mail}))+'</div>'));
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:300px;font-size:var(--t-sm);color:var(--muted);">'+escapeHtml(t("verify_spam"))+'</div>'));
-var msg = el('<div style="min-height:18px;font-size:var(--t-sm);color:var(--accent-soft);text-align:center;margin-top:6px;max-width:300px;"></div>');
+var msg = el('<div style="min-height:18px;font-size:var(--t-sm);color:var(--accent-soft);text-align:center;margin-top:var(--s-1);max-width:300px;"></div>');
 wrap.appendChild(msg);
-var doneBtn = el('<button class="btn btn-primary" style="margin-top:10px;">'+escapeHtml(t("verify_done_btn"))+'</button>');
+var doneBtn = el('<button class="btn btn-primary" style="margin-top:var(--s-2);">'+escapeHtml(t("verify_done_btn"))+'</button>');
 doneBtn.addEventListener("click", function(){
 if(!auth.currentUser){ authState = "needLogin"; render(); return; }
 doneBtn.disabled = true;
@@ -8768,7 +8836,7 @@ msg.textContent = t("verify_not_yet");
 });
 });
 wrap.appendChild(doneBtn);
-var resendBtn = el('<button class="btn btn-ghost" style="margin-top:10px;">'+escapeHtml(t("verify_resend_btn"))+'</button>');
+var resendBtn = el('<button class="btn btn-ghost" style="margin-top:var(--s-2);">'+escapeHtml(t("verify_resend_btn"))+'</button>');
 resendBtn.addEventListener("click", function(){
 var left = Math.ceil((verifyResendAt - Date.now())/1000);
 if(left > 0){ msg.textContent = t("verify_wait",{sec:left}); return; }
@@ -8785,7 +8853,7 @@ msg.textContent = t("verify_error");
 });
 });
 wrap.appendChild(resendBtn);
-var outBtn = el('<button class="btn btn-ghost" style="margin-top:10px;">'+escapeHtml(t("logout_word"))+'</button>');
+var outBtn = el('<button class="btn btn-ghost" style="margin-top:var(--s-2);">'+escapeHtml(t("logout_word"))+'</button>');
 outBtn.addEventListener("click", function(){
 auth.signOut().then(function(){ authState = "needLogin"; currentUser = null; render(); });
 });
@@ -8802,13 +8870,13 @@ wrap.appendChild(el('<div class="onboard-title display">'+escapeHtml(t("pend_tit
 var emailTxt = currentUser ? currentUser.email : "";
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">'+escapeHtml(t("pend_body",{email:emailTxt}))+'</div>'));
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;font-size:var(--t-sm);color:var(--muted);">'+escapeHtml(t("pend_note"))+'</div>'));
-var refreshBtn = el('<button class="btn btn-primary" style="margin-top:10px;">'+escapeHtml(t("pend_recheck"))+'</button>');
+var refreshBtn = el('<button class="btn btn-primary" style="margin-top:var(--s-2);">'+escapeHtml(t("pend_recheck"))+'</button>');
 refreshBtn.addEventListener("click", function(){
 authState = "loading"; render();
 onAuthReady(currentUser);
 });
 wrap.appendChild(refreshBtn);
-var logoutBtn = el('<button class="btn btn-ghost" style="margin-top:10px;">'+escapeHtml(t("logout_word"))+'</button>');
+var logoutBtn = el('<button class="btn btn-ghost" style="margin-top:var(--s-2);">'+escapeHtml(t("logout_word"))+'</button>');
 logoutBtn.addEventListener("click", function(){
 auth.signOut().then(function(){ authState = "needLogin"; currentUser = null; render(); });
 });
@@ -8825,17 +8893,17 @@ var setupCountry = null;
 function setupScreen(){
 // Questa schermata si apre a casa, non in mezzo al bosco: fondo chiaro e
 // testo scuro, indipendente dal tema del resto dell'app.
-var wrap = el('<div style="max-width:420px;margin:0 auto;background:#F5F4F0;border-radius:var(--r-lg);padding:18px 16px 20px;color:#1A1D1B;"></div>');
+var wrap = el('<div style="max-width:420px;margin:0 auto;background:#F5F4F0;border-radius:var(--r-lg);padding:16px 16px 20px;color:#1A1D1B;"></div>');
 
-var logo = el('<div style="text-align:center;margin:6px 0 16px;"></div>');
+var logo = el('<div style="text-align:center;margin:4px 0 16px;"></div>');
 logo.innerHTML = logoSVG(110);
 wrap.appendChild(logo);
 
 var etichettaStile = 'display:block;font-size:0.82rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#5A6B5F;margin-bottom:var(--s-2);';
-var tendinaStile = 'width:100%;font-size:1.05rem;padding:15px 14px;border-radius:var(--r-md);border:2px solid #C9CFC7;background:#FFFFFF;color:#1A1D1B;font-family:inherit;font-weight:600;';
+var tendinaStile = 'width:100%;font-size:1.05rem;padding:16px 12px;border-radius:var(--r-md);border:2px solid #C9CFC7;background:#FFFFFF;color:#1A1D1B;font-family:inherit;font-weight:600;';
 
 // ---- 1. lingua ----
-var c1 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:var(--s-4);margin-bottom:14px;"></div>');
+var c1 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:var(--s-4);margin-bottom:var(--s-3);"></div>');
 c1.appendChild(el('<label style="'+etichettaStile+'">1 &middot; '+(state.lang ? t("setup_lang_label") : "Lingua / Language")+'</label>'));
 var selLang = el('<select style="'+tendinaStile+'"></select>');
 if(!state.lang) selLang.appendChild(el('<option value="" disabled selected>\u2014</option>'));
@@ -8858,7 +8926,7 @@ if(!state.lang) return wrap;
 // ---- 2. nazione ----
 if(setupCountry === null) setupCountry = state.country || LANG_TO_COUNTRY[state.lang] || null;
 
-var c2 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:var(--s-4);margin-bottom:14px;"></div>');
+var c2 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:var(--s-4);margin-bottom:var(--s-3);"></div>');
 c2.appendChild(el('<label style="'+etichettaStile+'">2 &middot; '+t("setup_country_label")+'</label>'));
 var selPaese = el('<select style="'+tendinaStile+'"></select>');
 if(!setupCountry) selPaese.appendChild(el('<option value="" disabled selected>'+t("setup_country_placeholder")+'</option>'));
@@ -8878,7 +8946,7 @@ wrap.appendChild(c2);
 // ---- 3. federazioni della nazione scelta ----
 if(setupCountry){
 var feds = COUNTRY_FEDERATIONS[setupCountry] || [];
-var c3 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:var(--s-4);margin-bottom:14px;"></div>');
+var c3 = el('<div style="background:#FFFFFF;border:1px solid #DDE2DA;border-radius:14px;padding:var(--s-4);margin-bottom:var(--s-3);"></div>');
 c3.appendChild(el('<label style="'+etichettaStile+'">3 &middot; '+t("setup_fed_label")+'</label>'));
 
 if(feds.length === 0){
@@ -8886,7 +8954,7 @@ c3.appendChild(el('<div style="font-size:var(--t-sm);color:#5A6B5F;padding:8px 0
 } else {
 feds.forEach(function(f){
 var scelta = (state.country === setupCountry && state.federation === f.code);
-var b = el('<button style="width:100%;min-height:56px;display:flex;align-items:center;gap:10px;padding:14px 16px;margin-bottom:10px;border-radius:var(--r-md);cursor:pointer;text-align:left;font-family:inherit;font-size:var(--t-lg);font-weight:700;'+
+var b = el('<button style="width:100%;min-height:56px;display:flex;align-items:center;gap:var(--s-2);padding:12px 16px;margin-bottom:var(--s-2);border-radius:var(--r-md);cursor:pointer;text-align:left;font-family:inherit;font-size:var(--t-lg);font-weight:700;'+
 (scelta
 ? 'background:#315B35;border:2px solid #315B35;color:#fff;'
 : 'background:#FFFFFF;border:2px solid #C9CFC7;color:#1A1D1B;')+'"></button>');
@@ -9124,12 +9192,12 @@ var regBtn = el('<button class="btn btn-primary" style="min-width:220px;">'+t("h
 regBtn.addEventListener("click", function(){ state.screen = "profile-registration"; save(); render(); });
 wrap.appendChild(regBtn);
 
-var loginBtn = el('<button class="btn btn-ghost" id="welcomeLoginLink" style="min-width:220px;margin-top:10px;">'+t("home_login_link_word")+'</button>');
+var loginBtn = el('<button class="btn btn-ghost" id="welcomeLoginLink" style="min-width:220px;margin-top:var(--s-2);">'+t("home_login_link_word")+'</button>');
 wrap.appendChild(loginBtn);
 
 var isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 if(!isStandalone){
-var installBtn = el('<button class="btn btn-ghost" style="min-width:220px;margin-top:10px;">'+icon("target",18)+' '+t("home_install_btn")+'</button>');
+var installBtn = el('<button class="btn btn-ghost" style="min-width:220px;margin-top:var(--s-2);">'+icon("target",18)+' '+t("home_install_btn")+'</button>');
 var installInstructions = el('<div class="install-hint" style="max-width:320px;margin-top:var(--s-3);text-align:left;display:none;"></div>');
 installBtn.addEventListener("click", function(){
 if(deferredInstallPrompt){
@@ -9149,7 +9217,7 @@ var devText = t("home_dev_text", {
 email: '<a href="mailto:'+ADMIN_CONTACT_EMAIL+'" style="color:var(--accent-soft);font-weight:700;">'+ADMIN_CONTACT_EMAIL+'</a>',
 sito: '<a href="https://'+ADMIN_SITE+'" target="_blank" rel="noopener" style="color:var(--accent-soft);font-weight:700;">'+ADMIN_SITE+'</a>'
 });
-var devBox = el('<div class="install-hint" style="max-width:320px;margin-top:34px;text-align:left;"></div>');
+var devBox = el('<div class="install-hint" style="max-width:320px;margin-top:var(--s-6);text-align:left;"></div>');
 devBox.innerHTML = '<b>'+t("home_dev_title")+'</b><br>'+devText;
 wrap.appendChild(devBox);
 
@@ -9171,7 +9239,7 @@ return wrap;
 function profileRegistrationScreen(){
 var wrap = el('<div></div>');
 var card = el('<div class="card"></div>');
-var header = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><h2 class="section-title" style="margin:0;">'+t("profile_title")+'</h2></div>');
+var header = el('<div style="display:flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-4);"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><h2 class="section-title" style="margin:0;">'+t("profile_title")+'</h2></div>');
 card.appendChild(header);
 
 var goLoginLink = el('<div style="font-size:var(--t-sm);color:var(--muted);margin:-8px 0 16px;">'+t("home_login_link")+' <span id="regGoLoginLink" style="color:var(--accent-soft);font-weight:700;cursor:pointer;text-decoration:underline;">'+t("home_login_link_word")+'</span></div>');
@@ -9195,7 +9263,7 @@ var rigaPw2 = el('<div class="cp-select-row"><label>'+t("profile_password_confir
 rigaPw2.appendChild(campoPassword("pfPasswordConfirm", "new-password"));
 card.appendChild(rigaPw2);
 
-card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_federazioni")+'</h2>'));
+card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("profile_federazioni")+'</h2>'));
 var fedWrap = el('<div></div>');
 PROFILE_FEDERATIONS.forEach(function(f){
 var row = el('<div class="pf-fed-row"></div>');
@@ -9210,8 +9278,8 @@ fedWrap.appendChild(row);
 });
 card.appendChild(fedWrap);
 
-card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_arco")+'</h2>'));
-var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
+card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("profile_arco")+'</h2>'));
+var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:var(--s-1);"></div>');
 var arcoSel = null;
 Object.keys(PROFILE_BOW_LABEL).forEach(function(k){
 var chip = el('<div class="chip" style="min-width:70px;">'+PROFILE_BOW_LABEL[k]+'</div>');
@@ -9230,7 +9298,7 @@ var termsRow = el('<label class="checkbox-row serrata"><input type="checkbox" id
 card.appendChild(termsRow);
 card.appendChild(el('<div style="font-size:var(--t-sm);margin:0 0 8px;"><a href="/privacy.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_privacy")+'</a> &middot; <a href="/termini.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="color:var(--accent-soft);">'+t("legal_terms")+'</a></div>'));
 
-var errorMsg = el('<div style="color:var(--danger);font-size:var(--t-sm);margin:6px 0;min-height:1.2em;"></div>');
+var errorMsg = el('<div style="color:var(--danger);font-size:var(--t-sm);margin:4px 0;min-height:1.2em;"></div>');
 card.appendChild(errorMsg);
 
 var submitBtn = el('<button class="btn btn-primary btn-block" style="margin-top:var(--s-2);">'+t("profile_submit")+'</button>');
@@ -9381,19 +9449,19 @@ btnEl.disabled = false;
 function profileEditScreen(){
 var wrap = el('<div></div>');
 var card = el('<div class="card"></div>');
-var header = el('<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><h2 class="section-title" style="margin:0;">'+t("profile_edit_title")+'</h2></div>');
+var header = el('<div style="display:flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-4);"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><h2 class="section-title" style="margin:0;">'+t("profile_edit_title")+'</h2></div>');
 card.appendChild(header);
 
 var profile = state.profile || {};
 
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_email")+'</label><input type="email" value="'+escapeHtml(profile.email||"")+'" disabled style="opacity:0.6;"></div>'));
-card.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin:-10px 0 14px;">'+t("profile_edit_email_note")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin:-8px 0 12px;">'+t("profile_edit_email_note")+'</div>'));
 
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_nome")+'</label><input type="text" id="peNome" value="'+escapeHtml(profile.nomeCognome||"")+'"></div>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+' <span style="font-weight:400;color:var(--muted);">'+t("profile_username_hint")+'</span></label><input type="text" id="peUsername" value="'+escapeHtml(profile.username||"")+'"></div>'));
 card.appendChild(el('<label class="checkbox-row sotto-campo"><input type="checkbox" id="peHideName"'+(profile.nomeNascosto?' checked':'')+'><span><b>'+t("profile_hide_name")+'</b><span class="nota">'+t("profile_hide_name_note")+'</span></span></label>'));
 
-card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_federazioni")+'</h2>'));
+card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("profile_federazioni")+'</h2>'));
 var fedWrap = el('<div></div>');
 var existingFedMap = {};
 (profile.federazioni||[]).forEach(function(f){ existingFedMap[f.code] = f.tessera || ""; });
@@ -9413,16 +9481,16 @@ fedWrap.appendChild(row);
 card.appendChild(fedWrap);
 
 // Compagnia di appartenenza: serve per filtrare gli allenamenti riservati
-card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_club_title")+'</h2>'));
+card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("profile_club_title")+'</h2>'));
 card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);">'+t("profile_club_hint")+'</div>'));
 var clubCod = profile.compagnia || null;
 var clubNome = profile.compagniaNome || "";
-var clubSelDiv = el('<div style="background:var(--accent);color:var(--accent-ink);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:var(--s-2);justify-content:space-between;align-items:center;"></div>');
+var clubSelDiv = el('<div style="background:var(--accent);color:var(--accent-ink);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:var(--s-2);justify-content:space-between;align-items:center;"></div>');
 var clubSelName = el('<span style="font-weight:700;font-size:var(--t-md);"></span>');
 var clubClear = el('<button style="background:none;border:none;color:#fff;font-size:var(--t-lg);cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
 clubSelDiv.appendChild(clubSelName); clubSelDiv.appendChild(clubClear);
 var clubSearch = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("profile_club_search"))+'">');
-var clubList = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:10px;display:none;"></div>');
+var clubList = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:var(--s-2);display:none;"></div>');
 card.appendChild(clubSelDiv); card.appendChild(clubSearch); card.appendChild(clubList);
 function refreshClub(){
 if(clubCod){
@@ -9447,7 +9515,7 @@ var c = COMPAGNIE[cod];
 var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "");
 if(label.toLowerCase().indexOf(q) === -1) return;
 found++;
-var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(label)+'</div>');
+var row = el('<div style="padding:8px 12px;border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(label)+'</div>');
 row.addEventListener("click", function(){ clubCod = cod; clubNome = label; clubSearch.value=""; refreshClub(); if(savedMsg) savedMsg.textContent = ""; });
 clubList.appendChild(row);
 });
@@ -9455,8 +9523,8 @@ clubList.style.display = found ? "block" : "none";
 });
 refreshClub();
 
-card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("profile_arco")+'</h2>'));
-var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
+card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("profile_arco")+'</h2>'));
+var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:var(--s-1);"></div>');
 var arcoSel = profile.arco || null;
 Object.keys(PROFILE_BOW_LABEL).forEach(function(k){
 var chip = el('<div class="chip" style="min-width:70px;">'+PROFILE_BOW_LABEL[k]+'</div>');
@@ -9471,9 +9539,9 @@ bowRow.appendChild(chip);
 });
 card.appendChild(bowRow);
 
-card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("theme_section_title")+'</h2>'));
+card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("theme_section_title")+'</h2>'));
 var themeSel = currentTheme();
-var themeRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:6px;"></div>');
+var themeRow = el('<div class="chip-group" style="flex-wrap:wrap;margin-bottom:var(--s-1);"></div>');
 [["light", t("theme_light_label")], ["dark", t("theme_dark_label")], ["sole", t("theme_sun_label")]].forEach(function(pair){
 var k = pair[0], label = pair[1];
 var chip = el('<div class="chip" style="min-width:120px;">'+label+'</div>');
@@ -9501,10 +9569,10 @@ card.appendChild(themeRow);
 card.appendChild(el('<div class="scheda-nota">'+escapeHtml(t("theme_hint"))+'</div>'));
 
 if(!DEV_MODE && currentUser){
-card.appendChild(el('<h2 class="section-title" style="margin-top:6px;">'+t("notif_section_title")+'</h2>'));
-var notifRow = el('<div style="margin-bottom:6px;"></div>');
+card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("notif_section_title")+'</h2>'));
+var notifRow = el('<div style="margin-bottom:var(--s-1);"></div>');
 var notifBtn = el('<button class="btn btn-ghost btn-block">'+t("notif_enable_btn")+'</button>');
-var notifStatus = el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:6px;"></div>');
+var notifStatus = el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:var(--s-1);"></div>');
 // IL TASTO NON GUARDAVA MAI SE ERANO GIA' ATTIVE. *(16/08/2026, dal campo:
 // "ogni volta che vado sul profilo mi chiede di attivare le notifiche ma l'ho
 // fatto 1000 volte".)* Chiedere una cosa gia' fatta non e' solo inutile: fa
@@ -9583,7 +9651,7 @@ provaRow.appendChild(provaBtn); provaRow.appendChild(provaEsito);
 card.appendChild(provaRow);
 }
 
-var savedMsg = el('<div style="color:var(--accent-soft);font-size:var(--t-sm);margin:6px 0;min-height:1.2em;"></div>');
+var savedMsg = el('<div style="color:var(--accent-soft);font-size:var(--t-sm);margin:4px 0;min-height:1.2em;"></div>');
 card.appendChild(savedMsg);
 
 var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-top:var(--s-2);">'+t("profile_edit_save")+'</button>');
@@ -9773,8 +9841,8 @@ return wrap;
 }
 
 function langSwitcher(){
-var wrap = el('<div style="margin-bottom:14px;"></div>');
-var select = el('<select style="width:100%;font-size:var(--t-sm);padding:10px 12px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);"></select>');
+var wrap = el('<div style="margin-bottom:var(--s-3);"></div>');
+var select = el('<select style="width:100%;font-size:var(--t-sm);padding:8px 12px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);"></select>');
 LANG_ORDER.forEach(function(code){
 var meta = LANG_META[code];
 var opt = el('<option value="'+code+'"'+(state.lang===code?' selected':'')+'>'+meta.flag+' '+meta.name+'</option>');
@@ -9813,7 +9881,7 @@ if(!DEV_MODE && db){
 card2.appendChild(el('<div class="campo-eti">'+t("reg_lbl_cerca")+'</div>'));
 var searchRow = el('<div class="row"><input type="text" id="archerSearchInput" placeholder="'+t("search_username_placeholder")+'"></div>');
 card2.appendChild(searchRow);
-searchResults = el('<div id="archerSearchResults" style="margin-top:var(--s-1);display:flex;flex-wrap:wrap;gap:6px;"></div>');
+searchResults = el('<div id="archerSearchResults" style="margin-top:var(--s-1);display:flex;flex-wrap:wrap;gap:var(--s-1);"></div>');
 card2.appendChild(searchResults);
 }
 var list = el('<div class="archer-list"></div>');
@@ -9926,13 +9994,13 @@ function pgGruppoLabel(pcfg, k){ for(var i=0;i<pcfg.gruppi.length;i++){ if(pcfg.
 function preparaGaraScreen(){
 if(!state.pgScreen) state.pgScreen = "pick";
 var wrap = el('<div></div>');
-wrap.appendChild(el('<div style="text-align:center;margin-bottom:14px;"><h2 style="font-family:var(--font-display);color:var(--gold);font-size:var(--t-lg);">'+t("pg_title")+'</h2></div>'));
+wrap.appendChild(el('<div style="text-align:center;margin-bottom:var(--s-3);"><h2 style="font-family:var(--font-display);color:var(--gold);font-size:var(--t-lg);">'+t("pg_title")+'</h2></div>'));
 if(state.pgScreen === "pick") wrap.appendChild(pgPickScreen());
 else if(state.pgScreen === "elenco") wrap.appendChild(pgElencoScreen());
 else if(state.pgScreen === "setup") wrap.appendChild(pgSetupScreen());
 else if(state.pgScreen === "piazzole") wrap.appendChild(pgPiazzoleScreen());
 else if(state.pgScreen === "iscritti") wrap.appendChild(pgIscrittiScreen());
-var back = el('<div style="text-align:center;margin-top:22px;"><button class="btn btn-ghost">'+t("pg_back_menu")+'</button></div>');
+var back = el('<div style="text-align:center;margin-top:20px;"><button class="btn btn-ghost">'+t("pg_back_menu")+'</button></div>');
 back.querySelector("button").addEventListener("click", function(){ state.screen="menu"; save(); render(); });
 wrap.appendChild(back);
 return wrap;
@@ -9955,7 +10023,7 @@ state.pgScreen = "setup"; save(); render();
 d.appendChild(b);
 });
 if(!DEV_MODE && db && currentUser){
-var elencoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:14px;">'+t("pg_my_saved_routes")+'</button>');
+var elencoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-3);">'+t("pg_my_saved_routes")+'</button>');
 elencoBtn.addEventListener("click", function(){ state.pgScreen = "elenco"; state.pgElenco = null; save(); render(); });
 d.appendChild(elencoBtn);
 }
@@ -10012,7 +10080,7 @@ save(); render();
 card.appendChild(useBtn);
 if(p.squadre && p.squadre.length){
 p.squadre.forEach(function(s, gIdx){
-card.appendChild(el('<div style="font-size:var(--t-sm);background:var(--bg-panel-2);border-radius:var(--r-xs);padding:6px 8px;margin-bottom:var(--s-1);"><b style="color:var(--gold);">'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);background:var(--bg-panel-2);border-radius:var(--r-xs);padding:4px 8px;margin-bottom:var(--s-1);"><b style="color:var(--gold);">'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
 });
 }
 d.appendChild(card);
@@ -10057,13 +10125,13 @@ var card = el('<div class="card"></div>');
 card.appendChild(el('<h3 class="section-title">'+t("pg_section_piazzole",{gara:pcfg.label})+'</h3>'));
 var doneCount = state.pgDraft.piazzole.filter(function(p){return p;}).length;
 var totFrecce = state.pgDraft.piazzole.reduce(function(a,p){ return a+(p?p.frecce:0); },0);
-card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("pg_configured_label")+': <b style="color:var(--gold);">'+doneCount+' / '+state.pgDraft.piazzole.length+'</b> \u00b7 '+t("pg_total_arrows_label")+': <b style="color:var(--gold);">'+totFrecce+'</b></div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);">'+t("pg_configured_label")+': <b style="color:var(--gold);">'+doneCount+' / '+state.pgDraft.piazzole.length+'</b> \u00b7 '+t("pg_total_arrows_label")+': <b style="color:var(--gold);">'+totFrecce+'</b></div>'));
 
 state.pgDraft.piazzole.forEach(function(p, idx){
 if(state.pgEditingIndex === idx){
 card.appendChild(pgPiazzolaEditor(pcfg, idx));
 } else {
-var row = el('<div style="display:flex;align-items:center;gap:10px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;margin-bottom:7px;cursor:pointer;"></div>');
+var row = el('<div style="display:flex;align-items:center;gap:var(--s-2);background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-md);padding:8px 12px;margin-bottom:var(--s-2);cursor:pointer;"></div>');
 row.innerHTML = '<div style="width:28px;height:28px;border-radius:50%;background:var(--bg-panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:var(--t-sm);flex-shrink:0;">'+(idx+1)+'</div>' +
 '<div style="flex:1;font-size:var(--t-sm);">' + (p ? (pcfg.hasTipo ? p.tipoLabel : pgGruppoLabel(pcfg,p.gruppo)) + ' \u00b7 '+p.frecce+' '+t("pg_frecce_word") + (p.ginocchio?' \u00b7 '+t("pg_knee_suffix"):'') + (p.tempo?' \u00b7 '+t("pg_timed_suffix"):'') + (p.mobile?' \u00b7 '+t("pg_mobile_suffix"):'') + (p.descrizione?' \u00b7 '+escapeHtml(p.descrizione):'') : '<span style="color:var(--muted);">'+t("pg_to_configure")+'</span>') + '</div>';
 row.addEventListener("click", function(){ state.pgEditingIndex = idx; state.pgEditDraft = null; render(); });
@@ -10071,7 +10139,7 @@ card.appendChild(row);
 }
 });
 
-var iscrittiBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:14px;">'+t("pg_btn_participants_teams")+'</button>');
+var iscrittiBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-3);">'+t("pg_btn_participants_teams")+'</button>');
 iscrittiBtn.addEventListener("click", function(){ state.pgScreen="iscritti"; save(); render(); });
 card.appendChild(iscrittiBtn);
 d.appendChild(card);
@@ -10083,11 +10151,11 @@ if(!state.pgEditDraft){
 state.pgEditDraft = JSON.parse(JSON.stringify(state.pgDraft.piazzole[idx] || { tipo:null, gruppo:(pcfg.gruppi.length===1?pcfg.gruppi[0][0]:null), frecce:pcfg.frecceFixed||1, ginocchio:false, tempo:false, mobile:false, descrizione:"" }));
 }
 var draft = state.pgEditDraft;
-var box = el('<div style="background:var(--bg-panel);border:1px solid var(--accent-soft);border-radius:var(--r-lg);padding:14px;margin-bottom:10px;"></div>');
-box.appendChild(el('<h4 style="font-size:var(--t-sm);color:var(--gold);margin-bottom:10px;">'+t("pg_piazzola_n",{n:idx+1})+'</h4>'));
+var box = el('<div style="background:var(--bg-panel);border:1px solid var(--accent-soft);border-radius:var(--r-lg);padding:var(--s-3);margin-bottom:var(--s-2);"></div>');
+box.appendChild(el('<h4 style="font-size:var(--t-sm);color:var(--gold);margin-bottom:var(--s-2);">'+t("pg_piazzola_n",{n:idx+1})+'</h4>'));
 
 if(pcfg.hasTipo){
-box.appendChild(el('<div style="font-size:var(--t-xs);text-transform:uppercase;color:var(--muted);margin-bottom:6px;">'+t("pg_type_label")+'</div>'));
+box.appendChild(el('<div style="font-size:var(--t-xs);text-transform:uppercase;color:var(--muted);margin-bottom:var(--s-1);">'+t("pg_type_label")+'</div>'));
 var tipoRow = el('<div style="display:flex;flex-wrap:wrap;gap:var(--s-2);margin-bottom:var(--s-3);"></div>');
 getPgTipi().forEach(function(tp){
 var b = el('<button type="button" class="btn '+(draft.tipo===tp.key?'btn-primary':'btn-ghost')+'" style="padding:8px 12px;font-size:var(--t-sm);">'+tp.label+'</button>');
@@ -10100,7 +10168,7 @@ draft.frecce = pcfg.frecceFixed;
 }
 
 if(pcfg.gruppi.length > 1){
-box.appendChild(el('<div style="font-size:var(--t-xs);text-transform:uppercase;color:var(--muted);margin-bottom:6px;">'+t("pg_distance_group_label")+'</div>'));
+box.appendChild(el('<div style="font-size:var(--t-xs);text-transform:uppercase;color:var(--muted);margin-bottom:var(--s-1);">'+t("pg_distance_group_label")+'</div>'));
 var gruppoRow = el('<div style="display:flex;flex-wrap:wrap;gap:var(--s-2);margin-bottom:var(--s-3);"></div>');
 pcfg.gruppi.forEach(function(g, gi){
 var b = el('<button type="button" class="btn '+(draft.gruppo===g[0]?'btn-primary':'btn-ghost')+'" style="padding:8px 12px;font-size:var(--t-sm);">'+t("pg_group_n",{n:gi+1})+' \u00b7 '+g[1]+'</button>');
@@ -10111,19 +10179,19 @@ box.appendChild(gruppoRow);
 }
 
 if(!pcfg.hasTipo){
-box.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("pg_arrows_on_this")+' <b style="color:var(--cream);">'+pcfg.frecceFixed+'</b></div>'));
+box.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);">'+t("pg_arrows_on_this")+' <b style="color:var(--cream);">'+pcfg.frecceFixed+'</b></div>'));
 }
 
-var togglesRow = el('<div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:var(--s-3);"></div>');
+var togglesRow = el('<div style="display:flex;flex-wrap:wrap;gap:var(--s-3);margin-bottom:var(--s-3);"></div>');
 if(pcfg.hasTempo){
-var tempoLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:var(--t-sm);cursor:pointer;"></label>');
+var tempoLbl = el('<label style="display:flex;align-items:center;gap:var(--s-1);font-size:var(--t-sm);cursor:pointer;"></label>');
 var tempoChk = el('<input type="checkbox" '+(draft.tempo?'checked':'')+'>');
 tempoChk.onchange = function(){ draft.tempo=this.checked; if(draft.tempo) draft.ginocchio=false; render(); };
 tempoLbl.appendChild(tempoChk); tempoLbl.appendChild(document.createTextNode(t("pg_timed_toggle")));
 togglesRow.appendChild(tempoLbl);
 }
 if(pcfg.hasMobileToggle){
-var mobLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:var(--t-sm);cursor:pointer;"></label>');
+var mobLbl = el('<label style="display:flex;align-items:center;gap:var(--s-1);font-size:var(--t-sm);cursor:pointer;"></label>');
 var mobChk = el('<input type="checkbox" '+(draft.mobile?'checked':'')+'>');
 mobChk.onchange = function(){ draft.mobile=this.checked; render(); };
 mobLbl.appendChild(mobChk); mobLbl.appendChild(document.createTextNode(t("pg_mobile_toggle")));
@@ -10131,7 +10199,7 @@ togglesRow.appendChild(mobLbl);
 }
 if(!pcfg.hideGinocchio){
 if(pcfg.ginocchioAllowed){
-var ginLbl = el('<label style="display:flex;align-items:center;gap:6px;font-size:var(--t-sm);cursor:'+(draft.tempo?'not-allowed':'pointer')+';color:'+(draft.tempo?'var(--muted)':'var(--cream)')+';"></label>');
+var ginLbl = el('<label style="display:flex;align-items:center;gap:var(--s-1);font-size:var(--t-sm);cursor:'+(draft.tempo?'not-allowed':'pointer')+';color:'+(draft.tempo?'var(--muted)':'var(--cream)')+';"></label>');
 var ginChk = el('<input type="checkbox" '+(draft.ginocchio?'checked':'')+(draft.tempo?' disabled':'')+'>');
 ginChk.onchange = function(){ draft.ginocchio=this.checked; render(); };
 ginLbl.appendChild(ginChk); ginLbl.appendChild(document.createTextNode(draft.tempo?t("pg_knee_not_allowed_timed"):t("pg_knee_toggle")));
@@ -10541,7 +10609,7 @@ var spotsLeft = total - taken;
 
 var isInvited = myUid && (ot.invitedUids||[]).indexOf(myUid) !== -1;
 var otRow = el(
-'<div style="padding:10px 0;border-bottom:1px solid var(--line);">'+
+'<div style="padding:8px 0;border-bottom:1px solid var(--line);">'+
 (isInvited&&!joined?'<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);margin-bottom:var(--s-1);">⭐ '+t("ot_invite_label").replace(" (opzionale)","").replace(" (optional)","").replace(" (optionnel)","").replace(" (optional)","").replace(" (isteğe bağlı)","").replace(" (необязательно)","").replace(" (opcional)","").replace(" (valfritt)","").replace(" (optioneel)","")+' ← tu</div>':'')+
 (ot.visibility === "all" ? '<div style="display:inline-block;font-size:var(--t-xs);font-weight:700;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--muted);border-radius:var(--r-pill);padding:2px 8px;margin-bottom:var(--s-1);">'+t("ot_badge_open")+'</div>' : '')+
 '<div style="font-weight:700;font-size:var(--t-md);">'+escapeHtml(ot.field||"?")+'</div>'+
@@ -10562,10 +10630,10 @@ otRow.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margi
 if(!isOwner && currentUser){
 // Pulsante di conferma a tutta larghezza, con la spiegazione sopra:
 // il vecchio pulsantino accanto al testo non veniva trovato dai tester.
-var actionBox = el('<div style="margin-top:10px;"></div>');
-var actErr = el('<div style="font-size:var(--t-sm);color:var(--danger);margin-top:6px;display:none;"></div>');
+var actionBox = el('<div style="margin-top:var(--s-2);"></div>');
+var actErr = el('<div style="font-size:var(--t-sm);color:var(--danger);margin-top:var(--s-1);display:none;"></div>');
 if(joined){
-actionBox.appendChild(el('<div style="border-radius:var(--r-sm);padding:10px 12px;font-weight:800;font-size:var(--t-sm);background:color-mix(in srgb, var(--success) 16%, var(--bg-panel));border:1px solid color-mix(in srgb, var(--success) 55%, transparent);color:var(--cream);">'+t("ot_joined_label")+'</div>'));
+actionBox.appendChild(el('<div style="border-radius:var(--r-sm);padding:8px 12px;font-weight:800;font-size:var(--t-sm);background:color-mix(in srgb, var(--success) 16%, var(--bg-panel));border:1px solid color-mix(in srgb, var(--success) 55%, transparent);color:var(--cream);">'+t("ot_joined_label")+'</div>'));
 actionBox.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:var(--s-1);">'+t("ot_joined_hint")+'</div>'));
 var leaveBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);">'+t("ot_leave_btn")+'</button>');
 (function(otId){ leaveBtn.addEventListener("click", function(){ otSetJoin(otId, false, leaveBtn, actErr); }); })(ot.id);
@@ -10573,7 +10641,7 @@ actionBox.appendChild(leaveBtn);
 } else if(full){
 actionBox.appendChild(el('<button class="btn btn-block btn-sm" disabled>'+t("ot_full_label")+'</button>'));
 } else {
-actionBox.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:6px;">'+t("ot_join_hint")+'</div>'));
+actionBox.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-1);">'+t("ot_join_hint")+'</div>'));
 var joinBtn = el('<button class="btn btn-primary btn-block">'+t("ot_join_btn")+'</button>');
 (function(otId){ joinBtn.addEventListener("click", function(){ otSetJoin(otId, true, joinBtn, actErr); }); })(ot.id);
 actionBox.appendChild(joinBtn);
@@ -10582,7 +10650,7 @@ actionBox.appendChild(actErr);
 otRow.appendChild(actionBox);
 }
 if(isOwner){
-var delBtn = el('<button style="margin-top:6px;padding:4px 10px;border-radius:var(--r-xs);border:none;cursor:pointer;font-size:var(--t-sm);background:var(--danger);color:#fff;">'+t("ot_delete_btn")+'</button>');
+var delBtn = el('<button style="margin-top:var(--s-1);padding:4px 8px;border-radius:var(--r-xs);border:none;cursor:pointer;font-size:var(--t-sm);background:var(--danger);color:#fff;">'+t("ot_delete_btn")+'</button>');
 (function(otId){
 delBtn.addEventListener("click", function(){
 if(!confirm(t("ot_confirm_delete"))) return;
@@ -10598,7 +10666,7 @@ var extraBtns = el('<div style="display:flex;gap:var(--s-2);margin-top:var(--s-2
 if(ot.lat && ot.lng){
 // nessuna mappa mini
 
-var dirBtn = el('<button style="flex:1;padding:6px 10px;border-radius:var(--r-xs);border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:var(--t-sm);cursor:pointer;">'+t("ot_directions_btn")+'</button>');
+var dirBtn = el('<button style="flex:1;padding:4px 8px;border-radius:var(--r-xs);border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:var(--t-sm);cursor:pointer;">'+t("ot_directions_btn")+'</button>');
 (function(lat,lng){ dirBtn.addEventListener("click",function(){ window.open("https://www.google.com/maps/dir/?api=1&destination="+lat+","+lng,"_blank"); }); })(ot.lat,ot.lng);
 extraBtns.appendChild(dirBtn);
 }
@@ -10611,7 +10679,7 @@ extraBtns.appendChild(dirBtn);
 // L'etichetta cambia perche' cambia il verso: chi non e' l'organizzatore
 // «scrive all'organizzatore», l'organizzatore apre i «Messaggi».
 if(currentUser){
-var msgBtn = el('<button style="flex:1;padding:6px 10px;border-radius:var(--r-xs);border:1px solid var(--accent);background:transparent;color:var(--accent-soft);font-size:var(--t-sm);cursor:pointer;font-weight:700;">'+(isOwner ? ("\uD83D\uDCAC " + t("dm_title")) : t("ot_msg_btn"))+'</button>');
+var msgBtn = el('<button style="flex:1;padding:4px 8px;border-radius:var(--r-xs);border:1px solid var(--accent);background:transparent;color:var(--accent-soft);font-size:var(--t-sm);cursor:pointer;font-weight:700;">'+(isOwner ? ("\uD83D\uDCAC " + t("dm_title")) : t("ot_msg_btn"))+'</button>');
 (function(otId, ownerName, ownerUid){
 msgBtn.addEventListener("click", function(){
 state.otChatId = otId;
@@ -10630,7 +10698,7 @@ return otRow;
 
 // compact = true -> versione ridotta per la scheda "Tira" (max 2, con "vedi tutti")
 function otSectionCard(compact){
-var otCard = el('<div class="card" style="margin-bottom:14px;"></div>');
+var otCard = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
 otCard.appendChild(el('<div><div style="font-weight:800;font-size:var(--t-md);">'+t("ot_section_title")+'</div><div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;margin-bottom:var(--s-2);">'+t("ot_section_hint")+'</div></div>'));
 
 var mio = myClubCode();
@@ -10644,7 +10712,7 @@ else gruppoOpen.push(ot);
 if(compact){
 var tutti = gruppoClub.concat(gruppoOpen);
 if(tutti.length === 0){
-otCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("ot_no_trainings")+'</div>'));
+otCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);">'+t("ot_no_trainings")+'</div>'));
 } else {
 tutti.slice(0,2).forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 if(tutti.length > 2){
@@ -10655,20 +10723,20 @@ otCard.appendChild(allBtn);
 }
 } else {
 if(gruppoClub.length === 0 && gruppoOpen.length === 0){
-otCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("ot_no_trainings")+'</div>'));
+otCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);">'+t("ot_no_trainings")+'</div>'));
 }
 if(gruppoClub.length){
-otCard.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 2px;">'+t("ot_group_club")+'</div>'));
+otCard.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:8px 0 2px;">'+t("ot_group_club")+'</div>'));
 gruppoClub.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 }
 if(gruppoOpen.length){
-otCard.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 2px;">'+t("ot_group_open")+'</div>'));
+otCard.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 2px;">'+t("ot_group_open")+'</div>'));
 gruppoOpen.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 }
 }
 
 if(currentUser){
-var createBtn = el('<button class="btn btn-primary btn-block" style="margin-top:10px;font-size:var(--t-sm);">'+t("ot_create_btn")+'</button>');
+var createBtn = el('<button class="btn btn-primary btn-block" style="margin-top:var(--s-2);font-size:var(--t-sm);">'+t("ot_create_btn")+'</button>');
 createBtn.addEventListener("click", function(){ state.screen="open-training-create"; save(); render(); });
 otCard.appendChild(createBtn);
 }
@@ -10728,7 +10796,7 @@ if(!state.tab || state.tab === "community") state.tab = "tira";
 if(hasActiveRound && state.tab === "tira"){
 wrap.appendChild(el(
 '<div class="resume-banner">'+t("resume_banner", { mode: escapeHtml(modeLabel(state.mode)), n: state.format })+
-'<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="resumeBtn">'+t("resume_btn")+'</button></div></div>'
+'<div class="row" style="margin-top:var(--s-2);"><button class="btn btn-primary btn-block" id="resumeBtn">'+t("resume_btn")+'</button></div></div>'
 ));
 }
 
@@ -10738,7 +10806,7 @@ var sessBanner = el(
 '<button id="dismissBtn_'+sess.id+'" style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);font-size:var(--t-lg);cursor:pointer;line-height:1;padding:0;">&#x2715;</button>'+
 '<div style="font-weight:800;">'+t("session_banner_title")+'</div>'+
 '<div style="font-size:var(--t-sm);margin-top:var(--s-1);">'+t("session_banner_body",{name:escapeHtml(sess.ownerName||"?")})+'</div>'+
-'<div class="row" style="margin-top:10px;"><button class="btn btn-primary btn-block" id="followBtn_'+sess.id+'">'+t("session_banner_btn")+'</button></div></div>'
+'<div class="row" style="margin-top:var(--s-2);"><button class="btn btn-primary btn-block" id="followBtn_'+sess.id+'">'+t("session_banner_btn")+'</button></div></div>'
 );
 wrap.appendChild(sessBanner);
 setTimeout(function(){
@@ -10759,8 +10827,11 @@ render();
 
 // ══════════════════════ SEZIONE: TIRA ══════════════════════
 if(state.tab === "tira"){
-wrap.appendChild(otSectionCard(false));
-
+// PRIMA COSA PUOI FARE, POI COSA FANNO GLI ALTRI. (20/08/2026.)
+// «Allenamenti aperti» stava in cima, ed e' quasi sempre vuoto: la prima
+// cosa che si vedeva aprendo l'app era **un'assenza**, nel posto migliore
+// dello schermo. Adesso viene dopo le tre azioni.
+// *Non e' che non conti: e' che non e' il motivo per cui si apre l'app.*
 var menuCard = el('<div class="card"></div>');
 menuCard.appendChild(el('<h2 class="section-title">'+t("menu_title")+'</h2>'));
 
@@ -10799,14 +10870,16 @@ menuCard.appendChild(pgBtn);
 } else {
 // Stesso trattamento del Marketplace: invece di sparire senza spiegazione,
 // la funzione si mostra chiusa e dice a chi sara' aperta.
-var pgLock = el('<div style="margin-top:10px;padding:14px 12px;border:1px dashed var(--line);border-radius:14px;text-align:center;"></div>');
-pgLock.appendChild(el('<div style="color:var(--muted);opacity:0.75;line-height:1;">'+navIcon("azprepara",30,"unica")+'</div>'));
-pgLock.appendChild(el('<div style="font-weight:800;color:var(--muted);margin:8px 0 4px;">'+t("pg_menu_btn_label")+'</div>'));
-pgLock.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.45;color:var(--muted);">'+t("pg_locked_body")+'</div>'));
+// Quattro righe centrate con l'icona grande sono diventate due, a sinistra.
+// Le stringhe sono le stesse: cambia il peso, non il testo.
+var pgLock = el('<div class="riga-chiusa"></div>');
+pgLock.appendChild(el('<b>'+t("pg_menu_btn_label")+'</b>'));
+pgLock.appendChild(el('<span>'+t("pg_locked_body")+'</span>'));
 menuCard.appendChild(pgLock);
 }
 }
 wrap.appendChild(menuCard);
+wrap.appendChild(otSectionCard(false));
 
 // "Arcieri salvati" rimosso: la stessa lista si modifica all'avvio di ogni
 // giro nella schermata Arcieri, quindi era una seconda porta sulla stessa cosa.
@@ -10845,12 +10918,12 @@ if(IS_BETA_TESTER === true){
 // Si apre da solo: premere "Marketplace" due volte non aveva senso.
 // La scheda torna su "Tira" PRIMA di uscire, altrimenti al ritorno dal
 // marketplace si ripartirebbe subito verso il marketplace, in cerchio.
-mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+navIcon("navmarket",34,"unica")+'</div>'));
+mktCard.appendChild(el('<div style="text-align:center;padding:8px 0 8px;color:var(--muted);">'+navIcon("navmarket",34,"unica")+'</div>'));
 mktCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);text-align:center;">'+t("market_opening")+'</div>'));
 state.tab = "tira"; save();
 setTimeout(function(){ window.location.href = "marketplace.html"; }, 80);
 } else {
-mktCard.appendChild(el('<div style="text-align:center;padding:10px 0 8px;color:var(--muted);">'+navIcon("navmarket",34,"unica")+'</div>'));
+mktCard.appendChild(el('<div style="text-align:center;padding:8px 0 8px;color:var(--muted);">'+navIcon("navmarket",34,"unica")+'</div>'));
 mktCard.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.45;text-align:center;color:var(--muted);">'+t("market_locked_body")+'</div>'));
 }
 wrap.appendChild(mktCard);
@@ -10871,8 +10944,8 @@ wrap.appendChild(el('<div class="card"><div style="font-size:var(--t-sm);color:v
 else if(mineClubs.length && !clubShowAll){
 if(mineClubs.indexOf(state.clubSpaceCode) === -1) state.clubSpaceCode = mineClubs[0];
 if(mineClubs.length > 1){
-var pickCard = el('<div class="card" style="margin-bottom:14px;"></div>');
-pickCard.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:6px;">'+t("club_pick_space")+'</label>'));
+var pickCard = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
+pickCard.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("club_pick_space")+'</label>'));
 var pickSel = el('<select style="width:100%;font-size:var(--t-md);padding:var(--s-3);border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);"></select>');
 mineClubs.forEach(function(c){
 var nmC = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[c]) ? COMPAGNIE[c].nome : c;
@@ -10882,26 +10955,26 @@ pickSel.addEventListener("change", function(){ state.clubSpaceCode = pickSel.val
 pickCard.appendChild(pickSel);
 wrap.appendChild(pickCard);
 }
-wrap.appendChild(el('<div class="card" style="margin-bottom:14px;border-top-color:var(--gold);"><div style="font-size:var(--t-sm);color:var(--muted);line-height:1.45;">'+t("club_only_space_hint")+'</div></div>'));
+wrap.appendChild(el('<div class="card" style="margin-bottom:var(--s-3);border-top-color:var(--gold);"><div style="font-size:var(--t-sm);color:var(--muted);line-height:1.45;">'+t("club_only_space_hint")+'</div></div>'));
 wrap.appendChild(clubSpaceScreen(true));
-var seeAllBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t("club_see_all")+'</button>');
+var seeAllBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);">'+t("club_see_all")+'</button>');
 seeAllBtn.addEventListener("click", function(){ clubShowAll = true; save(); render(); });
 wrap.appendChild(seeAllBtn);
 }
 else {
 if(mineClubs.length){
-var backSpaceBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:14px;">'+t("club_back_to_space")+'</button>');
+var backSpaceBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:var(--s-3);">'+t("club_back_to_space")+'</button>');
 backSpaceBtn.addEventListener("click", function(){ clubShowAll = false; save(); render(); });
 wrap.appendChild(backSpaceBtn);
 }
 // Registrazione: la richiesta parte dall'app ma va confermata via email
 // da un indirizzo ufficiale, altrimenti chiunque potrebbe intestarsi una compagnia.
-var regCard = el('<div class="card" style="margin-bottom:14px;border-top-color:var(--gold);"></div>');
+var regCard = el('<div class="card" style="margin-bottom:var(--s-3);border-top-color:var(--gold);"></div>');
 regCard.appendChild(el('<h2 class="section-title">'+t("club_reg_title")+'</h2>'));
 regCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-3);">'+t("club_reg_hint")+'</div>'));
 
 function passo(n, testo){
-var r = el('<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;"></div>');
+var r = el('<div style="display:flex;gap:var(--s-2);align-items:flex-start;margin-bottom:var(--s-2);"></div>');
 r.appendChild(el('<span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#1A2620;font-weight:800;font-size:var(--t-sm);display:flex;align-items:center;justify-content:center;">'+n+'</span>'));
 r.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.4;">'+testo+'</div>'));
 regCard.appendChild(r);
@@ -10913,7 +10986,7 @@ passo(3, t("club_reg_s3"));
 var mailHref = "mailto:"+CONTACT_EMAIL
 +"?subject="+encodeURIComponent(t("club_reg_mail_subject"))
 +"&body="+encodeURIComponent(t("club_reg_mail_body"));
-regCard.appendChild(el('<a href="'+mailHref+'" class="btn btn-primary btn-block" style="text-decoration:none;display:flex;align-items:center;justify-content:center;margin-top:6px;">'+t("club_reg_mail_btn")+'</a>'));
+regCard.appendChild(el('<a href="'+mailHref+'" class="btn btn-primary btn-block" style="text-decoration:none;display:flex;align-items:center;justify-content:center;margin-top:var(--s-1);">'+t("club_reg_mail_btn")+'</a>'));
 wrap.appendChild(regCard);
 
 if(currentUser && myClubCode()){
@@ -10958,7 +11031,7 @@ var fedFlag = "", fedPaese = state.country, fedNome = state.federation.toUpperCa
 for(var ci=0; ci<COUNTRY_LIST.length; ci++){ if(COUNTRY_LIST[ci].code === state.country){ fedFlag = COUNTRY_LIST[ci].flag; fedPaese = t(COUNTRY_LIST[ci].key); break; } }
 var fedsQui = COUNTRY_FEDERATIONS[state.country] || [];
 for(var fi=0; fi<fedsQui.length; fi++){ if(fedsQui[fi].code === state.federation){ fedNome = fedsQui[fi].label; break; } }
-var fedRow = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:var(--s-2);"><span style="font-size:1.15em;margin-right:6px;">'+fedFlag+'</span>'+escapeHtml(fedNome)+' <span style="color:var(--muted);">&middot; '+escapeHtml(fedPaese)+'</span></button>');
+var fedRow = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:var(--s-2);"><span style="font-size:1.15em;margin-right:var(--s-1);">'+fedFlag+'</span>'+escapeHtml(fedNome)+' <span style="color:var(--muted);">&middot; '+escapeHtml(fedPaese)+'</span></button>');
 fedRow.addEventListener("click", function(){ setupCountry = state.country; state.screen = "setup"; save(); render(); });
 setCard.appendChild(fedRow);
 }
@@ -10967,23 +11040,23 @@ infoBtn.addEventListener("click", function(){ state.screen = "info"; save(); ren
 setCard.appendChild(infoBtn);
 
 if(currentUser && currentUser.email === ADMIN_EMAIL){
-var adminBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+icon("users",16)+' '+t("menu_admin")+'</button>');
+var adminBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);">'+icon("users",16)+' '+t("menu_admin")+'</button>');
 adminBtn.addEventListener("click", function(){ adminTab = "accessi"; state.screen = "admin"; save(); render(); });
 setCard.appendChild(adminBtn);
 }
 // Privacy e termini: devono essere raggiungibili dall'app, non solo dallo store
-var legalRow = el('<div style="display:flex;gap:var(--s-2);margin-top:10px;"></div>');
+var legalRow = el('<div style="display:flex;gap:var(--s-2);margin-top:var(--s-2);"></div>');
 legalRow.appendChild(el('<a class="btn btn-ghost btn-sm" href="/privacy.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_privacy")+'</a>'));
 legalRow.appendChild(el('<a class="btn btn-ghost btn-sm" href="/termini.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_terms")+'</a>'));
 setCard.appendChild(legalRow);
 
 if(currentUser){
-var logoutBtn2 = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t("logout_word")+' ('+escapeHtml(currentUser.email)+')</button>');
+var logoutBtn2 = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);">'+t("logout_word")+' ('+escapeHtml(currentUser.email)+')</button>');
 logoutBtn2.addEventListener("click", function(){
 auth.signOut().then(function(){ authState = "needLogin"; currentUser = null; render(); });
 });
 setCard.appendChild(logoutBtn2);
-var delAccBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:14px;color:var(--danger);border-color:var(--danger);">'+t("acc_delete_btn")+'</button>');
+var delAccBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-3);color:var(--danger);border-color:var(--danger);">'+t("acc_delete_btn")+'</button>');
 delAccBtn.addEventListener("click", function(){ state.screen = "account-delete"; save(); render(); });
 setCard.appendChild(delAccBtn);
 }
@@ -11025,7 +11098,7 @@ var card1 = el('<div class="card"></div>');
 card1.appendChild(el('<h2 class="section-title">'+t("train_setup_title")+'</h2>'));
 var numInput = el('<input type="number" id="formatInput" min="'+mode.minFormat+'" max="'+mode.maxFormat+'" value="'+(state.pendingFormat||14)+'">');
 card1.appendChild(numInput);
-card1.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:6px;">'+t("train_setup_hint",{max:mode.maxFormat})+'</div>'));
+card1.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:var(--s-1);">'+t("train_setup_hint",{max:mode.maxFormat})+'</div>'));
 card1.appendChild(el('<div style="font-size:var(--t-xs);color:var(--gold);margin-top:var(--s-1);">'+t("train_free_hint")+'</div>'));
 wrap.appendChild(card1);
 
@@ -11041,20 +11114,20 @@ c.addEventListener("click", function(){ state.trainingArrowsChoice = n; save(); 
 arrowsGrid.appendChild(c);
 });
 arrowsCard.appendChild(arrowsGrid);
-arrowsCard.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:6px;">'+t("train_arrows_hint")+'</div>'));
+arrowsCard.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:var(--s-1);">'+t("train_arrows_hint")+'</div>'));
 wrap.appendChild(arrowsCard);
 }
 
 if(hasInvitedArchers() && !DEV_MODE && db && currentUser){
 var sharedCard = el('<div class="card"></div>');
 sharedCard.appendChild(el('<h2 class="section-title">'+t("train_shared_title")+'</h2>'));
-sharedCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("train_shared_hint")+'</div>'));
+sharedCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);">'+t("train_shared_hint")+'</div>'));
 var dcRow = el('<label class="checkbox-row principale"><input type="checkbox" id="doubleConfirmChk"><span>'+t("train_double_confirm_label")+'</span></label>');
 var dcChk = dcRow.querySelector("#doubleConfirmChk");
 dcChk.checked = !!state.doubleConfirm;
 dcChk.addEventListener("change", function(){ state.doubleConfirm = dcChk.checked; save(); });
 sharedCard.appendChild(dcRow);
-sharedCard.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:6px;">'+t("train_double_confirm_hint")+'</div>'));
+sharedCard.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-top:var(--s-1);">'+t("train_double_confirm_hint")+'</div>'));
 wrap.appendChild(sharedCard);
 }
 
@@ -11327,9 +11400,9 @@ var hasPending = false; // controlliamo Firestore solo se serve
 if(!isAppAdmin && !isAdmin){
 // Mostra pulsante "richiedi admin" per chi non è ancora admin
 if(currentUser){
-var claimCard = el('<div class="card" style="margin-bottom:10px;"></div>');
+var claimCard = el('<div class="card" style="margin-bottom:var(--s-2);"></div>');
 var claimBtn = el('<button class="btn btn-ghost btn-block" style="font-size:var(--t-sm);">'+t("cp_admin_claim_btn")+'</button>');
-var claimStatus = el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:6px;min-height:16px;"></div>');
+var claimStatus = el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:var(--s-1);min-height:16px;"></div>');
 claimBtn.addEventListener("click", function(){
 claimBtn.disabled = true;
 requestAdminCompagnia(codice, function(esito){
@@ -11351,7 +11424,7 @@ return;
 }
 
 // Admin: scorciatoia allo spazio compagnia (i dati si modificano li')
-var adminCard = el('<div class="card" style="margin-bottom:14px;border:2px solid var(--accent-soft);"></div>');
+var adminCard = el('<div class="card" style="margin-bottom:var(--s-3);border:2px solid var(--accent-soft);"></div>');
 var openSpace = el('<button class="btn btn-primary btn-block">'+t("club_space_open")+'</button>');
 openSpace.addEventListener("click", function(){ state.clubSpaceCode = codice; state.screen = "club-space"; save(); render(); });
 adminCard.appendChild(openSpace);
@@ -11390,7 +11463,7 @@ save(); render();
 percCard.appendChild(card);
 });
 
-var actionsRow = el('<div class="row" style="margin-top:6px;"></div>');
+var actionsRow = el('<div class="row" style="margin-top:var(--s-1);"></div>');
 var newRisBtn = el('<button class="btn btn-primary btn-block btn-sm">'+t("compagnie_new_risultato")+'</button>');
 newRisBtn.addEventListener("click", function(){ state.compagniaForm = "risultato"; save(); render(); });
 var newPerBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("compagnie_new_percorso")+'</button>');
@@ -11448,7 +11521,7 @@ card.appendChild(percRow);
 card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_arciere")+'</label><input type="text" id="cpFNome" placeholder="'+t("compagnie_arciere")+'"></div>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_punteggio")+'</label><input type="number" id="cpFPunteggio" min="0"></div>'));
 var todayIso = new Date().toISOString().slice(0,10);
-card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_data")+'</label><input type="date" id="cpFData" value="'+todayIso+'" style="width:100%;padding:13px 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);font-size:var(--t-md);"></div>'));
+card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_data")+'</label><input type="date" id="cpFData" value="'+todayIso+'" style="width:100%;padding:12px 12px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg-panel);color:var(--cream);font-size:var(--t-md);"></div>'));
 
 card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_arco")+'</label></div>'));
 var bowRow = el('<div class="chip-group" style="flex-wrap:wrap;"></div>');
@@ -11465,7 +11538,7 @@ bowRow.appendChild(chip);
 });
 card.appendChild(bowRow);
 
-var actions = el('<div class="row" style="margin-top:14px;"></div>');
+var actions = el('<div class="row" style="margin-top:var(--s-3);"></div>');
 var saveBtn = el('<button class="btn btn-primary btn-block">'+t("compagnie_salva")+'</button>');
 var cancelBtn = el('<button class="btn btn-ghost btn-block">'+t("compagnie_annulla")+'</button>');
 actions.appendChild(saveBtn); actions.appendChild(cancelBtn);
@@ -11493,7 +11566,7 @@ card.appendChild(el('<h2 class="section-title">'+t("compagnie_new_percorso")+'</
 card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_nome_percorso")+'</label><input type="text" id="cpFPNome"></div>'));
 card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_num_piazzole")+'</label><input type="number" id="cpFPPiazzole" min="1"></div>'));
 
-var actions = el('<div class="row" style="margin-top:14px;"></div>');
+var actions = el('<div class="row" style="margin-top:var(--s-3);"></div>');
 var saveBtn = el('<button class="btn btn-primary btn-block">'+t("compagnie_salva")+'</button>');
 var cancelBtn = el('<button class="btn btn-ghost btn-block">'+t("compagnie_annulla")+'</button>');
 actions.appendChild(saveBtn); actions.appendChild(cancelBtn);
@@ -11542,7 +11615,7 @@ card.appendChild(row);
 });
 if(!any){ card.appendChild(el('<div class="empty-hint">'+t("compagnie_classifica_empty")+'</div>')); }
 
-var closeBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("compagnie_annulla")+'</button>');
+var closeBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-2);">'+t("compagnie_annulla")+'</button>');
 closeBtn.addEventListener("click", function(){ state.compagniaForm = null; save(); render(); });
 card.appendChild(closeBtn);
 
@@ -11569,7 +11642,7 @@ navigator.geolocation.getCurrentPosition(function(pos){ openIt(pos.coords); }, f
 } else { openIt(null); }
 }
 
-var locCard = el('<div class="card" style="margin-bottom:14px;"></div>');
+var locCard = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
 locCard.appendChild(el('<h2 class="section-title">'+t("campi_title")+'</h2>'));
 
 var locBtn = el('<button class="btn btn-primary btn-block">'+icon("pin",18)+' '+t("campi_btn")+'</button>');
@@ -11581,7 +11654,7 @@ apriMaps(t("campi_maps_query"));
 setTimeout(function(){ locBtn.innerHTML = icon("pin",18)+' '+t("campi_btn"); }, 2500);
 });
 locCard.appendChild(locBtn);
-locCard.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin:8px 0 14px;">'+t("campi_hint")+'</div>'));
+locCard.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin:8px 0 12px;">'+t("campi_hint")+'</div>'));
 
 // Le due ricerche separate (campi / compagnie) davano quasi sempre gli stessi
 // risultati: in Italia il campo e' della compagnia. Ne resta una sola.
@@ -11649,7 +11722,7 @@ body.innerHTML = "";
 // ── Chi non e' referente: puo' solo chiedere di diventarlo ────────────────
 if(!isAdmin){
 var claimCard = el('<div class="card"></div>');
-claimCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("club_space_claim_hint")+'</div>'));
+claimCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);">'+t("club_space_claim_hint")+'</div>'));
 var claimBtn = el('<button class="btn btn-primary btn-block">'+t("club_space_claim")+'</button>');
 var claimMsg = el('<div style="font-size:var(--t-sm);color:var(--accent-soft);margin-top:var(--s-2);min-height:16px;text-align:center;"></div>');
 claimBtn.addEventListener("click", function(){
@@ -11747,7 +11820,7 @@ repList.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'
 }
 mostra.forEach(function(r){
 var chiuso = (r.status === "closed");
-var row = el('<div style="border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:var(--s-2);'+(chiuso?'opacity:.55;':'')+'"></div>');
+var row = el('<div style="border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:var(--s-2);'+(chiuso?'opacity:.55;':'')+'"></div>');
 var testa = el('<div style="display:flex;justify-content:space-between;gap:var(--s-2);align-items:center;margin-bottom:var(--s-1);"></div>');
 testa.appendChild(el('<span style="font-size:var(--t-xs);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.03em;">'+(TIPI[r.type]||TIPI.other)+(r.piazzola ? ' \u00b7 '+t("club_piazzola_word")+' '+r.piazzola : '')+'</span>'));
 if(chiuso){ testa.appendChild(el('<span style="font-size:var(--t-xs);font-weight:700;color:var(--accent-soft);">'+t("club_report_resolved")+'</span>')); }
@@ -11769,7 +11842,7 @@ repList.appendChild(row);
 
 // ── Pulizia: le segnalazioni risolte non servono piu' a nessuno ───────────
 if(chiuse.length){
-var toggleBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">'+t(state.clubShowClosed ? "club_reports_hide_closed" : "club_reports_show_closed")+' ('+chiuse.length+')</button>');
+var toggleBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);">'+t(state.clubShowClosed ? "club_reports_hide_closed" : "club_reports_show_closed")+' ('+chiuse.length+')</button>');
 toggleBtn.addEventListener("click", function(){ state.clubShowClosed = !state.clubShowClosed; save(); caricaSegnalazioni(); });
 repList.appendChild(toggleBtn);
 
@@ -11779,7 +11852,7 @@ armDoubleConfirm(pulisciBtn, t("club_reports_clear_confirm"), function(){
 var batch = db.batch();
 chiuse.forEach(function(x){ batch.delete(db.collection("field_reports").doc(x.id)); });
 batch.commit().then(caricaSegnalazioni).catch(function(e){
-repList.appendChild(el('<div style="font-size:var(--t-sm);color:var(--danger);margin-top:6px;">'+escapeHtml(e && e.message ? e.message : "Errore")+'</div>'));
+repList.appendChild(el('<div style="font-size:var(--t-sm);color:var(--danger);margin-top:var(--s-1);">'+escapeHtml(e && e.message ? e.message : "Errore")+'</div>'));
 });
 });
 }
@@ -11791,7 +11864,7 @@ caricaSegnalazioni();
 });
 
 if(!embedded){
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-1);">'+t("cancel_btn")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen = "menu"; state.tab = "profilo"; save(); render(); });
 wrap.appendChild(backBtn);
 }
@@ -12045,7 +12118,7 @@ card.appendChild(listWrap);
 // lingue non avrebbe senso.
 var ppCard = el('<div class="card"></div>');
 ppCard.appendChild(el('<h2 class="section-title">Profili pubblici</h2>'));
-ppCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;line-height:1.5;">Ricostruisce public_profiles a partire dagli utenti approvati. Da lanciare al passaggio alle nuove regole, poi solo se qualcuno non compare nell\'elenco arcieri.</div>'));
+ppCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);line-height:1.5;">Ricostruisce public_profiles a partire dagli utenti approvati. Da lanciare al passaggio alle nuove regole, poi solo se qualcuno non compare nell\'elenco arcieri.</div>'));
 var ppStatus = el('<div style="font-size:var(--t-sm);min-height:20px;margin-bottom:var(--s-2);"></div>');
 var ppBtn = el('<button class="btn btn-ghost btn-block btn-sm">Allinea profili pubblici</button>');
 ppBtn.addEventListener("click", function(){
@@ -12096,16 +12169,16 @@ ppCard.appendChild(ppBtn);
 // Solo orderBy, nessun where: niente indice composito da creare.
 var erCard = el('<div class="card"></div>');
 erCard.appendChild(el('<h2 class="section-title">Errori registrati</h2>'));
-erCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;line-height:1.5;">Ultimi 30 errori raccolti sui dispositivi. Ogni riga dice dove, in quale schermata e con quale versione del file.</div>'));
+erCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);line-height:1.5;">Ultimi 30 errori raccolti sui dispositivi. Ogni riga dice dove, in quale schermata e con quale versione del file.</div>'));
 var erList = el('<div style="font-size:var(--t-sm);line-height:1.5;"></div>');
-var erRow  = el('<div style="display:flex;gap:var(--s-2);margin-top:10px;"></div>');
+var erRow  = el('<div style="display:flex;gap:var(--s-2);margin-top:var(--s-2);"></div>');
 var erBtn  = el('<button class="btn btn-ghost btn-sm" style="flex:1;">Carica errori</button>');
 var erDel  = el('<button class="btn btn-ghost btn-sm" style="flex:1;">Svuota</button>');
 
 function erFmt(d){
 var when = d.at ? new Date(d.at) : null;
 var data = when ? (("0"+when.getDate()).slice(-2)+"/"+("0"+(when.getMonth()+1)).slice(-2)+" "+("0"+when.getHours()).slice(-2)+":"+("0"+when.getMinutes()).slice(-2)) : "?";
-var box = el('<div style="border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 10px;margin-bottom:var(--s-2);"></div>');
+var box = el('<div style="border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 8px;margin-bottom:var(--s-2);"></div>');
 box.appendChild(el('<div style="font-weight:700;color:var(--danger);word-break:break-word;">'+escapeHtml(d.msg || "?")+'</div>'));
 box.appendChild(el('<div style="color:var(--muted);">'+escapeHtml(data+" \u00b7 "+(d.dove||"?")+" \u00b7 schermata "+(d.screen||"?")+" \u00b7 "+(d.build||"?"))+'</div>'));
 if(d.extra) box.appendChild(el('<div style="color:var(--muted);word-break:break-all;">'+escapeHtml(String(d.extra))+'</div>'));
@@ -12176,7 +12249,7 @@ if(pending.length === 0){
 listWrap.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-4);">'+t("admin_empty_pending")+'</div>'));
 }
 pending.forEach(function(row){
-var rowEl = el('<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);"><span style="font-size:var(--t-sm);word-break:break-all;">'+escapeHtml(row.email)+'</span></div>');
+var rowEl = el('<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-2);padding:8px 0;border-bottom:1px solid var(--line);"><span style="font-size:var(--t-sm);word-break:break-all;">'+escapeHtml(row.email)+'</span></div>');
 var btn = el('<button class="btn btn-primary btn-sm">'+t("admin_approve_btn")+'</button>');
 btn.addEventListener("click", function(){
 btn.disabled = true;
@@ -12257,9 +12330,9 @@ return;
 snap.forEach(function(doc){
 var r = doc.data();
 var nomeComp = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[r.codice]) ? COMPAGNIE[r.codice].nome : r.codice;
-var row = el('<div style="border-bottom:1px solid var(--line);padding:10px 0;"></div>');
+var row = el('<div style="border-bottom:1px solid var(--line);padding:8px 0;"></div>');
 row.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;">'+escapeHtml(nomeComp)+' <span style="color:var(--muted);font-weight:600;font-size:var(--t-sm);">('+escapeHtml(r.codice||"")+')</span></div>'));
-row.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:6px;">'+escapeHtml(r.richiedenteName||"?")+'</div>'));
+row.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-1);">'+escapeHtml(r.richiedenteName||"?")+'</div>'));
 var btnRow = el('<div class="row"></div>');
 var ok = el('<button class="btn btn-primary btn-sm btn-block">'+t("admin_club_approve")+'</button>');
 ok.addEventListener("click", function(){
@@ -12293,7 +12366,7 @@ var sessListWrap = el('<div id="adminSessListWrap"><div style="font-size:var(--t
 sessCard.appendChild(sessListWrap);
 admPanel("sessioni", sessCard);
 
-var closeAllBtn = el('<button class="btn" style="width:100%;margin-bottom:10px;background:var(--danger);color:#fff;font-size:var(--t-sm);">&#128465; Chiudi tutte le sessioni attive</button>');
+var closeAllBtn = el('<button class="btn" style="width:100%;margin-bottom:var(--s-2);background:var(--danger);color:#fff;font-size:var(--t-sm);">&#128465; Chiudi tutte le sessioni attive</button>');
 closeAllBtn.addEventListener("click", function(){
 if(!confirm("Chiudere TUTTE le sessioni attive?")) return;
 db.collection("sessions").where("status","==","active").get().then(function(snap){
@@ -12317,14 +12390,14 @@ var d = doc.data();
 var names = (d.participants||[]).map(function(p){ return escapeHtml(p.name||"?"); }).join(", ");
 var dcLabel = d.doubleConfirm ? t("admin_sessions_double_confirm") : t("admin_sessions_single");
 var row = el(
-'<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:var(--t-sm);">'+
+'<div style="padding:8px 0;border-bottom:1px solid var(--line);font-size:var(--t-sm);">'+
 '<div style="font-weight:700;">'+escapeHtml(d.ownerName||"?")+'</div>'+
 '<div style="color:var(--muted);margin-top:2px;">'+t("admin_sessions_participants")+': '+names+'</div>'+
 '<div style="color:var(--muted);margin-top:2px;">'+dcLabel+'</div>'+
 '</div>'
 );
 sessListWrap.appendChild(row);
-var closeBtn = el('<button style="margin-top:var(--s-1);background:var(--danger);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:var(--t-sm);cursor:pointer;">Chiudi sessione</button>');
+var closeBtn = el('<button style="margin-top:var(--s-1);background:var(--danger);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:var(--t-sm);cursor:pointer;">Chiudi sessione</button>');
 (function(docRef, docId){
 closeBtn.addEventListener("click", function(){
 docRef.update({status:"closed", updatedAt: firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
@@ -12364,7 +12437,7 @@ if(!data){
 card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("admin_loading")+'</div>'));
 wrap.appendChild(card);
 } else {
-card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:10px;">'+t("session_follow_owner",{name:escapeHtml(data.ownerName||"?")})+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);">'+t("session_follow_owner",{name:escapeHtml(data.ownerName||"?")})+'</div>'));
 if(data.status !== "active"){
 card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("session_closed_note")+'</div>'));
 }
@@ -12373,8 +12446,8 @@ var confirms = data.confirms || {};
 var hasAny = false;
 archerNames.forEach(function(an){
 var entries = sessionShots(data, an.id);
-var block = el('<div style="margin-bottom:14px;"></div>');
-block.appendChild(el('<div style="font-weight:700;margin-bottom:6px;">'+escapeHtml(an.name)+'</div>'));
+var block = el('<div style="margin-bottom:var(--s-3);"></div>');
+block.appendChild(el('<div style="font-weight:700;margin-bottom:var(--s-1);">'+escapeHtml(an.name)+'</div>'));
 if(entries.length === 0){
 block.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("session_no_data")+'</div>'));
 }
@@ -12389,7 +12462,7 @@ var statusColor = firmato ? "var(--accent-soft)" : "var(--bark)";
 // gia' dovuto togliere di mezzo sulla pista.
 var dove = entry.target ? (t("target_inline")+' '+entry.target+' \u00b7 ') : '';
 var row = el(
-'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:var(--t-sm);">'+
+'<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-2);padding:4px 0;border-bottom:1px solid var(--line);font-size:var(--t-sm);">'+
 '<span>'+dove+escapeHtml(entry.arrows.join(", "))+' &middot; <b class="num">'+entry.total+'</b></span>'+
 '<span style="color:'+statusColor+';font-size:var(--t-sm);">'+statusLabel+'</span></div>'
 );
@@ -12417,7 +12490,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-spazi-sulla-scala";
+var BUILD_STAMP = "2026-08-20-linguaggio-b";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12426,7 +12499,7 @@ var BUILD_STAMP = "2026-08-20-spazi-sulla-scala";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-raggi-sulla-scala";
+var BUILD_PARENT = "2026-08-20-spazi-sulla-scala";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -12504,14 +12577,14 @@ editorial.appendChild(el('<div class="editorial-icon">'+icon("info",20)+'</div>'
 editorial.appendChild(el('<div class="editorial-body">'+t("disclaimer_text")+'</div>'));
 wrap.appendChild(editorial);
 
-var contactCard = el('<div class="card" style="margin-top:14px;"></div>');
+var contactCard = el('<div class="card" style="margin-top:var(--s-3);"></div>');
 contactCard.appendChild(el('<h2 class="section-title">'+t("contact_title")+'</h2>'));
 contactCard.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.6;">'+t("contact_text")+'</div>'));
-var mailBtn = el('<button class="btn btn-primary btn-block" style="margin-top:10px;">'+t("welcome_note_report")+'</button>');
+var mailBtn = el('<button class="btn btn-primary btn-block" style="margin-top:var(--s-2);">'+t("welcome_note_report")+'</button>');
 mailBtn.addEventListener("click", function(){ openAdminChat(); });
 contactCard.appendChild(mailBtn);
-contactCard.appendChild(el('<a class="btn btn-ghost btn-block btn-sm" href="/presentazione.html" target="_blank" rel="noopener" style="margin-top:10px;text-align:center;text-decoration:none;">'+t("legal_about")+'</a>'));
-var legalRow2 = el('<div style="display:flex;gap:var(--s-2);margin-top:10px;"></div>');
+contactCard.appendChild(el('<a class="btn btn-ghost btn-block btn-sm" href="/presentazione.html" target="_blank" rel="noopener" style="margin-top:var(--s-2);text-align:center;text-decoration:none;">'+t("legal_about")+'</a>'));
+var legalRow2 = el('<div style="display:flex;gap:var(--s-2);margin-top:var(--s-2);"></div>');
 legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/privacy.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_privacy")+'</a>'));
 legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/termini.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_terms")+'</a>'));
 contactCard.appendChild(legalRow2);
@@ -12560,13 +12633,13 @@ function journalScreen(){
 var wrap = el('<div></div>');
 if(!state.journalTab) state.journalTab = "trend";
 
-var head = el('<div class="card" style="margin-bottom:14px;"></div>');
+var head = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
 head.appendChild(el('<h2 class="section-title">'+t("journal_title")+'</h2>'));
 head.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-3);">'+t("journal_sub")+'</div>'));
 var seg = el('<div style="display:flex;gap:var(--s-2);"></div>');
 [["trend",t("journal_tab_trend")],["rounds",t("journal_tab_rounds")]].forEach(function(pair){
 var k = pair[0], on = (state.journalTab === k);
-var b = el('<button style="flex:1;padding:10px 6px;border-radius:var(--r-sm);border:1px solid '+(on?"var(--accent)":"var(--line)")+';background:'+(on?"var(--accent)":"var(--bg-panel-2)")+';color:'+(on?"var(--accent-ink)":"var(--cream)")+';font-size:0.84rem;font-weight:700;cursor:pointer;">'+pair[1]+'</button>');
+var b = el('<button style="flex:1;padding:8px 4px;border-radius:var(--r-sm);border:1px solid '+(on?"var(--accent)":"var(--line)")+';background:'+(on?"var(--accent)":"var(--bg-panel-2)")+';color:'+(on?"var(--accent-ink)":"var(--cream)")+';font-size:0.84rem;font-weight:700;cursor:pointer;">'+pair[1]+'</button>');
 b.addEventListener("click", function(){ state.journalTab = k; save(); render(); });
 seg.appendChild(b);
 });
@@ -12632,7 +12705,7 @@ var d = Math.round(((a5-b5)/b5)*100);
 if(d !== 0){ trend = t("diario_trend",{d:(d>0?"+":"")+d}); trendUp = (d>0); }
 }
 
-var grid = el('<div style="display:flex;gap:10px;margin-bottom:var(--s-1);"></div>');
+var grid = el('<div style="display:flex;gap:var(--s-2);margin-bottom:var(--s-1);"></div>');
 grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);"><div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div><div style="font-size:var(--t-xl);font-weight:800;color:var(--gold);line-height:1.2;">'+bestTotal+'</div><div style="font-size:var(--t-xs);color:var(--muted);">'+escapeHtml(bestLabel||"")+'</div></div>'));
 grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);"><div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div><div style="font-size:var(--t-xl);font-weight:800;color:var(--cream);line-height:1.2;">'+media+'</div><div style="font-size:var(--t-xs);color:var(--muted);">'+t("diario_on_rounds",{n:roundsCount})+'</div></div>'));
 head.appendChild(grid);
@@ -12689,7 +12762,7 @@ var avg = g.rounds ? Math.round(g.sum / g.rounds) : 0;
 var row = el('<div style="background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);margin-bottom:var(--s-2);"></div>');
 row.innerHTML =
 '<div style="font-weight:600;font-size:var(--t-sm);color:var(--cream);margin-bottom:var(--s-2);">'+escapeHtml(g.label)+'</div>'+
-'<div style="display:flex;gap:10px;">'+
+'<div style="display:flex;gap:var(--s-2);">'+
 '<div style="flex:1;text-align:center;background:var(--bg-panel);border-radius:var(--r-xs);padding:8px 4px;">'+
 '<div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div>'+
 '<div style="font-size:var(--t-lg);font-weight:800;color:var(--gold);">'+g.best+'</div></div>'+
@@ -12709,7 +12782,7 @@ cloudCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);l
 if(DEV_MODE || !db || !currentUser){
 cloudCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("diario_cloud_offline")+'</div>'));
 } else {
-var cloudMsg = el('<div style="font-size:var(--t-sm);color:var(--muted);min-height:1.2em;margin-bottom:10px;"></div>');
+var cloudMsg = el('<div style="font-size:var(--t-sm);color:var(--muted);min-height:1.2em;margin-bottom:var(--s-2);"></div>');
 if(lastCloudRestoreMsg){ cloudMsg.textContent = lastCloudRestoreMsg; lastCloudRestoreMsg = ""; }
 cloudCard.appendChild(cloudMsg);
 var upBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:var(--s-2);">'+t("diario_cloud_backup")+'</button>');
@@ -12787,7 +12860,7 @@ var d = new Date(h.date);
 var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 var winner = h.results.length ? h.results[0] : null;
 var mLabel = h.modeKey ? modeLabel(h.modeKey) : (h.modeLabel || modeLabel("training"));
-var row = el('<div class="timeline-row" style="cursor:pointer;position:relative;padding-right:26px;"></div>');
+var row = el('<div class="timeline-row" style="cursor:pointer;position:relative;padding-right:var(--s-5);"></div>');
 row.appendChild(el('<div class="timeline-icon">'+icon("target",16)+'</div>'));
 var content = el('<div class="timeline-content"></div>');
 content.appendChild(el('<span class="timeline-meta">'+dateStr+' &middot; '+escapeHtml(mLabel)+' &middot; '+h.format+' '+t("targets_word")+'</span>'));
@@ -12798,7 +12871,7 @@ state.historyIndex = hIdx;
 state.screen = "history-detail";
 save(); render();
 });
-var delRound = el('<button title="'+t("hist_delete_one")+'" style="position:absolute;top:50%;right:2px;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:var(--t-lg);line-height:1;cursor:pointer;padding:4px 6px;">&times;</button>');
+var delRound = el('<button title="'+t("hist_delete_one")+'" style="position:absolute;top:50%;right:2px;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:var(--t-lg);line-height:1;cursor:pointer;padding:4px 4px;">&times;</button>');
 delRound.addEventListener("click", function(ev){
 ev.stopPropagation();
 if(delRound.dataset.armed === "1"){
@@ -12820,7 +12893,7 @@ row.appendChild(delRound);
 histList.appendChild(row);
 });
 histCard.appendChild(histList);
-var clearHistBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("history_clear")+'</button>');
+var clearHistBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-2);">'+t("history_clear")+'</button>');
 histCard.appendChild(clearHistBtn);
 armDoubleConfirm(clearHistBtn, t("clear_confirm"), function(){
 // come per il singolo giro: si cancella dal dispositivo E dal cloud, altrimenti
@@ -12841,7 +12914,7 @@ var wrap = el('<div></div>');
 var hist = loadHistory();
 var h = hist[state.historyIndex];
 if(!h){
-var backBtnEmpty = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("back_to_history_btn")+'</button>');
+var backBtnEmpty = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-2);">'+t("back_to_history_btn")+'</button>');
 backBtnEmpty.addEventListener("click", function(){ state.screen = "history"; save(); render(); });
 wrap.appendChild(backBtnEmpty);
 return wrap;
@@ -12897,11 +12970,11 @@ wrap.appendChild(detailCard);
 var sigRow = el('<div class="print-signatures"><div>'+t("print_sign_archer")+'</div><div>'+t("print_sign_judge")+'</div></div>');
 wrap.appendChild(sigRow);
 
-var printBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;">'+icon("printer",16)+' '+t("export_pdf_btn")+'</button>');
+var printBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:var(--s-2);">'+icon("printer",16)+' '+t("export_pdf_btn")+'</button>');
 printBtn.addEventListener("click", function(){ window.print(); });
 wrap.appendChild(printBtn);
 
-var shareBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;">'+icon("share",16)+' '+t("share_btn")+'</button>');
+var shareBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:var(--s-2);">'+icon("share",16)+' '+t("share_btn")+'</button>');
 shareBtn.addEventListener("click", function(){
 var lines = h.results.map(function(r,i){
 var perTarget = (r.perTarget||[]).map(function(tot,idx){ return (idx+1)+":"+tot; }).join(" ");
@@ -12919,14 +12992,14 @@ setTimeout(function(){ shareBtn.innerHTML = icon("share",16)+' '+t("share_btn");
 });
 wrap.appendChild(shareBtn);
 
-var delRoundBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;color:var(--danger);border-color:var(--danger);">'+t("hist_delete_one")+'</button>');
+var delRoundBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:var(--s-2);color:var(--danger);border-color:var(--danger);">'+t("hist_delete_one")+'</button>');
 wrap.appendChild(delRoundBtn);
 armDoubleConfirm(delRoundBtn, t("hist_delete_confirm"), function(){
 deleteHistoryRound(state.historyIndex);
 state.screen = "history"; save(); render();
 });
 
-var backBtn = el('<button class="btn btn-primary btn-block no-print" style="margin-top:10px;">'+t("back_to_history_btn")+'</button>');
+var backBtn = el('<button class="btn btn-primary btn-block no-print" style="margin-top:var(--s-2);">'+t("back_to_history_btn")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen = "history"; save(); render(); });
 wrap.appendChild(backBtn);
 
@@ -13155,9 +13228,9 @@ var wrap = el('<div></div>');
 var card = el('<div class="card"></div>');
 
 // Intestazione: cosa stai facendo e dove finisce la segnalazione
-var head = el('<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;"></div>');
+var head = el('<div style="display:flex;align-items:flex-start;gap:var(--s-2);margin-bottom:var(--s-3);"></div>');
 head.appendChild(el('<span style="flex-shrink:0;width:38px;height:38px;border-radius:var(--r-sm);background:color-mix(in srgb, var(--danger) 18%, transparent);border:1px solid color-mix(in srgb, var(--danger) 45%, transparent);color:var(--danger);display:flex;align-items:center;justify-content:center;">'+icon("warn",20)+'</span>'));
-head.appendChild(el('<div><div style="font-weight:800;font-size:var(--t-lg);color:var(--cream);line-height:1.25;">'+t("fr_report_title")+'</div><div style="font-size:var(--t-sm);color:var(--muted);margin-top:3px;">'+t("fr_report_sub")+'</div></div>'));
+head.appendChild(el('<div><div style="font-weight:800;font-size:var(--t-lg);color:var(--cream);line-height:1.25;">'+t("fr_report_title")+'</div><div style="font-size:var(--t-sm);color:var(--muted);margin-top:var(--s-1);">'+t("fr_report_sub")+'</div></div>'));
 card.appendChild(head);
 
 // ── Campo: stessa selezione da elenco usata per gli allenamenti ────────────
@@ -13166,7 +13239,7 @@ var frCod = null, frLabel = "";
 // Precompilo con la compagnia dell'utente: quasi sempre e' il campo dove sta tirando
 if(state.profile && state.profile.compagnia){ frCod = state.profile.compagnia; frLabel = state.profile.compagniaNome || state.profile.compagnia; }
 
-var selDiv = el('<div style="background:var(--accent);color:var(--accent-ink);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:var(--s-2);justify-content:space-between;align-items:center;"></div>');
+var selDiv = el('<div style="background:var(--accent);color:var(--accent-ink);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:var(--s-2);justify-content:space-between;align-items:center;"></div>');
 var selName = el('<span style="font-weight:700;font-size:var(--t-md);"></span>');
 var selClear = el('<button style="background:none;border:none;color:#fff;font-size:var(--t-lg);cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
 selDiv.appendChild(selName); selDiv.appendChild(selClear);
@@ -13191,7 +13264,7 @@ var c = COMPAGNIE[cod];
 var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "");
 if(label.toLowerCase().indexOf(q) === -1) return;
 found++;
-var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(label)+'</div>');
+var row = el('<div style="padding:8px 12px;border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(label)+'</div>');
 row.addEventListener("click", function(){ frCod = cod; frLabel = label; searchInp.value = ""; refreshField(); });
 listDiv.appendChild(row);
 });
@@ -13200,7 +13273,7 @@ listDiv.style.display = found ? "block" : "none";
 refreshField();
 
 // ── Tipo di problema ──────────────────────────────────────────────────────
-card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:6px;">'+t("fr_type_label")+'</label>'));
+card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("fr_type_label")+'</label>'));
 var tipo = "target";
 var tipoWrap = el('<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4);"></div>');
 var tipoBtns = {};
@@ -13235,12 +13308,12 @@ card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);disp
 var descInp = el('<textarea class="input-field in-modulo" placeholder="'+escapeHtml(t("fr_report_desc_ph"))+'" rows="4"></textarea>');
 card.appendChild(descInp);
 
-var status = el('<div style="font-size:var(--t-sm);margin-bottom:10px;min-height:20px;text-align:center;"></div>');
+var status = el('<div style="font-size:var(--t-sm);margin-bottom:var(--s-2);min-height:20px;text-align:center;"></div>');
 card.appendChild(status);
 
 var backTo = state.frFrom || "menu";
 
-var sendBtn = el('<button class="btn btn-danger btn-block" style="margin-bottom:10px;">'+t("fr_report_send")+'</button>');
+var sendBtn = el('<button class="btn btn-danger btn-block" style="margin-bottom:var(--s-2);">'+t("fr_report_send")+'</button>');
 sendBtn.addEventListener("click", function(){
 status.style.color = "var(--danger)";
 if(!frCod){ status.textContent = t("fr_report_field"); searchInp.focus(); return; }
@@ -13285,7 +13358,7 @@ status.textContent = adminUid ? t("fr_sent_to",{name:frLabel}) : t("fr_no_admin_
 // L'email non puo' partire da sola senza un server: si apre gia' pronta
 // nell'app di posta dell'utente, che deve solo premere invia.
 sendBtn.style.display = "none";
-var mailWrap = el('<div style="margin-bottom:10px;"></div>');
+var mailWrap = el('<div style="margin-bottom:var(--s-2);"></div>');
 mailWrap.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-2);">'+t("fr_email_hint")+'</div>'));
 if(adm.emailComp){
 var corpo = [
@@ -13391,12 +13464,12 @@ setTimeout(loadOtMsgs, 0);
 
 var inputRow = el('<div style="display:flex;gap:var(--s-2);align-items:flex-end;"></div>');
 var textInp = el('<textarea class="input-field in-riga" placeholder="'+escapeHtml(t("ot_msg_placeholder"))+'" rows="2"></textarea>');
-var sendBtn = el('<button class="btn btn-primary" style="padding:10px 16px;">'+t("ot_msg_send")+'</button>');
+var sendBtn = el('<button class="btn btn-primary" style="padding:8px 16px;">'+t("ot_msg_send")+'</button>');
 inputRow.appendChild(textInp);
 inputRow.appendChild(sendBtn);
 card.appendChild(inputRow);
 
-var statusEl = el('<div style="font-size:var(--t-sm);margin-top:6px;min-height:18px;"></div>');
+var statusEl = el('<div style="font-size:var(--t-sm);margin-top:var(--s-1);min-height:18px;"></div>');
 card.appendChild(statusEl);
 
 sendBtn.addEventListener("click", function(){
@@ -13448,7 +13521,7 @@ statusEl.textContent = t("ot_msg_error");
 });
 });
 
-var backBtn = el('<button class="btn btn-block" style="background:var(--bg-panel-2);margin-top:10px;">← '+t("ot_cancel_btn")+'</button>');
+var backBtn = el('<button class="btn btn-block" style="background:var(--bg-panel-2);margin-top:var(--s-2);">← '+t("ot_cancel_btn")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen="menu"; save(); render(); });
 card.appendChild(backBtn);
 
@@ -13834,12 +13907,12 @@ function moderationBar(ctx, onChange){
 var box = el('<div style="margin:-2px 0 12px;"></div>');
 var row = el('<div style="display:flex;gap:var(--s-2);justify-content:flex-end;flex-wrap:wrap;"></div>');
 
-var repBtn = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:var(--t-sm);">\u26a0 '+t("rep_btn")+'</button>');
+var repBtn = el('<button class="btn btn-ghost btn-sm" style="padding:4px 12px;font-size:var(--t-sm);">\u26a0 '+t("rep_btn")+'</button>');
 row.appendChild(repBtn);
 
 if(ctx.uid && currentUser && ctx.uid !== currentUser.uid){
 var bloccato = isUserBlocked(ctx.uid);
-var blkBtn = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:var(--t-sm);'+(bloccato?"":"color:var(--danger);border-color:var(--danger);")+'">'+(bloccato ? t("blk_unblock_btn") : t("blk_block_btn"))+'</button>');
+var blkBtn = el('<button class="btn btn-ghost btn-sm" style="padding:4px 12px;font-size:var(--t-sm);'+(bloccato?"":"color:var(--danger);border-color:var(--danger);")+'">'+(bloccato ? t("blk_unblock_btn") : t("blk_block_btn"))+'</button>');
 if(bloccato){
 blkBtn.addEventListener("click", function(){
 blkBtn.disabled = true;
@@ -13941,9 +14014,9 @@ if(!uids.length){
 card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("blk_list_empty")+'</div>'));
 } else {
 uids.forEach(function(u){
-var riga = el('<div style="display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 12px;margin-bottom:var(--s-2);"></div>');
+var riga = el('<div style="display:flex;align-items:center;gap:var(--s-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:var(--s-2);"></div>');
 riga.appendChild(el('<span style="flex:1;font-size:var(--t-sm);font-weight:700;">@'+escapeHtml(blockedUsers[u]||"?")+'</span>'));
-var sbl = el('<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:var(--t-sm);">'+t("blk_unblock_btn")+'</button>');
+var sbl = el('<button class="btn btn-ghost btn-sm" style="padding:4px 12px;font-size:var(--t-sm);">'+t("blk_unblock_btn")+'</button>');
 sbl.addEventListener("click", function(){
 sbl.disabled = true;
 setUserBlocked(u, blockedUsers[u], false, function(){ render(); });
@@ -13954,7 +14027,7 @@ card.appendChild(riga);
 }
 wrap.appendChild(card);
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-1);">'+t("cancel_btn")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen = "menu"; state.tab = "profilo"; save(); render(); });
 wrap.appendChild(backBtn);
 return wrap;
@@ -14091,15 +14164,15 @@ card.appendChild(el('<h2 class="section-title">'+t("acc_delete_title")+'</h2>'))
 if(!currentUser || !db){
 card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t("acc_delete_error")+'</div>'));
 wrap.appendChild(card);
-var b0 = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
+var b0 = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-1);">'+t("cancel_btn")+'</button>');
 b0.addEventListener("click", function(){ state.screen = "menu"; state.tab = "profilo"; save(); render(); });
 wrap.appendChild(b0);
 return wrap;
 }
 
-card.appendChild(el('<div style="border:1px solid var(--danger);border-radius:var(--r-md);padding:12px 14px;font-size:var(--t-sm);line-height:1.55;color:var(--cream);margin-bottom:var(--s-3);">'+t("acc_delete_warn")+'</div>'));
+card.appendChild(el('<div style="border:1px solid var(--danger);border-radius:var(--r-md);padding:12px 12px;font-size:var(--t-sm);line-height:1.55;color:var(--cream);margin-bottom:var(--s-3);">'+t("acc_delete_warn")+'</div>'));
 card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.55;margin-bottom:var(--s-2);">'+t("acc_delete_what")+'</div>'));
-card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.55;margin-bottom:14px;">'+t("acc_delete_keep")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.55;margin-bottom:var(--s-3);">'+t("acc_delete_keep")+'</div>'));
 
 card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("acc_delete_pwd")+'</label>'));
 var pwdInp = el('<input type="password" class="input-field" autocomplete="current-password">');
@@ -14110,10 +14183,10 @@ card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);disp
 var wordInp = el('<input type="text" class="input-field" autocapitalize="characters" autocomplete="off">');
 card.appendChild(wordInp);
 
-var statusEl = el('<div style="font-size:var(--t-sm);margin:10px 0 0;min-height:20px;line-height:1.45;"></div>');
+var statusEl = el('<div style="font-size:var(--t-sm);margin:8px 0 0;min-height:20px;line-height:1.45;"></div>');
 card.appendChild(statusEl);
 
-var goBtn = el('<button class="btn btn-block" style="margin-top:10px;background:var(--danger);color:#fff;border:none;">'+t("acc_delete_do")+'</button>');
+var goBtn = el('<button class="btn btn-block" style="margin-top:var(--s-2);background:var(--danger);color:#fff;border:none;">'+t("acc_delete_do")+'</button>');
 goBtn.addEventListener("click", function(){
 if((wordInp.value||"").trim().toUpperCase() !== t("acc_delete_word")){
 statusEl.style.color = "var(--danger)";
@@ -14168,7 +14241,7 @@ console.error("eliminazione account:", err);
 card.appendChild(goBtn);
 
 wrap.appendChild(card);
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("acc_delete_cancel")+'</button>');
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-1);">'+t("acc_delete_cancel")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen = "menu"; state.tab = "profilo"; save(); render(); });
 wrap.appendChild(backBtn);
 return wrap;
@@ -14384,7 +14457,7 @@ card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin
 card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("dm_search_label")+'</label>'));
 var searchInp = el('<input type="text" class="input-field cerca" placeholder="\ud83d\udd0d '+escapeHtml(t("dm_search_placeholder"))+'">');
 card.appendChild(searchInp);
-var results = el('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"></div>');
+var results = el('<div style="display:flex;flex-wrap:wrap;gap:var(--s-1);margin-bottom:var(--s-3);"></div>');
 card.appendChild(results);
 searchInp.addEventListener("input", function(){
 var q = searchInp.value.trim().toLowerCase();
@@ -14399,7 +14472,7 @@ results.appendChild(el('<span style="font-size:var(--t-sm);color:var(--muted);">
 return;
 }
 matches.forEach(function(u){
-var chip = el('<button style="background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:var(--r-xs);padding:5px 10px;font-size:var(--t-sm);cursor:pointer;">@'+escapeHtml(u.username)+(u.nomeCognome?" \u00b7 "+escapeHtml(u.nomeCognome):"")+'</button>');
+var chip = el('<button style="background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:var(--r-xs);padding:4px 8px;font-size:var(--t-sm);cursor:pointer;">@'+escapeHtml(u.username)+(u.nomeCognome?" \u00b7 "+escapeHtml(u.nomeCognome):"")+'</button>');
 chip.addEventListener("click", function(){ openDirectChat(u.uid, u.username); });
 results.appendChild(chip);
 });
@@ -14422,9 +14495,9 @@ var dt = c.lastAt.toDate();
 var oggi = (new Date()).toDateString() === dt.toDateString();
 quando = oggi ? dt.toLocaleTimeString(locale,{hour:"2-digit",minute:"2-digit"}) : dt.toLocaleDateString(locale);
 }
-var row = el('<button style="width:100%;text-align:left;background:'+(nuovo?"var(--bg-panel-2)":"transparent")+';border:1px solid '+(nuovo?"var(--accent-soft)":"var(--line)")+';border-radius:var(--r-sm);padding:10px 12px;margin-bottom:var(--s-2);cursor:pointer;color:var(--cream);"></button>');
+var row = el('<button style="width:100%;text-align:left;background:'+(nuovo?"var(--bg-panel-2)":"transparent")+';border:1px solid '+(nuovo?"var(--accent-soft)":"var(--line)")+';border-radius:var(--r-sm);padding:8px 12px;margin-bottom:var(--s-2);cursor:pointer;color:var(--cream);"></button>');
 row.appendChild(el('<div style="display:flex;justify-content:space-between;align-items:center;gap:var(--s-2);">'+
-'<span style="font-weight:'+(nuovo?"800":"700")+';font-size:0.92rem;">@'+escapeHtml(altro.name)+(nuovo?' <span style="font-size:var(--t-xs);background:var(--danger);color:#fff;border-radius:var(--r-pill);padding:1px 6px;vertical-align:middle;">'+t("dm_new_badge")+'</span>':'')+'</span>'+
+'<span style="font-weight:'+(nuovo?"800":"700")+';font-size:0.92rem;">@'+escapeHtml(altro.name)+(nuovo?' <span style="font-size:var(--t-xs);background:var(--danger);color:#fff;border-radius:var(--r-pill);padding:1px 4px;vertical-align:middle;">'+t("dm_new_badge")+'</span>':'')+'</span>'+
 '<span style="font-size:var(--t-xs);color:var(--muted);white-space:nowrap;">'+quando+'</span></div>'));
 if(c.lastText){
 var prefisso = (c.lastSenderUid === (currentUser&&currentUser.uid)) ? "\u2192 " : "";
@@ -14436,7 +14509,7 @@ card.appendChild(row);
 }
 wrap.appendChild(card);
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("cancel_btn")+'</button>');
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-1);">'+t("cancel_btn")+'</button>');
 backBtn.addEventListener("click", function(){ state.screen = "menu"; save(); render(); });
 wrap.appendChild(backBtn);
 return wrap;
@@ -14455,7 +14528,7 @@ card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);">'+t(
 wrap.appendChild(card);
 return wrap;
 }
-var dmSub = el('<div style="font-size:var(--t-sm);color:var(--muted);margin:-6px 0 12px;line-height:1.4;"></div>');
+var dmSub = el('<div style="font-size:var(--t-sm);color:var(--muted);margin:-4px 0 12px;line-height:1.4;"></div>');
 card.appendChild(dmSub);
 fillDmSubtitle(dmSub, otherUid);
 
@@ -14467,7 +14540,7 @@ card.appendChild(moderationBar({ uid: otherUid, name: otherName, what: t("dm_cha
 if(isUserBlocked(otherUid)){
 card.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.5;">'+t("blk_blocked_note")+'</div>'));
 wrap.appendChild(card);
-var backBlocked = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("dm_back")+'</button>');
+var backBlocked = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-1);">'+t("dm_back")+'</button>');
 backBlocked.addEventListener("click", function(){ stopDmMessages(); state.screen = "messaggi"; save(); render(); });
 wrap.appendChild(backBlocked);
 return wrap;
@@ -14509,12 +14582,12 @@ dmMarkRead(chatId);
 
 var inputRow = el('<div style="display:flex;gap:var(--s-2);align-items:flex-end;"></div>');
 var textInp = el('<textarea class="input-field in-riga" data-keep="dm:draft:'+chatId+'" placeholder="'+escapeHtml(t("dm_placeholder"))+'" rows="2"></textarea>');
-var sendBtn = el('<button class="btn btn-primary" style="padding:10px 16px;">'+t("dm_send")+'</button>');
+var sendBtn = el('<button class="btn btn-primary" style="padding:8px 16px;">'+t("dm_send")+'</button>');
 inputRow.appendChild(textInp);
 inputRow.appendChild(sendBtn);
 card.appendChild(inputRow);
 
-var statusEl = el('<div style="font-size:var(--t-sm);margin-top:6px;min-height:18px;"></div>');
+var statusEl = el('<div style="font-size:var(--t-sm);margin-top:var(--s-1);min-height:18px;"></div>');
 card.appendChild(statusEl);
 
 sendBtn.addEventListener("click", function(){
@@ -14562,7 +14635,7 @@ statusEl.textContent = t("dm_error");
 });
 });
 
-var delChatBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;color:var(--danger);border-color:var(--danger);">'+t("dm_delete_chat")+'</button>');
+var delChatBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);color:var(--danger);border-color:var(--danger);">'+t("dm_delete_chat")+'</button>');
 card.appendChild(delChatBtn);
 armDoubleConfirm(delChatBtn, t("dm_delete_chat_confirm"), function(){
 delChatBtn.disabled = true;
@@ -14574,7 +14647,7 @@ state.screen = "messaggi"; save(); render();
 
 wrap.appendChild(card);
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:6px;">'+t("dm_back")+'</button>');
+var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-1);">'+t("dm_back")+'</button>');
 backBtn.addEventListener("click", function(){ stopDmMessages(); state.screen = "messaggi"; save(); render(); });
 wrap.appendChild(backBtn);
 return wrap;
@@ -14822,7 +14895,7 @@ card.appendChild(el('<h2 class="section-title">'+t("ot_create_title")+'</h2>'));
 // Selezione campo
 card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("ot_field_label")+'</label>'));
 
-var fieldSelectedDiv = el('<div style="display:none;background:var(--accent);color:var(--accent-ink);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:var(--s-2);display:flex;justify-content:space-between;align-items:center;"></div>');
+var fieldSelectedDiv = el('<div style="display:none;background:var(--accent);color:var(--accent-ink);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:var(--s-2);display:flex;justify-content:space-between;align-items:center;"></div>');
 var fieldSelectedName = el('<span style="font-weight:700;font-size:var(--t-md);"></span>');
 var fieldClearBtn = el('<button style="background:none;border:none;color:#fff;font-size:var(--t-lg);cursor:pointer;padding:0;line-height:1;">×</button>');
 fieldSelectedDiv.appendChild(fieldSelectedName);
@@ -14875,12 +14948,12 @@ if(label.toLowerCase().indexOf(q.toLowerCase()) !== -1) matches.push({ label:lab
 });
 }
 if(matches.length === 0){
-fieldListDiv.appendChild(el('<div style="padding:10px;font-size:var(--t-sm);color:var(--muted);">'+t("search_username_empty")+'</div>'));
+fieldListDiv.appendChild(el('<div style="padding:var(--s-2);font-size:var(--t-sm);color:var(--muted);">'+t("search_username_empty")+'</div>'));
 fieldListDiv.style.display = "block";
 return;
 }
 matches.slice(0,30).forEach(function(m){
-var row = el('<div style="padding:10px 12px;border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(m.label)+'</div>');
+var row = el('<div style="padding:8px 12px;border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(m.label)+'</div>');
 row.addEventListener("click", function(){
 fieldInp.value = m.label;
 fieldInp.setAttribute("data-cod", m.cod);
@@ -14929,10 +15002,10 @@ var timeInp = { get value(){ return (hSel.value && mSel.value) ? hSel.value+":"+
 
 // Posti
 card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("ot_spots_label")+'</label>'));
-var spotsWrap = el('<div style="display:flex;gap:10px;margin-bottom:var(--s-3);"></div>');
+var spotsWrap = el('<div style="display:flex;gap:var(--s-2);margin-bottom:var(--s-3);"></div>');
 var spotsVal = 3;
 [1,2,3,4].forEach(function(n){
-var btn = el('<button style="flex:1;padding:10px 0;border-radius:var(--r-sm);border:2px solid '+(n===3?'var(--accent)':'var(--line)')+';background:'+(n===3?'var(--accent)':'transparent')+';color:'+(n===3?'var(--accent-ink)':'var(--cream)')+';font-weight:700;font-size:var(--t-md);cursor:pointer;">'+n+'</button>');
+var btn = el('<button style="flex:1;padding:8px 0;border-radius:var(--r-sm);border:2px solid '+(n===3?'var(--accent)':'var(--line)')+';background:'+(n===3?'var(--accent)':'transparent')+';color:'+(n===3?'var(--accent-ink)':'var(--cream)')+';font-weight:700;font-size:var(--t-md);cursor:pointer;">'+n+'</button>');
 btn.addEventListener("click", function(){
 spotsVal = n;
 spotsWrap.querySelectorAll("button").forEach(function(b,i){ b.style.borderColor=(i+1===n?'var(--accent)':'var(--line)'); b.style.background=(i+1===n?'var(--accent)':'transparent'); b.style.color=(i+1===n?'var(--accent-ink)':'var(--cream)'); });
@@ -14950,13 +15023,13 @@ card.appendChild(noteInp);
 // E' chi pubblica a deciderlo, cosi' la lista di chi legge resta corta.
 card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("ot_vis_label")+'</label>'));
 var visVal = myClubCode() ? "club" : "all";
-var visWrap = el('<div style="margin-bottom:6px;"></div>');
-var visRow = el('<div style="display:flex;gap:var(--s-2);margin-bottom:6px;"></div>');
+var visWrap = el('<div style="margin-bottom:var(--s-1);"></div>');
+var visRow = el('<div style="display:flex;gap:var(--s-2);margin-bottom:var(--s-1);"></div>');
 var visHint = el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-4);"></div>');
 var visBtns = {};
 [["club", t("ot_vis_club")], ["all", t("ot_vis_all")]].forEach(function(pair){
 var k = pair[0];
-var b = el('<button style="flex:1;padding:10px 6px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:var(--t-sm);font-weight:700;cursor:pointer;">'+pair[1]+'</button>');
+var b = el('<button style="flex:1;padding:8px 4px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:var(--t-sm);font-weight:700;cursor:pointer;">'+pair[1]+'</button>');
 visBtns[k] = b;
 b.addEventListener("click", function(){
 if(k === "club" && !myClubCode()){ visHint.style.color = "var(--danger)"; visHint.textContent = t("ot_no_club_warn"); return; }
@@ -14984,8 +15057,8 @@ refreshVis();
 card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("ot_invite_label")+'</label>'));
 var inviteWrap = el('<div style="margin-bottom:var(--s-4);"></div>');
 var inviteSearch = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("ot_invite_placeholder"))+'">');
-var inviteResults = el('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;"></div>');
-var inviteChips = el('<div style="display:flex;flex-wrap:wrap;gap:6px;"></div>');
+var inviteResults = el('<div style="display:flex;flex-wrap:wrap;gap:var(--s-1);margin-bottom:var(--s-1);"></div>');
+var inviteChips = el('<div style="display:flex;flex-wrap:wrap;gap:var(--s-1);"></div>');
 inviteWrap.appendChild(inviteSearch);
 inviteWrap.appendChild(inviteResults);
 inviteWrap.appendChild(inviteChips);
@@ -14999,7 +15072,7 @@ if(invitedUsers.length === 0) return;
 var lbl = el('<span style="font-size:var(--t-sm);color:var(--muted);">'+t("ot_invite_added")+'</span>');
 inviteChips.appendChild(lbl);
 invitedUsers.forEach(function(u, idx){
-var chip = el('<span style="display:inline-flex;align-items:center;gap:var(--s-1);background:var(--accent);color:var(--accent-ink);border-radius:var(--r-pill);padding:3px 10px;font-size:var(--t-sm);">@'+escapeHtml(u.username)+'<button style="background:none;border:none;color:var(--accent-ink);cursor:pointer;font-size:var(--t-md);padding:0;line-height:1;">×</button></span>');
+var chip = el('<span style="display:inline-flex;align-items:center;gap:var(--s-1);background:var(--accent);color:var(--accent-ink);border-radius:var(--r-pill);padding:4px 8px;font-size:var(--t-sm);">@'+escapeHtml(u.username)+'<button style="background:none;border:none;color:var(--accent-ink);cursor:pointer;font-size:var(--t-md);padding:0;line-height:1;">×</button></span>');
 chip.querySelector("button").addEventListener("click", function(){ invitedUsers.splice(idx,1); renderInviteChips(); });
 inviteChips.appendChild(chip);
 });
@@ -15019,7 +15092,7 @@ loadApprovedUsersForInvite(function(list){
 var matches = list.filter(function(u){ return u.username.toLowerCase().indexOf(q) !== -1 && !invitedUsers.find(function(i){ return i.uid===u.uid; }); }).slice(0,5);
 if(matches.length === 0){ inviteResults.appendChild(el('<span style="font-size:var(--t-sm);color:var(--muted);">'+t("search_username_empty")+'</span>')); return; }
 matches.forEach(function(u){
-var chip = el('<button style="background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:var(--r-xs);padding:4px 10px;font-size:var(--t-sm);cursor:pointer;">@'+escapeHtml(u.username)+(u.nomeCognome?" · "+escapeHtml(u.nomeCognome):"")+'</button>');
+var chip = el('<button style="background:var(--bg-panel-2);border:1px solid var(--line);color:var(--cream);border-radius:var(--r-xs);padding:4px 8px;font-size:var(--t-sm);cursor:pointer;">@'+escapeHtml(u.username)+(u.nomeCognome?" · "+escapeHtml(u.nomeCognome):"")+'</button>');
 chip.addEventListener("click", function(){ invitedUsers.push(u); inviteSearch.value=""; inviteResults.innerHTML=""; renderInviteChips(); });
 inviteResults.appendChild(chip);
 });
@@ -15027,7 +15100,7 @@ inviteResults.appendChild(chip);
 });
 
 // Pulsanti
-var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-bottom:10px;">'+t("ot_save_btn")+'</button>');
+var saveBtn = el('<button class="btn btn-primary btn-block" style="margin-bottom:var(--s-2);">'+t("ot_save_btn")+'</button>');
 var saveStatus = el('<div style="font-size:var(--t-sm);margin-bottom:var(--s-2);min-height:18px;text-align:center;"></div>');
 card.appendChild(saveStatus);
 function setStatus(msg, color){ saveStatus.style.color = color||"var(--muted)"; saveStatus.textContent = msg; }
@@ -15293,7 +15366,7 @@ pickHero.appendChild(el('<div class="piazzola-hero-lbl">'+t("target_singular")+'
 pickHero.appendChild(el('<div class="piazzola-num">'+state.target+'</div>'));
 pickCard.appendChild(pickHero);
 pickCard.appendChild(el('<div class="archer-turn">'+t("gl_which_piazzola")+'</div>'));
-var pickGrid = el('<div class="onboard-stack" style="max-width:none;margin-top:14px;"></div>');
+var pickGrid = el('<div class="onboard-stack" style="max-width:none;margin-top:var(--s-3);"></div>');
 var pickOpts = [
 {key:"singola", label:t("gl_singola"), sub:t("gl_1_arrow"), frecce:1},
 {key:"mobile", label:t("gl_mobile"), sub:t("gl_1_arrow"), frecce:1},
@@ -15783,7 +15856,7 @@ var isLeader = tot === topTotal && tot > 0;
 p.appendChild(el('<div class="partial-row'+(isLeader?" leader":"")+'"><span class="pname">'+escapeHtml(a.name)+'</span><span class="ptot">'+tot+'</span></div>'));
 });
 
-p.appendChild(el('<div class="partial-title" style="margin-top:14px;">'+t("pista_per_piazzola")+'</div>'));
+p.appendChild(el('<div class="partial-title" style="margin-top:var(--s-3);">'+t("pista_per_piazzola")+'</div>'));
 var piazzFlow = el('<div class="piazz-flow"></div>');
 for(var pfi=0; pfi<state.target; pfi++){
 var pCard = el('<div class="piazz-card"></div>');
@@ -15818,7 +15891,7 @@ state.panel = null; state.screen = "summary"; save(); render();
 });
 sotto.appendChild(stop);
 if(state.arrowsPerTargetOverride && (GAME_MODES[state.mode]||{}).freeFormat){
-var skipBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("skip_remaining_btn")+'</button>');
+var skipBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-2);">'+t("skip_remaining_btn")+'</button>');
 skipBtn.addEventListener("click", function(){ state.panel = null; finishTargetEarly(); });
 sotto.appendChild(skipBtn);
 }
@@ -15859,7 +15932,7 @@ wrap.appendChild(nextBtn);
 // e vuole continuare, ne aggiunge una al volo senza chiudere il giro.
 var modeQui = GAME_MODES[state.mode] || GAME_MODES.training;
 if(isLast && modeQui.freeFormat){
-var addBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">+ '+t("train_add_target_btn")+'</button>');
+var addBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-2);">+ '+t("train_add_target_btn")+'</button>');
 addBtn.addEventListener("click", function(){
 state.format = (state.format||1) + 1;
 advanceToNextTarget();
@@ -15867,7 +15940,7 @@ advanceToNextTarget();
 wrap.appendChild(addBtn);
 }
 
-var undoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:10px;">'+t("undo_btn")+'</button>');
+var undoBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-2);">'+t("undo_btn")+'</button>');
 undoBtn.addEventListener("click", undoLastShot);
 wrap.appendChild(undoBtn);
 
@@ -16382,17 +16455,17 @@ var newRound = el('<button class="btn '+(consegnaAperta?"btn-ghost":"btn-primary
 newRound.addEventListener("click", function(){ homeOverride = true; render(); });
 wrap.appendChild(newRound);
 
-var resetBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;">'+t("reset_round_btn")+'</button>');
+var resetBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:var(--s-2);">'+t("reset_round_btn")+'</button>');
 wrap.appendChild(resetBtn);
 armDoubleConfirm(resetBtn, t("reset_confirm"), hardResetAll);
 
-var printBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;">'+icon("printer",16)+' '+t("export_pdf_btn")+'</button>');
+var printBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:var(--s-2);">'+icon("printer",16)+' '+t("export_pdf_btn")+'</button>');
 printBtn.addEventListener("click", function(){
 window.print();
 });
 wrap.appendChild(printBtn);
 
-var shareBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:10px;">'+icon("share",16)+' '+t("share_btn")+'</button>');
+var shareBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:var(--s-2);">'+icon("share",16)+' '+t("share_btn")+'</button>');
 shareBtn.addEventListener("click", function(){
 var lines = ranked.map(function(a,i){
 var entries = state.scores[a.id] || [];
