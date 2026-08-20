@@ -1287,6 +1287,29 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
   background:var(--surface-1); border:1px solid var(--border); display:flex;
   align-items:center; justify-content:center; color:var(--accent-soft); }
 .comp-riga.on{ border-color:var(--accent); background:var(--surface-1); }
+/* ══════════ I PERCORSI PROPOSTI (20/08/2026) ══════════ */
+/* Un percorso che aspetta si distingue senza leggere: il bordo tratteggiato
+   dice «non e' ancora una cosa ferma» meglio di qualunque parola. */
+.cp-percorso-card.in-attesa{ border-style:dashed; border-color:var(--clay);
+  background:color-mix(in srgb, var(--clay) 6%, var(--surface-1)); }
+.pc-decidi{ display:flex; gap:var(--s-2); margin-top:var(--s-3); }
+.pc-decidi .btn{ flex:1 1 0; }
+.pc-rifiuta{ color:var(--danger); border-color:var(--danger); }
+.pc-modulo{ margin-top:var(--s-3); padding-top:var(--s-3); border-top:1px solid var(--line); }
+.pc-eti{ display:block; font-size:var(--t-sm); color:var(--muted); margin-bottom:var(--s-1); }
+.pc-esito{ min-height:18px; text-align:center; }
+/* Nate togliendo cinque `style=` uguali da dentro altrettante stringhe HTML:
+   erano lo stesso avviso di errore e lo stesso stacco, scritti a mano. */
+.pc-err{ color:var(--danger); display:none; }
+.pc-err.visibile{ display:block; }
+.pc-sotto{ margin-top:var(--s-2); }
+.pc-esito.male{ color:var(--danger); }
+.pc-attesa{ border:1px solid var(--line); border-left:3px solid var(--clay);
+  border-radius:var(--r-sm); padding:var(--s-3); margin-bottom:var(--s-2); }
+.pc-nome{ font-weight:700; font-size:var(--t-md); line-height:1.25; }
+.pc-note{ font-size:var(--t-sm); margin-top:var(--s-1); }
+/* Nato togliendo `style="color:var(--gold)"` da dentro una stringa HTML. */
+.cp-punti-oro{ color:var(--gold); }
 .cp-vuoto{ font-size:var(--t-sm); color:var(--text-3); line-height:1.5; margin:0 0 var(--s-3); }
 
 /* ---------- IL CAMPO CON L'OCCHIO ----------
@@ -2975,6 +2998,22 @@ var LANG_ORDER = ["it","en","fr","de","tr","ru","es","sv","nl"];
 
 var STRINGS = {
 it: {
+/* L'ARCIERE PROPONE, LA COMPAGNIA CONFERMA. (20/08/2026.) */
+pc_add_btn: "+ Aggiungi un percorso",
+pc_add_title: "Aggiungi un percorso",
+pc_add_hint: "Scrivi quello che sai. La compagnia riceve un avviso e conferma che il percorso esiste: da quel momento lo vedono tutti.",
+pc_send: "Proponi alla compagnia",
+pc_sent: "Mandato. Lo vedi in elenco appena la compagnia conferma.",
+pc_error: "Non è riuscito. Riprova fra un attimo.",
+pc_da_confermare: "Da confermare",
+pc_mio_in_attesa: "L’hai proposto tu. Aspetta la compagnia.",
+pc_conferma: "Conferma",
+pc_rifiuta: "Rifiuta",
+pc_rifiuta_conf: "Rifiutare questo percorso? Sparisce dall’elenco.",
+pc_ritira: "Ritira",
+pc_sezione_attesa: "Percorsi da confermare",
+pc_vuoto: "Nessun percorso ancora. Il primo lo aggiungi tu.",
+pc_coda_posta: "Email in coda",
 /* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
 comp_tab_mia: "La mia",
 comp_tab_scopri: "Scopri",
@@ -3573,6 +3612,22 @@ notif_token_error: "Impossibile ottenere il token. Riprova.", notif_enabled: "No
 notif_save_error: "Errore nel salvataggio: {err}", notif_generic_error: "Errore: {err}", notif_not_configured: "Notifiche non ancora configurate (manca la chiave sul server).",
 },
 en: {
+/* L'ARCIERE PROPONE, LA COMPAGNIA CONFERMA. (20/08/2026.) */
+pc_add_btn: "+ Add a course",
+pc_add_title: "Add a course",
+pc_add_hint: "Write what you know. The club gets a notice and confirms the course exists: from then on everyone sees it.",
+pc_send: "Send to the club",
+pc_sent: "Sent. You’ll see it listed as soon as the club confirms.",
+pc_error: "It didn’t work. Try again in a moment.",
+pc_da_confermare: "To confirm",
+pc_mio_in_attesa: "You proposed it. Waiting for the club.",
+pc_conferma: "Confirm",
+pc_rifiuta: "Reject",
+pc_rifiuta_conf: "Reject this course? It disappears from the list.",
+pc_ritira: "Withdraw",
+pc_sezione_attesa: "Courses to confirm",
+pc_vuoto: "No courses yet. Add the first one.",
+pc_coda_posta: "Emails queued",
 /* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
 comp_tab_mia: "Mine",
 comp_tab_scopri: "Discover",
@@ -4120,6 +4175,22 @@ profile_hide_name: "Hide my first and last name from other archers", profile_hid
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 },
 fr: {
+/* L'ARCIERE PROPONE, LA COMPAGNIA CONFERMA. (20/08/2026.) */
+pc_add_btn: "+ Ajouter un parcours",
+pc_add_title: "Ajouter un parcours",
+pc_add_hint: "Écris ce que tu sais. Le club reçoit un avis et confirme que le parcours existe : à partir de là tout le monde le voit.",
+pc_send: "Proposer au club",
+pc_sent: "Envoyé. Tu le verras dans la liste dès que le club confirme.",
+pc_error: "Ça n’a pas marché. Réessaie dans un instant.",
+pc_da_confermare: "À confirmer",
+pc_mio_in_attesa: "C’est toi qui l’as proposé. Attends le club.",
+pc_conferma: "Confirmer",
+pc_rifiuta: "Refuser",
+pc_rifiuta_conf: "Refuser ce parcours ? Il disparaît de la liste.",
+pc_ritira: "Retirer",
+pc_sezione_attesa: "Parcours à confirmer",
+pc_vuoto: "Aucun parcours pour l’instant. Ajoute le premier.",
+pc_coda_posta: "E-mails en attente",
 /* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
 comp_tab_mia: "La mienne",
 comp_tab_scopri: "Découvrir",
@@ -4667,6 +4738,22 @@ profile_hide_name: "Masquer mes nom et pr\u00e9nom aux autres archers", profile_
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 },
 de: {
+/* L'ARCIERE PROPONE, LA COMPAGNIA CONFERMA. (20/08/2026.) */
+pc_add_btn: "+ Parcours hinzufügen",
+pc_add_title: "Parcours hinzufügen",
+pc_add_hint: "Schreib, was du weißt. Der Verein bekommt eine Nachricht und bestätigt, dass es den Parcours gibt: ab dann sehen ihn alle.",
+pc_send: "Dem Verein vorschlagen",
+pc_sent: "Gesendet. Du siehst ihn in der Liste, sobald der Verein bestätigt.",
+pc_error: "Hat nicht geklappt. Versuch es gleich noch einmal.",
+pc_da_confermare: "Zu bestätigen",
+pc_mio_in_attesa: "Du hast ihn vorgeschlagen. Warte auf den Verein.",
+pc_conferma: "Bestätigen",
+pc_rifiuta: "Ablehnen",
+pc_rifiuta_conf: "Diesen Parcours ablehnen? Er verschwindet aus der Liste.",
+pc_ritira: "Zurückziehen",
+pc_sezione_attesa: "Parcours zu bestätigen",
+pc_vuoto: "Noch keine Parcours. Füge den ersten hinzu.",
+pc_coda_posta: "E-Mails in der Warteschlange",
 /* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
 comp_tab_mia: "Meiner",
 comp_tab_scopri: "Entdecken",
@@ -5214,6 +5301,22 @@ profile_hide_name: "Vor- und Nachnamen vor anderen Sch\u00fctzen verbergen", pro
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 },
 tr: {
+/* L'ARCIERE PROPONE, LA COMPAGNIA CONFERMA. (20/08/2026.) */
+pc_add_btn: "+ Parkur ekle",
+pc_add_title: "Parkur ekle",
+pc_add_hint: "Bildiğini yaz. Kulüp bir bildirim alır ve parkurun var olduğunu onaylar: o andan sonra herkes görür.",
+pc_send: "Kulübe öner",
+pc_sent: "Gönderildi. Kulüp onaylar onaylamaz listede görürsün.",
+pc_error: "Olmadı. Birazdan tekrar dene.",
+pc_da_confermare: "Onay bekliyor",
+pc_mio_in_attesa: "Sen önerdin. Kulübü bekle.",
+pc_conferma: "Onayla",
+pc_rifiuta: "Reddet",
+pc_rifiuta_conf: "Bu parkur reddedilsin mi? Listeden kaybolur.",
+pc_ritira: "Geri çek",
+pc_sezione_attesa: "Onay bekleyen parkurlar",
+pc_vuoto: "Henüz parkur yok. İlkini sen ekle.",
+pc_coda_posta: "Sırada bekleyen e-posta",
 /* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
 comp_tab_mia: "Benimki",
 comp_tab_scopri: "Keşfet",
@@ -5774,6 +5877,22 @@ notif_token_error: "Token al\u0131namad\u0131. Tekrar dene.", notif_enabled: "Bu
 notif_save_error: "Kaydetme hatas\u0131: {err}", notif_generic_error: "Hata: {err}", notif_not_configured: "Bildirimler hen\u00fcz yap\u0131land\u0131r\u0131lmad\u0131 (sunucuda anahtar eksik).",
 },
 ru: {
+/* L'ARCIERE PROPONE, LA COMPAGNIA CONFERMA. (20/08/2026.) */
+pc_add_btn: "+ Добавить маршрут",
+pc_add_title: "Добавить маршрут",
+pc_add_hint: "Напишите, что знаете. Клуб получит уведомление и подтвердит, что маршрут существует: после этого его увидят все.",
+pc_send: "Предложить клубу",
+pc_sent: "Отправлено. Маршрут появится в списке, как только клуб подтвердит.",
+pc_error: "Не получилось. Попробуйте ещё раз.",
+pc_da_confermare: "На подтверждении",
+pc_mio_in_attesa: "Вы предложили его. Ждём клуб.",
+pc_conferma: "Подтвердить",
+pc_rifiuta: "Отклонить",
+pc_rifiuta_conf: "Отклонить этот маршрут? Он исчезнет из списка.",
+pc_ritira: "Отозвать",
+pc_sezione_attesa: "Маршруты на подтверждении",
+pc_vuoto: "Маршрутов пока нет. Добавьте первый.",
+pc_coda_posta: "Писем в очереди",
 /* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
 comp_tab_mia: "Мой",
 comp_tab_scopri: "Найти",
@@ -6334,6 +6453,22 @@ notif_token_error: "Не удалось получить токен. Попро�
 notif_save_error: "Ошибка сохранения: {err}", notif_generic_error: "Ошибка: {err}", notif_not_configured: "Уведомления ещё не настроены (на сервере отсутствует ключ).",
 },
 es: {
+/* L'ARCIERE PROPONE, LA COMPAGNIA CONFERMA. (20/08/2026.) */
+pc_add_btn: "+ Añadir un recorrido",
+pc_add_title: "Añadir un recorrido",
+pc_add_hint: "Escribe lo que sepas. El club recibe un aviso y confirma que el recorrido existe: a partir de ahí lo ve todo el mundo.",
+pc_send: "Proponer al club",
+pc_sent: "Enviado. Lo verás en la lista en cuanto el club lo confirme.",
+pc_error: "No ha funcionado. Inténtalo dentro de un momento.",
+pc_da_confermare: "Por confirmar",
+pc_mio_in_attesa: "Lo has propuesto tú. Espera al club.",
+pc_conferma: "Confirmar",
+pc_rifiuta: "Rechazar",
+pc_rifiuta_conf: "¿Rechazar este recorrido? Desaparece de la lista.",
+pc_ritira: "Retirar",
+pc_sezione_attesa: "Recorridos por confirmar",
+pc_vuoto: "Todavía no hay recorridos. Añade el primero.",
+pc_coda_posta: "Correos en cola",
 /* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
 comp_tab_mia: "El mío",
 comp_tab_scopri: "Descubrir",
@@ -6894,6 +7029,22 @@ notif_token_error: "No se pudo obtener el token. Int\u00e9ntalo de nuevo.", noti
 notif_save_error: "Error al guardar: {err}", notif_generic_error: "Error: {err}", notif_not_configured: "Notificaciones a\u00fan no configuradas (falta la clave en el servidor).",
 },
 sv: {
+/* L'ARCIERE PROPONE, LA COMPAGNIA CONFERMA. (20/08/2026.) */
+pc_add_btn: "+ Lägg till en bana",
+pc_add_title: "Lägg till en bana",
+pc_add_hint: "Skriv det du vet. Klubben får en avisering och bekräftar att banan finns: därefter ser alla den.",
+pc_send: "Föreslå till klubben",
+pc_sent: "Skickat. Du ser den i listan så snart klubben bekräftar.",
+pc_error: "Det gick inte. Försök igen om en stund.",
+pc_da_confermare: "Att bekräfta",
+pc_mio_in_attesa: "Du föreslog den. Vänta på klubben.",
+pc_conferma: "Bekräfta",
+pc_rifiuta: "Avvisa",
+pc_rifiuta_conf: "Avvisa den här banan? Den försvinner ur listan.",
+pc_ritira: "Dra tillbaka",
+pc_sezione_attesa: "Banor att bekräfta",
+pc_vuoto: "Inga banor ännu. Lägg till den första.",
+pc_coda_posta: "E-post i kö",
 /* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
 comp_tab_mia: "Min",
 comp_tab_scopri: "Upptäck",
@@ -7454,6 +7605,22 @@ notif_token_error: "Kunde inte h\u00e4mta token. F\u00f6rs\u00f6k igen.", notif_
 notif_save_error: "Fel vid sparande: {err}", notif_generic_error: "Fel: {err}", notif_not_configured: "Notiser \u00e4nnu inte konfigurerade (nyckel saknas p\u00e5 servern).",
 },
 nl: {
+/* L'ARCIERE PROPONE, LA COMPAGNIA CONFERMA. (20/08/2026.) */
+pc_add_btn: "+ Een parcours toevoegen",
+pc_add_title: "Een parcours toevoegen",
+pc_add_hint: "Schrijf wat je weet. De vereniging krijgt een melding en bevestigt dat het parcours bestaat: daarna ziet iedereen het.",
+pc_send: "Voorstellen aan de vereniging",
+pc_sent: "Verstuurd. Je ziet het in de lijst zodra de vereniging bevestigt.",
+pc_error: "Het lukte niet. Probeer het zo nog eens.",
+pc_da_confermare: "Te bevestigen",
+pc_mio_in_attesa: "Jij hebt het voorgesteld. Wacht op de vereniging.",
+pc_conferma: "Bevestigen",
+pc_rifiuta: "Weigeren",
+pc_rifiuta_conf: "Dit parcours weigeren? Het verdwijnt uit de lijst.",
+pc_ritira: "Intrekken",
+pc_sezione_attesa: "Parcoursen te bevestigen",
+pc_vuoto: "Nog geen parcoursen. Voeg het eerste toe.",
+pc_coda_posta: "E-mails in de wachtrij",
 /* L'AREA COMPAGNIA A SCHEDE. (20/08/2026.) */
 comp_tab_mia: "Mijn",
 comp_tab_scopri: "Ontdekken",
@@ -9820,30 +9987,19 @@ if(onErr) onErr(err);
 }
 
 
+/* I DATI FINTI SE NE SONO ANDATI. (20/08/2026.)
+
+   Qui dentro c'erano due percorsi e undici punteggi di Anna, Carlo, Pino e
+   Milly, precaricati sulla compagnia 01VERB. Erano dati inventati che si
+   presentavano come veri, e li vedeva solo chi apriva quella compagnia sul
+   proprio telefono: nessun altro al mondo vedeva quei numeri.
+
+   *La regola e' sua, di stamattina: i dati devono essere veri, non possiamo
+   precaricare dati.* Questa era l'ultima cosa dell'app che non la
+   rispettava. Adesso i percorsi vengono da `percorsi_campo`, che e' vero e
+   condiviso; i punteggi restano locali finche' non arrivano dai giri veri. */
 function initCompagnieData(){
 if(!state.compagnieData){ state.compagnieData = {}; }
-if(!state.compagnieData["01VERB"]){
-state.compagnieData["01VERB"] = {
-percorsi: [
-{ id:1, nome:"Percorso Rosso", piazzole:14 },
-{ id:2, nome:"Percorso Blu", piazzole:20 }
-],
-risultati: [
-{ id:1, percorsoId:1, nome:"Alessandro", arco:"compound", punteggio:312, data:"2026-07-05" },
-{ id:2, percorsoId:1, nome:"Alessandro", arco:"compound", punteggio:298, data:"2026-07-12" },
-{ id:3, percorsoId:1, nome:"Anna", arco:"ricurvo", punteggio:271, data:"2026-07-05" },
-{ id:4, percorsoId:1, nome:"Anna", arco:"ricurvo", punteggio:284, data:"2026-07-19" },
-{ id:5, percorsoId:1, nome:"Carlo", arco:"storico", punteggio:233, data:"2026-07-12" },
-{ id:6, percorsoId:1, nome:"Mauro", arco:"compound", punteggio:305, data:"2026-07-19" },
-{ id:7, percorsoId:1, nome:"Milly", arco:"ricurvo", punteggio:249, data:"2026-07-19" },
-{ id:8, percorsoId:2, nome:"Alessandro", arco:"compound", punteggio:401, data:"2026-07-26" },
-{ id:9, percorsoId:2, nome:"Anna", arco:"ricurvo", punteggio:356, data:"2026-07-26" },
-{ id:10, percorsoId:2, nome:"Pino", arco:"storico", punteggio:318, data:"2026-07-20" },
-{ id:11, percorsoId:2, nome:"Milly", arco:"ricurvo", punteggio:337, data:"2026-07-26" }
-],
-nextPercorsoId: 3, nextRisultatoId: 12
-};
-}
 }
 
 function ensureCompagniaData(codice){
@@ -11431,7 +11587,7 @@ riga.appendChild(tocca);
 // premibile a destra della riga. Quando la riga si apre sparisce, perche'
 // sotto c'e' lo stesso gesto scritto per esteso.
 var azione = el('<span class="al-azione"></span>');
-var pillErr = el('<div class="nota dopo" style="color:var(--danger);display:none;"></div>');
+var pillErr = el('<div class="nota dopo pc-err"></div>');
 if(currentUser && !isOwner){
 if(joined){
 azione.appendChild(el('<span class="al-pill dentro">'+soloParole(t("ot_joined_label"))+'</span>'));
@@ -12642,6 +12798,281 @@ return Object.keys(COMPAGNIE).filter(compagniaVisibile);
    Ci sono percorsi, punteggi e allenamenti in programma, che si contano.
    E se sono tutti e tre a zero la fascia dei numeri non viene disegnata:
    un cruscotto pieno di zeri non informa, scoraggia. */
+/* ══════════ I PERCORSI DI UN CAMPO (20/08/2026) ══════════
+
+   L'ARCIERE PROPONE, LA COMPAGNIA CONFERMA.
+
+   Nessuno dei due da solo funziona. Se solo le compagnie possono scrivere,
+   l'elenco resta vuoto: sono 663 e nessuna ha motivo di compilarlo prima
+   che ci sia qualcuno che lo legge. Se puo' scrivere chiunque senza
+   controllo, l'elenco si riempie di doppioni e di nomi sbagliati — e *un
+   elenco di cui non ti fidi vale meno di nessun elenco*.
+
+   Lo stato 'confermato' non lo puo' scrivere chi propone: lo impediscono le
+   regole, non questa pagina. Qui c'e' la buona educazione; la porta chiusa
+   sta su Firestore.
+
+   PERCHE' UNA `.get()` E NON UN ASCOLTO. Gli allenamenti aperti hanno una
+   finestra sempre aperta perche' cambiano mentre li guardi: uno annunciato
+   adesso deve comparire adesso. I percorsi di un campo no — cambiano una
+   volta ogni mai. Una finestra aperta per una cosa che non si muove e' una
+   connessione che costa e non racconta niente. */
+
+// clubCode -> { stato:'carico'|'pronto'|'guasto', lista:[] }
+var percorsiCampo = {};
+
+function caricaPercorsiCampo(cod, poi){
+if(!cod) return;
+if(!db){ percorsiCampo[cod] = { stato:"pronto", lista:[] }; if(poi) poi(); return; }
+var c = percorsiCampo[cod];
+if(c && c.stato === "carico") return;          // gia' in viaggio
+if(c && c.stato === "pronto"){ if(poi) poi(); return; }
+percorsiCampo[cod] = { stato:"carico", lista:[] };
+// Niente orderBy insieme al where: eviterebbe un indice composto. Ordino qui.
+db.collection("percorsi_campo").where("clubCode","==",cod).limit(80).get().then(function(snap){
+var arr = [];
+snap.forEach(function(d){ var x = d.data() || {}; x.id = d.id; arr.push(x); });
+arr.sort(function(a,b){ return String(a.nome||"").localeCompare(String(b.nome||""), "it"); });
+percorsiCampo[cod] = { stato:"pronto", lista:arr };
+if(poi) poi(); else render();
+}).catch(function(err){
+console.error("percorsi_campo:", err);
+percorsiCampo[cod] = { stato:"guasto", lista:[] };
+if(poi) poi(); else render();
+});
+}
+
+// Dopo ogni scrittura la copia in memoria non vale piu': si butta e si
+// rilegge. Aggiustarla a mano sarebbe piu' veloce e sarebbe la solita copia
+// che diverge dall'originale al terzo caso particolare.
+function scordaPercorsiCampo(cod){ delete percorsiCampo[cod]; }
+
+/* Quelli che si vedono, e quelli che aspettano.
+   Un percorso proposto NON compare agli altri arcieri: comparirebbe come
+   vero, e non lo e' ancora. Compare a chi l'ha proposto (altrimenti crede di
+   aver sbagliato a premere) e a chi deve confermarlo. */
+// Quale compagnia ha il modulo aperto. Fuori da render(): scrivere il nome
+// di un percorso e vedersi chiudere il modulo perche' e' arrivato un
+// allenamento nuovo sarebbe l'ultima volta che qualcuno lo compila.
+var pcForm = null;
+
+/* LA SCHEDA DEI PERCORSI DI UN CAMPO.
+   La usano due schermate — la propria compagnia e quella che si sta
+   guardando in Scopri — e sono la stessa cosa: non c'e' motivo perche' un
+   percorso si presenti in due modi a seconda di come ci sei arrivato. */
+function percorsiCard(cod, conRisultati){
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("comp_w_percorsi")+'</h2>'));
+
+var c = percorsiCampo[cod];
+if(!c || c.stato === "carico"){
+card.appendChild(el('<div class="nota">'+t("admin_loading")+'</div>'));
+caricaPercorsiCampo(cod);
+return card;
+}
+if(c.stato === "guasto"){
+card.appendChild(el('<div class="nota" style="color:var(--danger);">'+t("pc_error")+'</div>'));
+return card;
+}
+
+var cd = conRisultati ? ensureCompagniaData(cod) : null;
+var lista = percorsiVisibili(cod);
+if(lista.length === 0){
+card.appendChild(el('<div class="empty-hint">'+t("pc_vuoto")+'</div>'));
+}
+
+lista.forEach(function(p){
+var attesa = (p.stato === "proposto");
+var mio = currentUser && p.createdBy === currentUser.uid;
+var risP = cd ? cd.risultati.filter(function(r){ return r.percorsoId === p.id; })
+.sort(function(a,b){ return b.punteggio - a.punteggio; }) : [];
+var aperto = (state.compagniaPercorsoAperto === p.id);
+var classe = "cp-percorso-card" + (aperto ? " open" : "") + (attesa ? " in-attesa" : "");
+var box = el('<div class="'+classe+'"></div>');
+
+var meta = [];
+if(p.piazzole) meta.push(p.piazzole + " " + t("compagnie_piazzole_word"));
+if(conRisultati) meta.push(risP.length + " " + t("compagnie_punteggi_word"));
+
+var testa = el('<div class="cp-percorso-top"><div><h3>'+escapeHtml(p.nome || "?")
++ (attesa ? ' <span class="al-tag">'+t("pc_da_confermare")+'</span>' : '')
++ '</h3><div class="cp-percorso-meta">'+escapeHtml(meta.join(" \u00b7 "))+'</div></div>'
++ (conRisultati && !attesa ? '<div class="cp-chev">\u203a</div>' : '')+'</div>');
+box.appendChild(testa);
+
+if(conRisultati && !attesa){
+var risWrap = el('<div class="cp-risultati"></div>');
+if(risP.length === 0){
+risWrap.appendChild(el('<div class="empty-hint">'+t("compagnie_empty_msg")+'</div>'));
+} else {
+risP.forEach(function(r){
+risWrap.appendChild(el('<div class="cp-risultato-row"><span>'+escapeHtml(r.nome)+'<span class="cp-bow-chip '+r.arco+'">'+COMPAGNIE_BOW_LABEL[r.arco]+'</span></span><span><b class="cp-punti-oro">'+r.punteggio+'</b> &middot; '+formatDateIt(r.data)+'</span></div>'));
+});
+}
+box.appendChild(risWrap);
+testa.addEventListener("click", function(){
+state.compagniaPercorsoAperto = aperto ? null : p.id;
+save(); render();
+});
+}
+
+// ── Quello che si puo' fare con un percorso che aspetta ──────────────────
+if(attesa){
+var err = el('<div class="nota dopo pc-err"></div>');
+if(puoConfermare(cod)){
+var riga = el('<div class="pc-decidi"></div>');
+var si = el('<button class="btn btn-primary btn-sm">'+t("pc_conferma")+'</button>');
+si.addEventListener("click", function(){
+si.disabled = true;
+decidiPercorso(cod, p.id, true, null, function(){ si.disabled = false; err.textContent = t("pc_error"); err.style.display = "block"; });
+});
+var no = el('<button class="btn btn-ghost btn-sm pc-rifiuta">'+t("pc_rifiuta")+'</button>');
+armDoubleConfirm(no, t("pc_rifiuta_conf"), function(){
+decidiPercorso(cod, p.id, false, null, function(){ err.textContent = t("pc_error"); err.style.display = "block"; });
+});
+riga.appendChild(si); riga.appendChild(no);
+box.appendChild(riga);
+} else if(mio){
+box.appendChild(el('<div class="nota dopo">'+t("pc_mio_in_attesa")+'</div>'));
+var rit = el('<button class="btn btn-ghost btn-sm btn-block pc-sotto">'+t("pc_ritira")+'</button>');
+rit.addEventListener("click", function(){
+rit.disabled = true;
+decidiPercorso(cod, p.id, false, null, function(){ rit.disabled = false; err.textContent = t("pc_error"); err.style.display = "block"; });
+});
+box.appendChild(rit);
+}
+box.appendChild(err);
+}
+
+card.appendChild(box);
+});
+
+// ── Aggiungerne uno ─────────────────────────────────────────────────────
+if(currentUser){
+if(pcForm === cod){
+card.appendChild(percorsoForm(cod));
+} else {
+var pi = el('<button class="btn btn-ghost btn-block btn-sm pc-sotto">'+t("pc_add_btn")+'</button>');
+pi.addEventListener("click", function(){ pcForm = cod; render(); });
+card.appendChild(pi);
+}
+}
+
+return card;
+}
+
+/* IL MODULO. Due campi e una frase.
+   La frase non e' una cortesia: dice che il percorso NON si vede finche' la
+   compagnia non conferma. Senza, chi lo scrive preme, non vede comparire
+   niente, e lo riscrive — e il doppione lo abbiamo fatto noi. */
+function percorsoForm(cod){
+var d = el('<div class="pc-modulo"></div>');
+d.appendChild(el('<div class="comp-eti">'+escapeHtml(t("pc_add_title"))+'</div>'));
+d.appendChild(el('<div class="nota stacco-3">'+t("pc_add_hint")+'</div>'));
+
+d.appendChild(el('<label class="pc-eti">'+t("compagnie_nome_percorso")+'</label>'));
+var nome = el('<input type="text" class="input-field in-modulo" maxlength="80">');
+d.appendChild(nome);
+d.appendChild(el('<label class="pc-eti">'+t("compagnie_num_piazzole")+'</label>'));
+var piaz = el('<input type="number" class="input-field in-modulo" min="1" max="99" inputmode="numeric">');
+d.appendChild(piaz);
+d.appendChild(el('<label class="pc-eti">'+t("club_notes")+'</label>'));
+var note = el('<textarea class="input-field in-modulo" rows="2" maxlength="300"></textarea>');
+d.appendChild(note);
+
+var esito = el('<div class="nota dopo pc-esito"></div>');
+var manda = el('<button class="btn btn-block btn-arancio">'+t("pc_send")+'</button>');
+var lascia = el('<button class="btn btn-ghost btn-block btn-sm pc-sotto">'+t("compagnie_annulla")+'</button>');
+
+manda.addEventListener("click", function(){
+var n = nome.value.trim();
+if(!n){ nome.focus(); return; }
+manda.disabled = true;
+esito.classList.remove("male");
+esito.textContent = t("pg_saving");
+proponiPercorso(cod, { nome:n, piazzole:piaz.value, note:note.value }, function(){
+pcForm = null;   // il ridisegno lo fa proponiPercorso
+}, function(){
+manda.disabled = false;
+esito.classList.add("male");
+esito.textContent = t("pc_error");
+});
+});
+lascia.addEventListener("click", function(){ pcForm = null; render(); });
+
+d.appendChild(manda);
+d.appendChild(esito);
+d.appendChild(lascia);
+return d;
+}
+
+function percorsiVisibili(cod){
+var c = percorsiCampo[cod];
+if(!c) return [];
+var mio = currentUser && currentUser.uid;
+return c.lista.filter(function(p){
+if(p.stato === "confermato") return true;
+if(p.stato !== "proposto") return false;
+return (mio && p.createdBy === mio) || puoConfermare(cod);
+});
+}
+
+function percorsiInAttesa(cod){
+var c = percorsiCampo[cod];
+if(!c) return [];
+return c.lista.filter(function(p){ return p.stato === "proposto"; });
+}
+
+// Chi risponde di questo campo: il referente della compagnia, o chi tiene
+// l'app. La cache dei referenti e' gia' in casa, non si rilegge niente.
+function puoConfermare(cod){
+if(!currentUser) return false;
+if(currentUser.email === ADMIN_EMAIL) return true;
+if(!compagnieAdminCache) return false;
+var d = compagnieAdminCache[cod];
+return !!(d && d.adminUid === currentUser.uid);
+}
+
+function proponiPercorso(cod, dati, ok, ko){
+if(!db || !currentUser){ if(ko) ko(new Error("offline")); return; }
+// Chi puo' confermare non deve chiedere il permesso a se stesso: quello che
+// scrive nasce gia' confermato. Le regole dicono la stessa cosa, e quella e'
+// la voce che conta.
+var subito = puoConfermare(cod);
+var doc = {
+clubCode: cod,
+nome: String(dati.nome || "").slice(0,80),
+piazzole: Number(dati.piazzole) || 0,
+note: String(dati.note || "").slice(0,300),
+stato: subito ? "confermato" : "proposto",
+createdBy: currentUser.uid,
+createdByName: myDisplayName(),
+createdByEmail: currentUser.email || "",
+createdAt: Date.now()
+};
+if(subito){ doc.confermatoDa = currentUser.uid; doc.confermatoIl = Date.now(); }
+db.collection("percorsi_campo").add(doc).then(function(){
+scordaPercorsiCampo(cod);
+caricaPercorsiCampo(cod, function(){ if(ok) ok(subito); render(); });
+}).catch(function(e){ console.error("proponiPercorso:", e); if(ko) ko(e); });
+}
+
+// Confermare e rifiutare sono lo stesso gesto in due direzioni, e il rifiuto
+// CANCELLA invece di segnare 'rifiutato': un percorso che non esiste non deve
+// restare in giro a farsi riproporre. Chi l'ha proposto se lo ritrova sparito,
+// che e' esattamente quello che vuol dire «non esiste».
+function decidiPercorso(cod, id, siNo, ok, ko){
+if(!db || !currentUser){ if(ko) ko(new Error("offline")); return; }
+var ref = db.collection("percorsi_campo").doc(id);
+var lavoro = siNo
+? ref.update({ stato:"confermato", confermatoDa: currentUser.uid, confermatoIl: Date.now() })
+: ref.delete();
+lavoro.then(function(){
+scordaPercorsiCampo(cod);
+caricaPercorsiCampo(cod, function(){ if(ok) ok(); render(); });
+}).catch(function(e){ console.error("decidiPercorso:", e); if(ko) ko(e); });
+}
+
 function compagniaMiaCard(cod){
 var wrap = el('<div></div>');
 
@@ -12696,10 +13127,18 @@ dentro.appendChild(el('<div class="comp-sotto">'+icon("pin",16)+' '+escapeHtml(c
 }
 
 // ── I tre numeri, e solo se ce n'e' almeno uno ────────────────────────────
+// I PERCORSI SI CONTANO DA QUELLI VERI. (20/08/2026.) Prima contava
+// `cd.percorsi`, che stava nella memoria di questo telefono: il numero era
+// giusto solo per chi lo guardava. Adesso conta quelli confermati, che sono
+// gli stessi per tutti. Se l'elenco non e' ancora arrivato non si conta
+// niente: meglio un numero che manca di un numero che dice zero e mente.
 var cd = ensureCompagniaData(cod);
 var quiOra = (openTrainings || []).filter(function(ot){ return ot.clubCode === cod; });
+var pc = percorsiCampo[cod];
+var quantiPerc = (pc && pc.stato === "pronto")
+? pc.lista.filter(function(p){ return p.stato === "confermato"; }).length : 0;
 var numeri = [
-[cd.percorsi.length, t("comp_w_percorsi")],
+[quantiPerc, t("comp_w_percorsi")],
 [cd.risultati.length, t("comp_w_punteggi")],
 [quiOra.length, t("comp_w_prossimi")]
 ].filter(function(n){ return n[0] > 0; });
@@ -12748,6 +13187,11 @@ annBtn.addEventListener("click", function(){ state.screen = "open-training-creat
 prossimi.appendChild(annBtn);
 }
 wrap.appendChild(prossimi);
+
+// I percorsi della propria compagnia stanno qui, sotto quello che succede:
+// prima viene la gente, poi il posto. E qui l'arciere ha la ragione piu'
+// forte per aggiungerne uno — e' il suo campo, lo conosce.
+wrap.appendChild(percorsiCard(cod, false));
 
 return wrap;
 }
@@ -12950,54 +13394,30 @@ wrap.appendChild(adminCard);
 // ── FINE SEZIONE ADMIN ───────────────────────────────────────────────────
 
 if(compagnia.completa){
+// I PERCORSI VENGONO DA FIRESTORE, NON DALLA MEMORIA DEL TELEFONO.
+// (20/08/2026.) Prima erano `cd.percorsi`, cioe' una lista che stava nel
+// localStorage di CHI GUARDAVA: uno poteva aggiungere «Percorso Rosso» e non
+// lo vedeva nessun altro al mondo. Adesso li propone un arciere e li conferma
+// la compagnia, e sono gli stessi per tutti.
+//
+// I punteggi restano dove stavano, locali, e la loro chiave punta all'id del
+// percorso — che adesso e' una stringa di Firestore. I punteggi finti di
+// prima non combaciano piu' con niente e non compaiono: e' giusto cosi',
+// erano finti.
 var cd = ensureCompagniaData(state.compagniaAttiva);
-var percCard = el('<div class="card"></div>');
-// Diceva «Compagnie» sopra un elenco di PERCORSI, dentro la scheda di una
-// compagnia. Un titolo che ripete il nome del contenitore non dice niente
-// del contenuto: qui sotto ci sono i percorsi, e adesso c'e' scritto.
-percCard.appendChild(el('<h2 class="section-title">'+t("comp_w_percorsi")+'</h2>'));
-if(cd.percorsi.length === 0){
-percCard.appendChild(el('<div class="empty-hint">'+t("compagnie_no_percorsi")+'</div>'));
-}
-cd.percorsi.forEach(function(p){
-var risP = cd.risultati.filter(function(r){ return r.percorsoId === p.id; }).sort(function(a,b){ return b.punteggio - a.punteggio; });
-var isOpen = (state.compagniaPercorsoAperto === p.id);
-var card = el('<div class="cp-percorso-card'+(isOpen?' open':'')+'"></div>');
-var top = el('<div class="cp-percorso-top"><div><h3>'+escapeHtml(p.nome)+'</h3><div class="cp-percorso-meta">'+p.piazzole+' '+t("compagnie_piazzole_word")+' &middot; '+risP.length+' '+t("compagnie_punteggi_word")+'</div></div><div class="cp-chev">\u203a</div></div>');
-card.appendChild(top);
-var risWrap = el('<div class="cp-risultati"></div>');
-if(risP.length === 0){
-risWrap.appendChild(el('<div class="empty-hint">'+t("compagnie_empty_msg")+'</div>'));
-} else {
-risP.forEach(function(r){
-var row = el('<div class="cp-risultato-row"><span>'+escapeHtml(r.nome)+'<span class="cp-bow-chip '+r.arco+'">'+COMPAGNIE_BOW_LABEL[r.arco]+'</span></span><span><b style="color:var(--gold);">'+r.punteggio+'</b> &middot; '+formatDateIt(r.data)+'</span></div>');
-risWrap.appendChild(row);
-});
-}
-card.appendChild(risWrap);
-top.addEventListener("click", function(){
-state.compagniaPercorsoAperto = isOpen ? null : p.id;
-save(); render();
-});
-percCard.appendChild(card);
-});
+wrap.appendChild(percorsiCard(state.compagniaAttiva, true));
 
-var actionsRow = el('<div class="row" style="margin-top:var(--s-1);"></div>');
+var azCard = el('<div class="card"></div>');
+var actionsRow = el('<div class="row"></div>');
 var newRisBtn = el('<button class="btn btn-primary btn-block btn-sm">'+t("compagnie_new_risultato")+'</button>');
 newRisBtn.addEventListener("click", function(){ state.compagniaForm = "risultato"; save(); render(); });
-var newPerBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("compagnie_new_percorso")+'</button>');
-newPerBtn.addEventListener("click", function(){ state.compagniaForm = "percorso"; save(); render(); });
-actionsRow.appendChild(newRisBtn); actionsRow.appendChild(newPerBtn);
-percCard.appendChild(actionsRow);
-
-var classBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);">'+icon("scroll",16)+' '+t("compagnie_classifica")+'</button>');
+var classBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("scroll",16)+' '+t("compagnie_classifica")+'</button>');
 classBtn.addEventListener("click", function(){ state.compagniaForm = "classifica"; save(); render(); });
-percCard.appendChild(classBtn);
-
-wrap.appendChild(percCard);
+actionsRow.appendChild(newRisBtn); actionsRow.appendChild(classBtn);
+azCard.appendChild(actionsRow);
+wrap.appendChild(azCard);
 
 if(state.compagniaForm === "risultato"){ wrap.appendChild(compagnieRisultatoForm(cd)); }
-if(state.compagniaForm === "percorso"){ wrap.appendChild(compagniePercorsoForm(cd)); }
 if(state.compagniaForm === "classifica"){ wrap.appendChild(compagnieClassificaCard(cd)); }
 }
 }
@@ -13083,31 +13503,12 @@ save(); render();
 return card;
 }
 
-function compagniePercorsoForm(cd){
-var card = el('<div class="card"></div>');
-card.appendChild(el('<h2 class="section-title">'+t("compagnie_new_percorso")+'</h2>'));
-card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_nome_percorso")+'</label><input type="text" id="cpFPNome"></div>'));
-card.appendChild(el('<div class="cp-select-row"><label>'+t("compagnie_num_piazzole")+'</label><input type="number" id="cpFPPiazzole" min="1"></div>'));
-
-var actions = el('<div class="row" style="margin-top:var(--s-3);"></div>');
-var saveBtn = el('<button class="btn btn-primary btn-block">'+t("compagnie_salva")+'</button>');
-var cancelBtn = el('<button class="btn btn-ghost btn-block">'+t("compagnie_annulla")+'</button>');
-actions.appendChild(saveBtn); actions.appendChild(cancelBtn);
-card.appendChild(actions);
-
-cancelBtn.addEventListener("click", function(){ state.compagniaForm = null; save(); render(); });
-saveBtn.addEventListener("click", function(){
-var nome = document.getElementById("cpFPNome").value.trim();
-var piazzole = parseInt(document.getElementById("cpFPPiazzole").value,10);
-if(!nome || isNaN(piazzole)){ return; }
-cd.percorsi.push({ id: cd.nextPercorsoId++, nome: nome, piazzole: piazzole });
-state.compagniaForm = null;
-save(); render();
-});
-
-return card;
-}
-
+/* IL VECCHIO MODULO DEL PERCORSO E' STATO TOLTO. (20/08/2026.)
+   Scriveva nella memoria del telefono: un percorso che non usciva di li' e
+   che non vedeva nessun altro. Al suo posto c'e' `percorsoForm`, che lo manda
+   alla compagnia e aspetta la conferma. Le chiavi `compagnie_new_percorso`,
+   `compagnie_nome_percorso` e `compagnie_num_piazzole` restano e le usa il
+   modulo nuovo. */
 function compagnieClassificaCard(cd){
 var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t("compagnie_classifica")+'</h2>'));
@@ -13314,6 +13715,49 @@ infoCard.appendChild(saveBtn);
 infoCard.appendChild(saveMsg);
 body.appendChild(infoCard);
 
+// ── Percorsi da confermare ───────────────────────────────────────────────
+// PRIMA delle segnalazioni, e non per importanza: perche' dall'altra parte
+// c'e' un arciere che ha scritto qualcosa e sta aspettando. Una segnalazione
+// non risposta e' un lavoro che resta da fare; un percorso non confermato e'
+// una persona che non sa se l'hai visto.
+var pcCard = el('<div class="card"></div>');
+pcCard.appendChild(el('<h2 class="section-title">'+t("pc_sezione_attesa")+'</h2>'));
+var pcDentro = el('<div></div>');
+pcCard.appendChild(pcDentro);
+body.appendChild(pcCard);
+caricaPercorsiCampo(codice, function(){
+pcDentro.innerHTML = "";
+var attesa = percorsiInAttesa(codice);
+if(attesa.length === 0){
+pcDentro.appendChild(el('<div class="nota">'+t("club_reports_empty")+'</div>'));
+return;
+}
+attesa.forEach(function(p){
+var riga = el('<div class="pc-attesa"></div>');
+var meta = [];
+if(p.piazzole) meta.push(p.piazzole + " " + t("compagnie_piazzole_word"));
+meta.push(t("club_report_by", { name: escapeHtml(p.createdByName || "?") }));
+riga.appendChild(el('<div class="pc-nome">'+escapeHtml(p.nome || "?")+'</div>'));
+riga.appendChild(el('<div class="nota">'+escapeHtml(meta.join(" \u00b7 "))+'</div>'));
+if(p.note){ riga.appendChild(el('<div class="pc-note">'+escapeHtml(p.note)+'</div>')); }
+var err = el('<div class="nota dopo pc-err"></div>');
+var az = el('<div class="pc-decidi"></div>');
+var si = el('<button class="btn btn-primary btn-sm">'+t("pc_conferma")+'</button>');
+si.addEventListener("click", function(){
+si.disabled = true;
+decidiPercorso(codice, p.id, true, null, function(){ si.disabled = false; err.textContent = t("pc_error"); err.style.display = "block"; });
+});
+var no = el('<button class="btn btn-ghost btn-sm pc-rifiuta">'+t("pc_rifiuta")+'</button>');
+armDoubleConfirm(no, t("pc_rifiuta_conf"), function(){
+decidiPercorso(codice, p.id, false, null, function(){ err.textContent = t("pc_error"); err.style.display = "block"; });
+});
+az.appendChild(si); az.appendChild(no);
+riga.appendChild(az);
+riga.appendChild(err);
+pcDentro.appendChild(riga);
+});
+});
+
 // ── Segnalazioni ricevute ────────────────────────────────────────────────
 var repCard = el('<div class="card"></div>');
 repCard.appendChild(el('<h2 class="section-title">'+t("club_reports_title")+'</h2>'));
@@ -13414,7 +13858,10 @@ var wrap = el('<div></div>');
 // solo quando la tocchi e' un cassetto in piu', non uno in meno.
 // Le etichette sono in italiano, come «Profili pubblici» e «Errori
 // registrati» che ci sono gia': questa schermata la vede una persona sola.
-var ADM_TABS = [["accessi","Accessi"],["richieste","Richieste"],["sessioni","Sessioni"],["profili","Profili"],["errori","Errori"]];
+// SEI SCHEDE. «Percorsi» e' entrata il 20/08 con i percorsi proposti dagli
+// arcieri: le compagnie senza referente non hanno nessuno che confermi, e
+// senza questa scheda le loro proposte resterebbero ferme per sempre.
+var ADM_TABS = [["accessi","Accessi"],["richieste","Richieste"],["percorsi","Percorsi"],["sessioni","Sessioni"],["profili","Profili"],["errori","Errori"]];
 var admTabsBar = el('<div class="adm-tabs" role="tablist" aria-label="Sezioni del pannello"></div>');
 var admPanels  = el('<div></div>');
 wrap.appendChild(admTabsBar);
@@ -13832,6 +14279,87 @@ listWrap.innerHTML = '<div style="font-size:var(--t-sm);color:var(--danger);">'+
 }
 setTimeout(loadList, 0);
 
+// ── Percorsi proposti, di tutte le compagnie ──────────────────────────────
+// PERCHE' QUESTA SCHEDA ESISTE. Un percorso proposto lo conferma il referente
+// della sua compagnia. Ma su 663 compagnie i referenti sono una manciata: per
+// tutte le altre non c'e' NESSUNO dall'altra parte, e senza questa scheda una
+// proposta resterebbe ferma per sempre senza che nessuno lo sappia.
+//
+// E c'e' la coda della posta. L'estensione che manda le email si installa a
+// parte: se non c'e', i documenti si accumulano e non parte niente. Contarli
+// qui e' l'unico modo per accorgersene — *una posta che non parte non fa
+// rumore, e un numero che sale si'*.
+var pcCard = el('<div class="card"></div>');
+pcCard.appendChild(el('<h2 class="section-title">'+t("pc_sezione_attesa")+'</h2>'));
+var pcCoda = el('<div class="nota stacco-3"></div>');
+pcCard.appendChild(pcCoda);
+var pcWrap = el('<div><div class="nota">'+t("admin_loading")+'</div></div>');
+pcCard.appendChild(pcWrap);
+admPanel("percorsi", pcCard);
+
+function admCodaPosta(){
+if(!db) return;
+db.collection("mail").limit(200).get().then(function(snap){
+var n = snap.size;
+// L'estensione, quando c'e', scrive `delivery.state` su ogni documento.
+// Se NESSUNO ce l'ha, l'estensione non e' installata e la posta non parte.
+var partite = 0;
+snap.forEach(function(d){ var x = d.data() || {}; if(x.delivery) partite++; });
+pcCoda.textContent = t("pc_coda_posta") + ": " + n
++ (n && !partite ? "  \u2014 nessuna e' partita: l'estensione non e' installata" : "")
++ (partite ? "  \u00b7 " + partite + " lavorate" : "");
+}).catch(function(){ pcCoda.textContent = ""; });
+}
+
+function admPercorsiProposti(){
+if(!db) return;
+db.collection("percorsi_campo").where("stato","==","proposto").limit(80).get().then(function(snap){
+var arr = [];
+snap.forEach(function(d){ var x = d.data() || {}; x.id = d.id; arr.push(x); });
+arr.sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
+admBadge("percorsi", arr.length);
+pcWrap.innerHTML = "";
+if(arr.length === 0){
+pcWrap.appendChild(el('<div class="nota">'+t("club_reports_empty")+'</div>'));
+return;
+}
+arr.forEach(function(p){
+var riga = el('<div class="pc-attesa"></div>');
+var nomeComp = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[p.clubCode]) ? COMPAGNIE[p.clubCode].nome : p.clubCode;
+riga.appendChild(el('<div class="pc-nome">'+escapeHtml(p.nome || "?")+'</div>'));
+var meta = [escapeHtml(String(p.clubCode||"?")) + " \u00b7 " + escapeHtml(String(nomeComp||"?"))];
+if(p.piazzole) meta.push(p.piazzole + " " + t("compagnie_piazzole_word"));
+meta.push(t("club_report_by", { name: escapeHtml(p.createdByName || p.createdByEmail || "?") }));
+riga.appendChild(el('<div class="nota">'+meta.join(" \u00b7 ")+'</div>'));
+if(p.note){ riga.appendChild(el('<div class="pc-note">'+escapeHtml(p.note)+'</div>')); }
+var err = el('<div class="nota dopo pc-err"></div>');
+var az = el('<div class="pc-decidi"></div>');
+var si = el('<button class="btn btn-primary btn-sm">'+t("pc_conferma")+'</button>');
+si.addEventListener("click", function(){
+si.disabled = true;
+db.collection("percorsi_campo").doc(p.id).update({ stato:"confermato", confermatoDa: currentUser.uid, confermatoIl: Date.now() })
+.then(function(){ scordaPercorsiCampo(p.clubCode); admPercorsiProposti(); })
+.catch(function(){ si.disabled = false; err.textContent = t("pc_error"); err.style.display = "block"; });
+});
+var no = el('<button class="btn btn-ghost btn-sm pc-rifiuta">'+t("pc_rifiuta")+'</button>');
+armDoubleConfirm(no, t("pc_rifiuta_conf"), function(){
+db.collection("percorsi_campo").doc(p.id).delete()
+.then(function(){ scordaPercorsiCampo(p.clubCode); admPercorsiProposti(); })
+.catch(function(){ err.textContent = t("pc_error"); err.style.display = "block"; });
+});
+az.appendChild(si); az.appendChild(no);
+riga.appendChild(az);
+riga.appendChild(err);
+pcWrap.appendChild(riga);
+});
+}).catch(function(e){
+pcWrap.innerHTML = "";
+pcWrap.appendChild(el('<div class="nota pc-err visibile">'+escapeHtml(e && e.message ? e.message : "?")+'</div>'));
+});
+}
+admPercorsiProposti();
+admCodaPosta();
+
 // ── Richieste di gestione compagnia ───────────────────────────────────────
 // Venivano scritte su compagnie_admin_requests ma nessuno le leggeva:
 // senza questo pannello nessuna compagnia poteva essere attivata.
@@ -14013,7 +14541,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-area-compagnia";
+var BUILD_STAMP = "2026-08-20-percorsi-proposti";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -14022,7 +14550,7 @@ var BUILD_STAMP = "2026-08-20-area-compagnia";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-casetta-e-arancio";
+var BUILD_PARENT = "2026-08-20-area-compagnia";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -16361,7 +16889,10 @@ return wrap;
 // che l'id contiene gia'. Se un giorno arriva un avviso di admin d'altro
 // tipo finisce su "accessi", che e' la scheda che si sarebbe aperta comunque.
 function admTabDaAvviso(id){
-return String(id || "").indexOf("club-") === 0 ? "richieste" : "accessi";
+var x = String(id || "");
+if(x.indexOf("club-") === 0) return "richieste";
+if(x.indexOf("perc-") === 0) return "percorsi";
+return "accessi";
 }
 
 function destinazioneNotifica(n){
@@ -16379,6 +16910,13 @@ if(d && d.k === "ot" && d.id) return { etichetta: t("notif_open_msg"), k:"ot", v
 // Il controllo sull'email non e' una difesa (il pannello e' chiuso dalle
 // regole): e' per non offrire una porta che si aprirebbe su una schermata
 // vuota.
+// IL REFERENTE HA UNA PORTA SUA. (20/08/2026.) Un percorso da confermare non
+// si conferma dal pannello di chi tiene l'app: si conferma nel proprio spazio
+// compagnia, e l'avviso deve portarci — altrimenti dice «c'e' una cosa da
+// fare» e lascia cercare dove si fa.
+if(n.apri === "club-space" && currentUser){
+return { etichetta: t("club_space_title"), k:"club-space", val: n.clubCode || myClubCode() || "" };
+}
 if(n.apri === "admin" && currentUser && currentUser.email === ADMIN_EMAIL){
 return { etichetta: t("admin_title"), k:"admin", val:"admin" };
 }
@@ -16531,6 +17069,12 @@ db.collection("notifications").doc(currentUser.uid).collection("items").doc(n.id
 if(dove.k === "dm") apriChatDaNotifica(dove.val);
 else if(dove.k === "ot") apriChatAllenamentoDaNotifica(dove.val, row);
 else if(dove.k === "admin"){ adminTab = admTabDaAvviso(n.id); state.screen = "admin"; save(); render(); }
+// Senza questa riga finiva nell'`else` qui sotto e veniva trattato come
+// l'id di un annuncio del mercatino: cioe' apriva il nulla.
+else if(dove.k === "club-space"){
+if(dove.val) state.clubSpaceCode = dove.val;
+state.screen = "club-space"; save(); render();
+}
 else apriAnnuncioDaNotifica(dove.val, row);
 };
 row.addEventListener("click", apri);
