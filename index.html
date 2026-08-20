@@ -613,11 +613,17 @@ background:transparent; border:1.5px solid var(--border-strong); color:var(--tex
 header.top .home-btn.pericolo:active,
 header.top .home-btn.pericolo.armato{
 border-color:var(--danger); color:var(--danger); }
+/* IL PALLINO DEI NON LETTI E' ARANCIO, NON ROSSO. (20/08/2026, PRD §9.3.)
+   Il rosso e' riservato: distruttivo, sicurezza, errori seri. Un messaggio
+   non letto non e' nessuna di queste tre — e' *attenzione che vale*, che nel
+   PRD e' arancio. Usare il rosso per tutto quello che chiede attenzione lo
+   consuma: quando arriva un errore vero, non ha piu' niente da dire.
+   Verificato a 3:1 sui tre temi. */
 .bar-badge{ position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 var(--s-1);
-border-radius:var(--r-sm); background:var(--danger); color:#fff; font-size:var(--t-2xs); font-weight:800;
+border-radius:var(--r-sm); background:var(--clay); color:var(--solid-ink); font-size:var(--t-2xs); font-weight:800;
 display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
 .bar-dot{ position:absolute; top:4px; right:4px; width:10px; height:10px; border-radius:50%;
-background:var(--danger); border:2px solid var(--bg-panel); }
+background:var(--clay); border:2px solid var(--bg-panel); }   /* arancio come la pastiglia */
 
 /* ── la pastiglia della firma ──────────────────────────────────────────────
    Sta accanto al marchio, ed e' l'unica cosa che si aggiunge alla barra
@@ -674,7 +680,7 @@ color:var(--cream); font-family:inherit; font-size:var(--t-md); font-weight:600;
 .bar-menu-item:active{ background:var(--bg-panel-2); }
 .bar-menu-item > svg{ flex:0 0 auto; color:var(--muted); }
 .bar-menu-count{ margin-left:auto; min-width:20px; height:20px; padding:0 var(--s-1); border-radius:var(--r-sm);
-background:var(--danger); color:#fff; font-size:var(--t-xs); font-weight:800;
+background:var(--clay); color:var(--solid-ink); font-size:var(--t-xs); font-weight:800;
 display:flex; align-items:center; justify-content:center; }
 header.top .brand-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-sm); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
 header.top .brandblock{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
@@ -1479,6 +1485,8 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    due direzioni della stessa cosa, e in fila si legge quale e' quella in
    corso. */
 .notif-spegni{ margin-top:var(--s-1); }
+/* Il tasto che ti unisce a un allenamento di qualcun altro. */
+.ot-partecipa{ background:var(--clay); color:var(--solid-ink); border-color:var(--clay); }
 /* La riga che dice a cosa serve la prova. Senza, il tasto e' un enigma: se
    uno deve chiedere «che senso ha», la risposta andava scritta accanto. */
 .prova-nota{ font-size:var(--t-xs); color:var(--muted); line-height:1.45; margin-bottom:var(--s-2); }
@@ -8475,6 +8483,11 @@ return '<img class="brandmark" src="'+LOGO_DATA_URI+'" alt="ArcTrail 3D" style="
 }
 
 var ICON_PATHS = {
+/* UNA CHAT, NON UNA BUSTA. (20/08/2026, dal campo.) I messaggi portavano
+   l'icona della posta, e la posta e' un'altra cosa: si scrive, si aspetta,
+   si risponde domani. Qui si parla. La nuvoletta coi tre puntini lo dice in
+   una forma sola, e nessuno ha bisogno di leggere l'etichetta. */
+chat:'<path d="M20.5 11.7c0 4.2-3.8 7.6-8.5 7.6a9.9 9.9 0 0 1-2.3-.26L4.5 21.2l1.4-3.95A7.3 7.3 0 0 1 3.5 11.7C3.5 7.5 7.3 4.1 12 4.1s8.5 3.4 8.5 7.6z"/><path d="M9 11.7h.01"/><path d="M12 11.7h.01"/><path d="M15 11.7h.01"/>',
 home: '<path d="M4 11.4 12 4l8 7.4"/><path d="M6.4 10.2V20h11.2v-9.8"/><path d="M10 20v-5h4v5"/>',
 sun: '<circle cx="12" cy="12" r="4.2" style="fill:var(--sun-dot)"/><path d="M12 2.6v2.4M12 19v2.4M2.6 12h2.4M19 12h2.4"/><path d="M5.4 5.4l1.7 1.7M16.9 16.9l1.7 1.7M18.6 5.4l-1.7 1.7M7.1 16.9l-1.7 1.7"/>',
 globe: '<circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2"/><path d="M12 3.4c2.35 2.3 3.66 5.4 3.66 8.6S14.35 18.3 12 20.6c-2.35-2.3-3.66-5.4-3.66-8.6S9.65 5.7 12 3.4Z"/>',
@@ -8543,6 +8556,17 @@ firma: '<path d="M2.5 12.6 6.2 16.3 12.4 8.8"/><path d="M10.6 15.4 12.4 17.2 21.
    pastiglia dello stesso verde, cioe' invisibile. Un accento che non e' mai il colore della
    struttura non puo' sparire, in nessuno stato. */
 var ICONE_PIENE = {
+/* LA CASETTA. (20/08/2026.) La Home e Tira usavano LA STESSA icona — il
+   bersaglio — perche' quando la Home e' nata ha preso in prestito quella che
+   c'era. Due voci identiche in una barra di cinque non sono un dettaglio:
+   sono due voci che si cerca di distinguere leggendo, cioe' la cosa che
+   un'icona esiste per evitare.
+   Disegnata nella stessa lingua delle altre: la sagoma e' un contorno pieno
+   (`evenodd`, un profilo dentro l'altro) e la porta e' l'accento, come il
+   centro del bersaglio e l'anello dello spillo. */
+navhome: { t:'translate(100 100) scale(1.0) translate(-100 -100) translate(0.00 -2.00)',
+s:'<path fill-rule="evenodd" d="M100,26 L180,96 L180,174 L20,174 L20,96 Z M100,47.6 L163,102.7 L163,157 L37,157 L37,102.7 Z"/>',
+a:'<path d="M86,157 V131 a14,14 0 0 1 28,0 v26 Z"/>' },
 navfield: { t:'translate(100 100) scale(0.9924) translate(-100 -100) translate(0.00 -3.88)',
 s:'<path d="M100,176.34H98.4l1.6,2.47,1.6-2.47Z"/><path d="M100,171.8l-4-6.16c-1.36-2.09-33.41-51.56-43.13-69.36l-.07-.12a40.34,40.34,0,0,1-3.11-8.28A52.26,52.26,0,0,1,100,21.37h0a52.26,52.26,0,0,1,50.29,66.51,40.7,40.7,0,0,1-3.11,8.28l-.07.12c-9.72,17.8-41.77,67.27-43.13,69.36Zm-38.74-80c7.58,13.85,29.64,48.35,38.74,62.49,9.1-14.14,31.15-48.64,38.73-62.49a30.36,30.36,0,0,0,2.36-6.31l0-.14A42.78,42.78,0,0,0,100,30.88h0A42.73,42.73,0,0,0,58.86,85.34l0,.14A30.91,30.91,0,0,0,61.25,91.79Z"/><path d="M123.16,142.83c-2,3.13-3.89,6.12-5.65,8.88,11.15,2.68,17.71,7.6,17.71,11.34,0,5.28-13,12.9-33.59,13.28h-3.2c-20.59-.37-33.65-8-33.65-13.28,0-3.75,6.58-8.68,17.76-11.35-1.76-2.76-3.68-5.76-5.65-8.89-13.45,3.95-22.13,11.37-22.13,20.24,0,13.29,19.45,23.32,45.24,23.32s45.24-10,45.24-23.32C145.24,154.19,136.58,146.78,123.16,142.83Z"/>',
 a:'<path d="M100,102.51a28.91,28.91,0,1,1,22.63-10.93,28.64,28.64,0,0,1-22.58,10.93Zm0-46.09a17.19,17.19,0,1,0,13.49,27.89A17.2,17.2,0,0,0,100,56.42Z"/>' },
@@ -10228,7 +10252,7 @@ azioni.push({ id:"notifiche", glifo:"bell", testo:t("notif_center_title"), conta
 vai:function(){ state.screen = "notifiche"; save(); render(); }});
 }
 if(state.screen !== "messaggi" && state.screen !== "dm-chat"){
-azioni.push({ id:"messaggi", glifo:"mail", testo:t("dm_title"), conta:dmUnreadCount,
+azioni.push({ id:"messaggi", glifo:"chat", testo:t("dm_title"), conta:dmUnreadCount,
 vai:function(){ state.screen = "messaggi"; save(); render(); }});
 }
 }
@@ -11122,7 +11146,11 @@ actionBox.appendChild(leaveBtn);
 actionBox.appendChild(el('<button class="btn btn-block btn-sm" disabled>'+t("ot_full_label")+'</button>'));
 } else {
 actionBox.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-bottom:var(--s-1);">'+t("ot_join_hint")+'</div>'));
-var joinBtn = el('<button class="btn btn-primary btn-block">'+t("ot_join_btn")+'</button>');
+// UNIRSI E' ARANCIO. (PRD §9.3: «Orange: event / join / publish».) Il verde
+// e' l'azione sportiva — tirare. Partecipare a quello che fa un altro e' una
+// cosa diversa, e in una schermata dove il verde e' gia' il tasto principale
+// un secondo verde non e' una seconda scelta: e' la stessa scelta due volte.
+var joinBtn = el('<button class="btn btn-block ot-partecipa">'+t("ot_join_btn")+'</button>');
 (function(otId){ joinBtn.addEventListener("click", function(){ otSetJoin(otId, true, joinBtn, actErr); }); })(ot.id);
 actionBox.appendChild(joinBtn);
 }
@@ -11335,7 +11363,7 @@ g += '<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="var(--bord
 g += '<path d="'+area+'" fill="var(--chart-line)" opacity="0.08"></path>';
 g += '<path d="'+d+'" fill="none" stroke="var(--chart-line)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>';
 // L'ultimo punto e' l'unico segnato: e' quello che si sta cercando.
-g += '<circle cx="'+X(serie.length-1).toFixed(1)+'" cy="'+Y(serie[serie.length-1].v).toFixed(1)+'" r="4.5" fill="var(--chart-line)"></circle>';
+g += '<circle cx="'+X(serie.length-1).toFixed(1)+'" cy="'+Y(serie[serie.length-1].v).toFixed(1)+'" r="4.5" fill="var(--clay)"></circle>';   /* l'ultimo punto e' quello che si cerca */
 g += '<line class="home-mira" x1="0" y1="'+PT+'" x2="0" y2="'+(H-PB)+'" stroke="var(--chart-line)" stroke-width="1"></line>';
 g += '<circle class="home-mira-p" r="5" fill="var(--chart-line)" stroke="var(--surface-1)" stroke-width="2"></circle>';
 svg.innerHTML = g;
@@ -11665,7 +11693,7 @@ var bar = el('<nav class="tabbar'+(wide?' tabbar-wide':' tabbar-bottom')+'" aria
 // e ha una scorciatoia sulla Home.
 // Attivita' prende il suo posto, e Tira resta al centro: e' la cosa che si
 // fa piu' spesso e il pollice deve trovarla senza guardare.
-[["home","navshoot",t("nav_home")],
+[["home","navhome",t("nav_home")],
  ["campi","navfield",t("nav_fields")],
  ["tira","navshoot",t("nav_shoot")],
  ["attivita","azdiario",t("nav_activity")],
@@ -13468,7 +13496,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-corpo-16";
+var BUILD_STAMP = "2026-08-20-casetta-e-arancio";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -13477,7 +13505,7 @@ var BUILD_STAMP = "2026-08-20-corpo-16";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-attivita";
+var BUILD_PARENT = "2026-08-20-corpo-16";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
