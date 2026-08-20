@@ -183,13 +183,39 @@
    La differenza fra un gradino mancante e del rumore resta quella: quante
    volte torna, e se si distingue dal vicino. 0.60 e 0.72 su una pastiglia
    si distinguono; 0.78 e 0.80 no. */
---t-2xs:clamp(0.58rem,0.56rem + 0.10vw,0.64rem);
---t-xs:clamp(0.66rem,0.63rem + 0.15vw,0.72rem);
---t-sm:clamp(0.78rem,0.75rem + 0.18vw,0.86rem);
---t-md:clamp(0.92rem,0.89rem + 0.18vw,1rem);
---t-lg:clamp(1.05rem,1rem + 0.3vw,1.2rem);
---t-xl:clamp(1.3rem,1.15rem + 0.7vw,1.6rem);
---t-2xl:clamp(1.9rem,1.55rem + 1.7vw,2.5rem);
+/* LA SCALA SALE. (20/08/2026, PRD §9.4: «Body: 16 minimum».)
+
+   Sul telefono l'app stava a 14,9px di corpo, 12,7 di piccolo, 10,7 di
+   micro. Il PRD chiede 16 / 14 / 12-13, e non e' un capriccio: e' la misura
+   sotto cui un testo si legge male in piedi, al sole, a braccio teso.
+
+   OGNI GRADINO SALE, NON SOLO IL CORPO. Alzare solo `--t-md` avrebbe
+   schiacciato la distanza fra corpo e titolo: una scala e' fatta di
+   rapporti, e cambiarne uno solo la rompe invece di spostarla.
+
+   Le misure a 390px (un telefono normale): 2xs 11 · xs 12 · sm 14 · md 16
+   · lg 18 · xl 23 · 2xl 33 · 3xl 44.
+
+   *E' la modifica piu' invasiva della giornata scritta nel modo meno
+   invasivo: otto righe. Se non piace, si torna indietro con le otto righe
+   di prima — che sono qui sotto, nel commento.*
+
+   Com'era, per poterci tornare:
+     2xs clamp(0.58rem,0.56rem + 0.10vw,0.64rem)
+     xs  clamp(0.66rem,0.63rem + 0.15vw,0.72rem)
+     sm  clamp(0.78rem,0.75rem + 0.18vw,0.86rem)
+     md  clamp(0.92rem,0.89rem + 0.18vw,1rem)
+     lg  clamp(1.05rem,1rem + 0.3vw,1.2rem)
+     xl  clamp(1.3rem,1.15rem + 0.7vw,1.6rem)
+     2xl clamp(1.9rem,1.55rem + 1.7vw,2.5rem)
+     3xl clamp(2.6rem,2rem + 3vw,3.9rem)  */
+--t-2xs:clamp(0.66rem,0.66rem + 0.11vw,0.74rem);
+--t-xs:clamp(0.74rem,0.72rem + 0.13vw,0.82rem);
+--t-sm:clamp(0.84rem,0.83rem + 0.19vw,0.94rem);
+--t-md:clamp(0.98rem,0.96rem + 0.19vw,1.08rem);
+--t-lg:clamp(1.10rem,1.08rem + 0.20vw,1.30rem);
+--t-xl:clamp(1.36rem,1.30rem + 0.50vw,1.72rem);
+--t-2xl:clamp(1.95rem,1.72rem + 1.40vw,2.60rem);
 --t-3xl:clamp(2.6rem,2rem + 3vw,3.9rem);
 }
 
@@ -13442,7 +13468,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-attivita";
+var BUILD_STAMP = "2026-08-20-corpo-16";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -13451,7 +13477,7 @@ var BUILD_STAMP = "2026-08-20-attivita";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-andamento";
+var BUILD_PARENT = "2026-08-20-attivita";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
