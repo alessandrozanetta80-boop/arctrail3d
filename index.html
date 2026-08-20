@@ -10807,17 +10807,30 @@ var otReg = "", otProv = "";   // fuori dalla funzione: sopravvivono a render()
 
 function otSectionCard(compact){
 var otCard = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
-otCard.appendChild(el('<div><div style="font-weight:800;font-size:var(--t-md);">'+t("ot_section_title")+'</div><div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;margin-bottom:var(--s-2);">'+t("ot_section_hint")+'</div></div>'));
+// Il conto nel titolo: si vede quanti ce ne sono prima di leggerli, e si
+// nota subito se ne manca uno.
+var quanti = (openTrainings||[]).length;
+otCard.appendChild(el('<div><div style="font-weight:800;font-size:var(--t-md);">'+t("ot_section_title")+(quanti?' · '+quanti:'')+'</div><div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;margin-bottom:var(--s-2);">'+t("ot_section_hint")+'</div></div>'));
 
 var mio = myClubCode();
 var base = (openTrainings || []).slice();
 var nascostiFiltro = 0;
 
 if(!compact){
-// LE TENDINE COMPAIONO SOLO QUANDO C'E' QUALCOSA DA SCEGLIERE.
-// Con due allenamenti nella stessa regione un filtro non aiuta: e' un
-// ostacolo con l'aria di uno strumento. *Un comando che ha una risposta
-// sola non e' un comando.*
+// LE TENDINE COMPAIONO DA DUE ALLENAMENTI IN SU.
+// (Corretto il 20/08/2026, mezz'ora dopo averle scritte: «scusa ma dove li
+// vedi i filtri, adesso ho 2 allenamenti in linea».)
+// La prima regola era «da due REGIONI in su», e il ragionamento reggeva:
+// un comando che ha una risposta sola non e' un comando. Ma due allenamenti
+// vicini stanno quasi sempre nella STESSA regione — cioe' la regola
+// nascondeva la tendina esattamente nel caso in cui si va a cercarla, e
+// Alessandro aveva chiesto una cosa BEN VISIBILE.
+// *Nascondere un comando finche' non serve e' giusto in teoria e sbagliato
+// il giorno in cui qualcuno chiede dov'e': se non si vede mai, non si sa
+// che esiste, e la prima volta che servirebbe non lo cerca nessuno.*
+// Con una regione sola la tendina non filtra niente e dice comunque una
+// cosa vera: dove sono. «Piemonte (2)» e' informazione, non un comando
+// muto.
 var regioni = {}, province = {};
 base.forEach(function(ot){
 var L = otLuogo(ot);
@@ -10829,7 +10842,7 @@ province[L.reg][L.prov] = (province[L.reg][L.prov] || 0) + 1;
 }
 });
 var elencoReg = Object.keys(regioni).sort();
-if(elencoReg.length > 1){
+if(base.length > 1){
 var fRow = el('<div class="ot-filtri"></div>');
 
 var selReg = el('<select aria-label="'+escapeHtml(t("compagnie_regione"))+'"></select>');
@@ -12678,7 +12691,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-tendine-e-filtri";
+var BUILD_STAMP = "2026-08-20-tendine-visibili";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -12687,7 +12700,7 @@ var BUILD_STAMP = "2026-08-20-tendine-e-filtri";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-cinque-dal-campo";
+var BUILD_PARENT = "2026-08-20-tendine-e-filtri";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
