@@ -1977,13 +1977,33 @@ html.no-smooth{ scroll-behavior:auto; }
 /* L'insegna era un blocco verde scuro sopra una pagina chiara: due meta'
    diverse. Ora e' chiara come tutto il resto, e il marchio si tiene il verde
    pieno — cosi' il presidio resta, ma non e' piu' la testata a gridare. */
+/* UNA RIGA SOLA. (21/08/2026, chiesto da Alessandro: «sarebbe bello avere
+   tutti i tasti sulla stessa linea invece di una barra cosi' alta».)
+   La testata poteva andare a capo (`flex-wrap:wrap`), e con le cinque sezioni
+   infilate in mezzo ci andava sempre: marchio sopra, sezioni sotto, comandi a
+   destra della prima riga. Due righe alte 60 ciascuna in cima a ogni
+   schermata. Su schermo largo lo spazio in orizzontale e' quello che avanza:
+   e' esattamente il posto dove NON si va a capo. */
 header.top{
-  min-height:60px; padding:var(--s-2) var(--s-3) var(--s-2) var(--s-2); gap:var(--s-4); border-radius:var(--r-lg);
-  background:var(--navbar-bg); border:1px solid var(--navbar-line); box-shadow:var(--elev-2);
+  min-height:var(--s-7); padding:var(--s-2) var(--s-3); gap:var(--s-4);
+  border-radius:var(--r-lg); flex-wrap:nowrap;
+  background:var(--navbar-bg); border:1px solid var(--navbar-line); box-shadow:var(--elev-1);
   margin-bottom:20px; position:sticky; top:12px; z-index:70; isolation:isolate;
 }
+/* Le sezioni prendono il centro e si stringono per prime: se lo spazio manca,
+   a cedere devono essere le distanze fra le voci, non il nome dell'app ne' i
+   comandi. */
+header.top > .tabbar-wide{ flex:1 1 auto; min-width:0; justify-content:center;
+  flex-wrap:nowrap; overflow:hidden; }
 header.top::after{ display:none; }
-header.top .brand-title{ font-size:var(--t-lg); font-weight:700; letter-spacing:0.13em; color:#FFFFFF; }
+/* IL NOME DELL'APP ERA SCRITTO IN BIANCO SU FONDO BIANCO. (21/08/2026,
+   segnalato da Alessandro: «da web non c'e' la scritta ArcTrail 3D».)
+   Non era nascosto: era bianco perche' quando questa riga e' stata scritta la
+   testata era un blocco verde scuro. Poi la testata e' diventata chiara e
+   nessuno e' tornato a guardare qui. *Un colore fissato a mano sopravvive al
+   fondo per cui era stato scelto, e non protesta.* */
+header.top .brand-title{ font-size:var(--t-md); font-weight:800;
+  letter-spacing:-0.02em; color:var(--text-1); }
 /* I tre bottoni arancioni in fila erano la cosa piu' pesante della pagina:
    ora sono pastiglie di vetro sul verde scuro, e resta arancione solo il
    comando vero e proprio ("Cambia"). */
@@ -2002,6 +2022,21 @@ header.top .home-btn.small{
 }
 header.top .home-btn.small:hover{ background:color-mix(in srgb, var(--clay) 88%, white); border-color:transparent; }
 
+/* ── I TASTI SI FERMANO ALLA LORO SCRITTA ────────────────────────────────
+   (21/08/2026, chiesto da Alessandro.) Un tasto largo tutto lo schermo, su
+   un telefono, e' giusto: il pollice arriva ovunque e il bersaglio piu'
+   grande e' il migliore. Su un computer lo stesso tasto diventa una fascia
+   di mille pixel per due parole, e una fascia non si legge come un comando —
+   si legge come un'intestazione. Il puntatore, poi, arriva dove vuole: la
+   larghezza non e' piu' un aiuto.
+   Resta una larghezza minima, perche' tre tasti di misure diverse in colonna
+   fanno una scaletta. */
+.menu-cols .home-azioni{ align-items:flex-start; }
+.menu-cols .home-azioni > .btn.btn-block,
+.strato > .btn.btn-block,
+.menu-cols > .home-sezione > .btn.btn-block{
+  width:auto; min-width:260px; align-self:flex-start; }
+
 /* ── 3. Le sezioni: non piu' una barra a se', ma il centro della testata ── */
 .tabbar-wide button > svg{ transition:transform var(--dur-2) var(--ease); }
 .tabbar-wide button:hover > svg{ transform:translateY(-1px); }
@@ -2014,20 +2049,21 @@ header.top .home-btn.small:hover{ background:color-mix(in srgb, var(--clay) 88%,
    - L'ombra era 44px di sfocatura sotto ogni cosa. La profondita' viene dalla
      superficie e dal filo, non dal buio.
    - Il raggio era 18: fra --r-lg (16) e --r-xl (20), cioe' su nessun gradino. */
+/* LO STESSO RIQUADRO DEL TELEFONO. (21/08/2026, detto da Alessandro: «hanno
+   design diversi fra web e telefono, quindi non va bene».) Aveva ragione, e
+   la causa era qui: questo blocco rimetteva l'ombra e l'angolo grande che la
+   regola di primo livello aveva appena tolto. Due fogli che si contraddicono
+   fanno due app. */
 .card{
-  border-radius:var(--r-lg); padding:20px var(--s-5); margin-bottom:var(--s-4);
+  border-radius:var(--r-md); padding:var(--s-5); margin-bottom:var(--s-4);
   border:1px solid var(--border);
-  box-shadow:var(--elev-1);
-  transition:box-shadow var(--dur-2) var(--ease);
+  box-shadow:none;
 }
-h2.section-title{
-  display:flex; align-items:center; gap:var(--s-3);
-  font-size:var(--t-xs); letter-spacing:0.18em; margin-bottom:var(--s-4);
-}
-h2.section-title::after{
-  content:""; flex:1 1 auto; height:1px;
-  background:linear-gradient(90deg, var(--line), transparent);
-}
+/* Il filo che si allunga dopo il titolo era un ornamento in piu' su schermo
+   largo, cioe' un'altra differenza fra le due vesti. Tolto: l'etichetta e'
+   la stessa di la'. */
+h2.section-title{ font-size:var(--t-2xs); letter-spacing:0.14em;
+  margin-bottom:var(--s-4); }
 
 /* ── 5. I comandi diventano schede affiancate ────────────────────────────
    In colonna, uno sotto l'altro, sprecavano mezzo schermo. La griglia si
@@ -2601,6 +2637,21 @@ text-transform:uppercase; color:var(--text-3); }
    grafico, che e' un'altra domanda, resta dentro. */
 .home-mese-vuota .hm-vuota-testo{ font-size:var(--t-sm); color:var(--text-3);
   margin-top:var(--s-2); }
+/* LA PORTA DEL PROFILO. Il segno e' grande perche' e' l'unica cosa della
+   schermata che rappresenta una PERSONA, non un numero: si riconosce prima di
+   leggerla. Tutto in colonna e centrato — un bersaglio che si vede da mezzo
+   metro, che e' la distanza a cui si tiene un telefono. */
+.profilo-porta{ text-align:center; }
+.profilo-tessera{ display:flex; flex-direction:column; align-items:center;
+  gap:var(--s-2); width:100%; padding:var(--s-2) 0; background:none; border:0;
+  font:inherit; color:inherit; cursor:pointer; }
+.profilo-segno{ display:inline-flex; align-items:center; justify-content:center;
+  width:var(--s-7); height:var(--s-7); border-radius:var(--r-pill);
+  background:color-mix(in srgb, var(--brand) 12%, var(--surface-2));
+  color:var(--brand); }
+.profilo-nome{ font-size:var(--t-md); font-weight:800; letter-spacing:-0.01em;
+  color:var(--text-1); }
+.profilo-chi{ font-size:var(--t-xs); color:var(--text-3); }
 /* La freccia gira: e' l'unico modo per sapere, guardando, se sotto c'e' altro. */
 .home-mese-freccia{ flex:0 0 auto; width:0; height:0; border-left:5px solid transparent;
   border-right:5px solid transparent; border-top:6px solid var(--text-3);
@@ -13508,8 +13559,6 @@ var vic = el('<div class="strato"></div>');
 vic.appendChild(otSectionCard(true));
 strati.appendChild(vic);
 
-wrap.appendChild(strati);
-
 /* LA HOME HA TRE COSE, E BASTA. (21/08/2026, detto da Alessandro:
    «inizia un giro, poi la tabella questo mese, gli allenamenti aperti; niente
    di piu', il resto va nelle sezioni apposite».)
@@ -13518,11 +13567,23 @@ wrap.appendChild(strati);
    le altre: e' il posto da cui si passa per il diario, l'attrezzatura e lo
    spazio compagnia — cioe' tre stanze che dalla barra non hanno piu' una
    porta. */
-var sc = el('<div class="home-sezione"></div>');
-var bProf = el('<button class="btn btn-ghost btn-block btn-sm">'+navIcon("navprofile",16,"due")+' '+escapeHtml(t("menu_profile"))+'</button>');
+/* IL PROFILO NON E' PIU' UN TASTO FANTASMA IN FONDO. (21/08/2026, chiesto da
+   Alessandro: «deve essere molto piu' visibile, icona piu' grossa e la
+   scritta sotto, una roba bella e impattante».)
+   Era la cosa meno visibile della schermata — grigio su grigio, in coda —
+   per una porta che ne apre tre: il diario, l'attrezzatura e lo spazio
+   compagnia. Adesso e' una fascia sua: il segno grande, il nome sotto, e chi
+   ha un nome utente se lo legge scritto. */
+var sc = el('<div class="strato profilo-porta"></div>');
+var bProf = el('<button class="profilo-tessera"></button>');
+bProf.appendChild(el('<span class="profilo-segno">'+navIcon("navprofile",28,"due")+'</span>'));
+bProf.appendChild(el('<span class="profilo-nome">'+escapeHtml(t("menu_profile"))+'</span>'));
+var uProf = (state.profile && (state.profile.username || state.profile.nomeCognome)) || "";
+if(uProf) bProf.appendChild(el('<span class="profilo-chi">'+escapeHtml(uProf)+'</span>'));
 bProf.addEventListener("click", function(){ state.tab = "profilo"; save(); render(); });
 sc.appendChild(bProf);
-wrap.appendChild(sc);
+strati.appendChild(sc);
+wrap.appendChild(strati);
 
 return wrap;
 }
@@ -16292,7 +16353,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-gerarchia";
+var BUILD_STAMP = "2026-08-21-una-riga";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16301,7 +16362,7 @@ var BUILD_STAMP = "2026-08-21-gerarchia";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-respiro";
+var BUILD_PARENT = "2026-08-21-gerarchia";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
