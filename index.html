@@ -2367,6 +2367,22 @@ text-transform:uppercase; color:var(--text-3); }
 .fin-zona.perfect{ background:var(--score-perfect); }
 .fin-zona.zero{ background:var(--score-zero); }
 .fin-azione{ margin-top:var(--s-2); }
+/* ══════════ I TRAGUARDI (21/08/2026, PRD 23) ══════════
+   Righe, non medaglie. Il PRD chiede un tono «maturo, sobrio, sportivo» e lo
+   dice anche in negativo: niente badge a pioggia. Quello raggiunto si
+   distingue per un segno di spunta e per l'inchiostro pieno, non per una
+   coccarda. */
+.trag-elenco{ display:flex; flex-direction:column; }
+.trag-riga{ display:flex; align-items:center; gap:var(--s-3);
+  padding:var(--s-2) 0; border-top:1px solid var(--border);
+  font-size:var(--t-sm); color:var(--text-3); }
+.trag-riga:first-child{ border-top:0; }
+.trag-riga.fatto{ color:var(--text-1); font-weight:600; }
+.trag-segno{ flex:0 0 auto; width:var(--s-5); text-align:center;
+  color:var(--success); font-weight:800; }
+.trag-nome{ flex:1 1 auto; min-width:0; }
+.trag-conto{ flex:0 0 auto; font-family:var(--font-num);
+  font-variant-numeric:tabular-nums; font-size:var(--t-xs); color:var(--text-3); }
 .fin-azione.via{ display:none; }
 .fin-nota{ display:none; margin-top:var(--s-2); }
 .fin-nota.aperta{ display:block; }
@@ -3544,6 +3560,15 @@ campi_title: "Trova un campo di tiro 3D",
 campi_btn: "Cerca campi vicino a te",
 campi_hint: "Non lo trovi in elenco? Questo apre Google Maps sui dintorni (richiede geolocalizzazione).",
 campi_searching: "Ricerca posizione\u2026",
+trag_titolo: "Traguardi",
+trag_niente: "I traguardi arrivano tirando.",
+trag_primo_giro: "Primo giro",
+trag_100: "100 piazzole",
+trag_500: "500 piazzole",
+trag_campi: "10 campi diversi",
+trag_prima_gara: "Prima gara",
+trag_record: "Primo record personale",
+trag_stagione: "10 giri in stagione",
 fin_nota_btn: "Aggiungi una nota",
 fin_nota_ph: "Com’è andata? Vento, arco, distanze…",
 fin_nota_salvata: "Nota salvata",
@@ -4146,6 +4171,15 @@ campi_title: "Find a 3D archery field",
 campi_btn: "Search fields near you",
 campi_hint: "Not in the list? This opens Google Maps nearby (needs location access).",
 campi_searching: "Locating\u2026",
+trag_titolo: "Milestones",
+trag_niente: "Milestones come from shooting.",
+trag_primo_giro: "First round",
+trag_100: "100 targets",
+trag_500: "500 targets",
+trag_campi: "10 different fields",
+trag_prima_gara: "First competition",
+trag_record: "First personal best",
+trag_stagione: "10 rounds this season",
 fin_nota_btn: "Add a note",
 fin_nota_ph: "How did it go? Wind, bow, distances…",
 fin_nota_salvata: "Note saved",
@@ -4747,6 +4781,15 @@ campi_title: "Trouvez un terrain de tir 3D",
 campi_btn: "Rechercher des terrains \u00e0 proximit\u00e9",
 campi_hint: "Pas dans la liste ? Ceci ouvre Google Maps aux alentours (nécessite la géolocalisation).",
 campi_searching: "Localisation\u2026",
+trag_titolo: "Jalons",
+trag_niente: "Les jalons viennent en tirant.",
+trag_primo_giro: "Premier parcours",
+trag_100: "100 cibles",
+trag_500: "500 cibles",
+trag_campi: "10 terrains différents",
+trag_prima_gara: "Première compétition",
+trag_record: "Premier record personnel",
+trag_stagione: "10 parcours cette saison",
 fin_nota_btn: "Ajouter une note",
 fin_nota_ph: "Comment ça s’est passé ? Vent, arc, distances…",
 fin_nota_salvata: "Note enregistrée",
@@ -5348,6 +5391,15 @@ campi_title: "Finde einen 3D-Bogenparcours",
 campi_btn: "Pl\u00e4tze in der N\u00e4he suchen",
 campi_hint: "Nicht in der Liste? Das öffnet Google Maps in der Umgebung (benötigt Standortzugriff).",
 campi_searching: "Standort wird gesucht\u2026",
+trag_titolo: "Meilensteine",
+trag_niente: "Meilensteine entstehen beim Schießen.",
+trag_primo_giro: "Erste Runde",
+trag_100: "100 Ziele",
+trag_500: "500 Ziele",
+trag_campi: "10 verschiedene Parcours",
+trag_prima_gara: "Erster Wettkampf",
+trag_record: "Erster persönlicher Rekord",
+trag_stagione: "10 Runden in dieser Saison",
 fin_nota_btn: "Notiz hinzufügen",
 fin_nota_ph: "Wie lief es? Wind, Bogen, Distanzen…",
 fin_nota_salvata: "Notiz gespeichert",
@@ -5968,6 +6020,15 @@ campi_title: "Bir 3D at\u0131\u015f sahas\u0131 bul",
 campi_btn: "Yak\u0131n\u0131ndaki sahalar\u0131 ara",
 campi_hint: "Listede yok mu? Bu, çevredeki sahalarla Google Haritalar’ı açar (konum izni gerekir).",
 campi_searching: "Konum aran\u0131yor\u2026",
+trag_titolo: "Kilometre taşları",
+trag_niente: "Kilometre taşları atış yaptıkça gelir.",
+trag_primo_giro: "İlk tur",
+trag_100: "100 hedef",
+trag_500: "500 hedef",
+trag_campi: "10 farklı saha",
+trag_prima_gara: "İlk yarışma",
+trag_record: "İlk kişisel rekor",
+trag_stagione: "Bu sezon 10 tur",
 fin_nota_btn: "Not ekle",
 fin_nota_ph: "Nasıl geçti? Rüzgâr, yay, mesafeler…",
 fin_nota_salvata: "Not kaydedildi",
@@ -6582,6 +6643,15 @@ campi_title: "Найти площадку для 3D-стрельбы",
 campi_btn: "Искать площадки рядом",
 campi_hint: "Нет в списке? Откроется Google Карты поблизости (нужен доступ к местоположению).",
 campi_searching: "Поиск местоположения…",
+trag_titolo: "Вехи",
+trag_niente: "Вехи появляются с практикой.",
+trag_primo_giro: "Первый раунд",
+trag_100: "100 мишеней",
+trag_500: "500 мишеней",
+trag_campi: "10 разных площадок",
+trag_prima_gara: "Первые соревнования",
+trag_record: "Первый личный рекорд",
+trag_stagione: "10 раундов за сезон",
 fin_nota_btn: "Добавить заметку",
 fin_nota_ph: "Как прошло? Ветер, лук, дистанции…",
 fin_nota_salvata: "Заметка сохранена",
@@ -7196,6 +7266,15 @@ campi_title: "Encontrar un campo de tiro 3D",
 campi_btn: "Buscar campos cerca de ti",
 campi_hint: "¿No está en la lista? Esto abre Google Maps en los alrededores (requiere ubicación).",
 campi_searching: "Buscando ubicaci\u00f3n\u2026",
+trag_titolo: "Hitos",
+trag_niente: "Los hitos llegan tirando.",
+trag_primo_giro: "Primera ronda",
+trag_100: "100 diana",
+trag_500: "500 dianas",
+trag_campi: "10 campos distintos",
+trag_prima_gara: "Primera competición",
+trag_record: "Primer récord personal",
+trag_stagione: "10 rondas esta temporada",
 fin_nota_btn: "Añadir una nota",
 fin_nota_ph: "¿Cómo fue? Viento, arco, distancias…",
 fin_nota_salvata: "Nota guardada",
@@ -7810,6 +7889,15 @@ campi_title: "Hitta en 3D-bana",
 campi_btn: "S\u00f6k banor n\u00e4ra dig",
 campi_hint: "Inte i listan? Detta öppnar Google Maps i närheten (kräver platsåtkomst).",
 campi_searching: "S\u00f6ker plats\u2026",
+trag_titolo: "Milstolpar",
+trag_niente: "Milstolpar kommer av att skjuta.",
+trag_primo_giro: "Första rundan",
+trag_100: "100 mål",
+trag_500: "500 mål",
+trag_campi: "10 olika banor",
+trag_prima_gara: "Första tävlingen",
+trag_record: "Första personbästa",
+trag_stagione: "10 rundor i år",
 fin_nota_btn: "Lägg till en anteckning",
 fin_nota_ph: "Hur gick det? Vind, båge, avstånd…",
 fin_nota_salvata: "Anteckning sparad",
@@ -8424,6 +8512,15 @@ campi_title: "Vind een 3D-schietbaan",
 campi_btn: "Zoek banen in de buurt",
 campi_hint: "Niet in de lijst? Dit opent Google Maps in de buurt (locatietoegang nodig).",
 campi_searching: "Locatie zoeken\u2026",
+trag_titolo: "Mijlpalen",
+trag_niente: "Mijlpalen komen door te schieten.",
+trag_primo_giro: "Eerste ronde",
+trag_100: "100 doelen",
+trag_500: "500 doelen",
+trag_campi: "10 verschillende velden",
+trag_prima_gara: "Eerste wedstrijd",
+trag_record: "Eerste persoonlijk record",
+trag_stagione: "10 rondes dit seizoen",
 fin_nota_btn: "Een notitie toevoegen",
 fin_nota_ph: "Hoe ging het? Wind, boog, afstanden…",
 fin_nota_salvata: "Notitie opgeslagen",
@@ -15486,7 +15583,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-tre-veloci";
+var BUILD_STAMP = "2026-08-21-traguardi";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -15495,7 +15592,7 @@ var BUILD_STAMP = "2026-08-21-tre-veloci";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-dopo-il-giro";
+var BUILD_PARENT = "2026-08-21-tre-veloci";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -15640,6 +15737,80 @@ return box;
    La scheda aperta sta in `state` come prima, quindi si ritrova dov'era.
    I due nomi vecchi («trend», «rounds») restano validi: chi aveva l'app
    aperta sulla scheda dei giri non si ritrova altrove al primo ridisegno. */
+/* ══════════════════ I TRAGUARDI ══════════════════
+ * (21/08/2026, PRD §23, Fase 8.)
+ *
+ * IL TONO E' SCRITTO NEL PRD, ed e' la parte che conta piu' dell'elenco:
+ * «mature, restrained, sport-focused», e sotto, in negativo: niente monete
+ * finte, niente scrigni, niente animazioni infantili, niente medaglie a
+ * pioggia. Sette voci, tutte legate a cose che un arciere fa davvero.
+ *
+ * NON SI SALVA NIENTE DI NUOVO. I traguardi si contano dallo storico ogni
+ * volta che si apre la scheda: cosi' non possono divergere dai giri, non
+ * serve una migrazione per chi ha gia' tirato, e chi cancella un giro vede il
+ * conto tornare indietro — che e' giusto, perche' quel giro non c'e' piu'.
+ *
+ * QUELLO CHE MANCA, E PERCHE'. Il PRD elenca anche «5 allenamenti aperti»:
+ * quel numero non sta nello storico ma su Firestore, e conterebbe solo le
+ * iscrizioni ancora aperte — cioe' direbbe una cosa diversa da quella che
+ * promette. Meglio non esserci che esserci sbagliato.
+ */
+function traguardiConto(){
+var hist = loadHistory();
+var fed = FEDERATIONS[state.federation || "fiarc"];
+var out = { giri:0, piazzole:0, campi:0, gare:0, record:false, stagione:0, anno:new Date().getFullYear() };
+var campi = {}, meglio = {};
+// dal piu' vecchio al piu' recente: il «primo record» ha senso solo in ordine
+for(var i = hist.length - 1; i >= 0; i--){
+var h = hist[i]; if(!h) continue;
+var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0];
+if(!r) continue;
+out.giri++;
+out.piazzole += (r.perTarget && r.perTarget.length) ? r.perTarget.length : (h.format || 0);
+if(h.campo && String(h.campo).trim()) campi[String(h.campo).trim().toLowerCase()] = true;
+if(h.modeKey && fed && fed.garaModes.indexOf(h.modeKey) !== -1) out.gare++;
+var k = (h.modeKey || h.modeLabel || "?") + "|" + (h.format || 0);
+if(meglio[k] !== undefined && r.total > meglio[k]) out.record = true;
+if(meglio[k] === undefined || r.total > meglio[k]) meglio[k] = r.total;
+try{ if(new Date(h.date).getFullYear() === out.anno) out.stagione++; }catch(e){}
+}
+out.campi = Object.keys(campi).length;
+return out;
+}
+
+function traguardiCard(){
+var q = traguardiConto();
+var voci = [
+{ k:"trag_primo_giro", ora:q.giri, meta:1 },
+{ k:"trag_100",        ora:q.piazzole, meta:100 },
+{ k:"trag_500",        ora:q.piazzole, meta:500 },
+{ k:"trag_campi",      ora:q.campi, meta:10 },
+{ k:"trag_prima_gara", ora:q.gare, meta:1 },
+{ k:"trag_record",     ora:(q.record ? 1 : 0), meta:1 },
+{ k:"trag_stagione",   ora:q.stagione, meta:10 }
+];
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("trag_titolo")+'</h2>'));
+if(!q.giri){
+card.appendChild(el('<div class="nota">'+escapeHtml(t("trag_niente"))+'</div>'));
+return card;
+}
+var elenco = el('<div class="trag-elenco"></div>');
+voci.forEach(function(v){
+var fatto = v.ora >= v.meta;
+// Il conto si mostra solo per i traguardi che si contano davvero: «primo
+// giro 1/1» non e' un progresso, e' rumore.
+var quanto = (v.meta > 1 && !fatto) ? Math.min(v.ora, v.meta) + "/" + v.meta : "";
+var riga = el('<div class="trag-riga'+(fatto ? " fatto" : "")+'">'+
+'<span class="trag-segno">'+(fatto ? "\u2713" : "")+'</span>'+
+'<span class="trag-nome">'+escapeHtml(t(v.k))+'</span>'+
+'<span class="trag-conto">'+escapeHtml(quanto)+'</span></div>');
+elenco.appendChild(riga);
+});
+card.appendChild(elenco);
+return card;
+}
+
 function journalScreen(){
 var wrap = el('<div></div>');
 if(!state.journalTab) state.journalTab = "trend";
@@ -15663,6 +15834,10 @@ if(state.journalTab === "rounds"){
 wrap.appendChild(historyScreen());
 } else if(state.journalTab === "record"){
 wrap.appendChild(diarioScreen("record"));
+// I traguardi stanno con i record e non in una scheda loro: sono la stessa
+// domanda — «a che punto sono» — e una scheda in piu' per sette righe
+// sarebbe un posto in piu' da ricordarsi.
+wrap.appendChild(traguardiCard());
 } else {
 // INSIEME: la stagione, poi l'andamento, poi il record e la media.
 // L'ordine e' dal grande al piccolo: quanto hai fatto, come stai andando,
