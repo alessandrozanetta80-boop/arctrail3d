@@ -2360,6 +2360,7 @@ text-transform:uppercase; color:var(--text-3); }
 .fin-zona.sagoma{ background:var(--score-sag); }
 .fin-zona.perfect{ background:var(--score-perfect); }
 .fin-zona.zero{ background:var(--score-zero); }
+.fin-azione{ margin-top:var(--s-2); }
 
 /* ══════════ LA SCELTA DEL REGOLAMENTO (21/08/2026, PRD 14) ══════════
    Stessa riga dell'elenco compagnie e dei campi: sono tutti e tre elenchi in
@@ -3526,6 +3527,7 @@ campi_title: "Trova un campo di tiro 3D",
 campi_btn: "Cerca campi vicino a te",
 campi_hint: "Non lo trovi in elenco? Questo apre Google Maps sui dintorni (richiede geolocalizzazione).",
 campi_searching: "Ricerca posizione\u2026",
+fin_vedi_andamento: "Vedi l’andamento",
 regola_somma: "si sommano tutte",
 regola_prima_a_segno: "vale la prima a segno",
 regola_branco: "a branchi, si ferma al primo Nulla",
@@ -4124,6 +4126,7 @@ campi_title: "Find a 3D archery field",
 campi_btn: "Search fields near you",
 campi_hint: "Not in the list? This opens Google Maps nearby (needs location access).",
 campi_searching: "Locating\u2026",
+fin_vedi_andamento: "See your progress",
 regola_somma: "all arrows count",
 regola_prima_a_segno: "only the first hit counts",
 regola_branco: "in groups, stops at the first miss",
@@ -4721,6 +4724,7 @@ campi_title: "Trouvez un terrain de tir 3D",
 campi_btn: "Rechercher des terrains \u00e0 proximit\u00e9",
 campi_hint: "Pas dans la liste ? Ceci ouvre Google Maps aux alentours (nécessite la géolocalisation).",
 campi_searching: "Localisation\u2026",
+fin_vedi_andamento: "Voir la progression",
 regola_somma: "toutes les flèches comptent",
 regola_prima_a_segno: "seule la 1re flèche touchée compte",
 regola_branco: "en hardes, s’arrête au 1er manqué",
@@ -5318,6 +5322,7 @@ campi_title: "Finde einen 3D-Bogenparcours",
 campi_btn: "Pl\u00e4tze in der N\u00e4he suchen",
 campi_hint: "Nicht in der Liste? Das öffnet Google Maps in der Umgebung (benötigt Standortzugriff).",
 campi_searching: "Standort wird gesucht\u2026",
+fin_vedi_andamento: "Verlauf ansehen",
 regola_somma: "alle Pfeile zählen",
 regola_prima_a_segno: "nur der erste Treffer zählt",
 regola_branco: "in Rudeln, endet beim ersten Fehler",
@@ -5934,6 +5939,7 @@ campi_title: "Bir 3D at\u0131\u015f sahas\u0131 bul",
 campi_btn: "Yak\u0131n\u0131ndaki sahalar\u0131 ara",
 campi_hint: "Listede yok mu? Bu, çevredeki sahalarla Google Haritalar’ı açar (konum izni gerekir).",
 campi_searching: "Konum aran\u0131yor\u2026",
+fin_vedi_andamento: "Gelişimi gör",
 regola_somma: "tüm oklar sayılır",
 regola_prima_a_segno: "sadece ilk isabet sayılır",
 regola_branco: "sürü hâlinde, ilk ıskada durur",
@@ -6544,6 +6550,7 @@ campi_title: "Найти площадку для 3D-стрельбы",
 campi_btn: "Искать площадки рядом",
 campi_hint: "Нет в списке? Откроется Google Карты поблизости (нужен доступ к местоположению).",
 campi_searching: "Поиск местоположения…",
+fin_vedi_andamento: "Посмотреть динамику",
 regola_somma: "считаются все стрелы",
 regola_prima_a_segno: "считается только первое попадание",
 regola_branco: "группами, до первого промаха",
@@ -7154,6 +7161,7 @@ campi_title: "Encontrar un campo de tiro 3D",
 campi_btn: "Buscar campos cerca de ti",
 campi_hint: "¿No está en la lista? Esto abre Google Maps en los alrededores (requiere ubicación).",
 campi_searching: "Buscando ubicaci\u00f3n\u2026",
+fin_vedi_andamento: "Ver tu evolución",
 regola_somma: "se suman todas",
 regola_prima_a_segno: "solo cuenta la primera acertada",
 regola_branco: "por grupos, para al primer fallo",
@@ -7764,6 +7772,7 @@ campi_title: "Hitta en 3D-bana",
 campi_btn: "S\u00f6k banor n\u00e4ra dig",
 campi_hint: "Inte i listan? Detta öppnar Google Maps i närheten (kräver platsåtkomst).",
 campi_searching: "S\u00f6ker plats\u2026",
+fin_vedi_andamento: "Se din utveckling",
 regola_somma: "alla pilar räknas",
 regola_prima_a_segno: "bara första träffen räknas",
 regola_branco: "i flockar, stoppar vid första bom",
@@ -8374,6 +8383,7 @@ campi_title: "Vind een 3D-schietbaan",
 campi_btn: "Zoek banen in de buurt",
 campi_hint: "Niet in de lijst? Dit opent Google Maps in de buurt (locatietoegang nodig).",
 campi_searching: "Locatie zoeken\u2026",
+fin_vedi_andamento: "Bekijk je voortgang",
 regola_somma: "alle pijlen tellen",
 regola_prima_a_segno: "alleen de eerste treffer telt",
 regola_branco: "in groepen, stopt bij de eerste misser",
@@ -9189,6 +9199,10 @@ return out;
    Non e' un difetto da nascondere con la parola «salvato»: e' la sua
    situazione, ed e' l'unica in cui cambiare telefono perde il giro. */
 var giroNube = { stato:"locale", errore:"", inviato:"" };
+/* Quello che il finale ha appena detto a schermo. Serve alla condivisione:
+   ricalcolarlo la' sarebbe il modo piu' facile di mandare a un amico un numero
+   diverso da quello che si sta guardando. */
+var ultimoFinale = null;
 
 function statoGiroTesto(){
 switch(giroNube.stato){
@@ -15421,7 +15435,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-arancio-di-casa";
+var BUILD_STAMP = "2026-08-21-dopo-il-giro";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -15430,7 +15444,7 @@ var BUILD_STAMP = "2026-08-21-arancio-di-casa";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-arancio-che-si-vede";
+var BUILD_PARENT = "2026-08-21-arancio-di-casa";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -19584,6 +19598,8 @@ var megliodiPrima = null;
 passati.forEach(function(h){ var v = suoTotale(h); if(v !== null && (megliodiPrima === null || v > megliodiPrima)) megliodiPrima = v; });
 var eRecord = (megliodiPrima !== null && n.tot > megliodiPrima);
 
+ultimoFinale = { tot: n.tot, record: eRecord, campo: state.campo || null,
+delta: (precedente === null ? null : (n.tot - precedente)), stessoCampo: stessoCampo };
 var card = el('<div class="card fin-hero no-print"></div>');
 card.appendChild(el('<div class="fin-tit">'+t("round_done")+'</div>'));
 card.appendChild(el('<div class="fin-num">'+n.tot+'<span class="fin-pt">'+t("fin_punti")+'</span></div>'));
@@ -19775,6 +19791,13 @@ var newRound = el('<button class="btn '+(consegnaAperta?"btn-ghost":"btn-primary
 newRound.addEventListener("click", function(){ homeOverride = true; render(); });
 wrap.appendChild(newRound);
 
+// DAL RISULTATO ALL'ANDAMENTO. (21/08/2026, PRD 17.3.) Un punteggio da solo
+// non dice se stai migliorando: la risposta e' in Attivita', e prima da qui
+// non ci si arrivava — bisognava tornare al menu e cercarla.
+var andamentoBtn = el('<button class="btn btn-ghost btn-block no-print fin-azione">'+icon("chart",16)+' '+t("fin_vedi_andamento")+'</button>');
+andamentoBtn.addEventListener("click", function(){ state.tab = "attivita"; state.screen = "menu"; homeOverride = false; save(); render(); });
+wrap.appendChild(andamentoBtn);
+
 var resetBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:var(--s-2);">'+t("reset_round_btn")+'</button>');
 wrap.appendChild(resetBtn);
 armDoubleConfirm(resetBtn, t("reset_confirm"), function(){ cancellaGiroSulCloud(); hardResetAll(); });
@@ -19792,7 +19815,12 @@ var entries = state.scores[a.id] || [];
 var perTarget = entries.map(function(ent,idx){ return (idx+1)+":"+ent.total; }).join(" ");
 return (i+1)+". "+a.name+" \u2013 "+totalFor(a.id)+" pt\n "+perTarget;
 });
-var text = t("share_header",{mode:mLabel, n:state.format})+"\n\n"+lines.join("\n\n");
+// La condivisione portava solo i numeri. Il campo e il record sono le due
+// cose che un arciere racconta per prime, e le sapevamo gia'.
+var testa = [t("share_header",{mode:mLabel, n:state.format})];
+if(ultimoFinale && ultimoFinale.campo) testa.push(ultimoFinale.campo);
+if(ultimoFinale && ultimoFinale.record) testa.push(t("fin_record_nuovo"));
+var text = testa.join("\n")+"\n\n"+lines.join("\n\n");
 if(navigator.share){
 navigator.share({ title: "ArcTrail 3D", text: text }).catch(function(){});
 } else if(navigator.clipboard){
