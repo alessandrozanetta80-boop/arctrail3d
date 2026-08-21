@@ -1303,12 +1303,13 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
    blocco appartiene alla riga sopra e non e' un'altra sezione della pagina.
    Le schede dentro perdono il proprio fondo, altrimenti dell'arancione si
    vedrebbe solo una cornice di due pixel. */
-.comp-sotto{ background:var(--scheda-bg); border:1px solid var(--scheda-bd);
+.comp-dettaglio{ background:var(--surface-2); border:1px solid var(--border);
+  border-left:3px solid var(--scheda-bd);
   border-radius:var(--r-md); padding:var(--s-3) var(--s-3) var(--s-1);
   margin:0 0 var(--s-3); }
-.comp-sotto .card{ background:none; border:0; box-shadow:none;
+.comp-dettaglio .card{ background:none; border:0; box-shadow:none;
   padding:0; margin-bottom:var(--s-4); }
-.comp-sotto .card + .card{ border-top:1px solid var(--scheda-bd); padding-top:var(--s-3); }
+.comp-dettaglio .card + .card{ border-top:1px solid var(--border); padding-top:var(--s-3); }
 /* ══════════ LA RICERCA DEI CAMPI (21/08/2026) ══════════ */
 /* La riga del campo e' la stessa .comp-riga dell'elenco compagnie, e non e'
    pigrizia: sono due elenchi della stessa cosa vista da due domande diverse,
@@ -14624,7 +14625,7 @@ initCompagnieData();
 // motivo l'elenco non viene costruito, in fondo c'e' il ripiego che lo
 // attacca al fondo della pagina — una scheda nel posto sbagliato e' meglio
 // di una scheda che sparisce.
-var sotto = el('<div class="comp-sotto"></div>');
+var sotto = el('<div class="comp-dettaglio"></div>');
 
 if(state.compagniaAttiva && !compagniaVisibile(state.compagniaAttiva)){
 state.compagniaAttiva = null;
@@ -16111,7 +16112,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-meno-cose-piu-chiare";
+var BUILD_STAMP = "2026-08-21-compagnia-senza-tinta";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16120,7 +16121,7 @@ var BUILD_STAMP = "2026-08-21-meno-cose-piu-chiare";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-profilo-pubblico";
+var BUILD_PARENT = "2026-08-21-meno-cose-piu-chiare";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
