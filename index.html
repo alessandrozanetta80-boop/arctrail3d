@@ -325,7 +325,7 @@ color-scheme:light;
 --navbar-on:var(--green-800); --navbar-pill:var(--green-800);
 --navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(30,45,34,0.14);
 --icona-accento:var(--clay-400);
---scheda-bg:color-mix(in srgb, var(--clay-400) 10%, var(--surface-1));
+--scheda-bg:color-mix(in srgb, var(--clay-400) 22%, var(--surface-1));
 --scheda-bd:color-mix(in srgb, var(--clay-400) 45%, var(--surface-1));
 --navbar-hover:rgba(18,22,15,0.05);
 
@@ -397,7 +397,7 @@ color-scheme:dark;
 --navbar-on:var(--green-400); --navbar-pill:color-mix(in srgb, var(--green-400) 18%, var(--surface-2));
 --navbar-pill-ink:var(--green-400); --navbar-shadow:rgba(0,0,0,0.45);
 --icona-accento:var(--clay-400);
---scheda-bg:color-mix(in srgb, var(--clay-400) 14%, var(--surface-2));
+--scheda-bg:color-mix(in srgb, var(--clay-400) 20%, var(--surface-2));
 --scheda-bd:color-mix(in srgb, var(--clay-400) 50%, var(--surface-2));
 --navbar-hover:rgba(255,255,255,0.06);
 
@@ -521,7 +521,7 @@ color-scheme:light;
 --navbar-on:var(--green-900); --navbar-pill:var(--green-900);
 --navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(18,22,15,0.22);
 --icona-accento:var(--clay-400);
---scheda-bg:color-mix(in srgb, var(--clay-400) 12%, var(--surface-1));
+--scheda-bg:color-mix(in srgb, var(--clay-400) 24%, var(--surface-1));
 --scheda-bd:color-mix(in srgb, var(--clay-600) 65%, var(--surface-1));
 --navbar-hover:rgba(18,22,15,0.08);
 
@@ -2377,6 +2377,9 @@ text-transform:uppercase; color:var(--text-3); }
   margin-top:2px; line-height:1.3; }
 /* «l'ultima volta» non e' un consiglio dell'app: e' un fatto che viene dal tuo
    storico. Percio' e' una pastiglia sobria, non un richiamo. */
+.reg-sotto{ background:var(--scheda-bg); border-color:var(--scheda-bd);
+  margin-top:0; }
+.reg-riga.on{ margin-bottom:0; }
 .reg-ultima{ flex:0 0 auto; align-self:flex-start; font-size:var(--t-xs); font-weight:700;
   color:var(--text-3); background:var(--surface-1); border:1px solid var(--border);
   border-radius:var(--r-lg); padding:2px var(--s-2); }
@@ -13450,10 +13453,13 @@ footerParts.push(t("ordinal_"+arrowNum)+" "+unitDisplay+": "+zoneLineFor(mode.sc
 });
 }
 var provisionalHtml = mode.provisional ? '<br><br><b style="color:var(--danger);">'+t("provisional_note")+'</b>' : '';
-modeCard.appendChild(el(
-'<div class="rules-panel"><div class="rp-title">'+escapeHtml(modeLabel(modeKey))+' &middot; '+format+' '+t("targets_word")+'</div>'+
+var pannello = el(
+'<div class="rules-panel reg-sotto"><div class="rp-title">'+format+' '+t("targets_word")+'</div>'+
 modeDesc(modeKey)+'<br><br>'+footerParts.join("<br>")+provisionalHtml+'</div>'
-));
+);
+var rigaScelta = modeGrid.querySelector(".reg-riga.on");
+if(rigaScelta){ modeGrid.insertBefore(pannello, rigaScelta.nextSibling); }
+else { modeCard.appendChild(pannello); }
 wrap.appendChild(modeCard);
 
 // Anche la gara libera: il campo vale li' quanto in allenamento, e chi tira
@@ -15415,7 +15421,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-che-gara-e";
+var BUILD_STAMP = "2026-08-21-arancio-che-si-vede";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -15424,7 +15430,7 @@ var BUILD_STAMP = "2026-08-21-che-gara-e";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-il-finale";
+var BUILD_PARENT = "2026-08-21-che-gara-e";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
