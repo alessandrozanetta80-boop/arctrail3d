@@ -601,16 +601,22 @@ header.top .logo{ width:var(--hit); height:var(--hit); flex:0 0 auto; }
    ne' nel profilo. Una misura sola, che arriva da --mark. */
 .brandmark{ width:var(--mark,44px); height:var(--mark,44px); display:block;
 border-radius:0; object-fit:contain; }
-header.top .logo{ --mark:var(--hit); overflow:visible; }
+header.top .logo{ --mark:var(--s-6); overflow:visible; }
+header.top .logo{ width:var(--s-6); height:var(--s-6); }
 header.top .logo .brandmark{ width:100%; height:100%; }
 header.top .headtxt{ flex:0 0 auto; min-width:0; }
 header.top .head-actions{ flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center; gap:var(--s-2); }
 
 /* Il tasto della barra. Uno solo, sempre uguale, sempre 44x44. */
+/* IL TASTO DELLA TESTATA E' UN'ICONA NUDA. (21/08/2026.) Il bersaglio da
+   toccare resta 44x44 — quello non si tocca mai — ma il riquadro attorno
+   sparisce: non aggiungeva niente da premere, aggiungeva tre rettangoli
+   disegnati nella riga piu' in vista dell'app. */
 .bar-btn{ width:var(--hit); height:var(--hit); flex:0 0 auto; padding:0; position:relative;
 display:inline-flex; align-items:center; justify-content:center;
-border-radius:var(--r-md); background:var(--bg-panel); border:1.5px solid var(--line-strong);
-color:var(--ink-2); cursor:pointer; font-family:inherit; }
+border-radius:var(--r-pill); background:none; border:1px solid transparent;
+color:var(--text-2); cursor:pointer; font-family:inherit; }
+.bar-btn:hover{ background:var(--surface-2); }
 .bar-btn:active{ transform:scale(0.96); }
 .bar-btn.pericolo{ background:transparent; border-color:var(--danger); color:var(--danger); }
 header.top .home-btn{ position:relative; gap:var(--s-2); }
@@ -699,7 +705,9 @@ color:var(--cream); font-family:inherit; font-size:var(--t-md); font-weight:600;
 .bar-menu-count{ margin-left:auto; min-width:20px; height:20px; padding:0 var(--s-1); border-radius:var(--r-sm);
 background:var(--clay); color:var(--clay-ink); font-size:var(--t-xs); font-weight:800;
 display:flex; align-items:center; justify-content:center; }
-header.top .brand-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-sm); letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; display:block; }
+header.top .brand-title{ font-family:var(--font-ui); font-weight:800;
+font-size:var(--t-md); letter-spacing:-0.02em; text-transform:none;
+color:var(--text-1); white-space:nowrap; display:block; }
 header.top .brandblock{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 header.top h1{ font-size:var(--t-lg); margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-soft); }
 header.top .sub{ font-size:var(--t-xs); color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
@@ -752,8 +760,12 @@ letter-spacing:0.14em; color:var(--text-3); margin:0 0 var(--s-3); }
    correndo o tirando la usano tutte.
    Il bordo scende da 1,5 a 1: un filo spesso su una pastiglia fa contorno da
    disegno. Il tasto pieno il bordo non ce l'ha mai avuto. */
+/* IL TASTO NON E' UNA FASCIA. Con 24 di imbottitura sopra e sotto piu'
+   l'altezza minima, il tasto della Home veniva alto quasi settanta pixel: un
+   tasto alto come una riga di testo e mezza sembra un pannello, non un
+   comando. L'altezza minima da toccare resta intatta. */
 .btn{ display:inline-flex; align-items:center; justify-content:center; gap:var(--s-2);
-border-radius:var(--r-pill); padding:var(--s-3) var(--s-5); min-height:var(--hit);
+border-radius:var(--r-pill); padding:var(--s-2) var(--s-5); min-height:var(--hit);
 font-family:inherit; font-size:var(--t-md); font-weight:700; cursor:pointer;
 color:var(--text-1); background:var(--surface-2); border:1px solid var(--border-strong);
 box-shadow:none;
@@ -1496,9 +1508,12 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
 /* La riga piu' grande dell'app: e' la domanda a cui la schermata risponde.
    L'interlinea sotto l'uno perche' a questa taglia il carattere del marchio,
    con l'interlinea normale, lascia una fessura in mezzo alla frase. */
-.home-domanda{ font-family:var(--font-display); font-size:var(--t-2xl);
-  font-weight:700; line-height:0.98; letter-spacing:-0.03em;
-  margin:0 0 var(--s-5); text-wrap:balance; }
+/* LA DOMANDA CALA DI UNA TAGLIA. Era grande come un titolo di copertina e si
+   prendeva un quarto dello schermo per una frase che si legge una volta al
+   giorno. Il tasto sotto e' la cosa che si tocca: deve essere lui il peso. */
+.home-domanda{ font-family:var(--font-display); font-size:var(--t-xl);
+  font-weight:700; line-height:1.0; letter-spacing:-0.02em;
+  margin:0 0 var(--s-4); text-wrap:balance; }
 .home-azioni{ display:flex; flex-direction:column; gap:var(--s-3); }
 
 /* Gli strati escono dai margini della pagina: il gradino fra l'uno e l'altro
@@ -2195,11 +2210,13 @@ h2.section-title{ color:var(--text-2); }
 /* Il marchio si tiene il verde pieno in tutti i temi: e' l'unico blocco di
    colore forte dell'insegna, e da lontano basta quello per riconoscere l'app.
    Era scritto solo per il chiaro, quindi sullo scuro spariva. */
-header.top .brandblock{
-background:linear-gradient(140deg,var(--green-700) 0%,var(--green-900) 100%);
-padding:var(--s-1) 14px var(--s-1) var(--s-1); border-radius:var(--r-lg);
-}
-header.top .brand-title{ color:#FFFFFF; }
+/* L'INSEGNA IN CIMA A OGNI SCHERMATA E' STATA TOLTA. (21/08/2026.)
+   Era un blocco verde pieno con dentro il marchio: da lontano si riconosceva
+   l'app, ed era la ragione per cui era stata scritta. Ma il nome dell'app,
+   ripetuto quindici volte a chi l'app l'ha gia' aperta, non informa nessuno —
+   occupa il posto migliore dello schermo per dire una cosa nota.
+   Resta il marchio, piccolo, e il nome in chiaro. */
+header.top .brandblock{ background:none; padding:0; border-radius:0; }
 
 /* ── LE CINQUE SEZIONI ────────────────────────────────────────────────────
    Tutto in CSS, niente stile in linea, zero !important. La voce attiva ha
@@ -2554,10 +2571,23 @@ text-transform:uppercase; color:var(--text-3); }
   gap:var(--s-2); width:100%; }
 .home-mese-eti{ flex:0 0 auto; font-size:var(--t-2xs); font-weight:700;
   letter-spacing:0.12em; text-transform:uppercase; color:var(--text-3); }
-.home-mese-dati{ width:100%; display:flex; margin-top:var(--s-4); }
-.hm-voce{ flex:1 1 0; min-width:0; padding-left:var(--s-3);
+/* UNO COMANDA, TRE ACCOMPAGNANO. (21/08/2026, detto da Alessandro guardando
+   la foto: «quattro dati messi cosi' non vogliono dire niente».) Aveva
+   ragione, e il difetto non era il contenuto: quattro cifre della stessa
+   taglia in fila non sono un dato, sono un elenco — l'occhio non sa da dove
+   cominciare e quindi non comincia.
+   La media e' il numero con cui un arciere si giudica: prende la taglia
+   grande e la riga sua. Giri, record e piazzole scendono sotto, piccoli, e
+   diventano quello che sono: il contorno che spiega la media. */
+.home-mese-dati{ width:100%; display:flex; flex-wrap:wrap; align-items:flex-end;
+  gap:var(--s-4); margin-top:var(--s-4); }
+.hm-voce{ flex:1 1 0; min-width:0; }
+.hm-voce:first-child{ flex:0 0 100%; }
+.hm-voce:first-child b{ font-size:var(--t-3xl); }
+.hm-voce:not(:first-child) b{ font-size:var(--t-lg); }
+.hm-voce:not(:first-child){ padding-left:var(--s-4);
   border-left:1px solid var(--border); }
-.hm-voce:first-child{ padding-left:0; border-left:0; }
+.hm-voce:nth-child(2){ padding-left:0; border-left:0; }
 /* Il numero cresce e l'etichetta cala: e' la stessa distanza che c'e' fra
    una cosa che si rilegge ogni volta e una che si sa a memoria. */
 .hm-voce b{ display:block; font-family:var(--font-num);
@@ -16262,7 +16292,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-respiro";
+var BUILD_STAMP = "2026-08-21-gerarchia";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16271,7 +16301,7 @@ var BUILD_STAMP = "2026-08-21-respiro";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-fondamenta";
+var BUILD_PARENT = "2026-08-21-respiro";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
