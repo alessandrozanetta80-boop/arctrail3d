@@ -283,7 +283,7 @@ section.active{display:block}
 .ftextarea{width:100%;min-height:90px;padding:12px 14px;background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-s);font-size:14px;font-family:inherit;color:var(--cream);outline:none;resize:none;line-height:1.55;}
 .ftextarea:focus{border-color:var(--accent);box-shadow:var(--focus-ring)}
 .err-msg{font-size:12.5px;color:var(--danger);margin-top:8px;display:none}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:48px;padding:0 20px;border:none;border-radius:var(--r-s);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:background var(--dur-1),transform var(--dur-1);letter-spacing:-.2px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:48px;padding:0 20px;border:none;border-radius:var(--r-p);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:background var(--dur-1),transform var(--dur-1);letter-spacing:-.2px;}
 .btn:active{transform:scale(.98)}
 .btn-primary{background:var(--accent);color:var(--brand-ink);width:100%}
 .btn-primary:hover{background:var(--accent-d)}
@@ -309,7 +309,7 @@ section.active{display:block}
 .chip-wrap{position:relative;flex-shrink:0}
 .chip-dot{display:none;width:8px;height:8px;border-radius:50%;background:var(--bark);position:absolute;top:6px;right:6px;}
 .chip-dot.show{display:block}
-.btn-crea{flex:1;height:var(--hit);display:flex;align-items:center;justify-content:center;gap:7px;background:var(--bark);color:var(--on-chrome);border:none;border-radius:var(--r-p);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:var(--elev-1);transition:background var(--dur-1),transform var(--dur-1);}
+.btn-crea{flex:1;height:var(--hit);display:flex;align-items:center;justify-content:center;gap:7px;background:var(--bark);color:var(--on-chrome);border:none;border-radius:var(--r-p);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:none;transition:background var(--dur-1),transform var(--dur-1);}
 .btn-crea:active{background:var(--bark-d);transform:scale(.98)}
 .result-info{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 2px;font-size:12.5px;color:var(--muted);}
 .result-clear{background:none;border:none;font-family:inherit;font-size:12.5px;color:var(--accent);font-weight:600;cursor:pointer;padding:0;min-height:var(--hit);display:inline-flex;align-items:center;}
@@ -325,7 +325,7 @@ section.active{display:block}
    E la riga tecnica non c'era. Il motivo per cui questo mercatino esiste
    invece di un gruppo Facebook e' che sa cos'e' un libraggio: dirlo solo
    dentro la scheda aperta significa non dirlo. */
-.lcard{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:start;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:12px;margin-bottom:10px;cursor:pointer;position:relative;box-shadow:var(--elev-1);transition:border-color var(--dur-2),transform var(--dur-1);}
+.lcard{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:start;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:12px;margin-bottom:10px;cursor:pointer;position:relative;box-shadow:none;transition:border-color var(--dur-2),transform var(--dur-1);}
 .lcard:active{transform:scale(.99);border-color:var(--accent)}
 .lthumb{width:84px;height:84px;border-radius:var(--r-s);overflow:hidden;background:var(--bg-p2);flex-shrink:0}
 .lthumb img{width:100%;height:100%;object-fit:cover;display:block}
@@ -526,7 +526,7 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
 .stat-lbl{font-size:11px;color:var(--muted);margin-top:2px}
 .pro-sec-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px}
 .pro-sec-title.dopo{margin-top:24px}
-.conv{display:flex;gap:12px;align-items:center;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:13px;margin-bottom:9px;cursor:pointer;box-shadow:var(--elev-1);}
+.conv{display:flex;gap:12px;align-items:center;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:13px;margin-bottom:9px;cursor:pointer;box-shadow:none;}
 .conv:active{border-color:var(--accent)}
 .conv-av{width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--brand-ink);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;}
 .conv-mid{flex:1;min-width:0}
@@ -558,7 +558,7 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
 .chat-ta:focus{border-color:var(--accent)}
 .btn-send{width:var(--hit);height:var(--hit);border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brand-ink);flex-shrink:0;}
 .btn-send:disabled{opacity:.4;pointer-events:none}
-.saved-card{display:flex;align-items:center;gap:12px;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:14px;margin-bottom:9px;box-shadow:var(--elev-1);}
+.saved-card{display:flex;align-items:center;gap:12px;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:14px;margin-bottom:9px;box-shadow:none;}
 .saved-body{flex:1;min-width:0}
 .saved-q{font-size:14.5px;font-weight:700;margin-bottom:3px}
 .saved-meta{font-size:12px;color:var(--muted)}
@@ -863,7 +863,7 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
      dire se questo file e' UGUALE a quello online, non se e' avanti o
      indietro. Era la voce 7 delle cose aperte nel diario del mercatino, ed e'
      chiusa nella stessa mossa in cui il timbro e' salito. -->
-<body data-build="2026-08-19-mercatino-beta" data-parent="2026-08-19-mercatino-cerchio">
+<body data-build="2026-08-21-fondamenta" data-parent="2026-08-19-mercatino-beta">
 <div id="app">
 <header class="topbar">
   <div class="tb-left">

@@ -582,7 +582,11 @@ outline:2px solid var(--brand-soft); outline-offset:2px; border-radius:var(--r-s
 
    Il marchio non si comprime mai (flex:0 0 auto, niente puntini) e non
    sparisce mai: e' il punto fermo della schermata. */
-header.top{ display:flex; align-items:center; gap:var(--s-3); min-height:60px;
+/* LA TESTATA PESA MENO. (21/08/2026.) Sessanta pixel di altezza minima piu'
+   il marchio grande facevano una fascia che si prendeva un decimo dello
+   schermo su ogni schermata, per dire una cosa che si sa gia': come si chiama
+   l'app che si sta usando. */
+header.top{ display:flex; align-items:center; gap:var(--s-3); min-height:52px;
 padding:var(--s-2) var(--s-4); margin-left:-16px; margin-right:-16px;
 border-bottom:1px solid var(--line); margin-bottom:var(--s-4);
 flex-wrap:wrap; row-gap:8px;
@@ -717,8 +721,15 @@ line-height:1; letter-spacing:0.01em; }
      non e' un accento: e' una cornice.
    - L'ombra passa da --elev-2 a --elev-1: la profondita' viene dalla
      superficie e dal filo, non dal buio sotto ogni cosa. */
-.card{ background:var(--surface-1); border:1px solid var(--border); border-radius:var(--r-lg);
-padding:var(--s-4); margin-bottom:var(--s-4); box-shadow:var(--elev-1);
+/* LA CARTA NON GALLEGGIA PIU'. (21/08/2026, versione `strati`.)
+   L'ombra sotto ogni riquadro era il segno d'epoca piu' forte di tutta l'app:
+   dice «questo oggetto sta sopra la pagina», e ripetuta quindici volte dice
+   che la pagina e' un tavolo pieno di foglietti. Adesso la carta e' un piano
+   chiaro con un filo intorno: sta NELLA pagina, non sopra.
+   E l'angolo cala da 20 a 12: un angolo molto tondo fa sembrare morbido
+   quello che dovrebbe sembrare preciso. */
+.card{ background:var(--surface-1); border:1px solid var(--border); border-radius:var(--r-md);
+padding:var(--s-4); margin-bottom:var(--s-4); box-shadow:none;
 position:relative; z-index:1; }
 
 /* IL RIQUADRO ATTORNO ALLE AZIONI NON C'E' PIU'. (20/08/2026.)
@@ -727,12 +738,25 @@ position:relative; z-index:1; }
    annidate. Qui, di primo livello, vale anche sul telefono. */
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
   background:transparent; border:0; box-shadow:none; padding:0; }
-h2.section-title{ font-size:var(--t-sm); text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:0 0 var(--s-3); }
+/* IL TITOLINO DI SEZIONE E' UN'ETICHETTA, NON UN TITOLO. (21/08/2026.)
+   Cala di una taglia e sale di peso: cosi' smette di competere col contenuto
+   che annuncia. La regola vale in tutta l'app — «QUESTO MESE» sulla Home,
+   «ATTREZZATURA» nel profilo, «AVVISI» nel pannello sono la stessa cosa e
+   adesso si vedono uguali. */
+h2.section-title{ font-size:var(--t-2xs); font-weight:700; text-transform:uppercase;
+letter-spacing:0.14em; color:var(--text-3); margin:0 0 var(--s-3); }
+/* IL TASTO E' UNA PASTIGLIA, E NON HA L'OMBRA. (21/08/2026.)
+   Il rettangolo con l'angolo appena smussato e l'ombra sotto e' il tasto del
+   2015. La pastiglia non e' una moda: e' la forma che dice «si preme» senza
+   bisogno di fingere il rilievo, ed e' il motivo per cui le app che si usano
+   correndo o tirando la usano tutte.
+   Il bordo scende da 1,5 a 1: un filo spesso su una pastiglia fa contorno da
+   disegno. Il tasto pieno il bordo non ce l'ha mai avuto. */
 .btn{ display:inline-flex; align-items:center; justify-content:center; gap:var(--s-2);
-border-radius:var(--r-md); padding:14px var(--s-4); min-height:var(--hit);
+border-radius:var(--r-pill); padding:var(--s-3) var(--s-5); min-height:var(--hit);
 font-family:inherit; font-size:var(--t-md); font-weight:700; cursor:pointer;
-color:var(--text-1); background:var(--surface-2); border:1.5px solid var(--border-strong);
-box-shadow:var(--elev-1);
+color:var(--text-1); background:var(--surface-2); border:1px solid var(--border-strong);
+box-shadow:none;
 transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease),
            background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
 .btn:active{ transform:scale(0.97); filter:brightness(0.97); }
@@ -742,16 +766,18 @@ transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--eas
 .btn-block{ width:100%; }
 /* I "fantasma" erano bianco su bianco con un filo di bordo: si leggevano come
    disattivati. Superficie propria + bordo forte, in tutti i temi. */
-.btn-ghost{ background:var(--surface-2); border:1.5px solid var(--border-strong); color:var(--text-1); }
+.btn-ghost{ background:var(--surface-2); border:1px solid var(--border-strong); color:var(--text-1); }
 .btn-ghost .menu-sub{ color:var(--text-3); }
 .btn-sm{ padding:var(--s-2) var(--s-3); font-size:var(--t-sm); }
 .btn-danger{ background:var(--danger); border-color:transparent; color:#fff; }
-.btn-ghost-danger{ background:color-mix(in srgb, var(--danger-role) 12%, var(--surface-1)); border:1.5px solid color-mix(in srgb, var(--danger-role) 55%, transparent); color:var(--danger-role); }
+.btn-ghost-danger{ background:color-mix(in srgb, var(--danger-role) 12%, var(--surface-1)); border:1px solid color-mix(in srgb, var(--danger-role) 55%, transparent); color:var(--danger-role); }
 .btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
 .btn-standings{ background:color-mix(in srgb, var(--gold-role) 14%, var(--surface-1));
-border:1.5px solid color-mix(in srgb, var(--gold-role) 55%, transparent);
+border:1px solid color-mix(in srgb, var(--gold-role) 55%, transparent);
 color:var(--gold-role); font-weight:800; box-shadow:none; }
-.menu-btn{ padding:var(--s-4); font-size:var(--t-lg); justify-content:flex-start; text-align:left; margin-bottom:var(--s-3); position:relative; overflow:hidden; }
+.menu-btn{ padding:var(--s-4); font-size:var(--t-lg); justify-content:flex-start;
+text-align:left; margin-bottom:var(--s-3); position:relative; overflow:hidden;
+border-radius:var(--r-md); }
 /* L'icona dentro una pastiglia: quando al sole la tinta del fondo sbiadisce,
    il quadretto pieno resta l'unico appiglio di colore. */
 .menu-btn .menu-icon{ font-size:var(--t-xl); position:relative; z-index:1;
@@ -16207,7 +16233,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-strati";
+var BUILD_STAMP = "2026-08-21-fondamenta";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16216,7 +16242,7 @@ var BUILD_STAMP = "2026-08-21-strati";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-barra-ferma-safari";
+var BUILD_PARENT = "2026-08-21-strati";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
