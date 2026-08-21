@@ -1317,7 +1317,7 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
 .campi-testa{ font-size:var(--t-xs); color:var(--muted); margin:var(--s-3) 0 var(--s-2); }
 /* La scheda si apre SOTTO la riga toccata, dentro l'elenco: una scheda che si
    apre in fondo alla pagina fa sembrare che toccare non abbia fatto niente. */
-.campo-scheda{ background:var(--surface-1); border:1px solid var(--accent);
+.campo-scheda{ background:var(--scheda-bg); border:1px solid var(--scheda-bd);
   border-radius:var(--r-md); padding:var(--s-3); margin:0 0 var(--s-3); }
 .campo-scheda .chi{ color:var(--muted); }
 /* Un campo dove qualcuno si allena domani non e' lo stesso campo: e' l'unica
@@ -1687,7 +1687,7 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   border-radius:var(--r-sm); border:1px solid var(--line);
   background:var(--bg-panel); color:var(--cream); }
 .passo-numero{ flex-shrink:0; width:22px; height:22px; border-radius:50%;
-  background:var(--sun-on-bg); color:var(--sun-on-fg); font-weight:800;
+  background:var(--brand); color:var(--brand-ink); font-weight:800;
   font-size:var(--t-sm); display:flex; align-items:center; justify-content:center; }
 .link-tasto{ text-decoration:none; display:flex; align-items:center;
   justify-content:center; margin-top:var(--s-1); }
@@ -2403,6 +2403,8 @@ text-transform:uppercase; color:var(--text-3); }
 .attr-err{ font-size:var(--t-sm); color:var(--danger); min-height:18px;
   margin:var(--s-2) 0; }
 .diario-assetto{ font-size:var(--t-sm); color:var(--text-3); margin:var(--s-1) 0; }
+.stacco-card{ margin-bottom:var(--s-3); }
+.club-nome{ font-weight:800; font-size:var(--t-md); color:var(--text-1); }
 /* ══════════ IL PROFILO PUBBLICO (21/08/2026, PRD 43) ══════════
    Una carta d'identita' sportiva, non una pagina personale: poche righe, un
    tondo con le iniziali al posto di una foto che nessuno ha caricato. */
@@ -2426,7 +2428,46 @@ text-transform:uppercase; color:var(--text-3); }
 /* Il titolo della chat e' diventato un tasto: deve restare un titolo. */
 .btn-nudo{ background:none; border:0; padding:0; margin:0; font:inherit;
   color:inherit; text-align:left; width:100%; cursor:pointer; }
+.pp-apri{ display:flex; align-items:center; gap:var(--s-3); }
 .pp-apri .section-title{ margin:0; }
+.pp-apri-testo{ flex:1 1 auto; min-width:0; }
+.pp-apri-sub{ display:block; font-size:var(--t-xs); color:var(--accent);
+  font-weight:700; margin-top:2px; }
+
+/* ══════════ LA STRISCIA DEL MESE (21/08/2026) ══════════
+   I numeri del mese erano due sezioni sempre aperte in mezzo alla prima
+   schermata. Adesso sono una striscia sola, staccata, letta come uno
+   strumento: etichetta piccolissima sopra, cifra tabulare sotto. Si tocca e
+   si apre.
+   LE CIFRE RESTANO GRANDI ABBASTANZA. «Piu' piccoli» vuol dire che pesano
+   meno nella pagina, non che si leggono peggio: l'etichetta scende, il numero
+   resta leggibile. Chi ha sessant'anni deve poter leggere il proprio record
+   senza avvicinare il telefono. */
+.home-mese{ border:1px solid var(--border); border-radius:var(--r-md);
+  background:var(--surface-1); margin-bottom:var(--s-4); overflow:hidden; }
+.home-mese-barra{ display:flex; flex-direction:column; gap:var(--s-1); width:100%;
+  min-height:var(--hit); padding:var(--s-2) var(--s-3); background:none;
+  border:0; font:inherit; color:inherit; text-align:left; cursor:pointer; }
+.home-mese-capo{ display:flex; align-items:center; justify-content:space-between; width:100%; }
+.home-mese-eti{ flex:0 0 auto; font-size:var(--t-2xs); font-weight:700;
+  letter-spacing:.09em; text-transform:uppercase; color:var(--text-3); }
+.home-mese-dati{ width:100%; display:flex; gap:var(--s-2);
+  justify-content:space-between; }
+.hm-voce{ display:flex; flex-direction:column; align-items:flex-start;
+  line-height:1.15; min-width:0; }
+.hm-voce i{ font-style:normal; font-size:var(--t-2xs); color:var(--text-3);
+  text-transform:uppercase; letter-spacing:.04em; }
+.hm-voce b{ font-family:var(--font-num); font-variant-numeric:tabular-nums;
+  font-size:var(--t-sm); font-weight:800; color:var(--text-1); }
+/* La freccia gira: e' l'unico modo per sapere, guardando, se sotto c'e' altro. */
+.home-mese-freccia{ flex:0 0 auto; width:0; height:0; border-left:5px solid transparent;
+  border-right:5px solid transparent; border-top:6px solid var(--text-3);
+  transition:transform var(--dur-2) var(--ease); }
+.home-mese.aperta .home-mese-freccia{ transform:rotate(180deg); }
+.home-mese-dentro{ padding:0 var(--s-3) var(--s-3); border-top:1px solid var(--border); }
+/* Dentro la striscia il titolo non e piu un titolo di pagina: e l etichetta
+   di quello che si e appena aperto. */
+.home-mese-dentro .home-titolo h2{ font-size:var(--t-md); }
 .trag-conto{ flex:0 0 auto; font-family:var(--font-num);
   font-variant-numeric:tabular-nums; font-size:var(--t-xs); color:var(--text-3); }
 .fin-azione.via{ display:none; }
@@ -3637,6 +3678,7 @@ campi_title: "Trova un campo di tiro 3D",
 campi_btn: "Cerca campi vicino a te",
 campi_hint: "Non lo trovi in elenco? Questo apre Google Maps sui dintorni (richiede geolocalizzazione).",
 campi_searching: "Ricerca posizione\u2026",
+pp_vedi: "Vedi il profilo",
 pp_titolo: "Come ti presenti",
 pp_bio: "Due righe su di te",
 pp_bio_ph: "Es. Tiro da tre anni, longbow, mi trovi quasi sempre al campo il sabato.",
@@ -4286,6 +4328,7 @@ campi_title: "Find a 3D archery field",
 campi_btn: "Search fields near you",
 campi_hint: "Not in the list? This opens Google Maps nearby (needs location access).",
 campi_searching: "Locating\u2026",
+pp_vedi: "See profile",
 pp_titolo: "How you introduce yourself",
 pp_bio: "Two lines about you",
 pp_bio_ph: "E.g. Shooting for three years, longbow, usually at the field on Saturdays.",
@@ -4934,6 +4977,7 @@ campi_title: "Trouvez un terrain de tir 3D",
 campi_btn: "Rechercher des terrains \u00e0 proximit\u00e9",
 campi_hint: "Pas dans la liste ? Ceci ouvre Google Maps aux alentours (nécessite la géolocalisation).",
 campi_searching: "Localisation\u2026",
+pp_vedi: "Voir le profil",
 pp_titolo: "Comment vous vous présentez",
 pp_bio: "Deux lignes sur vous",
 pp_bio_ph: "Ex. Je tire depuis trois ans, longbow, souvent au terrain le samedi.",
@@ -5582,6 +5626,7 @@ campi_title: "Finde einen 3D-Bogenparcours",
 campi_btn: "Pl\u00e4tze in der N\u00e4he suchen",
 campi_hint: "Nicht in der Liste? Das öffnet Google Maps in der Umgebung (benötigt Standortzugriff).",
 campi_searching: "Standort wird gesucht\u2026",
+pp_vedi: "Profil ansehen",
 pp_titolo: "Wie du dich vorstellst",
 pp_bio: "Zwei Zeilen über dich",
 pp_bio_ph: "z.B. Schieße seit drei Jahren, Langbogen, samstags meist am Parcours.",
@@ -6249,6 +6294,7 @@ campi_title: "Bir 3D at\u0131\u015f sahas\u0131 bul",
 campi_btn: "Yak\u0131n\u0131ndaki sahalar\u0131 ara",
 campi_hint: "Listede yok mu? Bu, çevredeki sahalarla Google Haritalar’ı açar (konum izni gerekir).",
 campi_searching: "Konum aran\u0131yor\u2026",
+pp_vedi: "Profili gör",
 pp_titolo: "Kendini nasıl tanıtıyorsun",
 pp_bio: "Kendin hakkında iki satır",
 pp_bio_ph: "Örn. Üç yıldır atış yapıyorum, longbow, cumartesileri sahadaım.",
@@ -6910,6 +6956,7 @@ campi_title: "Найти площадку для 3D-стрельбы",
 campi_btn: "Искать площадки рядом",
 campi_hint: "Нет в списке? Откроется Google Карты поблизости (нужен доступ к местоположению).",
 campi_searching: "Поиск местоположения…",
+pp_vedi: "Открыть профиль",
 pp_titolo: "Как вы себя представляете",
 pp_bio: "Две строки о себе",
 pp_bio_ph: "Напр. Стреляю три года, лонгбоу, по субботам на площадке.",
@@ -7571,6 +7618,7 @@ campi_title: "Encontrar un campo de tiro 3D",
 campi_btn: "Buscar campos cerca de ti",
 campi_hint: "¿No está en la lista? Esto abre Google Maps en los alrededores (requiere ubicación).",
 campi_searching: "Buscando ubicaci\u00f3n\u2026",
+pp_vedi: "Ver el perfil",
 pp_titolo: "Cómo te presentas",
 pp_bio: "Dos líneas sobre ti",
 pp_bio_ph: "Ej. Tiro desde hace tres años, longbow, los sábados suelo estar en el campo.",
@@ -8232,6 +8280,7 @@ campi_title: "Hitta en 3D-bana",
 campi_btn: "S\u00f6k banor n\u00e4ra dig",
 campi_hint: "Inte i listan? Detta öppnar Google Maps i närheten (kräver platsåtkomst).",
 campi_searching: "S\u00f6ker plats\u2026",
+pp_vedi: "Se profilen",
 pp_titolo: "Hur du presenterar dig",
 pp_bio: "Två rader om dig",
 pp_bio_ph: "T.ex. Skjuter sedan tre år, longbow, oftast på banan på lördagar.",
@@ -8893,6 +8942,7 @@ campi_title: "Vind een 3D-schietbaan",
 campi_btn: "Zoek banen in de buurt",
 campi_hint: "Niet in de lijst? Dit opent Google Maps in de buurt (locatietoegang nodig).",
 campi_searching: "Locatie zoeken\u2026",
+pp_vedi: "Bekijk profiel",
 pp_titolo: "Hoe je jezelf voorstelt",
 pp_bio: "Twee regels over jou",
 pp_bio_ph: "Bijv. Schiet al drie jaar, longbow, zaterdags meestal op het veld.",
@@ -10227,8 +10277,8 @@ var ICONE_PIENE = {
    (`evenodd`, un profilo dentro l'altro) e la porta e' l'accento, come il
    centro del bersaglio e l'anello dello spillo. */
 navhome: { t:'translate(100 100) scale(1.0) translate(-100 -100) translate(0.00 -2.00)',
-s:'<path fill-rule="evenodd" d="M100,26 L180,96 L180,174 L20,174 L20,96 Z M100,47.6 L163,102.7 L163,157 L37,157 L37,102.7 Z"/>',
-a:'<path d="M86,157 V131 a14,14 0 0 1 28,0 v26 Z"/>' },
+s:'<path fill-rule="evenodd" d="M100,26 L180,96 L180,174 L20,174 L20,96 Z M100,42 L169,101 L169,163 L31,163 L31,101 Z"/>',
+a:'<path d="M89,163 V139 a11,11 0 0 1 22,0 v24 Z"/>' },
 navfield: { t:'translate(100 100) scale(0.9924) translate(-100 -100) translate(0.00 -3.88)',
 s:'<path d="M100,176.34H98.4l1.6,2.47,1.6-2.47Z"/><path d="M100,171.8l-4-6.16c-1.36-2.09-33.41-51.56-43.13-69.36l-.07-.12a40.34,40.34,0,0,1-3.11-8.28A52.26,52.26,0,0,1,100,21.37h0a52.26,52.26,0,0,1,50.29,66.51,40.7,40.7,0,0,1-3.11,8.28l-.07.12c-9.72,17.8-41.77,67.27-43.13,69.36Zm-38.74-80c7.58,13.85,29.64,48.35,38.74,62.49,9.1-14.14,31.15-48.64,38.73-62.49a30.36,30.36,0,0,0,2.36-6.31l0-.14A42.78,42.78,0,0,0,100,30.88h0A42.73,42.73,0,0,0,58.86,85.34l0,.14A30.91,30.91,0,0,0,61.25,91.79Z"/><path d="M123.16,142.83c-2,3.13-3.89,6.12-5.65,8.88,11.15,2.68,17.71,7.6,17.71,11.34,0,5.28-13,12.9-33.59,13.28h-3.2c-20.59-.37-33.65-8-33.65-13.28,0-3.75,6.58-8.68,17.76-11.35-1.76-2.76-3.68-5.76-5.65-8.89-13.45,3.95-22.13,11.37-22.13,20.24,0,13.29,19.45,23.32,45.24,23.32s45.24-10,45.24-23.32C145.24,154.19,136.58,146.78,123.16,142.83Z"/>',
 a:'<path d="M100,102.51a28.91,28.91,0,1,1,22.63-10.93,28.64,28.64,0,0,1-22.58,10.93Zm0-46.09a17.19,17.19,0,1,0,13.49,27.89A17.2,17.2,0,0,0,100,56.42Z"/>' },
@@ -13214,32 +13264,56 @@ eroe.appendChild(az);
 wrap.appendChild(eroe);
 }
 
+/* ══ I NUMERI DEL MESE SONO CONTORNO, NON IL MOTIVO PER CUI SI APRE L'APP ══
+ * (21/08/2026, detto da Alessandro guardando la prima schermata: «è troppo
+ * piena, i dati del mese devono essere più piccoli, in una finestra che
+ * stacca dal resto ma che può essere aperta».)
+ *
+ * Prima erano DUE sezioni sempre aperte — quattro numeri grandi e il grafico
+ * dell'andamento — messe fra il tasto per cominciare e quello che fanno gli
+ * altri. Ogni schermata ha una cosa che conta: qui è **tirare**. Il resto,
+ * per bello che sia, sta in mezzo.
+ *
+ * Adesso è una striscia sola, staccata, con i quattro numeri in piccolo e
+ * letti come uno strumento: etichetta minuscola sopra, cifra tabulare sotto.
+ * Si tocca e si apre: dentro c'è il grafico. Chi non lo apre non lo vede, e
+ * non e' una perdita — e' quello che ha chiesto non vedendolo.
+ *
+ * *E si ricorda com'era lasciata:* chi la tiene aperta la ritrova aperta.
+ */
 var n = homeNumeri();
 if(n){
-var sez = el('<div class="home-sezione"></div>');
-var tit = el('<div class="home-titolo"><h2>'+escapeHtml(n.nelMese ? t("home_month") : t("journal_title"))+'</h2></div>');
-// Nessun link qui: la sezione «Ultimi giri» sta gia' qui sotto e il diario
-// ha la sua scorciatoia in fondo. *Tre porte per la stessa stanza non sono
-// tre comodita': sono tre volte la stessa domanda.*
-sez.appendChild(tit);
-var g = el('<div class="home-numeri"></div>');
-g.appendChild(el('<div class="home-num"><b>'+n.media+'</b><span>'+escapeHtml(t("diario_media"))+'</span></div>'));
-g.appendChild(el('<div class="home-num"><b>'+n.giri+'</b><span>'+escapeHtml(t("home_rounds_word"))+'</span></div>'));
-g.appendChild(el('<div class="home-num"><b>'+n.meglio+'</b><span>'+escapeHtml(t("diario_record"))+'</span></div>'));
-g.appendChild(el('<div class="home-num"><b>'+n.piazzole+'</b><span>'+escapeHtml(t("diario_targets_word"))+'</span></div>'));
-sez.appendChild(g);
+var aperta = (state.homeMese === true);
+var sez = el('<div class="home-mese'+(aperta ? " aperta" : "")+'"></div>');
+var barra = el('<button class="home-mese-barra" aria-expanded="'+aperta+'"></button>');
+// Intestazione e freccia su una riga, i quattro numeri sotto: in italiano
+// «PIAZZOLE» da solo mandava la fila a capo, e una striscia che va a capo
+// male e' peggio di due righe volute.
+var capo = el('<span class="home-mese-capo"></span>');
+capo.appendChild(el('<span class="home-mese-eti">'+escapeHtml(n.nelMese ? t("home_month") : t("journal_title"))+'</span>'));
+capo.appendChild(el('<span class="home-mese-freccia" aria-hidden="true"></span>'));
+barra.appendChild(capo);
+var dati = el('<span class="home-mese-dati"></span>');
+[[t("diario_media"), n.media], [t("home_rounds_word"), n.giri],
+ [t("diario_record"), n.meglio], [t("diario_targets_word"), n.piazzole]]
+.forEach(function(p){
+dati.appendChild(el('<span class="hm-voce"><i>'+escapeHtml(p[0])+'</i><b>'+escapeHtml(String(p[1]))+'</b></span>'));
+});
+barra.appendChild(dati);
+barra.addEventListener("click", function(){ state.homeMese = !aperta; save(); render(); });
+sez.appendChild(barra);
+if(aperta){
+var dentro = el('<div class="home-mese-dentro"></div>');
+dentro.appendChild(el('<div class="home-titolo"><h2>'+escapeHtml(t("home_trend"))+'</h2></div>'));
+dentro.appendChild(homeGrafico());
+sez.appendChild(dentro);
+}
 wrap.appendChild(sez);
 }
 
-// L'andamento sta SOTTO i quattro numeri e SOPRA gli allenamenti: i numeri
-// dicono dove sei, la linea dice dove stai andando, e solo dopo viene quello
-// che fanno gli altri.
-if(n){
-var gsez = el('<div class="home-sezione"></div>');
-gsez.appendChild(el('<div class="home-titolo"><h2>'+escapeHtml(t("home_trend"))+'</h2></div>'));
-gsez.appendChild(homeGrafico());
-wrap.appendChild(gsez);
-}
+// L'andamento non ha piu' una sezione sua: sta dentro la striscia del mese,
+// che e' il posto dove uno va quando vuole i numeri. Fuori restava aperto
+// sempre, e sempre non e' mai la risposta giusta a «quando serve?».
 
 // Chi si allena vicino a te: la scheda esiste gia' ed e' viva. Riusarla vuol
 // dire che i filtri e la riga di quello che manca valgono anche qui.
@@ -13745,7 +13819,7 @@ if(currentUser && mioCod){
 state.clubSpaceCode = mioCod;
 wrap.appendChild(clubSpaceScreen(true));
 }
-var regCard = el('<div class="card" style="margin-bottom:var(--s-3);border-top-color:var(--gold);"></div>');
+var regCard = el('<div class="card stacco-card"></div>');
 regCard.appendChild(el('<h2 class="section-title">'+t("club_reg_title")+'</h2>'));
 regCard.appendChild(el('<div class="nota stacco-3">'+t("club_reg_hint")+'</div>'));
 
@@ -15121,7 +15195,7 @@ var nomeComp = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[codice])
 
 var head = el('<div class="card"></div>');
 head.appendChild(el('<h2 class="section-title">'+t("club_space_title")+'</h2>'));
-head.appendChild(el('<div style="font-weight:800;font-size:var(--t-md);color:var(--gold);">'+escapeHtml(nomeComp)+'</div>'));
+head.appendChild(el('<div class="club-nome">'+escapeHtml(nomeComp)+'</div>'));
 // Il sottotitolo "i dati che gli arcieri vedono e dove arrivano le
 // segnalazioni" e' stato tolto (16/08): la scheda subito sotto si presenta gia'
 // da sola — "DATI DI RIFERIMENTO · compaiono agli arcieri nella scheda della
@@ -16037,7 +16111,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-profilo-pubblico";
+var BUILD_STAMP = "2026-08-21-meno-cose-piu-chiare";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16046,7 +16120,7 @@ var BUILD_STAMP = "2026-08-21-profilo-pubblico";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-attrezzatura";
+var BUILD_PARENT = "2026-08-21-profilo-pubblico";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -18625,7 +18699,13 @@ var card = el('<div class="card"></div>');
 // parlava con qualcuno senza poter sapere chi fosse — che compagnia, che
 // arco, quanti giri. In uno sport dove ci si trova sul campo, sapere con chi
 // si sta parlando e' meta' della conversazione.
-var titoloChat = el('<button class="btn-nudo pp-apri"><h2 class="section-title">'+t("dm_chat_with",{name:escapeHtml(otherName)})+'</h2></button>');
+// NON BASTAVA CHE FOSSE CLICCABILE: doveva vedersi. Un titolo che si tocca e
+// non lo dice non e' una scorciatoia, e' una cosa che scopre solo chi tocca
+// per sbaglio. Adesso e' una riga con la freccia e con scritto cosa fa.
+var titoloChat = el('<button class="btn-nudo pp-apri">'+
+'<span class="pp-apri-testo"><h2 class="section-title">'+t("dm_chat_with",{name:escapeHtml(otherName)})+'</h2>'+
+'<span class="pp-apri-sub">'+escapeHtml(t("pp_vedi"))+'</span></span>'+
+'<span class="al-chev" aria-hidden="true">\u203a</span></button>');
 titoloChat.addEventListener("click", function(){ apriProfiloPubblico(otherUid); });
 card.appendChild(titoloChat);
 
