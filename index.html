@@ -51,7 +51,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
@@ -167,7 +167,18 @@
    un Didone ad aste sottilissime: al riverbero le aste spariscono e un 8
    diventa un 3. Un punteggio non e' decorazione, e' il dato. */
 --font-ui:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
---font-display:"Fraunces",Georgia,serif;
+/* IL CARATTERE DEI TITOLI NON E' PIU' UN CARATTERE DA LIBRO. (21/08/2026,
+   detto da Alessandro: «e' dall'inizio dell'applicazione che continua a
+   sembrare vecchio».)
+   Fraunces e' un carattere con le grazie e il contrasto forte: bellissimo su
+   una copertina, e su uno schermo dice «rivista», non «strumento». Le grazie
+   pretendono taglie grandi per leggersi, ed e' il motivo per cui ogni titolo
+   dell'app era diventato enorme — la taglia non era una scelta di gerarchia,
+   era una necessita' del carattere.
+   Inter grasso e stretto fa il lavoro dei titoli con la stessa famiglia del
+   resto: **una famiglia sola, tre pesi**. Un'app che si legge di sfuggita, al
+   sole, con i guanti, non ha bisogno di due alfabeti. */
+--font-display:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 --font-num:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 
 /* ───── TIPOGRAFIA · scala fluida ─────
@@ -550,7 +561,7 @@ font-family:var(--font-ui); font-size:var(--t-md); min-height:100dvh;
 padding-bottom:env(safe-area-inset-bottom); text-size-adjust:100%; -webkit-text-size-adjust:100%; }
 body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:var(--grain); mix-blend-mode:multiply;
 background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-.display{ font-family:var(--font-display); font-weight:700; letter-spacing:0.03em; text-wrap:balance; }
+.display{ font-family:var(--font-display); font-weight:800; letter-spacing:-0.02em; text-wrap:balance; }
 /* Ogni cifra dell'app passa di qui: larghezza fissa, cosi' un punteggio che
    cambia non fa ballare la riga, e aste piene che il sole non mangia. */
 /* tabulari perche' le colonne di punteggi non devono ballare; zero barrato
@@ -1512,7 +1523,7 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    prendeva un quarto dello schermo per una frase che si legge una volta al
    giorno. Il tasto sotto e' la cosa che si tocca: deve essere lui il peso. */
 .home-domanda{ font-family:var(--font-display); font-size:var(--t-xl);
-  font-weight:700; line-height:1.0; letter-spacing:-0.02em;
+  font-weight:800; line-height:1.05; letter-spacing:-0.03em;
   margin:0 0 var(--s-4); text-wrap:balance; }
 .home-azioni{ display:flex; flex-direction:column; gap:var(--s-3); }
 
@@ -1660,7 +1671,31 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    allenamento»: pubblicare non e' partecipare. Il colore pero' e' lo stesso,
    perche' il PRD mette le due cose nella stessa famiglia — sono i due gesti
    con cui un arciere entra in quello che fanno gli altri. */
-.btn-arancio{ background:var(--clay); color:var(--clay-ink); border-color:var(--clay); }
+/* L'ARANCIONE PIENO ERA UNA MAZZATA. (21/08/2026, detto da Alessandro: «cosi'
+   e' un'ammazzata solo a guardarlo».)
+   Un rettangolo di terracotta piena largo tutto lo schermo pesa quanto il
+   tasto principale della pagina, e questi non lo sono: «Annuncia un
+   allenamento» e «Vado» sono comandi secondari accanto a «Inizia un giro».
+   Tinto — fondo velato, scritta e filo del colore pieno — resta arancione, si
+   vede da lontano, e smette di litigare col verde.
+   *Su una schermata il pieno spetta a un comando solo: quello per cui la
+   schermata esiste.* */
+.btn-arancio{ background:color-mix(in srgb, var(--clay) 14%, var(--surface-1));
+  color:var(--clay); border-color:color-mix(in srgb, var(--clay) 42%, transparent);
+  font-weight:800; }
+.btn-arancio:hover{ background:color-mix(in srgb, var(--clay) 22%, var(--surface-1));
+  border-color:var(--clay); }
+
+/* IL ROSSO DELLA SEGNALAZIONE. Rosso perche' e' l'unico comando dell'app che
+   dice «qualcosa non va», e quello si cerca con l'occhio, non con la memoria.
+   Velato perche' un rosso pieno vuol dire «adesso c'e' un guasto», e li' non
+   c'e' nessun guasto: c'e' una porta per dirlo. */
+.btn-segnala{ background:color-mix(in srgb, var(--danger-role) 12%, var(--surface-1));
+  color:var(--danger-role);
+  border-color:color-mix(in srgb, var(--danger-role) 38%, transparent);
+  font-weight:800; }
+.btn-segnala:hover{ background:color-mix(in srgb, var(--danger-role) 20%, var(--surface-1));
+  border-color:var(--danger-role); }
 
 /* ══════════ L'ALLENAMENTO COME NELLA BOZZA (20/08/2026) ══════════
    Prima ogni allenamento era una colonna alta mezzo schermo: titolo, data
@@ -1995,6 +2030,11 @@ header.top{
    comandi. */
 header.top > .tabbar-wide{ flex:1 1 auto; min-width:0; justify-content:center;
   flex-wrap:nowrap; overflow:hidden; }
+/* LA TESTATA ARRIVA DOVE ARRIVANO LE FASCE. (21/08/2026, visto da Alessandro:
+   «la barra sopra e' piu' stretta delle tabelle sotto».) Le fasce escono dal
+   margine della pagina, la testata no: due larghezze diverse nella stessa
+   colonna si vedono subito, e sembrano un errore di montaggio. Lo erano. */
+header.top{ margin-left:calc(var(--s-6) * -1); margin-right:calc(var(--s-6) * -1); }
 header.top::after{ display:none; }
 /* IL NOME DELL'APP ERA SCRITTO IN BIANCO SU FONDO BIANCO. (21/08/2026,
    segnalato da Alessandro: «da web non c'e' la scritta ArcTrail 3D».)
@@ -2031,11 +2071,21 @@ header.top .home-btn.small:hover{ background:color-mix(in srgb, var(--clay) 88%,
    larghezza non e' piu' un aiuto.
    Resta una larghezza minima, perche' tre tasti di misure diverse in colonna
    fanno una scaletta. */
-.menu-cols .home-azioni{ align-items:flex-start; }
+/* AL CENTRO, SUL COMPUTER. (21/08/2026, chiesto da Alessandro: «Start round
+   potremmo metterlo al centro insieme a Good afternoon e Ready to shoot».)
+   Su un telefono il testo va a sinistra perche' la colonna e' stretta e
+   l'occhio scende lungo un bordo solo. Su mille pixel non c'e' nessun bordo
+   da seguire: un saluto, una domanda e un tasto allineati a sinistra in mezzo
+   a tanto vuoto sembrano appoggiati li' per sbaglio. */
+.menu-cols .home-saluto,
+.menu-cols .home-domanda{ text-align:center; }
+.menu-cols .home-azioni{ align-items:center; }
 .menu-cols .home-azioni > .btn.btn-block,
 .strato > .btn.btn-block,
+.strato .card > .btn.btn-block,
+.menu-cols > .card > .btn.btn-block,
 .menu-cols > .home-sezione > .btn.btn-block{
-  width:auto; min-width:260px; align-self:flex-start; }
+  width:auto; min-width:260px; display:flex; margin-left:auto; margin-right:auto; }
 
 /* ── 3. Le sezioni: non piu' una barra a se', ma il centro della testata ── */
 .tabbar-wide button > svg{ transition:transform var(--dur-2) var(--ease); }
@@ -12217,13 +12267,32 @@ save(); render();
 }});
 }
 
-var inVista = largo ? azioni : azioni.slice(0,2);
-var nascoste = largo ? [] : azioni.slice(2);
-if(nascoste.length === 1){ inVista = azioni; nascoste = []; }
+/* SU SCHERMO LARGO SI VEDEVA TUTTO, E ERA UN MERCATO. (21/08/2026, detto da
+   Alessandro guardando la testata: «uno non puo' avere quel bordello di
+   sopra».)
+   La riga era `largo ? azioni : azioni.slice(0,2)`: sul telefono due comandi
+   e il resto nel menu — cioe' la regola giusta — e sul computer TUTTI, perche'
+   «lo spazio c'e'». Ma lo spazio non e' il criterio: **un comando in piu' in
+   vista e' una decisione in piu' da scartare ogni volta che si guarda in
+   cima**, e si guarda in cima a ogni schermata.
+   Adesso la regola e' una sola per tutti e due: due comandi, il resto sotto
+   il menu.
+
+   CAMBIA RESTA SEMPRE FUORI, ULTIMO A DESTRA. E' l'unico comando che porta
+   con se' una parola invece di un glifo, ed e' il solo modo per cambiare
+   nazione e federazione: sepolto in un menu non lo troverebbe piu' nessuno. */
+var forti = azioni.filter(function(a){ return a.forte; });
+var minori = azioni.filter(function(a){ return !a.forte; });
+var inVista = minori.slice(0, 2);
+var nascoste = minori.slice(2);
+// Un menu con una voce sola non e' un menu: e' un tasto con un passaggio in
+// piu'. In quel caso la terza voce resta fuori.
+if(nascoste.length === 1){ inVista = minori; nascoste = []; }
 
 var barra = el('<div class="head-actions no-print"></div>');
 inVista.forEach(function(a){ barra.appendChild(tastoBarra(a, largo)); });
 if(nascoste.length) barra.appendChild(troppoPieno(nascoste));
+forti.forEach(function(a){ barra.appendChild(tastoBarra(a, largo)); });
 if(barra.childNodes.length) h.appendChild(barra);
 return h;
 }
@@ -14159,7 +14228,7 @@ wrap.appendChild(setCard);
 if(currentUser){
 var repCard = el('<div class="card"></div>');
 repCard.appendChild(el('<div class="card-hint">'+t("report_admin_hint")+'</div>'));
-var repBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("welcome_note_report")+'</button>');
+var repBtn = el('<button class="btn btn-block btn-sm btn-segnala">'+t("welcome_note_report")+'</button>');
 repBtn.addEventListener("click", function(){ openAdminChat(); });
 repCard.appendChild(repBtn);
 wrap.appendChild(repCard);
@@ -16353,7 +16422,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-una-riga";
+var BUILD_STAMP = "2026-08-21-ordine";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16362,7 +16431,7 @@ var BUILD_STAMP = "2026-08-21-una-riga";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-gerarchia";
+var BUILD_PARENT = "2026-08-21-una-riga";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -16443,7 +16512,7 @@ wrap.appendChild(editorial);
 var contactCard = el('<div class="card" style="margin-top:var(--s-3);"></div>');
 contactCard.appendChild(el('<h2 class="section-title">'+t("contact_title")+'</h2>'));
 contactCard.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.6;">'+t("contact_text")+'</div>'));
-var mailBtn = el('<button class="btn btn-primary btn-block" style="margin-top:var(--s-2);">'+t("welcome_note_report")+'</button>');
+var mailBtn = el('<button class="btn btn-block btn-segnala" style="margin-top:var(--s-2);">'+t("welcome_note_report")+'</button>');
 mailBtn.addEventListener("click", function(){ openAdminChat(); });
 contactCard.appendChild(mailBtn);
 contactCard.appendChild(el('<a class="btn btn-ghost btn-block btn-sm" href="/presentazione.html" target="_blank" rel="noopener" style="margin-top:var(--s-2);text-align:center;text-decoration:none;">'+t("legal_about")+'</a>'));
