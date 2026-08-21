@@ -1437,49 +1437,90 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   border-radius:var(--r-md); border:2px solid var(--setup-line-strong);
   background:var(--setup-card); color:var(--setup-ink); font-family:inherit;
   font-weight:600; }
-/* LA HOME. (20/08/2026, dal PRD v2.1.)
+/* ══════════════ LA HOME A STRATI (21/08/2026, versione `strati`) ══════════
 
-   La schermata che risponde a UNA domanda: «qual e' la cosa piu' utile che
-   posso fare adesso?». Prima non esisteva — si apriva su «cosa vuoi fare»,
-   che e' una domanda girata all'utente invece di una risposta.
+   Cambia il MODO in cui la prima schermata si legge, non cosa dice. Restano
+   le tre cose decise il 21/08 — inizia un giro, i numeri del mese, gli
+   allenamenti aperti — ma smettono di essere tre riquadri appoggiati sulla
+   pagina e diventano tre STRATI a tutta larghezza, separati da un gradino di
+   fondo pagina.
 
-   I COLORI NON SONO QUELLI DEL DISEGNO, ED E' VOLUTO. Il mockup e' chiaro e
-   basta; l'app ha tre temi. Scriverci dentro gli esadecimali del PRD avrebbe
-   fatto una Home bellissima al chiaro e rotta al buio e al sole. I ruoli
-   dell'app SONO gia' quei colori — verde bosco, sabbia, argilla — tema per
-   tema. *Un colore giusto in un tema solo e' un colore sbagliato.* */
-.home-saluto{ font-size:var(--t-sm); color:var(--text-3); margin:0 0 var(--s-1); }
-.home-domanda{ font-size:var(--t-2xl); font-weight:800; line-height:1.1;
-  letter-spacing:-0.02em; margin:0 0 var(--s-4); text-wrap:balance; }
+   PERCHE' GLI STRATI E NON LE CARTE. Una carta con bordo e angoli tondi dice
+   «questo e' un oggetto». Tre carte in fila dicono «scegli fra tre oggetti»,
+   che e' di nuovo un menu — cioe' esattamente la cosa da cui la Home doveva
+   liberarci. Uno strato non e' un oggetto: e' un pezzo di pagina, e si legge
+   scorrendo senza dover scegliere. E' il motivo per cui le app di sport si
+   sfogliano invece di farsi navigare.
+
+   E IL NUMERO E' SEMPRE PIU' GRANDE DELLA SUA ETICHETTA. L'etichetta si legge
+   una volta e poi si sa a memoria; il numero si rilegge ogni volta. Prima
+   pesavano quasi uguale, ed e' il difetto che faceva sembrare vecchia la
+   schermata molto piu' di qualunque colore.
+
+   I COLORI NON SONO NUOVI, E NON DEVONO ESSERLO. Verde bosco, terracotta,
+   oro, sabbia: la tavolozza di sempre. Questa e' una riforma di STRUTTURA. */
+.home-saluto{ font-size:var(--t-2xs); font-weight:700; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--text-3); margin:0 0 var(--s-2); }
+.home-domanda{ font-family:var(--font-display); font-size:var(--t-2xl);
+  font-weight:700; line-height:1.05; letter-spacing:-0.02em;
+  margin:0 0 var(--s-5); text-wrap:balance; }
 .home-azioni{ display:flex; flex-direction:column; gap:var(--s-3); }
-.home-vicino{ display:flex; align-items:center; gap:var(--s-2);
-  margin-top:var(--s-4); font-size:var(--t-sm); color:var(--text-3); }
-.home-vicino b{ color:var(--text-2); font-weight:600; }
 
-/* LO STATO B: il giro in corso si prende la scena, e non e' decorazione.
-   Chi ha un giro aperto ha UNA cosa da fare, e non e' scegliere. */
+/* Gli strati escono dai margini della pagina: il gradino fra l'uno e l'altro
+   e' il fondo pagina che si vede in mezzo, non un bordo disegnato. */
+.strati{ margin:var(--s-5) calc(var(--s-4) * -1) 0; }
+.strato{ background:var(--surface-1); border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border); padding:var(--s-4);
+  margin-bottom:var(--s-2); }
+.strato:last-child{ margin-bottom:0; }
+/* Dentro uno strato una carta non e' piu' una carta: lo strato E' la carta.
+   Serve perche' la scheda degli allenamenti e' la stessa usata altrove, e
+   altrove il riquadro ci vuole. */
+.strato > .card{ background:none; border:0; border-radius:0; padding:0;
+  margin:0; box-shadow:none; }
+.strato-eti{ display:flex; align-items:center; justify-content:space-between;
+  gap:var(--s-2); font-size:var(--t-2xs); font-weight:700; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--text-3); }
+
+/* LO STATO B: il giro in corso si prende lo strato in cima, e non e'
+   decorazione. Chi ha un giro aperto ha UNA cosa da fare, e non e' scegliere. */
 .home-ripresa{ background:var(--brand); color:var(--brand-ink);
-  border-radius:var(--r-xl); padding:var(--s-5); display:flex;
-  flex-direction:column; gap:var(--s-4); }
+  border-color:var(--brand); display:flex; flex-direction:column; gap:var(--s-3); }
 .home-vivo{ display:inline-flex; align-items:center; gap:var(--s-2);
-  align-self:flex-start; padding:var(--s-1) var(--s-3); border-radius:var(--r-pill);
-  background:color-mix(in srgb, var(--brand-ink) 16%, transparent);
-  font-size:var(--t-2xs); font-weight:700; letter-spacing:0.06em;
-  text-transform:uppercase; }
-.home-vivo i{ width:7px; height:7px; border-radius:var(--r-pill);
+  align-self:flex-start; font-size:var(--t-2xs); font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase; opacity:0.85; }
+.home-vivo i{ width:8px; height:8px; border-radius:var(--r-pill);
   background:var(--clay); display:block; }
-.home-ripresa h2{ font-size:var(--t-xl); font-weight:800; letter-spacing:-0.01em;
-  margin:0; line-height:1.15; }
+.home-ripresa h2{ font-family:var(--font-display); font-size:var(--t-xl);
+  font-weight:700; letter-spacing:-0.01em; margin:0; line-height:1.1; }
 .home-ripresa .dove{ font-size:var(--t-sm); opacity:0.85; margin:0; }
-.home-binario{ height:8px; border-radius:var(--r-pill);
+.home-binario{ height:4px; border-radius:var(--r-pill);
   background:color-mix(in srgb, var(--brand-ink) 22%, transparent); overflow:hidden; }
 .home-binario i{ display:block; height:100%; border-radius:var(--r-pill);
   background:var(--clay); width:var(--avanz,0%); }
 .home-avanz{ display:flex; align-items:baseline; font-size:var(--t-sm); }
-.home-avanz b{ font-weight:700; }
+.home-avanz b{ font-family:var(--font-num); font-variant-numeric:tabular-nums;
+  font-weight:800; }
 .home-avanz span{ margin-left:auto; opacity:0.85; }
-.home-salvato{ display:flex; align-items:center; gap:6px; font-size:var(--t-xs);
-  opacity:0.85; }
+.home-salvato{ display:flex; align-items:center; gap:var(--s-1);
+  font-size:var(--t-xs); opacity:0.85; }
+/* Su fondo verde il tasto va chiaro: un tasto pieno di un altro colore su un
+   fondo gia' pieno fa due macchie che litigano. */
+.home-riprendi{ background:var(--brand-ink); color:var(--brand); }
+
+/* LA TRACCIA — il tracciato del giro, che e' l'unica figura che questa app
+   puo' disegnare di se stessa. (21/08/2026.)
+   Un'app di corsa mette la mappa del percorso: si riconosce un'uscita senza
+   leggere un numero. Qui la mappa non c'e' — il percorso e' un bosco e il
+   telefono non lo segue — ma la FORMA del giro si', ed e' questa: una tacca
+   per piazzola, alta quanto il punteggio. Un giro storto si vede prima di
+   leggerlo, e questo e' esattamente cosa deve fare una figura. */
+.traccia{ display:flex; align-items:flex-end; gap:var(--s-1);
+  height:var(--s-6); }
+.traccia i{ flex:1 1 0; min-width:0; height:var(--alt,18%);
+  background:color-mix(in srgb, var(--brand-ink) 24%, transparent); }
+.traccia i.piena{ background:color-mix(in srgb, var(--brand-ink) 72%, transparent); }
+.traccia i.massima{ background:var(--clay); }
 
 /* I QUATTRO NUMERI. Solo dati veri: se non ci sono giri, la fascia non c'e'.
    *Un cruscotto che mostra zero non informa: scoraggia.* */
@@ -1502,21 +1543,6 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   min-height:0; font-size:var(--t-sm); font-weight:600; color:var(--accent-soft);
   cursor:pointer; }
 
-.home-giro{ display:flex; align-items:center; gap:var(--s-3); }
-.home-giro .dove{ flex:1 1 auto; min-width:0; }
-.home-giro .dove b{ display:block; font-size:var(--t-md); font-weight:700;
-  line-height:1.25; }
-.home-giro .dove span{ display:block; font-size:var(--t-sm); color:var(--text-3);
-  margin-top:2px; }
-.home-giro .punti{ text-align:right; flex:0 0 auto; }
-.home-giro .punti b{ display:block; font-size:var(--t-xl); font-weight:800;
-  font-variant-numeric:tabular-nums; line-height:1.1; }
-.home-giro .punti span{ font-size:var(--t-sm); font-weight:700; }
-.home-su{ color:var(--success); } .home-giu{ color:var(--text-3); }
-
-/* Il tasto che riprende il giro e il segno del record: erano due stili in
-   linea, e uno stile in linea non si puo' ridisegnare da nessuna parte. */
-.home-riprendi{ background:var(--clay); color:var(--clay-ink); }
 .home-record{ color:var(--gold); font-weight:700; }
 /* IL GRAFICO DELL'ANDAMENTO.
    Una serie sola, quindi nessuna legenda: il titolo dice gia' cos'e'.
@@ -1539,19 +1565,13 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   font-variant-numeric:tabular-nums; }
 .home-assex{ display:flex; justify-content:space-between; font-size:var(--t-2xs);
   color:var(--text-3); margin-top:var(--s-1); }
-/* L'etichetta che compare toccando. Su un telefono non c'e' il passaggio del
-   mouse: o si tocca o non si legge niente. */
-/* Il mirino: comparire e sparire e' presentazione, e sta nel foglio. Prima
-   era `setAttribute("opacity", …)` dal codice — funzionava, ed era una
-   regola di stile scritta dove nessuno la cerca. */
+/* Il mirino: comparire e sparire e' presentazione, e sta nel foglio. */
 .home-mira, .home-mira-p{ opacity:0; pointer-events:none; }
 .home-tela.legge .home-mira{ opacity:0.35; }
 .home-tela.legge .home-mira-p{ opacity:1; }
 .home-letto{ min-height:var(--s-5); margin-top:var(--s-2); font-size:var(--t-sm);
   color:var(--text-2); font-variant-numeric:tabular-nums; }
 .home-letto b{ color:var(--text-1); font-weight:700; }
-.home-scorciatoie{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:var(--s-2); }
 .prova-campanella{ margin-bottom:var(--s-3); }
 /* I DUE MENU A TENDINA DEGLI ALLENAMENTI. (20/08/2026, chiesti dal campo:
    «se un giorno saranno tanti sara' impossibile capirci qualcosa».)
@@ -2467,39 +2487,45 @@ text-transform:uppercase; color:var(--text-3); }
 .pp-apri-sub{ display:block; font-size:var(--t-xs); color:var(--accent);
   font-weight:700; margin-top:2px; }
 
-/* ══════════ LA STRISCIA DEL MESE (21/08/2026) ══════════
-   I numeri del mese erano due sezioni sempre aperte in mezzo alla prima
-   schermata. Adesso sono una striscia sola, staccata, letta come uno
-   strumento: etichetta piccolissima sopra, cifra tabulare sotto. Si tocca e
-   si apre.
-   LE CIFRE RESTANO GRANDI ABBASTANZA. «Piu' piccoli» vuol dire che pesano
-   meno nella pagina, non che si leggono peggio: l'etichetta scende, il numero
-   resta leggibile. Chi ha sessant'anni deve poter leggere il proprio record
-   senza avvicinare il telefono. */
-.home-mese{ border:1px solid var(--border); border-radius:var(--r-md);
-  background:var(--surface-1); margin:var(--s-5) 0 var(--s-4); overflow:hidden; }
-.home-mese-barra{ display:flex; flex-direction:column; gap:var(--s-1); width:100%;
-  min-height:var(--hit); padding:var(--s-2) var(--s-3); background:none;
+/* ══════════ LA STRISCIA DEL MESE, DENTRO LO STRATO (21/08/2026) ══════════
+   I numeri del mese non sono piu' una tendina chiusa dentro un riquadro: sono
+   lo strato di mezzo, sempre leggibile. Quello che si apre toccandola e'
+   soltanto il GRAFICO, che e' l'unica cosa che si va a cercare apposta.
+   Le cifre sono cresciute e le etichette sono calate: quattro numeri in fila
+   divisi da un filetto si leggono come uno strumento, non come un cruscotto.
+   E restano grandi abbastanza — chi ha sessant'anni deve poter leggere il
+   proprio record senza avvicinare il telefono. */
+.home-mese-barra{ display:block; width:100%; padding:0; background:none;
   border:0; font:inherit; color:inherit; text-align:left; cursor:pointer; }
-.home-mese-capo{ display:flex; align-items:center; justify-content:space-between; width:100%; }
+.home-mese-capo{ display:flex; align-items:center; justify-content:space-between;
+  gap:var(--s-2); width:100%; }
 .home-mese-eti{ flex:0 0 auto; font-size:var(--t-2xs); font-weight:700;
-  letter-spacing:.09em; text-transform:uppercase; color:var(--text-3); }
-.home-mese-dati{ width:100%; display:flex; gap:var(--s-2);
-  justify-content:space-between; }
-.hm-voce{ display:flex; flex-direction:column; align-items:flex-start;
-  line-height:1.15; min-width:0; }
-.hm-voce i{ font-style:normal; font-size:var(--t-2xs); color:var(--text-3);
-  text-transform:uppercase; letter-spacing:.04em; }
-.hm-voce b{ font-family:var(--font-num); font-variant-numeric:tabular-nums;
-  font-size:var(--t-sm); font-weight:800; color:var(--text-1); }
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--text-3); }
+.home-mese-dati{ width:100%; display:flex; margin-top:var(--s-3); }
+.hm-voce{ flex:1 1 0; min-width:0; padding-left:var(--s-3);
+  border-left:1px solid var(--border); }
+.hm-voce:first-child{ padding-left:0; border-left:0; }
+.hm-voce b{ display:block; font-family:var(--font-num);
+  font-variant-numeric:tabular-nums; font-size:var(--t-xl); font-weight:800;
+  letter-spacing:-0.02em; line-height:1; color:var(--text-1); }
+.hm-voce i{ display:block; font-style:normal; font-size:var(--t-2xs);
+  font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--text-3); margin-top:var(--s-1); }
+/* I giri del mese, uno per barra. Non e' il grafico: e' il POLSO del mese —
+   quanto spesso si e' tirato e se l'ultimo e' stato meglio o peggio. Il
+   grafico, che e' un'altra domanda, resta dentro. */
+.hm-barre{ display:flex; align-items:flex-end; gap:var(--s-1);
+  height:var(--s-5); margin-top:var(--s-4); }
+.hm-barre i{ flex:1 1 0; min-width:0; height:var(--alt,20%);
+  background:var(--border-strong); }
+.hm-barre i.ultima{ background:var(--clay); }
 /* La freccia gira: e' l'unico modo per sapere, guardando, se sotto c'e' altro. */
 .home-mese-freccia{ flex:0 0 auto; width:0; height:0; border-left:5px solid transparent;
   border-right:5px solid transparent; border-top:6px solid var(--text-3);
   transition:transform var(--dur-2) var(--ease); }
 .home-mese.aperta .home-mese-freccia{ transform:rotate(180deg); }
-.home-mese-dentro{ padding:0 var(--s-3) var(--s-3); border-top:1px solid var(--border); }
-/* Dentro la striscia il titolo non e piu un titolo di pagina: e l etichetta
-   di quello che si e appena aperto. */
+.home-mese-dentro{ margin-top:var(--s-4); padding-top:var(--s-4);
+  border-top:1px solid var(--border); }
 .home-mese-dentro .home-titolo h2{ font-size:var(--t-md); }
 .trag-conto{ flex:0 0 auto; font-family:var(--font-num);
   font-variant-numeric:tabular-nums; font-size:var(--t-xs); color:var(--text-3); }
@@ -13109,6 +13135,10 @@ var precedente = miei[1] || null;
 return {
 media: Math.round(somma / base.length),
 giri: base.length,
+// Gli ultimi otto, dal piu' vecchio al piu' recente: e' il polso del mese
+// disegnato sotto le cifre. Otto perche' e' quanto ci sta senza che le
+// barre diventino fili.
+serie: miei.slice(0, 8).reverse(),
 piazzole: piazz,
 meglio: meglio,
 nelMese: mese.length > 0,
@@ -13257,18 +13287,61 @@ svg.addEventListener("pointerup", function(){ setTimeout(spegni, 2500); });
 return card;
 }
 
+/* LA TRACCIA DEL GIRO IN CORSO. Una tacca per piazzola, alta quanto il
+   punteggio; quelle non ancora tirate restano basse e spente. La piu' alta
+   del giro si accende di terracotta.
+   L'altezza passa da una variabile CSS e non da uno stile in linea: e' una
+   misura, non una regola di stile, e il foglio resta l'unico posto dove si
+   decide come si vede. */
+function homeTraccia(){
+var io = (state.archers || []).filter(function(a){ return a.isSelf === true; })[0];
+if(!io) return null;
+var voci = ((state.scores || {})[io.id]) || [];
+if(!voci.length) return null;
+var tot = Math.max(voci.length, state.format || 24);
+var max = 0;
+voci.forEach(function(e){ var v = e && e.total || 0; if(v > max) max = v; });
+if(max <= 0) return null;
+var tr = el('<div class="traccia" aria-hidden="true"></div>');
+for(var i = 0; i < tot; i++){
+var e = voci[i];
+var b = el('<i></i>');
+if(e){
+var v = e.total || 0;
+b.className = (v >= max) ? "massima" : "piena";
+b.style.setProperty("--alt", Math.max(18, Math.round(v / max * 100)) + "%");
+}
+tr.appendChild(b);
+}
+return tr;
+}
+
 function homeScreen(){
 var wrap = el('<div class="menu-cols"></div>');
 var inCorso = (state.roundActive === true) || (state.screen === "round");
+
+/* GLI STRATI, IN ORDINE DI URGENZA.
+   1. quello che stai facendo adesso (solo se c'e');
+   2. come sta andando il mese;
+   3. cosa fanno gli altri.
+   Chi non ha un giro aperto trova al posto del primo strato la domanda e il
+   tasto: quello resta dentro i margini della pagina, perche' e' un discorso,
+   non un dato. */
+var strati = el('<div class="strati"></div>');
 
 if(inCorso){
 var fatte = Math.max(1, state.target || 1);
 var tot = state.format || 24;
 var pct = Math.min(100, Math.round((fatte - 1) / tot * 100));
-var rip = el('<div class="home-ripresa"></div>');
+var rip = el('<div class="strato home-ripresa"></div>');
 rip.appendChild(el('<span class="home-vivo"><i></i> '+escapeHtml(t("resume_btn"))+'</span>'));
 rip.appendChild(el('<h2>'+escapeHtml(t("home_resume_title"))+'</h2>'));
 rip.appendChild(el('<p class="dove">'+escapeHtml(modeLabel(state.mode))+'</p>'));
+// La traccia sta SOPRA il binario, e non e' un doppione: il binario dice a
+// che punto sei, la traccia dice come sta andando. Se non si e' ancora
+// segnato niente non c'e' niente da disegnare, e non si disegna.
+var tr = homeTraccia();
+if(tr) rip.appendChild(tr);
 var av = el('<div></div>');
 av.appendChild(el('<div class="home-avanz"><b>'+escapeHtml(t("home_target_of",{n:fatte,tot:tot}))+'</b></div>'));
 var bin = el('<div class="home-binario"><i></i></div>');
@@ -13281,11 +13354,11 @@ rip.appendChild(vai);
 // Niente icona: fra quelle disponibili non c'e un segno di spunta, e
 // icon() con un nome che non esiste disegna un SVG VUOTO senza dire niente.
 rip.appendChild(el('<div class="home-salvato">'+escapeHtml(t("home_saved_here"))+'</div>'));
-wrap.appendChild(rip);
+strati.appendChild(rip);
 } else {
 var eroe = el('<div></div>');
 var nome = (state.profile && (state.profile.username || state.profile.nomeCognome)) || "";
-eroe.appendChild(el('<p class="home-saluto">'+escapeHtml(homeSaluto() + (nome ? ", " + nome : ""))+'.</p>'));
+eroe.appendChild(el('<p class="home-saluto">'+escapeHtml(homeSaluto() + (nome ? ", " + nome : ""))+'</p>'));
 eroe.appendChild(el('<h1 class="home-domanda">'+escapeHtml(t("home_ready"))+'</h1>'));
 var az = el('<div class="home-azioni"></div>');
 var bTira = el('<button class="btn btn-primary btn-block">'+navIcon("azarco",20,"unica")+' '+escapeHtml(t("home_start"))+'</button>');
@@ -13296,30 +13369,16 @@ wrap.appendChild(eroe);
 }
 
 /* ══ I NUMERI DEL MESE SONO CONTORNO, NON IL MOTIVO PER CUI SI APRE L'APP ══
- * (21/08/2026, detto da Alessandro guardando la prima schermata: «è troppo
- * piena, i dati del mese devono essere più piccoli, in una finestra che
- * stacca dal resto ma che può essere aperta».)
- *
- * Prima erano DUE sezioni sempre aperte — quattro numeri grandi e il grafico
- * dell'andamento — messe fra il tasto per cominciare e quello che fanno gli
- * altri. Ogni schermata ha una cosa che conta: qui è **tirare**. Il resto,
- * per bello che sia, sta in mezzo.
- *
- * Adesso è una striscia sola, staccata, con i quattro numeri in piccolo e
- * letti come uno strumento: etichetta minuscola sopra, cifra tabulare sotto.
- * Si tocca e si apre: dentro c'è il grafico. Chi non lo apre non lo vede, e
- * non e' una perdita — e' quello che ha chiesto non vedendolo.
- *
- * *E si ricorda com'era lasciata:* chi la tiene aperta la ritrova aperta.
+ * (21/08/2026.) Restano quattro numeri piccoli e uno strumento da leggere:
+ * etichetta minuscola sotto, cifra tabulare sopra. La tendina non nasconde
+ * piu' i numeri — nasconde solo il GRAFICO, che e' l'unica cosa che si va a
+ * cercare apposta. *E si ricorda com'era lasciata.*
  */
 var n = homeNumeri();
 if(n){
 var aperta = (state.homeMese === true);
-var sez = el('<div class="home-mese'+(aperta ? " aperta" : "")+'"></div>');
+var sez = el('<div class="strato home-mese'+(aperta ? " aperta" : "")+'"></div>');
 var barra = el('<button class="home-mese-barra" aria-expanded="'+aperta+'"></button>');
-// Intestazione e freccia su una riga, i quattro numeri sotto: in italiano
-// «PIAZZOLE» da solo mandava la fila a capo, e una striscia che va a capo
-// male e' peggio di due righe volute.
 var capo = el('<span class="home-mese-capo"></span>');
 capo.appendChild(el('<span class="home-mese-eti">'+escapeHtml(n.nelMese ? t("home_month") : t("journal_title"))+'</span>'));
 capo.appendChild(el('<span class="home-mese-freccia" aria-hidden="true"></span>'));
@@ -13328,9 +13387,25 @@ var dati = el('<span class="home-mese-dati"></span>');
 [[t("diario_media"), n.media], [t("home_rounds_word"), n.giri],
  [t("diario_record"), n.meglio], [t("diario_targets_word"), n.piazzole]]
 .forEach(function(p){
-dati.appendChild(el('<span class="hm-voce"><i>'+escapeHtml(p[0])+'</i><b>'+escapeHtml(String(p[1]))+'</b></span>'));
+dati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(p[1]))+'</b><i>'+escapeHtml(p[0])+'</i></span>'));
 });
 barra.appendChild(dati);
+// Il polso del mese: una barra per giro, l'ultima accesa. Da due giri in su,
+// perche' una barra sola non e' un andamento — e' un numero gia' scritto
+// due centimetri piu' su.
+if(n.serie && n.serie.length > 1){
+var alto = 0;
+n.serie.forEach(function(x){ if(x.punti > alto) alto = x.punti; });
+if(alto > 0){
+var barre = el('<span class="hm-barre" aria-hidden="true"></span>');
+n.serie.forEach(function(x, i){
+var b = el('<i'+(i === n.serie.length - 1 ? ' class="ultima"' : '')+'></i>');
+b.style.setProperty("--alt", Math.max(20, Math.round(x.punti / alto * 100)) + "%");
+barre.appendChild(b);
+});
+barra.appendChild(barre);
+}
+}
 barra.addEventListener("click", function(){ state.homeMese = !aperta; save(); render(); });
 sez.appendChild(barra);
 if(aperta){
@@ -13339,35 +13414,25 @@ dentro.appendChild(el('<div class="home-titolo"><h2>'+escapeHtml(t("home_trend")
 dentro.appendChild(homeGrafico());
 sez.appendChild(dentro);
 }
-wrap.appendChild(sez);
+strati.appendChild(sez);
 }
-
-// L'andamento non ha piu' una sezione sua: sta dentro la striscia del mese,
-// che e' il posto dove uno va quando vuole i numeri. Fuori restava aperto
-// sempre, e sempre non e' mai la risposta giusta a «quando serve?».
 
 // Chi si allena vicino a te: la scheda esiste gia' ed e' viva. Riusarla vuol
 // dire che i filtri e la riga di quello che manca valgono anche qui.
-var vic = el('<div class="home-sezione"></div>');
+var vic = el('<div class="strato"></div>');
 vic.appendChild(otSectionCard(true));
-wrap.appendChild(vic);
+strati.appendChild(vic);
+
+wrap.appendChild(strati);
 
 /* LA HOME HA TRE COSE, E BASTA. (21/08/2026, detto da Alessandro:
    «inizia un giro, poi la tabella questo mese, gli allenamenti aperti; niente
-   di più, il resto va nelle sezioni apposite».)
+   di piu', il resto va nelle sezioni apposite».)
 
-   Qui c'erano anche gli ULTIMI GIRI — che sono Attività › Giri, cioè una voce
-   della barra sempre a schermo — e una fila di SCORCIATOIE per Profilo e
-   Mercatino. Il profilo sta nella testata da sempre; il mercatino ci va
-   adesso, accanto ad esso: era rimasto qui perché uscendo dalla barra non
-   aveva più una porta, e una porta si può appendere anche altrove.
-
-   *Una scorciatoia in più sulla prima schermata non è una comodità in più: è
-   una decisione in più da prendere ogni volta che si apre l'app.*
-
-   IL PROFILO RESTA, e lo ha chiesto Alessandro. Non è una scorciatoia come le
-   altre: è il posto da cui si passa per il diario, l'attrezzatura e lo spazio
-   compagnia — cioè tre stanze che dalla barra non hanno più una porta. */
+   IL PROFILO RESTA, e lo ha chiesto Alessandro. Non e' una scorciatoia come
+   le altre: e' il posto da cui si passa per il diario, l'attrezzatura e lo
+   spazio compagnia — cioe' tre stanze che dalla barra non hanno piu' una
+   porta. */
 var sc = el('<div class="home-sezione"></div>');
 var bProf = el('<button class="btn btn-ghost btn-block btn-sm">'+navIcon("navprofile",16,"due")+' '+escapeHtml(t("menu_profile"))+'</button>');
 bProf.addEventListener("click", function(){ state.tab = "profilo"; save(); render(); });
@@ -16142,7 +16207,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-barra-ferma-safari";
+var BUILD_STAMP = "2026-08-21-strati";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16151,7 +16216,7 @@ var BUILD_STAMP = "2026-08-21-barra-ferma-safari";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-barra-e-home";
+var BUILD_PARENT = "2026-08-21-barra-ferma-safari";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
