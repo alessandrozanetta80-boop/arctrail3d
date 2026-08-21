@@ -2381,6 +2381,28 @@ text-transform:uppercase; color:var(--text-3); }
 .trag-segno{ flex:0 0 auto; width:var(--s-5); text-align:center;
   color:var(--success); font-weight:800; }
 .trag-nome{ flex:1 1 auto; min-width:0; }
+/* ══════════ L ATTREZZATURA (21/08/2026, PRD 24) ══════════ */
+.attr-card{ margin-bottom:var(--s-3); }
+.attr-testa{ display:flex; align-items:center; gap:var(--s-2); margin-bottom:var(--s-2); }
+.attr-testa b{ font-size:var(--t-md); font-weight:800; }
+.attr-pred{ font-size:var(--t-xs); font-weight:700; color:var(--accent);
+  background:var(--scheda-bg); border:1px solid var(--scheda-bd);
+  border-radius:var(--r-lg); padding:2px var(--s-2); }
+.attr-riga{ font-size:var(--t-sm); color:var(--text-2); line-height:1.5; }
+.attr-note{ font-size:var(--t-sm); color:var(--text-3); font-style:italic;
+  margin-top:var(--s-2); }
+/* Il numero dell assetto e un giudizio sull arco: finche non ha abbastanza
+   giri dietro, si dice quanti ne mancano invece di dare una media. */
+.attr-numeri{ margin-top:var(--s-2); font-size:var(--t-sm); font-weight:700;
+  color:var(--success); }
+.attr-numeri.poco{ color:var(--text-3); font-weight:400; }
+.attr-azioni{ display:flex; flex-wrap:wrap; gap:var(--s-2); margin-top:var(--s-3); }
+.attr-lbl{ display:block; font-size:var(--t-sm); color:var(--muted);
+  margin:var(--s-3) 0 var(--s-1); }
+.attr-archi{ flex-wrap:wrap; margin-bottom:var(--s-1); }
+.attr-err{ font-size:var(--t-sm); color:var(--danger); min-height:18px;
+  margin:var(--s-2) 0; }
+.diario-assetto{ font-size:var(--t-sm); color:var(--text-3); margin:var(--s-1) 0; }
 .trag-conto{ flex:0 0 auto; font-family:var(--font-num);
   font-variant-numeric:tabular-nums; font-size:var(--t-xs); color:var(--text-3); }
 .fin-azione.via{ display:none; }
@@ -3053,6 +3075,7 @@ authState = data.approved ? "ready" : "pendingApproval";
 // Il profilo pubblico si riallinea a ogni apertura: cosi' un cambio di nome
 // o di compagnia fatto altrove non lascia l'elenco arcieri indietro.
 if(data.approved) syncMyPublicProfile(data);
+recuperaAttrezziDalCloud(data);
 }
 // LA CONFERMA EMAIL VIENE PRIMA DELL'APPROVAZIONE. (19/08/2026.)
 // Prima diceva `authState === "ready" && ...`, e quell'AND era un vicolo
@@ -3560,6 +3583,36 @@ campi_title: "Trova un campo di tiro 3D",
 campi_btn: "Cerca campi vicino a te",
 campi_hint: "Non lo trovi in elenco? Questo apre Google Maps sui dintorni (richiede geolocalizzazione).",
 campi_searching: "Ricerca posizione\u2026",
+attr_titolo: "Attrezzatura",
+attr_hint: "Gli assetti che usi. Ogni giro si porta dietro quello con cui l’hai tirato.",
+attr_nuovo: "+ Nuovo assetto",
+attr_vuoto: "Nessun assetto. Il primo che aggiungi diventa quello predefinito.",
+attr_nome: "Nome dell’assetto",
+attr_nome_ph: "Es. Longbow da caccia",
+attr_marca: "Marca",
+attr_modello: "Modello",
+attr_libbre: "Libbraggio",
+attr_mano: "Mano",
+attr_destro: "Destro",
+attr_mancino: "Mancino",
+attr_frecce: "Frecce",
+attr_spine: "Spine",
+attr_lunghezza: "Lunghezza (pollici)",
+attr_punta: "Punta (grani)",
+attr_note: "Note",
+attr_salva: "Salva assetto",
+attr_serve_nome: "Dagli un nome, così lo riconosci.",
+attr_modifica: "Modifica",
+attr_predefinito: "predefinito",
+attr_fai_predefinito: "Rendi predefinito",
+attr_archivia: "Archivia",
+attr_riprendi: "Rimetti in uso",
+attr_archiviati: "Archiviati",
+attr_archiviati_hint: "Non compaiono nella scelta, ma restano scritti nei giri già tirati.",
+attr_media_con: "Media {media} a piazzola, su {n} giri",
+attr_pochi_giri: "{n} giro/i: la media compare dopo {min}.",
+attr_assetto: "Assetto",
+attr_cambia: "Cambia",
 trag_titolo: "Traguardi",
 trag_niente: "I traguardi arrivano tirando.",
 trag_primo_giro: "Primo giro",
@@ -4171,6 +4224,36 @@ campi_title: "Find a 3D archery field",
 campi_btn: "Search fields near you",
 campi_hint: "Not in the list? This opens Google Maps nearby (needs location access).",
 campi_searching: "Locating\u2026",
+attr_titolo: "Equipment",
+attr_hint: "The setups you use. Every round remembers the one you shot it with.",
+attr_nuovo: "+ New setup",
+attr_vuoto: "No setups yet. The first one you add becomes the default.",
+attr_nome: "Setup name",
+attr_nome_ph: "E.g. Hunting longbow",
+attr_marca: "Brand",
+attr_modello: "Model",
+attr_libbre: "Draw weight",
+attr_mano: "Handedness",
+attr_destro: "Right handed",
+attr_mancino: "Left handed",
+attr_frecce: "Arrows",
+attr_spine: "Spine",
+attr_lunghezza: "Length (inches)",
+attr_punta: "Point (grains)",
+attr_note: "Notes",
+attr_salva: "Save setup",
+attr_serve_nome: "Give it a name, so you recognise it.",
+attr_modifica: "Edit",
+attr_predefinito: "default",
+attr_fai_predefinito: "Make default",
+attr_archivia: "Archive",
+attr_riprendi: "Put back in use",
+attr_archiviati: "Archived",
+attr_archiviati_hint: "They no longer appear in the picker, but stay named in past rounds.",
+attr_media_con: "{media} per target on average, over {n} rounds",
+attr_pochi_giri: "{n} round(s): the average shows after {min}.",
+attr_assetto: "Setup",
+attr_cambia: "Change",
 trag_titolo: "Milestones",
 trag_niente: "Milestones come from shooting.",
 trag_primo_giro: "First round",
@@ -4781,6 +4864,36 @@ campi_title: "Trouvez un terrain de tir 3D",
 campi_btn: "Rechercher des terrains \u00e0 proximit\u00e9",
 campi_hint: "Pas dans la liste ? Ceci ouvre Google Maps aux alentours (nécessite la géolocalisation).",
 campi_searching: "Localisation\u2026",
+attr_titolo: "Équipement",
+attr_hint: "Vos configurations. Chaque parcours retient celle avec laquelle vous avez tiré.",
+attr_nuovo: "+ Nouvelle configuration",
+attr_vuoto: "Aucune configuration. La première ajoutée devient celle par défaut.",
+attr_nome: "Nom",
+attr_nome_ph: "Ex. Longbow de chasse",
+attr_marca: "Marque",
+attr_modello: "Modèle",
+attr_libbre: "Puissance (lb)",
+attr_mano: "Main",
+attr_destro: "Droitier",
+attr_mancino: "Gaucher",
+attr_frecce: "Flèches",
+attr_spine: "Spine",
+attr_lunghezza: "Longueur (pouces)",
+attr_punta: "Pointe (grains)",
+attr_note: "Notes",
+attr_salva: "Enregistrer",
+attr_serve_nome: "Donnez-lui un nom pour la reconnaître.",
+attr_modifica: "Modifier",
+attr_predefinito: "par défaut",
+attr_fai_predefinito: "Définir par défaut",
+attr_archivia: "Archiver",
+attr_riprendi: "Remettre en service",
+attr_archiviati: "Archivées",
+attr_archiviati_hint: "Elles ne sont plus proposées, mais restent nommées dans les parcours passés.",
+attr_media_con: "Moyenne {media} par cible, sur {n} parcours",
+attr_pochi_giri: "{n} parcours : la moyenne apparaît après {min}.",
+attr_assetto: "Configuration",
+attr_cambia: "Changer",
 trag_titolo: "Jalons",
 trag_niente: "Les jalons viennent en tirant.",
 trag_primo_giro: "Premier parcours",
@@ -5391,6 +5504,36 @@ campi_title: "Finde einen 3D-Bogenparcours",
 campi_btn: "Pl\u00e4tze in der N\u00e4he suchen",
 campi_hint: "Nicht in der Liste? Das öffnet Google Maps in der Umgebung (benötigt Standortzugriff).",
 campi_searching: "Standort wird gesucht\u2026",
+attr_titolo: "Ausrüstung",
+attr_hint: "Deine Setups. Jede Runde merkt sich, mit welchem du geschossen hast.",
+attr_nuovo: "+ Neues Setup",
+attr_vuoto: "Noch kein Setup. Das erste wird automatisch zum Standard.",
+attr_nome: "Name des Setups",
+attr_nome_ph: "z.B. Jagd-Langbogen",
+attr_marca: "Marke",
+attr_modello: "Modell",
+attr_libbre: "Zuggewicht",
+attr_mano: "Hand",
+attr_destro: "Rechtshand",
+attr_mancino: "Linkshand",
+attr_frecce: "Pfeile",
+attr_spine: "Spine",
+attr_lunghezza: "Länge (Zoll)",
+attr_punta: "Spitze (grain)",
+attr_note: "Notizen",
+attr_salva: "Setup speichern",
+attr_serve_nome: "Gib ihm einen Namen, damit du es wiedererkennst.",
+attr_modifica: "Bearbeiten",
+attr_predefinito: "Standard",
+attr_fai_predefinito: "Als Standard",
+attr_archivia: "Archivieren",
+attr_riprendi: "Wieder verwenden",
+attr_archiviati: "Archiviert",
+attr_archiviati_hint: "Sie erscheinen nicht mehr zur Auswahl, bleiben aber in alten Runden benannt.",
+attr_media_con: "Schnitt {media} pro Ziel, über {n} Runden",
+attr_pochi_giri: "{n} Runde(n): der Schnitt erscheint ab {min}.",
+attr_assetto: "Setup",
+attr_cambia: "Ändern",
 trag_titolo: "Meilensteine",
 trag_niente: "Meilensteine entstehen beim Schießen.",
 trag_primo_giro: "Erste Runde",
@@ -6020,6 +6163,36 @@ campi_title: "Bir 3D at\u0131\u015f sahas\u0131 bul",
 campi_btn: "Yak\u0131n\u0131ndaki sahalar\u0131 ara",
 campi_hint: "Listede yok mu? Bu, çevredeki sahalarla Google Haritalar’ı açar (konum izni gerekir).",
 campi_searching: "Konum aran\u0131yor\u2026",
+attr_titolo: "Ekipman",
+attr_hint: "Kullandığın setler. Her tur hangisiyle atış yaptığını hatırlar.",
+attr_nuovo: "+ Yeni set",
+attr_vuoto: "Henüz set yok. Eklediğin ilk set varsayılan olur.",
+attr_nome: "Set adı",
+attr_nome_ph: "Örn. Av yayı",
+attr_marca: "Marka",
+attr_modello: "Model",
+attr_libbre: "Çekiş ağırlığı",
+attr_mano: "El",
+attr_destro: "Sağ",
+attr_mancino: "Sol",
+attr_frecce: "Oklar",
+attr_spine: "Spine",
+attr_lunghezza: "Uzunluk (inç)",
+attr_punta: "Uç (grain)",
+attr_note: "Notlar",
+attr_salva: "Seti kaydet",
+attr_serve_nome: "Tanıyabilmen için bir ad ver.",
+attr_modifica: "Düzenle",
+attr_predefinito: "varsayılan",
+attr_fai_predefinito: "Varsayılan yap",
+attr_archivia: "Arşivle",
+attr_riprendi: "Yeniden kullan",
+attr_archiviati: "Arşivlenmiş",
+attr_archiviati_hint: "Seçimde çıkmaz, ama eski turlarda adı kalır.",
+attr_media_con: "Hedef başına {media} ortalama, {n} turda",
+attr_pochi_giri: "{n} tur: ortalama {min} turdan sonra görünür.",
+attr_assetto: "Set",
+attr_cambia: "Değiştir",
 trag_titolo: "Kilometre taşları",
 trag_niente: "Kilometre taşları atış yaptıkça gelir.",
 trag_primo_giro: "İlk tur",
@@ -6643,6 +6816,36 @@ campi_title: "Найти площадку для 3D-стрельбы",
 campi_btn: "Искать площадки рядом",
 campi_hint: "Нет в списке? Откроется Google Карты поблизости (нужен доступ к местоположению).",
 campi_searching: "Поиск местоположения…",
+attr_titolo: "Снаряжение",
+attr_hint: "Ваши комплекты. Каждый раунд помнит, чем вы стреляли.",
+attr_nuovo: "+ Новый комплект",
+attr_vuoto: "Комплектов нет. Первый станет основным.",
+attr_nome: "Название",
+attr_nome_ph: "Напр. Охотничий лонгбоу",
+attr_marca: "Марка",
+attr_modello: "Модель",
+attr_libbre: "Сила натяжения",
+attr_mano: "Рука",
+attr_destro: "Правая",
+attr_mancino: "Левая",
+attr_frecce: "Стрелы",
+attr_spine: "Жёсткость",
+attr_lunghezza: "Длина (дюймы)",
+attr_punta: "Наконечник (грены)",
+attr_note: "Заметки",
+attr_salva: "Сохранить",
+attr_serve_nome: "Дайте название, чтобы узнавать.",
+attr_modifica: "Изменить",
+attr_predefinito: "основной",
+attr_fai_predefinito: "Сделать основным",
+attr_archivia: "В архив",
+attr_riprendi: "Вернуть в работу",
+attr_archiviati: "Архив",
+attr_archiviati_hint: "В выборе не появляются, но остаются в прошлых раундах.",
+attr_media_con: "В среднем {media} на мишень, за {n} раундов",
+attr_pochi_giri: "{n} раунд(ов): среднее появится после {min}.",
+attr_assetto: "Комплект",
+attr_cambia: "Сменить",
 trag_titolo: "Вехи",
 trag_niente: "Вехи появляются с практикой.",
 trag_primo_giro: "Первый раунд",
@@ -7266,6 +7469,36 @@ campi_title: "Encontrar un campo de tiro 3D",
 campi_btn: "Buscar campos cerca de ti",
 campi_hint: "¿No está en la lista? Esto abre Google Maps en los alrededores (requiere ubicación).",
 campi_searching: "Buscando ubicaci\u00f3n\u2026",
+attr_titolo: "Equipo",
+attr_hint: "Tus configuraciones. Cada ronda recuerda con cuál la tiraste.",
+attr_nuovo: "+ Nueva configuración",
+attr_vuoto: "Sin configuraciones. La primera que añadas será la predeterminada.",
+attr_nome: "Nombre",
+attr_nome_ph: "Ej. Longbow de caza",
+attr_marca: "Marca",
+attr_modello: "Modelo",
+attr_libbre: "Libraje",
+attr_mano: "Mano",
+attr_destro: "Diestro",
+attr_mancino: "Zurdo",
+attr_frecce: "Flechas",
+attr_spine: "Spine",
+attr_lunghezza: "Longitud (pulgadas)",
+attr_punta: "Punta (granos)",
+attr_note: "Notas",
+attr_salva: "Guardar",
+attr_serve_nome: "Dale un nombre para reconocerla.",
+attr_modifica: "Editar",
+attr_predefinito: "predeterminada",
+attr_fai_predefinito: "Hacer predeterminada",
+attr_archivia: "Archivar",
+attr_riprendi: "Volver a usar",
+attr_archiviati: "Archivadas",
+attr_archiviati_hint: "Ya no aparecen al elegir, pero siguen nombradas en las rondas pasadas.",
+attr_media_con: "Media {media} por diana, en {n} rondas",
+attr_pochi_giri: "{n} ronda(s): la media aparece a partir de {min}.",
+attr_assetto: "Configuración",
+attr_cambia: "Cambiar",
 trag_titolo: "Hitos",
 trag_niente: "Los hitos llegan tirando.",
 trag_primo_giro: "Primera ronda",
@@ -7889,6 +8122,36 @@ campi_title: "Hitta en 3D-bana",
 campi_btn: "S\u00f6k banor n\u00e4ra dig",
 campi_hint: "Inte i listan? Detta öppnar Google Maps i närheten (kräver platsåtkomst).",
 campi_searching: "S\u00f6ker plats\u2026",
+attr_titolo: "Utrustning",
+attr_hint: "Dina uppställningar. Varje runda minns vilken du sköt med.",
+attr_nuovo: "+ Ny uppställning",
+attr_vuoto: "Inga uppställningar än. Den första blir standard.",
+attr_nome: "Namn",
+attr_nome_ph: "T.ex. Jaktlongbow",
+attr_marca: "Märke",
+attr_modello: "Modell",
+attr_libbre: "Dragvikt",
+attr_mano: "Hand",
+attr_destro: "Höger",
+attr_mancino: "Vänster",
+attr_frecce: "Pilar",
+attr_spine: "Spine",
+attr_lunghezza: "Längd (tum)",
+attr_punta: "Spets (grain)",
+attr_note: "Anteckningar",
+attr_salva: "Spara",
+attr_serve_nome: "Ge den ett namn så du känner igen den.",
+attr_modifica: "Ändra",
+attr_predefinito: "standard",
+attr_fai_predefinito: "Gör till standard",
+attr_archivia: "Arkivera",
+attr_riprendi: "Använd igen",
+attr_archiviati: "Arkiverade",
+attr_archiviati_hint: "De visas inte i valet, men står kvar i tidigare rundor.",
+attr_media_con: "Snitt {media} per mål, över {n} rundor",
+attr_pochi_giri: "{n} runda/rundor: snittet visas efter {min}.",
+attr_assetto: "Uppställning",
+attr_cambia: "Byt",
 trag_titolo: "Milstolpar",
 trag_niente: "Milstolpar kommer av att skjuta.",
 trag_primo_giro: "Första rundan",
@@ -8512,6 +8775,36 @@ campi_title: "Vind een 3D-schietbaan",
 campi_btn: "Zoek banen in de buurt",
 campi_hint: "Niet in de lijst? Dit opent Google Maps in de buurt (locatietoegang nodig).",
 campi_searching: "Locatie zoeken\u2026",
+attr_titolo: "Uitrusting",
+attr_hint: "Je opstellingen. Elke ronde onthoudt waarmee je hebt geschoten.",
+attr_nuovo: "+ Nieuwe opstelling",
+attr_vuoto: "Nog geen opstellingen. De eerste wordt de standaard.",
+attr_nome: "Naam",
+attr_nome_ph: "Bijv. Jachtlongbow",
+attr_marca: "Merk",
+attr_modello: "Model",
+attr_libbre: "Trekgewicht",
+attr_mano: "Hand",
+attr_destro: "Rechts",
+attr_mancino: "Links",
+attr_frecce: "Pijlen",
+attr_spine: "Spine",
+attr_lunghezza: "Lengte (inch)",
+attr_punta: "Punt (grein)",
+attr_note: "Notities",
+attr_salva: "Opslaan",
+attr_serve_nome: "Geef het een naam zodat je het herkent.",
+attr_modifica: "Bewerken",
+attr_predefinito: "standaard",
+attr_fai_predefinito: "Maak standaard",
+attr_archivia: "Archiveren",
+attr_riprendi: "Weer gebruiken",
+attr_archiviati: "Gearchiveerd",
+attr_archiviati_hint: "Ze verschijnen niet meer bij de keuze, maar blijven benoemd in oude rondes.",
+attr_media_con: "Gemiddeld {media} per doel, over {n} rondes",
+attr_pochi_giri: "{n} ronde(s): het gemiddelde verschijnt vanaf {min}.",
+attr_assetto: "Opstelling",
+attr_cambia: "Wijzigen",
 trag_titolo: "Mijlpalen",
 trag_niente: "Mijlpalen komen door te schieten.",
 trag_primo_giro: "Eerste ronde",
@@ -9326,7 +9619,7 @@ var CAMPI_DEL_GIRO = ["roundActive","archersBase","rotBaseTarget","mode","format
 "archers","scores","target","archerIndex","arrowIndex","pendingArrows",
 "liveBattutaTypes","awaitingStep","savedToHistory","roundEntryDate","firme",
 "consegna","sessionId","campo","doubleConfirm","arrowsPerTargetOverride",
-"startedAt"];
+"startedAt","assetto","assettoNome"];
 
 function pezzoDelGiro(){
 var out = {};
@@ -9522,6 +9815,8 @@ modeLabel: roundEntry.modeLabel || "",
 results: packResults(roundEntry.results),
 consegna: roundEntry.consegna || null,
 nota: roundEntry.nota || null,
+assetto: roundEntry.assetto || null,
+assettoNome: roundEntry.assettoNome || null,
 savedAt: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true }).catch(function(err){
 cloudSyncState.lastError = describeFirebaseError(err);
@@ -9941,7 +10236,7 @@ app.style.paddingBottom = "92px";
 // e un modulo o una chat larghi tutto lo schermo si leggono peggio.
 var NARROW_SCREENS = {
 "round":1, "summary":1, "registration":1, "setup":1, "profile-registration":1,
-"profile-edit":1, "training-setup":1, "gara-setup":1, "open-training-create":1,
+"profile-edit":1, "attrezzatura":1, "training-setup":1, "gara-setup":1, "open-training-create":1,
 "field-report":1, "dm-chat":1, "ot-chat":1, "session-follow":1, "info":1,
 "account-delete":1, "blocked-users":1
 };
@@ -10297,6 +10592,7 @@ break;
 case "campi": app.appendChild(campiScreen()); break;
 case "compagnie": app.appendChild(compagnieScreen()); break;
 case "club-space": app.appendChild(clubSpaceScreen()); break;
+case "attrezzatura": app.appendChild(attrezzaturaScreen()); break;
 case "profile-edit": app.appendChild(profileEditScreen()); break;
 case "history": app.appendChild(journalScreen()); break;
 case "history-detail": app.appendChild(historyDetailScreen()); break;
@@ -11235,6 +11531,13 @@ if(savedMsg) savedMsg.textContent = "";
 bowRow.appendChild(chip);
 });
 card.appendChild(bowRow);
+// L'ARCO PRINCIPALE RESTA UNA COSA SOLA — e' quello che compare accanto al
+// tuo nome agli altri arcieri. L'attrezzatura vera, con libbre, frecce e
+// spine, sta dietro questa porta: nel profilo sarebbero venti campi in mezzo
+// a chi vuole solo cambiare il nome utente.
+var attrBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azarco",24,"due")+'</span><span class="menu-txt">'+t("attr_titolo")+'<span class="menu-sub">'+escapeHtml(t("attr_hint"))+'</span></span></button>');
+attrBtn.addEventListener("click", function(){ state.assettoAperto = null; state.screen = "attrezzatura"; save(); render(); });
+card.appendChild(attrBtn);
 
 card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("theme_section_title")+'</h2>'));
 var themeSel = currentTheme();
@@ -13332,6 +13635,13 @@ var profileBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span clas
 profileBtn.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
 profCard.appendChild(profileBtn);
 
+// L attrezzatura sta qui, accanto al profilo e allo spazio compagnia: e la
+// terza cosa che uno viene a fare in questa schermata. Dentro il modulo del
+// profilo sarebbe stata venti campi piu giu.
+var attrezziBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azarco",24,"due")+'</span><span class="menu-txt">'+t("attr_titolo")+'<span class="menu-sub">'+escapeHtml(t("attr_hint"))+'</span></span></button>');
+attrezziBtn.addEventListener("click", function(){ state.assettoAperto = null; state.screen = "attrezzatura"; save(); render(); });
+profCard.appendChild(attrezziBtn);
+
 var clubSpaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navclub",24,"due")+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
 clubSpaceBtn.addEventListener("click", function(){ state.clubSpaceCode = myClubCode(); state.screen = "club-space"; save(); render(); });
 profCard.appendChild(clubSpaceBtn);
@@ -13512,6 +13822,7 @@ wrap.appendChild(sharedCard);
 }
 
 wrap.appendChild(campoCard());
+wrap.appendChild(assettoCard());
 var startBtn = el('<button class="btn btn-primary btn-block" style="padding:var(--s-4);font-size:var(--t-lg);">'+t("start_round_btn")+'</button>');
 startBtn.addEventListener("click", function(){
 leggiCampo();
@@ -13627,6 +13938,7 @@ wrap.appendChild(modeCard);
 // Anche la gara libera: il campo vale li' quanto in allenamento, e chi tira
 // una gara ha ancora piu' motivo di ritrovarla nel diario col suo nome.
 wrap.appendChild(campoCard());
+wrap.appendChild(assettoCard());
 var startBtn = el('<button class="btn btn-primary btn-block" style="padding:var(--s-4);font-size:var(--t-lg);">'+t("start_gara_btn")+'</button>');
 startBtn.addEventListener("click", function(){ leggiCampo(); beginRound(modeKey); });
 wrap.appendChild(startBtn);
@@ -15583,7 +15895,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-traguardi";
+var BUILD_STAMP = "2026-08-21-attrezzatura";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -15592,7 +15904,7 @@ var BUILD_STAMP = "2026-08-21-traguardi";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-tre-veloci";
+var BUILD_PARENT = "2026-08-21-traguardi";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -15737,6 +16049,248 @@ return box;
    La scheda aperta sta in `state` come prima, quindi si ritrova dov'era.
    I due nomi vecchi («trend», «rounds») restano validi: chi aveva l'app
    aperta sulla scheda dei giri non si ritrova altrove al primo ridisegno. */
+/* ══════════════════ L'ATTREZZATURA ══════════════════
+ * (21/08/2026, PRD §24, Fase 8.)
+ *
+ * A COSA SERVE, detto dal PRD in tre parole: *connect equipment to
+ * performance data*. Non e' un inventario: e' la risposta alla domanda che un
+ * arciere si fa da solo dopo un anno — «con quale arco vado meglio?».
+ *
+ * QUINDI IL PEZZO CHE CONTA NON E' LA SCHEDA, E' IL LEGAME: ogni giro si
+ * porta dietro l'assetto con cui e' stato tirato. E se lo porta dietro col
+ * NOME, non solo con il codice: il PRD lo chiede in una riga che sembra un
+ * dettaglio e non lo e' — *historical rounds must retain archived setup
+ * references*. Un assetto archiviato tre anni fa non deve far sparire il nome
+ * dai giri di allora.
+ *
+ * ARCHIVIARE, NON CANCELLARE. Un assetto che non usi piu' esce dall'elenco ma
+ * resta: i giri di ieri sono stati tirati con quello, e riscriverli sarebbe
+ * riscrivere la storia. Si cancella solo un assetto che non ha tirato niente.
+ *
+ * DOVE VIVE. Nel telefono, e — quando c'e' l'accesso — dentro il documento
+ * dell'utente, che le regole gia' permettono di scrivere a lui e a nessun
+ * altro. Non serve una raccolta nuova ne' una regola nuova: e' roba sua, sta
+ * col resto della sua roba.
+ */
+var ATTREZZI_KEY = "arctrail3d_attrezzi_v1";
+function caricaAttrezzi(){
+try{ var raw = localStorage.getItem(ATTREZZI_KEY); var a = raw ? JSON.parse(raw) : []; return a && a.length !== undefined ? a : []; }
+catch(e){ return []; }
+}
+function salvaAttrezzi(lista){
+try{ localStorage.setItem(ATTREZZI_KEY, JSON.stringify(lista)); }catch(e){}
+// e sul cloud, se c'e' qualcuno a cui appartengono. Best effort: se non parte,
+// l'assetto e' comunque sul telefono e non si e' perso niente.
+if(!DEV_MODE && db && currentUser){
+try{ db.collection("users").doc(currentUser.uid).set({ attrezzatura: lista }, { merge:true }).catch(function(){}); }catch(e){}
+}
+}
+/* All'accesso: se qui non c'e' niente e sul cloud si', si prende quella. Non il
+   contrario, e non si fondono: il telefono che hai in mano ha ragione, come
+   per il giro in corso. */
+function recuperaAttrezziDalCloud(dati){
+if(!dati || !dati.attrezzatura || !dati.attrezzatura.length) return;
+if(caricaAttrezzi().length) return;
+try{ localStorage.setItem(ATTREZZI_KEY, JSON.stringify(dati.attrezzatura)); }catch(e){}
+}
+function attrezziVivi(){ return caricaAttrezzi().filter(function(a){ return !a.archiviato; }); }
+function assettoPredefinito(){
+var vivi = attrezziVivi();
+if(!vivi.length) return null;
+var d = vivi.filter(function(a){ return a.predefinito; })[0];
+return d || vivi[0];
+}
+function assettoPerId(id){
+if(!id) return null;
+return caricaAttrezzi().filter(function(a){ return a.id === id; })[0] || null;
+}
+/* QUANTO HA TIRATO QUESTO ASSETTO, e come e' andata. Il PRD e' esplicito:
+   *only show when sample size is meaningful*. Sotto cinque giri la media di un
+   assetto non e' un'informazione, e' un caso — e presentarla come un giudizio
+   sull'arco sarebbe la bugia piu' facile di tutta l'app. */
+var ASSETTO_MINIMO = 5;
+function assettoNumeri(id){
+var hist = loadHistory(), giri = 0, somma = 0;
+for(var i = 0; i < hist.length; i++){
+var h = hist[i]; if(!h || h.assetto !== id) continue;
+var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0];
+if(!r) continue;
+var pz = (r.perTarget && r.perTarget.length) ? r.perTarget.length : (h.format || 0);
+if(!pz) continue;
+giri++; somma += (r.total / pz);
+}
+return { giri: giri, media: giri ? (somma / giri) : null };
+}
+
+/* LA SCELTA PRIMA DI PARTIRE, e solo se c'e' qualcosa da scegliere. Con un
+   assetto solo la riga direbbe una cosa che non ha alternative: e' rumore, e
+   sta in mezzo alla strada di chi vuole solo cominciare a tirare. Con zero,
+   peggio: chiederebbe di configurare qualcosa per poter tirare. */
+function assettoCard(){
+var vivi = attrezziVivi();
+if(vivi.length < 2) return el('<span></span>');
+var scelto = state.pendingAssetto && vivi.filter(function(a){ return a.id === state.pendingAssetto; })[0];
+if(!scelto){ scelto = assettoPredefinito(); state.pendingAssetto = scelto ? scelto.id : null; }
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("attr_assetto")+'</h2>'));
+var riga = el('<div class="chip-group attr-archi"></div>');
+vivi.forEach(function(a){
+var chip = el('<div class="chip">'+escapeHtml(a.nome)+'</div>');
+if(scelto && a.id === scelto.id) chip.classList.add("active");
+chip.addEventListener("click", function(){ state.pendingAssetto = a.id; save(); render(); });
+riga.appendChild(chip);
+});
+card.appendChild(riga);
+return card;
+}
+
+function attrezzaturaScreen(){
+var wrap = el('<div></div>');
+var lista = caricaAttrezzi();
+var testa = el('<div class="card"></div>');
+testa.appendChild(el('<h2 class="section-title">'+t("attr_titolo")+'</h2>'));
+testa.appendChild(el('<div class="nota stacco-3">'+escapeHtml(t("attr_hint"))+'</div>'));
+var nuovo = el('<button class="btn btn-primary btn-block">'+t("attr_nuovo")+'</button>');
+nuovo.addEventListener("click", function(){ state.assettoAperto = "nuovo"; save(); render(); });
+testa.appendChild(nuovo);
+wrap.appendChild(testa);
+
+if(state.assettoAperto){ wrap.appendChild(assettoForm(state.assettoAperto)); return wrap; }
+
+var vivi = lista.filter(function(a){ return !a.archiviato; });
+var vecchi = lista.filter(function(a){ return a.archiviato; });
+if(!vivi.length){
+wrap.appendChild(el('<div class="card"><div class="nota">'+escapeHtml(t("attr_vuoto"))+'</div></div>'));
+}
+function scheda(a){
+var card = el('<div class="card attr-card"></div>');
+var testaRiga = el('<div class="attr-testa"></div>');
+testaRiga.appendChild(el('<b>'+escapeHtml(a.nome || "?")+'</b>'));
+if(a.predefinito && !a.archiviato) testaRiga.appendChild(el('<span class="attr-pred">'+escapeHtml(t("attr_predefinito"))+'</span>'));
+card.appendChild(testaRiga);
+var righe = [];
+var primo = [PROFILE_BOW_LABEL[a.arco] || "", a.marca, a.modello].filter(Boolean).join(" \u00b7 ");
+var secondo = [a.libbre ? a.libbre + " lb" : "", a.mano ? t(a.mano === "sx" ? "attr_mancino" : "attr_destro") : ""].filter(Boolean).join(" \u00b7 ");
+var terzo = [a.frecce, a.spine ? "spine " + a.spine : "", a.lunghezza ? a.lunghezza + '"' : "", a.punta ? a.punta + " gr" : ""].filter(Boolean).join(" \u00b7 ");
+[primo, secondo, terzo].forEach(function(r){ if(r) righe.push(r); });
+righe.forEach(function(r){ card.appendChild(el('<div class="attr-riga">'+escapeHtml(r)+'</div>')); });
+if(a.note) card.appendChild(el('<div class="attr-note">'+escapeHtml(a.note)+'</div>'));
+
+var num = assettoNumeri(a.id);
+if(num.giri >= ASSETTO_MINIMO){
+card.appendChild(el('<div class="attr-numeri">'+escapeHtml(t("attr_media_con", { media: (Math.round(num.media*10)/10).toString().replace(".", decimaleLocale()), n: num.giri }))+'</div>'));
+} else if(num.giri > 0){
+card.appendChild(el('<div class="attr-numeri poco">'+escapeHtml(t("attr_pochi_giri", { n: num.giri, min: ASSETTO_MINIMO }))+'</div>'));
+}
+
+var azioni = el('<div class="attr-azioni"></div>');
+var mod = el('<button class="btn btn-ghost btn-sm">'+t("attr_modifica")+'</button>');
+mod.addEventListener("click", function(){ state.assettoAperto = a.id; save(); render(); });
+azioni.appendChild(mod);
+if(!a.archiviato && !a.predefinito){
+var pre = el('<button class="btn btn-ghost btn-sm">'+t("attr_fai_predefinito")+'</button>');
+pre.addEventListener("click", function(){
+var l = caricaAttrezzi();
+l.forEach(function(x){ x.predefinito = (x.id === a.id); });
+salvaAttrezzi(l); render();
+});
+azioni.appendChild(pre);
+}
+var arc = el('<button class="btn btn-ghost btn-sm">'+t(a.archiviato ? "attr_riprendi" : "attr_archivia")+'</button>');
+arc.addEventListener("click", function(){
+var l = caricaAttrezzi();
+l.forEach(function(x){ if(x.id === a.id){ x.archiviato = !x.archiviato; if(x.archiviato) x.predefinito = false; } });
+salvaAttrezzi(l); render();
+});
+azioni.appendChild(arc);
+card.appendChild(azioni);
+return card;
+}
+vivi.forEach(function(a){ wrap.appendChild(scheda(a)); });
+if(vecchi.length){
+wrap.appendChild(el('<h2 class="section-title stacco">'+t("attr_archiviati")+'</h2>'));
+wrap.appendChild(el('<div class="nota stacco-3">'+escapeHtml(t("attr_archiviati_hint"))+'</div>'));
+vecchi.forEach(function(a){ wrap.appendChild(scheda(a)); });
+}
+return wrap;
+}
+
+function assettoForm(quale){
+var nuovo = (quale === "nuovo");
+var a = nuovo ? { id:"as"+Date.now(), nome:"", arco:(state.profile&&state.profile.arco)||null, mano:"dx" } : (assettoPerId(quale) || { id:quale });
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t(nuovo ? "attr_nuovo" : "attr_modifica")+'</h2>'));
+function campo(chiave, etichetta, valore, tipo, ph){
+card.appendChild(el('<div class="cp-select-row"><label>'+escapeHtml(etichetta)+'</label><input type="'+(tipo||"text")+'" id="as_'+chiave+'" value="'+escapeHtml(valore==null?"":String(valore))+'" placeholder="'+escapeHtml(ph||"")+'"></div>'));
+}
+campo("nome", t("attr_nome"), a.nome, "text", t("attr_nome_ph"));
+
+card.appendChild(el('<label class="attr-lbl">'+t("profile_arco")+'</label>'));
+var bowRow = el('<div class="chip-group attr-archi"></div>');
+var arcoSel = a.arco || null;
+Object.keys(PROFILE_BOW_LABEL).forEach(function(k){
+var chip = el('<div class="chip">'+PROFILE_BOW_LABEL[k]+'</div>');
+if(k === arcoSel) chip.classList.add("active");
+chip.addEventListener("click", function(){
+Array.prototype.forEach.call(bowRow.querySelectorAll(".chip"), function(x){ x.classList.remove("active"); });
+chip.classList.add("active"); arcoSel = k;
+});
+bowRow.appendChild(chip);
+});
+card.appendChild(bowRow);
+
+campo("marca", t("attr_marca"), a.marca, "text", "Bearpaw");
+campo("modello", t("attr_modello"), a.modello, "text", "Black Kiowa");
+campo("libbre", t("attr_libbre"), a.libbre, "number", "45");
+
+card.appendChild(el('<label class="attr-lbl">'+t("attr_mano")+'</label>'));
+var manoRow = el('<div class="chip-group attr-archi"></div>');
+var manoSel = a.mano || "dx";
+[["dx", t("attr_destro")], ["sx", t("attr_mancino")]].forEach(function(p){
+var chip = el('<div class="chip">'+escapeHtml(p[1])+'</div>');
+if(p[0] === manoSel) chip.classList.add("active");
+chip.addEventListener("click", function(){
+Array.prototype.forEach.call(manoRow.querySelectorAll(".chip"), function(x){ x.classList.remove("active"); });
+chip.classList.add("active"); manoSel = p[0];
+});
+manoRow.appendChild(chip);
+});
+card.appendChild(manoRow);
+
+campo("frecce", t("attr_frecce"), a.frecce, "text", "Easton X10");
+campo("spine", t("attr_spine"), a.spine, "text", "500");
+campo("lunghezza", t("attr_lunghezza"), a.lunghezza, "text", "28");
+campo("punta", t("attr_punta"), a.punta, "number", "100");
+card.appendChild(el('<div class="cp-select-row"><label>'+t("attr_note")+'</label><textarea class="input-field" id="as_note" rows="2"></textarea></div>'));
+
+var err = el('<div class="attr-err"></div>');
+card.appendChild(err);
+var salva = el('<button class="btn btn-primary btn-block">'+t("attr_salva")+'</button>');
+salva.addEventListener("click", function(){
+function v(k){ var n = document.getElementById("as_"+k); return n ? String(n.value||"").trim() : ""; }
+var nome = v("nome");
+if(!nome){ err.textContent = t("attr_serve_nome"); return; }
+var l = caricaAttrezzi();
+var dentro = l.filter(function(x){ return x.id === a.id; })[0];
+if(!dentro){ dentro = { id: a.id, archiviato:false }; l.push(dentro); }
+dentro.nome = nome; dentro.arco = arcoSel; dentro.mano = manoSel;
+["marca","modello","libbre","frecce","spine","lunghezza","punta","note"].forEach(function(k){ dentro[k] = v(k) || null; });
+// il primo assetto e' anche il predefinito: senza, ci sarebbe un elenco di
+// uno in cui nessuno e' quello buono.
+if(!l.filter(function(x){ return x.predefinito && !x.archiviato; }).length) dentro.predefinito = true;
+salvaAttrezzi(l);
+state.assettoAperto = null; save(); render();
+});
+card.appendChild(salva);
+var indietro = el('<button class="btn btn-ghost btn-block fin-azione">'+t("back_step")+'</button>');
+indietro.addEventListener("click", function(){ state.assettoAperto = null; save(); render(); });
+card.appendChild(indietro);
+setTimeout(function(){
+var nt = document.getElementById("as_note"); if(nt) nt.value = a.note || "";
+}, 0);
+return card;
+}
+
 /* ══════════════════ I TRAGUARDI ══════════════════
  * (21/08/2026, PRD §23, Fase 8.)
  *
@@ -16182,6 +16736,7 @@ card.appendChild(el('<h2 class="section-title">'+t("classifica_title",{mode:esca
 
 // La nota scritta a fine giro si rilegge qui: e' il posto in cui, a marzo, un
 // punteggio senza contesto non direbbe niente.
+if(h.assettoNome){ card.appendChild(el('<div class="diario-assetto">'+escapeHtml(t("attr_assetto"))+': '+escapeHtml(h.assettoNome)+'</div>')); }
 if(h.nota){ card.appendChild(el('<div class="diario-nota">'+escapeHtml(h.nota)+'</div>')); }
 var table = el('<table class="score-table"><thead><tr><th class="name-col">'+t("th_archer")+'</th><th>'+t("th_targets")+'</th><th>'+t("th_total")+'</th></tr></thead><tbody></tbody></table>');
 var tbody = table.querySelector("tbody");
@@ -18664,6 +19219,15 @@ state.roundActive = true;
 // senza, e il diario sara' misto per un po': e' onesto che lo sia, come per
 // il campo.
 state.startedAt = Date.now();
+/* L'ASSETTO CON CUI SI TIRA, deciso qui e non alla fine: alla fine si
+   ricorderebbe quello di adesso, non quello di allora. Si salva anche il
+   NOME, perche' il PRD chiede che un assetto archiviato resti leggibile nei
+   giri vecchi — e un codice senza nome, fra tre anni, non e' un riferimento:
+   e' una stringa. */
+var ass = (state.pendingAssetto && assettoPerId(state.pendingAssetto) && !assettoPerId(state.pendingAssetto).archiviato)
+        ? assettoPerId(state.pendingAssetto) : assettoPredefinito();
+state.assetto = ass ? ass.id : null;
+state.assettoNome = ass ? ass.nome : null;
 misura("giriIniziati"); ultimoTocco = null;
 state.archersBase = archers.slice(); // ordine della prima piazzola: da qui si ricava quello di tutte le altre
 state.rotBaseTarget = 1;
@@ -19936,6 +20500,8 @@ campo: state.campo || null,
 // Quanto e' durato, in minuti. `null` per i giri cominciati prima che l'app
 // segnasse l'ora: meglio niente che uno zero, che sembrerebbe un dato.
 durata: state.startedAt ? Math.max(1, Math.round((Date.now() - state.startedAt) / 60000)) : null,
+assetto: state.assetto || null,
+assettoNome: state.assettoNome || null,
 results: ranked.map(function(a){
 var entries = state.scores[a.id] || [];
 return { name: a.name, total: totalFor(a.id), isSelf: (a.isSelf === true), ownerUid: a.ownerUid || null, perTarget: entries.map(function(e){ return e.total; }), arrows: entries.map(function(e){ return e.arrows; }) };
