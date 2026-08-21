@@ -325,6 +325,8 @@ color-scheme:light;
 --navbar-on:var(--green-800); --navbar-pill:var(--green-800);
 --navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(30,45,34,0.14);
 --icona-accento:var(--clay-400);
+--scheda-bg:color-mix(in srgb, var(--clay-400) 10%, var(--surface-1));
+--scheda-bd:color-mix(in srgb, var(--clay-400) 45%, var(--surface-1));
 --navbar-hover:rgba(18,22,15,0.05);
 
 /* zone del bersaglio: restano quelle che sono, e' anatomia, non stile */
@@ -395,6 +397,8 @@ color-scheme:dark;
 --navbar-on:var(--green-400); --navbar-pill:color-mix(in srgb, var(--green-400) 18%, var(--surface-2));
 --navbar-pill-ink:var(--green-400); --navbar-shadow:rgba(0,0,0,0.45);
 --icona-accento:var(--clay-400);
+--scheda-bg:color-mix(in srgb, var(--clay-400) 14%, var(--surface-2));
+--scheda-bd:color-mix(in srgb, var(--clay-400) 50%, var(--surface-2));
 --navbar-hover:rgba(255,255,255,0.06);
 
 --qsag:var(--slate-400);
@@ -517,6 +521,8 @@ color-scheme:light;
 --navbar-on:var(--green-900); --navbar-pill:var(--green-900);
 --navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(18,22,15,0.22);
 --icona-accento:var(--clay-400);
+--scheda-bg:color-mix(in srgb, var(--clay-400) 12%, var(--surface-1));
+--scheda-bd:color-mix(in srgb, var(--clay-600) 65%, var(--surface-1));
 --navbar-hover:rgba(18,22,15,0.08);
 
 --qsag:var(--slate-700);
@@ -1287,6 +1293,22 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
   background:var(--surface-1); border:1px solid var(--border); display:flex;
   align-items:center; justify-content:center; color:var(--accent-soft); }
 .comp-riga.on{ border-color:var(--accent); background:var(--surface-1); }
+/* ══════════ LA SCHEDA SI APRE SOTTO LA RIGA (21/08/2026) ══════════ */
+/* Prima si apriva IN FONDO all'elenco: toccata una compagnia a meta' di
+   quindici righe, la sua scheda compariva sotto le altre quattordici — cioe'
+   fuori dallo schermo. Da fuori sembrava che toccare non avesse fatto niente,
+   e chi toccava di nuovo la chiudeva credendo di riprovare.
+   *La risposta a un tocco deve stare dove il dito ha toccato.*
+   Il fondo arancione molto diluito serve alla stessa domanda: dice che quel
+   blocco appartiene alla riga sopra e non e' un'altra sezione della pagina.
+   Le schede dentro perdono il proprio fondo, altrimenti dell'arancione si
+   vedrebbe solo una cornice di due pixel. */
+.comp-sotto{ background:var(--scheda-bg); border:1px solid var(--scheda-bd);
+  border-radius:var(--r-md); padding:var(--s-3) var(--s-3) var(--s-1);
+  margin:0 0 var(--s-3); }
+.comp-sotto .card{ background:none; border:0; box-shadow:none;
+  padding:0; margin-bottom:var(--s-4); }
+.comp-sotto .card + .card{ border-top:1px solid var(--scheda-bd); padding-top:var(--s-3); }
 /* ══════════ LA RICERCA DEI CAMPI (21/08/2026) ══════════ */
 /* La riga del campo e' la stessa .comp-riga dell'elenco compagnie, e non e'
    pigrizia: sono due elenchi della stessa cosa vista da due domande diverse,
@@ -13338,6 +13360,13 @@ return wrap;
 
 function compagnieScreen(){
 initCompagnieData();
+// Dove finisce la scheda della compagnia scelta: dentro l'elenco, subito
+// sotto la sua riga. Nasce vuoto e viene riempito piu' giu'; se per qualche
+// motivo l'elenco non viene costruito, in fondo c'e' il ripiego che lo
+// attacca al fondo della pagina — una scheda nel posto sbagliato e' meglio
+// di una scheda che sparisce.
+var sotto = el('<div class="comp-sotto"></div>');
+
 if(state.compagniaAttiva && !compagniaVisibile(state.compagniaAttiva)){
 state.compagniaAttiva = null;
 state.compagniaRegione = null;
@@ -13459,6 +13488,7 @@ compVaiGiu = !scelta;
 save(); render();
 });
 elenco.appendChild(riga);
+if(scelta){ elenco.appendChild(sotto); }
 });
 if(quante === 0){
 elenco.appendChild(el('<div class="nota">'+t("compagnie_classifica_empty")+'</div>'));
@@ -13488,7 +13518,7 @@ infoCard.appendChild(el('<div class="cp-info-row"><a href="https://'+compagnia.s
 infoCard.appendChild(el('<div class="cp-info-row placeholder">'+icon("pin",16)+' '+escapeHtml(compagnia.luogo)+'</div>'));
 infoCard.appendChild(el('<div class="cp-info-row placeholder">'+t("compagnie_no_dati")+'</div>'));
 }
-wrap.appendChild(infoCard);
+sotto.appendChild(infoCard);
 
 // ── SEZIONE ADMIN COMPAGNIA ─────────────────────────────────────────────
 (function(codice){
@@ -13518,17 +13548,17 @@ claimStatus.textContent = t("club_claim_error", { msg: (err && (err.code || err.
 });
 claimCard.appendChild(claimBtn);
 claimCard.appendChild(claimStatus);
-wrap.appendChild(claimCard);
+sotto.appendChild(claimCard);
 }
 return;
 }
 
 // Admin: scorciatoia allo spazio compagnia (i dati si modificano li')
-var adminCard = el('<div class="card" style="margin-bottom:var(--s-3);border:2px solid var(--accent-soft);"></div>');
+var adminCard = el('<div class="card"></div>');
 var openSpace = el('<button class="btn btn-primary btn-block">'+t("club_space_open")+'</button>');
 openSpace.addEventListener("click", function(){ state.clubSpaceCode = codice; state.screen = "club-space"; save(); render(); });
 adminCard.appendChild(openSpace);
-wrap.appendChild(adminCard);
+sotto.appendChild(adminCard);
 });
 })(state.compagniaAttiva);
 // ── FINE SEZIONE ADMIN ───────────────────────────────────────────────────
@@ -13545,7 +13575,7 @@ if(compagnia.completa){
 // prima non combaciano piu' con niente e non compaiono: e' giusto cosi',
 // erano finti.
 var cd = ensureCompagniaData(state.compagniaAttiva);
-wrap.appendChild(percorsiCard(state.compagniaAttiva, true));
+sotto.appendChild(percorsiCard(state.compagniaAttiva, true));
 
 var azCard = el('<div class="card"></div>');
 var actionsRow = el('<div class="row"></div>');
@@ -13555,13 +13585,18 @@ var classBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("scroll
 classBtn.addEventListener("click", function(){ state.compagniaForm = "classifica"; save(); render(); });
 actionsRow.appendChild(newRisBtn); actionsRow.appendChild(classBtn);
 azCard.appendChild(actionsRow);
-wrap.appendChild(azCard);
+sotto.appendChild(azCard);
 
-if(state.compagniaForm === "risultato"){ wrap.appendChild(compagnieRisultatoForm(cd)); }
-if(state.compagniaForm === "classifica"){ wrap.appendChild(compagnieClassificaCard(cd)); }
+if(state.compagniaForm === "risultato"){ sotto.appendChild(compagnieRisultatoForm(cd)); }
+if(state.compagniaForm === "classifica"){ sotto.appendChild(compagnieClassificaCard(cd)); }
 }
 }
 
+
+// IL RIPIEGO. Se la scheda non ha trovato la sua riga — elenco non
+// costruito, compagnia filtrata via — finisce in fondo alla pagina invece
+// di non comparire affatto.
+if(compagnia && !sotto.parentNode){ wrap.appendChild(sotto); }
 
 setTimeout(function(){
 if(compVaiGiu){
@@ -14817,7 +14852,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-campi-nell-app";
+var BUILD_STAMP = "2026-08-21-scheda-sotto-la-riga";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -14826,7 +14861,7 @@ var BUILD_STAMP = "2026-08-21-campi-nell-app";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-percorsi-proposti";
+var BUILD_PARENT = "2026-08-21-campi-nell-app";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
