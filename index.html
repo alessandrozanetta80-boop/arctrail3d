@@ -13258,9 +13258,7 @@ eroe.appendChild(el('<h1 class="home-domanda">'+escapeHtml(t("home_ready"))+'</h
 var az = el('<div class="home-azioni"></div>');
 var bTira = el('<button class="btn btn-primary btn-block">'+navIcon("azarco",20,"unica")+' '+escapeHtml(t("home_start"))+'</button>');
 bTira.addEventListener("click", function(){ state.tab = "tira"; save(); render(); });
-var bCampi = el('<button class="btn btn-ghost btn-block">'+navIcon("navfield",20,"due")+' '+escapeHtml(t("home_find"))+'</button>');
-bCampi.addEventListener("click", function(){ state.tab = "campi"; save(); render(); });
-az.appendChild(bTira); az.appendChild(bCampi);
+az.appendChild(bTira);
 eroe.appendChild(az);
 wrap.appendChild(eroe);
 }
@@ -16112,7 +16110,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-compagnia-senza-tinta";
+var BUILD_STAMP = "2026-08-21-una-porta-sola";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16121,7 +16119,7 @@ var BUILD_STAMP = "2026-08-21-compagnia-senza-tinta";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-meno-cose-piu-chiare";
+var BUILD_PARENT = "2026-08-21-compagnia-senza-tinta";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
