@@ -2309,6 +2309,58 @@ text-transform:uppercase; color:var(--text-3); }
 .pista-stato.in-corso{ color:var(--text-3); }
 .pista-stato.rotto{ color:var(--danger); }
 
+/* ══════════ IL FINALE DEL GIRO (21/08/2026, PRD 17) ══════════
+   Il numero grande e' il protagonista, e non e' vezzo: e' la sola cosa che si
+   guarda per prima dopo due ore di bosco. Tutto il resto della schermata —
+   classifica, piazzola per piazzola, scheda da firmare — resta dov'era, sotto:
+   quella e' la scheda di gara, e una scheda di gara non si ridisegna per fare
+   colpo. */
+.fin-hero{ text-align:center; }
+.fin-tit{ font-size:var(--t-xs); font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--text-3); }
+.fin-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums;
+  font-size:var(--t-3xl); font-weight:800; line-height:1.05; color:var(--text-1);
+  margin:var(--s-2) 0 var(--s-1); }
+.fin-pt{ font-family:inherit; font-size:var(--t-sm); font-weight:600;
+  color:var(--text-3); margin-left:var(--s-2); }
+.fin-vs{ font-size:var(--t-sm); color:var(--text-2); }
+/* Il confronto porta il colore SOLO quando dice qualcosa: sopra e sotto. Un
+   pari non e' una vittoria ne' una sconfitta, e tingerlo sarebbe raccontare
+   una storia che i numeri non hanno. */
+.fin-vs.su{ color:var(--success); font-weight:700; }
+.fin-vs.giu{ color:var(--text-2); }
+.fin-record{ display:inline-flex; align-items:center; gap:var(--s-2);
+  margin-top:var(--s-3); padding:var(--s-2) var(--s-3); border-radius:var(--r-lg);
+  background:var(--scheda-bg); border:1px solid var(--accent);
+  color:var(--accent); font-weight:800; font-size:var(--t-sm); }
+/* I numeri stanno su una riga sola e si stringono: sono da due a cinque, e il
+   loro numero dipende da cosa il giro sapeva davvero (la durata solo se
+   l'ora d'inizio c'era, la prima freccia solo dove ce n'e' piu' di una). */
+.fin-numeri{ display:flex; flex-wrap:wrap; justify-content:center;
+  gap:var(--s-3); margin-top:var(--s-4); }
+.fin-n{ flex:1 1 64px; min-width:0; }
+.fin-n-val{ font-family:var(--font-num); font-variant-numeric:tabular-nums;
+  font-size:var(--t-lg); font-weight:800; color:var(--text-1); }
+.fin-n-lbl{ font-size:var(--t-xs); color:var(--text-3); line-height:1.2; }
+.fin-zone-tit{ font-size:var(--t-xs); font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--text-3); margin-top:var(--s-4); }
+.fin-zone{ display:flex; flex-wrap:wrap; justify-content:center;
+  gap:var(--s-2); margin-top:var(--s-2); }
+/* Le pastiglie prendono i colori delle zone, gli stessi della tastiera: chi ha
+   appena passato due ore a toccare quei quattro tasti li riconosce senza
+   leggere. */
+.fin-zona{ display:inline-flex; align-items:center; gap:var(--s-1);
+  padding:var(--s-1) var(--s-3); border-radius:var(--r-lg);
+  font-size:var(--t-xs); font-weight:600; color:var(--solid-ink);
+  border:1px solid rgba(0,0,0,0.12); }
+.fin-zona b{ font-family:var(--font-num); font-variant-numeric:tabular-nums;
+  font-size:var(--t-sm); font-weight:800; }
+.fin-zona.superspot{ background:var(--score-ss); }
+.fin-zona.spot{ background:var(--score-spot); }
+.fin-zona.sagoma{ background:var(--score-sag); }
+.fin-zona.perfect{ background:var(--score-perfect); }
+.fin-zona.zero{ background:var(--score-zero); }
+
 /* ── il cartello del giro ritrovato (21/08/2026, PRD 16.7) ──
    Ha il bordo pieno, non tratteggiato come il promemoria del percorso in
    corso: quello ricorda una cosa che sai, questo dice una cosa che credevi
@@ -3451,6 +3503,15 @@ campi_title: "Trova un campo di tiro 3D",
 campi_btn: "Cerca campi vicino a te",
 campi_hint: "Non lo trovi in elenco? Questo apre Google Maps sui dintorni (richiede geolocalizzazione).",
 campi_searching: "Ricerca posizione\u2026",
+fin_punti: "punti",
+fin_vs_qui: "{n} rispetto al tuo giro precedente qui",
+fin_vs: "{n} rispetto al tuo giro precedente (altro campo)",
+fin_nessun_confronto: "È il primo giro di questo tipo: non c’è ancora niente con cui confrontarlo.",
+fin_record_nuovo: "Record personale",
+fin_zeri: "Frecce a zero",
+fin_durata: "Durata",
+fin_prima_freccia: "Media 1ª freccia",
+fin_dove: "Dove sono andate le frecce",
 giro_stato_locale: "Sul telefono",
 giro_stato_invio: "Invio…",
 giro_stato_salvato: "Al sicuro",
@@ -4036,6 +4097,15 @@ campi_title: "Find a 3D archery field",
 campi_btn: "Search fields near you",
 campi_hint: "Not in the list? This opens Google Maps nearby (needs location access).",
 campi_searching: "Locating\u2026",
+fin_punti: "points",
+fin_vs_qui: "{n} vs your previous round here",
+fin_vs: "{n} vs your previous round (different field)",
+fin_nessun_confronto: "First round of this kind — nothing to compare it with yet.",
+fin_record_nuovo: "Personal best",
+fin_zeri: "Missed arrows",
+fin_durata: "Duration",
+fin_prima_freccia: "1st arrow average",
+fin_dove: "Where the arrows went",
 giro_stato_locale: "On this phone",
 giro_stato_invio: "Syncing…",
 giro_stato_salvato: "Backed up",
@@ -4620,6 +4690,15 @@ campi_title: "Trouvez un terrain de tir 3D",
 campi_btn: "Rechercher des terrains \u00e0 proximit\u00e9",
 campi_hint: "Pas dans la liste ? Ceci ouvre Google Maps aux alentours (nécessite la géolocalisation).",
 campi_searching: "Localisation\u2026",
+fin_punti: "points",
+fin_vs_qui: "{n} par rapport à votre parcours précédent ici",
+fin_vs: "{n} par rapport à votre parcours précédent (autre terrain)",
+fin_nessun_confronto: "Premier parcours de ce type : rien à comparer pour l’instant.",
+fin_record_nuovo: "Record personnel",
+fin_zeri: "Flèches à zéro",
+fin_durata: "Durée",
+fin_prima_freccia: "Moyenne 1re flèche",
+fin_dove: "Où sont parties les flèches",
 giro_stato_locale: "Sur le téléphone",
 giro_stato_invio: "Envoi…",
 giro_stato_salvato: "Sauvegardé",
@@ -5204,6 +5283,15 @@ campi_title: "Finde einen 3D-Bogenparcours",
 campi_btn: "Pl\u00e4tze in der N\u00e4he suchen",
 campi_hint: "Nicht in der Liste? Das öffnet Google Maps in der Umgebung (benötigt Standortzugriff).",
 campi_searching: "Standort wird gesucht\u2026",
+fin_punti: "Punkte",
+fin_vs_qui: "{n} gegenüber deiner letzten Runde hier",
+fin_vs: "{n} gegenüber deiner letzten Runde (anderer Parcours)",
+fin_nessun_confronto: "Erste Runde dieser Art — noch nichts zum Vergleichen.",
+fin_record_nuovo: "Persönlicher Rekord",
+fin_zeri: "Pfeile mit null",
+fin_durata: "Dauer",
+fin_prima_freccia: "Schnitt 1. Pfeil",
+fin_dove: "Wohin die Pfeile gingen",
 giro_stato_locale: "Auf dem Telefon",
 giro_stato_invio: "Sendet…",
 giro_stato_salvato: "Gesichert",
@@ -5807,6 +5895,15 @@ campi_title: "Bir 3D at\u0131\u015f sahas\u0131 bul",
 campi_btn: "Yak\u0131n\u0131ndaki sahalar\u0131 ara",
 campi_hint: "Listede yok mu? Bu, çevredeki sahalarla Google Haritalar’ı açar (konum izni gerekir).",
 campi_searching: "Konum aran\u0131yor\u2026",
+fin_punti: "puan",
+fin_vs_qui: "Burada bir önceki tura göre {n}",
+fin_vs: "Bir önceki tura göre {n} (başka saha)",
+fin_nessun_confronto: "Bu türden ilk tur — henüz karşılaştıracak bir şey yok.",
+fin_record_nuovo: "Kişisel rekor",
+fin_zeri: "Sıfır ok",
+fin_durata: "Süre",
+fin_prima_freccia: "1. ok ortalaması",
+fin_dove: "Oklar nereye gitti",
 giro_stato_locale: "Telefonda",
 giro_stato_invio: "Gönderiliyor…",
 giro_stato_salvato: "Yedeklendi",
@@ -6404,6 +6501,15 @@ campi_title: "Найти площадку для 3D-стрельбы",
 campi_btn: "Искать площадки рядом",
 campi_hint: "Нет в списке? Откроется Google Карты поблизости (нужен доступ к местоположению).",
 campi_searching: "Поиск местоположения…",
+fin_punti: "очков",
+fin_vs_qui: "{n} к прошлому раунду здесь",
+fin_vs: "{n} к прошлому раунду (другая площадка)",
+fin_nessun_confronto: "Первый такой раунд — сравнивать пока не с чем.",
+fin_record_nuovo: "Личный рекорд",
+fin_zeri: "Промахи",
+fin_durata: "Длительность",
+fin_prima_freccia: "Среднее 1-й стрелы",
+fin_dove: "Куда попали стрелы",
 giro_stato_locale: "На телефоне",
 giro_stato_invio: "Отправка…",
 giro_stato_salvato: "В безопасности",
@@ -7001,6 +7107,15 @@ campi_title: "Encontrar un campo de tiro 3D",
 campi_btn: "Buscar campos cerca de ti",
 campi_hint: "¿No está en la lista? Esto abre Google Maps en los alrededores (requiere ubicación).",
 campi_searching: "Buscando ubicaci\u00f3n\u2026",
+fin_punti: "puntos",
+fin_vs_qui: "{n} respecto a tu ronda anterior aquí",
+fin_vs: "{n} respecto a tu ronda anterior (otro campo)",
+fin_nessun_confronto: "Es la primera ronda de este tipo: aún no hay con qué compararla.",
+fin_record_nuovo: "Récord personal",
+fin_zeri: "Flechas a cero",
+fin_durata: "Duración",
+fin_prima_freccia: "Media 1.ª flecha",
+fin_dove: "Dónde fueron las flechas",
 giro_stato_locale: "En el teléfono",
 giro_stato_invio: "Enviando…",
 giro_stato_salvato: "A salvo",
@@ -7598,6 +7713,15 @@ campi_title: "Hitta en 3D-bana",
 campi_btn: "S\u00f6k banor n\u00e4ra dig",
 campi_hint: "Inte i listan? Detta öppnar Google Maps i närheten (kräver platsåtkomst).",
 campi_searching: "S\u00f6ker plats\u2026",
+fin_punti: "poäng",
+fin_vs_qui: "{n} mot din förra runda här",
+fin_vs: "{n} mot din förra runda (annan bana)",
+fin_nessun_confronto: "Första rundan av det här slaget — inget att jämföra med än.",
+fin_record_nuovo: "Personbästa",
+fin_zeri: "Bommar",
+fin_durata: "Tid",
+fin_prima_freccia: "Snitt första pilen",
+fin_dove: "Var pilarna hamnade",
 giro_stato_locale: "I telefonen",
 giro_stato_invio: "Skickar…",
 giro_stato_salvato: "Säkrad",
@@ -8195,6 +8319,15 @@ campi_title: "Vind een 3D-schietbaan",
 campi_btn: "Zoek banen in de buurt",
 campi_hint: "Niet in de lijst? Dit opent Google Maps in de buurt (locatietoegang nodig).",
 campi_searching: "Locatie zoeken\u2026",
+fin_punti: "punten",
+fin_vs_qui: "{n} ten opzichte van je vorige ronde hier",
+fin_vs: "{n} ten opzichte van je vorige ronde (ander veld)",
+fin_nessun_confronto: "Eerste ronde van dit soort — nog niets om mee te vergelijken.",
+fin_record_nuovo: "Persoonlijk record",
+fin_zeri: "Missers",
+fin_durata: "Duur",
+fin_prima_freccia: "Gemiddelde 1e pijl",
+fin_dove: "Waar de pijlen heen gingen",
 giro_stato_locale: "Op de telefoon",
 giro_stato_invio: "Versturen…",
 giro_stato_salvato: "Veilig",
@@ -8953,7 +9086,8 @@ return db.collection("users").doc(currentUser.uid).collection("giro_aperto").doc
 var CAMPI_DEL_GIRO = ["roundActive","archersBase","rotBaseTarget","mode","format",
 "archers","scores","target","archerIndex","arrowIndex","pendingArrows",
 "liveBattutaTypes","awaitingStep","savedToHistory","roundEntryDate","firme",
-"consegna","sessionId","campo","doubleConfirm","arrowsPerTargetOverride"];
+"consegna","sessionId","campo","doubleConfirm","arrowsPerTargetOverride",
+"startedAt"];
 
 function pezzoDelGiro(){
 var out = {};
@@ -15176,7 +15310,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-giro-al-sicuro";
+var BUILD_STAMP = "2026-08-21-il-finale";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -15185,7 +15319,7 @@ var BUILD_STAMP = "2026-08-21-giro-al-sicuro";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-scheda-sotto-la-riga";
+var BUILD_PARENT = "2026-08-21-giro-al-sicuro";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -18170,6 +18304,12 @@ archers.sort(function(a,b){ return a.name.localeCompare(b.name, state.lang || "i
 var scores = {};
 archers.forEach(function(a){ scores[a.id] = []; });
 state.roundActive = true;
+// L'ORA IN CUI SI COMINCIA. (21/08/2026, PRD 17.1: fra i numeri del finale
+// c'e' la durata.) Non si puo' dedurre da niente — un giro non lascia
+// traccia dell'ora — quindi da oggi si segna. I giri gia' fatti resteranno
+// senza, e il diario sara' misto per un po': e' onesto che lo sia, come per
+// il campo.
+state.startedAt = Date.now();
 misura("giriIniziati"); ultimoTocco = null;
 state.archersBase = archers.slice(); // ordine della prima piazzola: da qui si ricava quello di tutte le altre
 state.rotBaseTarget = 1;
@@ -19221,6 +19361,176 @@ if(!pronta) card.appendChild(el('<div class="scheda-manca">'+escapeHtml(t("conse
 return card;
 }
 
+
+/* ══════════════════ IL FINALE: COS'HAI FATTO, NON SOLO QUANTO ══════════════
+ * (21/08/2026, PRD §17.)
+ *
+ * Fino a oggi la fine di un giro era una TABELLA: nomi, piazzole, totale, e la
+ * colonna «vs precedente». Giusta, e muta. Un percorso da due ore finisce con
+ * un foglio di calcolo, e la cosa che uno vuole sapere per prima — *quanto ho
+ * fatto, e sono andato meglio di ieri?* — bisogna cercarla dentro una riga.
+ *
+ * Il PRD chiama questa schermata «emotional payoff», che detto in italiano
+ * vuol dire: qui si guarda il punteggio, non si consulta.
+ *
+ * QUELLO CHE C'ERA RESTA TUTTO. La classifica, il punteggio piazzola per
+ * piazzola, la scheda da firmare, la stampa: sono la scheda di gara, e la
+ * scheda di gara non e' una decorazione. Il finale nuovo sta SOPRA, e in
+ * stampa non compare affatto.
+ *
+ * IL CONFRONTO E' COL GIRO PRECEDENTE **QUI**, cioe' sullo stesso campo, con
+ * lo stesso regolamento e lo stesso numero di piazzole. Confrontare 12
+ * piazzole con 24 non e' un confronto, e confrontare due campi diversi
+ * nemmeno: un percorso e' fatto di quel bosco, di quelle distanze. Se un giro
+ * cosi' non c'e', si scende al confronto senza campo — e si dice che il campo
+ * non c'entra, invece di far finta.
+ */
+function finaleNumeri(entries, mode){
+var tot = 0, zeri = 0, frecce = 0, prime = 0, quantePrime = 0;
+entries.forEach(function(e){
+tot += e.total || 0;
+(e.arrows || []).forEach(function(v, i){
+frecce++;
+if(v === 0) zeri++;
+if(i === 0){ prime += v; quantePrime++; }
+});
+});
+return { tot: tot, zeri: zeri, frecce: frecce,
+media: entries.length ? (tot / entries.length) : 0,
+primaFreccia: quantePrime ? (prime / quantePrime) : null };
+}
+
+/* DOVE SONO ANDATE LE FRECCE. (PRD §17.2, che la chiede «solo se il modo di
+   punteggio la sostiene».) Qui la sostiene: il valore di una freccia dice da
+   solo in che zona e' finita, perche' la tabella dei punti del modo associa
+   un numero a ogni zona — e cambia con la freccia, quindi si guarda anche
+   QUALE freccia era. Se un valore non combacia con nessuna zona non si
+   inventa: non viene contato, e il totale delle frecce lo dice. */
+function finaleZone(entries, mode){
+if(!mode || !mode.zones || !mode.scoring) return null;
+var conti = {}, riconosciute = 0;
+mode.zones.forEach(function(z){ conti[z.key] = 0; });
+conti.zero = 0;
+entries.forEach(function(e){
+(e.arrows || []).forEach(function(v, i){
+if(v === 0){ conti.zero++; riconosciute++; return; }
+var tabella = mode.scoring[i + 1] || mode.scoring[mode.arrowsPerTarget] || mode.scoring[1];
+if(!tabella) return;
+for(var k = 0; k < mode.zones.length; k++){
+var z = mode.zones[k];
+if(tabella[z.key] === v){ conti[z.key]++; riconosciute++; return; }
+}
+});
+});
+if(!riconosciute) return null;
+var righe = mode.zones.map(function(z){ return { lbl: t(z.labelKey), cls: z.cls, n: conti[z.key] }; });
+righe.push({ lbl: t("zero_label"), cls: "zero", n: conti.zero });
+return righe;
+}
+
+function finaleHero(ranked, histAll, mLabel){
+var io = state.archers.filter(function(a){ return a.isSelf === true; })[0] || ranked[0];
+if(!io) return null;
+var entries = state.scores[io.id] || [];
+if(!entries.length) return null;
+var mode = effectiveMode();
+var n = finaleNumeri(entries, mode);
+
+// Il giro di adesso sta gia' nello storico: si riconosce dalla data e si
+// salta, altrimenti si confronterebbe con se stesso.
+function suoTotale(h){
+var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0]
+     || (h.results || []).filter(function(x){ return x.name === io.name; })[0];
+return r ? r.total : null;
+}
+function stessoTipo(h){
+var hKey = h.modeKey || null;
+if(hKey ? hKey !== state.mode : h.modeLabel !== mLabel) return false;
+if((h.format || 0) !== state.format) return false;
+return h.date !== state.roundEntryDate;
+}
+var mioCampo = (state.campo || "").trim().toLowerCase();
+var precedente = null, stessoCampo = false;
+var passati = (histAll || []).filter(stessoTipo);
+if(mioCampo){
+for(var i = 0; i < passati.length; i++){
+if((passati[i].campo || "").trim().toLowerCase() !== mioCampo) continue;
+var v = suoTotale(passati[i]);
+if(v !== null){ precedente = v; stessoCampo = true; break; }
+}
+}
+if(precedente === null){
+for(var j = 0; j < passati.length; j++){
+var w = suoTotale(passati[j]);
+if(w !== null){ precedente = w; break; }
+}
+}
+// Il record si guarda fra giri dello STESSO tipo, e il primo giro non e' un
+// record: e' il primo. Una pastiglia «record personale» al primo giro e' un
+// complimento che non vuol dire niente, e insegna a non fidarsi della
+// pastiglia.
+var megliodiPrima = null;
+passati.forEach(function(h){ var v = suoTotale(h); if(v !== null && (megliodiPrima === null || v > megliodiPrima)) megliodiPrima = v; });
+var eRecord = (megliodiPrima !== null && n.tot > megliodiPrima);
+
+var card = el('<div class="card fin-hero no-print"></div>');
+card.appendChild(el('<div class="fin-tit">'+t("round_done")+'</div>'));
+card.appendChild(el('<div class="fin-num">'+n.tot+'<span class="fin-pt">'+t("fin_punti")+'</span></div>'));
+
+if(precedente !== null){
+var d = n.tot - precedente;
+var segno = d > 0 ? "+" : (d < 0 ? "−" : "±");
+var cl = d > 0 ? "su" : (d < 0 ? "giu" : "pari");
+var testo = (stessoCampo ? t("fin_vs_qui", { n: segno + Math.abs(d) }) : t("fin_vs", { n: segno + Math.abs(d) }));
+card.appendChild(el('<div class="fin-vs '+cl+'">'+escapeHtml(testo)+'</div>'));
+} else {
+card.appendChild(el('<div class="fin-vs">'+escapeHtml(t("fin_nessun_confronto"))+'</div>'));
+}
+
+if(eRecord){
+card.appendChild(el('<div class="fin-record">'+icon("target",16)+' '+escapeHtml(t("fin_record_nuovo"))+'</div>'));
+}
+
+// I NUMERI. Nessuno inventato: la durata compare solo se il giro sapeva a che
+// ora era cominciato, la prima freccia solo dove ce n'e' piu' di una.
+var numeri = el('<div class="fin-numeri"></div>');
+function num(valore, etichetta){
+var b = el('<div class="fin-n"></div>');
+b.appendChild(el('<div class="fin-n-val">'+escapeHtml(String(valore))+'</div>'));
+b.appendChild(el('<div class="fin-n-lbl">'+escapeHtml(etichetta)+'</div>'));
+numeri.appendChild(b);
+}
+num(entries.length + "/" + state.format, t("th_targets"));
+num((Math.round(n.media * 10) / 10).toString().replace(".", decimaleLocale()), t("diario_media"));
+num(n.zeri, t("fin_zeri"));
+if(state.startedAt){
+var min = Math.max(1, Math.round((Date.now() - state.startedAt) / 60000));
+num(min >= 60 ? (Math.floor(min/60) + "h " + (min%60) + "′") : (min + "′"), t("fin_durata"));
+}
+if(n.primaFreccia !== null && mode && targetArrowCount(mode) > 1){
+num((Math.round(n.primaFreccia * 10) / 10).toString().replace(".", decimaleLocale()), t("fin_prima_freccia"));
+}
+card.appendChild(numeri);
+
+var zone = finaleZone(entries, mode);
+if(zone){
+card.appendChild(el('<div class="fin-zone-tit">'+escapeHtml(t("fin_dove"))+'</div>'));
+var fascia = el('<div class="fin-zone"></div>');
+zone.forEach(function(z){
+fascia.appendChild(el('<span class="fin-zona '+z.cls+'"><b>'+z.n+'</b> '+escapeHtml(z.lbl)+'</span>'));
+});
+card.appendChild(fascia);
+}
+return card;
+}
+
+/* La virgola o il punto: in italiano 20,5 e in inglese 20.5. E' una decisione
+   di lingua, non di codice — come il «ziel 13» in tedesco. */
+function decimaleLocale(){
+try{ return (1.1).toLocaleString(state.lang || "it").indexOf(",") >= 0 ? "," : "."; }
+catch(e){ return ","; }
+}
+
 function summaryScreen(){
 var wrap = el('<div></div>');
 var mLabel = modeLabel(state.mode);
@@ -19240,6 +19550,9 @@ modeLabel: mLabel,
 // DOVE. Puo' essere null, ed e' giusto: chi non l'ha scritto non deve
 // ritrovarsi un campo inventato nel proprio diario.
 campo: state.campo || null,
+// Quanto e' durato, in minuti. `null` per i giri cominciati prima che l'app
+// segnasse l'ora: meglio niente che uno zero, che sembrerebbe un dato.
+durata: state.startedAt ? Math.max(1, Math.round((Date.now() - state.startedAt) / 60000)) : null,
 results: ranked.map(function(a){
 var entries = state.scores[a.id] || [];
 return { name: a.name, total: totalFor(a.id), isSelf: (a.isSelf === true), ownerUid: a.ownerUid || null, perTarget: entries.map(function(e){ return e.total; }), arrows: entries.map(function(e){ return e.arrows; }) };
@@ -19291,6 +19604,9 @@ tbody.appendChild(el(
 '<td>'+entries.length+'</td><td class="total-col">'+tot+'</td><td>'+deltaTxt+'</td></tr>'
 ));
 });
+// IL FINALE STA SOPRA LA SCHEDA: prima cosa hai fatto, poi il documento.
+var eroe = finaleHero(ranked, histAll, mLabel);
+if(eroe) wrap.appendChild(eroe);
 card.appendChild(table);
 wrap.appendChild(card);
 
