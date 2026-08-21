@@ -1188,6 +1188,12 @@ lunghezza della riga non c'entrano niente. Adesso il guscio ha una misura sola
 per tutte le schermate e la colonna di lettura vive dentro. */
 @media (min-width:760px){
 #app{ max-width:900px; padding:20px var(--s-5) 44px; }
+/* Le fasce escono dal margine della PAGINA, e sul computer il margine e' un
+   altro: senza questa riga restano rientrate di otto pixel e si rileggono
+   come le carte di prima. E' il motivo per cui il disegno nuovo, da computer,
+   sembrava identico al vecchio. */
+.strati, .menu-cols > .card, .menu-cols > .home-sezione > .card{
+  margin-left:calc(var(--s-5) * -1); margin-right:calc(var(--s-5) * -1); }
 #app.narrow > :not(header.top){ width:100%; max-width:620px; margin-left:auto; margin-right:auto; }
 header.top{ height:72px; margin-bottom:20px; }
 header.top .logo{ width:56px; height:56px; }
@@ -1487,16 +1493,35 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    oro, sabbia: la tavolozza di sempre. Questa e' una riforma di STRUTTURA. */
 .home-saluto{ font-size:var(--t-2xs); font-weight:700; letter-spacing:0.12em;
   text-transform:uppercase; color:var(--text-3); margin:0 0 var(--s-2); }
+/* La riga piu' grande dell'app: e' la domanda a cui la schermata risponde.
+   L'interlinea sotto l'uno perche' a questa taglia il carattere del marchio,
+   con l'interlinea normale, lascia una fessura in mezzo alla frase. */
 .home-domanda{ font-family:var(--font-display); font-size:var(--t-2xl);
-  font-weight:700; line-height:1.05; letter-spacing:-0.02em;
+  font-weight:700; line-height:0.98; letter-spacing:-0.03em;
   margin:0 0 var(--s-5); text-wrap:balance; }
 .home-azioni{ display:flex; flex-direction:column; gap:var(--s-3); }
 
 /* Gli strati escono dai margini della pagina: il gradino fra l'uno e l'altro
    e' il fondo pagina che si vede in mezzo, non un bordo disegnato. */
+/* LE FASCE VALGONO PER TUTTE LE SCHERMATE, NON SOLO PER LA HOME.
+   (21/08/2026, e questo era il pezzo mancante.) Gli strati erano nati come
+   una classe che si scriveva a mano: risultato, esistevano nella Home e in
+   nessun altro posto, e l'app restava quella di prima ovunque.
+   Adesso e' la CARTA di primo livello a diventare una fascia — cioe' il
+   contenitore che quindici schermate usano gia'. Non c'e' niente da riscrivere
+   schermata per schermata: il pezzo condiviso cambia, e cambiano tutte. */
 .strati{ margin:var(--s-5) calc(var(--s-4) * -1) 0; }
+.menu-cols > .card,
+.menu-cols > .home-sezione > .card{
+  margin-left:calc(var(--s-4) * -1); margin-right:calc(var(--s-4) * -1);
+  padding:var(--s-5) var(--s-4);
+  border-left:0; border-right:0; border-radius:0; }
+/* Una carta dentro una fascia torna a essere una carta: la fascia e' il
+   pavimento, non un modo di disegnare qualunque riquadro. */
+.strato .card, .card .card{ margin-left:0; margin-right:0;
+  border:1px solid var(--border); border-radius:var(--r-md); }
 .strato{ background:var(--surface-1); border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border); padding:var(--s-4);
+  border-bottom:1px solid var(--border); padding:var(--s-5) var(--s-4);
   margin-bottom:var(--s-2); }
 .strato:last-child{ margin-bottom:0; }
 /* Dentro uno strato una carta non e' piu' una carta: lo strato E' la carta.
@@ -1921,6 +1946,8 @@ body{
 html{ scroll-behavior:smooth; }
 html.no-smooth{ scroll-behavior:auto; }
 #app{ max-width:1060px; padding:20px var(--s-6) 76px; }
+.strati, .menu-cols > .card, .menu-cols > .home-sezione > .card{
+  margin-left:calc(var(--s-6) * -1); margin-right:calc(var(--s-6) * -1); }
 /* La colonna di lettura, non il guscio: vedi la nota nel blocco dei 760px.
    `> :not(header.top)` colpisce il nodo della schermata e basta — l'insegna
    resta larga, e sotto i 760px la barra in fondo non e' toccata perche' vive
@@ -2527,24 +2554,23 @@ text-transform:uppercase; color:var(--text-3); }
   gap:var(--s-2); width:100%; }
 .home-mese-eti{ flex:0 0 auto; font-size:var(--t-2xs); font-weight:700;
   letter-spacing:0.12em; text-transform:uppercase; color:var(--text-3); }
-.home-mese-dati{ width:100%; display:flex; margin-top:var(--s-3); }
+.home-mese-dati{ width:100%; display:flex; margin-top:var(--s-4); }
 .hm-voce{ flex:1 1 0; min-width:0; padding-left:var(--s-3);
   border-left:1px solid var(--border); }
 .hm-voce:first-child{ padding-left:0; border-left:0; }
+/* Il numero cresce e l'etichetta cala: e' la stessa distanza che c'e' fra
+   una cosa che si rilegge ogni volta e una che si sa a memoria. */
 .hm-voce b{ display:block; font-family:var(--font-num);
-  font-variant-numeric:tabular-nums; font-size:var(--t-xl); font-weight:800;
-  letter-spacing:-0.02em; line-height:1; color:var(--text-1); }
+  font-variant-numeric:tabular-nums; font-size:var(--t-2xl); font-weight:800;
+  letter-spacing:-0.03em; line-height:0.95; color:var(--text-1); }
 .hm-voce i{ display:block; font-style:normal; font-size:var(--t-2xs);
-  font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
-  color:var(--text-3); margin-top:var(--s-1); }
+  font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--text-3); margin-top:var(--s-2); }
 /* I giri del mese, uno per barra. Non e' il grafico: e' il POLSO del mese —
    quanto spesso si e' tirato e se l'ultimo e' stato meglio o peggio. Il
    grafico, che e' un'altra domanda, resta dentro. */
-.hm-barre{ display:flex; align-items:flex-end; gap:var(--s-1);
-  height:var(--s-5); margin-top:var(--s-4); }
-.hm-barre i{ flex:1 1 0; min-width:0; height:var(--alt,20%);
-  background:var(--border-strong); }
-.hm-barre i.ultima{ background:var(--clay); }
+.home-mese-vuota .hm-vuota-testo{ font-size:var(--t-sm); color:var(--text-3);
+  margin-top:var(--s-2); }
 /* La freccia gira: e' l'unico modo per sapere, guardando, se sotto c'e' altro. */
 .home-mese-freccia{ flex:0 0 auto; width:0; height:0; border-left:5px solid transparent;
   border-right:5px solid transparent; border-top:6px solid var(--text-3);
@@ -13161,10 +13187,6 @@ var precedente = miei[1] || null;
 return {
 media: Math.round(somma / base.length),
 giri: base.length,
-// Gli ultimi otto, dal piu' vecchio al piu' recente: e' il polso del mese
-// disegnato sotto le cifre. Otto perche' e' quanto ci sta senza che le
-// barre diventino fili.
-serie: miei.slice(0, 8).reverse(),
 piazzole: piazz,
 meglio: meglio,
 nelMese: mese.length > 0,
@@ -13401,6 +13423,18 @@ wrap.appendChild(eroe);
  * cercare apposta. *E si ricorda com'era lasciata.*
  */
 var n = homeNumeri();
+if(!n){
+/* PRIMA DEL PRIMO GIRO NON SI MOSTRANO QUATTRO ZERI: SI DICE COSA
+   COMPARIRA'. (21/08/2026.) La regola vecchia diceva che un cruscotto a zero
+   scoraggia, ed e' vera — ma la conclusione era sbagliata: si toglieva
+   l'intera fascia, e chi apriva l'app il primo giorno non sapeva nemmeno che
+   quei numeri esistessero. Una fascia vuota che dice cosa ci sara' e' un
+   invito; quattro zeri sono una pagella. */
+var vuota = el('<div class="strato home-mese-vuota"></div>');
+vuota.appendChild(el('<div class="home-mese-eti">'+escapeHtml(t("home_month"))+'</div>'));
+vuota.appendChild(el('<div class="hm-vuota-testo">'+escapeHtml(t("home_trend_few"))+'</div>'));
+strati.appendChild(vuota);
+}
 if(n){
 var aperta = (state.homeMese === true);
 var sez = el('<div class="strato home-mese'+(aperta ? " aperta" : "")+'"></div>');
@@ -13416,22 +13450,17 @@ var dati = el('<span class="home-mese-dati"></span>');
 dati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(p[1]))+'</b><i>'+escapeHtml(p[0])+'</i></span>'));
 });
 barra.appendChild(dati);
-// Il polso del mese: una barra per giro, l'ultima accesa. Da due giri in su,
-// perche' una barra sola non e' un andamento — e' un numero gia' scritto
-// due centimetri piu' su.
-if(n.serie && n.serie.length > 1){
-var alto = 0;
-n.serie.forEach(function(x){ if(x.punti > alto) alto = x.punti; });
-if(alto > 0){
-var barre = el('<span class="hm-barre" aria-hidden="true"></span>');
-n.serie.forEach(function(x, i){
-var b = el('<i'+(i === n.serie.length - 1 ? ' class="ultima"' : '')+'></i>');
-b.style.setProperty("--alt", Math.max(20, Math.round(x.punti / alto * 100)) + "%");
-barre.appendChild(b);
-});
-barra.appendChild(barre);
-}
-}
+/* QUI C'ERANO LE BARRE DEL MESE, E SONO STATE TOLTE. (21/08/2026, viste da
+   Alessandro sul telefono: «sono tutte storte, devono essere legate a
+   qualcosa».) Erano legate ai dati — una barra per giro, alta quanto il
+   punteggio — ma il difetto era piu' profondo del disegno: i punteggi di tiro
+   stanno stretti, fra 268 e 291. Una barra proporzionale o parte da zero, e
+   allora sono tutte uguali; o parte dal minimo del mese, e allora tre punti
+   di scarto diventano una barra doppia dell'altra.
+   *E' esattamente la bugia contro cui esiste gia' la regola dell'asse scritto
+   sul grafico dell'andamento.* Il grafico e' a un tocco di distanza, dice fra
+   che numeri si muove e sotto quattro giri non disegna niente: la domanda
+   aveva gia' una risposta onesta, e questa ne era una seconda disonesta. */
 barra.addEventListener("click", function(){ state.homeMese = !aperta; save(); render(); });
 sez.appendChild(barra);
 if(aperta){
@@ -16233,7 +16262,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-fondamenta";
+var BUILD_STAMP = "2026-08-21-respiro";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16242,7 +16271,7 @@ var BUILD_STAMP = "2026-08-21-fondamenta";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-strati";
+var BUILD_PARENT = "2026-08-21-fondamenta";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
