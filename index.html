@@ -1287,6 +1287,23 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
   background:var(--surface-1); border:1px solid var(--border); display:flex;
   align-items:center; justify-content:center; color:var(--accent-soft); }
 .comp-riga.on{ border-color:var(--accent); background:var(--surface-1); }
+/* ══════════ LA RICERCA DEI CAMPI (21/08/2026) ══════════ */
+/* La riga del campo e' la stessa .comp-riga dell'elenco compagnie, e non e'
+   pigrizia: sono due elenchi della stessa cosa vista da due domande diverse,
+   e due disegni direbbero che sono due cose. Cambia cosa sta in grassetto —
+   li' il nome, qui il luogo — che e' la differenza vera. */
+.campi-testa{ font-size:var(--t-xs); color:var(--muted); margin:var(--s-3) 0 var(--s-2); }
+/* La scheda si apre SOTTO la riga toccata, dentro l'elenco: una scheda che si
+   apre in fondo alla pagina fa sembrare che toccare non abbia fatto niente. */
+.campo-scheda{ background:var(--surface-1); border:1px solid var(--accent);
+  border-radius:var(--r-md); padding:var(--s-3); margin:0 0 var(--s-3); }
+.campo-scheda .chi{ color:var(--muted); }
+/* Un campo dove qualcuno si allena domani non e' lo stesso campo: e' l'unica
+   riga della scheda che parla di persone, e prende l'oro. */
+.campo-scheda .allena{ color:var(--gold); font-weight:700; }
+.campo-scheda .btn + .btn{ margin-top:var(--s-2); }
+.campi-nota{ font-size:var(--t-xs); color:var(--muted); margin-bottom:var(--s-2); }
+.campi-seguito{ margin-top:var(--s-3); }
 /* ══════════ I PERCORSI PROPOSTI (20/08/2026) ══════════ */
 /* Un percorso che aspetta si distingue senza leggere: il bordo tratteggiato
    dice «non e' ancora una cosa ferma» meglio di qualunque parola. */
@@ -2099,6 +2116,21 @@ transition:color var(--dur-2) var(--ease), background var(--dur-2) var(--ease); 
 /* in fondo, sul telefono: icona sopra, parola sotto */
 .tabn{ flex:1; min-height:var(--hit); padding:var(--s-2) var(--s-1);
 display:flex; flex-direction:column; align-items:center; gap:var(--s-1); }
+/* SUGLI SCHERMI PICCOLI SI STRINGE LA CELLA, NON LA PAROLA. (20/08/2026.)
+   Misurato a 320px — iPhone SE, e i telefoni piccoli che restano in giro —
+   la riga delle cinque voci SFORA la barra: 308px di contenuto in 305 in
+   italiano, 323 in russo, 325 in nederlandese. Le celle hanno flex:1 ma non
+   possono restringersi sotto il loro contenuto, quindi a sforare e la riga:
+   l ultima parola esce dallo schermo a destra. «Verenigingen» ne perdeva
+   venti pixel, e nessuna foto lo aveva mai mostrato perche nessuna foto era
+   larga 320.
+   Quattro pixel di fianco per cella fanno venti pixel in riga: tolti quelli,
+   tutte e nove le lingue rientrano intere. Si toglie l aria, non le lettere:
+   un troncamento con i puntini in una barra di navigazione e una parola che
+   non si legge, e la parola e meta del bersaglio da colpire col pollice. */
+@media (max-width:359px){
+.tabn{ padding-left:2px; padding-right:2px; }
+}
 /* 48x32 e icona 24: tre misure della scala, dove prima erano 46x29 e 21.
    Non e' vezzo di ordine. Le icone piene hanno l'inchiostro all'82% della
    loro finestra, quindi a 21px erano 17 punti di disegno dentro una
@@ -3366,8 +3398,19 @@ gara_type_title: "Tipo di gara",
 start_gara_btn: "Inizia gara",
 campi_title: "Trova un campo di tiro 3D",
 campi_btn: "Cerca campi vicino a te",
-campi_hint: "Apre Google Maps con i campi di tiro con l\u2019arco 3D nei dintorni (richiede geolocalizzazione).",
+campi_hint: "Non lo trovi in elenco? Questo apre Google Maps sui dintorni (richiede geolocalizzazione).",
 campi_searching: "Ricerca posizione\u2026",
+campi_cerca_ph: "Cerca un campo, un paese, una provincia…",
+campi_qui: "In {reg} · {n} campi",
+campi_conto: "{n} campi",
+campi_conto_uno: "1 campo",
+campi_qui_uno: "In {reg} · 1 campo",
+campi_nessuno: "Nessun campo per «{q}».",
+campi_nessuno_qui: "Nessun campo in elenco qui.",
+campi_troppi: "Altri {n} non in elenco: restringi la ricerca.",
+campi_portami: "Portami lì",
+campi_scheda: "Scheda della compagnia",
+campi_allenamenti_qui: "Allenamenti aperti qui: {n}",
 campi_filter_placeholder: "Filtra per nome o luogo…",
 history_empty: "I percorsi completati appariranno qui in ordine cronologico, con punteggio e piazzole.", history_empty_title: "Ancora nessun percorso", history_empty_cta: "Inizia il primo percorso", stats_rounds: "Gare", stats_avg: "Media", stats_best: "Record",
 history_clear: "Cancella storico",
@@ -3930,8 +3973,19 @@ gara_type_title: "Competition type",
 start_gara_btn: "Start competition",
 campi_title: "Find a 3D archery field",
 campi_btn: "Search fields near you",
-campi_hint: "Opens Google Maps with 3D archery fields nearby (requires location access).",
+campi_hint: "Not in the list? This opens Google Maps nearby (needs location access).",
 campi_searching: "Locating\u2026",
+campi_cerca_ph: "Search a field, a town, a province…",
+campi_qui: "In {reg} · {n} fields",
+campi_conto: "{n} fields",
+campi_conto_uno: "1 field",
+campi_qui_uno: "In {reg} · 1 field",
+campi_nessuno: "No field for “{q}”.",
+campi_nessuno_qui: "No fields listed here.",
+campi_troppi: "{n} more not listed: narrow the search.",
+campi_portami: "Take me there",
+campi_scheda: "Club details",
+campi_allenamenti_qui: "Open trainings here: {n}",
 campi_filter_placeholder: "Filter by name or location…",
 history_empty: "Completed rounds will appear here in chronological order, with score and targets.", history_empty_title: "No rounds yet", history_empty_cta: "Start your first round", stats_rounds: "Rounds", stats_avg: "Average", stats_best: "Best",
 history_clear: "Clear history",
@@ -4493,8 +4547,19 @@ gara_type_title: "Type de comp\u00e9tition",
 start_gara_btn: "Commencer la comp\u00e9tition",
 campi_title: "Trouvez un terrain de tir 3D",
 campi_btn: "Rechercher des terrains \u00e0 proximit\u00e9",
-campi_hint: "Ouvre Google Maps avec les terrains de tir 3D \u00e0 proximit\u00e9 (n\u00e9cessite la g\u00e9olocalisation).",
+campi_hint: "Pas dans la liste ? Ceci ouvre Google Maps aux alentours (nécessite la géolocalisation).",
 campi_searching: "Localisation\u2026",
+campi_cerca_ph: "Cherchez un terrain, une ville, un département…",
+campi_qui: "En {reg} · {n} terrains",
+campi_conto: "{n} terrains",
+campi_conto_uno: "1 terrain",
+campi_qui_uno: "En {reg} · 1 terrain",
+campi_nessuno: "Aucun terrain pour « {q} ».",
+campi_nessuno_qui: "Aucun terrain répertorié ici.",
+campi_troppi: "{n} autres non affichés : affinez la recherche.",
+campi_portami: "M’y emmener",
+campi_scheda: "Fiche du club",
+campi_allenamenti_qui: "Entraînements ouverts ici : {n}",
 campi_filter_placeholder: "Filtrer par nom ou lieu…",
 history_empty: "Les parcours termin\u00e9s appara\u00eetront ici par ordre chronologique, avec le score et les piquets.", history_empty_title: "Aucun parcours pour l’instant", history_empty_cta: "Commencer le premier parcours", stats_rounds: "Parcours", stats_avg: "Moyenne", stats_best: "Record",
 history_clear: "Effacer l\u2019historique",
@@ -5056,8 +5121,19 @@ gara_type_title: "Wettkampfart",
 start_gara_btn: "Wettkampf starten",
 campi_title: "Finde einen 3D-Bogenparcours",
 campi_btn: "Pl\u00e4tze in der N\u00e4he suchen",
-campi_hint: "\u00d6ffnet Google Maps mit 3D-Bogenpl\u00e4tzen in der N\u00e4he (ben\u00f6tigt Standortzugriff).",
+campi_hint: "Nicht in der Liste? Das öffnet Google Maps in der Umgebung (benötigt Standortzugriff).",
 campi_searching: "Standort wird gesucht\u2026",
+campi_cerca_ph: "Parcours, Ort oder Provinz suchen…",
+campi_qui: "In {reg} · {n} Parcours",
+campi_conto: "{n} Parcours",
+campi_conto_uno: "1 Parcours",
+campi_qui_uno: "In {reg} · 1 Parcours",
+campi_nessuno: "Kein Parcours für „{q}“.",
+campi_nessuno_qui: "Hier ist kein Parcours eingetragen.",
+campi_troppi: "{n} weitere nicht gezeigt: Suche eingrenzen.",
+campi_portami: "Route starten",
+campi_scheda: "Vereinsseite",
+campi_allenamenti_qui: "Offene Trainings hier: {n}",
 campi_filter_placeholder: "Nach Name oder Ort filtern…",
 history_empty: "Abgeschlossene Parcours erscheinen hier in chronologischer Reihenfolge, mit Punktzahl und Zielen.", history_empty_title: "Noch keine Runde", history_empty_cta: "Ersten Parcours starten", stats_rounds: "Runden", stats_avg: "Durchschnitt", stats_best: "Bestwert",
 history_clear: "Verlauf l\u00f6schen",
@@ -5638,8 +5714,19 @@ gara_type_title: "Yar\u0131\u015fma t\u00fcr\u00fc",
 start_gara_btn: "Yar\u0131\u015fmay\u0131 ba\u015flat",
 campi_title: "Bir 3D at\u0131\u015f sahas\u0131 bul",
 campi_btn: "Yak\u0131n\u0131ndaki sahalar\u0131 ara",
-campi_hint: "Yak\u0131n\u0131ndaki 3D okculuk sahalar\u0131yla Google Haritalar\u2019\u0131 a\u00e7ar (konum izni gerekir).",
+campi_hint: "Listede yok mu? Bu, çevredeki sahalarla Google Haritalar’ı açar (konum izni gerekir).",
 campi_searching: "Konum aran\u0131yor\u2026",
+campi_cerca_ph: "Saha, şehir ya da il ara…",
+campi_qui: "{reg} · {n} saha",
+campi_conto: "{n} saha",
+campi_conto_uno: "1 saha",
+campi_qui_uno: "{reg} · 1 saha",
+campi_nessuno: "«{q}» için saha yok.",
+campi_nessuno_qui: "Burada listelenmiş saha yok.",
+campi_troppi: "{n} tane daha var: aramayı daralt.",
+campi_portami: "Yol tarifi",
+campi_scheda: "Kulüp kartı",
+campi_allenamenti_qui: "Burada açık antrenman: {n}",
 campi_filter_placeholder: "Filtrele…",
 history_empty: "Tamamlanan parkurlar puan ve hedeflerle birlikte burada kronolojik s\u0131rayla g\u00f6r\u00fcn\u00fcr.", history_empty_title: "Hen\u00fcz parkur yok", history_empty_cta: "\u0130lk parkuru ba\u015flat", stats_rounds: "Yar\u0131\u015fmalar", stats_avg: "Ortalama", stats_best: "Rekor",
 history_clear: "Ge\u00e7mi\u015fi sil",
@@ -6214,8 +6301,19 @@ gara_type_title: "Тип соревнования",
 start_gara_btn: "Начать соревнование",
 campi_title: "Найти площадку для 3D-стрельбы",
 campi_btn: "Искать площадки рядом",
-campi_hint: "Открывает Google Карты с площадками для 3D-стрельбы из лука поблизости (требуется геолокация).",
+campi_hint: "Нет в списке? Откроется Google Карты поблизости (нужен доступ к местоположению).",
 campi_searching: "Поиск местоположения…",
+campi_cerca_ph: "Поиск площадки, города или провинции…",
+campi_qui: "{reg} · площадок: {n}",
+campi_conto: "Площадок: {n}",
+campi_conto_uno: "Площадок: 1",
+campi_qui_uno: "{reg} · площадок: 1",
+campi_nessuno: "Ничего не найдено по «{q}».",
+campi_nessuno_qui: "Здесь нет площадок в списке.",
+campi_troppi: "Ещё {n} не показаны: уточните поиск.",
+campi_portami: "Проложить маршрут",
+campi_scheda: "Карточка клуба",
+campi_allenamenti_qui: "Открытых тренировок здесь: {n}",
 campi_filter_placeholder: "Фильтр по названию или месту…",
 history_empty: "Завершённые маршруты появятся здесь в хронологическом порядке, с очками и мишенями.", history_empty_title: "Пока нет маршрутов", history_empty_cta: "Начать первый маршрут", stats_rounds: "Соревнования", stats_avg: "Среднее", stats_best: "Рекорд",
 history_clear: "Очистить историю",
@@ -6790,8 +6888,19 @@ gara_type_title: "Tipo de competici\u00f3n",
 start_gara_btn: "Iniciar competici\u00f3n",
 campi_title: "Encontrar un campo de tiro 3D",
 campi_btn: "Buscar campos cerca de ti",
-campi_hint: "Abre Google Maps con los campos de tiro con arco 3D cercanos (requiere geolocalizaci\u00f3n).",
+campi_hint: "¿No está en la lista? Esto abre Google Maps en los alrededores (requiere ubicación).",
 campi_searching: "Buscando ubicaci\u00f3n\u2026",
+campi_cerca_ph: "Busca un campo, un pueblo, una provincia…",
+campi_qui: "En {reg} · {n} campos",
+campi_conto: "{n} campos",
+campi_conto_uno: "1 campo",
+campi_qui_uno: "En {reg} · 1 campo",
+campi_nessuno: "Ningún campo para «{q}».",
+campi_nessuno_qui: "Aquí no hay campos en la lista.",
+campi_troppi: "{n} más no listados: afina la búsqueda.",
+campi_portami: "Llévame allí",
+campi_scheda: "Ficha del club",
+campi_allenamenti_qui: "Entrenamientos abiertos aquí: {n}",
 campi_filter_placeholder: "Filtrar…",
 history_empty: "Los recorridos completados aparecer\u00e1n aqu\u00ed en orden cronol\u00f3gico, con puntuaci\u00f3n y dianas.", history_empty_title: "A\u00fan no hay recorridos", history_empty_cta: "Iniciar el primer recorrido", stats_rounds: "Competiciones", stats_avg: "Media", stats_best: "R\u00e9cord",
 history_clear: "Borrar historial",
@@ -7366,8 +7475,19 @@ gara_type_title: "T\u00e4vlingstyp",
 start_gara_btn: "Starta t\u00e4vling",
 campi_title: "Hitta en 3D-bana",
 campi_btn: "S\u00f6k banor n\u00e4ra dig",
-campi_hint: "\u00d6ppnar Google Maps med 3D-bansk\u00e4ttebanor i n\u00e4rheten (kr\u00e4ver geolokalisering).",
+campi_hint: "Inte i listan? Detta öppnar Google Maps i närheten (kräver platsåtkomst).",
 campi_searching: "S\u00f6ker plats\u2026",
+campi_cerca_ph: "Sök bana, ort eller län…",
+campi_qui: "I {reg} · {n} banor",
+campi_conto: "{n} banor",
+campi_conto_uno: "1 bana",
+campi_qui_uno: "I {reg} · 1 bana",
+campi_nessuno: "Ingen bana för ”{q}”.",
+campi_nessuno_qui: "Inga banor listade här.",
+campi_troppi: "{n} till visas inte: förfina sökningen.",
+campi_portami: "Vägbeskrivning",
+campi_scheda: "Klubbens sida",
+campi_allenamenti_qui: "Öppna träningar här: {n}",
 campi_filter_placeholder: "Filtrera…",
 history_empty: "Avslutade rundor visas h\u00e4r i kronologisk ordning, med po\u00e4ng och m\u00e5l.", history_empty_title: "\u00c4nnu inga rundor", history_empty_cta: "Starta din f\u00f6rsta runda", stats_rounds: "T\u00e4vlingar", stats_avg: "Medel", stats_best: "Rekord",
 history_clear: "Rensa historik",
@@ -7942,8 +8062,19 @@ gara_type_title: "Type wedstrijd",
 start_gara_btn: "Wedstrijd starten",
 campi_title: "Vind een 3D-schietbaan",
 campi_btn: "Zoek banen in de buurt",
-campi_hint: "Opent Google Maps met 3D-boogschietbanen in de buurt (locatiebepaling vereist).",
+campi_hint: "Niet in de lijst? Dit opent Google Maps in de buurt (locatietoegang nodig).",
 campi_searching: "Locatie zoeken\u2026",
+campi_cerca_ph: "Zoek een veld, plaats of provincie…",
+campi_qui: "In {reg} · {n} velden",
+campi_conto: "{n} velden",
+campi_conto_uno: "1 veld",
+campi_qui_uno: "In {reg} · 1 veld",
+campi_nessuno: "Geen veld voor ‘{q}’.",
+campi_nessuno_qui: "Hier staan geen velden in de lijst.",
+campi_troppi: "Nog {n} niet getoond: verfijn de zoekopdracht.",
+campi_portami: "Breng me erheen",
+campi_scheda: "Clubkaart",
+campi_allenamenti_qui: "Open trainingen hier: {n}",
 campi_filter_placeholder: "Filteren…",
 history_empty: "Voltooide rondes verschijnen hier in chronologische volgorde, met score en doelen.", history_empty_title: "Nog geen rondes", history_empty_cta: "Start je eerste ronde", stats_rounds: "Wedstrijden", stats_avg: "Gemiddelde", stats_best: "Record",
 history_clear: "Geschiedenis wissen",
@@ -9879,6 +10010,15 @@ var compagnieAdminCache = null; // { codice: { adminUid, lat, lng, tel, email, s
    Vive fuori da render() perche' iscriversi a un allenamento ridisegna la
    schermata, e tornare alla prima scheda dopo ogni gesto sarebbe peggio. */
 var compTab = null;
+
+/* LA RICERCA DEI CAMPI VIVE FUORI DA render(), come compTab e per lo stesso
+   motivo: aprire la scheda di un campo ridisegna, e ritrovarsi il campo di
+   ricerca svuotato dopo ogni tocco sarebbe peggio di non averlo.
+   Non stanno in `state` di proposito: una ricerca e' un gesto, non una
+   preferenza, e riaprire l'app domani con dentro «Cerrione» di ieri sarebbe
+   un ricordo che nessuno ha chiesto. */
+var campiQ = "";
+var campoAttivo = null;
 
 /* TOCCATA UNA COMPAGNIA, LA SUA SCHEDA E' FUORI SCHERMO. L'elenco puo'
    essere lungo quindici righe, e la scheda si apre in fondo: da fuori sembra
@@ -12190,7 +12330,7 @@ b = el('<button class="tabn'+(on?" on":"")+'" aria-current="'+(on?"page":"false"
 '<span class="tab-pill">'+navIcon(tb[1],24)+'</span>'+
 '<span class="tab-lbl">'+tb[2]+'</span></button>');
 }
-b.addEventListener("click", function(){ state.tab = key; state.screen = "menu"; homeOverride = false; compTab = null; save(); forgetScroll(); render(); });
+b.addEventListener("click", function(){ state.tab = key; state.screen = "menu"; homeOverride = false; compTab = null; campiQ = ""; campoAttivo = null; save(); forgetScroll(); render(); });
 bar.appendChild(b);
 });
 return bar;
@@ -13551,6 +13691,7 @@ return card;
 // e senza ordine geografico, quindi inutile. Restano due ricerche su Google Maps
 // (link esterno, gratuito) e le scorciatoie utili.
 function campiScreen(){
+initCompagnieData();
 var wrap = el('<div></div>');
 
 function apriMaps(query){
@@ -13566,28 +13707,163 @@ navigator.geolocation.getCurrentPosition(function(pos){ openIt(pos.coords); }, f
 } else { openIt(null); }
 }
 
-var locCard = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
-locCard.appendChild(el('<h2 class="section-title">'+t("campi_title")+'</h2>'));
+/* ══ LA SCOPERTA AVVIENE QUI DENTRO. MAPS SERVE PER ANDARCI. ══════════════
+   (21/08/2026, PRD Fase 3 — «field discovery happens inside ArcTrail;
+   external maps used for navigation, not discovery».)
 
-var locBtn = el('<button class="btn btn-primary btn-block">'+icon("pin",18)+' '+t("campi_btn")+'</button>');
+   Fino a ieri questa sezione era UN TASTO che apriva Google Maps con una
+   frase di ricerca. Non era poco perche' faceva poco: era poco perche'
+   mandava via. Chi cercava un campo usciva dall'app, e quello che trovava
+   fuori — un cartello, un punto d'interesse messo da un passante — non
+   sapeva niente della compagnia che lo tiene, di chi ci si allena domani,
+   di come si chiama il referente.
+
+   E i campi ce li avevamo gia': SEICENTOSESSANTATRE, uno per compagnia, con
+   luogo, provincia, regione e contatti. Erano nel file, e si potevano
+   guardare solo passando da «Compagnie», cioe' cercando un'associazione
+   quando si stava cercando un posto.
+
+   IL CAMPO E' LA COMPAGNIA, in Italia: la riga mette avanti il LUOGO e
+   sotto il nome di chi lo tiene, che e' l'ordine in cui la domanda viene
+   fatta — *dove posso tirare?*, non *come si chiama l'associazione?*.
+
+   MAPS RESTA, in due punti e con due mestieri diversi: «Portami li'» dentro
+   la scheda di un campo che abbiamo gia' trovato (navigazione), e in fondo
+   la ricerca larga per chi e' fuori dall'elenco — all'estero, o in un posto
+   che non e' di nessuna compagnia. *Un ripiego dichiarato non e' una
+   scorciatoia nascosta.* */
+
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("campi_title")+'</h2>'));
+
+var inp = el('<input type="search" id="campiQ" class="input-field in-modulo" autocomplete="off" '+
+'placeholder="'+escapeHtml(t("campi_cerca_ph"))+'" value="'+escapeHtml(campiQ)+'" aria-label="'+escapeHtml(t("campi_cerca_ph"))+'">');
+card.appendChild(inp);
+
+var testa = el('<div class="campi-testa"></div>');
+var elenco = el('<div></div>');
+card.appendChild(testa);
+card.appendChild(elenco);
+wrap.appendChild(card);
+
+// La regione di partenza: quella della propria compagnia. Senza, la prima
+// cosa che si vede sarebbe un elenco di seicento campi in ordine alfabetico,
+// che non e' una risposta a nessuna domanda.
+var mioCod = myClubCode();
+var miaReg = (mioCod && typeof COMPAGNIE !== "undefined" && COMPAGNIE[mioCod]) ? COMPAGNIE[mioCod].regione : null;
+
+function eUnCampo(c){ return c && c.luogo && c.luogo !== "—"; }
+
+function trova(q){
+q = String(q||"").trim().toLowerCase();
+var out = [];
+Object.keys(COMPAGNIE).forEach(function(cod){
+var c = COMPAGNIE[cod];
+if(!compagniaVisibile(cod)) return;
+if(!eUnCampo(c)) return;
+if(q){
+var ago = (c.luogo+" "+c.nome+" "+c.provincia+" "+c.regione+" "+cod).toLowerCase();
+if(ago.indexOf(q) < 0) return;
+} else if(miaReg && c.regione !== miaReg) return;
+out.push(cod);
+});
+out.sort(function(x,y){ return String(COMPAGNIE[x].luogo).localeCompare(String(COMPAGNIE[y].luogo), "it"); });
+return out;
+}
+
+function schedaCampo(cod){
+var c = COMPAGNIE[cod];
+var box = el('<div class="campo-scheda"></div>');
+box.appendChild(el('<div class="cp-info-row">'+icon("pin",16)+' '+escapeHtml(c.luogo)+'</div>'));
+box.appendChild(el('<div class="cp-info-row chi">'+escapeHtml(c.nome)+' · '+escapeHtml(cod)+'</div>'));
+if(c.telefono){ box.appendChild(el('<div class="cp-info-row"><a href="tel:'+c.telefono.replace(/\s/g,"")+'">📞 '+escapeHtml(c.telefono)+'</a></div>')); }
+if(c.email){ box.appendChild(el('<div class="cp-info-row"><a href="mailto:'+escapeHtml(c.email)+'">✉️ '+escapeHtml(c.email)+'</a></div>')); }
+if(c.sito){ box.appendChild(el('<div class="cp-info-row"><a href="https://'+escapeHtml(c.sito)+'" target="_blank" rel="noopener">🌐 '+escapeHtml(c.sito)+'</a></div>')); }
+
+// Chi si allena qui, se qualcuno si allena qui. Un campo con un allenamento
+// gia' annunciato e' un'altra cosa da un campo e basta: e' una porta aperta.
+var quiOra = (openTrainings || []).filter(function(ot){ return ot.clubCode === cod; });
+if(quiOra.length){
+box.appendChild(el('<div class="cp-info-row allena">'+navIcon("azarco",16,"due")+' '+escapeHtml(t("campi_allenamenti_qui", { n: quiOra.length }))+'</div>'));
+}
+
+var vai = el('<button class="btn btn-primary btn-block btn-sm">'+icon("pin",16)+' '+t("campi_portami")+'</button>');
+vai.addEventListener("click", function(){ apriMaps(c.luogo + " " + c.nome); });
+box.appendChild(vai);
+
+var sch = el('<button class="btn btn-ghost btn-block btn-sm">'+t("campi_scheda")+'</button>');
+sch.addEventListener("click", function(){
+state.tab = "compagnie"; compTab = "scopri";
+state.compagniaRegione = c.regione; state.compagniaProvincia = null;
+state.compagniaAttiva = cod; compVaiGiu = true;
+save(); render();
+});
+box.appendChild(sch);
+return box;
+}
+
+function disegna(){
+var q = inp.value;
+var trovati = trova(q);
+var cercando = !!String(q||"").trim();
+
+var uno = (trovati.length === 1);
+var conto = uno ? t("campi_conto_uno") : t("campi_conto", { n: trovati.length });
+testa.textContent = (cercando || !miaReg) ? conto
+: (uno ? t("campi_qui_uno", { reg: miaReg }) : t("campi_qui", { reg: miaReg, n: trovati.length }));
+
+elenco.innerHTML = "";
+if(!trovati.length){
+elenco.appendChild(el('<div class="nota stacco">'+escapeHtml(cercando ? t("campi_nessuno", { q: String(q).trim() }) : t("campi_nessuno_qui"))+'</div>'));
+return;
+}
+
+// IL TETTO SI DICHIARA. Sessanta righe sono gia' piu' di quante se ne
+// guardino; ma un elenco che si ferma senza dirlo si legge come «non ce
+// n'e' altri», ed e' una bugia che si racconta da sola.
+var TETTO = 60;
+trovati.slice(0, TETTO).forEach(function(cod){
+var c = COMPAGNIE[cod];
+var scelto = (campoAttivo === cod);
+var riga = el('<button class="comp-riga'+(scelto?" on":"")+'"><span class="mini">'+navIcon("navfield",20,"due")+'</span>'
++ '<span class="al-dove"><b>'+escapeHtml(c.luogo)+'</b>'
++ '<span>'+escapeHtml(c.nome)+'</span></span></button>');
+riga.addEventListener("click", function(){
+campoAttivo = scelto ? null : cod;
+disegna();
+});
+elenco.appendChild(riga);
+if(scelto){ elenco.appendChild(schedaCampo(cod)); }
+});
+if(trovati.length > TETTO){
+elenco.appendChild(el('<div class="nota">'+escapeHtml(t("campi_troppi", { n: trovati.length - TETTO }))+'</div>'));
+}
+}
+
+// UN TASTO PER LETTERA, NON UN RIDISEGNO PER LETTERA. render() rifa' la
+// pagina intera e il fuoco tornerebbe da nessuna parte: qui si ridisegna
+// solo l'elenco, che e' l'unica cosa che cambia.
+inp.addEventListener("input", function(){ campiQ = inp.value; campoAttivo = null; disegna(); });
+disegna();
+
+// ── MAPS, IN FONDO E DICHIARATO ──────────────────────────────────────────
+var mapsCard = el('<div class="card campi-seguito"></div>');
+mapsCard.appendChild(el('<div class="campi-nota">'+t("campi_hint")+'</div>'));
+var locBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("pin",16)+' '+t("campi_btn")+'</button>');
 locBtn.addEventListener("click", function(){
 locBtn.innerHTML = t("campi_searching");
 // La frase che finisce su Maps era scritta a mano in italiano, per tutte e
 // nove le lingue: un olandese cercava "tiro con l'arco campo 3D" in Olanda.
 apriMaps(t("campi_maps_query"));
-setTimeout(function(){ locBtn.innerHTML = icon("pin",18)+' '+t("campi_btn"); }, 2500);
+setTimeout(function(){ locBtn.innerHTML = icon("pin",16)+' '+t("campi_btn"); }, 2500);
 });
-locCard.appendChild(locBtn);
-locCard.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin:var(--s-2) 0 var(--s-3);">'+t("campi_hint")+'</div>'));
-
-// Le due ricerche separate (campi / compagnie) davano quasi sempre gli stessi
-// risultati: in Italia il campo e' della compagnia. Ne resta una sola.
-wrap.appendChild(locCard);
+mapsCard.appendChild(locBtn);
+wrap.appendChild(mapsCard);
 
 // Scorciatoie: annunciare un allenamento e segnalare un problema.
 // La scelta del campo avviene dentro i rispettivi moduli, che hanno gia' la ricerca.
 if(currentUser){
-var actCard = el('<div class="card"></div>');
+var actCard = el('<div class="card campi-seguito"></div>');
 var annBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azarco",24,"due")+'</span><span class="menu-txt">'+t("campi_announce_btn")+'<span class="menu-sub">'+t("ot_section_hint")+'</span></span></button>');
 annBtn.addEventListener("click", function(){ state.screen = "open-training-create"; save(); render(); });
 actCard.appendChild(annBtn);
@@ -14541,7 +14817,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-20-percorsi-proposti";
+var BUILD_STAMP = "2026-08-21-campi-nell-app";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -14550,7 +14826,7 @@ var BUILD_STAMP = "2026-08-20-percorsi-proposti";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-20-area-compagnia";
+var BUILD_PARENT = "2026-08-20-percorsi-proposti";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
