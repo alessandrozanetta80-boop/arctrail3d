@@ -2135,9 +2135,29 @@ header.top .brand-title{ color:#FFFFFF; }
    il caso "verde su verde" — la sezione aperta che era l'unica illeggibile —
    non e' piu' nemmeno esprimibile. */
 .tabbar{ display:flex; z-index:60; }
+/* SU SAFARI LA BARRA IN BASSO SI MUOVE, E NON E' UN DIFETTO DI QUI.
+   (21/08/2026, visto da Alessandro su iPhone.) Scorrendo, Safari fa sparire e
+   ricomparire la sua barra degli indirizzi: la finestra VISIBILE cambia
+   altezza, quella di IMPAGINAZIONE no, e una barra `position:fixed` e'
+   agganciata alla seconda. Durante lo scorrimento per inerzia sale di qualche
+   pixel e poi si riassesta. Succede a qualunque barra fissa su iOS.
+
+   QUESTA E' UN'ATTENUAZIONE, NON UNA CURA, e va detto: `translateZ(0)` manda
+   la barra su un livello grafico suo, cosi' il browser la ridisegna da sola
+   invece di rifare la pagina a ogni fotogramma — il tremolio cala, il
+   riassestamento resta.
+
+   LA CURA VERA e' non avere una barra fissa: pagina che non scorre, contenuto
+   che scorre dentro una colonna alta quanto lo schermo, barra come ultima
+   riga. Tocca lo scorrimento salvato, la tastiera nei moduli, la stampa della
+   scheda e la pista: mezza giornata piu' prove su un telefono vero. Non e'
+   stato fatto il 21/08 per una ragione precisa: **installata sulla schermata
+   Home il problema non esiste**, perche' in modalita' app la barra degli
+   indirizzi non c'e' — ed e' come si usa sul campo. */
 .tabbar-bottom{ position:fixed; left:0; right:0; bottom:0; max-width:520px; margin:0 auto;
 border-top:2px solid var(--navbar-on); background:var(--navbar-bg);
-box-shadow:0 -10px 26px var(--navbar-shadow); padding-bottom:env(safe-area-inset-bottom); }
+box-shadow:0 -10px 26px var(--navbar-shadow); padding-bottom:env(safe-area-inset-bottom);
+transform:translateZ(0); -webkit-backface-visibility:hidden; backface-visibility:hidden; }
 .tabbar button{ background:none; border:1px solid transparent; cursor:pointer;
 font-family:inherit; color:var(--navbar-fg);
 transition:color var(--dur-2) var(--ease), background var(--dur-2) var(--ease); }
@@ -16122,7 +16142,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-barra-e-home";
+var BUILD_STAMP = "2026-08-21-barra-ferma-safari";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16131,7 +16151,7 @@ var BUILD_STAMP = "2026-08-21-barra-e-home";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-una-porta-sola";
+var BUILD_PARENT = "2026-08-21-barra-e-home";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
