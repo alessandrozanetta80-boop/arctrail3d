@@ -1604,8 +1604,14 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   background:none; border:none; padding:0; margin:0; text-align:left; color:inherit;
   font:inherit; cursor:pointer; min-height:var(--hit); }
 .al-dove{ flex:1 1 auto; min-width:0; }
-.al-dove b{ display:block; font-size:var(--t-md); font-weight:700; line-height:1.25;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* IL NOME DEL CAMPO PUO' ANDARE A CAPO UNA VOLTA. (21/08/2026.) Su 390px
+   «Fornasona/Cascina Ronco, Cerrione (BI)» diventava «Fornasona/Cascina...»:
+   il banco misurava che la riga CI STESSE, non che si leggesse. Due righe
+   bastano per quasi tutti i nomi veri; oltre le due i puntini restano, perche'
+   una riga d'elenco che cresce all'infinito non e' piu' un elenco. */
+.al-dove b{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  font-size:var(--t-md); font-weight:700; line-height:1.25;
+  overflow:hidden; white-space:normal; overflow-wrap:anywhere; }
 .al-dove span{ display:block; font-size:var(--t-sm); color:var(--muted); margin-top:2px;
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .al-chev{ flex:0 0 auto; color:var(--muted); font-size:var(--t-md); line-height:1;
@@ -2361,6 +2367,17 @@ text-transform:uppercase; color:var(--text-3); }
 .fin-zona.perfect{ background:var(--score-perfect); }
 .fin-zona.zero{ background:var(--score-zero); }
 .fin-azione{ margin-top:var(--s-2); }
+.fin-azione.via{ display:none; }
+.fin-nota{ display:none; margin-top:var(--s-2); }
+.fin-nota.aperta{ display:block; }
+.fin-nota-campo{ width:100%; resize:vertical; }
+.fin-nota-esito{ font-size:var(--t-xs); color:var(--success); min-height:16px;
+  margin-top:var(--s-1); }
+/* Nel diario la nota e' la voce di chi ha tirato, non un dato: corsivo, e il
+   filo a sinistra la stacca dai numeri senza farne un'altra scheda. */
+.diario-nota{ border-left:3px solid var(--scheda-bd); padding-left:var(--s-3);
+  margin:var(--s-2) 0 var(--s-3); font-style:italic; color:var(--text-2);
+  font-size:var(--t-sm); line-height:1.5; }
 
 /* ══════════ LA SCELTA DEL REGOLAMENTO (21/08/2026, PRD 14) ══════════
    Stessa riga dell'elenco compagnie e dei campi: sono tutti e tre elenchi in
@@ -3527,6 +3544,9 @@ campi_title: "Trova un campo di tiro 3D",
 campi_btn: "Cerca campi vicino a te",
 campi_hint: "Non lo trovi in elenco? Questo apre Google Maps sui dintorni (richiede geolocalizzazione).",
 campi_searching: "Ricerca posizione\u2026",
+fin_nota_btn: "Aggiungi una nota",
+fin_nota_ph: "Com’è andata? Vento, arco, distanze…",
+fin_nota_salvata: "Nota salvata",
 fin_vedi_andamento: "Vedi l’andamento",
 regola_somma: "si sommano tutte",
 regola_prima_a_segno: "vale la prima a segno",
@@ -4126,6 +4146,9 @@ campi_title: "Find a 3D archery field",
 campi_btn: "Search fields near you",
 campi_hint: "Not in the list? This opens Google Maps nearby (needs location access).",
 campi_searching: "Locating\u2026",
+fin_nota_btn: "Add a note",
+fin_nota_ph: "How did it go? Wind, bow, distances…",
+fin_nota_salvata: "Note saved",
 fin_vedi_andamento: "See your progress",
 regola_somma: "all arrows count",
 regola_prima_a_segno: "only the first hit counts",
@@ -4724,6 +4747,9 @@ campi_title: "Trouvez un terrain de tir 3D",
 campi_btn: "Rechercher des terrains \u00e0 proximit\u00e9",
 campi_hint: "Pas dans la liste ? Ceci ouvre Google Maps aux alentours (nécessite la géolocalisation).",
 campi_searching: "Localisation\u2026",
+fin_nota_btn: "Ajouter une note",
+fin_nota_ph: "Comment ça s’est passé ? Vent, arc, distances…",
+fin_nota_salvata: "Note enregistrée",
 fin_vedi_andamento: "Voir la progression",
 regola_somma: "toutes les flèches comptent",
 regola_prima_a_segno: "seule la 1re flèche touchée compte",
@@ -5322,6 +5348,9 @@ campi_title: "Finde einen 3D-Bogenparcours",
 campi_btn: "Pl\u00e4tze in der N\u00e4he suchen",
 campi_hint: "Nicht in der Liste? Das öffnet Google Maps in der Umgebung (benötigt Standortzugriff).",
 campi_searching: "Standort wird gesucht\u2026",
+fin_nota_btn: "Notiz hinzufügen",
+fin_nota_ph: "Wie lief es? Wind, Bogen, Distanzen…",
+fin_nota_salvata: "Notiz gespeichert",
 fin_vedi_andamento: "Verlauf ansehen",
 regola_somma: "alle Pfeile zählen",
 regola_prima_a_segno: "nur der erste Treffer zählt",
@@ -5939,6 +5968,9 @@ campi_title: "Bir 3D at\u0131\u015f sahas\u0131 bul",
 campi_btn: "Yak\u0131n\u0131ndaki sahalar\u0131 ara",
 campi_hint: "Listede yok mu? Bu, çevredeki sahalarla Google Haritalar’ı açar (konum izni gerekir).",
 campi_searching: "Konum aran\u0131yor\u2026",
+fin_nota_btn: "Not ekle",
+fin_nota_ph: "Nasıl geçti? Rüzgâr, yay, mesafeler…",
+fin_nota_salvata: "Not kaydedildi",
 fin_vedi_andamento: "Gelişimi gör",
 regola_somma: "tüm oklar sayılır",
 regola_prima_a_segno: "sadece ilk isabet sayılır",
@@ -6550,6 +6582,9 @@ campi_title: "Найти площадку для 3D-стрельбы",
 campi_btn: "Искать площадки рядом",
 campi_hint: "Нет в списке? Откроется Google Карты поблизости (нужен доступ к местоположению).",
 campi_searching: "Поиск местоположения…",
+fin_nota_btn: "Добавить заметку",
+fin_nota_ph: "Как прошло? Ветер, лук, дистанции…",
+fin_nota_salvata: "Заметка сохранена",
 fin_vedi_andamento: "Посмотреть динамику",
 regola_somma: "считаются все стрелы",
 regola_prima_a_segno: "считается только первое попадание",
@@ -7161,6 +7196,9 @@ campi_title: "Encontrar un campo de tiro 3D",
 campi_btn: "Buscar campos cerca de ti",
 campi_hint: "¿No está en la lista? Esto abre Google Maps en los alrededores (requiere ubicación).",
 campi_searching: "Buscando ubicaci\u00f3n\u2026",
+fin_nota_btn: "Añadir una nota",
+fin_nota_ph: "¿Cómo fue? Viento, arco, distancias…",
+fin_nota_salvata: "Nota guardada",
 fin_vedi_andamento: "Ver tu evolución",
 regola_somma: "se suman todas",
 regola_prima_a_segno: "solo cuenta la primera acertada",
@@ -7772,6 +7810,9 @@ campi_title: "Hitta en 3D-bana",
 campi_btn: "S\u00f6k banor n\u00e4ra dig",
 campi_hint: "Inte i listan? Detta öppnar Google Maps i närheten (kräver platsåtkomst).",
 campi_searching: "S\u00f6ker plats\u2026",
+fin_nota_btn: "Lägg till en anteckning",
+fin_nota_ph: "Hur gick det? Vind, båge, avstånd…",
+fin_nota_salvata: "Anteckning sparad",
 fin_vedi_andamento: "Se din utveckling",
 regola_somma: "alla pilar räknas",
 regola_prima_a_segno: "bara första träffen räknas",
@@ -8383,6 +8424,9 @@ campi_title: "Vind een 3D-schietbaan",
 campi_btn: "Zoek banen in de buurt",
 campi_hint: "Niet in de lijst? Dit opent Google Maps in de buurt (locatietoegang nodig).",
 campi_searching: "Locatie zoeken\u2026",
+fin_nota_btn: "Een notitie toevoegen",
+fin_nota_ph: "Hoe ging het? Wind, boog, afstanden…",
+fin_nota_salvata: "Notitie opgeslagen",
 fin_vedi_andamento: "Bekijk je voortgang",
 regola_somma: "alle pijlen tellen",
 regola_prima_a_segno: "alleen de eerste treffer telt",
@@ -9380,6 +9424,7 @@ modeKey: roundEntry.modeKey || null,
 modeLabel: roundEntry.modeLabel || "",
 results: packResults(roundEntry.results),
 consegna: roundEntry.consegna || null,
+nota: roundEntry.nota || null,
 savedAt: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true }).catch(function(err){
 cloudSyncState.lastError = describeFirebaseError(err);
@@ -9699,8 +9744,14 @@ a:'<path d="M128.87,23.33v18a3.78,3.78,0,0,1-3.78,3.78H74.91a3.78,3.78,0,0,1-3.7
    sono nate gia' al centro: resta a translate(0 0) per non avere due
    formati di icona nello stesso elenco. */
 azdiario: { t:'translate(0 0)',
-s:'<path d="M18,18H28.5V171.5H182V182H18Z"/><rect x="44" y="121.5" width="32" height="50"/><rect x="92" y="91.5" width="32" height="80"/>',
-a:'<rect x="140" y="57.5" width="32" height="114"/>' },
+/* LA TERZA COLONNA NON E' TUTTA ARANCIONE. (21/08/2026.) Era l'unica
+   macchia arancione piena della barra — 114 punti per 32 — e da spenta pesava
+   piu' di Tira, che e' la voce centrale e la cosa che si fa piu' spesso.
+   L'accento resta, ma diventa quello che e' negli altri disegni: un segno in
+   cima, come la porta della casetta o il punto nel mirino. Un quinto
+   dell'inchiostro arancione, stessa lettura. */
+s:'<path d="M18,18H28.5V171.5H182V182H18Z"/><rect x="44" y="121.5" width="32" height="50"/><rect x="92" y="91.5" width="32" height="80"/><rect x="140" y="87.5" width="32" height="84"/>',
+a:'<rect x="140" y="53.5" width="32" height="22"/>' },
 azavviso: { t:'translate(0 0)',
 s:'<path fill-rule="evenodd" d="M100,18L184,182H16ZM100,46.52L162.73,169H37.27Z"/>',
 a:'<rect x="93" y="74" width="14" height="50"/><circle cx="100" cy="141" r="8"/>' },
@@ -15435,7 +15486,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-dopo-il-giro";
+var BUILD_STAMP = "2026-08-21-tre-veloci";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -15444,7 +15495,7 @@ var BUILD_STAMP = "2026-08-21-dopo-il-giro";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-arancio-di-casa";
+var BUILD_PARENT = "2026-08-21-dopo-il-giro";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -15954,6 +16005,9 @@ var card = el('<div class="card"></div>');
 card.appendChild(el('<div class="print-header"><h2 style="margin:0;">ArcTrail 3D \u2014 '+escapeHtml(mLabel)+'</h2><div style="font-size:var(--t-sm);">'+dateStr+'</div></div>'));
 card.appendChild(el('<h2 class="section-title">'+t("classifica_title",{mode:escapeHtml(mLabel)})+'</h2>'));
 
+// La nota scritta a fine giro si rilegge qui: e' il posto in cui, a marzo, un
+// punteggio senza contesto non direbbe niente.
+if(h.nota){ card.appendChild(el('<div class="diario-nota">'+escapeHtml(h.nota)+'</div>')); }
 var table = el('<table class="score-table"><thead><tr><th class="name-col">'+t("th_archer")+'</th><th>'+t("th_targets")+'</th><th>'+t("th_total")+'</th></tr></thead><tbody></tbody></table>');
 var tbody = table.querySelector("tbody");
 h.results.forEach(function(r, i){
@@ -19390,6 +19444,33 @@ return !!fed && fed.garaModes.indexOf(state.mode) !== -1;
 // risulta di nuovo da firmare — e una consegna che si dimentica non e' una
 // consegna. La riga si ritrova per data, non per posizione: la prima della
 // lista e' quasi sempre questa, ma "quasi sempre" non e' un criterio.
+/* LA NOTA DEL GIRO. (21/08/2026, PRD §17.3 «Add Note».) Un punteggio senza
+   contesto, riletto a marzo, non dice niente: «giornata di vento», «arco
+   nuovo», «prima volta su questo campo» sono meta' della memoria di un giro.
+   Si scrive nello storico come la consegna — per data, non per posizione — e
+   va anche sul cloud, cosi' segue la persona invece del telefono. */
+function scriviNota(testo){
+if(!state.roundEntryDate) return false;
+var hist = loadHistory();
+for(var i=0;i<hist.length;i++){
+if(hist[i] && hist[i].date === state.roundEntryDate){
+hist[i].nota = testo || null;
+saveHistoryList(hist);
+backupRoundToCloud(hist[i]);
+return true;
+}
+}
+return false;
+}
+function leggiNota(){
+if(!state.roundEntryDate) return "";
+var hist = loadHistory();
+for(var i=0;i<hist.length;i++){
+if(hist[i] && hist[i].date === state.roundEntryDate) return hist[i].nota || "";
+}
+return "";
+}
+
 function scriviConsegna(c){
 if(!c || !state.roundEntryDate) return;
 var hist = loadHistory();
@@ -19794,6 +19875,29 @@ wrap.appendChild(newRound);
 // DAL RISULTATO ALL'ANDAMENTO. (21/08/2026, PRD 17.3.) Un punteggio da solo
 // non dice se stai migliorando: la risposta e' in Attivita', e prima da qui
 // non ci si arrivava — bisognava tornare al menu e cercarla.
+/* Si apre solo se la si chiede: chi ha appena finito un giro non deve
+   trovarsi davanti un foglio bianco da riempire. */
+var notaBox = el('<div class="fin-nota no-print"></div>');
+var notaTesto = leggiNota();
+var notaArea = el('<textarea class="input-field fin-nota-campo" rows="3" placeholder="'+escapeHtml(t("fin_nota_ph"))+'"></textarea>');
+notaArea.value = notaTesto;
+var notaEsito = el('<div class="fin-nota-esito"></div>');
+var notaApri = el('<button class="btn btn-ghost btn-block no-print fin-azione">'+icon("scroll",16)+' '+t("fin_nota_btn")+'</button>');
+notaApri.addEventListener("click", function(){
+notaBox.classList.add("aperta");
+notaApri.classList.add("via");
+try{ notaArea.focus(); }catch(e){}
+});
+// Si salva uscendo dal campo: un tasto «salva» in piu' per tre parole e' un
+// tasto che si dimentica di premere, e la nota sparirebbe senza dire niente.
+notaArea.addEventListener("change", function(){
+notaEsito.textContent = scriviNota(notaArea.value.trim()) ? t("fin_nota_salvata") : "";
+});
+notaBox.appendChild(notaArea);
+notaBox.appendChild(notaEsito);
+if(notaTesto){ notaBox.classList.add("aperta"); } else { wrap.appendChild(notaApri); }
+wrap.appendChild(notaBox);
+
 var andamentoBtn = el('<button class="btn btn-ghost btn-block no-print fin-azione">'+icon("chart",16)+' '+t("fin_vedi_andamento")+'</button>');
 andamentoBtn.addEventListener("click", function(){ state.tab = "attivita"; state.screen = "menu"; homeOverride = false; save(); render(); });
 wrap.appendChild(andamentoBtn);
