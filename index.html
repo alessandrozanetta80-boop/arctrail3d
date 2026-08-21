@@ -2403,6 +2403,30 @@ text-transform:uppercase; color:var(--text-3); }
 .attr-err{ font-size:var(--t-sm); color:var(--danger); min-height:18px;
   margin:var(--s-2) 0; }
 .diario-assetto{ font-size:var(--t-sm); color:var(--text-3); margin:var(--s-1) 0; }
+/* ══════════ IL PROFILO PUBBLICO (21/08/2026, PRD 43) ══════════
+   Una carta d'identita' sportiva, non una pagina personale: poche righe, un
+   tondo con le iniziali al posto di una foto che nessuno ha caricato. */
+.pp-card{ }
+.pp-testa{ display:flex; align-items:center; gap:var(--s-3); margin-bottom:var(--s-3); }
+.pp-tondo{ flex:0 0 auto; width:56px; height:56px; border-radius:50%;
+  background:var(--scheda-bg); border:1px solid var(--scheda-bd);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:var(--t-lg); color:var(--accent); }
+.pp-chi{ min-width:0; }
+.pp-chi b{ display:block; font-size:var(--t-lg); font-weight:800; line-height:1.2; }
+.pp-chi span{ display:block; font-size:var(--t-sm); color:var(--text-3); }
+.pp-riga{ font-size:var(--t-sm); color:var(--text-2); line-height:1.5; }
+.pp-bio{ margin-top:var(--s-3); font-size:var(--t-sm); line-height:1.55;
+  color:var(--text-1); }
+.pp-numeri{ margin-top:var(--s-4); }
+/* Chi non mostra i numeri non lascia un buco: lo dice. Un vuoto senza spiega
+   sembra un guasto dell'app, non una scelta di una persona. */
+.pp-privato{ margin-top:var(--s-4); font-size:var(--t-sm); color:var(--text-3);
+  font-style:italic; }
+/* Il titolo della chat e' diventato un tasto: deve restare un titolo. */
+.btn-nudo{ background:none; border:0; padding:0; margin:0; font:inherit;
+  color:inherit; text-align:left; width:100%; cursor:pointer; }
+.pp-apri .section-title{ margin:0; }
 .trag-conto{ flex:0 0 auto; font-family:var(--font-num);
   font-variant-numeric:tabular-nums; font-size:var(--t-xs); color:var(--text-3); }
 .fin-azione.via{ display:none; }
@@ -2899,14 +2923,43 @@ var publicProfilesCache = null;
 // per sempre. Nome e cognome restano in users/{uid}, che legge solo
 // l'interessato (e l'admin). Le regole usano hasOnly, che ammette un
 // sottoinsieme: nessuna modifica a firestore.rules.
+/* I NUMERI DEL PROFILO PUBBLICO SI CONTANO QUI E SI PUBBLICANO, NON SI
+   LASCIANO LEGGERE. (21/08/2026, PRD §43.) Lo storico vero sta in
+   `users/{uid}/storico`, che le regole chiudono a chiunque non sia il
+   proprietario — ed e' giusto che resti cosi': dentro c'e' ogni singola
+   freccia. Quello che gli altri vedono e' un riassunto di quattro numeri, che
+   scrive l'interessato quando salva il profilo.
+   *La privacy non e' un campo «nascondi»: e' l'assenza del dato.* Chi non
+   vuole mostrarli non pubblica un `false` — cancella i numeri, e da fuori non
+   c'e' niente da leggere. */
+function mieiNumeriPubblici(){
+var hist = loadHistory(), giri = 0, piazzole = 0, somma = 0, campi = {};
+for(var i = 0; i < hist.length; i++){
+var h = hist[i]; if(!h) continue;
+var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0];
+if(!r) continue;
+var pz = (r.perTarget && r.perTarget.length) ? r.perTarget.length : (h.format || 0);
+if(!pz) continue;
+giri++; piazzole += pz; somma += (r.total / pz);
+if(h.campo && String(h.campo).trim()) campi[String(h.campo).trim().toLowerCase()] = true;
+}
+if(!giri) return null;
+return { giri: giri, piazzole: piazzole, campi: Object.keys(campi).length,
+media: Math.round((somma / giri) * 10) / 10 };
+}
+
 function publicProfileData(d){
 d = d || {};
 var nascondi = (d.nomeNascosto === true);
+var numeri = (d.mostraNumeri === true) ? mieiNumeriPubblici() : null;
 return {
 username: d.username || "",
 nomeCognome: nascondi ? firebase.firestore.FieldValue.delete() : (d.nomeCognome || ""),
 compagnia: d.compagnia || null,
 compagniaNome: d.compagniaNome || "",
+arco: d.arco || null,
+bio: d.bio ? String(d.bio).slice(0, 160) : firebase.firestore.FieldValue.delete(),
+numeri: numeri || firebase.firestore.FieldValue.delete(),
 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
 };
 }
@@ -3068,6 +3121,7 @@ if(!state.profile && data.nomeCognome){
 state.profile = {
 nomeCognome: data.nomeCognome, nomeNascosto: (data.nomeNascosto === true), username: data.username || "",
 email: data.email || user.email, federazioni: data.federazioni || [], arco: data.arco || null, privacy: true,
+bio: data.bio || null, mostraNumeri: data.mostraNumeri === true,
 compagnia: data.compagnia || null, compagniaNome: data.compagniaNome || ""
 };
 }
@@ -3583,6 +3637,14 @@ campi_title: "Trova un campo di tiro 3D",
 campi_btn: "Cerca campi vicino a te",
 campi_hint: "Non lo trovi in elenco? Questo apre Google Maps sui dintorni (richiede geolocalizzazione).",
 campi_searching: "Ricerca posizione\u2026",
+pp_titolo: "Come ti presenti",
+pp_bio: "Due righe su di te",
+pp_bio_ph: "Es. Tiro da tre anni, longbow, mi trovi quasi sempre al campo il sabato.",
+pp_mostra_numeri: "Mostra i miei numeri agli altri arcieri",
+pp_mostra_numeri_sub: "Giri, piazzole, campi e media. Lo storico dei singoli giri resta tuo e non lo vede nessuno.",
+pp_non_trovato: "Questo profilo non c’è, o non è pubblico.",
+pp_numeri_privati: "Questo arciere non mostra i suoi numeri.",
+pp_campi: "Campi",
 attr_titolo: "Attrezzatura",
 attr_hint: "Gli assetti che usi. Ogni giro si porta dietro quello con cui l’hai tirato.",
 attr_nuovo: "+ Nuovo assetto",
@@ -4224,6 +4286,14 @@ campi_title: "Find a 3D archery field",
 campi_btn: "Search fields near you",
 campi_hint: "Not in the list? This opens Google Maps nearby (needs location access).",
 campi_searching: "Locating\u2026",
+pp_titolo: "How you introduce yourself",
+pp_bio: "Two lines about you",
+pp_bio_ph: "E.g. Shooting for three years, longbow, usually at the field on Saturdays.",
+pp_mostra_numeri: "Show my numbers to other archers",
+pp_mostra_numeri_sub: "Rounds, targets, fields and average. Your round-by-round history stays yours and nobody sees it.",
+pp_non_trovato: "This profile does not exist, or is not public.",
+pp_numeri_privati: "This archer does not show their numbers.",
+pp_campi: "Fields",
 attr_titolo: "Equipment",
 attr_hint: "The setups you use. Every round remembers the one you shot it with.",
 attr_nuovo: "+ New setup",
@@ -4864,6 +4934,14 @@ campi_title: "Trouvez un terrain de tir 3D",
 campi_btn: "Rechercher des terrains \u00e0 proximit\u00e9",
 campi_hint: "Pas dans la liste ? Ceci ouvre Google Maps aux alentours (nécessite la géolocalisation).",
 campi_searching: "Localisation\u2026",
+pp_titolo: "Comment vous vous présentez",
+pp_bio: "Deux lignes sur vous",
+pp_bio_ph: "Ex. Je tire depuis trois ans, longbow, souvent au terrain le samedi.",
+pp_mostra_numeri: "Montrer mes chiffres aux autres archers",
+pp_mostra_numeri_sub: "Parcours, cibles, terrains et moyenne. L’historique détaillé reste le vôtre et personne ne le voit.",
+pp_non_trovato: "Ce profil n’existe pas, ou n’est pas public.",
+pp_numeri_privati: "Cet archer ne montre pas ses chiffres.",
+pp_campi: "Terrains",
 attr_titolo: "Équipement",
 attr_hint: "Vos configurations. Chaque parcours retient celle avec laquelle vous avez tiré.",
 attr_nuovo: "+ Nouvelle configuration",
@@ -5504,6 +5582,14 @@ campi_title: "Finde einen 3D-Bogenparcours",
 campi_btn: "Pl\u00e4tze in der N\u00e4he suchen",
 campi_hint: "Nicht in der Liste? Das öffnet Google Maps in der Umgebung (benötigt Standortzugriff).",
 campi_searching: "Standort wird gesucht\u2026",
+pp_titolo: "Wie du dich vorstellst",
+pp_bio: "Zwei Zeilen über dich",
+pp_bio_ph: "z.B. Schieße seit drei Jahren, Langbogen, samstags meist am Parcours.",
+pp_mostra_numeri: "Meine Zahlen anderen Schützen zeigen",
+pp_mostra_numeri_sub: "Runden, Ziele, Parcours und Schnitt. Deine Runde-für-Runde-Historie bleibt deine und sieht niemand.",
+pp_non_trovato: "Dieses Profil gibt es nicht, oder es ist nicht öffentlich.",
+pp_numeri_privati: "Dieser Schütze zeigt seine Zahlen nicht.",
+pp_campi: "Parcours",
 attr_titolo: "Ausrüstung",
 attr_hint: "Deine Setups. Jede Runde merkt sich, mit welchem du geschossen hast.",
 attr_nuovo: "+ Neues Setup",
@@ -6163,6 +6249,14 @@ campi_title: "Bir 3D at\u0131\u015f sahas\u0131 bul",
 campi_btn: "Yak\u0131n\u0131ndaki sahalar\u0131 ara",
 campi_hint: "Listede yok mu? Bu, çevredeki sahalarla Google Haritalar’ı açar (konum izni gerekir).",
 campi_searching: "Konum aran\u0131yor\u2026",
+pp_titolo: "Kendini nasıl tanıtıyorsun",
+pp_bio: "Kendin hakkında iki satır",
+pp_bio_ph: "Örn. Üç yıldır atış yapıyorum, longbow, cumartesileri sahadaım.",
+pp_mostra_numeri: "Sayılarımı diğer okculara göster",
+pp_mostra_numeri_sub: "Tur, hedef, saha ve ortalama. Tur tur geçmişin sende kalır, kimse görmez.",
+pp_non_trovato: "Bu profil yok ya da herkese açık değil.",
+pp_numeri_privati: "Bu okçu sayılarını göstermiyor.",
+pp_campi: "Saha",
 attr_titolo: "Ekipman",
 attr_hint: "Kullandığın setler. Her tur hangisiyle atış yaptığını hatırlar.",
 attr_nuovo: "+ Yeni set",
@@ -6816,6 +6910,14 @@ campi_title: "Найти площадку для 3D-стрельбы",
 campi_btn: "Искать площадки рядом",
 campi_hint: "Нет в списке? Откроется Google Карты поблизости (нужен доступ к местоположению).",
 campi_searching: "Поиск местоположения…",
+pp_titolo: "Как вы себя представляете",
+pp_bio: "Две строки о себе",
+pp_bio_ph: "Напр. Стреляю три года, лонгбоу, по субботам на площадке.",
+pp_mostra_numeri: "Показывать мои цифры другим",
+pp_mostra_numeri_sub: "Раунды, мишени, площадки и среднее. История по раундам остаётся вашей.",
+pp_non_trovato: "Такого профиля нет или он не публичный.",
+pp_numeri_privati: "Этот стрелок не показывает свои цифры.",
+pp_campi: "Площадки",
 attr_titolo: "Снаряжение",
 attr_hint: "Ваши комплекты. Каждый раунд помнит, чем вы стреляли.",
 attr_nuovo: "+ Новый комплект",
@@ -7469,6 +7571,14 @@ campi_title: "Encontrar un campo de tiro 3D",
 campi_btn: "Buscar campos cerca de ti",
 campi_hint: "¿No está en la lista? Esto abre Google Maps en los alrededores (requiere ubicación).",
 campi_searching: "Buscando ubicaci\u00f3n\u2026",
+pp_titolo: "Cómo te presentas",
+pp_bio: "Dos líneas sobre ti",
+pp_bio_ph: "Ej. Tiro desde hace tres años, longbow, los sábados suelo estar en el campo.",
+pp_mostra_numeri: "Mostrar mis números a otros arqueros",
+pp_mostra_numeri_sub: "Rondas, dianas, campos y media. Tu historial ronda a ronda sigue siendo tuyo y no lo ve nadie.",
+pp_non_trovato: "Este perfil no existe, o no es público.",
+pp_numeri_privati: "Este arquero no muestra sus números.",
+pp_campi: "Campos",
 attr_titolo: "Equipo",
 attr_hint: "Tus configuraciones. Cada ronda recuerda con cuál la tiraste.",
 attr_nuovo: "+ Nueva configuración",
@@ -8122,6 +8232,14 @@ campi_title: "Hitta en 3D-bana",
 campi_btn: "S\u00f6k banor n\u00e4ra dig",
 campi_hint: "Inte i listan? Detta öppnar Google Maps i närheten (kräver platsåtkomst).",
 campi_searching: "S\u00f6ker plats\u2026",
+pp_titolo: "Hur du presenterar dig",
+pp_bio: "Två rader om dig",
+pp_bio_ph: "T.ex. Skjuter sedan tre år, longbow, oftast på banan på lördagar.",
+pp_mostra_numeri: "Visa mina siffror för andra skyttar",
+pp_mostra_numeri_sub: "Rundor, mål, banor och snitt. Din historik runda för runda förblir din och ingen ser den.",
+pp_non_trovato: "Den här profilen finns inte, eller är inte offentlig.",
+pp_numeri_privati: "Den här skytten visar inte sina siffror.",
+pp_campi: "Banor",
 attr_titolo: "Utrustning",
 attr_hint: "Dina uppställningar. Varje runda minns vilken du sköt med.",
 attr_nuovo: "+ Ny uppställning",
@@ -8775,6 +8893,14 @@ campi_title: "Vind een 3D-schietbaan",
 campi_btn: "Zoek banen in de buurt",
 campi_hint: "Niet in de lijst? Dit opent Google Maps in de buurt (locatietoegang nodig).",
 campi_searching: "Locatie zoeken\u2026",
+pp_titolo: "Hoe je jezelf voorstelt",
+pp_bio: "Twee regels over jou",
+pp_bio_ph: "Bijv. Schiet al drie jaar, longbow, zaterdags meestal op het veld.",
+pp_mostra_numeri: "Mijn cijfers aan andere schutters tonen",
+pp_mostra_numeri_sub: "Rondes, doelen, velden en gemiddelde. Je ronde-voor-ronde geschiedenis blijft van jou en niemand ziet die.",
+pp_non_trovato: "Dit profiel bestaat niet, of is niet openbaar.",
+pp_numeri_privati: "Deze schutter toont zijn cijfers niet.",
+pp_campi: "Velden",
 attr_titolo: "Uitrusting",
 attr_hint: "Je opstellingen. Elke ronde onthoudt waarmee je hebt geschoten.",
 attr_nuovo: "+ Nieuwe opstelling",
@@ -10236,7 +10362,7 @@ app.style.paddingBottom = "92px";
 // e un modulo o una chat larghi tutto lo schermo si leggono peggio.
 var NARROW_SCREENS = {
 "round":1, "summary":1, "registration":1, "setup":1, "profile-registration":1,
-"profile-edit":1, "attrezzatura":1, "training-setup":1, "gara-setup":1, "open-training-create":1,
+"profile-edit":1, "attrezzatura":1, "profilo-pubblico":1, "training-setup":1, "gara-setup":1, "open-training-create":1,
 "field-report":1, "dm-chat":1, "ot-chat":1, "session-follow":1, "info":1,
 "account-delete":1, "blocked-users":1
 };
@@ -10593,6 +10719,7 @@ case "campi": app.appendChild(campiScreen()); break;
 case "compagnie": app.appendChild(compagnieScreen()); break;
 case "club-space": app.appendChild(clubSpaceScreen()); break;
 case "attrezzatura": app.appendChild(attrezzaturaScreen()); break;
+case "profilo-pubblico": app.appendChild(profiloPubblicoScreen()); break;
 case "profile-edit": app.appendChild(profileEditScreen()); break;
 case "history": app.appendChild(journalScreen()); break;
 case "history-detail": app.appendChild(historyDetailScreen()); break;
@@ -11531,6 +11658,17 @@ if(savedMsg) savedMsg.textContent = "";
 bowRow.appendChild(chip);
 });
 card.appendChild(bowRow);
+
+/* COME TI PRESENTI, E COSA FAI VEDERE. (21/08/2026, PRD §43.)
+   Due righe di presentazione e un interruttore per i numeri. L'interruttore
+   parte SPENTO e non e' timidezza: e' che i numeri di un arciere sono suoi, e
+   una app che li pubblica di sua iniziativa ha deciso al posto suo. Chi vuole
+   farsi vedere lo dice in un tocco. */
+card.appendChild(el('<h2 class="section-title stacco">'+t("pp_titolo")+'</h2>'));
+card.appendChild(el('<div class="cp-select-row"><label>'+t("pp_bio")+'</label><textarea class="input-field" id="peBio" rows="2" maxlength="160" placeholder="'+escapeHtml(t("pp_bio_ph"))+'"></textarea></div>'));
+card.appendChild(el('<label class="checkbox-row sotto-campo"><input type="checkbox" id="peNumeri"'+(profile.mostraNumeri?' checked':'')+'><span><b>'+escapeHtml(t("pp_mostra_numeri"))+'</b><br><span class="nota">'+escapeHtml(t("pp_mostra_numeri_sub"))+'</span></span></label>'));
+setTimeout(function(){ var b = document.getElementById("peBio"); if(b) b.value = profile.bio || ""; }, 0);
+
 // L'ARCO PRINCIPALE RESTA UNA COSA SOLA — e' quello che compare accanto al
 // tuo nome agli altri arcieri. L'attrezzatura vera, con libbre, frecce e
 // spine, sta dietro questa porta: nel profilo sarebbero venti campi in mezzo
@@ -11722,9 +11860,12 @@ var tesseraInput = fedWrap.querySelector('input[data-tessera-fed="'+code+'"]');
 federazioni.push({ code: code, tessera: tesseraInput ? tesseraInput.value.trim() : "" });
 }
 });
+var bioVal = (function(){ var b = document.getElementById("peBio"); return b ? String(b.value||"").trim().slice(0,160) : (profile.bio||""); })();
+var mostraNum = (function(){ var b = document.getElementById("peNumeri"); return b ? !!b.checked : (profile.mostraNumeri === true); })();
 state.profile = {
 nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, email: profile.email,
 federazioni: federazioni, arco: arcoSel, privacy: true,
+bio: bioVal || null, mostraNumeri: mostraNum,
 compagnia: clubCod, compagniaNome: clubNome
 };
 state.theme = themeSel;
@@ -11732,9 +11873,10 @@ save();
 if(!DEV_MODE && currentUser && db){
 db.collection("users").doc(currentUser.uid).update({
 nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, federazioni: federazioni, arco: arcoSel,
+bio: bioVal || null, mostraNumeri: mostraNum,
 compagnia: clubCod, compagniaNome: clubNome
 }).then(function(){
-syncMyPublicProfile({ username: username, nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, compagnia: clubCod, compagniaNome: clubNome });
+syncMyPublicProfile({ username: username, nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, compagnia: clubCod, compagniaNome: clubNome, arco: arcoSel, bio: bioVal, mostraNumeri: mostraNum });
 }).catch(function(){});
 }
 savedMsg.textContent = t("profile_edit_saved_msg");
@@ -15895,7 +16037,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-attrezzatura";
+var BUILD_STAMP = "2026-08-21-profilo-pubblico";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -15904,7 +16046,7 @@ var BUILD_STAMP = "2026-08-21-attrezzatura";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-traguardi";
+var BUILD_PARENT = "2026-08-21-attrezzatura";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -18396,6 +18538,81 @@ return wrap;
 }
 
 // ---------- CONVERSAZIONE ----------
+/* ══════════════════ IL PROFILO PUBBLICO ══════════════════
+ * (21/08/2026, PRD §43.) «A lightweight sporting identity»: non una pagina
+ * personale, una carta d'identita' sportiva. Nome, compagnia, zona, arco, due
+ * righe di presentazione, e — se la persona ha detto di si' — quattro numeri.
+ *
+ * LA ZONA NON E' UNA POSIZIONE. Il PRD chiede di non esporre la posizione
+ * esatta di nessuno, e qui non ce n'e' bisogno: la regione e la provincia si
+ * deducono dalla COMPAGNIA, che e' pubblica per definizione e larga come una
+ * provincia. Non c'e' nessun GPS in questa schermata, e non deve entrarci.
+ */
+function profiloPubblicoScreen(){
+var wrap = el('<div></div>');
+var uid = state.profiloUid;
+var card = el('<div class="card pp-card"></div>');
+wrap.appendChild(card);
+if(!uid || !db){
+card.appendChild(el('<div class="nota">'+escapeHtml(t("pp_non_trovato"))+'</div>'));
+return wrap;
+}
+card.appendChild(el('<div class="nota">'+t("admin_loading")+'</div>'));
+db.collection("public_profiles").doc(uid).get().then(function(snap){
+card.innerHTML = "";
+if(!snap || !snap.exists){
+card.appendChild(el('<div class="nota">'+escapeHtml(t("pp_non_trovato"))+'</div>'));
+return;
+}
+var p = snap.data() || {};
+var nome = p.nomeCognome || p.username || "?";
+var iniziali = nome.split(/\s+/).map(function(x){ return x.charAt(0); }).join("").slice(0,2).toUpperCase();
+var testa = el('<div class="pp-testa"></div>');
+testa.appendChild(el('<div class="pp-tondo">'+escapeHtml(iniziali)+'</div>'));
+var chi = el('<div class="pp-chi"></div>');
+chi.appendChild(el('<b>'+escapeHtml(nome)+'</b>'));
+if(p.username && p.nomeCognome) chi.appendChild(el('<span>@'+escapeHtml(p.username)+'</span>'));
+testa.appendChild(chi);
+card.appendChild(testa);
+
+// La zona viene dalla compagnia, non dal telefono di nessuno.
+var righe = [];
+if(p.compagniaNome) righe.push(p.compagniaNome);
+var comp = (p.compagnia && typeof COMPAGNIE !== "undefined") ? COMPAGNIE[p.compagnia] : null;
+if(comp && comp.regione) righe.push(comp.regione + (comp.provincia && comp.provincia !== "\u2014" ? " (" + comp.provincia + ")" : ""));
+if(p.arco && typeof PROFILE_BOW_LABEL !== "undefined" && PROFILE_BOW_LABEL[p.arco]) righe.push(PROFILE_BOW_LABEL[p.arco]);
+righe.forEach(function(r){ card.appendChild(el('<div class="pp-riga">'+escapeHtml(r)+'</div>')); });
+if(p.bio) card.appendChild(el('<div class="pp-bio">'+escapeHtml(p.bio)+'</div>'));
+
+if(p.numeri){
+var q = el('<div class="home-numeri pp-numeri"></div>');
+q.appendChild(el('<div class="home-num"><b>'+(p.numeri.giri||0)+'</b><span>'+escapeHtml(t("home_rounds_word"))+'</span></div>'));
+q.appendChild(el('<div class="home-num"><b>'+(p.numeri.piazzole||0)+'</b><span>'+escapeHtml(t("diario_targets_word"))+'</span></div>'));
+q.appendChild(el('<div class="home-num"><b>'+(p.numeri.campi||0)+'</b><span>'+escapeHtml(t("pp_campi"))+'</span></div>'));
+q.appendChild(el('<div class="home-num"><b>'+String(p.numeri.media||0).replace(".", decimaleLocale())+'</b><span>'+escapeHtml(t("diario_media"))+'</span></div>'));
+card.appendChild(q);
+} else {
+card.appendChild(el('<div class="pp-privato">'+escapeHtml(t("pp_numeri_privati"))+'</div>'));
+}
+}).catch(function(){
+card.innerHTML = "";
+card.appendChild(el('<div class="nota">'+escapeHtml(t("pp_non_trovato"))+'</div>'));
+});
+
+var indietro = el('<button class="btn btn-ghost btn-block">'+t("back_step")+'</button>');
+indietro.addEventListener("click", function(){ state.screen = state.profiloDaDove || "menu"; save(); render(); });
+wrap.appendChild(indietro);
+return wrap;
+}
+
+function apriProfiloPubblico(uid){
+if(!uid) return;
+state.profiloUid = uid;
+state.profiloDaDove = state.screen;
+state.screen = "profilo-pubblico";
+save(); render();
+}
+
 function dmChatScreen(){
 assicuraNomi();
 var otherUid = state.dmUid;
@@ -18404,7 +18621,13 @@ var otherUid = state.dmUid;
 var otherName = nomeVivo(state.dmUid) || state.dmName || "?";
 var wrap = el('<div style="padding-bottom:20px;"></div>');
 var card = el('<div class="card"></div>');
-card.appendChild(el('<h2 class="section-title">'+t("dm_chat_with",{name:escapeHtml(otherName)})+'</h2>'));
+// IL NOME IN CIMA ALLA CHAT PORTA ALLA PERSONA. Era un titolo e basta: si
+// parlava con qualcuno senza poter sapere chi fosse — che compagnia, che
+// arco, quanti giri. In uno sport dove ci si trova sul campo, sapere con chi
+// si sta parlando e' meta' della conversazione.
+var titoloChat = el('<button class="btn-nudo pp-apri"><h2 class="section-title">'+t("dm_chat_with",{name:escapeHtml(otherName)})+'</h2></button>');
+titoloChat.addEventListener("click", function(){ apriProfiloPubblico(otherUid); });
+card.appendChild(titoloChat);
 
 if(!otherUid || !currentUser || !db){
 card.appendChild(el('<div class="nota">'+t("dm_empty")+'</div>'));
