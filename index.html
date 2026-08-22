@@ -149,9 +149,20 @@
    perche' deve restare quella FORMA a qualunque misura il marchio venga
    disegnato — 28 in testata, 44 nell'insegna, 512 nel file. */
 --r-app:22%;
-/* Quanto la fascia esce dal foglio, e quanto il testo rientra: la prima e'
-   `--bordo`, il secondo e' `--gola`. La gola e' piu' larga di proposito. */
---bordo:var(--s-4); --gola:var(--s-5);
+/* Quanto la fascia esce dal foglio, e quanto il testo rientra.
+   ERA SCRITTO COME DUE MISURE INDIPENDENTI, E QUELLO ERA IL DIFETTO. (22/08.)
+   `--bordo` 16 e `--gola` 24 sembrano due numeri sensati; il margine che si
+   vede pero' e' la loro DIFFERENZA — otto pixel, cioe' un millimetro. Nessuno
+   dei due numeri era sbagliato, e il risultato lo era: il difetto stava nella
+   sottrazione, che non era scritta da nessuna parte.
+   E LA RISPOSTA E' CHE DEVONO ESSERE LO STESSO NUMERO. La fascia esce fino
+   al bordo del foglio; quindi la sua imbottitura NON si somma e non si
+   sottrae a niente: e' esattamente la distanza dal vetro. Se vale quanto il
+   margine del foglio, il testo dentro le fasce e il testo fuori — il saluto
+   della Home, i tasti sfusi — cadono sulla STESSA riga verticale, e la
+   pagina smette di sembrare montata da due persone diverse.
+   `--bordo` cambia da telefono a computer, e la gola lo segue da sola. */
+--bordo:var(--s-4); --gola:var(--bordo);
 
 /* ───── LA PRIMA SCHERMATA ─────
    Si apre a casa, non in mezzo al bosco: fondo chiaro e testo scuro,
@@ -592,7 +603,7 @@ font-variant-numeric:tabular-nums slashed-zero; }
    mano e tutto il resto non ne aveva. */
 :where(button,a,input,select,textarea,[tabindex]):focus-visible{
 outline:2px solid var(--brand-soft); outline-offset:2px; border-radius:var(--r-sm); }
-#app{ max-width:520px; margin:0 auto; padding:var(--s-4) var(--s-4) var(--s-6); min-height:100dvh; position:relative; }
+#app{ max-width:520px; margin:0 auto; padding:var(--s-4) var(--bordo) var(--s-6); min-height:100dvh; position:relative; }
 /* ══════════════ LA BARRA IN ALTO ══════════════
    Tre regole, e da queste discende tutto il resto. Non c'e' una soglia
    per modello di telefono: se ne serve una, vuol dire che la regola e'
@@ -778,7 +789,17 @@ position:relative; z-index:1; }
    aveva un altro; con l'icona, che ne ha un terzo, erano TRE cornici
    annidate. Qui, di primo livello, vale anche sul telefono. */
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
-  background:transparent; border:0; box-shadow:none; padding:0; }
+  background:transparent; border:0; box-shadow:none;
+  /* SOLO SOPRA E SOTTO. (22/08/2026.) Qui c'era `padding:0`, e azzerava anche
+     i fianchi. Questa regola e' piu' specifica di quella del margine di
+     pagina piu' in basso, quindi vinceva senza dirlo: la fascia usciva di 16
+     e non rientrava di niente: il titolo di sezione e le porte finivano a
+     ZERO pixel dal vetro, tagliate.
+     E il guasto non si vedeva leggendo, perche' le due regole stanno a
+     ottocento righe di distanza e nessuna delle due e' sbagliata da sola.
+     Togliere il riquadro vuol dire togliere fondo, bordo e ombra. Il margine
+     della pagina non e' decorazione della carta: e' della pagina. */
+  padding-top:0; padding-bottom:0; }
 /* IL TITOLINO DI SEZIONE E' UN'ETICHETTA, NON UN TITOLO. (21/08/2026.)
    Cala di una taglia e sale di peso: cosi' smette di competere col contenuto
    che annuncia. La regola vale in tutta l'app — «QUESTO MESE» sulla Home,
@@ -1256,13 +1277,16 @@ saltava da 1060 a 660 e si portava dietro testata, insegna e sfondo, che con la
 lunghezza della riga non c'entrano niente. Adesso il guscio ha una misura sola
 per tutte le schermate e la colonna di lettura vive dentro. */
 @media (min-width:760px){
-#app{ max-width:900px; padding:20px var(--s-5) 44px; }
+/* Il margine della pagina cresce, e con lui la gola: `--gola` e' definita in
+   funzione di `--bordo`, quindi basta cambiare questo. */
+:root{ --bordo:var(--s-5); }
+#app{ max-width:900px; padding:20px var(--bordo) 44px; }
 /* Le fasce escono dal margine della PAGINA, e sul computer il margine e' un
    altro: senza questa riga restano rientrate di otto pixel e si rileggono
    come le carte di prima. E' il motivo per cui il disegno nuovo, da computer,
    sembrava identico al vecchio. */
 .strati, .menu-cols > .card, .menu-cols > .home-sezione > .card{
-  margin-left:calc(var(--s-5) * -1); margin-right:calc(var(--s-5) * -1); }
+  margin-left:calc(var(--bordo) * -1); margin-right:calc(var(--bordo) * -1); }
 #app.narrow > :not(header.top){ width:100%; max-width:620px; margin-left:auto; margin-right:auto; }
 header.top{ height:72px; margin-bottom:20px; }
 header.top .logo{ width:56px; height:56px; }
@@ -2064,9 +2088,10 @@ body{
 }
 html{ scroll-behavior:smooth; }
 html.no-smooth{ scroll-behavior:auto; }
-#app{ max-width:1060px; padding:20px var(--s-6) 76px; }
+:root{ --bordo:var(--s-6); }
+#app{ max-width:1060px; padding:20px var(--bordo) 76px; }
 .strati, .menu-cols > .card, .menu-cols > .home-sezione > .card{
-  margin-left:calc(var(--s-6) * -1); margin-right:calc(var(--s-6) * -1); }
+  margin-left:calc(var(--bordo) * -1); margin-right:calc(var(--bordo) * -1); }
 /* La colonna di lettura, non il guscio: vedi la nota nel blocco dei 760px.
    `> :not(header.top)` colpisce il nodo della schermata e basta — l'insegna
    resta larga, e sotto i 760px la barra in fondo non e' toccata perche' vive
@@ -16874,7 +16899,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-scarta";
+var BUILD_STAMP = "2026-08-22-bordo";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16883,7 +16908,7 @@ var BUILD_STAMP = "2026-08-22-scarta";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-22-toni";
+var BUILD_PARENT = "2026-08-22-scarta";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -21788,8 +21813,31 @@ if(!DEV_MODE && 'serviceWorker' in navigator){
 window.addEventListener('load', function(){
 navigator.serviceWorker.register('sw.js').catch(function(){});
 });
+/* IL CARICAMENTO DOPPIO ALL'AVVIO, E PERCHE' LA GUARDIA DI PRIMA NON BASTAVA.
+   (22/08/2026, segnalato di nuovo da Alessandro: «in avvio c'e' ancora il
+   problema del refresh».)
+   `swReloaded` impediva DUE ricariche. Non impediva LA ricarica — che e'
+   quella che si vede, e che partiva anche quando non c'era niente di nuovo
+   da mostrare.
+   Il giro e' questo: alla PRIMA apertura (app appena installata, cache
+   svuotata, navigazione in incognito) la pagina nasce senza nessun service
+   worker al comando. Quello nuovo si installa, fa `skipWaiting` e poi
+   `clients.claim()` — cioe' prende il comando di una pagina GIA' APERTA. Il
+   browser annuncia il passaggio con `controllerchange`, e noi ricaricavamo.
+   Ma quella pagina era gia' l'ultima versione: era appena arrivata dalla
+   rete. Si ricaricava per rileggere se stessa.
+   LA DOMANDA GIUSTA NON E' «E' CAMBIATO IL CONTROLLORE», E' «CE N'ERA GIA'
+   UNO». Se non c'era, il passaggio e' la prima presa di possesso e non
+   annuncia niente di nuovo. Se c'era, allora e' un aggiornamento vero, e li'
+   la ricarica serve: e' l'unico modo di far vedere la versione appena
+   pubblicata senza chiudere l'app.
+   Il valore si legge SUBITO, non dentro l'ascoltatore: quando l'evento
+   arriva, `controller` e' gia' quello nuovo e la domanda non si puo' piu'
+   fare. */
+var avevaControllore = !!navigator.serviceWorker.controller;
 var swReloaded = false;
 navigator.serviceWorker.addEventListener('controllerchange', function(){
+if(!avevaControllore) return;
 if(swReloaded) return;
 swReloaded = true;
 window.location.reload();
