@@ -149,6 +149,9 @@
    perche' deve restare quella FORMA a qualunque misura il marchio venga
    disegnato — 28 in testata, 44 nell'insegna, 512 nel file. */
 --r-app:22%;
+/* Quanto la fascia esce dal foglio, e quanto il testo rientra: la prima e'
+   `--bordo`, il secondo e' `--gola`. La gola e' piu' larga di proposito. */
+--bordo:var(--s-4); --gola:var(--s-5);
 
 /* ───── LA PRIMA SCHERMATA ─────
    Si apre a casa, non in mezzo al bosco: fondo chiaro e testo scuro,
@@ -1568,18 +1571,38 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    Adesso e' la CARTA di primo livello a diventare una fascia — cioe' il
    contenitore che quindici schermate usano gia'. Non c'e' niente da riscrivere
    schermata per schermata: il pezzo condiviso cambia, e cambiano tutte. */
-.strati{ margin:var(--s-5) calc(var(--s-4) * -1) 0; }
+/* IL MARGINE DELLA PAGINA HA UN NOME, E VALE PER TUTTI. (22/08/2026, visto da
+   Alessandro: «i tasti sono troppo larghi e arriviamo troppo all'esterno
+   dello schermo, controlla che tutte le pagine abbiano la stessa larghezza e
+   un minimo di margine»).
+   Il difetto era aritmetico: la fascia esce di 16 (il margine del foglio) e
+   dentro rimette 16 di imbottitura — quindi il testo torna esattamente sul
+   bordo del foglio, cioe' a filo dello schermo. Sedici pixel su un telefono
+   grande sono meno di due millimetri: il testo sembra tagliato dal vetro.
+   Adesso il margine e' un token solo (`--bordo`), usato sia per uscire sia
+   per rientrare, e il rientro e' piu' largo dell'uscita. Cambiarlo in un
+   posto lo cambia in tutta l'app. */
+.strati{ margin:var(--s-5) calc(var(--bordo) * -1) 0; }
 .menu-cols > .card,
 .menu-cols > .home-sezione > .card{
-  margin-left:calc(var(--s-4) * -1); margin-right:calc(var(--s-4) * -1);
-  padding:var(--s-5) var(--s-4);
+  margin-left:calc(var(--bordo) * -1); margin-right:calc(var(--bordo) * -1);
+  padding:var(--s-5) var(--gola);
   border-left:0; border-right:0; border-radius:0; }
+/* Dentro una fascia le porte non hanno un'imbottitura loro: si allineano alla
+   gola, come il titolo di sezione sopra di loro. Due rientri diversi nella
+   stessa colonna sono la ragione per cui l'etichetta «PROFILO» e le icone
+   sotto non partivano dallo stesso punto. */
+.menu-cols > .card > .menu-btn{ padding-left:0; padding-right:0; }
+/* La freccia (il `::after` qui sopra) sta in coda alla riga: dice che si
+   entra. Con `margin-left:auto` resta incollata al bordo destro anche quando
+   il titolo e' corto. */
+.card .menu-btn.btn-ghost::after{ margin-left:auto; }
 /* Una carta dentro una fascia torna a essere una carta: la fascia e' il
    pavimento, non un modo di disegnare qualunque riquadro. */
 .strato .card, .card .card{ margin-left:0; margin-right:0;
   border:1px solid var(--border); border-radius:var(--r-md); }
 .strato{ background:var(--surface-1); border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border); padding:var(--s-5) var(--s-4);
+  border-bottom:1px solid var(--border); padding:var(--s-5) var(--gola);
   margin-bottom:var(--s-2); }
 .strato:last-child{ margin-bottom:0; }
 /* Dentro uno strato una carta non e' piu' una carta: lo strato E' la carta.
@@ -2134,12 +2157,21 @@ header.top .home-btn.small:hover{ background:color-mix(in srgb, var(--clay) 88%,
    descrizione, e la sua larghezza e' quella della colonna — se no le tre
    scelte non si confrontano piu', e confrontarle e' tutto il lavoro di quella
    schermata. Da qui l'esclusione esplicita di `.menu-btn`. */
-.menu-cols .home-azioni > .btn.btn-block:not(.menu-btn),
-.strato > .btn.btn-block:not(.menu-btn),
-.strato .card > .btn.btn-block:not(.menu-btn),
-.menu-cols > .card > .btn.btn-block:not(.menu-btn),
-.menu-cols > .home-sezione > .btn.btn-block:not(.menu-btn){
+/* IL TASTO STRETTO VALE SOLO PER L'EROE DELLA HOME. (22/08/2026, seconda
+   correzione della stessa regola in due giorni.)
+   Scritta per «Inizia un giro», si era allargata a ogni tasto dentro ogni
+   scheda: nelle impostazioni sono diventati sei tasti di sei larghezze
+   diverse, incolonnati al centro, con buchi bianchi a destra e a sinistra.
+   Peggio di quello che doveva correggere.
+   *Un tasto si stringe quando e' SOLO nella sua scheda ed e' l'unica cosa da
+   fare li'. Se sono in fila, la fila conta piu' del singolo, e una fila si
+   legge se i tasti sono pari.* Da qui l'ancora ristretta all'eroe. */
+.menu-cols .home-azioni > .btn.btn-block{
   width:auto; min-width:260px; display:flex; margin-left:auto; margin-right:auto; }
+/* I tasti in fila dentro una scheda si mettono a coppie: pari fra loro, e non
+   larghi mille pixel per due parole. */
+.menu-cols > .card > .btn.btn-block:not(.menu-btn),
+.menu-cols > .card > .link-tasto{ width:100%; }
 
 /* ── 3. Le sezioni: non piu' una barra a se', ma il centro della testata ── */
 .tabbar-wide button > svg{ transition:transform var(--dur-2) var(--ease); }
@@ -2206,12 +2238,31 @@ h2.section-title{ font-size:var(--t-2xs); letter-spacing:0.14em;
    del profilo sono un ELENCO di stanze, e un elenco si legge in colonna.
    L'ancora giusta e' la prima delle tre tessere (`.menu-btn.training`), che
    nessun elenco ha. */
-.menu-cols .card:has(> .menu-btn.training){
+/* TRE PER RIGA, ICONA SOPRA. (22/08/2026, chiesto da Alessandro: «le icone
+   sopra dei tasti devono essere affiancate, tre per linea, perche' sono sei e
+   riempiamo tutto».)
+   Vale per tutte le schede fatte di porte, non piu' solo per le tre del tiro:
+   con sei voci, tre per riga fanno due righe piene e nessun buco. Quello che
+   prima faceva schifo non era la griglia — era che dentro la tessera icona,
+   titolo, descrizione e freccia stavano in FILA ORIZZONTALE, e su una colonna
+   stretta si spezzavano su quattro righe con la freccia da sola in fondo.
+   In colonna, con la freccia in alto a destra, la tessera e' una tessera. */
+.menu-cols .card:has(> .menu-btn){
   display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
   gap:var(--s-3); align-items:stretch;
-  /* trasparenza e niente bordo li dichiara la regola di primo livello: qui
-     serve solo la griglia, che e' l'unica cosa che riguarda lo schermo largo. */
 }
+/* Dentro la griglia la porta si rialza: icona sopra, titolo, descrizione, e
+   la freccia esce dal flusso e va nell'angolo. In fila orizzontale, dentro
+   una colonna da un terzo di pagina, quattro pezzi si spezzano su quattro
+   righe — ed e' quello che nella foto sembrava un errore di montaggio. */
+.menu-cols .card:has(> .menu-btn) > .menu-btn{
+  flex-direction:column; align-items:flex-start; gap:var(--s-2);
+  padding:var(--s-4); position:relative; margin-bottom:0;
+  border:1px solid var(--border); border-radius:var(--r-md); }
+.menu-cols .card:has(> .menu-btn) > .menu-btn .menu-txt{ gap:var(--s-1); }
+.menu-cols .card:has(> .menu-btn) > .menu-btn .menu-sub{ opacity:0.75; }
+.menu-cols .card:has(> .menu-btn) > .menu-btn::after{
+  position:absolute; top:var(--s-3); right:var(--s-4); margin:0; }
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)) > h2.section-title,
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)) > div{
   grid-column:1 / -1; margin-bottom:0;
@@ -14415,12 +14466,18 @@ state.clubSpaceCode = mieCompagnie[0]; state.screen = "club-space"; save(); rend
 });
 }
 
-/* LE COMPAGNIE, USCITE DALLA BARRA, ENTRANO QUI. Chi non e' referente ci va
-   per cercare un campo o mandare una segnalazione: due volte l'anno, non due
-   volte a settimana. */
-porta("navclub", "due", t("nav_clubs"), t("club_space_sub"), null, function(){
+/* LE COMPAGNIE, USCITE DALLA BARRA, ENTRANO QUI — MA SOLO PER CHI NON HA UNO
+   SPAZIO DA GESTIRE. (22/08/2026, detto da Alessandro: «se c'e' spazio
+   compagnia non lasciamo anche compagnie, non ha senso».)
+   Aveva ragione due volte: le due righe avevano lo stesso segno E la stessa
+   descrizione — copiata, ed era un errore mio — quindi erano due porte
+   indistinguibili. Per un referente, «Compagnie» non aggiunge niente che
+   «Spazio compagnia» non dia gia'. */
+if(!(mieCompagnie && mieCompagnie.length)){
+porta("navclub", "due", t("nav_clubs"), t("comp_tab_scopri"), null, function(){
 state.tab = "compagnie"; state.screen = "menu"; save(); render();
 });
+}
 
 porta("navprofile", "due", t("settings_title"),
 ((state.profile && state.profile.compagniaNome) ? escapeHtml(state.profile.compagniaNome) : t("profile_club_none")),
@@ -16680,7 +16737,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-in-cima";
+var BUILD_STAMP = "2026-08-22-gola";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16689,7 +16746,7 @@ var BUILD_STAMP = "2026-08-22-in-cima";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-22-bandiera";
+var BUILD_PARENT = "2026-08-22-in-cima";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
