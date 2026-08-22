@@ -2196,7 +2196,17 @@ h2.section-title{ font-size:var(--t-2xs); letter-spacing:0.14em;
    diverse. `align-items:stretch` pareggia l'altezza. Sotto i 900px questo
    blocco non esiste e le tessere tornano in colonna, che sul telefono e'
    l'unica forma leggibile. */
-.menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
+/* LA GRIGLIA A TRE VALE SOLO PER LE TRE TESSERE DEL TIRO. (22/08/2026, visto
+   nel profilo: sei porte messe a griglia, con le descrizioni di lunghezza
+   diversa che lasciavano buchi bianchi alti mezzo schermo, e la freccia di
+   ogni riga finita su una riga sua.)
+   L'ancora era `.card:has(> .menu-btn)`, cioe' «qualunque scheda fatta di
+   porte» — e il profilo e' fatto di porte. Ma le tre del tiro sono una
+   SCELTA fra alternative pari, e si mettono in fila per confrontarle; le sei
+   del profilo sono un ELENCO di stanze, e un elenco si legge in colonna.
+   L'ancora giusta e' la prima delle tre tessere (`.menu-btn.training`), che
+   nessun elenco ha. */
+.menu-cols .card:has(> .menu-btn.training){
   display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
   gap:var(--s-3); align-items:stretch;
   /* trasparenza e niente bordo li dichiara la regola di primo livello: qui
@@ -2771,6 +2781,11 @@ text-transform:uppercase; color:var(--text-3); }
    schermata che rappresenta una PERSONA, non un numero: si riconosce prima di
    leggerla. Tutto in colonna e centrato — un bersaglio che si vede da mezzo
    metro, che e' la distanza a cui si tiene un telefono. */
+/* I due tasti della copia: due colonne pari, e sul telefono restano pari
+   perche' due comandi opposti non hanno un primo e un secondo. */
+.cloud-coppia{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--s-2); }
+.cloud-coppia .btn{ width:100%; min-width:0; }
 .profilo-porta{ text-align:center; }
 .profilo-tessera{ display:flex; flex-direction:column; align-items:center;
   gap:var(--s-2); width:100%; padding:var(--s-2) 0; background:none; border:0;
@@ -14010,11 +14025,20 @@ var bar = el('<nav class="tabbar'+(wide?' tabbar-wide':' tabbar-bottom')+'" aria
 // chiusa. E' la stessa obiezione per cui era uscito il 20/08 — questa volta la
 // scelta e' di tenerla, perche' il mercatino apre a tutti presto e una voce
 // che compare e sparisce dalla barra e' peggio di una che aspetta.
+/* COMPAGNIE ESCE DALLA BARRA. (22/08/2026, deciso da Alessandro: «col tasto
+   li' compagnie dovrebbe uscire solo se sono amministratore di una compagnia,
+   e invece compare a tutti».)
+   La barra e' fatta di destinazioni che TUTTI usano tutte le settimane. Le
+   compagnie non lo sono: chi non e' referente ci entra due volte l'anno, per
+   cercare un campo o mandare una segnalazione. Una voce su cinque della barra
+   — cioe' un quinto della navigazione permanente — per una cosa che si fa due
+   volte l'anno e' spazio rubato alle altre quattro.
+   *Non e' stata cancellata: e' scesa nel profilo, dove stanno le cose che si
+   aprono quando servono.* */
 [["home","navhome",t("nav_home")],
  ["campi","navfield",t("nav_fields")],
  ["tira","navshoot",t("nav_shoot")],
- ["market","navmarket",t("nav_market")],
- ["compagnie","navclub",t("nav_clubs")]].forEach(function(tb){
+ ["market","navmarket",t("nav_market")]].forEach(function(tb){
 var key = tb[0], on = (state.tab === key);
 // La voce attiva ha una pastiglia piena: sul telefono, al sole, il solo
 // cambio di colore del testo non si vede.
@@ -14319,28 +14343,63 @@ else {
 var profCard = el('<div class="card"></div>');
 profCard.appendChild(el('<h2 class="section-title">'+t("nav_profile")+'</h2>'));
 
-var profileBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navprofile",24,"due")+'</span><span class="menu-txt">'+t("menu_profile")+'<span class="menu-sub">'+((state.profile && state.profile.compagniaNome) ? escapeHtml(state.profile.compagniaNome) : t("profile_club_none"))+'</span></span></button>');
-profileBtn.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
-profCard.appendChild(profileBtn);
+/* L'ORDINE E' QUELLO IN CUI SI ENTRA. (22/08/2026, dato da Alessandro:
+   «diario, attrezzatura, spazio compagnia, poi impostazioni e persone
+   bloccate».)
+   Prima era: profilo, attrezzatura, spazio compagnia, diario, bloccati —
+   cioe' l'ordine in cui le stanze erano state costruite. Adesso e' l'ordine
+   in cui si entra: prima quello che si guarda spesso (i propri giri), poi
+   quello che si guarda ogni tanto (l'arco, la compagnia), infine quello che
+   si tocca due volte l'anno.
 
-// L attrezzatura sta qui, accanto al profilo e allo spazio compagnia: e la
-// terza cosa che uno viene a fare in questa schermata. Dentro il modulo del
-// profilo sarebbe stata venti campi piu giu.
-var attrezziBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azarco",24,"due")+'</span><span class="menu-txt">'+t("attr_titolo")+'<span class="menu-sub">'+escapeHtml(t("attr_hint"))+'</span></span></button>');
-attrezziBtn.addEventListener("click", function(){ state.assettoAperto = null; state.screen = "attrezzatura"; save(); render(); });
-profCard.appendChild(attrezziBtn);
+   E «IL MIO PROFILO» DENTRO «IL MIO PROFILO» NON ESISTE PIU'. Aprire una
+   porta e ritrovarsi davanti la stessa porta e' il segno che la stanza non ha
+   un nome suo. Quella riga apre il modulo dei dati personali: si chiama
+   Impostazioni, che e' cosa fa. */
+function porta(segno, tinta, titolo, sotto, extra, click){
+var b = el('<button class="btn btn-ghost btn-block menu-btn'+(extra ? " "+extra : "")+'"><span class="menu-icon">'+navIcon(segno,24,tinta)+'</span><span class="menu-txt">'+titolo+'<span class="menu-sub">'+sotto+'</span></span></button>');
+b.addEventListener("click", click);
+profCard.appendChild(b);
+return b;
+}
 
-var clubSpaceBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("navclub",24,"due")+'</span><span class="menu-txt">'+t("club_space_title")+'<span class="menu-sub">'+t("club_space_sub")+'</span></span></button>');
-clubSpaceBtn.addEventListener("click", function(){ state.clubSpaceCode = myClubCode(); state.screen = "club-space"; save(); render(); });
-profCard.appendChild(clubSpaceBtn);
+porta("azdiario", "due", t("journal_title"), t("journal_sub"), null, function(){
+state.tab = "attivita"; state.screen = "menu"; save(); render();
+});
 
-var diarioBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azdiario",24,"due")+'</span><span class="menu-txt">'+t("journal_title")+'<span class="menu-sub">'+t("journal_sub")+'</span></span></button>');
-diarioBtn.addEventListener("click", function(){ state.tab = "attivita"; state.screen = "menu"; save(); render(); });
-profCard.appendChild(diarioBtn);
+porta("azarco", "due", t("attr_titolo"), escapeHtml(t("attr_hint")), null, function(){
+state.assettoAperto = null; state.screen = "attrezzatura"; save(); render();
+});
+
+/* LO SPAZIO COMPAGNIA SOLO A CHI HA UNA COMPAGNIA DA GESTIRE. (22/08/2026.)
+   Compariva a chiunque avesse dichiarato una compagnia nel profilo — cioe'
+   quasi tutti — e portava a una schermata che dice «sei il referente di
+   questa compagnia», che per quasi tutti e' falso.
+   `myAdminClubCodes()` restituisce `null` finche' la cache non e' pronta: in
+   quel caso la riga non si disegna e ricompare da sola al giro dopo. Meglio
+   una riga che arriva un istante tardi di una porta che si apre su niente. */
+var mieCompagnie = myAdminClubCodes();
+if(mieCompagnie && mieCompagnie.length){
+porta("navclub", "due", t("club_space_title"), t("club_space_sub"), null, function(){
+state.clubSpaceCode = mieCompagnie[0]; state.screen = "club-space"; save(); render();
+});
+}
+
+/* LE COMPAGNIE, USCITE DALLA BARRA, ENTRANO QUI. Chi non e' referente ci va
+   per cercare un campo o mandare una segnalazione: due volte l'anno, non due
+   volte a settimana. */
+porta("navclub", "due", t("nav_clubs"), t("club_space_sub"), null, function(){
+state.tab = "compagnie"; state.screen = "menu"; save(); render();
+});
+
+porta("navprofile", "due", t("settings_title"),
+((state.profile && state.profile.compagniaNome) ? escapeHtml(state.profile.compagniaNome) : t("profile_club_none")),
+null, function(){ state.screen = "profile-edit"; save(); render(); });
+
 if(currentUser){
-var blockedBtn = el('<button class="btn btn-ghost btn-block menu-btn riga-attenzione"><span class="menu-icon">'+navIcon("azbloccati",24,"unica")+'</span><span class="menu-txt">'+t("blk_list_title")+'<span class="menu-sub">'+t("blk_list_sub")+'</span></span></button>');
-blockedBtn.addEventListener("click", function(){ state.screen = "blocked-users"; save(); render(); });
-profCard.appendChild(blockedBtn);
+porta("azbloccati", "unica", t("blk_list_title"), t("blk_list_sub"), "riga-attenzione", function(){
+state.screen = "blocked-users"; save(); render();
+});
 }
 wrap.appendChild(profCard);
 
@@ -16591,7 +16650,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-bandiera";
+var BUILD_STAMP = "2026-08-22-quattro-voci";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16600,7 +16659,7 @@ var BUILD_STAMP = "2026-08-22-bandiera";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-22-dall-inizio";
+var BUILD_PARENT = "2026-08-22-bandiera";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -17162,8 +17221,16 @@ cloudCard.appendChild(el('<div class="nota">'+t("diario_cloud_offline")+'</div>'
 var cloudMsg = el('<div style="font-size:var(--t-sm);color:var(--muted);min-height:1.2em;margin-bottom:var(--s-2);"></div>');
 if(lastCloudRestoreMsg){ cloudMsg.textContent = lastCloudRestoreMsg; lastCloudRestoreMsg = ""; }
 cloudCard.appendChild(cloudMsg);
-var upBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-bottom:var(--s-2);">'+t("diario_cloud_backup")+'</button>');
-var downBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+t("diario_cloud_restore")+'</button>');
+/* I DUE TASTI STANNO SULLA STESSA RIGA. (22/08/2026, detto da Alessandro:
+   «cosi' fa schifo, va giu' troppo, un sacco di spazi vuoti».)
+   Erano due tasti larghi tutta la scheda, uno sopra l'altro: quattro righe di
+   altezza per due comandi di tre parole. E impilati suggeriscono un ORDINE —
+   prima salva, poi recupera — che non esiste: sono due direzioni opposte
+   della stessa cosa, e si scelgono, non si eseguono in sequenza. Affiancati
+   lo dicono da soli. */
+var coppia = el('<div class="cloud-coppia"></div>');
+var upBtn = el('<button class="btn btn-ghost btn-sm">'+t("diario_cloud_backup")+'</button>');
+var downBtn = el('<button class="btn btn-ghost btn-sm">'+t("diario_cloud_restore")+'</button>');
 upBtn.addEventListener("click", function(){
 upBtn.disabled = true; downBtn.disabled = true;
 cloudMsg.textContent = t("diario_cloud_working");
@@ -17182,8 +17249,9 @@ if(n > 0){ lastCloudRestoreMsg = t("diario_cloud_added",{n:n}); render(); return
 cloudMsg.textContent = t("diario_cloud_none");
 });
 });
-cloudCard.appendChild(upBtn);
-cloudCard.appendChild(downBtn);
+coppia.appendChild(upBtn);
+coppia.appendChild(downBtn);
+cloudCard.appendChild(coppia);
 }
 /* LA COPIA DI SICUREZZA STA IN TUTTE E TRE LE SCHEDE. (21/08/2026, dopo che
    Alessandro non e' riuscito a ritrovarla: «prima ce l'avevo, son sicuro».)
