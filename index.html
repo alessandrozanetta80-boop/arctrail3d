@@ -644,6 +644,9 @@ display:inline-flex; align-items:center; justify-content:center;
 border-radius:var(--r-sm); background:none; border:1px solid transparent;
 color:var(--text-2); cursor:pointer; font-family:inherit; }
 .bar-btn:hover{ background:var(--surface-2); }
+/* La bandiera e' un'emoji: senza una misura sua esce alta quanto il testo del
+   tasto, cioe' minuscola accanto a icone da 22. */
+.bar-flag{ font-size:1.25em; line-height:1; display:inline-block; }
 .bar-btn:active{ transform:scale(0.96); }
 .bar-btn.pericolo{ background:transparent; border-color:var(--danger); color:var(--danger); }
 header.top .home-btn{ position:relative; gap:var(--s-2); }
@@ -1632,8 +1635,11 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    *Un cruscotto che mostra zero non informa: scoraggia.* */
 .home-numeri{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
   gap:var(--s-2); }
-.home-num{ background:var(--surface-1); border:1px solid var(--border);
-  border-radius:var(--r-lg); padding:var(--s-3) var(--s-4); }
+/* Gli stessi numeri, visti dal diario e dal profilo pubblico: stesso
+   pannello, o la stessa domanda avrebbe due facce. */
+.home-num{ background:var(--surface-2); border:1px solid var(--border);
+  border-radius:var(--r-md); padding:var(--s-3) var(--s-4); }
+.home-num b{ font-variant-numeric:tabular-nums; }
 .home-num b{ display:block; font-size:var(--t-xl); font-weight:800;
   letter-spacing:-0.02em; line-height:1.1; font-variant-numeric:tabular-nums; }
 .home-num span{ display:block; font-size:var(--t-xs); color:var(--text-3);
@@ -2731,15 +2737,23 @@ text-transform:uppercase; color:var(--text-3); }
    La media e' il numero con cui un arciere si giudica: prende la taglia
    grande e la riga sua. Giri, record e piazzole scendono sotto, piccoli, e
    diventano quello che sono: il contorno che spiega la media. */
-.home-mese-dati{ width:100%; display:flex; flex-wrap:wrap; align-items:flex-end;
-  gap:var(--s-4); margin-top:var(--s-4); }
-.hm-voce{ flex:1 1 0; min-width:0; }
-.hm-voce:first-child{ flex:0 0 100%; }
+/* IL PANNELLO. Fondo di mezzo tono piu' basso del resto della pagina: non e'
+   un colore nuovo, e' la stessa sabbia spinta di un gradino. Basta a dire
+   «questo si legge, non si tocca» senza aggiungere un solo ornamento.
+   *Un pannello tecnico e' tale perche' toglie, non perche' aggiunge.* */
+.home-mese{ background:var(--surface-2); }
+.home-mese-dati{ width:100%; display:block; margin-top:var(--s-3); }
+.hm-voce{ min-width:0; }
+.hm-voce b{ font-variant-numeric:tabular-nums; }
 .hm-voce:first-child b{ font-size:var(--t-3xl); }
-.hm-voce:not(:first-child) b{ font-size:var(--t-lg); }
-.hm-voce:not(:first-child){ padding-left:var(--s-4);
+/* Il filetto e' quello che trasforma quattro cifre in una tabella: sopra il
+   numero con cui ci si giudica, sotto quelli che lo spiegano. */
+.hm-riga{ display:flex; margin-top:var(--s-3); padding-top:var(--s-3);
+  border-top:1px solid var(--border); }
+.hm-riga .hm-voce{ flex:1 1 0; padding-left:var(--s-4);
   border-left:1px solid var(--border); }
-.hm-voce:nth-child(2){ padding-left:0; border-left:0; }
+.hm-riga .hm-voce:first-child{ padding-left:0; border-left:0; }
+.hm-riga .hm-voce b{ font-size:var(--t-lg); }
 /* Il numero cresce e l'etichetta cala: e' la stessa distanza che c'e' fra
    una cosa che si rilegge ogni volta e una che si sa a memoria. */
 .hm-voce b{ display:block; font-family:var(--font-num);
@@ -12337,16 +12351,39 @@ vai:function(){ state.screen = "messaggi"; save(); render(); }});
 }
 // IL PROFILO, uscito dalla barra (vedi tabBar). Sta fra le utilita' come le
 // notifiche e i messaggi: cose che si aprono e si chiudono, non destinazioni.
+/* IL PROFILO HA UN SEGNO SOLO, E DEVE ESSERE SEMPRE QUELLO. (22/08/2026,
+   visto da Alessandro: «in alto c'e' un'icona di profilo che non e' quella
+   giusta e non c'entra niente».)
+   In testata usava `users` — due sagome, che nel resto dell'app vuol dire
+   «altre persone»: iscritti, compagnia, arcieri di un giro. Dappertutto
+   altrove il profilo e' `navprofile`, una sagoma sola. Due segni per la
+   stessa porta non sono un dettaglio: **insegnano che il segno non conta**, e
+   da quel momento nessuna icona dell'app e' piu' affidabile. */
 if(state.screen === "menu" && state.tab !== "profilo"){
-azioni.push({ id:"profilo", glifo:"users", testo:t("nav_profile"), vai:function(){
+azioni.push({ id:"profilo", glifo:"users", pieno:"navprofile", testo:t("nav_profile"), vai:function(){
 state.tab = "profilo"; save(); render();
 }});
 }
 
 // Nazione e federazione attive: toccandole si apre la scelta. E' l'unico
 // punto da imparare per cambiarle.
+/* «CAMBIA» NON DICEVA CAMBIA COSA. (22/08/2026, detto da Alessandro: «io
+   oramai lo so, ma change o cambia significa un po' poco, la gente deve
+   capire a colpo d'occhio di cosa si tratta».)
+   La parola era il NOME DELL'AZIONE, e da sola l'azione non ha oggetto:
+   cambia la lingua? il profilo? il giro? Adesso il tasto porta lo STATO
+   ATTUALE — la bandiera del paese e la sigla della federazione — e l'azione
+   resta implicita, che e' come funzionano tutti i selettori: uno vede «FIARC ·
+   Italia» e capisce insieme cos'e' e che si puo' toccare.
+   La bandiera fa anche il lavoro che il mappamondo non faceva: un globo vuol
+   dire «internazionale» in generale, una bandiera dice ESATTAMENTE dove sei.
+   *Sullo stretto resta la sola bandiera, senza parole: e' gia' piu' precisa
+   di qualunque glifo.* */
 if((state.screen === "menu" || mostraMenu) && state.country && state.federation){
-azioni.push({ id:"cambia", glifo:"globe", testo:t("setup_change_btn"), conParola:true, forte:true, vai:function(){
+var attiva = federazioneAttiva();
+azioni.push({ id:"cambia", glifo:"globe", bandiera:attiva.flag, testo:attiva.sigla,
+titolo:t("setup_change_btn")+" \u2014 "+attiva.nome+" \u00b7 "+attiva.paese,
+conParola:true, forte:true, vai:function(){
 setupCountry = state.country;
 state.screen = "setup";
 save(); render();
@@ -12387,6 +12424,21 @@ return h;
 // dito non sbaglia (Apple ne chiede 44, Material 48). Da computer i
 // comandi principali si tengono anche la parola: lo spazio c'e', e una
 // parola si legge sempre meglio di un glifo.
+/* CHE PAESE E CHE FEDERAZIONE SONO ATTIVI. Stava scritto per esteso dentro
+   la schermata delle impostazioni; adesso serve anche in testata, e due copie
+   dello stesso giro di liste sono due copie che possono divergere. */
+function federazioneAttiva(){
+var flag = "", paese = state.country || "", sigla = (state.federation || "").toUpperCase(), nome = sigla;
+for(var ci=0; ci<COUNTRY_LIST.length; ci++){
+if(COUNTRY_LIST[ci].code === state.country){ flag = COUNTRY_LIST[ci].flag; paese = t(COUNTRY_LIST[ci].key); break; }
+}
+var qui = COUNTRY_FEDERATIONS[state.country] || [];
+for(var fi=0; fi<qui.length; fi++){
+if(qui[fi].code === state.federation){ nome = qui[fi].label; sigla = qui[fi].label; break; }
+}
+return { flag:flag, paese:paese, nome:nome, sigla:sigla };
+}
+
 function tastoBarra(a, largo){
 var conParola = largo && a.conParola;
 var classi = conParola
@@ -12395,7 +12447,12 @@ var classi = conParola
 var b = el('<button type="button" class="'+classi+' no-print"></button>');
 b.setAttribute("title", a.titolo || a.testo);
 b.setAttribute("aria-label", a.titolo || a.testo);
-b.innerHTML = icon(a.glifo, conParola ? 17 : 20);
+/* Tre modi di segnare un tasto, in ordine di precisione: una bandiera dice
+   dove sei, un segno pieno e' quello che l'app usa per quella porta ovunque,
+   un glifo di linea e' il ripiego. */
+if(a.bandiera){ b.innerHTML = '<span class="bar-flag">'+a.bandiera+'</span>'; }
+else if(a.pieno){ b.innerHTML = navIcon(a.pieno, conParola ? 18 : 22, "due"); }
+else { b.innerHTML = icon(a.glifo, conParola ? 17 : 20); }
 if(conParola) b.appendChild(document.createTextNode(a.testo));
 if(a.conta > 0) b.appendChild(el('<span class="bar-badge">'+(a.conta > 9 ? "9+" : a.conta)+'</span>'));
 b.addEventListener("click", a.vai);
@@ -12416,7 +12473,7 @@ if(azioni.some(function(a){ return a.conta > 0; })) b.appendChild(el('<span clas
 var menu = el('<div class="bar-menu" role="menu" hidden></div>');
 azioni.forEach(function(a){
 var v = el('<button type="button" class="bar-menu-item" role="menuitem"></button>');
-v.innerHTML = icon(a.glifo, 20);
+v.innerHTML = a.pieno ? navIcon(a.pieno, 20, "due") : icon(a.glifo, 20);
 v.appendChild(el('<span>'+escapeHtml(a.testo)+'</span>'));
 if(a.conta > 0) v.appendChild(el('<span class="bar-menu-count">'+(a.conta > 9 ? "9+" : a.conta)+'</span>'));
 v.addEventListener("click", function(){ chiudi(); a.vai(); });
@@ -13679,12 +13736,32 @@ var capo = el('<span class="home-mese-capo"></span>');
 capo.appendChild(el('<span class="home-mese-eti">'+escapeHtml(n.nelMese ? t("home_month") : t("journal_title"))+'</span>'));
 capo.appendChild(el('<span class="home-mese-freccia" aria-hidden="true"></span>'));
 barra.appendChild(capo);
+/* IL PANNELLO DEI NUMERI. (22/08/2026, chiesto da Alessandro: «e' un'utilita'
+   dove uno vede i propri numeri, dovrebbe avere un look piu' tecnico, adesso
+   si fonde con tutto il resto».)
+   Tre mosse, e nessuna aggiunge niente:
+   1. il fondo scende di mezzo tono — non e' piu' una carta come le altre, e'
+      un pannello di lettura;
+   2. la media sta sopra un filetto, i tre numeri minori sotto: il filetto e'
+      quello che trasforma quattro cifre in una tabella;
+   3. l'unita' entra nell'etichetta dove esiste — «media · punti», «record ·
+      punti». Giri e piazzole sono conteggi e l'unita' e' il nome stesso.
+
+   QUELLO CHE NON SI PUO' FARE, ed e' stato scartato da Alessandro: scrivere
+   «122 su 280». Il massimo dipende dalla disciplina E da quante piazzole si
+   tirano, quindi quel denominatore sarebbe inventato — cioe' la stessa bugia
+   delle barre tolte ieri, scritta in cifre invece che disegnata. */
 var dati = el('<span class="home-mese-dati"></span>');
-[[t("diario_media"), n.media], [t("home_rounds_word"), n.giri],
- [t("diario_record"), n.meglio], [t("diario_targets_word"), n.piazzole]]
+var conPunti = function(parola){ return parola + " \u00b7 " + t("fin_punti"); };
+dati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(n.media))+'</b><i>'+escapeHtml(conPunti(t("diario_media")))+'</i></span>'));
+var riga = el('<span class="hm-riga"></span>');
+[[t("home_rounds_word"), n.giri],
+ [conPunti(t("diario_record")), n.meglio],
+ [t("diario_targets_word"), n.piazzole]]
 .forEach(function(p){
-dati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(p[1]))+'</b><i>'+escapeHtml(p[0])+'</i></span>'));
+riga.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(p[1]))+'</b><i>'+escapeHtml(p[0])+'</i></span>'));
 });
+dati.appendChild(riga);
 barra.appendChild(dati);
 /* QUI C'ERANO LE BARRE DEL MESE, E SONO STATE TOLTE. (21/08/2026, viste da
    Alessandro sul telefono: «sono tutte storte, devono essere legate a
@@ -16514,7 +16591,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-dall-inizio";
+var BUILD_STAMP = "2026-08-22-bandiera";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16523,7 +16600,7 @@ var BUILD_STAMP = "2026-08-22-dall-inizio";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-22-copia-in-vista";
+var BUILD_PARENT = "2026-08-22-dall-inizio";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
