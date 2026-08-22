@@ -86,12 +86,43 @@
 /* ───────────────────────── STRATO 1 · PRIMITIVI ─────────────────────────── */
 :root{
 /* Verde bosco, argilla, oro: i tre colori dell'app, in gradini veri.
-   Se serve una tinta nuova si aggiunge QUI, non dentro un componente. */
---green-900:#1D4F26; --green-800:#24602C; --green-700:#2C5230; --green-600:#315B35;
---green-500:#3C6D42; --green-400:#60A966; --green-200:#DDEBDA;
+   Se serve una tinta nuova si aggiunge QUI, non dentro un componente.
+
+   IL VERDE E' CAMBIATO. (22/08/2026, scelto da Alessandro: `#4a5d4e`.)
+   La tinta e' quasi la stessa di prima — 133 gradi contro 128, cinque di
+   differenza. A cambiare e' la SATURAZIONE: da 45% a 11%. Da verde bandiera a
+   verde muschio.
+   E il motivo per cui si poteva fare senza rigirare niente e' un numero: col
+   bianco sopra fa 7,08, e quello di prima faceva 7,54. Stessa leggibilita',
+   quindi nessun inchiostro da cambiare e nessuna scritta da spostare. Un
+   verde piu' chiaro provato lo stesso giorno (`#86976B`) si fermava a 3,16 e
+   avrebbe voluto mezzo tema riscritto: e' stato scartato per quello, non per
+   il gusto.
+   GLI ALTRI GRADINI SONO LA STESSA TINTA A PIU' O MENO LUCE, e devono
+   restarlo: desaturare solo il colore principale lascerebbe nell'app due
+   verdi diversi che si notano appena e non si spiegano.
+   Il 900 e' il piu' scuro perche' e' il verde del tema Sole, dove il
+   contrasto e' il mestiere del tema.
+   *L'argilla non e' stata toccata, e adesso funziona meglio: due colori
+   saturi si contendevano l'attenzione, adesso uno fa da terra e l'altro da
+   segnale.* */
+--green-900:#323E34; --green-800:#4A5D4E; --green-700:#3D4D40; --green-600:#4A5D4E;
+--green-500:#5A6F5E; --green-400:#88A08D; --green-200:#E3E8E4;
 --green-success:#2E7D32; --green-success-dk:#4CAF50;
---clay-800:#8A3F09; --clay-700:#BC4F0B; --clay-600:#BE530F; --clay-500:#C1571F;
---clay-400:#E8722F; --clay-200:#FBE2D0;
+/* L'ARGILLA E' CAMBIATA. (22/08/2026, scelta da Alessandro: `#FF4D00`.)
+   E' un arancione a saturazione piena — 100%, contro l'85% di prima — e sta
+   nel gradino 400, che e' quello che si VEDE: le icone d'accento, il pallino
+   del giro, la pastiglia della gara nel tema scuro. Li' e' esattamente il
+   colore chiesto, senza aggiustamenti.
+   SOTTO LE SCRITTE BIANCHE C'E' LA STESSA TINTA PIU' SCURA, e non e' un
+   ripiego: `#FF4D00` col bianco sopra fa 3,33 — sotto la soglia di lettura,
+   e su un tasto che dice «gara» quello non e' un dettaglio estetico. Il 600,
+   che e' quello che porta le scritte, fa 5,86: piu' leggibile del vecchio
+   BE530F, che si fermava a 4,74 ed era gia' al limite.
+   Tinta unica per tutti i gradini (18°), come per il verde: due arancioni che
+   si somigliano appena sono peggio di due arancioni diversi. */
+--clay-800:#8F2B00; --clay-700:#A33100; --clay-600:#B83700; --clay-500:#CC3E00;
+--clay-400:#FF4D00; --clay-200:#FFE3D6;
 --gold-800:#6E4E0C; --gold-700:#7A5610; --gold-600:#8A6210; --gold-500:#B07E12;
 --gold-400:#CBA35C; --gold-200:#F6E8C6; --gold-150:#F9E9C4; --gold-100:#FDF2D9;
 --red-700:#8E0F14; --red-600:#A81319; --red-400:#E23D2E; --red-100:#F9DCDC;
@@ -117,11 +148,21 @@
    non una decorazione: stanno qui perche' un componente non nomina mai
    un esadecimale, nemmeno quando disegna un oggetto reale. */
 --straw-200:#F1E2B8; --straw-500:#D9B96A; --straw-900:#3A2A12;
---sand-250:#EDEAE0; --sand-350:#CFC9B8;
-/* Neutri caldi: la terra e il muschio, non il grigio da ufficio. */
---sand-50:#FFFFFF;  --sand-100:#F5F6F0; --sand-200:#ECEDE6; --sand-300:#D3D7CB;
---sand-400:#B4BBAC; --sand-500:#5F645C; --sand-600:#565D53; --sand-700:#3A403A;
---sand-900:#12160F;
+--sand-250:#EEE8DF; --sand-350:#D1C7B6;
+/* Neutri caldi: la terra e il muschio, non il grigio da ufficio.
+   IL FONDO E' CAMBIATO. (22/08/2026, scelto da Alessandro: `#F5F2ED`.)
+   Era un neutro che tirava al verde (tinta 70°) perche' nasceva dal verde del
+   marchio. Adesso tira al beige (37°): e' carta, non muschio schiarito.
+   TUTTA LA SCALA E' RUOTATA INSIEME, e non e' zelo. Cambiare un gradino solo
+   avrebbe lasciato nella stessa schermata un fondo caldo e dei bordi freddi,
+   e quel tipo di stonatura non si sa spiegare guardandola: si vede che
+   qualcosa non torna e non si trova cosa.
+   Luce e saturazione di ogni gradino sono quelle di prima — cambia la tinta,
+   non il peso — quindi i contrasti del testo restano quelli gia' provati:
+   18,5 / 10,7 / 6,9 sul foglio. */
+--sand-50:#FFFFFF;  --sand-100:#F5F2ED; --sand-200:#EEEAE5; --sand-300:#D8D3CA;
+--sand-400:#BCB6AB; --sand-500:#65615B; --sand-600:#5E5952; --sand-700:#403E3A;
+--sand-900:#17130E;
 --moss-900:#0F1412; --moss-800:#16201C; --moss-700:#1A2620; --moss-600:#2A362F;
 --moss-500:#3B4A41; --moss-300:#9AA39C; --moss-200:#C7CFC5; --moss-100:#EDE6D6;
 
@@ -16899,7 +16940,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-bordo";
+var BUILD_STAMP = "2026-08-22-terra";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16908,7 +16949,7 @@ var BUILD_STAMP = "2026-08-22-bordo";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-22-scarta";
+var BUILD_PARENT = "2026-08-22-bordo";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
