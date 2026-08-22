@@ -4180,8 +4180,8 @@ giro_stato_errore: "Non inviato",
 giro_trovato_titolo: "Abbiamo trovato un giro non finito",
 giro_trovato_riga: "{modo} · piazzola {n} di {tot}",
 giro_trovato_riprendi: "Riprendi il giro",
-giro_trovato_butta: "Buttalo via",
-giro_trovato_butta_conferma: "Buttare via il giro? Tocca di nuovo",
+giro_trovato_butta: "Scarta il giro",
+giro_trovato_butta_conferma: "Scartare il giro? Tocca di nuovo",
 campi_cerca_ph: "Cerca un campo, un paese, una provincia…",
 campi_qui: "In {reg} · {n} campi",
 campi_conto: "{n} campi",
@@ -4830,7 +4830,7 @@ giro_stato_errore: "Not synced",
 giro_trovato_titolo: "We found an unfinished round",
 giro_trovato_riga: "{modo} · target {n} of {tot}",
 giro_trovato_riprendi: "Resume round",
-giro_trovato_butta: "Discard it",
+giro_trovato_butta: "Discard the round",
 giro_trovato_butta_conferma: "Discard the round? Tap again",
 campi_cerca_ph: "Search a field, a town, a province…",
 campi_qui: "In {reg} · {n} fields",
@@ -5479,7 +5479,7 @@ giro_stato_errore: "Non envoyé",
 giro_trovato_titolo: "Nous avons trouvé un parcours non terminé",
 giro_trovato_riga: "{modo} · cible {n} sur {tot}",
 giro_trovato_riprendi: "Reprendre le parcours",
-giro_trovato_butta: "L’abandonner",
+giro_trovato_butta: "Abandonner le parcours",
 giro_trovato_butta_conferma: "Abandonner le parcours ? Touchez à nouveau",
 campi_cerca_ph: "Cherchez un terrain, une ville, un département…",
 campi_qui: "En {reg} · {n} terrains",
@@ -6128,7 +6128,7 @@ giro_stato_errore: "Nicht gesendet",
 giro_trovato_titolo: "Wir haben eine unfertige Runde gefunden",
 giro_trovato_riga: "{modo} · Ziel {n} von {tot}",
 giro_trovato_riprendi: "Runde fortsetzen",
-giro_trovato_butta: "Verwerfen",
+giro_trovato_butta: "Runde verwerfen",
 giro_trovato_butta_conferma: "Runde verwerfen? Nochmal tippen",
 campi_cerca_ph: "Parcours, Ort oder Provinz suchen…",
 campi_qui: "In {reg} · {n} Parcours",
@@ -6796,7 +6796,7 @@ giro_stato_errore: "Gönderilmedi",
 giro_trovato_titolo: "Bitmemiş bir tur bulduk",
 giro_trovato_riga: "{modo} · hedef {n} / {tot}",
 giro_trovato_riprendi: "Tura devam et",
-giro_trovato_butta: "At",
+giro_trovato_butta: "Turu at",
 giro_trovato_butta_conferma: "Tur atılsın mı? Tekrar dokun",
 campi_cerca_ph: "Saha, şehir ya da il ara…",
 campi_qui: "{reg} · {n} saha",
@@ -7458,7 +7458,7 @@ giro_stato_errore: "Не отправлено",
 giro_trovato_titolo: "Мы нашли незавершённый раунд",
 giro_trovato_riga: "{modo} · мишень {n} из {tot}",
 giro_trovato_riprendi: "Продолжить раунд",
-giro_trovato_butta: "Удалить",
+giro_trovato_butta: "Удалить раунд",
 giro_trovato_butta_conferma: "Удалить раунд? Нажмите ещё раз",
 campi_cerca_ph: "Поиск площадки, города или провинции…",
 campi_qui: "{reg} · площадок: {n}",
@@ -8120,7 +8120,7 @@ giro_stato_errore: "No enviado",
 giro_trovato_titolo: "Hemos encontrado una ronda sin terminar",
 giro_trovato_riga: "{modo} · diana {n} de {tot}",
 giro_trovato_riprendi: "Reanudar la ronda",
-giro_trovato_butta: "Descartarla",
+giro_trovato_butta: "Descartar la ronda",
 giro_trovato_butta_conferma: "¿Descartar la ronda? Toca otra vez",
 campi_cerca_ph: "Busca un campo, un pueblo, una provincia…",
 campi_qui: "En {reg} · {n} campos",
@@ -8782,7 +8782,7 @@ giro_stato_errore: "Inte skickad",
 giro_trovato_titolo: "Vi hittade en oavslutad runda",
 giro_trovato_riga: "{modo} · mål {n} av {tot}",
 giro_trovato_riprendi: "Återuppta rundan",
-giro_trovato_butta: "Kasta den",
+giro_trovato_butta: "Kasta rundan",
 giro_trovato_butta_conferma: "Kasta rundan? Tryck igen",
 campi_cerca_ph: "Sök bana, ort eller län…",
 campi_qui: "I {reg} · {n} banor",
@@ -9444,7 +9444,7 @@ giro_stato_errore: "Niet verstuurd",
 giro_trovato_titolo: "We vonden een onafgemaakte ronde",
 giro_trovato_riga: "{modo} · doel {n} van {tot}",
 giro_trovato_riprendi: "Ronde hervatten",
-giro_trovato_butta: "Weggooien",
+giro_trovato_butta: "Ronde weggooien",
 giro_trovato_butta_conferma: "Ronde weggooien? Tik nog eens",
 campi_cerca_ph: "Zoek een veld, plaats of provincie…",
 campi_qui: "In {reg} · {n} velden",
@@ -10360,6 +10360,26 @@ function buttaGiroRitrovato(){
 giroRitrovato = null;
 cancellaGiroSulCloud();
 render();
+}
+
+/* SCARTARE UN GIRO APERTO SU QUESTO DISPOSITIVO. (22/08/2026.)
+   Fino a oggi l'uscita esisteva per un giro solo: quello RITROVATO sul cloud.
+   Il giro aperto QUI aveva un tasto solo — «Riprendi» — e nessun modo di dire
+   di no: per chiuderlo bisognava riprenderlo e arrivare in fondo, o
+   interromperlo dalla classifica. Dal computer si vede subito, perche' li' un
+   giro lasciato aperto per prova non lo chiude mai una camminata.
+   I campi si tolgono invece di azzerarli: beginRound li riscrive tutti quando
+   parte il prossimo, e un campo rimasto a meta' e' peggio di un campo assente.
+   Stessa cautela dell'altro tasto: due tocchi, non uno. */
+function scartaGiroInCorso(){
+CAMPI_DEL_GIRO.forEach(function(k){ delete state[k]; });
+state.roundActive = false;
+state.panel = null; state.lastShotInfo = null; state.awaitingStep = null;
+state.screen = "menu";
+homeOverride = false;
+giroNube.inviato = "";
+cancellaGiroSulCloud();
+save(); render();
 }
 
 // Tornando la rete, quello che era in coda parte da solo: la riga deve
@@ -13849,6 +13869,18 @@ rip.appendChild(av);
 var vai = el('<button class="btn btn-block home-riprendi">'+escapeHtml(t("resume_btn"))+'</button>');
 vai.addEventListener("click", function(){ homeOverride = false; state.screen = "round"; save(); render(); });
 rip.appendChild(vai);
+/* E LA VIA D'USCITA, CHE FIN QUI NON C'ERA. (22/08/2026.)
+   Questo strato aveva un tasto solo. L'app si riapre SEMPRE sulla home — lo
+   decide il caricamento dello stato — quindi un giro lasciato aperto per
+   sbaglio si ripresentava qui a ogni avvio e non c'era modo di dirgli di no:
+   l'unica uscita era riprenderlo e arrivare in fondo, o interromperlo dalla
+   classifica. Da computer si vedeva subito, perche' li' un giro di prova non
+   lo chiude mai una camminata.
+   Il peso e' diverso apposta: riprendere e' il tasto pieno e un tocco solo,
+   scartare e' in sordina e ne chiede due. */
+var scarta = el('<button class="btn btn-ghost btn-block btn-sm ritrovato-butta">'+escapeHtml(t("giro_trovato_butta"))+'</button>');
+armDoubleConfirm(scarta, t("giro_trovato_butta_conferma"), scartaGiroInCorso);
+rip.appendChild(scarta);
 // Niente icona: fra quelle disponibili non c'e un segno di spunta, e
 // icon() con un nome che non esiste disegna un SVG VUOTO senza dire niente.
 rip.appendChild(el('<div class="home-salvato">'+escapeHtml(t("home_saved_here"))+'</div>'));
@@ -14235,10 +14267,14 @@ wrap.appendChild(gr);
 // Il banner del percorso in corso ha senso solo dove si tira: nello spazio
 // compagnia o nel marketplace e' fuori posto.
 if(hasActiveRound && state.tab === "tira"){
-wrap.appendChild(el(
-'<div class="resume-banner">'+t("resume_banner", { mode: escapeHtml(modeLabel(state.mode)), n: state.format })+
-'<div class="row" style="margin-top:var(--s-2);"><button class="btn btn-primary btn-block" id="resumeBtn">'+t("resume_btn")+'</button></div></div>'
-));
+var rb = el('<div class="resume-banner">'+t("resume_banner", { mode: escapeHtml(modeLabel(state.mode)), n: state.format })+
+'<div class="row" style="margin-top:var(--s-2);"><button class="btn btn-primary btn-block" id="resumeBtn">'+t("resume_btn")+'</button></div></div>');
+// Le due uscite non pesano uguale, come nel cartello del giro ritrovato:
+// riprendere e' un tocco, scartare ne chiede due.
+var rbNo = el('<button class="btn btn-ghost btn-block btn-sm ritrovato-butta">'+t("giro_trovato_butta")+'</button>');
+armDoubleConfirm(rbNo, t("giro_trovato_butta_conferma"), scartaGiroInCorso);
+rb.appendChild(rbNo);
+wrap.appendChild(rb);
 }
 
 (incomingSessions||[]).forEach(function(sess){
@@ -16838,7 +16874,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-toni";
+var BUILD_STAMP = "2026-08-22-scarta";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16847,7 +16883,7 @@ var BUILD_STAMP = "2026-08-22-toni";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-22-gola";
+var BUILD_PARENT = "2026-08-22-toni";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
