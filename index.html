@@ -938,6 +938,17 @@ background:none; width:auto; height:auto; }
    e vale per "persone bloccate", il cui segno e' un divieto: un divieto
    verde dice il contrario di quello che disegna. */
 .menu-btn.btn-ghost.riga-attenzione .menu-icon{ color:var(--danger-role); }
+/* OGNI PORTA HA IL SUO TONO. (22/08/2026, chiesto da Alessandro: «il mio
+   diario dovrebbe avere un po' di colore, che stacchi».)
+   Il fondo dell'icona era gia' `currentColor` al 16%: bastava dare a ogni
+   riga il proprio `color`, e il quadretto si tinge da solo. Nessun colore
+   nuovo scritto a mano, nessuna regola in piu' per riga.
+   I toni non sono decorativi: sono gli stessi che quelle cose hanno gia'
+   altrove nell'app — oro per i numeri e i record, verde per l'attrezzatura e
+   la compagnia, rosso per cio' che blocca. *Un colore che significa una cosa
+   sola vale una legenda che nessuno legge.* */
+.menu-btn.btn-ghost.riga-diario .menu-icon{ color:var(--gold-role); }
+.menu-btn.btn-ghost.riga-diario .menu-icon svg{ width:28px; height:28px; }
 
 /* ── chi tira, in cima al setup ── */
 .riga-arcieri{ padding-bottom:var(--s-3); }
@@ -2247,7 +2258,7 @@ h2.section-title{ font-size:var(--t-2xs); letter-spacing:0.14em;
    titolo, descrizione e freccia stavano in FILA ORIZZONTALE, e su una colonna
    stretta si spezzavano su quattro righe con la freccia da sola in fondo.
    In colonna, con la freccia in alto a destra, la tessera e' una tessera. */
-.menu-cols .card:has(> .menu-btn){
+.menu-cols .card:has(> .menu-btn):not(.riga-lunga){
   display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
   gap:var(--s-3); align-items:stretch;
 }
@@ -2255,13 +2266,13 @@ h2.section-title{ font-size:var(--t-2xs); letter-spacing:0.14em;
    la freccia esce dal flusso e va nell'angolo. In fila orizzontale, dentro
    una colonna da un terzo di pagina, quattro pezzi si spezzano su quattro
    righe — ed e' quello che nella foto sembrava un errore di montaggio. */
-.menu-cols .card:has(> .menu-btn) > .menu-btn{
+.menu-cols .card:has(> .menu-btn):not(.riga-lunga) > .menu-btn{
   flex-direction:column; align-items:flex-start; gap:var(--s-2);
   padding:var(--s-4); position:relative; margin-bottom:0;
   border:1px solid var(--border); border-radius:var(--r-md); }
-.menu-cols .card:has(> .menu-btn) > .menu-btn .menu-txt{ gap:var(--s-1); }
-.menu-cols .card:has(> .menu-btn) > .menu-btn .menu-sub{ opacity:0.75; }
-.menu-cols .card:has(> .menu-btn) > .menu-btn::after{
+.menu-cols .card:has(> .menu-btn):not(.riga-lunga) > .menu-btn .menu-txt{ gap:var(--s-1); }
+.menu-cols .card:has(> .menu-btn):not(.riga-lunga) > .menu-btn .menu-sub{ opacity:0.75; }
+.menu-cols .card:has(> .menu-btn):not(.riga-lunga) > .menu-btn::after{
   position:absolute; top:var(--s-3); right:var(--s-4); margin:0; }
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)) > h2.section-title,
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)) > div{
@@ -2832,6 +2843,36 @@ text-transform:uppercase; color:var(--text-3); }
    schermata che rappresenta una PERSONA, non un numero: si riconosce prima di
    leggerla. Tutto in colonna e centrato — un bersaglio che si vede da mezzo
    metro, che e' la distanza a cui si tiene un telefono. */
+/* LA COPIA DI SICUREZZA HA UN FONDO SUO. (22/08/2026, chiesto da Alessandro:
+   «dovrebbe avere una tonalita' diversa, che si noti bene».)
+   Non e' un vezzo: e' la sola scheda della schermata che non serve a
+   consultare qualcosa ma a **non perdere niente**, e in mezzo a sei porte
+   grigie sparisce. Il tono e' l'oro — nell'app significa gia' «questo conta»
+   (i record, la media) — al dieci per cento, con il filo al quaranta.
+   *Velato e non pieno, perche' non e' un allarme: e' un promemoria.* */
+.scheda-cloud{ background:color-mix(in srgb, var(--gold-role) 10%, var(--surface-1));
+  border-color:color-mix(in srgb, var(--gold-role) 40%, transparent); }
+.scheda-cloud .section-title{ color:var(--gold-role); }
+/* I campi corti a coppie; sotto i 700 tornano in colonna. */
+/* `riga-lunga` marca una scheda che non deve MAI diventare una griglia di
+   tessere, nemmeno su schermo largo: dentro c'e' una sola azione, e una sola
+   azione non si confronta con niente. Qui la regola non fa nulla di visibile —
+   una scheda e' gia' un blocco — ma esiste perche' il nome deve avere una
+   regola anche sul telefono: un nome definito solo dentro un @media e' un
+   nome che sul telefono nessuno controlla piu'. */
+.riga-lunga{ display:block; }
+.campi-coppie{ display:grid; grid-template-columns:minmax(0,1fr); gap:var(--s-3); }
+@media (min-width:700px){ .campi-coppie{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+.campo-blocco{ margin-bottom:var(--s-3); }
+.campi-coppie .campo-blocco{ margin-bottom:0; }
+.campo-eti{ display:block; font-size:var(--t-2xs); font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--text-3);
+  margin-bottom:var(--s-1); }
+.campo-note{ min-height:200px; resize:vertical; line-height:1.5; }
+
+.scheda-cloud .btn{ background:var(--surface-1);
+  border-color:color-mix(in srgb, var(--gold-role) 45%, transparent); }
+
 /* I due tasti della copia: due colonne pari, e sul telefono restano pari
    perche' due comandi opposti non hanno un primo e un secondo. */
 .cloud-coppia{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
@@ -10711,6 +10752,26 @@ a:'<rect x="140" y="53.5" width="32" height="22"/>' },
 azavviso: { t:'translate(0 0)',
 s:'<path fill-rule="evenodd" d="M100,18L184,182H16ZM100,46.52L162.73,169H37.27Z"/>',
 a:'<rect x="93" y="74" width="14" height="50"/><circle cx="100" cy="141" r="8"/>' },
+/* LA ROTELLA. (22/08/2026, chiesta da Alessandro: «una rotellina classica da
+   impostazioni, rivista con lo stile delle icone che abbiamo adesso».)
+   Le regole della famiglia, rispettate una per una: sagoma piena in
+   `s`, dettaglio d'accento in `a`, viewBox 200 come tutte le altre. Otto
+   denti e non dodici: sotto i 24px, dodici denti diventano un bordo seghettato
+   che non si legge piu' come una rotella. Il buco al centro e' ritagliato con
+   `evenodd`, cioe' lo stesso modo in cui e' fatto il segno dei bloccati —
+   nessuna tecnica nuova da mantenere.
+   L'accento e' il perno: il solo punto dell'icona che non e' meccanico. */
+azrotella: { t:'translate(0 0)',
+s:'<path fill-rule="evenodd" d="M100,32a68,68 0 1,0 0.1,0ZM100,68a32,32 0 1,1 -0.1,0Z"/>'+
+'<rect x="88" y="12" width="24" height="34" rx="8"/>'+
+'<rect x="88" y="154" width="24" height="34" rx="8"/>'+
+'<rect x="12" y="88" width="34" height="24" rx="8"/>'+
+'<rect x="154" y="88" width="34" height="24" rx="8"/>'+
+'<rect x="88" y="12" width="24" height="34" rx="8" transform="rotate(45 100 100)"/>'+
+'<rect x="88" y="154" width="24" height="34" rx="8" transform="rotate(45 100 100)"/>'+
+'<rect x="12" y="88" width="34" height="24" rx="8" transform="rotate(45 100 100)"/>'+
+'<rect x="154" y="88" width="34" height="24" rx="8" transform="rotate(45 100 100)"/>',
+a:'<circle cx="100" cy="100" r="19"/>' },
 azbloccati: { t:'translate(0 0)',
 s:'<path fill-rule="evenodd" d="M100,18a82,82 0 1,0 0.1,0ZM100,31a69,69 0 1,1 -0.1,0Z"/>',
 a:'<rect x="93" y="34" width="14" height="132" transform="rotate(45 100 100)"/>' }
@@ -14444,7 +14505,7 @@ profCard.appendChild(b);
 return b;
 }
 
-porta("azdiario", "due", t("journal_title"), t("journal_sub"), null, function(){
+porta("azdiario", "due", t("journal_title"), t("journal_sub"), "riga-diario", function(){
 state.tab = "attivita"; state.screen = "menu"; save(); render();
 });
 
@@ -14479,7 +14540,7 @@ state.tab = "compagnie"; state.screen = "menu"; save(); render();
 });
 }
 
-porta("navprofile", "due", t("settings_title"),
+porta("azrotella", "due", t("settings_title"),
 ((state.profile && state.profile.compagniaNome) ? escapeHtml(state.profile.compagniaNome) : t("profile_club_none")),
 null, function(){ state.screen = "profile-edit"; save(); render(); });
 
@@ -14537,10 +14598,18 @@ setCard.appendChild(delAccBtn);
 wrap.appendChild(setCard);
 }
 
-// Segnalazione sempre a portata di mano: finche' l'app e' in prova il pulsante
-// sta in fondo a OGNI sezione, non solo dentro Info, dove nessuno lo trovava
-// dopo aver chiuso l'avviso di benvenuto.
-if(currentUser){
+/* SEGNALAZIONE IN FONDO: SULLA HOME, NON DAPPERTUTTO. (22/08/2026, deciso da
+   Alessandro: «dalla parte campi la toglierei, la lascerei solo nella home;
+   non mettiamo mille annunci».)
+   Era in fondo a OGNI sezione, per una ragione vera del 14/08 — dentro Info
+   non la trovava nessuno. Ma la cura e' diventata il male: in Campi
+   convivevano DUE segnalazioni diverse a due dita di distanza, «un problema
+   sul percorso» (che va alla compagnia) e «scrivi a chi sviluppa» (che arriva
+   a me). Due porte quasi identiche con destinatari diversi non sono due
+   comodita': sono un modo di far arrivare la segnalazione alla persona
+   sbagliata.
+   Resta sulla Home, che e' la schermata da cui si passa comunque. */
+if(currentUser && state.tab === "home"){
 var repCard = el('<div class="card"></div>');
 repCard.appendChild(el('<div class="card-hint">'+t("report_admin_hint")+'</div>'));
 var repBtn = el('<button class="btn btn-block btn-sm btn-segnala">'+t("welcome_note_report")+'</button>');
@@ -15786,7 +15855,16 @@ wrap.appendChild(mapsCard);
 // la stessa domanda, e in una schermata che serve a TROVARE un campo e' anche
 // fuori tema.
 if(currentUser){
-var actCard = el('<div class="card campi-seguito"></div>');
+/* IN CAMPI LA SEGNALAZIONE RESTA UNA RIGA LARGA. (22/08/2026, visto da
+   Alessandro: «e' diventato un rettangolo, io lo metterei lungo qua; sono due
+   cose diverse rispetto a quelle del profilo».)
+   Ed e' vero che sono due cose diverse: nel profilo le tessere sono un ELENCO
+   DI STANZE fra cui scegliere, e messe in griglia si confrontano. Questa e'
+   una sola, ed e' un'AZIONE — non c'e' niente da confrontare. Una tessera da
+   un terzo di pagina, sola in mezzo al bianco, sembra la prima di tre che non
+   sono mai arrivate.
+   `riga-lunga` esclude questa scheda dalla griglia a tre. */
+var actCard = el('<div class="card campi-seguito riga-lunga"></div>');
 
 var repBtn = el('<button class="btn btn-ghost btn-block menu-btn riga-attenzione"><span class="menu-icon">'+navIcon("azavviso",24,"unica")+'</span><span class="menu-txt">'+t("fr_report_open_btn")+'<span class="menu-sub">'+t("fr_report_sub")+'</span></span></button>');
 repBtn.addEventListener("click", function(){ state.frFrom = "menu"; state.screen = "field-report"; save(); render(); });
@@ -15867,22 +15945,45 @@ var infoCard = el('<div class="card"></div>');
 infoCard.appendChild(el('<h2 class="section-title">'+t("club_contacts_title")+'</h2>'));
 infoCard.appendChild(el('<div class="nota stacco-3">'+t("club_contacts_hint")+'</div>'));
 
-function campo(label, tipo, valore, ph){
-infoCard.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+label+'</label>'));
+/* DUE PER RIGA, E L'INDIRIZZO DA SOLO. (22/08/2026, chiesto da Alessandro:
+   «essendoci tutto lo spazio vuoto a destra, i quattro li mettiamo affiancati
+   due e due, e l'indirizzo sotto».)
+   Referente, email, telefono e sito sono quattro dati corti: uno sotto
+   l'altro, su schermo largo, fanno una colonna di campi lunghi mille pixel
+   per scriverci un numero di telefono — e mezza pagina bianca a destra.
+   L'indirizzo resta da solo perche' e' l'unico lungo: affiancarlo a un campo
+   corto vorrebbe dire tagliarlo o sfalsare la riga.
+   *Sotto i 700px la griglia torna a una colonna: due campi affiancati su un
+   telefono sono due campi in cui non ci sta niente.* */
+var griglia = el('<div class="campi-coppie"></div>');
+infoCard.appendChild(griglia);
+
+function campo(dove, label, tipo, valore, ph){
+var box = el('<div class="campo-blocco"></div>');
+box.appendChild(el('<label class="campo-eti">'+label+'</label>'));
 var inp = el('<input type="'+tipo+'" class="input-field in-modulo" placeholder="'+escapeHtml(ph||label)+'" value="'+escapeHtml(valore||"")+'">');
-infoCard.appendChild(inp);
+box.appendChild(inp);
+dove.appendChild(box);
 return inp;
 }
-var refInp   = campo(t("club_ref_name"), "text", info.referente, "Es. Mario Rossi");
-var emailInp = campo(t("cp_admin_email_label"), "email", info.emailComp, "info@compagnia.it");
-var telInp   = campo(t("cp_admin_tel"), "tel", info.tel, "+39 333 1234567");
-var sitoInp  = campo(t("cp_admin_sito"), "text", info.sito, "www.compagnia.it");
-var addrInp  = campo(t("club_addr"), "text", info.indirizzo, "Via A. Alberti, Vignone (VB)");
+var refInp   = campo(griglia, t("club_ref_name"), "text", info.referente, "Es. Mario Rossi");
+var emailInp = campo(griglia, t("cp_admin_email_label"), "email", info.emailComp, "info@compagnia.it");
+var telInp   = campo(griglia, t("cp_admin_tel"), "tel", info.tel, "+39 333 1234567");
+var sitoInp  = campo(griglia, t("cp_admin_sito"), "text", info.sito, "www.compagnia.it");
+var addrInp  = campo(infoCard, t("club_addr"), "text", info.indirizzo, "Via A. Alberti, Vignone (VB)");
 
-infoCard.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("club_notes")+'</label>'));
-var noteInp = el('<textarea class="input-field in-modulo" rows="3"></textarea>');
+/* LE NOTE PER GLI ARCIERI NON SI SCRIVONO IN UNA FESSURA. (22/08/2026.)
+   Tre righe visibili per un testo che spiega come si arriva al campo, dove si
+   parcheggia e cosa portarsi: si scriveva scorrendo dentro una finestrella
+   alta due dita, e per rileggerlo bisognava scorrere di nuovo. Dodici righe
+   e la possibilita' di tirarla piu' giu' — *un campo che si vede tutto e' un
+   campo che si rilegge prima di salvare.* */
+var noteBox = el('<div class="campo-blocco"></div>');
+noteBox.appendChild(el('<label class="campo-eti">'+t("club_notes")+'</label>'));
+var noteInp = el('<textarea class="input-field in-modulo campo-note" rows="12"></textarea>');
 noteInp.value = info.note || "";
-infoCard.appendChild(noteInp);
+noteBox.appendChild(noteInp);
+infoCard.appendChild(noteBox);
 
 var saveBtn = el('<button class="btn btn-primary btn-block">'+t("club_save")+'</button>');
 var saveMsg = el('<div style="font-size:var(--t-sm);margin-top:var(--s-2);min-height:16px;text-align:center;"></div>');
@@ -16737,7 +16838,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-gola";
+var BUILD_STAMP = "2026-08-22-toni";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16746,7 +16847,7 @@ var BUILD_STAMP = "2026-08-22-gola";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-22-in-cima";
+var BUILD_PARENT = "2026-08-22-gola";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -17299,7 +17400,7 @@ return { anno: anno, giri: n, piazzole: piazz, media: Math.round(somma / n), meg
    Dentro non e' cambiato nulla: sono gli stessi due tasti gia' provati sul
    campo, in una cornice che adesso si puo' appendere dove serve. */
 function cloudBackupCard(){
-var cloudCard = el('<div class="card"></div>');
+var cloudCard = el('<div class="card scheda-cloud"></div>');
 cloudCard.appendChild(el('<h2 class="section-title">'+t("diario_cloud_title")+'</h2>'));
 cloudCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.5;margin-bottom:var(--s-3);">'+t("diario_cloud_hint")+'</div>'));
 if(DEV_MODE || !db || !currentUser){
