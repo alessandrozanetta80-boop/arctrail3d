@@ -2150,9 +2150,19 @@ h2.section-title{ font-size:var(--t-2xs); letter-spacing:0.14em;
    aveva un altro; con l'icona, che ne ha un terzo, erano TRE cornici
    annidate. Adesso stanno sulla pagina.
    La griglia resta: quella e' la decisione del 13/08 e non cambia. */
+/* LE PIASTRELLE TORNANO IN COLONNA. (21/08/2026, detto da Alessandro: «i tre
+   quadrati devono diventare rettangoli che prendono tutta la pagina, se no
+   non ha senso».)
+   Tre colonne su schermo largo sembravano un guadagno di spazio, e invece
+   erano tre difetti: le tessere venivano alte quanto la piu' lunga delle tre
+   descrizioni, il titolo e il testo finivano incolonnati a forza in scatole
+   strette, e soprattutto **la stessa schermata si leggeva in due modi
+   diversi** — in colonna sul telefono, a griglia sul computer.
+   Un rettangolo largo con l'icona a sinistra e due righe a destra e' la
+   stessa forma di la', e su mille pixel si legge in un'occhiata sola. */
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:var(--s-4); align-items:stretch;
+  display:grid; grid-template-columns:minmax(0,1fr);
+  gap:var(--s-3); align-items:stretch;
   /* trasparenza e niente bordo li dichiara la regola di primo livello: qui
      serve solo la griglia, che e' l'unica cosa che riguarda lo schermo largo. */
 }
@@ -16448,7 +16458,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-21-squadrato";
+var BUILD_STAMP = "2026-08-21-colonna";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16457,7 +16467,7 @@ var BUILD_STAMP = "2026-08-21-squadrato";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-ordine";
+var BUILD_PARENT = "2026-08-21-squadrato";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -17167,7 +17177,14 @@ cloudMsg.textContent = t("diario_cloud_none");
 cloudCard.appendChild(upBtn);
 cloudCard.appendChild(downBtn);
 }
-if(tutto || soloRecord) wrap.appendChild(cloudCard);
+/* LA COPIA DI SICUREZZA STA IN TUTTE E TRE LE SCHEDE. (21/08/2026, dopo che
+   Alessandro non e' riuscito a ritrovarla: «prima ce l'avevo, son sicuro».)
+   Non era sparita: era in fondo alla scheda «Record», che e' la terza. Chi
+   entra nel diario per cercare i propri giri apre «Giri salvati», non
+   «Record» — e li' non c'era.
+   *Una cosa che si cerca in un momento di panico — ho cambiato telefono, dove
+   sono i miei giri — non puo' stare dietro alla scheda giusta.* */
+wrap.appendChild(cloudCard);
 
 
 return wrap;
