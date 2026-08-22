@@ -2119,11 +2119,20 @@ header.top .home-btn.small:hover{ background:color-mix(in srgb, var(--clay) 88%,
 .menu-cols .home-saluto,
 .menu-cols .home-domanda{ text-align:center; }
 .menu-cols .home-azioni{ align-items:center; }
-.menu-cols .home-azioni > .btn.btn-block,
-.strato > .btn.btn-block,
-.strato .card > .btn.btn-block,
-.menu-cols > .card > .btn.btn-block,
-.menu-cols > .home-sezione > .btn.btn-block{
+/* ATTENZIONE — QUESTA REGOLA NON DEVE TOCCARE LE PIASTRELLE.
+   (22/08/2026, difetto visto da Alessandro: le tre tessere di «Cosa vuoi
+   fare?» venivano larghe quanto la loro scritta e centrate una per volta,
+   cioe' una scaletta storta in mezzo alla pagina.)
+   Un tasto si stringe alla sua scritta perche' e' un COMANDO. Una piastrella
+   non e' un comando: e' una destinazione con dentro un'icona, un titolo e una
+   descrizione, e la sua larghezza e' quella della colonna — se no le tre
+   scelte non si confrontano piu', e confrontarle e' tutto il lavoro di quella
+   schermata. Da qui l'esclusione esplicita di `.menu-btn`. */
+.menu-cols .home-azioni > .btn.btn-block:not(.menu-btn),
+.strato > .btn.btn-block:not(.menu-btn),
+.strato .card > .btn.btn-block:not(.menu-btn),
+.menu-cols > .card > .btn.btn-block:not(.menu-btn),
+.menu-cols > .home-sezione > .btn.btn-block:not(.menu-btn){
   width:auto; min-width:260px; display:flex; margin-left:auto; margin-right:auto; }
 
 /* ── 3. Le sezioni: non piu' una barra a se', ma il centro della testata ── */
@@ -2173,8 +2182,16 @@ h2.section-title{ font-size:var(--t-2xs); letter-spacing:0.14em;
    diversi** — in colonna sul telefono, a griglia sul computer.
    Un rettangolo largo con l'icona a sinistra e due righe a destra e' la
    stessa forma di la', e su mille pixel si legge in un'occhiata sola. */
+/* TRE TESSERE AFFIANCATE, DELLA STESSA MISURA. (22/08/2026, chiesto da
+   Alessandro: «bisogna affiancare i tre rettangoli che abbiano la stessa
+   dimensione».)
+   `1fr` tre volte e non `auto-fit`: `auto-fit` divide lo spazio secondo il
+   contenuto e basta una descrizione piu' lunga per far nascere tre colonne
+   diverse. `align-items:stretch` pareggia l'altezza. Sotto i 900px questo
+   blocco non esiste e le tessere tornano in colonna, che sul telefono e'
+   l'unica forma leggibile. */
 .menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
-  display:grid; grid-template-columns:minmax(0,1fr);
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
   gap:var(--s-3); align-items:stretch;
   /* trasparenza e niente bordo li dichiara la regola di primo livello: qui
      serve solo la griglia, che e' l'unica cosa che riguarda lo schermo largo. */
@@ -11000,6 +11017,26 @@ catch(e){ renderNow(); }
 function renderNow(){
 paintScreen();
 restoreContinuity(!lastMoved);
+if(lastMoved) tornaInCima();
+}
+
+/* UNA SCHERMATA NUOVA COMINCIA DALL'INIZIO. (22/08/2026, visto da Alessandro:
+   «se nella pagina precedente sei a meta', la pagina nuova si apre a meta'».)
+   La pagina non veniva ridisegnata da capo: veniva sostituito il contenuto di
+   `#app`, e la finestra restava dove stava. Se la schermata nuova e' alta
+   quanto la vecchia, uno si ritrova in mezzo a un testo che non ha mai
+   letto — e non ha modo di sapere che sopra c'e' dell'altro.
+   Vale SOLO quando si cambia davvero schermata (`lastMoved`). Sul ridisegno
+   della stessa — che succede a ogni tocco, a ogni freccia segnata — la
+   posizione va tenuta, o segnare una piazzola sbatterebbe in cima ogni volta.
+   Niente scorrimento morbido: il salto e' istantaneo di proposito, perche'
+   un'animazione qui non racconta un movimento, racconta solo un ritardo. */
+function tornaInCima(){
+try{
+if(typeof window.scrollTo === "function"){ window.scrollTo(0, 0); }
+var d = document.scrollingElement || document.documentElement;
+if(d){ d.scrollTop = 0; }
+}catch(e){}
 }
 
 function paintScreen(){
@@ -16477,7 +16514,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-copia-in-vista";
+var BUILD_STAMP = "2026-08-22-dall-inizio";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16486,7 +16523,7 @@ var BUILD_STAMP = "2026-08-22-copia-in-vista";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-21-colonna";
+var BUILD_PARENT = "2026-08-22-copia-in-vista";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
