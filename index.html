@@ -10991,7 +10991,35 @@ try{ f.setSelectionRange(keepFocus.start, keepFocus.end); }catch(e3){}
 }
 }
 
+/* CAMBIANDO SCHERMATA SI RIPARTE DALL'ALTO, E LA POSIZIONE VECCHIA SI BUTTA.
+   (22/08/2026, seconda passata: il rimedio di ieri non funzionava.)
+
+   Ieri `tornaInCima()` era stato messo DOPO `restoreContinuity`, e sembrava
+   giusto. Non lo era per due motivi, ed e' il secondo quello che conta:
+
+   1. `applyScroll` fa due passate — una subito e una al fotogramma dopo,
+      quando l'altezza della pagina e' definitiva. La seconda arrivava DOPO il
+      mio zero e lo cancellava.
+   2. Ma la causa vera e' che `keepScroll` **si ricordava di quella schermata
+      da una visita precedente**. In un'app che gira fra quattro destinazioni,
+      quasi ogni schermata e' gia' stata vista: la memoria c'era quasi sempre,
+      e la pagina si riapriva a meta' esattamente com'era stata lasciata la
+      volta prima.
+
+   Cioe': non era un ripristino che sfuggiva, era un ripristino che
+   funzionava. *La continuita' serve fra due ridisegni della STESSA schermata
+   — dove il ridisegno e' un dettaglio tecnico che l'utente non ha chiesto —
+   e non fra due schermate diverse, dove il salto e' proprio quello che ha
+   chiesto.*
+
+   Quindi la posizione non viene solo ignorata: viene buttata, o tornerebbe a
+   galla alla visita dopo. */
+if(sameScreen){
 applyScroll(keepScroll[scrollKey()] || 0);
+} else {
+delete keepScroll[scrollKey()];
+applyScroll(0);
+}
 }
 
 // Rimettere un riquadro dove stava. Chiamabile anche da fuori: le chat si
@@ -11012,12 +11040,19 @@ node.scrollTop = (v === "end") ? node.scrollHeight : v;
 // Due passate: subito, e al fotogramma dopo, quando l'altezza e' definitiva.
 function applyScroll(y){
 var doc = document.scrollingElement || document.documentElement;
-if(y === 0 && doc.scrollTop === 0) return;
+var win = (typeof window.scrollY === "number") ? window.scrollY : 0;
+// La scorciatoia vale solo se sono d'accordo TUTTI E DUE i modi di leggere
+// lo scorrimento: su alcuni telefoni `scrollingElement.scrollTop` resta a
+// zero mentre la finestra e' scesa, e con la scorciatoia sbagliata il
+// ritorno in cima non veniva mai eseguito.
+if(y === 0 && doc.scrollTop === 0 && win === 0) return;
 var root = document.documentElement;
 root.classList.add("no-smooth");
 doc.scrollTop = y;
+try{ window.scrollTo(0, y); }catch(e){}
 requestAnimationFrame(function(){
 doc.scrollTop = y;
+try{ window.scrollTo(0, y); }catch(e2){}
 root.classList.remove("no-smooth");
 });
 }
@@ -11046,7 +11081,6 @@ catch(e){ renderNow(); }
 function renderNow(){
 paintScreen();
 restoreContinuity(!lastMoved);
-if(lastMoved) tornaInCima();
 }
 
 /* UNA SCHERMATA NUOVA COMINCIA DALL'INIZIO. (22/08/2026, visto da Alessandro:
@@ -11060,13 +11094,9 @@ if(lastMoved) tornaInCima();
    posizione va tenuta, o segnare una piazzola sbatterebbe in cima ogni volta.
    Niente scorrimento morbido: il salto e' istantaneo di proposito, perche'
    un'animazione qui non racconta un movimento, racconta solo un ritardo. */
-function tornaInCima(){
-try{
-if(typeof window.scrollTo === "function"){ window.scrollTo(0, 0); }
-var d = document.scrollingElement || document.documentElement;
-if(d){ d.scrollTop = 0; }
-}catch(e){}
-}
+/* Qui stava `tornaInCima()`, tolta il 22/08: faceva la stessa cosa che adesso
+   fa `restoreContinuity`, un istante prima e senza buttare la posizione
+   vecchia. Due mani sullo stesso volante sono peggio di una. */
 
 function paintScreen(){
 var app = document.getElementById("app");
@@ -16650,7 +16680,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-quattro-voci";
+var BUILD_STAMP = "2026-08-22-in-cima";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
