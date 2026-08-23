@@ -415,7 +415,17 @@ color-scheme:light;
 /* i tre comandi del menu: fondo tenue, pastiglia piena, testo scuro.
    Quando al sole la tinta sbiadisce, il quadretto pieno resta l'unico
    appiglio di colore. */
+/* `--tone-*-ico` NASCE QUANDO SPARISCE IL QUADRETTO. (23/08/2026.)
+   Finche' l'icona stava dentro una pastiglia piena, il suo colore era
+   l'inchiostro della pastiglia e il fondo del tasto non c'entrava. Senza
+   pastiglia l'icona sta sul fondo tenue, e li' il verde del marchio fa
+   **2,17:1**: si vede che c'e' qualcosa e non si capisce cosa.
+   Arancione e oro reggono con il loro `-fg` (4,89 e 4,74). Il verde no, e
+   prende il verde scuro: 5,76:1. *Non e' un'eccezione al sistema, e' il
+   sistema che finalmente distingue «colore della voce» da «colore di un
+   segno appoggiato sul fondo».* */
 --tone-train-bg:var(--green-200); --tone-train-fg:var(--green-800); --tone-train-solid:var(--lime-500);
+--tone-train-ico:var(--green-700); --tone-race-ico:var(--clay-600); --tone-prep-ico:var(--gold-600);
 --tone-race-bg:var(--clay-200);  --tone-race-fg:var(--clay-600);   --tone-race-solid:var(--clay-400);
 --tone-prep-bg:var(--gold-200);  --tone-prep-fg:var(--gold-600);   --tone-prep-solid:var(--gold-400);
 --tone-border:60%;
@@ -536,6 +546,9 @@ color-scheme:dark;
 --tone-race-fg:var(--clay-400);   --tone-race-solid:var(--clay-500);
 --tone-prep-bg:color-mix(in srgb, var(--gold-500) 24%, var(--surface-1));
 --tone-prep-fg:var(--gold-400);   --tone-prep-solid:var(--gold-500);
+/* Al buio il rapporto si rovescia: i tre `-fg` chiari sul fondo tenue fanno
+   3,71 / 3,60 / 4,25. Vanno bene come sono. */
+--tone-train-ico:var(--tone-train-fg); --tone-race-ico:var(--tone-race-fg); --tone-prep-ico:var(--tone-prep-fg);
 --tone-border:55%; --solid-ink:var(--sand-50);
 
 --score-ss:var(--punto-ss-scuro); --score-spot:var(--punto-spot-scuro); --score-sag:var(--punto-sag-scuro);
@@ -658,6 +671,9 @@ color-scheme:light;
 --tone-train-bg:var(--sand-50); --tone-train-fg:var(--green-900); --tone-train-solid:var(--lime-500);
 --tone-race-bg:var(--sand-50);  --tone-race-fg:var(--clay-800);   --tone-race-solid:var(--clay-400);
 --tone-prep-bg:var(--sand-50);  --tone-prep-fg:var(--gold-800);   --tone-prep-solid:var(--gold-400);
+/* Al sole il fondo e' bianco: il verde del marchio ci fa 2,66:1. Stesso
+   verde scuro del tema chiaro, 7,04:1. */
+--tone-train-ico:var(--green-700); --tone-race-ico:var(--tone-race-fg); --tone-prep-ico:var(--tone-prep-fg);
 --tone-border:100%; --solid-ink:var(--sand-900);
 /* il vuoto del bersaglio e le superfici tenui non devono restare veli */
 --checkbox-border:var(--sand-900);
@@ -1007,20 +1023,45 @@ color:var(--gold-role); font-weight:800; box-shadow:none; }
    guardando la fila intera, non leggendola una riga per volta.* Scende a
    `--t-md`, che e' la taglia del testo — la stessa che ha nelle liste di
    qualunque app che di elenchi ne mostra dieci. */
+/* LE TRE PORTE SONO ALTE UGUALE. (23/08/2026.)
+   Erano alte 88, 118 e 118 pixel, perche' l'altezza la decideva la
+   lunghezza della descrizione. Tre destinazioni che si scelgono guardando
+   la fila intera non possono avere tre pesi diversi per un motivo che non
+   e' loro: la piu' alta sembra la piu' importante, e la piu' importante
+   diventa quella che aveva la frase piu' lunga.
+   `--porta-h` e' la stessa per tutte e tre. La descrizione si ferma a due
+   righe — la nota di qui sotto ne chiedeva una sola, ma in nove lingue una
+   sola non basta, e un limite che nessuno rispetta non e' un limite. */
+--porta-h:calc(var(--s-7) + var(--s-6));
 .menu-btn{ padding:var(--s-3) var(--s-4); font-size:var(--t-md);
 text-align:left; justify-content:flex-start; margin-bottom:var(--s-2);
 position:relative; overflow:hidden; border-radius:var(--r-md); }
-/* L'icona dentro una pastiglia: quando al sole la tinta del fondo sbiadisce,
-   il quadretto pieno resta l'unico appiglio di colore. */
+.menu-btn.training, .menu-btn.gara, .menu-btn.prepara{
+min-height:var(--porta-h); align-items:center; }
+/* IL QUADRETTO PIENO E' STATO TOLTO. (23/08/2026, chiesto da Alessandro:
+   «non mi piace, e non e' staccato dal bordo».)
+   Aveva una ragione buona, scritta qui prima: al sole, con la tinta del
+   fondo sbiadita, il quadretto restava l'unico appiglio di colore. Ma nel
+   tema Sole il fondo e' bianco e il BORDO sta al 100% — il colore lo porta
+   gia' lui, e il quadretto era una seconda risposta alla stessa domanda.
+   *E dopo il passaggio al tinto era rimasto l'ultimo pieno di queste tre
+   schermate: tre francobolli saturi sopra tre fondi velati.*
+   Resta l'ingombro, non il fondo: la larghezza fissa tiene i tre titoli
+   incolonnati, che e' il vero mestiere di quel quadrato. Il segno cresce da
+   24 a 28 perche' senza pastiglia intorno aveva perso presenza. */
 .menu-btn .menu-icon{ font-size:var(--t-lg); position:relative; z-index:1;
 display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
-width:var(--s-6); height:var(--s-6); border-radius:var(--r-md);
-background:color-mix(in srgb, currentColor 16%, transparent); }
+width:var(--s-6); height:var(--s-6); }
 .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; position:relative; z-index:1; }
 /* La descrizione va a una riga sola: e' un aiuto, non una spiegazione. Se non
    ci sta, il titolo non era abbastanza chiaro e si aggiusta il titolo. */
 .menu-btn .menu-sub{ font-size:var(--t-xs); font-weight:400; opacity:0.8;
 margin-top:2px; line-height:1.35; }
+/* Due righe e non tre: senza il tetto, una traduzione lunga rifa' il difetto
+   delle altezze diverse dalla porta di servizio. */
+.menu-btn.training .menu-sub, .menu-btn.gara .menu-sub, .menu-btn.prepara .menu-sub{
+display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
+line-clamp:2; overflow:hidden; }
 /* I tre comandi: fondo tenue, bordo della stessa famiglia, pastiglia piena.
    Un solo disegno per tutti i temi — cambiano solo le tre coppie --tone-*. */
 .menu-btn.training{ background:var(--tone-train-bg); color:var(--tone-train-fg);
@@ -1054,7 +1095,7 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
    torna indietro e' il resto del giro — niente riquadro attorno, niente riga
    d'oro, ombra leggera, raggio sulla scala: *quella parte non e' stata
    contestata, ed e' quella che ha tolto un quarto di schermo.* */
-.menu-btn.training .menu-icon{ background:var(--tone-train-solid); color:var(--solid-ink); }
+.menu-btn.training .menu-icon{ color:var(--tone-train-ico); }
 
 /* UN AVVISO DI CHIUSURA NON DEVE PESARE COME UN'AZIONE APERTA. (20/08/2026.)
    «Prepara gara» chiuso era una cornice tratteggiata alta quanto l'azione
@@ -1064,8 +1105,8 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
   border:1px dashed var(--line); border-radius:var(--r-md);
   font-size:var(--t-sm); line-height:1.45; color:var(--muted); }
 .riga-chiusa b{ display:block; font-weight:700; color:var(--text-2); margin-bottom:var(--s-1); }
-.menu-btn.gara .menu-icon{ background:var(--tone-race-solid); color:var(--solid-ink); }
-.menu-btn.prepara .menu-icon{ background:var(--tone-prep-solid); color:var(--solid-ink); }
+.menu-btn.gara .menu-icon{ color:var(--tone-race-ico); }
+.menu-btn.prepara .menu-icon{ color:var(--tone-prep-ico); }
 .menu-btn .menu-txt{ color:var(--text-1); }
 .menu-btn .menu-sub{ color:var(--text-3); opacity:1; font-weight:500; }
 
@@ -1124,8 +1165,13 @@ background:none; width:auto; height:auto; }
    altrove nell'app — oro per i numeri e i record, verde per l'attrezzatura e
    la compagnia, rosso per cio' che blocca. *Un colore che significa una cosa
    sola vale una legenda che nessuno legge.* */
-.menu-btn.btn-ghost.riga-diario .menu-icon{ color:var(--gold-role); }
-.menu-btn.btn-ghost.riga-diario .menu-icon svg{ width:28px; height:28px; }
+/* IL DIARIO ERA D'ORO, E LE ALTRE QUATTRO VERDI. (23/08/2026, detto da
+   Alessandro: «le icone devono avere tutti gli stessi colori».)
+   In una colonna di porte l'unica di un altro colore non dice «sono diversa»:
+   dice «sono piu' importante», che non era vero. Era anche l'unica a 28px
+   invece di 24 — due segnali nella stessa direzione, nessuno voluto.
+   Torna verde e torna della misura di tutte. L'accento arancione resta: quello
+   ce l'hanno tutte e cinque, ed e' quello che le tiene insieme. */
 
 /* ── chi tira, in cima al setup ── */
 .riga-arcieri{ padding-bottom:var(--s-3); }
@@ -10962,17 +11008,50 @@ a:'<rect x="93" y="74" width="14" height="50"/><circle cx="100" cy="141" r="8"/>
    `evenodd`, cioe' lo stesso modo in cui e' fatto il segno dei bloccati —
    nessuna tecnica nuova da mantenere.
    L'accento e' il perno: il solo punto dell'icona che non e' meccanico. */
+/* LA ROTELLA ERA UNA MASSA, LE ALTRE SONO DISEGNI. (23/08/2026, detto da
+   Alessandro: «deve essere piu' simile a quelle icone che gia' abbiamo
+   fatto».)
+   Il difetto, in numeri: l'anello era spesso 36 punti su 200 e i denti erano
+   otto rettangoli da 24×34 con angoli da 8. A 24 pixel tutto questo si fonde
+   in un cerchio nero. L'arco, la bandierina e il grafico accanto hanno
+   l'ARIA dentro — l'arco e' aperto, l'asta della bandiera e' un filo, le
+   colonne del grafico sono separate — e la rotella era l'unica senza.
+   Cosa e' cambiato: l'anello scende da 36 a 24 di spessore (il foro passa da
+   32 a 46), i denti da 24 a 18 di larghezza e da 34 a 26 di sporgenza, gli
+   angoli da 8 a 6. Il perno accentato scende da 19 a 15, cosi' resta un
+   PUNTO come nelle altre e non un secondo cerchio pieno.
+   *Non e' stata ridisegnata piu' bella: e' stata svuotata finche' non ha
+   avuto la stessa quantita' di bianco delle sue vicine.* */
+/* LA ROTELLA E' UN INGRANAGGIO, NON UN CERCHIO CON DELLE TACCHE.
+   (23/08/2026, seconda passata, su un riferimento portato da Alessandro.)
+
+   La passata di stamattina l'aveva SVUOTATA — anello piu' sottile, denti piu'
+   corti — ed era la cura giusta per il difetto sbagliato. Il problema non era
+   quanta materia c'era: era che i denti erano otto RETTANGOLI appoggiati su un
+   anello, quindi da lontano leggevi «cerchio con delle tacche». Un ingranaggio
+   vero ha denti TRAPEZOIDALI che nascono dal corpo e si stringono in punta, e
+   il corpo si vede fra un dente e l'altro.
+
+   Il disegno non e' scritto a mano: e' generato: otto denti a 45 gradi, base
+   +/-12 gradi sul corpo (r 62), punta +/-8 gradi a r 86. Fra due denti restano
+   21 gradi di corpo nudo, ed e' quello che lo fa leggere come ingranaggio.
+
+   LO SMUSSO E' UNO STROKE, non angoli disegnati. `stroke-linejoin:round` con
+   8 di spessore arrotonda tutti e trentadue gli spigoli in una riga, e i raggi
+   rientrano di 4 per compensare. Scritti a mano sarebbero stati 32 archi
+   impossibili da ritoccare.
+
+   IL FORO E' UN BUCO, NON UN CERCHIO DIPINTO. Sottopath in verso opposto piu'
+   `fill-rule="evenodd"`. Un cerchio color fondo avrebbe funzionato benissimo
+   nel tema chiaro e lasciato una macchia chiara in mezzo alla rotella al buio
+   — cioe' il difetto delle due icone col verde di luglio, rifatto lo stesso
+   giorno in cui e' stato corretto.
+
+   Guardata resa davvero, a 200 / 80 / 28 / 24 pixel e nei tre temi, accanto
+   alle sue quattro vicine. *Non e' stata immaginata: e' stata vista.* */
 azrotella: { t:'translate(0 0)',
-s:'<path fill-rule="evenodd" d="M100,32a68,68 0 1,0 0.1,0ZM100,68a32,32 0 1,1 -0.1,0Z"/>'+
-'<rect x="88" y="12" width="24" height="34" rx="8"/>'+
-'<rect x="88" y="154" width="24" height="34" rx="8"/>'+
-'<rect x="12" y="88" width="34" height="24" rx="8"/>'+
-'<rect x="154" y="88" width="34" height="24" rx="8"/>'+
-'<rect x="88" y="12" width="24" height="34" rx="8" transform="rotate(45 100 100)"/>'+
-'<rect x="88" y="154" width="24" height="34" rx="8" transform="rotate(45 100 100)"/>'+
-'<rect x="12" y="88" width="34" height="24" rx="8" transform="rotate(45 100 100)"/>'+
-'<rect x="154" y="88" width="34" height="24" rx="8" transform="rotate(45 100 100)"/>',
-a:'<circle cx="100" cy="100" r="19"/>' },
+s:'<path fill-rule="evenodd" d="M87.9,43.3L88.6,18.8L111.4,18.8L112.1,43.3A58.0,58.0 0 0,1 131.6,51.4L131.6,51.4L149.3,34.5L165.5,50.7L148.6,68.4A58.0,58.0 0 0,1 156.7,87.9L156.7,87.9L181.2,88.6L181.2,111.4L156.7,112.1A58.0,58.0 0 0,1 148.6,131.6L148.6,131.6L165.5,149.3L149.3,165.5L131.6,148.6A58.0,58.0 0 0,1 112.1,156.7L112.1,156.7L111.4,181.2L88.6,181.2L87.9,156.7A58.0,58.0 0 0,1 68.4,148.6L68.4,148.6L50.7,165.5L34.5,149.3L51.4,131.6A58.0,58.0 0 0,1 43.3,112.1L43.3,112.1L18.8,111.4L18.8,88.6L43.3,87.9A58.0,58.0 0 0,1 51.4,68.4L51.4,68.4L34.5,50.7L50.7,34.5L68.4,51.4A58.0,58.0 0 0,1 87.9,43.3ZM100,53.0a47.0,47.0 0 1,0 0.1,0Z" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/>',
+a:'<path fill-rule="evenodd" d="M100,57a43,43 0 1,0 0.1,0ZM100,62a38,38 0 1,1 -0.1,0Z"/>' },
 azbloccati: { t:'translate(0 0)',
 s:'<path fill-rule="evenodd" d="M100,18a82,82 0 1,0 0.1,0ZM100,31a69,69 0 1,1 -0.1,0Z"/>',
 a:'<rect x="93" y="34" width="14" height="132" transform="rotate(45 100 100)"/>' }
@@ -17055,7 +17134,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-verde-tinto";
+var BUILD_STAMP = "2026-08-23-ingranaggio";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17064,7 +17143,7 @@ var BUILD_STAMP = "2026-08-23-verde-tinto";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-verde-velato";
+var BUILD_PARENT = "2026-08-23-porte-pari";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
