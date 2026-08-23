@@ -889,6 +889,17 @@ background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(
 header.top{ background:var(--eroe-bg); color:var(--eroe-ink);
   border-bottom-color:transparent;
   backdrop-filter:none; -webkit-backdrop-filter:none; }
+/* E TOCCA IL BORDO IN ALTO. Il pannello usciva gia' dai margini di fianco
+   (`margin-left/right:-16px`) ma non da quello in cima: `#app` ha un
+   riempimento di 16 sopra, e sopra la fascia scura restava una striscia di
+   fondo pagina. *Un pannello che tocca tre bordi su quattro non sembra un
+   pannello: sembra un pannello messo storto.*
+   La misura non e' scritta a mano: e' lo stesso `--s-4` del riempimento che
+   annulla, quindi se quello cambia questa lo segue. La barra di stato del
+   telefono resta rispettata — `env(safe-area-inset-top)` era gia' li' e
+   viene dopo. */
+header.top{ margin-top:calc(var(--s-4) * -1 + env(safe-area-inset-top));
+  padding-top:calc(var(--s-2) + env(safe-area-inset-top)); }
 header.top .brandblock .brand-title{ color:var(--eroe-ink); }
 header.top .sub, header.top .bar-btn{ color:var(--eroe-eti); }
 header.top .bar-btn:hover{ background:color-mix(in srgb, var(--eroe-ink) 12%, transparent); }
@@ -1754,13 +1765,27 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
 /* La riga di una compagnia nell'elenco: un segno, il nome, dove sta.
    E' un tasto, non una voce di menu — si tocca e si apre qui sotto. */
 .comp-riga{ display:flex; align-items:center; gap:var(--s-3); width:100%;
-  padding:var(--s-2) var(--s-3); margin-bottom:var(--s-2); min-height:var(--hit);
-  background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-md);
+  padding:var(--s-3) var(--s-2); margin-bottom:0; min-height:var(--hit);
+  background:none; border:0; border-bottom:1px solid var(--border); border-radius:0;
   text-align:left; font:inherit; color:inherit; cursor:pointer; }
+/* ══ L'ELENCO E' UN ELENCO, NON UNA PILA DI TASTI ═════════════════════════
+   (23/08/2026, quarta passata: «spingiamola ancora un po' verso la vetrina».)
+   Centoquarantadue campi erano centoquarantadue riquadri con fondo, bordo e
+   angolo tondo: da lontano una colonna di tasti tutti uguali, dove il nome —
+   che e' l'unica cosa che si cerca — pesava quanto la sua cornice.
+   Nella vetrina un elenco e' fatto di righe separate da un filo. Qui succede
+   lo stesso: sparisce il riquadro, resta il filetto sotto, e quello che si
+   vede diventa il nome.
+   *Non e' meno premibile: e' l'intera riga a essere premibile, come prima, e
+   adesso e' larga tutta la fascia invece che larga quanto il suo riquadro.*
+   L'ultima riga non porta il filo: un elenco finisce, non si interrompe. */
+.comp-riga:last-child{ border-bottom:0; }
+.comp-riga:active{ background:var(--surface-2); }
+.comp-riga.on{ background:var(--verde-bg); }
 .comp-riga .mini{ flex:0 0 auto; width:var(--s-6); height:var(--s-6); border-radius:var(--r-sm);
   background:var(--surface-1); border:1px solid var(--border); display:flex;
   align-items:center; justify-content:center; color:var(--accent-soft); }
-.comp-riga.on{ border-color:var(--accent); background:var(--surface-1); }
+
 /* ══════════ LA SCHEDA SI APRE SOTTO LA RIGA (21/08/2026) ══════════ */
 /* Prima si apriva IN FONDO all'elenco: toccata una compagnia a meta' di
    quindici righe, la sua scheda compariva sotto le altre quattordici — cioe'
@@ -17737,7 +17762,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-testata";
+var BUILD_STAMP = "2026-08-23-elenco";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
