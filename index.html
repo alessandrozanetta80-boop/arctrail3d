@@ -231,6 +231,15 @@
    sulla schermata Home del telefono, e cambiargliela vorrebbe dire che l'app
    sullo scaffale e l'app aperta non sono la stessa cosa. */
 --r-xs:2px; --r-sm:3px; --r-md:4px; --r-lg:6px; --r-xl:8px; --r-pill:999px;
+/* IL RAGGIO DELLA BOLLA E' UN'ECCEZIONE, ED E' VOLUTA. (23/08/2026, chiesta
+   da Alessandro: «prendi lo stile di WhatsApp a cui tutti sono abituati».)
+   La scala dell'app e' quasi quadrata apposta — 2/3/4/6/8 — perche' un
+   segnapunti e' uno strumento e gli strumenti non sono morbidi. Una bolla di
+   chat non e' uno strumento: e' una cosa che si e' imparata altrove, e la
+   forma imparata altrove e' quella tonda.
+   *Un'eccezione dichiarata vale piu' di una coerenza che nessuno riconosce.*
+   Vive qui, con un nome, e non e' un numero scritto dentro una regola. */
+--r-bolla:14px;
 /* L'angolo dell'icona dell'app: una percentuale, non un numero di pixel,
    perche' deve restare quella FORMA a qualunque misura il marchio venga
    disegnato — 28 in testata, 44 nell'insegna, 512 nel file. */
@@ -490,6 +499,10 @@ color-scheme:light;
    verde scuro fa 6,22:1. *L'arancione se lo puo' permettere di piu' — 2,79:1
    — perche' e' una tinta calda a saturazione piena, ma anche lui e' sotto la
    soglia: vedi la voce aperta nel diario.* */
+/* I FONDI DELLE BOLLE. Al chiaro il flusso e' grigio: la mia bolla sta al
+   38% perche' al 20% lo stacco scendeva a 1,003 e spariva. */
+--bolla-mia:color-mix(in srgb, var(--brand) 38%, var(--surface-1));
+--bolla-sua:var(--surface-1);
 --primario-bg:color-mix(in srgb, var(--brand) 14%, var(--surface-1));
 --primario-fg:var(--green-700);
 --primario-bd:color-mix(in srgb, var(--brand) 42%, transparent);
@@ -583,6 +596,11 @@ color-scheme:dark;
    colori invece di allontanarli: a 18% la scritta scendeva a 4,14:1, sotto
    la soglia. Misurato, non guardato — a occhio 18 e 12 al buio si somigliano
    moltissimo. */
+/* Al buio il flusso e' `--surface`, il piu' scuro dei tre, quindi la bolla
+   dell'altro sale a `--surface-1` e la mia resta al 38%: li' fa 2,245 di
+   stacco, il migliore dei due temi. */
+--bolla-mia:color-mix(in srgb, var(--brand) 38%, var(--surface-1));
+--bolla-sua:var(--surface-1);
 --primario-bg:color-mix(in srgb, var(--brand) 12%, var(--surface-2));
 --primario-fg:var(--brand);
 --primario-bd:color-mix(in srgb, var(--brand) 48%, transparent);
@@ -730,6 +748,10 @@ color-scheme:light;
    «non si vede». Chi accende il Sole ha gia' detto che gli serve il massimo
    stacco, e togliergli il pieno sarebbe dargli il contrario di quello che ha
    chiesto. Passa dai token, quindi non serve nessuna regola per tema. */
+/* Al sole niente velature nate per il chiuso: la bolla propria e' piu'
+   carica, perche' in piena luce una tinta leggera e' una tinta assente. */
+--bolla-mia:color-mix(in srgb, var(--brand) 52%, var(--surface-1));
+--bolla-sua:var(--surface-1);
 --primario-bg:var(--brand);
 --primario-fg:var(--brand-ink);
 --primario-bd:transparent;
@@ -2131,6 +2153,132 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    e stacca poco, `stacco` separa da quello che segue, `dopo` si allontana da
    quello che precede. Cosi' cambiare la scala non obbliga a rinominare. */
 .nota{ font-size:var(--t-sm); color:var(--muted); }
+
+/* ══ LA CHAT ═══════════════════════════════════════════════════════════════
+   (23/08/2026.) Era scritta tutta in stili in linea dal copione: un colore
+   di fondo deciso dentro una `if`, un raggio scritto a mano, e nessun nome
+   per niente. Il difetto non era l'aspetto: era che l'aspetto non aveva un
+   posto dove stare. Adesso ha delle regole, e si cambia da qui.
+
+   COSA CAMBIA, e ognuna nasce da una cosa che si vedeva nella foto:
+
+   1. IL NOME SOPRA OGNI MESSAGGIO. In una conversazione fra DUE persone
+      basta sapere da che parte sta la bolla. Il nome compare solo quando
+      cambia chi parla, e mai sopra i propri: sei tu.
+   2. «ELIMINA» SOTTO OGNI BOLLA. Era la parola piu' ripetuta della
+      schermata. Un comando che si usa una volta ogni cento messaggi non puo'
+      stare cento volte: adesso la propria bolla si tiene premuta e il
+      comando compare li'.
+   3. LE BOLLE ERANO TUTTE STACCATE UGUALI. Tre messaggi di fila della stessa
+      persona sono UN turno di parola: si stringono fra loro e si staccano
+      dal turno dopo. E' quello che fa leggere una chat a colpo d'occhio.
+   4. NON C'ERA UN ORARIO. Una conversazione senza tempo non si puo'
+      ricostruire. Sta dentro la bolla, piccolo, in fondo a destra.
+   5. LA MIA BOLLA ERA VERDE PIENA. Dopo il passaggio al tinto era rimasta
+      l'ultima macchia satura, e in una schermata fatta di testo altrui
+      gridava. Adesso e' TINTA: si distingue per colore, non per peso.
+   ═══════════════════════════════════════════════════════════════════════ */
+/* IL FLUSSO E' INCASSATO, E QUESTO E' IL PEZZO CHE MANCAVA.
+   (23/08/2026, seconda passata: «la trovo ancora un po' piatta».)
+   Aveva ragione, e non era una questione di gusto: la bolla dell'altro era
+   `--surface-2` sopra una card `--surface-1`, cioe' **1,117 di stacco**. Nel
+   tema chiaro quei due grigi sono #F5F2ED e #FFFFFF: praticamente lo stesso
+   colore. La chat era piatta perche' aveva UN SOLO LIVELLO.
+   Adesso ne ha tre: la card, il flusso incassato piu' scuro, e le bolle che
+   ci galleggiano sopra. *La profondita' non viene dalle ombre: viene
+   dall'ordine dei fondi. L'ombra la conferma, non la crea.* */
+.chat-flusso{ display:flex; flex-direction:column; gap:2px;
+  min-height:160px; max-height:min(52dvh, 420px); overflow-y:auto;
+  margin:var(--s-3) 0; padding:var(--s-3);
+  background:var(--surface); border-radius:var(--r-md);
+  border:1px solid var(--border); }
+.chat-turno{ display:flex; flex-direction:column; margin-top:var(--s-3); }
+.chat-turno:first-child{ margin-top:0; }
+.chat-turno.mio{ align-items:flex-end; }
+.chat-turno.suo{ align-items:flex-start; }
+/* Il nome del turno: c'e' solo quando cambia chi parla, e solo per l'altro. */
+.chat-chi{ font-size:var(--t-2xs); font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--text-3); margin:0 var(--s-2) var(--s-1); }
+/* LA BOLLA, CON LE CONVENZIONI CHE TUTTI HANNO GIA' IMPARATO.
+   (23/08/2026.) Quello che si prende non e' la grafica di un'altra app — lo
+   sfondo a disegnini e i suoi verdi sono suoi, e il marchio qui e' un altro.
+   Si prende la GRAMMATICA, che ormai e' di tutti:
+   · bolla tonda con UNA coda che punta a chi parla;
+   · l'ora dentro, in basso a destra, sulla stessa riga dell'ultima parola;
+   · le spunte accanto all'ora sui propri messaggi;
+   · il giorno come pastiglia in mezzo al flusso.
+   *Un'interfaccia che si impara due volte e' un'interfaccia sbagliata: la
+   prima volta l'ha gia' insegnata qualcun altro.* */
+.chat-bolla{ position:relative; max-width:82%;
+  padding:var(--s-2) var(--s-3) var(--s-2) var(--s-3);
+  font-size:var(--t-sm); line-height:1.45; white-space:pre-wrap;
+  word-break:break-word; border:1px solid transparent;
+  border-radius:var(--r-bolla); margin-top:2px; }
+.chat-bolla:first-of-type{ margin-top:0; }
+/* LA CODA STA SOLO SULLA PRIMA BOLLA DEL TURNO, non sull'ultima.
+   E' la parte che si sbaglia guardando le altre app di sfuggita: la coda
+   segna DA DOVE parte il turno, come il trattino di un elenco. Metterla in
+   fondo la fa sembrare una firma. */
+.chat-turno .chat-bolla:first-of-type::after{ content:""; position:absolute;
+  top:0; width:0; height:0; border:7px solid transparent; }
+.chat-turno.mio .chat-bolla:first-of-type{ border-top-right-radius:var(--r-xs); }
+.chat-turno.suo .chat-bolla:first-of-type{ border-top-left-radius:var(--r-xs); }
+.chat-turno.mio .chat-bolla:first-of-type::after{ right:-6px;
+  border-top-color:var(--bolla-mia); border-right:0; }
+.chat-turno.suo .chat-bolla:first-of-type::after{ left:-6px;
+  border-top-color:var(--bolla-sua); border-left:0; }
+/* L'angolo verso di chi parla resta stretto SOLO sull'ultima bolla del turno:
+   e' la coda, e una coda per turno dice dove finisce il turno. */
+/* LA MIA BOLLA E' PIU' TINTA DI UNA FASCIA, e non e' un'incoerenza.
+   `--verde-bg` sta al 20% ed e' giusto per una fascia larga sul foglio
+   bianco. Qui il fondo e' grigio: al 20% lo stacco scende a **1,003**, cioe'
+   la bolla sparisce. Al 38% torna a 1,187 e il testo dentro resta a 12,88:1.
+   *Lo stesso colore su due fondi diversi non e' lo stesso colore.*
+   La bolla dell'altro va all'opposto: BIANCA, il livello piu' alto, perche'
+   sul grigio il bianco e' quello che emerge. Prima era grigia su bianco —
+   affondava. */
+/* I due fondi hanno un nome perche' li usa anche la CODA, che e' un bordo
+   colorato e non puo' ereditare il fondo di nessuno. Senza il nome, il
+   giorno che si cambia la tinta della bolla la coda resta indietro e nessuno
+   se ne accorge: e' un triangolo di sette pixel. */
+.chat-turno.mio .chat-bolla{ background:var(--bolla-mia);
+  border-color:color-mix(in srgb, var(--brand) 55%, var(--surface-1));
+  color:var(--text-1); box-shadow:var(--elev-1); }
+.chat-turno.suo .chat-bolla{ background:var(--bolla-sua); border-color:var(--border);
+  color:var(--text-1); box-shadow:var(--elev-1); }
+/* L'ORA STA SULLA RIGA DELL'ULTIMA PAROLA, non sotto. Galleggia a destra e
+   il testo le scorre intorno: su un messaggio corto sta accanto, su uno
+   lungo scende da sola. E' il motivo per cui una chat non diventa il doppio
+   piu' alta solo per dire che ore sono. */
+.chat-ora{ float:right; margin:var(--s-2) 0 0 var(--s-2);
+  font-size:var(--t-2xs); color:var(--text-3); line-height:1;
+  font-variant-numeric:tabular-nums; white-space:nowrap; }
+.chat-ora .spunta{ margin-left:var(--s-1); font-weight:700; letter-spacing:-2px; }
+.chat-ora .spunta.letto{ color:var(--brand); }
+/* IL GIORNO, come pastiglia in mezzo al flusso. Senza, «10:02» di tre
+   settimane fa e «10:02» di stamattina sono la stessa cosa. */
+.chat-giorno{ align-self:center; margin:var(--s-4) 0 var(--s-2);
+  padding:var(--s-1) var(--s-3); border-radius:var(--r-pill);
+  background:var(--surface-1); border:1px solid var(--border);
+  box-shadow:var(--elev-1); font-size:var(--t-2xs); font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--text-3); }
+.chat-turno.mio .chat-bolla:not(:last-of-type){ border-bottom-right-radius:var(--r-md); }
+.chat-turno.suo .chat-bolla:not(:last-of-type){ border-bottom-left-radius:var(--r-md); }
+.chat-ora{ display:block; font-size:var(--t-2xs); color:var(--text-3);
+  text-align:right; margin-top:var(--s-1); font-variant-numeric:tabular-nums; }
+/* La propria bolla si tiene premuta e scopre il comando. Finche' non lo si
+   fa, il comando non occupa una riga per ogni messaggio. */
+.chat-bolla.premibile{ cursor:pointer; }
+.chat-canc{ display:none; align-self:flex-end; margin:2px var(--s-1) 0;
+  background:none; border:none; padding:2px var(--s-1);
+  font-family:inherit; font-size:var(--t-2xs); font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase;
+  color:var(--danger-role); cursor:pointer; }
+.chat-canc.aperto{ display:block; }
+/* La riga in cui si scrive: il campo cresce, il tasto no. */
+.chat-scrivi{ display:flex; gap:var(--s-2); align-items:flex-end; }
+.chat-scrivi textarea{ flex:1 1 auto; min-width:0; resize:none; }
+.chat-scrivi .btn{ flex:0 0 auto; }
 .nota.blocco{ display:block; margin-bottom:var(--s-1); }
 .nota.stacco{ margin-bottom:var(--s-2); }
 .nota.stacco-3{ margin-bottom:var(--s-3); }
@@ -4230,6 +4378,7 @@ dm_placeholder: "Scrivi un messaggio\u2026",
 dm_send: "Invia",
 dm_error: "Messaggio non inviato, riprova.",
 dm_no_messages: "Nessun messaggio: scrivi tu per primo.",
+chat_today: "Oggi", chat_yesterday: "Ieri", chat_read: "Letto",
 dm_delete_chat: "Elimina conversazione",
 dm_delete_chat_confirm: "Confermi? La conversazione viene cancellata per entrambi.",
 dm_back: "\u2190 Messaggi",
@@ -4855,6 +5004,7 @@ dm_placeholder: "Write a message\u2026",
 dm_send: "Send",
 dm_error: "Message not sent, try again.",
 dm_no_messages: "No messages: write the first one.",
+chat_today: "Today", chat_yesterday: "Yesterday", chat_read: "Read",
 dm_delete_chat: "Delete conversation",
 dm_delete_chat_confirm: "Are you sure? The conversation is deleted for both of you.",
 dm_back: "\u2190 Messages",
@@ -5504,6 +5654,7 @@ dm_placeholder: "\u00c9crivez un message\u2026",
 dm_send: "Envoyer",
 dm_error: "Message non envoy\u00e9, r\u00e9essayez.",
 dm_no_messages: "Aucun message : \u00e9crivez le premier.",
+chat_today: "Aujourd\u2019hui", chat_yesterday: "Hier", chat_read: "Lu",
 dm_delete_chat: "Supprimer la conversation",
 dm_delete_chat_confirm: "Confirmer\u00a0? La conversation est supprim\u00e9e pour vous deux.",
 dm_back: "\u2190 Messages",
@@ -6153,6 +6304,7 @@ dm_placeholder: "Eine Nachricht schreiben\u2026",
 dm_send: "Senden",
 dm_error: "Nachricht nicht gesendet, versuche es erneut.",
 dm_no_messages: "Keine Nachrichten: schreib du als Erster.",
+chat_today: "Heute", chat_yesterday: "Gestern", chat_read: "Gelesen",
 dm_delete_chat: "Unterhaltung l\u00f6schen",
 dm_delete_chat_confirm: "Best\u00e4tigen? Die Unterhaltung wird f\u00fcr beide gel\u00f6scht.",
 dm_back: "\u2190 Nachrichten",
@@ -6801,6 +6953,7 @@ dm_placeholder: "Bir mesaj yaz\u2026",
 dm_send: "G\u00f6nder",
 dm_error: "Mesaj g\u00f6nderilemedi, tekrar dene.",
 dm_no_messages: "Mesaj yok: ilk yazan sen ol.",
+chat_today: "Bug\u00fcn", chat_yesterday: "D\u00fcn", chat_read: "Okundu",
 dm_delete_chat: "Sohbeti sil",
 dm_delete_chat_confirm: "Onayl\u0131yor musun? Sohbet iki taraf i\u00e7in de silinir.",
 dm_back: "\u2190 Mesajlar",
@@ -7463,6 +7616,7 @@ dm_placeholder: "\u041d\u0430\u043f\u0438\u0448\u0438\u0442\u0435 \u0441\u043e\u
 dm_send: "\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c",
 dm_error: "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435 \u043d\u0435 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e, \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437.",
 dm_no_messages: "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0439 \u043d\u0435\u0442: \u043d\u0430\u043f\u0438\u0448\u0438\u0442\u0435 \u043f\u0435\u0440\u0432\u044b\u043c.",
+chat_today: "\u0421\u0435\u0433\u043e\u0434\u043d\u044f", chat_yesterday: "\u0412\u0447\u0435\u0440\u0430", chat_read: "\u041f\u0440\u043e\u0447\u0438\u0442\u0430\u043d\u043e",
 dm_delete_chat: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043a\u0443",
 dm_delete_chat_confirm: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u0435\u0442\u0435? \u041f\u0435\u0440\u0435\u043f\u0438\u0441\u043a\u0430 \u0443\u0434\u0430\u043b\u044f\u0435\u0442\u0441\u044f \u0443 \u043e\u0431\u043e\u0438\u0445.",
 dm_back: "\u2190 \u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f",
@@ -8125,6 +8279,7 @@ dm_placeholder: "Escribe un mensaje\u2026",
 dm_send: "Enviar",
 dm_error: "Mensaje no enviado, int\u00e9ntalo otra vez.",
 dm_no_messages: "No hay mensajes: escribe t\u00fa primero.",
+chat_today: "Hoy", chat_yesterday: "Ayer", chat_read: "Le\u00eddo",
 dm_delete_chat: "Eliminar la conversaci\u00f3n",
 dm_delete_chat_confirm: "\u00bfConfirmas? La conversaci\u00f3n se borra para los dos.",
 dm_back: "\u2190 Mensajes",
@@ -8787,6 +8942,7 @@ dm_placeholder: "Skriv ett meddelande\u2026",
 dm_send: "Skicka",
 dm_error: "Meddelandet skickades inte, f\u00f6rs\u00f6k igen.",
 dm_no_messages: "Inga meddelanden: skriv du f\u00f6rst.",
+chat_today: "I dag", chat_yesterday: "I g\u00e5r", chat_read: "L\u00e4st",
 dm_delete_chat: "Radera konversationen",
 dm_delete_chat_confirm: "Bekr\u00e4ftar du? Konversationen raderas f\u00f6r er b\u00e5da.",
 dm_back: "\u2190 Meddelanden",
@@ -9449,6 +9605,7 @@ dm_placeholder: "Schrijf een bericht\u2026",
 dm_send: "Verzenden",
 dm_error: "Bericht niet verzonden, probeer het opnieuw.",
 dm_no_messages: "Geen berichten: schrijf jij als eerste.",
+chat_today: "Vandaag", chat_yesterday: "Gisteren", chat_read: "Gelezen",
 dm_delete_chat: "Gesprek verwijderen",
 dm_delete_chat_confirm: "Bevestig je? Het gesprek wordt voor jullie allebei verwijderd.",
 dm_back: "\u2190 Berichten",
@@ -17161,7 +17318,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-casa-onesta";
+var BUILD_STAMP = "2026-08-23-chat-nota";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17170,7 +17327,7 @@ var BUILD_STAMP = "2026-08-23-casa-onesta";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-porte-riparate";
+var BUILD_PARENT = "2026-08-23-chat-profonda";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -18527,7 +18684,7 @@ if(!ioSonoOwner){
 card.appendChild(moderationBar({ uid: state.otChatOwnerUid || null, name: ownerName, what: t("ot_msg_title",{name:ownerName}) }, function(){ render(); }));
 }
 
-var msgList = el('<div id="ot-chat-msgs" style="min-height:120px;max-height:300px;overflow-y:auto;margin-bottom:var(--s-3);display:flex;flex-direction:column;gap:var(--s-2);"></div>');
+var msgList = el('<div id="ot-chat-msgs" class="chat-flusso"></div>');
 card.appendChild(msgList);
 
 // CHI STA IN QUESTA CONVERSAZIONE. Si riempie leggendo i messaggi, perche' la
@@ -18543,27 +18700,55 @@ db.collection("open_trainings").doc(otId).collection("messages")
 .orderBy("createdAt","asc").limit(50)
 .onSnapshot(function(snap){
 msgList.innerHTML = "";
+var otTurno = null, otDi = null, otQuando = 0, otGiorno = null;
 messaggiInOrdine(snap).forEach(function(doc){
 var d = doc.data();
 if(d.senderUid) otChatUids[d.senderUid] = true;   // c'e' stato, quindi va avvisato
 if(isUserBlocked(d.senderUid)) return;   // messaggi di chi hai bloccato: non li vedi
 var isMine = currentUser && d.senderUid === currentUser.uid;
-var bubble = el(
-'<div style="display:flex;flex-direction:column;align-items:'+(isMine?"flex-end":"flex-start")+';">'+
-'<div style="font-size:var(--t-xs);color:var(--muted);margin-bottom:2px;">'+escapeHtml(nomeVivo(d.senderUid) || d.senderName || "?")+'</div>'+
-'<div style="max-width:80%;background:'+(isMine?"var(--accent)":"var(--bg-panel-2)")+';color:'+(isMine?"var(--accent-ink)":"var(--cream)")+';border-radius:var(--r-md);padding:var(--s-2) var(--s-3);font-size:0.9rem;">'+escapeHtml(d.text||"")+'</div>'+
-'</div>'
-);
-// I propri messaggi si possono cancellare, come le notifiche
-if(isMine){
-var delMsg = el('<button title="'+t("msg_delete_mine")+'" style="align-self:flex-end;background:none;border:none;color:var(--muted);font-size:var(--t-xs);cursor:pointer;padding:2px 0;">'+t("notif_delete_one")+'</button>');
-delMsg.addEventListener("click", function(){
-delMsg.disabled = true;
-doc.ref.delete().catch(function(e){ console.error("msg delete:", e); delMsg.disabled = false; });
-});
-bubble.appendChild(delMsg);
+/* STESSO DISEGNO DELLA CHAT 1-A-1. (23/08/2026.)
+   Le due chat dell'app avevano lo stesso codice copiato due volte, e col
+   ridisegno di oggi sarebbero diventate due chat diverse nella stessa app.
+   *Due modi di disegnare la stessa cosa insegnano che il disegno non conta*
+   — la stessa ragione per cui il profilo ha un segno solo.
+   L'UNICA DIFFERENZA VOLUTA: qui il nome si scrive su OGNI turno altrui,
+   anche se e' sempre la stessa persona. E' una chat di gruppo: chi entra a
+   meta' non sa quanti sono, e un turno senza nome sarebbe di chiunque. */
+var quando = (d.createdAt && d.createdAt.toDate) ? d.createdAt.toDate() : null;
+var ms = quando ? quando.getTime() : 0;
+var gg = quando ? quando.toDateString() : null;
+if(gg && gg !== otGiorno){
+msgList.appendChild(el('<div class="chat-giorno">'+escapeHtml(giornoDi(quando))+'</div>'));
+otGiorno = gg; otTurno = null;
 }
-msgList.appendChild(bubble);
+var staccato = otQuando && ms && (ms - otQuando > 60*60*1000);
+if(!otTurno || otDi !== d.senderUid || staccato){
+otTurno = el('<div class="chat-turno '+(isMine?"mio":"suo")+'"></div>');
+if(!isMine){
+otTurno.appendChild(el('<div class="chat-chi">'+escapeHtml(nomeVivo(d.senderUid) || d.senderName || "?")+'</div>'));
+}
+msgList.appendChild(otTurno);
+otDi = d.senderUid;
+}
+if(ms) otQuando = ms;
+var bolla = el('<div class="chat-bolla'+(isMine?" premibile":"")+'">'+escapeHtml(d.text||"")+'</div>');
+/* Nessuna spunta qui: in una chat di gruppo «letto» non ha un soggetto —
+   letto da chi? Un segno che non sa rispondere e' peggio di nessun segno. */
+if(quando) bolla.insertBefore(el('<span class="chat-ora">'+escapeHtml(oraCorta(quando, true))+'</span>'), bolla.firstChild);
+otTurno.appendChild(bolla);
+if(isMine){
+var canc = el('<button type="button" class="chat-canc" title="'+escapeHtml(t("msg_delete_mine"))+'">'+escapeHtml(t("notif_delete_one"))+'</button>');
+otTurno.appendChild(canc);
+bolla.addEventListener("click", function(){
+var apri = !canc.classList.contains("aperto");
+Array.prototype.forEach.call(msgList.querySelectorAll(".chat-canc.aperto"), function(x){ x.classList.remove("aperto"); });
+if(apri) canc.classList.add("aperto");
+});
+canc.addEventListener("click", function(){
+canc.disabled = true;
+doc.ref.delete().catch(function(e){ console.error("msg delete:", e); canc.disabled = false; });
+});
+}
 });
 msgList.scrollTop = msgList.scrollHeight;
 }, function(){});
@@ -19768,6 +19953,57 @@ state.screen = "profilo-pubblico";
 save(); render();
 }
 
+/* L'ORA DI UN MESSAGGIO, e il giorno solo quando serve.
+   (23/08/2026.) Su una conversazione di oggi il giorno e' rumore: si sa che
+   e' oggi. Su una di tre settimane fa l'ora da sola non colloca niente.
+   Stessa regola gia' usata nell'elenco delle conversazioni — presa da li',
+   non reinventata, perche' due modi di scrivere la stessa ora nella stessa
+   schermata sono due modi di sbagliarla. */
+function oraCorta(dt, soloOra){
+if(!dt) return "";
+var locale = state.lang || "it";
+var ora = dt.toLocaleTimeString(locale, { hour:"2-digit", minute:"2-digit" });
+/* Dentro la bolla si scrive SOLO l'ora: il giorno lo dice gia' la pastiglia
+   in mezzo al flusso, e ripeterlo su ogni messaggio sarebbe la stessa
+   informazione due volte — cioe' rumore che sembra precisione. */
+if(soloOra) return ora;
+var oggi = (new Date()).toDateString() === dt.toDateString();
+return oggi ? ora : (dt.toLocaleDateString(locale) + " " + ora);
+}
+
+/* IL GIORNO, scritto come lo direbbe qualcuno a voce. (23/08/2026.)
+   «23/08/2026» in mezzo a una conversazione e' un timbro, non una data. Se
+   e' oggi si dice oggi, se e' ieri si dice ieri, e solo dopo si scrive. */
+function giornoDi(dt){
+if(!dt) return "";
+var locale = state.lang || "it";
+var oggi = new Date();
+var ieri = new Date(oggi.getTime() - 24*60*60*1000);
+if(dt.toDateString() === oggi.toDateString()) return t("chat_today");
+if(dt.toDateString() === ieri.toDateString()) return t("chat_yesterday");
+return dt.toLocaleDateString(locale, { day:"numeric", month:"long" });
+}
+
+/* LE SPUNTE, e quello che possono dire davvero.
+   Il dato di lettura sta sulla TESTATA della conversazione, non sul singolo
+   messaggio: `readBy[altro]` e' il momento fino a cui l'altro ha letto.
+   Quindi un messaggio e' letto se e' stato scritto PRIMA di quel momento.
+   *Piu' di cosi' non si puo' dire, e non si finge:* dove il dato non c'e'
+   ancora — chat appena aperta, elenco non ancora arrivato — non compare
+   nessuna spunta invece di comparirne una grigia che vorrebbe dire «forse». */
+function spuntaDi(chatId, otherUid, quandoMs){
+if(!quandoMs) return "";
+var chat = null;
+for(var i=0;i<myDirectChats.length;i++){ if(myDirectChats[i].id === chatId){ chat = myDirectChats[i]; break; } }
+if(!chat) return "";
+var letto = (chat.readBy || {})[otherUid];
+var ms = dmMillis(letto);
+if(!ms) return '<span class="spunta">\u2713</span>';
+return quandoMs <= ms
+? '<span class="spunta letto" title="'+escapeHtml(t("chat_read"))+'">\u2713\u2713</span>'
+: '<span class="spunta">\u2713</span>';
+}
+
 function dmChatScreen(){
 assicuraNomi();
 var otherUid = state.dmUid;
@@ -19813,7 +20049,7 @@ wrap.appendChild(backBlocked);
 return wrap;
 }
 
-var msgList = el('<div data-scroll-key="dm:msg:'+chatId+'" style="min-height:140px;max-height:320px;overflow-y:auto;margin-bottom:var(--s-3);display:flex;flex-direction:column;gap:var(--s-2);"></div>');
+var msgList = el('<div class="chat-flusso" data-scroll-key="dm:msg:'+chatId+'"></div>');
 card.appendChild(msgList);
 
 stopDmMessages();
@@ -19825,29 +20061,79 @@ msgList.innerHTML = "";
 if(snap.empty){
 msgList.appendChild(el('<div class="nota">'+t("dm_no_messages")+'</div>'));
 }
+/* I MESSAGGI SI RAGGRUPPANO IN TURNI DI PAROLA. (23/08/2026.)
+   Tre messaggi di fila della stessa persona sono UNA cosa sola: si stringono
+   fra loro e si staccano dal turno dopo. Il nome si scrive una volta per
+   turno, e solo per l'altro — sopra i propri diceva «Ale_01Verb» a ogni
+   riga, a una persona che sa gia' come si chiama.
+   Il turno si chiude anche dopo un'ora di silenzio: due frasi a distanza di
+   un pomeriggio non sono lo stesso discorso, anche se le ha dette la stessa
+   persona. */
+var turno = null, turnoDi = null, turnoQuando = 0, giornoScritto = null;
 messaggiInOrdine(snap).forEach(function(doc){
 var d = doc.data() || {};
 var isMine = d.senderUid === currentUser.uid;
-var bubble = el('<div style="display:flex;flex-direction:column;align-items:'+(isMine?"flex-end":"flex-start")+';"></div>');
-bubble.appendChild(el('<div style="font-size:var(--t-xs);color:var(--muted);margin-bottom:2px;">'+escapeHtml(isMine ? myDisplayName() : (nomeVivo(d.senderUid) || d.senderName || otherName))+'</div>'));
-bubble.appendChild(el('<div style="max-width:82%;background:'+(isMine?"var(--accent)":"var(--bg-panel-2)")+';color:'+(isMine?"var(--accent-ink)":"var(--cream)")+';border-radius:var(--r-md);padding:var(--s-2) var(--s-3);font-size:0.9rem;white-space:pre-wrap;word-break:break-word;">'+escapeHtml(d.text||"")+'</div>'));
-// Ogni messaggio proprio si puo' cancellare, come nelle altre chat dell'app
-if(isMine){
-var delMsg = el('<button title="'+t("msg_delete_mine")+'" style="align-self:flex-end;background:none;border:none;color:var(--muted);font-size:var(--t-xs);cursor:pointer;padding:2px 0;">'+t("notif_delete_one")+'</button>');
-delMsg.addEventListener("click", function(){
-delMsg.disabled = true;
-doc.ref.delete().catch(function(e){ console.error("dm msg delete:", e); delMsg.disabled = false; });
-});
-bubble.appendChild(delMsg);
+var quando = (d.createdAt && d.createdAt.toDate) ? d.createdAt.toDate() : null;
+var ms = quando ? quando.getTime() : 0;
+/* Il cambio di giorno spezza il turno anche se parla la stessa persona: un
+   messaggio prima e uno dopo la mezzanotte non sono lo stesso discorso, e
+   il separatore andrebbe a finire dentro il turno. */
+var gg = quando ? quando.toDateString() : null;
+var cambioGiorno = gg && gg !== giornoScritto;
+if(cambioGiorno){
+msgList.appendChild(el('<div class="chat-giorno">'+escapeHtml(giornoDi(quando))+'</div>'));
+giornoScritto = gg;
+turno = null;
 }
-msgList.appendChild(bubble);
+var staccato = turnoQuando && ms && (ms - turnoQuando > 60*60*1000);
+if(!turno || turnoDi !== d.senderUid || staccato){
+turno = el('<div class="chat-turno '+(isMine?"mio":"suo")+'"></div>');
+if(!isMine){
+turno.appendChild(el('<div class="chat-chi">'+escapeHtml(nomeVivo(d.senderUid) || d.senderName || otherName)+'</div>'));
+}
+msgList.appendChild(turno);
+turnoDi = d.senderUid;
+}
+if(ms) turnoQuando = ms;
+var bolla = el('<div class="chat-bolla'+(isMine?" premibile":"")+'">'+escapeHtml(d.text||"")+'</div>');
+/* L'ora sta DENTRO la bolla, in fondo: fuori sarebbe una riga in piu' per
+   messaggio, cioe' lo stesso difetto di «Elimina». */
+if(quando){
+/* L'ora galleggia a destra DENTRO la bolla, quindi va messa PRIMA del testo:
+   un float si aggancia alla riga in cui compare, e in fondo si aggancerebbe
+   all'ultima invece che a tutte. */
+var ora = el('<span class="chat-ora">'+escapeHtml(oraCorta(quando, true))+(isMine ? spuntaDi(chatId, otherUid, ms) : "")+'</span>');
+bolla.insertBefore(ora, bolla.firstChild);
+}
+turno.appendChild(bolla);
+/* IL COMANDO DI CANCELLARE STA DIETRO UN GESTO. Prima c'era una riga
+   «Elimina» sotto ogni messaggio proprio: la parola piu' ripetuta della
+   schermata, per un comando che si usa una volta ogni cento messaggi.
+   Adesso si tocca la propria bolla e il comando compare li'. Toccandola di
+   nuovo si richiude. Per cancellare servono DUE tocchi in due posti diversi,
+   quindi non serve nessuna conferma da inseguire. */
+if(isMine){
+var canc = el('<button type="button" class="chat-canc" title="'+escapeHtml(t("msg_delete_mine"))+'">'+escapeHtml(t("notif_delete_one"))+'</button>');
+turno.appendChild(canc);
+bolla.addEventListener("click", function(){
+var apri = !canc.classList.contains("aperto");
+/* Uno solo alla volta: due comandi aperti insieme e non si sa piu' quale
+   bolla si sta per cancellare. */
+Array.prototype.forEach.call(msgList.querySelectorAll(".chat-canc.aperto"), function(x){ x.classList.remove("aperto"); });
+if(apri) canc.classList.add("aperto");
+});
+canc.addEventListener("click", function(){
+canc.disabled = true;
+doc.ref.delete().catch(function(e){ console.error("dm msg delete:", e); canc.disabled = false; });
+});
+}
 });
 restoreBox(msgList, "end");
 dmMarkRead(chatId);
 }, function(err){ console.error("dm messaggi:", err); });
 }, 0);
 
-var inputRow = el('<div style="display:flex;gap:var(--s-2);align-items:flex-end;"></div>');
+var inputRow = el('<div class="chat-scrivi"></div>');
 var textInp = el('<textarea class="input-field in-riga" data-keep="dm:draft:'+chatId+'" placeholder="'+escapeHtml(t("dm_placeholder"))+'" rows="2"></textarea>');
 var sendBtn = el('<button class="btn btn-primary" style="padding:var(--s-2) var(--s-4);">'+t("dm_send")+'</button>');
 inputRow.appendChild(textInp);
