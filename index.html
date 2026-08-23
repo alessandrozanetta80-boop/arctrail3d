@@ -503,6 +503,17 @@ color-scheme:light;
    38% perche' al 20% lo stacco scendeva a 1,003 e spariva. */
 --bolla-mia:color-mix(in srgb, var(--brand) 38%, var(--surface-1));
 --bolla-sua:var(--surface-1);
+/* LA PASTIGLIA ACCESA SEGUE IL TASTO. (23/08/2026, detto da Alessandro: «i
+   tasti nel profilo anche in chiaro sono molto forti».)
+   Erano rimaste piene: verde saturo con la scritta scura, in una schermata
+   dove ormai tutto il resto e' velato. *Una scelta gia' fatta non deve
+   gridare: deve solo dire quale delle tre e'.*
+   Il 16% invece del 14% del tasto: qui l'accesa deve staccarsi dalle SPENTE
+   che le stanno accanto, non dal foglio — 1,149 di stacco, e il testo a
+   6,13:1. */
+--acceso-bg:color-mix(in srgb, var(--brand) 16%, var(--surface-1));
+--acceso-fg:var(--green-700);
+--acceso-bd:var(--brand);
 --primario-bg:color-mix(in srgb, var(--brand) 14%, var(--surface-1));
 --primario-fg:var(--green-700);
 --primario-bd:color-mix(in srgb, var(--brand) 42%, transparent);
@@ -601,6 +612,9 @@ color-scheme:dark;
    stacco, il migliore dei due temi. */
 --bolla-mia:color-mix(in srgb, var(--brand) 38%, var(--surface-1));
 --bolla-sua:var(--surface-1);
+--acceso-bg:color-mix(in srgb, var(--brand) 16%, var(--surface-2));
+--acceso-fg:var(--brand);
+--acceso-bd:var(--brand);
 --primario-bg:color-mix(in srgb, var(--brand) 12%, var(--surface-2));
 --primario-fg:var(--brand);
 --primario-bd:color-mix(in srgb, var(--brand) 48%, transparent);
@@ -752,6 +766,12 @@ color-scheme:light;
    carica, perche' in piena luce una tinta leggera e' una tinta assente. */
 --bolla-mia:color-mix(in srgb, var(--brand) 52%, var(--surface-1));
 --bolla-sua:var(--surface-1);
+/* Al sole resta piena, per lo stesso motivo del tasto: in piena luce una
+   tinta leggera e' una tinta assente, e qui in piu' bisogna capire QUALE
+   delle tre e' accesa camminando. */
+--acceso-bg:var(--brand);
+--acceso-fg:var(--brand-ink);
+--acceso-bd:var(--brand);
 --primario-bg:var(--brand);
 --primario-fg:var(--brand-ink);
 --primario-bd:transparent;
@@ -1224,7 +1244,8 @@ font-size:var(--t-lg); line-height:1; }
 .row{ display:flex; gap:var(--s-2); }
 .chip-group{ display:flex; gap:var(--s-2); flex-wrap:wrap; }
 .chip{ flex:1 1 0; min-width:0; min-height:var(--hit); text-align:center; padding:var(--s-3) var(--s-1); border-radius:var(--r-sm); border:1.5px solid var(--border-strong); background:var(--surface-2); color:var(--text-1); font-family:inherit; font-weight:700; cursor:pointer; white-space:normal; overflow-wrap:break-word; line-height:1.2; transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
-.chip.active{ background:var(--brand); color:var(--brand-ink); border-color:var(--brand); }
+.chip.active{ background:var(--acceso-bg); color:var(--acceso-fg);
+  border-color:var(--acceso-bd); font-weight:700; }
 @media (hover:hover) and (pointer:fine){
 .menu-btn:hover{ transform:translateY(-1px); box-shadow:var(--elev-2);
 border-color:color-mix(in srgb, currentColor 62%, transparent); }
@@ -2880,7 +2901,7 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
 .adm-search{width:100%;font-size:var(--t-sm);padding:var(--s-2) var(--s-2);margin-bottom:var(--s-2);}
 .adm-filtri{display:flex;gap:var(--s-1);flex-wrap:wrap;margin-bottom:var(--s-3);}
 .adm-f{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:var(--r-pill);padding:var(--s-1) var(--s-3);font-size:var(--t-sm);font-weight:700;cursor:pointer;white-space:nowrap;}
-.adm-f.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.adm-f.on{background:var(--acceso-bg);border-color:var(--acceso-bd);color:var(--acceso-fg);font-weight:700;}
 .adm-row{border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:var(--s-2);overflow:hidden;background:var(--bg-panel-2);}
 .adm-row.open{border-color:var(--accent-soft);}
 .adm-head{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-2) var(--s-2);cursor:pointer;}
@@ -2913,11 +2934,15 @@ header.top .tabbar-wide{ order:2; flex-basis:100%; }
 .adm-tabs,.schede{display:flex;gap:var(--s-2);overflow-x:auto;margin-bottom:var(--s-4);padding-bottom:var(--s-1);scrollbar-width:none;}
 .adm-tabs::-webkit-scrollbar,.schede::-webkit-scrollbar{display:none;}
 .adm-tab,.scheda{flex:0 0 auto;display:inline-flex;align-items:center;gap:var(--s-2);border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:var(--r-pill);padding:var(--s-2) var(--s-4);font-size:var(--t-sm);font-weight:700;cursor:pointer;white-space:nowrap;min-height:38px;}
-.adm-tab.on,.scheda.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+.adm-tab.on,.scheda.on{background:var(--acceso-bg);border-color:var(--acceso-bd);color:var(--acceso-fg);font-weight:700;}
 /* Il numero compare solo quando c'e' qualcosa che aspetta: un pallino con
    zero dentro e' rumore, e insegna a non guardarlo. */
 .adm-tab .n{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 var(--s-1);border-radius:var(--r-pill);background:var(--bark);color:var(--accent-ink);font-size:var(--t-2xs);font-weight:700;line-height:1;}
-.adm-tab.on .n{background:var(--accent-ink);color:var(--accent);}
+/* Il contatore dentro la scheda accesa: prima si rovesciava — fondo chiaro,
+   cifra verde — perche' la scheda era piena. Su una scheda tinta un
+   rovesciamento chiaro sparirebbe: adesso e' il verde pieno con la cifra
+   chiara, cioe' l'unico posto della scheda dove il pieno serve ancora. */
+.adm-tab.on .n{background:var(--brand);color:var(--brand-ink);}
 .card[hidden]{display:none;}
 @media(min-width:700px){.adm-dl{grid-template-columns:180px 1fr;}}
 @media(prefers-reduced-motion:reduce){.adm-chev{transition:none;}}
@@ -17521,7 +17546,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-profilo";
+var BUILD_STAMP = "2026-08-23-accesi";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17530,7 +17555,7 @@ var BUILD_STAMP = "2026-08-23-profilo";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-elenco-due";
+var BUILD_PARENT = "2026-08-23-profilo";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
