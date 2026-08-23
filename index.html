@@ -491,6 +491,12 @@ color-scheme:light;
    stato acceso: un pulsante non e' uno sfondo. */
 --verde-bg:color-mix(in srgb, var(--brand) 20%, var(--surface-1));
 --verde-bd:color-mix(in srgb, var(--brand) 55%, var(--surface-1));
+/* IL PANNELLO DELLA HOME. (23/08/2026, portato dalla vetrina del sito.)
+   Al chiuso e' il bosco: fondo profondo, scritta di carta. E' l'unico posto
+   dell'app dove il rapporto si rovescia, ed e' voluto — serve a dire che
+   quello non e' un riquadro da leggere ma la porta da cui si entra. */
+--eroe-bg:var(--moss-700); --eroe-ink:var(--sand-100);
+--eroe-eti:var(--moss-300);
 /* IL TASTO PRIMARIO: TINTO, NON PIENO. (23/08/2026, chiesto da Alessandro
    indicando `.btn-arancio`: «si vede bene, ma spinge un po' meno».)
    Stessa struttura dell'arancione — fondo velato, filo e scritta del colore.
@@ -601,6 +607,11 @@ color-scheme:dark;
    velatura sul fondo piu' scuro sparirebbe. */
 --verde-bg:color-mix(in srgb, var(--brand) 22%, var(--surface-2));
 --verde-bd:color-mix(in srgb, var(--brand) 55%, var(--surface-2));
+/* Al buio il pannello non puo' essere piu' scuro del fondo: sparirebbe.
+   Sale di un gradino invece di scendere — e' sempre lui che si stacca, solo
+   dalla parte opposta. */
+--eroe-bg:var(--moss-600); --eroe-ink:var(--sand-100);
+--eroe-eti:var(--moss-300);
 /* Al buio la scritta e' il verde chiaro: qui il fondo e' scuro, quindi il
    rapporto si rovescia e `--brand` va benissimo. */
 /* 12%, NON 18%. Al buio la velatura schiarisce il fondo e AVVICINA i due
@@ -757,6 +768,14 @@ color-scheme:light;
    una zona. Il verde segue la stessa regola. */
 --verde-bg:color-mix(in srgb, var(--brand) 20%, var(--surface-1));
 --verde-bd:color-mix(in srgb, var(--brand) 70%, var(--surface-1));
+/* AL SOLE IL PANNELLO NON E' SCURO, E QUESTO E' IL PUNTO.
+   In piena luce uno schermo scuro annega: la retroilluminazione non ha
+   niente da spingere. Qui il pannello resta il piu' chiaro che c'e' e a
+   distinguerlo e' la porta arancione, che in luce si vede da lontano.
+   *Il pannello non e' un colore: e' un ruolo, e ogni tema lo risolve come
+   gli serve.* */
+--eroe-bg:var(--sand-50); --eroe-ink:var(--sand-900);
+--eroe-eti:var(--sand-500);
 /* AL SOLE IL TASTO RESTA PIENO, ED E' IL MOTIVO PER CUI QUESTO TEMA ESISTE.
    Il tinto e' piu' garbato al chiuso; in piena luce «piu' garbato» vuol dire
    «non si vede». Chi accende il Sole ha gia' detto che gli serve il massimo
@@ -845,6 +864,37 @@ border-bottom:1px solid var(--line); margin-bottom:var(--s-4);
 flex-wrap:wrap; row-gap:8px;
 position:sticky; top:0; z-index:50; margin-top:env(safe-area-inset-top);
 background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+/* ══ LA TESTATA E' IL PANNELLO, IN TUTTE LE SCHERMATE ═════════════════════
+   (23/08/2026, terza passata. Alessandro: «molte pagine sembrano come prima,
+   anche la barra deve essere adeguata».)
+
+   Le due passate precedenti avevano cambiato le ETICHETTE e i NOMI: cose
+   giuste, ma piccole. Chi apriva Campi o Tira vedeva la stessa schermata di
+   ieri con qualche dettaglio diverso, e aveva ragione a dirlo — **il colpo
+   d'occhio non era cambiato, perche' il colpo d'occhio non lo fanno i
+   dettagli.**
+
+   La Home aveva un pannello e le altre no: una sola schermata vestita. La
+   cura non e' mettere un pannello nuovo in ognuna — sarebbe stato inventare
+   quindici volte la stessa cosa. La testata **c'e' gia' in tutte**: e'
+   quella che diventa il pannello.
+
+   PRENDE GLI STESSI TOKEN DELL'EROE, non colori nuovi. Quindi nel tema Sole
+   resta chiara, che e' il motivo per cui `--eroe-bg` esiste: al sole diretto
+   un fondo scuro si legge peggio, e questo era gia' stato deciso.
+
+   E il velo sfocato se ne va: aveva senso su un fondo che era quasi il fondo
+   pagina. Su un pannello pieno, sfocare quello che ci passa sotto non e'
+   eleganza, e' sporco. */
+header.top{ background:var(--eroe-bg); color:var(--eroe-ink);
+  border-bottom-color:transparent;
+  backdrop-filter:none; -webkit-backdrop-filter:none; }
+header.top .brandblock .brand-title{ color:var(--eroe-ink); }
+header.top .sub, header.top .bar-btn{ color:var(--eroe-eti); }
+header.top .bar-btn:hover{ background:color-mix(in srgb, var(--eroe-ink) 12%, transparent); }
+/* Nella Home il pannello sta attaccato alla testata: sono due pezzi dello
+   stesso blocco, e il filo in mezzo li farebbe sembrare due cose. */
+.strati > .home-eroe:first-child{ border-top:0; }
 header.top .brandblock{ display:flex; align-items:center; gap:var(--s-3); min-width:0; flex:0 0 auto; }
 header.top .logo{ width:var(--hit); height:var(--hit); flex:0 0 auto; }
 /* Il marchio: una misura sola, che arriva da --mark. Dentro l'insegna la
@@ -1019,6 +1069,21 @@ position:relative; z-index:1; }
    adesso si vedono uguali. */
 h2.section-title{ font-size:var(--t-2xs); font-weight:700; text-transform:uppercase;
 letter-spacing:0.14em; color:var(--text-3); margin:0 0 var(--s-3); }
+/* ══ E LA PUNTA VALE PER TUTTE, NON SOLO PER LA HOME ══════════════════════
+   (23/08/2026, chiesto da Alessandro: «falla tutta».)
+   La Home aveva preso la punta di freccia della vetrina su tre etichette,
+   e il resto dell'app era rimasto quello di ieri: due vesti nello stesso
+   guscio, che e' peggio di una vestita male.
+   `h2.section-title` e' l'etichetta di sezione di TUTTA l'app — sessantotto
+   posti, dal profilo al pannello admin al mercatino — quindi non c'e' niente
+   da riscrivere schermata per schermata: cambia il pezzo condiviso e
+   cambiano tutte insieme. E' la stessa lezione delle fasce del 21/08.
+   `align-items:flex-start` e non `center`: in tedesco queste etichette vanno
+   a capo, e la punta deve restare attaccata alla prima riga. */
+h2.section-title{ display:flex; align-items:flex-start; gap:var(--s-2); }
+h2.section-title::before{
+  content:""; width:8px; height:8px; flex:0 0 auto; margin-top:0.35em;
+  background:var(--clay); clip-path:polygon(50% 100%,0 0,100% 0); }
 /* IL TASTO E' UNA PASTIGLIA, E NON HA L'OMBRA. (21/08/2026.)
    Il rettangolo con l'angolo appena smussato e l'ombra sotto e' il tasto del
    2015. La pastiglia non e' una moda: e' la forma che dice «si preme» senza
@@ -1095,6 +1160,30 @@ min-height:var(--porta-h); align-items:center; }
 display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
 width:var(--s-6); height:var(--s-6); }
 .menu-btn .menu-txt{ display:flex; flex-direction:column; align-items:flex-start; position:relative; z-index:1; }
+/* ══ I NOMI DELLE COSE PESANO COME NELLA VETRINA ══════════════════════════
+   (23/08/2026, seconda passata: la punta da sola non bastava. Alessandro,
+   girando la copia: «dalla prova offline non risulta tutta l'app».)
+   Aveva ragione. La punta aveva vestito le ETICHETTE — le righe piccole che
+   annunciano una sezione — e i NOMI erano rimasti quelli di ieri: grassetto
+   di sistema, crenatura larga, nessun peso. Un'etichetta vestita sopra un
+   nome sciatto e' peggio di due cose sciatte: si vede che qualcuno e'
+   passato ed e' andato via a meta'.
+   Qui cambiano insieme il nome di una porta, il nome di un campo, il titolo
+   di un vuoto e quello di un blocco: sono la stessa cosa in quattro
+   schermate diverse.
+   PESO 800 E CRENATURA STRETTA, MA NON MAIUSCOLO. Il maiuscolo sta bene su
+   una domanda di tre parole; su «Aguscello, Ferrara (FE)» toglie le
+   maiuscole vere dei nomi propri, ed e' proprio l'informazione che serve. */
+.menu-btn .menu-txt,
+.al-dove b,
+.riga-chiusa b,
+.empty-state-title,
+.editorial-title,
+.home-titolo h2{
+  font-family:var(--font-display); font-weight:800; letter-spacing:-0.015em; }
+/* La descrizione sotto NON eredita il peso: e' l'aiuto, e se pesa uguale al
+   nome la coppia non dice piu' quale dei due si legge per primo. */
+.menu-btn .menu-sub{ font-family:var(--font-ui); font-weight:400; letter-spacing:0; }
 /* La descrizione va a una riga sola: e' un aiuto, non una spiegazione. Se non
    ci sta, il titolo non era abbastanza chiaro e si aggiusta il titolo. */
 .menu-btn .menu-sub{ font-size:var(--t-xs); font-weight:400; opacity:0.8;
@@ -1840,16 +1929,80 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    oro, sabbia: la tavolozza di sempre. Questa e' una riforma di STRUTTURA. */
 .home-saluto{ font-size:var(--t-2xs); font-weight:700; letter-spacing:0.12em;
   text-transform:uppercase; color:var(--text-3); margin:0 0 var(--s-2); }
+
+/* ══ L'OCCHIELLO, E PERCHE' HA UNA PUNTA ══════════════════════════════════
+   (23/08/2026, portato dalla vetrina del sito dopo che Alessandro l'ha vista
+   finita: «credi si potrebbe migliorare anche l'app cosi'?».)
+
+   Queste tre etichette esistevano gia' e dicevano gia' la stessa cosa —
+   «questo blocco parla di X» — ma nessuna lo diceva ad alta voce: erano
+   grigio su crema, e si leggevano solo se le si cercava.
+
+   La punta e' la sagoma di una punta di freccia, ed e' l'unico posto in cui
+   l'argilla compare SENZA essere un comando. Vale la pena perche' e' il segno
+   piu' corto che questo mestiere abbia: chi tira lo riconosce prima di
+   leggere la parola.
+
+   `flex-start` e non `center`: se l'etichetta va a capo — e in tedesco va a
+   capo — la punta deve restare attaccata alla prima riga, non galleggiare
+   fra le due. */
+.home-saluto, .strato-eti, .home-mese-eti{
+  display:flex; align-items:flex-start; gap:var(--s-2); }
+.home-saluto::before, .strato-eti::before, .home-mese-eti::before{
+  content:""; width:8px; height:8px; flex:0 0 auto; margin-top:0.35em;
+  background:var(--clay); clip-path:polygon(50% 100%,0 0,100% 0); }
+/* Il capo del mese ha la freccia della tendina in coda: li' l'etichetta e' il
+   primo pezzo di una riga, non la riga intera. */
+.home-mese-capo{ min-width:0; }
 /* La riga piu' grande dell'app: e' la domanda a cui la schermata risponde.
    L'interlinea sotto l'uno perche' a questa taglia il carattere del marchio,
    con l'interlinea normale, lascia una fessura in mezzo alla frase. */
 /* LA DOMANDA CALA DI UNA TAGLIA. Era grande come un titolo di copertina e si
    prendeva un quarto dello schermo per una frase che si legge una volta al
    giorno. Il tasto sotto e' la cosa che si tocca: deve essere lui il peso. */
-.home-domanda{ font-family:var(--font-display); font-size:var(--t-xl);
-  font-weight:800; line-height:1.05; letter-spacing:-0.03em;
-  margin:0 0 var(--s-4); text-wrap:balance; }
+.home-domanda{ font-family:var(--font-display); font-size:var(--t-2xl);
+  font-weight:800; line-height:0.98; letter-spacing:-0.02em;
+  text-transform:uppercase;
+  margin:0 0 var(--s-5); text-wrap:balance; }
 .home-azioni{ display:flex; flex-direction:column; gap:var(--s-3); }
+
+/* ══ IL PANNELLO DELLA HOME ═══════════════════════════════════════════════
+   (23/08/2026.) Prima qui c'erano un saluto, una domanda e un tasto tinto
+   sopra il fondo di pagina, in mezzo a fasce che gli somigliavano tutte.
+   Il difetto non era nessuno dei tre: era che **non c'era un punto dove
+   l'occhio cadesse**. Una schermata con quattro cose dello stesso peso e'
+   una schermata senza risposta alla domanda «e adesso?».
+
+   Il pannello e' una fascia come le altre — stessa uscita dai margini,
+   stessa gola — ma rovescia il rapporto fra fondo e scritta. E' l'unico
+   posto dell'app dove succede, e serve proprio perche' e' l'unico. */
+.strato.home-eroe{
+  background:var(--eroe-bg); color:var(--eroe-ink);
+  border-top:0; border-bottom:0;
+  padding-top:var(--s-6); padding-bottom:var(--s-6); }
+/* Il pannello e' la prima cosa sotto la barra: fra le due non ci va il fondo
+   pagina, o sembra che qualcosa non si sia caricato. */
+.strati > .home-eroe:first-child{ margin-top:calc(var(--s-5) * -1); }
+.home-eroe .home-saluto{ color:var(--eroe-eti); }
+.home-eroe .home-domanda{ color:var(--eroe-ink); }
+/* La seconda riga della domanda si accende. Non e' un colore in piu': e' lo
+   stesso arancione della porta sotto, cioe' il filo che porta l'occhio dalla
+   frase al tasto. */
+.home-eroe .home-domanda .acceso{ color:var(--clay); }
+
+/* LA PORTA. Piena, non tinta — ed e' l'eccezione, non un ripensamento.
+   Il tinto e' la regola dell'app dal 23/08 e resta: vale dove un comando sta
+   fra altri comandi. Qui il comando e' UNO, sta su un fondo suo, e un tasto
+   velato su un pannello velato non e' garbato: e' invisibile.
+   La scritta e' `--clay-ink`, non bianca: sull'argilla piena l'inchiostro
+   scuro sta a 5,56:1 e il bianco a 3,4. La vetrina usa il bianco e li' regge
+   perche' e' testo grande in grassetto — ma qui il numero migliore c'era
+   gia', ed e' quello gia' misurato dal banco dei contrasti. */
+.btn-porta{
+  background:var(--clay); color:var(--clay-ink); border-color:var(--clay);
+  font-family:var(--font-display); font-weight:800;
+  text-transform:uppercase; letter-spacing:0.05em; }
+.btn-porta:hover{ background:var(--clay-500); border-color:var(--clay-500); }
 
 /* Gli strati escono dai margini della pagina: il gradino fra l'uno e l'altro
    e' il fondo pagina che si vede in mezzo, non un bordo disegnato. */
@@ -1899,9 +2052,13 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    altrove il riquadro ci vuole. */
 .strato > .card{ background:none; border:0; border-radius:0; padding:0;
   margin:0; box-shadow:none; }
-.strato-eti{ display:flex; align-items:center; justify-content:space-between;
+.strato-eti{ display:flex; align-items:center; justify-content:flex-start;
   gap:var(--s-2); font-size:var(--t-2xs); font-weight:700; letter-spacing:0.12em;
   text-transform:uppercase; color:var(--text-3); }
+/* Se accanto all'etichetta c'e' un secondo elemento — un conto, un comando —
+   quello va a destra da solo. Un'etichetta sola resta a sinistra, dove si
+   legge. */
+.strato-eti > :last-child:not(:first-child){ margin-left:auto; }
 
 /* LO STATO B: il giro in corso si prende lo strato in cima, e non e'
    decorazione. Chi ha un giro aperto ha UNA cosa da fare, e non e' scegliere. */
@@ -3052,7 +3209,18 @@ display:flex; flex-direction:column; align-items:center; gap:var(--s-1); }
    pastiglia per leggersi come pastiglia. La barra cresce di 4px in tutto. */
 .tabn .tab-pill{ display:flex; align-items:center; justify-content:center;
 width:48px; height:32px; border-radius:var(--r-lg); border:1px solid transparent; }
-.tabn .tab-lbl{ font-size:var(--t-xs); font-weight:600; text-align:center; }
+.tabn .tab-lbl{ font-size:var(--t-2xs); font-weight:700; text-align:center;
+  text-transform:uppercase; letter-spacing:0.1em; }
+/* ══ E LA BARRA PARLA LA STESSA LINGUA DELLE ETICHETTE ════════════════════
+   (23/08/2026, chiesto da Alessandro nella stessa riga: «anche la barra deve
+   essere adeguata».) Le quattro parole in fondo sono etichette come tutte le
+   altre — dicono dove sei, non cosa fare — e in tutta l'app le etichette
+   adesso sono maiuscole spaziate. Erano rimaste l'unico posto in minuscolo.
+
+   LA PASTIGLIA RESTA PIENA E RESTA VERDE, e non e' una svista: al sole il
+   solo cambio di colore della parola non si vede, ed e' stato misurato il
+   21/08. Il verde e' «tirare»; l'argilla e' «premi qui». La voce dove sei
+   non e' un comando. */
 /* IL DISEGNO E' VERDE ANCHE DA SPENTO, LA PAROLA NO.
    Prima l'icona prendeva --navbar-fg, cioe' il grigio della parola: cinque
    disegni fatti apposta che arrivavano a schermo come cinque sagome grigie, e
@@ -3346,6 +3514,12 @@ text-transform:uppercase; color:var(--text-3); }
    «questo si legge, non si tocca» senza aggiungere un solo ornamento.
    *Un pannello tecnico e' tale perche' toglie, non perche' aggiunge.* */
 .home-mese{ background:var(--surface-2); }
+/* Il capo della scheda allenamenti: occhiello sopra, una riga di spiegazione
+   sotto — la stessa coppia di tutte le altre sezioni. Erano due stili scritti
+   a mano dentro il JS, cioe' due decisioni di aspetto prese in un posto dove
+   nessuno le va a cercare. */
+.ot-capo{ margin-bottom:var(--s-3); }
+.ot-capo-sotto{ font-size:var(--t-sm); color:var(--muted); margin-top:var(--s-2); }
 .home-mese-dati{ width:100%; display:block; margin-top:var(--s-3); }
 .hm-voce{ min-width:0; }
 .hm-voce b{ font-variant-numeric:tabular-nums; }
@@ -14517,16 +14691,33 @@ rip.appendChild(scarta);
 rip.appendChild(el('<div class="home-salvato">'+escapeHtml(t("home_saved_here"))+'</div>'));
 strati.appendChild(rip);
 } else {
-var eroe = el('<div></div>');
+/* IL PANNELLO. (23/08/2026.) L'eroe non sta piu' nudo sul fondo pagina: e'
+   una fascia come le altre, ma con il fondo e la scritta rovesciati. Cosa
+   sia «rovesciato» lo decide il tema — al sole non e' scuro, vedi
+   `--eroe-bg`.
+   LA DOMANDA SI SPEZZA IN DUE RIGHE, e non e' un vezzo tipografico: la
+   seconda e' quella che si accende, e senza lo spezzo l'accensione non
+   avrebbe dove appoggiarsi. Si spezza sull'ULTIMA parola, perche' e' l'unico
+   punto che funziona in tutte e nove le lingue senza tradurre lo spezzo:
+   «Pronto a / tirare?», «Ready to / shoot?», «Bereit zum / Schiessen?».
+   Se la frase e' di una parola sola non si spezza niente e si accende
+   quella. */
+var eroe = el('<div class="strato home-eroe"></div>');
 var nome = (state.profile && (state.profile.username || state.profile.nomeCognome)) || "";
 eroe.appendChild(el('<p class="home-saluto">'+escapeHtml(homeSaluto() + (nome ? ", " + nome : ""))+'</p>'));
-eroe.appendChild(el('<h1 class="home-domanda">'+escapeHtml(t("home_ready"))+'</h1>'));
+var frase = String(t("home_ready")).trim();
+var tagl = frase.lastIndexOf(" ");
+var testa = tagl > 0 ? frase.slice(0, tagl) : "";
+var coda = tagl > 0 ? frase.slice(tagl + 1) : frase;
+eroe.appendChild(el('<h1 class="home-domanda">'
+  + (testa ? escapeHtml(testa) + '<br>' : '')
+  + '<span class="acceso">'+escapeHtml(coda)+'</span></h1>'));
 var az = el('<div class="home-azioni"></div>');
-var bTira = el('<button class="btn btn-primary btn-block">'+navIcon("azarco",20,"unica")+' '+escapeHtml(t("home_start"))+'</button>');
+var bTira = el('<button class="btn btn-porta btn-block">'+escapeHtml(t("home_start"))+' '+navIcon("azarco",20,"unica")+'</button>');
 bTira.addEventListener("click", function(){ state.tab = "tira"; save(); render(); });
 az.appendChild(bTira);
 eroe.appendChild(az);
-wrap.appendChild(eroe);
+strati.appendChild(eroe);
 }
 
 /* ══ I NUMERI DEL MESE SONO CONTORNO, NON IL MOTIVO PER CUI SI APRE L'APP ══
@@ -14576,7 +14767,7 @@ var conPunti = function(parola){ return parola + " \u00b7 " + t("fin_punti"); };
 dati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(n.media))+'</b><i>'+escapeHtml(conPunti(t("diario_media")))+'</i></span>'));
 var riga = el('<span class="hm-riga"></span>');
 [[t("home_rounds_word"), n.giri],
- [conPunti(t("diario_record")), n.meglio],
+ [t("diario_record"), n.meglio],
  [t("diario_targets_word"), n.piazzole]]
 .forEach(function(p){
 riga.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(p[1]))+'</b><i>'+escapeHtml(p[0])+'</i></span>'));
@@ -14646,7 +14837,7 @@ var otCard = el('<div class="card" style="margin-bottom:var(--s-3);"></div>');
 // Il conto nel titolo: si vede quanti ce ne sono prima di leggerli, e si
 // nota subito se ne manca uno.
 var quanti = (openTrainings||[]).length;
-otCard.appendChild(el('<div><div style="font-weight:800;font-size:var(--t-md);">'+t("ot_section_title")+(quanti?' · '+quanti:'')+'</div><div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;margin-bottom:var(--s-2);">'+t("ot_section_hint")+'</div></div>'));
+otCard.appendChild(el('<div class="ot-capo"><div class="strato-eti">'+t("ot_section_title")+(quanti?' \u00b7 '+quanti:'')+'</div><div class="ot-capo-sotto">'+t("ot_section_hint")+'</div></div>'));
 
 var mio = myClubCode();
 var base = (openTrainings || []).slice();
@@ -17546,7 +17737,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-accesi";
+var BUILD_STAMP = "2026-08-23-testata";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17555,7 +17746,7 @@ var BUILD_STAMP = "2026-08-23-accesi";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-profilo";
+var BUILD_PARENT = "2026-08-23-accesi";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
