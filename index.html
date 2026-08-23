@@ -88,26 +88,27 @@
 /* Verde bosco, argilla, oro: i tre colori dell'app, in gradini veri.
    Se serve una tinta nuova si aggiunge QUI, non dentro un componente.
 
-   IL VERDE E' CAMBIATO. (22/08/2026, scelto da Alessandro: `#4a5d4e`.)
-   La tinta e' quasi la stessa di prima — 133 gradi contro 128, cinque di
-   differenza. A cambiare e' la SATURAZIONE: da 45% a 11%. Da verde bandiera a
-   verde muschio.
-   E il motivo per cui si poteva fare senza rigirare niente e' un numero: col
-   bianco sopra fa 7,08, e quello di prima faceva 7,54. Stessa leggibilita',
-   quindi nessun inchiostro da cambiare e nessuna scritta da spostare. Un
-   verde piu' chiaro provato lo stesso giorno (`#86976B`) si fermava a 3,16 e
-   avrebbe voluto mezzo tema riscritto: e' stato scartato per quello, non per
-   il gusto.
-   GLI ALTRI GRADINI SONO LA STESSA TINTA A PIU' O MENO LUCE, e devono
-   restarlo: desaturare solo il colore principale lascerebbe nell'app due
-   verdi diversi che si notano appena e non si spiegano.
-   Il 900 e' il piu' scuro perche' e' il verde del tema Sole, dove il
-   contrasto e' il mestiere del tema.
-   *L'argilla non e' stata toccata, e adesso funziona meglio: due colori
-   saturi si contendevano l'attenzione, adesso uno fa da terra e l'altro da
-   segnale.* */
---green-900:#323E34; --green-800:#4A5D4E; --green-700:#3D4D40; --green-600:#4A5D4E;
---green-500:#5A6F5E; --green-400:#88A08D; --green-200:#E3E8E4;
+   IL VERDE E' CAMBIATO. (22/08/2026, scelto da Alessandro: `#66B132`.)
+   Non e' un ritocco: e' un altro verde. Tinta 95 gradi contro 128, e
+   soprattutto luce 45% contro 26%. L'app passa da verde bosco a verde prato.
+   E' stato scelto dopo averlo VISTO montato, non calcolato — la strada e'
+   passata per un salvia (#86976B), un muschio spento (#4a5d4e, «morto») e tre
+   punti d'incontro. Il diario racconta il giro perche' la conclusione da sola
+   sembrerebbe un capriccio, e non lo e'.
+   LE SCRITTE SOPRA SONO SCURE, e questa e' la conseguenza che si porta dietro
+   tutto il resto: col bianco fa 2,66, e il bianco su un verde cosi' luminoso
+   galleggia invece di mordere. Con lo scuro fa 6,95. Non e' un ripiego: e' un
+   ribaltamento voluto. Il verde diventa la cosa piu' chiara dello schermo, e
+   nero, argilla e oro ci si appoggiano sopra.
+   IL 900 NON E' PIU' IL PIU' SCURO. Nel tema Sole il verde e' lo stesso degli
+   altri due temi, perche' li' il contrasto viene dall'inchiostro scuro, non
+   dal fondo abbassato.
+   *Questo verde e' anche quello della categoria «allenamento» (lime-500,
+   98 gradi): sono lo stesso colore a occhio, ed e' una scelta, non un
+   incidente. L'allenamento e' l'attivita' di casa dell'app, quindi porta il
+   colore di casa. Gara e prepara restano distinte con argilla e oro.* */
+--green-900:#66B132; --green-800:#66B132; --green-700:#3A631C; --green-600:#66B132;
+--green-500:#538F28; --green-400:#66B132; --green-200:#DEEDD4;
 --green-success:#2E7D32; --green-success-dk:#4CAF50;
 /* L'ARGILLA E' CAMBIATA. (22/08/2026, scelta da Alessandro: `#FF4D00`.)
    E' un arancione a saturazione piena — 100%, contro l'85% di prima — e sta
@@ -123,8 +124,16 @@
    si somigliano appena sono peggio di due arancioni diversi. */
 --clay-800:#8F2B00; --clay-700:#A33100; --clay-600:#B83700; --clay-500:#CC3E00;
 --clay-400:#FF4D00; --clay-200:#FFE3D6;
---gold-800:#6E4E0C; --gold-700:#7A5610; --gold-600:#8A6210; --gold-500:#B07E12;
---gold-400:#CBA35C; --gold-200:#F6E8C6; --gold-150:#F9E9C4; --gold-100:#FDF2D9;
+/* L'ORO E' TORNATO ORO. (22/08/2026.) Era saturo all'81% con una luce del
+   38%: ottone sporco. Il difetto pero' non era suo — era di CONTESTO. Accanto
+   a un'argilla e a un verde spenti nessuno lo notava; il giorno in cui
+   l'argilla e' diventata piena, l'oro e' rimasto l'unico dei tre a essere
+   smorto, e si e' visto subito.
+   Adesso e' a saturazione piena come gli altri due. I gradini scuri (600, 700,
+   800) restano per le SCRITTE: un oro luminoso e' esattamente quello sotto cui
+   il testo sparisce. */
+--gold-800:#7A5600; --gold-700:#8A6100; --gold-600:#996B00; --gold-500:#C28800;
+--gold-400:#D69600; --gold-200:#FFEDC2; --gold-150:#FFEFC9; --gold-100:#FFF6E0;
 --red-700:#8E0F14; --red-600:#A81319; --red-400:#E23D2E; --red-100:#F9DCDC;
 --blue-600:#2E5FA8; --blue-400:#5B8FD6;
 /* Il pallino del sole. E' l'UNICA tinta dell'app che non cambia fra i temi,
@@ -143,6 +152,42 @@
    lontane. Bianco sopra: 6,6 e 5,4. */
 --slate-700:#334657; --slate-600:#41566B; --slate-400:#5C7794;
 --lime-500:#6FBF3F;
+
+/* I CINQUE TASTI DI PUNTEGGIO HANNO I LORO COLORI, E NON LI DIVIDONO CON
+   NESSUNO. (22/08/2026, dopo un errore vero.)
+   Prendevano dalle famiglie: il superspot pescava dall'argilla. Il 22/08 l'argilla
+   e' diventata `#FF4D00` per una scelta estetica fatta su un'altra schermata,
+   e il tasto del superspot e' cambiato insieme a lei — senza che nessuno lo
+   volesse, senza che nessun banco lo dicesse. Lo stesso valeva per lo zero,
+   agganciato ai neutri il giorno in cui i neutri sono stati ruotati al caldo.
+   E' il difetto peggiore possibile su questi cinque tasti: la memoria
+   muscolare qui e' un comando di sicurezza. Chi tira in gara li preme senza
+   leggerli, e un tasto che cambia colore fra un giro e l'altro fa sbagliare
+   il punteggio a qualcuno che stava guardando il bersaglio.
+   Adesso hanno esadecimali propri. NON SONO RIPETIZIONI DEI PRIMITIVI: sono
+   valori che devono restare fermi mentre la tavolozza si muove, ed e'
+   esattamente il motivo per cui vivono qui e non dentro le famiglie.
+   Questi cinque numeri non si cambiano per estetica. */
+--punto-ss:#E8722F;     /* superspot — l'argilla di prima del 22/08 */
+--punto-spot:#6FBF3F;   /* spot */
+--punto-sag:#5C7794;    /* sagoma */
+--punto-perfetto:#D8574E;
+--punto-zero:#D3D7CB;   /* il neutro freddo di prima della rotazione dei sand */
+
+/* IL TEMA SCURO HA I SUOI CINQUE, ed erano agganciati alle famiglie come gli
+   altri — quindi anche loro si erano gia' mossi il 22/08 senza che nessuno lo
+   chiedesse. Questi valori sono ripresi dalla versione online, cioe' da
+   quello che l'app mostra oggi a chi la usa.
+   Perche' siano diversi da quelli del tema chiaro e' scritto piu' sotto, nella
+   nota del tema Sole: su un fondo scuro le stesse tinte diventano macchie
+   fangose. La regola «i cinque tasti sono identici in tutti i temi» vale su
+   quello che l'occhio riconosce — la tinta e la posizione — non sul valore
+   esadecimale. */
+--punto-ss-scuro:#C1571F;
+--punto-spot-scuro:#3C6D42;
+--punto-sag-scuro:#334657;
+--punto-perfetto-scuro:#A81319;
+--punto-zero-scuro:#3A403A;
 --violet-500:#6A5A8C; --tan-500:#8A7A5C;
 /* Le due tinte della paglia del bersaglio da anelli. Sono un materiale,
    non una decorazione: stanno qui perche' un componente non nomina mai
@@ -322,7 +367,7 @@ color-scheme:light;
 /* bordi */
 --border:var(--sand-300); --border-strong:var(--sand-400);
 /* marchio e codice colore */
---brand:var(--green-800); --brand-soft:var(--green-800); --brand-ink:var(--sand-50);
+--brand:var(--green-800); --brand-soft:var(--green-800); --brand-ink:var(--sand-900);
 /* LA LINEA DEL GRAFICO NON E' IL VERDE DEL MARCHIO, E NON E' UN CAPRICCIO.
    Al buio `--brand` (#315B35) sul fondo scuro (#16201C) fa 2,13:1 di
    contrasto: la linea c'e' e non si vede. Non si vedeva nemmeno a occhio —
@@ -338,7 +383,7 @@ color-scheme:light;
    *L'errore non era il colore: era aver dato per scontato che un ruolo
    giusto in due temi su tre lo fosse anche nel terzo.*
    Misure vere: chiaro 4,74 - scuro 6,00 - sole 7,51. */
---clay:var(--clay-600); --clay-ink:var(--sand-50);
+--clay:var(--clay-400); --clay-ink:var(--sand-900);
 /* --gold-role e' salito da --gold-700 a --gold-600 il 17/08, perche' il nome
    della compagnia sembrava marrone. E' l'ultimo gradino possibile: l'oro sta
    qui come INCHIOSTRO su foglio bianco, e un oro piu' acceso e' anche piu'
@@ -391,8 +436,8 @@ color-scheme:light;
    e' quello che sta all'aperto piu' spesso.
    Le variabili delle zone del bersaglio non ci sono piu': disegnavano la
    sagoma, e la sagoma non si disegna piu'. Resta --qsag, che serve altrove. */
---score-ss:var(--clay-400); --score-spot:var(--lime-500); --score-sag:var(--slate-400);
---score-perfect:var(--red-400); --score-zero:var(--sand-300);
+--score-ss:var(--punto-ss); --score-spot:var(--punto-spot); --score-sag:var(--punto-sag);
+--score-perfect:var(--punto-perfetto); --score-zero:var(--punto-zero);
 
 /* il timer. Da fermo ha un colore suo — ambra — che non e' nessuno dei tre
    codici dell'app, cosi' al sole non lo si confonde con "gara" o "prepara". */
@@ -435,7 +480,7 @@ color-scheme:dark;
 --surface:var(--moss-900); --surface-1:var(--moss-800); --surface-2:var(--moss-700);
 --text-1:var(--moss-100); --text-2:var(--moss-200); --text-3:var(--moss-300);
 --border:var(--moss-600); --border-strong:var(--moss-500);
---brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:var(--sand-50);
+--brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:var(--sand-900);
 --chart-line:var(--green-400);   /* al buio serve il verde chiaro: 3:1 */
 --clay:var(--clay-400); --clay-ink:var(--sand-900); --gold-role:var(--gold-400);
 --sun-on-bg:var(--gold-400); --sun-on-fg:#1A1305;
@@ -463,8 +508,8 @@ color-scheme:dark;
 --tone-prep-fg:var(--gold-400);   --tone-prep-solid:var(--gold-500);
 --tone-border:55%; --solid-ink:var(--sand-50);
 
---score-ss:var(--clay-500); --score-spot:var(--green-500); --score-sag:var(--slate-700);
---score-perfect:var(--red-600); --score-zero:var(--sand-700);
+--score-ss:var(--punto-ss-scuro); --score-spot:var(--punto-spot-scuro); --score-sag:var(--punto-sag-scuro);
+--score-perfect:var(--punto-perfetto-scuro); --score-zero:var(--punto-zero-scuro);
 
 --timer-idle-bg:linear-gradient(135deg,var(--moss-700),var(--moss-800));
 --timer-idle-bd:var(--border-strong); --timer-idle-fg:var(--text-1);
@@ -540,9 +585,9 @@ color-scheme:light;
 --border:var(--sand-500); --border-strong:var(--sand-900);
 
 /* marchio e codici: i gradini piu' scuri di ogni famiglia */
---brand:var(--green-900); --brand-soft:var(--green-900); --brand-ink:var(--sand-50);
+--brand:var(--green-900); --brand-soft:var(--green-900); --brand-ink:var(--sand-900);
 --chart-line:var(--green-900);   /* al sole il verde piu' scuro, sul bianco */
---clay:var(--clay-800); --clay-ink:var(--sand-50); --gold-role:var(--gold-800);
+--clay:var(--clay-400); --clay-ink:var(--sand-900); --gold-role:var(--gold-400);
 --sun-on-bg:var(--gold-800); --sun-on-fg:var(--sand-50);
 --danger-role:var(--red-700); --success-role:var(--green-800);
 
@@ -588,8 +633,8 @@ color-scheme:light;
 
    Nero su ciascun fondo: 8,3 / 8,9 / 4,8 / 6,2 / 15,1. Il quarto e il terzo
    stanno sotto il 7 ma sopra il 4,5, e queste sono cifre grandi e grasse. */
---score-ss:var(--clay-400); --score-spot:var(--lime-500); --score-sag:var(--slate-400);
---score-perfect:var(--red-400); --score-zero:var(--sand-300);
+--score-ss:var(--punto-ss); --score-spot:var(--punto-spot); --score-sag:var(--punto-sag);
+--score-perfect:var(--punto-perfetto); --score-zero:var(--punto-zero);
 
 /* il timer perde il gradiente: due tinte che si mescolano al sole sono una
    tinta sola, e sporca */
@@ -16940,7 +16985,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-terra";
+var BUILD_STAMP = "2026-08-22-prato";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16949,7 +16994,7 @@ var BUILD_STAMP = "2026-08-22-terra";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-22-bordo";
+var BUILD_PARENT = "2026-08-22-terra";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
