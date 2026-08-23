@@ -14,8 +14,11 @@
      quasi lo stesso cerchio. Qui si scrivono prezzi, libraggi e spine — cioe'
      solo cifre — quindi era lo stesso errore dell'app, in un file che nessuno
      aveva ancora guardato. Inter ha cifre tabulari vere e lo zero barrato;
-     Fraunces resta al marchio e ai titoli, mai su un dato. -->
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+     Inter ha cifre tabulari vere e lo zero barrato.
+     DAL 23/08/2026 c'e' SOLO Inter: Fraunces, che teneva marchio e titoli,
+     e' stato tolto per allinearsi all'app — che era gia' passata a Inter per
+     tutto. Un file di carattere in meno da scaricare. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet">
 <script>
 /* IL TEMA SI EREDITA DALL'APP, e si applica PRIMA di dipingere.
    "La scelta del tema vale su ogni schermo" e' scritto nelle note dal primo
@@ -100,7 +103,17 @@
 
 /* ───── CARATTERI · due famiglie, tre mestieri ───── */
 --font-ui:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
---font-display:"Fraunces",Georgia,serif;
+/* FRAUNCES NON C'E' PIU'. (23/08/2026, chiesto da Alessandro: «il font deve
+   essere come quello dell'app».)
+   Il mercatino scriveva i titoli in un serif; l'app e' passata a Inter per
+   tutto. *Due sezioni dello stesso sito con due caratteri diversi non
+   sembrano due sezioni: sembrano due prodotti, e il serif e' la differenza
+   che si nota prima del colore.*
+   Il nome del ruolo resta — `--font-display` dice «il carattere dei titoli»,
+   non «il serif» — cosi' il giorno che si vuole di nuovo un carattere a se'
+   si cambia qui e basta.
+   Guadagno secondario: un file di carattere in meno da scaricare all'avvio. */
+--font-display:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 --font-num:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 
 /* ───── SPAZIO · 4 / 8 / 12 / 16 / 24 / 32 / 48 ───── */
@@ -285,9 +298,17 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opa
 input[type="number"],.range-row input{
   font-family:var(--font-num);font-variant-numeric:tabular-nums slashed-zero;}
 
-/* Fraunces: marchio e titoli. Mai su un dato, mai su un nome utente,
-   mai sul titolo di un annuncio — che e' pieno di sigle e numeri. */
-.tb-logo-txt,.auth-card h1,.fscr-tb h2{font-family:var(--font-display);font-weight:600}
+/* Il carattere dei titoli. Era Fraunces, un serif; dal 23/08/2026 e' Inter
+   come nel resto del sito. La regola di prima resta valida e vale ancora la
+   pena scriverla: MAI su un dato, mai su un nome utente, mai sul titolo di un
+   annuncio — quelli sono pieni di sigle e numeri e vogliono `--font-num`. */
+/* IL NOME COL CARATTERE DELL'APP. (23/08/2026.) `--font-display` a peso 600
+   e' il carattere dei titoli editoriali; l'app scrive il proprio nome in
+   `--font-ui` a 800, stretto. *Due nomi affiancati scritti con due caratteri
+   diversi non sembrano due sezioni: sembrano due prodotti.*
+   Le altre due regole restano dov'erano: quelle SONO titoli. */
+.auth-card h1,.fscr-tb h2{font-family:var(--font-display);font-weight:600}
+.tb-logo-txt{font-family:var(--font-ui);font-weight:800;letter-spacing:-.02em}
 
 /* NIENTE `z-index` QUI, ED E' IL PEZZO CHE TENEVA LA BARRA PRIGIONIERA.
    `z-index:1` su questo contenitore creava un contesto di impilamento: da li'
@@ -318,16 +339,19 @@ input[type="number"],.range-row input{
 /* IL TASTO CHE RIPORTA AL SEGNAPUNTI. Su fondo chiaro il riquadro bianco
    con l'ombra nera non ha piu' senso: era fatto per staccarsi dal buio.
    Adesso e' tinto come tutti gli altri tasti dell'app. */
-.tb-back{height:38px;padding:0 12px 0 9px;border-radius:var(--r-s);
+/* Solo il segno, quadrato come la lettera del profilo che gli sta accanto:
+   due tasti della stessa fila con due forme diverse sembrano due cose
+   diverse. */
+.tb-back{width:38px;height:38px;padding:0;border-radius:var(--r-s);
   background:var(--primario-bg);border:1px solid var(--primario-bd);
-  display:flex;align-items:center;gap:6px;cursor:pointer;flex-shrink:0;text-decoration:none;
-  color:var(--primario-fg);font-size:13px;font-weight:800;letter-spacing:-.2px;}
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  flex-shrink:0;text-decoration:none;color:var(--primario-fg);}
 .tb-back:active{opacity:.85}
 .tb-back-txt{white-space:nowrap}
 .tb-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
 .tb-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .tb-exit{display:none;align-items:center;gap:7px;font-family:inherit;cursor:pointer}
-.tb-logo{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.tb-logo{display:flex;align-items:center;gap:8px;flex:1 1 auto;min-width:0}
 .tb-logo-txt{font-size:17px;letter-spacing:-.3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
 /* IL MARCHIO VERO, non due cerchi disegnati a mano. Il mercatino aveva un
    bersaglio stilizzato fatto con due `<circle>`: assomigliava al marchio ma
@@ -336,12 +360,22 @@ input[type="number"],.range-row input{
    `logo.webp` e' gia' servito dal sito e sta gia' nella cache del service
    worker: non e' un file in piu' da caricare. */
 .tb-mark{width:30px;height:30px;flex:0 0 auto;border-radius:var(--r-s);display:block}
-.beta-badge{display:inline-flex;align-items:center;background:color-mix(in srgb,var(--clay-400) 20%,transparent);
-  color:#F2A45E;border:1px solid color-mix(in srgb,var(--clay-400) 38%,transparent);
-  border-radius:var(--r-p);font-size:10px;font-weight:800;letter-spacing:.07em;padding:3px 8px;}
+/* La regola di `.beta-badge` e' stata tolta col cartellino (23/08/2026).
+   Portava anche un `#F2A45E` scritto a mano, un arancione che non sta in
+   nessuna famiglia: se un giorno il cartellino torna, si rifa' coi ruoli. */
 /* 44 e' il pavimento, non il traguardo: era 36. */
-.tb-avatar{width:var(--hit);height:var(--hit);border-radius:50%;background:var(--accent-l);color:var(--chrome-2);
-  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;border:none;font-family:inherit;}
+/* LA LETTERA DEL PROFILO. Era `--accent-l` — il verde CHIARO — con
+   `--chrome-2` sopra, cioe' una pastiglia pensata per stare su una barra
+   nera. Su fondo chiaro non si stacca piu' da niente.
+   Adesso e' lo stesso trattamento degli altri quattro avatar del mercatino:
+   velata, iniziale verde scuro, filo intorno. *Cinque pastiglie con
+   l'iniziale nella stessa app devono essere la stessa pastiglia.*
+   Quadrata come il tasto casa che le sta accanto? No: TONDA, perche' una
+   pastiglia con dentro una lettera e' una persona, e le persone in questa
+   app sono tonde ovunque. Il tasto casa e' un comando. */
+.tb-avatar{width:38px;height:38px;border-radius:50%;
+  background:var(--verde-bg);color:var(--acceso-fg);border:1px solid var(--verde-bd);
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;cursor:pointer;flex-shrink:0;font-family:inherit;}
 section{display:none}
 section.active{display:block}
 .center-scr{min-height:calc(100dvh - 58px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;}
@@ -958,7 +992,9 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
 
 /* Finestra stretta: sulla barra il nome del sito lascia il posto alle sezioni. */
 @media (min-width:760px) and (max-width:1299px){
-  .tb-logo-txt,.beta-badge{ display:none }
+  /* Su finestra media il nome lascia il posto alle sezioni. Il cartellino BETA
+   non c'e' piu': la regola non lo nomina piu'. */
+  .tb-logo-txt{ display:none }
 }
 
 @media (hover:hover) and (pointer:fine) and (min-width:760px){
@@ -991,7 +1027,7 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
      dire se questo file e' UGUALE a quello online, non se e' avanti o
      indietro. Era la voce 7 delle cose aperte nel diario del mercatino, ed e'
      chiusa nella stessa mossa in cui il timbro e' salito. -->
-<body data-build="2026-08-23-mercatino-chiaro" data-parent="2026-08-23-tavolozza">
+<body data-build="2026-08-23-barra" data-parent="2026-08-23-mercatino-chiaro">
 <div id="app">
 <header class="topbar">
   <div class="tb-left">
@@ -1002,11 +1038,24 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
        Adesso: la casetta, che dice «si torna a casa», e la parola che dice
        QUALE casa. *Il nome di una porta e' quello che ci trovi dietro, non
        quello che ti lasci alle spalle.* -->
-<a href="https://arctrail3d.com/index.html" class="tb-back" data-tt="back_title"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg><span class="tb-back-txt" data-t="app_back">Segnapunti</span></a>
+<!-- L'ORDINE DELLA BARRA. (23/08/2026, chiesto da Alessandro.)
+       Prima veniva il tasto di ritorno e POI il marchio: si entrava nella
+       pagina leggendo un'uscita. *La prima cosa che si legge in una testata
+       deve dire dove SEI, non da dove puoi andartene.*
+       Adesso: marchio e nome, poi la casetta, poi la lettera del profilo. Il
+       tasto di ritorno perde la parola e tiene solo il segno — la casetta da
+       sola dice «si torna a casa», e una parola accanto a un'icona chiara e'
+       una parola che nessuno legge. Il nome resta nel `title` e in
+       `aria-label` per chi non vede l'icona.
+       LA SCRITTA «BETA» E' STATA TOLTA. Il mercatino resta in prova — ci si
+       entra solo con `betaTester: true` — ma quel cartellino lo diceva a chi
+       era gia' stato fatto entrare: *dire «beta» a chi e' stato scelto per
+       provarlo non e' un avvertimento, e' rumore.* -->
     <div class="tb-logo">
       <img class="tb-mark" src="logo.webp" alt="" aria-hidden="true">
-      <span class="tb-logo-txt">ArcTrail Market</span><span class="beta-badge">BETA</span>
+      <span class="tb-logo-txt">Marketplace</span>
     </div>
+    <a href="https://arctrail3d.com/index.html" class="tb-back" data-tt="back_title" data-ta="back_title"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></a>
   </div>
   <nav class="bnav" id="bnav">
   <button class="bnav-item on" id="navMkt"><div class="bnav-iw"><svg viewBox="0 0 200 200" width="22" height="22" fill="currentColor" aria-hidden="true"><g transform="translate(100 100) scale(0.9924) translate(-100 -100) translate(7.62 -3.88)"><path d="M140.36,83.49l-7.55-20.72-7.43-20.45-15.09,6.25a29.22,29.22,0,0,0-2.38,13l11-4.58,5.7,15.68,2.2,6,7.59,20.89-32,72.14a5.92,5.92,0,0,1-3.32,3.16,6,6,0,0,1-4.58-.11L48,154.14a6,6,0,0,1-3-7.89L76.77,74.47l13-5.39a51.89,51.89,0,0,1-.69-11.71L68.44,65.94,34.83,141.76a17.07,17.07,0,0,0,8.69,22.5L90.07,184.9a17.07,17.07,0,0,0,22.5-8.69L146.35,100Z"/><circle cx="106.83" cy="87.35" r="12.26"/><rect x="83.15" y="106.57" width="8.23" height="35.92" transform="translate(-61.9 154.06) rotate(-66.18)"/><rect x="76.13" y="122.47" width="8.23" height="35.92" transform="translate(-80.63 157.12) rotate(-66.18)"/><g fill="var(--icona-accento)"><path d="M135.84,81.62l-7.08-7a52.47,52.47,0,0,0,10.57-14.87,23.49,23.49,0,0,0,1-16.85c-2.83-9-7.9-12.59-15.93-11.34-6.73,1.05-12.78,5.37-16.59,11.86C96.26,63,110.17,83.54,110.31,83.74l-8.19,5.67c-.73-1-17.64-26-2.91-51,5.34-9.07,13.94-15.14,23.64-16.65,7.56-1.18,21.11-.39,27,18.18a33.45,33.45,0,0,1-1.43,24A62.07,62.07,0,0,1,135.84,81.62Z"/></g></g></svg></div><span data-t="nav_market">Marketplace</span></button>
@@ -1338,6 +1387,13 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
 <div class="fullscr" id="fsRep" style="overflow-y:auto">
   <div class="fscr-tb"><button class="btn-icon" id="btnCRep2" data-ta="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><h2>Segnalazioni</h2></div>
   <div style="padding:14px 16px" id="repList"></div>
+  <!-- LO SVUOTA-MEMORIA STA IN FONDO, DOPO LE SEGNALAZIONI, E SEPARATO.
+       Non e' una segnalazione: e' l'attrezzo che si usa quando il mercatino
+       fa cose che non si spiegano — un filtro che resta appiccicato, una
+       ricerca salvata che non sparisce, una pagina che mostra roba vecchia.
+       *Sta qui perche' qui ci arriva chi sta gia' cercando di capire cosa
+       non va, e non altrove dove qualcuno lo premerebbe per curiosita'.* -->
+  <div style="padding:0 16px 24px" id="svuotaBox"></div>
 </div>
 
 <!-- ACTION SHEET -->
@@ -1598,6 +1654,9 @@ rep_photo:"Foto non veritiere",
 rep_price:"Prezzo non realistico",
 rep_sent:"Segnalazione inviata, grazie",
 rep_spam:"Spam o truffa",
+rep_list_title:"Segnalazioni", mem_title:"Svuota la memoria",
+mem_hint:"Cancella filtri, ordinamento e le pagine tenute da parte. Non esce dall’account e non tocca annunci, ricerche salvate e messaggi.",
+mem_btn:"Svuota la memoria", mem_confirm:"Confermi? Tocca di nuovo", mem_doing:"Svuoto…",
 rep_title:"Segnala annuncio",
 replace_photo:"Sostituisci foto",
 report_ad:"Segnala annuncio",
@@ -1904,6 +1963,9 @@ rep_photo:"Misleading photos",
 rep_price:"Unrealistic price",
 rep_sent:"Report sent, thank you",
 rep_spam:"Spam or scam",
+rep_list_title:"Reports", mem_title:"Clear stored data",
+mem_hint:"Clears filters, sorting and cached pages. It does not sign you out and does not touch listings, saved searches or messages.",
+mem_btn:"Clear stored data", mem_confirm:"Confirm? Tap again", mem_doing:"Clearing…",
 rep_title:"Report listing",
 replace_photo:"Replace photo",
 report_ad:"Report listing",
@@ -2210,6 +2272,9 @@ rep_photo:"Photos trompeuses",
 rep_price:"Prix irréaliste",
 rep_sent:"Signalement envoyé, merci",
 rep_spam:"Spam ou arnaque",
+rep_list_title:"Signalements", mem_title:"Vider la mémoire",
+mem_hint:"Efface les filtres, le tri et les pages mises de côté. Ne déconnecte pas et ne touche ni aux annonces, ni aux recherches, ni aux messages.",
+mem_btn:"Vider la mémoire", mem_confirm:"Confirmer ? Touchez encore", mem_doing:"Nettoyage…",
 rep_title:"Signaler l’annonce",
 replace_photo:"Remplacer la photo",
 report_ad:"Signaler l’annonce",
@@ -2516,6 +2581,9 @@ rep_photo:"Irreführende Fotos",
 rep_price:"Unrealistischer Preis",
 rep_sent:"Meldung gesendet, danke",
 rep_spam:"Spam oder Betrug",
+rep_list_title:"Meldungen", mem_title:"Speicher leeren",
+mem_hint:"Löscht Filter, Sortierung und zwischengespeicherte Seiten. Meldet dich nicht ab und berührt weder Anzeigen noch Suchen oder Nachrichten.",
+mem_btn:"Speicher leeren", mem_confirm:"Bestätigen? Nochmal tippen", mem_doing:"Wird geleert…",
 rep_title:"Anzeige melden",
 replace_photo:"Foto ersetzen",
 report_ad:"Anzeige melden",
@@ -2822,6 +2890,9 @@ rep_photo:"Yanıltıcı fotoğraf",
 rep_price:"Gerçekçi olmayan fiyat",
 rep_sent:"Bildirim gönderildi, teşekkürler",
 rep_spam:"Spam veya dolandırıcılık",
+rep_list_title:"Bildirimler", mem_title:"Belleği temizle",
+mem_hint:"Filtreleri, sıralamayı ve saklanan sayfaları siler. Oturumu kapatmaz; ilanlara, kayıtlı aramalara ve mesajlara dokunmaz.",
+mem_btn:"Belleği temizle", mem_confirm:"Onaylıyor musun? Tekrar dokun", mem_doing:"Temizleniyor…",
 rep_title:"İlanı bildir",
 replace_photo:"Fotoğrafı değiştir",
 report_ad:"İlanı bildir",
@@ -3128,6 +3199,9 @@ rep_photo:"Фото не соответствуют",
 rep_price:"Нереальная цена",
 rep_sent:"Жалоба отправлена, спасибо",
 rep_spam:"Спам или мошенничество",
+rep_list_title:"Жалобы", mem_title:"Очистить память",
+mem_hint:"Удаляет фильтры, сортировку и сохранённые страницы. Не выходит из аккаунта и не трогает объявления и сообщения.",
+mem_btn:"Очистить память", mem_confirm:"Подтвердить? Нажмите снова", mem_doing:"Очищаю…",
 rep_title:"Пожаловаться",
 replace_photo:"Заменить фото",
 report_ad:"Пожаловаться",
@@ -3434,6 +3508,9 @@ rep_photo:"Fotos engañosas",
 rep_price:"Precio poco realista",
 rep_sent:"Denuncia enviada, gracias",
 rep_spam:"Spam o estafa",
+rep_list_title:"Denuncias", mem_title:"Vaciar la memoria",
+mem_hint:"Borra filtros, orden y páginas guardadas. No cierra la sesión ni toca anuncios, búsquedas guardadas o mensajes.",
+mem_btn:"Vaciar la memoria", mem_confirm:"¿Confirmas? Toca otra vez", mem_doing:"Vaciando…",
 rep_title:"Denunciar anuncio",
 replace_photo:"Cambiar foto",
 report_ad:"Denunciar anuncio",
@@ -3740,6 +3817,9 @@ rep_photo:"Vilseledande foton",
 rep_price:"Orimligt pris",
 rep_sent:"Anmälan skickad, tack",
 rep_spam:"Spam eller bedrägeri",
+rep_list_title:"Rapporter", mem_title:"Töm minnet",
+mem_hint:"Rensar filter, sortering och sparade sidor. Loggar inte ut dig och rör inte annonser, sparade sökningar eller meddelanden.",
+mem_btn:"Töm minnet", mem_confirm:"Bekräfta? Tryck igen", mem_doing:"Tömmer…",
 rep_title:"Anmäl annons",
 replace_photo:"Byt foto",
 report_ad:"Anmäl annons",
@@ -4046,6 +4126,9 @@ rep_photo:"Misleidende foto’s",
 rep_price:"Onrealistische prijs",
 rep_sent:"Melding verstuurd, bedankt",
 rep_spam:"Spam of oplichting",
+rep_list_title:"Meldingen", mem_title:"Geheugen legen",
+mem_hint:"Wist filters, sortering en bewaarde pagina’s. Je blijft ingelogd en advertenties, opgeslagen zoekopdrachten en berichten blijven staan.",
+mem_btn:"Geheugen legen", mem_confirm:"Bevestigen? Tik nogmaals", mem_doing:"Legen…",
 rep_title:"Advertentie melden",
 replace_photo:"Foto vervangen",
 report_ad:"Advertentie melden",
@@ -4400,10 +4483,78 @@ function quandoBreve(ts){
   return d.toLocaleDateString("it-IT",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
 }
 
+/* SVUOTARE LA MEMORIA. (23/08/2026, chiesto da Alessandro.)
+   Cosa cancella, e sono tutte cose che il mercatino si e' scritto DA SOLO:
+   i filtri (`mf_<utente>`), l'ordinamento (`ms_<utente>`), la nota
+   dell'introduzione, e le cache del service worker.
+   COSA NON TOCCA, ed e' la parte che conta: l'accesso. Le chiavi di Firebase
+   stanno in IndexedDB e restano dove sono — *uno strumento di soccorso che
+   butta fuori chi lo usa non e' un soccorso: e' un secondo guasto.*
+   Nessuna finestra di conferma: il tasto chiede due tocchi, il secondo su
+   una parola diversa. Chi lo preme per sbaglio perde tre preferenze di
+   visualizzazione, non dei dati — gli annunci, le ricerche salvate e le
+   conversazioni vivono sul server. */
+function svuotaMemoria(){
+  var tolte = 0;
+  try{
+    Object.keys(localStorage).forEach(function(k){
+      if(k.indexOf("mf_")===0 || k.indexOf("ms_")===0 || k===MKT_NOTE_KEY){
+        localStorage.removeItem(k); tolte++;
+      }
+    });
+  }catch(e){ console.error("svuota localStorage:", e); }
+  var poi = function(){ location.reload(); };
+  if(window.caches && caches.keys){
+    caches.keys().then(function(nomi){
+      return Promise.all(nomi.map(function(n){ return caches.delete(n); }));
+    }).then(poi).catch(poi);
+  } else poi();
+  return tolte;
+}
+function disegnaSvuota(){
+  var box = document.getElementById("svuotaBox");
+  if(!box) return;
+  box.innerHTML = "";
+  var card = document.createElement("div");
+  card.className = "card";
+  card.style.cssText = "padding:14px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--bg-p)";
+  var h = document.createElement("div");
+  h.style.cssText = "font-weight:800;font-size:14px;margin-bottom:4px";
+  h.textContent = t("mem_title");
+  var p = document.createElement("div");
+  p.style.cssText = "font-size:12.5px;color:var(--muted);margin-bottom:12px;line-height:1.5";
+  p.textContent = t("mem_hint");
+  var b = document.createElement("button");
+  b.type = "button"; b.className = "btn btn-ghost"; b.style.width = "100%";
+  b.textContent = t("mem_btn");
+  /* Il secondo tocco e' su una parola diversa, e c'e' un modo di tornare
+     indietro: chi ha premuto per sbaglio lo capisce leggendo, non
+     premendo. */
+  var armato = false, torna = null;
+  b.addEventListener("click", function(){
+    if(!armato){
+      armato = true;
+      b.textContent = t("mem_confirm");
+      b.classList.add("btn-danger");
+      torna = setTimeout(function(){
+        armato = false; b.textContent = t("mem_btn"); b.classList.remove("btn-danger");
+      }, 5000);
+      return;
+    }
+    if(torna) clearTimeout(torna);
+    b.disabled = true;
+    b.textContent = t("mem_doing");
+    svuotaMemoria();
+  });
+  card.appendChild(h); card.appendChild(p); card.appendChild(b);
+  box.appendChild(card);
+}
+
 function openSegnalazioni(){
   var el = document.getElementById("repList");
-  el.innerHTML = '<div class="empty"><p>Carico…</p></div>';
+  el.innerHTML = '<div class="empty"><p>'+esc(t("loading"))+'</p></div>';
   openFS("fsRep");
+  disegnaSvuota();
   /* Le aperte per prime e le piu' recenti in cima: se ce n'e' una sola da
      guardare, deve essere la prima riga senza scorrere. */
   db.collection("market_reports").orderBy("createdAt","desc").limit(100).get()
@@ -4504,7 +4655,10 @@ document.getElementById("btnCRep2").addEventListener("click",function(){closeFS(
 document.getElementById("uav").addEventListener("click",function(){
   if(!cu)return;
   var voci = [{l:t("sav_title"),fn:openSavSearches}];
-  if(sonoAdmin()) voci.push({l:"Segnalazioni",fn:openSegnalazioni});
+  /* «Segnalazioni» era scritto in italiano dentro il codice: l'unica voce
+     del menu che non passava dal dizionario, quindi l'unica che restava
+     italiana per otto lingue su nove. (23/08/2026.) */
+  if(sonoAdmin()) voci.push({l:t("rep_list_title"),fn:openSegnalazioni});
   voci.push({l:t("exit")+" ("+cu.email+")",red:true,fn:doSignOut});
   openAS("",voci);
 });
