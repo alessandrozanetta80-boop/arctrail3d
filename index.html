@@ -1202,8 +1202,17 @@ background:none; width:auto; height:auto; }
 .ra-nomi{ display:flex; flex-wrap:wrap; gap:var(--s-2); margin-top:var(--s-3); }
 /* L'etichetta sopra un campo non e' burocrazia: e' l'unica cosa che dice a
    che serve, quando due campi identici fanno cose diverse. */
-.campo-eti{ font-size:var(--t-xs); font-weight:600; letter-spacing:.06em;
-text-transform:uppercase; color:var(--text-3); margin:var(--s-3) 0 var(--s-1); }
+/* L'ETICHETTA E' UN CARTELLINO, NON UN TITOLO. (23/08/2026.)
+   In maiuscolo a `--t-xs` con la spaziatura larga, «NOTE PER GLI ARCIERI
+   (ACCESSO, QUOTE, ORARI...)» prendeva due righe e pesava quanto la domanda
+   che introduceva. *Un'etichetta che si legge prima del campo che nomina ha
+   sbagliato mestiere.*
+   Resta maiuscola — serve a distinguerla dal contenuto — ma piu' piccola,
+   piu' stretta e piu' vicina al suo campo: sopra `--s-3`, sotto `--s-1`
+   diventa un blocco solo con l'input invece di due cose separate. */
+.campo-eti{ font-size:var(--t-2xs); font-weight:700; letter-spacing:.04em;
+text-transform:uppercase; color:var(--text-3);
+margin:var(--s-3) 0 var(--s-1); line-height:1.3; }
 .card > .campo-eti:first-of-type{ margin-top:var(--s-2); }
 .ra-nome{ display:inline-flex; align-items:center; min-height:32px;
 padding:0 var(--s-3); border-radius:var(--r-pill); background:var(--surface-2);
@@ -2093,7 +2102,12 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    *La schermata chiedeva di cercare quello che gia' sapeva.* */
 .comp-testa{ border-radius:var(--r-lg); overflow:hidden; border:1px solid var(--border);
   background:var(--surface-1); margin-bottom:var(--s-4); }
-.comp-fascia{ position:relative; height:calc(var(--s-7) + var(--s-4)); background:var(--verde-bg); }
+/* Un filo sotto, al posto dell'onda. La fascia stacca solo 1,2 dalla scheda
+   bianca: senza un confine dichiarato il verde sfuma nel foglio e la testata
+   perde il suo bordo. E' lo stesso filo che divide le righe dell'elenco —
+   *quello che separa nell'app e' sempre un pixel, mai un disegno.* */
+.comp-fascia{ position:relative; height:calc(var(--s-7) + var(--s-4));
+  background:var(--verde-bg); border-bottom:1px solid var(--verde-bd); }
 .comp-fascia svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
 .comp-stemma{ position:absolute; left:var(--s-4); bottom:calc(var(--s-5) * -1); width:var(--s-7);
   height:var(--s-7); border-radius:var(--r-md); background:var(--surface-1);
@@ -2275,6 +2289,57 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   letter-spacing:.06em; text-transform:uppercase;
   color:var(--danger-role); cursor:pointer; }
 .chat-canc.aperto{ display:block; }
+/* ══ LE IMPOSTAZIONI DEL PROFILO ═══════════════════════════════════════════
+   (23/08/2026.) Erano scritte in stili in linea come la chat prima del
+   ridisegno, e portavano dentro tre cose che il resto dell'app aveva gia'
+   smesso di fare:
+
+   1. LA COMPAGNIA SCELTA ERA UNA PASTIGLIA VERDE PIENA con una crocetta
+      bianca. Dopo il passaggio al tinto era l'ultimo pieno di questa
+      schermata — e il bianco della crocetta era `#fff` scritto a mano, cioe'
+      un esadecimale fuori dai primitivi. *Al buio, su un verde che li' e'
+      scuro, quel bianco funzionava per caso.*
+   2. LA CROCETTA NON DICEVA COSA FA. Un carattere `×` senza nome: chi usa un
+      lettore di schermo sentiva «times», e chi ha il dito grosso lo mancava,
+      perche' era alta quanto una riga di testo.
+   3. I RISULTATI DELLA RICERCA erano una riga sola con «nome — luogo»
+      incollati, lo stesso incollaggio corretto stamattina nella testata
+      della compagnia. Qui il luogo SERVE — due compagnie possono chiamarsi
+      quasi uguale — ma serve come SECONDA riga, non come coda del nome. */
+.prof-testa{ display:flex; align-items:center; gap:var(--s-2);
+  margin-bottom:var(--s-4); }
+.prof-testa .marchio{ width:var(--s-6); height:var(--s-6); flex:0 0 auto; }
+.prof-testa h2{ margin:0; }
+/* La compagnia scelta: tinta come tutto il resto, e con un tasto vero al
+   posto di un carattere. */
+.club-scelto{ display:flex; align-items:center; justify-content:space-between;
+  gap:var(--s-2); background:var(--verde-bg); border:1px solid var(--verde-bd);
+  border-radius:var(--r-md); padding:var(--s-2) var(--s-3);
+  margin-bottom:var(--s-2); }
+.club-scelto b{ font-weight:700; font-size:var(--t-md); color:var(--text-1);
+  min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.club-togli{ flex:0 0 auto; width:var(--s-5); height:var(--s-5);
+  display:flex; align-items:center; justify-content:center;
+  background:none; border:none; border-radius:var(--r-pill);
+  color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer;
+  font-family:inherit; }
+.club-togli:hover{ background:var(--surface-2); color:var(--danger-role); }
+/* L'elenco dei risultati: stesse regole delle righe delle conversazioni —
+   un filo fra le voci, niente cornice intorno a ognuna. */
+.club-cerca{ max-height:180px; overflow-y:auto; border:1px solid var(--border);
+  border-radius:var(--r-md); margin-bottom:var(--s-2); display:none; }
+.club-voce{ display:block; width:100%; text-align:left; background:none;
+  border:none; border-bottom:1px solid var(--border);
+  padding:var(--s-2) var(--s-3); cursor:pointer; font-family:inherit; }
+.club-voce:last-child{ border-bottom:none; }
+.club-voce:hover{ background:var(--surface-2); }
+.club-voce b{ display:block; font-size:var(--t-sm); font-weight:700;
+  color:var(--text-1); }
+/* Il luogo sotto, piu' piccolo: distingue due compagnie che si chiamano
+   quasi uguale senza far sembrare l'indirizzo parte della ragione sociale. */
+.club-voce span{ display:block; font-size:var(--t-xs); color:var(--text-3);
+  margin-top:var(--s-1); }
+
 /* ══ L'ELENCO DELLE CONVERSAZIONI ══════════════════════════════════════════
    (23/08/2026, stesso stile della chat.) Erano cinque schede quadrate con un
    bordo ciascuna, dentro un'altra scheda: sei riquadri annidati per dire
@@ -4326,6 +4391,7 @@ profile_club_title: "La mia compagnia",
 profile_club_hint: "Serve per vedere gli allenamenti riservati al tuo campo.",
 profile_club_none: "Nessuna compagnia",
 profile_club_search: "Cerca la tua compagnia…",
+profile_club_remove: "Togli la compagnia",
 fr_report_btn_short: "Segnala",
 fr_report_sub: "La segnalazione arriva alla compagnia che gestisce il campo, non a un servizio esterno.",
 fr_field_search: "Cerca il campo…",
@@ -4953,6 +5019,7 @@ profile_club_title: "My club",
 profile_club_hint: "It is needed to see the trainings reserved for your field.",
 profile_club_none: "No club",
 profile_club_search: "Search for your club\u2026",
+profile_club_remove: "Remove club",
 fr_report_btn_short: "Report",
 fr_report_sub: "The report goes to the club that manages the field, not to an outside service.",
 fr_field_search: "Search for the field\u2026",
@@ -5604,6 +5671,7 @@ profile_club_title: "Mon club",
 profile_club_hint: "N\u00e9cessaire pour voir les entra\u00eenements r\u00e9serv\u00e9s \u00e0 votre terrain.",
 profile_club_none: "Aucun club",
 profile_club_search: "Cherchez votre club\u2026",
+profile_club_remove: "Retirer le club",
 fr_report_btn_short: "Signaler",
 fr_report_sub: "Le signalement arrive au club qui g\u00e8re le terrain, pas \u00e0 un service ext\u00e9rieur.",
 fr_field_search: "Cherchez le terrain\u2026",
@@ -6255,6 +6323,7 @@ profile_club_title: "Mein Verein",
 profile_club_hint: "Wird gebraucht, um die Trainings auf deinem Parcours zu sehen.",
 profile_club_none: "Kein Verein",
 profile_club_search: "Deinen Verein suchen\u2026",
+profile_club_remove: "Verein entfernen",
 fr_report_btn_short: "Melden",
 fr_report_sub: "Die Meldung geht an den Verein, der den Parcours betreut, nicht an einen fremden Dienst.",
 fr_field_search: "Parcours suchen\u2026",
@@ -6906,6 +6975,7 @@ profile_club_title: "Kul\u00fcb\u00fcm",
 profile_club_hint: "Kendi alan\u0131na ayr\u0131lm\u0131\u015f antrenmanlar\u0131 g\u00f6rmek i\u00e7in gerekir.",
 profile_club_none: "Kul\u00fcp yok",
 profile_club_search: "Kul\u00fcb\u00fcn\u00fc ara\u2026",
+profile_club_remove: "Kul\u00fcb\u00fc kald\u0131r",
 fr_report_btn_short: "Bildir",
 fr_report_sub: "Bildirim, alan\u0131 y\u00f6neten kul\u00fcbe gider, d\u0131\u015far\u0131dan bir servise de\u011fil.",
 fr_field_search: "Alan\u0131 ara\u2026",
@@ -7570,6 +7640,7 @@ profile_club_title: "\u041c\u043e\u0439 \u043a\u043b\u0443\u0431",
 profile_club_hint: "\u041d\u0443\u0436\u0435\u043d, \u0447\u0442\u043e\u0431\u044b \u0432\u0438\u0434\u0435\u0442\u044c \u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0438 \u043d\u0430 \u0432\u0430\u0448\u0435\u043c \u043f\u043e\u043b\u0435.",
 profile_club_none: "\u0411\u0435\u0437 \u043a\u043b\u0443\u0431\u0430",
 profile_club_search: "\u041d\u0430\u0439\u0434\u0438\u0442\u0435 \u0441\u0432\u043e\u0439 \u043a\u043b\u0443\u0431\u2026",
+profile_club_remove: "\u0423\u0431\u0440\u0430\u0442\u044c \u043a\u043b\u0443\u0431",
 fr_report_btn_short: "\u0421\u043e\u043e\u0431\u0449\u0438\u0442\u044c",
 fr_report_sub: "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435 \u043f\u043e\u043f\u0430\u0434\u0430\u0435\u0442 \u0432 \u043a\u043b\u0443\u0431, \u043a\u043e\u0442\u043e\u0440\u044b\u0439 \u043e\u0431\u0441\u043b\u0443\u0436\u0438\u0432\u0430\u0435\u0442 \u043f\u043e\u043b\u0435, \u0430 \u043d\u0435 \u0432\u043e \u0432\u043d\u0435\u0448\u043d\u044e\u044e \u0441\u043b\u0443\u0436\u0431\u0443.",
 fr_field_search: "\u041d\u0430\u0439\u0434\u0438\u0442\u0435 \u043f\u043e\u043b\u0435\u2026",
@@ -8234,6 +8305,7 @@ profile_club_title: "Mi club",
 profile_club_hint: "Hace falta para ver los entrenamientos reservados a tu campo.",
 profile_club_none: "Sin club",
 profile_club_search: "Busca tu club\u2026",
+profile_club_remove: "Quitar el club",
 fr_report_btn_short: "Avisar",
 fr_report_sub: "El aviso llega al club que gestiona el campo, no a un servicio externo.",
 fr_field_search: "Busca el campo\u2026",
@@ -8898,6 +8970,7 @@ profile_club_title: "Min klubb",
 profile_club_hint: "Beh\u00f6vs f\u00f6r att se tr\u00e4ningarna p\u00e5 din bana.",
 profile_club_none: "Ingen klubb",
 profile_club_search: "S\u00f6k din klubb\u2026",
+profile_club_remove: "Ta bort klubben",
 fr_report_btn_short: "Rapportera",
 fr_report_sub: "Rapporten g\u00e5r till klubben som sk\u00f6ter banan, inte till n\u00e5gon utomst\u00e5ende tj\u00e4nst.",
 fr_field_search: "S\u00f6k banan\u2026",
@@ -9562,6 +9635,7 @@ profile_club_title: "Mijn vereniging",
 profile_club_hint: "Nodig om de trainingen op jouw veld te zien.",
 profile_club_none: "Geen vereniging",
 profile_club_search: "Zoek je vereniging\u2026",
+profile_club_remove: "Club verwijderen",
 fr_report_btn_short: "Melden",
 fr_report_sub: "De melding gaat naar de vereniging die het veld beheert, niet naar een externe dienst.",
 fr_field_search: "Zoek het veld\u2026",
@@ -12631,7 +12705,7 @@ btnEl.disabled = false;
 function profileEditScreen(){
 var wrap = el('<div></div>');
 var card = el('<div class="card"></div>');
-var header = el('<div style="display:flex;align-items:center;gap:var(--s-2);margin-bottom:var(--s-4);"><div style="width:36px;height:36px;flex:0 0 auto;">'+logoSVG(36)+'</div><h2 class="section-title" style="margin:0;">'+t("profile_edit_title")+'</h2></div>');
+var header = el('<div class="prof-testa"><span class="marchio">'+logoSVG(36)+'</span><h2 class="section-title">'+t("profile_edit_title")+'</h2></div>');
 card.appendChild(header);
 
 var profile = state.profile || {};
@@ -12667,12 +12741,15 @@ card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+
 card.appendChild(el('<div class="nota stacco">'+t("profile_club_hint")+'</div>'));
 var clubCod = profile.compagnia || null;
 var clubNome = profile.compagniaNome || "";
-var clubSelDiv = el('<div style="background:var(--accent);color:var(--accent-ink);border-radius:var(--r-sm);padding:var(--s-2) var(--s-3);margin-bottom:var(--s-2);justify-content:space-between;align-items:center;"></div>');
-var clubSelName = el('<span style="font-weight:700;font-size:var(--t-md);"></span>');
-var clubClear = el('<button style="background:none;border:none;color:#fff;font-size:var(--t-lg);cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
+var clubSelDiv = el('<div class="club-scelto"></div>');
+var clubSelName = el('<b></b>');
+/* Un tasto vero, con un nome e un'area da premere. Prima era un carattere
+   `\u00d7` alto quanto una riga: lo si mancava col pollice, e chi usa un
+   lettore di schermo sentiva «times». */
+var clubClear = el('<button type="button" class="club-togli" title="'+escapeHtml(t("profile_club_remove"))+'" aria-label="'+escapeHtml(t("profile_club_remove"))+'">\u00d7</button>');
 clubSelDiv.appendChild(clubSelName); clubSelDiv.appendChild(clubClear);
 var clubSearch = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("profile_club_search"))+'">');
-var clubList = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:var(--s-2);display:none;"></div>');
+var clubList = el('<div class="club-cerca"></div>');
 card.appendChild(clubSelDiv); card.appendChild(clubSearch); card.appendChild(clubList);
 function refreshClub(){
 if(clubCod){
@@ -12694,11 +12771,20 @@ var found = 0;
 Object.keys(COMPAGNIE).forEach(function(cod){
 if(found >= 30) return;
 var c = COMPAGNIE[cod];
+/* Si CERCA su nome e luogo insieme — chi scrive «Vignone» deve trovarla — ma
+   si MOSTRA su due righe: il nome sopra, il luogo sotto piu' piccolo. Cosi'
+   il luogo distingue due compagnie che si chiamano quasi uguale senza far
+   sembrare l'indirizzo parte della ragione sociale.
+   E quello che si SALVA e' il nome: prima finiva in `compagniaNome` la
+   stringa incollata, e da li' ricompariva ovunque — nella pastiglia, nel
+   profilo pubblico, negli allenamenti. *E' cosi' che un indirizzo diventa
+   parte di una ragione sociale: nessuno lo scrive, lo copia una riga sola.* */
 var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "");
 if(label.toLowerCase().indexOf(q) === -1) return;
 found++;
-var row = el('<div style="padding:var(--s-2) var(--s-3);border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(label)+'</div>');
-row.addEventListener("click", function(){ clubCod = cod; clubNome = label; clubSearch.value=""; refreshClub(); if(savedMsg) savedMsg.textContent = ""; });
+var row = el('<button type="button" class="club-voce"><b>'+escapeHtml(c.nome)+'</b>'
++ (c.luogo ? '<span>'+escapeHtml(c.luogo)+'</span>' : '')+'</button>');
+row.addEventListener("click", function(){ clubCod = cod; clubNome = c.nome; clubSearch.value=""; refreshClub(); if(savedMsg) savedMsg.textContent = ""; });
 clubList.appendChild(row);
 });
 clubList.style.display = found ? "block" : "none";
@@ -15762,15 +15848,40 @@ var nome = c ? c.nome : ((state.profile && state.profile.compagniaNome) || cod);
 
 var testa = el('<div class="comp-testa"></div>');
 
-// LA FASCIA. Gli anelli sono arancioni con `--clay-400`, il primitivo e non
-// il ruolo: il ruolo al sole diventa `--clay-800`, che su un verde scuro non
-// si vede piu'. Qui sotto c'e' SEMPRE il verde della fascia, quindi il colore
-// giusto e' sempre lo stesso e non dipende dal tema.
+/* L'ONDA E' STATA TOLTA, E IL MOTIVO E' UN NUMERO.
+   (23/08/2026, detto da Alessandro: «quella banda con i due verdi non ha
+   nulla a che vedere col resto del sito».)
+
+   L'onda era `--brand-ink` al 10%, ed era stata disegnata quando la fascia
+   era verde PIENO: li' un velo di scuro al 10% e' un'ombra appena percepita.
+   Dal 23/08 la fascia e' velata al 20%, e sullo stesso velo lo stesso 10%
+   diventa una seconda banda a se'.
+
+   IL CONTO CHE DECIDE: l'onda stacca **1,228** dalla fascia, la fascia stacca
+   **1,201** dalla scheda bianca sotto. *Il decoro si vedeva piu' della
+   struttura* — due verdi che sembrano un errore di stampa, e in mezzo il
+   confine vero che si vede meno di loro.
+
+   E non c'entrava col resto: **nessun'altra superficie dell'app ha una
+   texture.** Lo strato del giro, le bolle, le porte di Tira sono tinte
+   piatte. L'onda era l'unica, quindi l'estranea era lei.
+
+   GLI ANELLI RESTANO, ma cambiano colore, e il colore lo sceglie il TEMA.
+   Erano `--clay-400` col velo a 0,75 sopra: sul verde pieno funzionava, sulla
+   velatura scendono a **2,77:1** — si intuiscono e non si vedono.
+   Un primitivo fisso non basta piu': al chiaro la fascia e' chiara e serve un
+   arancione scuro (`clay-500` fa 4,11), **al buio la fascia e' scura e lo
+   stesso arancione crolla a 2,31**. `--tone-race-fg` e' gia' «l'arancione
+   leggibile in questo tema»: 4,97 / 3,42 / 7,88 nei tre.
+   *Il vecchio commento diceva di non usare il ruolo perche' al sole diventa
+   `clay-800` su un verde scuro. Era vero quando la fascia era verde PIENA;
+   dal 23/08 al sole e' chiara, e li' un arancione scuro e' la scelta giusta.*
+   Il richiamo al bersaglio e' l'unico segno d'identita' della fascia: era
+   l'ultima cosa da lasciare sbiadire. */
 var fascia = el('<div class="comp-fascia"></div>');
 fascia.innerHTML = '<svg viewBox="0 0 360 64" preserveAspectRatio="none" aria-hidden="true">'
-+ '<path d="M0 40 Q90 20 180 34 T360 26 V64 H0 Z" fill="var(--brand-ink)" opacity="0.10"></path>'
-+ '<circle cx="310" cy="24" r="17" fill="none" stroke="var(--clay-400)" stroke-width="1.6" opacity="0.75"></circle>'
-+ '<circle cx="310" cy="24" r="9" fill="none" stroke="var(--clay-400)" stroke-width="1.6" opacity="0.75"></circle>'
++ '<circle cx="310" cy="24" r="17" fill="none" stroke="var(--tone-race-fg)" stroke-width="1.6"></circle>'
++ '<circle cx="310" cy="24" r="9" fill="none" stroke="var(--tone-race-fg)" stroke-width="1.6"></circle>'
 + '</svg>';
 var stemma = el('<span class="comp-stemma"></span>');
 stemma.innerHTML = navIcon("navclub", 26, "due");
@@ -16449,21 +16560,37 @@ wrap.appendChild(noCard);
 return wrap;
 }
 
-var nomeComp = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[codice])
-? COMPAGNIE[codice].nome + (COMPAGNIE[codice].luogo ? " \u2014 " + COMPAGNIE[codice].luogo : "")
-: codice;
+/* IL REFERENTE VEDE LA SUA COMPAGNIA COME LA VEDONO GLI ALTRI.
+   (23/08/2026, detto da Alessandro: «non so come lo veda un altro utente, ma
+   sicuramente non puo' essere cosi'».)
 
-var head = el('<div class="card"></div>');
-head.appendChild(el('<h2 class="section-title">'+t("club_space_title")+'</h2>'));
-head.appendChild(el('<div class="club-nome">'+escapeHtml(nomeComp)+'</div>'));
-// Il sottotitolo "i dati che gli arcieri vedono e dove arrivano le
-// segnalazioni" e' stato tolto (16/08): la scheda subito sotto si presenta gia'
-// da sola — "DATI DI RIFERIMENTO · compaiono agli arcieri nella scheda della
-// compagnia" — e diceva la stessa cosa due centimetri piu' su. Una spiegazione
-// ripetuta non spiega il doppio: insegna a saltare le spiegazioni.
-// La stringa resta in STRINGS perche' la porta ancora il tasto del menu, dove
-// e' l'unica cosa che dice cosa c'e' dietro.
-wrap.appendChild(head);
+   Aveva ragione due volte. Qui c'era una scheda bianca con dentro il titolo
+   della sezione e un nome, e quel nome era `nome + " — " + luogo`: **«A.S.D.
+   Arcieri del VCO & Valgrande — Via A. Alberti, Vignone (VB)»**, tre righe di
+   titolo in cui l'indirizzo si travestiva da ragione sociale. *I due dati sono
+   separati nell'archivio da sempre: li incollava la schermata.*
+
+   E la testata giusta esisteva gia': fascia, stemma, nome, regione, indirizzo
+   con lo spillo, i tre numeri, i contatti. **La vedono gli arcieri quando
+   guardano una compagnia. Il referente no** — proprio lui, che quei dati li
+   scrive.
+
+   Adesso e' la stessa. Non e' solo estetica: chi compila un modulo deve
+   vedere il risultato di quello che sta compilando, altrimenti scrive alla
+   cieca e la domanda «come lo vedono gli altri?» resta senza risposta dentro
+   l'app che dovrebbe darla. */
+wrap.appendChild(compagniaMiaCard(codice));
+
+/* IL TITOLO «SPAZIO COMPAGNIA» E' STATO TOLTO CON LA SUA SCHEDA.
+   (23/08/2026.) Restava una scheda bianca con dentro una parola: dopo che il
+   nome e' passato nella testata qui sopra, quel riquadro non conteneva piu'
+   niente. *Una scheda vuota non separa: occupa.*
+   E il titolo era anche ridondante — la testata mostra il marchio, il nome e
+   l'indirizzo della compagnia, che dicono dove sei meglio di due parole
+   maiuscole.
+   Il sottotitolo era gia' stato tolto il 16/08 per lo stesso motivo: la scheda
+   sotto si presenta da sola. La stringa resta in STRINGS perche' la porta il
+   tasto del menu, dove e' l'unica cosa che dice cosa c'e' dietro. */
 
 var body = el('<div></div>');
 wrap.appendChild(body);
@@ -17394,7 +17521,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-elenco-due";
+var BUILD_STAMP = "2026-08-23-profilo";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17403,7 +17530,7 @@ var BUILD_STAMP = "2026-08-23-elenco-due";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-elenco";
+var BUILD_PARENT = "2026-08-23-elenco-due";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -18579,9 +18706,17 @@ var frCod = null, frLabel = "";
 // Precompilo con la compagnia dell'utente: quasi sempre e' il campo dove sta tirando
 if(state.profile && state.profile.compagnia){ frCod = state.profile.compagnia; frLabel = state.profile.compagniaNome || state.profile.compagnia; }
 
-var selDiv = el('<div style="background:var(--accent);color:var(--accent-ink);border-radius:var(--r-sm);padding:var(--s-2) var(--s-3);margin-bottom:var(--s-2);justify-content:space-between;align-items:center;"></div>');
-var selName = el('<span style="font-weight:700;font-size:var(--t-md);"></span>');
-var selClear = el('<button style="background:none;border:none;color:#fff;font-size:var(--t-lg);cursor:pointer;padding:0;line-height:1;">\u00d7</button>');
+/* SECONDA DELLE TRE COPIE. (23/08/2026, trovata dal banco.)
+   Lo stesso componente — «la cosa scelta, con la crocetta per toglierla» —
+   era scritto tre volte in tre punti lontani: qui, nel profilo e nella
+   scelta del campo. Tre copie identiche fino all'ultimo pixel, e tre
+   `#fff` scritti a mano.
+   *Non era un problema finche' erano tutte e tre uguali. Lo e' diventato il
+   giorno in cui una e' stata sistemata: due su tre restano indietro, e
+   nessuno se ne accorge perche' stanno in schermate diverse.* */
+var selDiv = el('<div class="club-scelto"></div>');
+var selName = el('<b></b>');
+var selClear = el('<button type="button" class="club-togli" title="'+escapeHtml(t("profile_club_remove"))+'" aria-label="'+escapeHtml(t("profile_club_remove"))+'">\u00d7</button>');
 selDiv.appendChild(selName); selDiv.appendChild(selClear);
 var searchInp = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("fr_field_search"))+'">');
 var listDiv = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:var(--s-3);display:none;"></div>');
@@ -20601,9 +20736,13 @@ card.appendChild(el('<h2 class="section-title">'+t("ot_create_title")+'</h2>'));
 // Selezione campo
 card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("ot_field_label")+'</label>'));
 
-var fieldSelectedDiv = el('<div style="display:none;background:var(--accent);color:var(--accent-ink);border-radius:var(--r-sm);padding:var(--s-2) var(--s-3);margin-bottom:var(--s-2);display:flex;justify-content:space-between;align-items:center;"></div>');
-var fieldSelectedName = el('<span style="font-weight:700;font-size:var(--t-md);"></span>');
-var fieldClearBtn = el('<button style="background:none;border:none;color:#fff;font-size:var(--t-lg);cursor:pointer;padding:0;line-height:1;">×</button>');
+/* TERZA DELLE TRE COPIE. Qui c'era anche `display:none` seguito da
+   `display:flex` nella stessa riga — il secondo vinceva sempre, e la riga
+   che doveva nascondere il riquadro non ha mai nascosto niente: a farlo era
+   il codice piu' sotto, per fortuna. */
+var fieldSelectedDiv = el('<div class="club-scelto" style="display:none;"></div>');
+var fieldSelectedName = el('<b></b>');
+var fieldClearBtn = el('<button type="button" class="club-togli" title="'+escapeHtml(t("profile_club_remove"))+'" aria-label="'+escapeHtml(t("profile_club_remove"))+'">\u00d7</button>');
 fieldSelectedDiv.appendChild(fieldSelectedName);
 fieldSelectedDiv.appendChild(fieldClearBtn);
 fieldSelectedDiv.style.display = "none";
