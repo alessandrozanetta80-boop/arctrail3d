@@ -449,8 +449,13 @@ color-scheme:light;
 
 /* insegna e sezioni */
 --navbar-bg:var(--sand-50); --navbar-line:var(--sand-300); --navbar-fg:var(--sand-600);
---navbar-on:var(--green-800); --navbar-pill:var(--green-800);
---navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(30,45,34,0.14);
+/* LA VOCE ACCESA ERA L'UNICA COSA PIENA DELLA SCHERMATA, e su desktop e'
+   anche la piu' grande. Tinta come il tasto: si vede quale sezione sei,
+   senza che la barra gridi. Al buio era gia' cosi' dal 21/08 — qui il chiaro
+   raggiunge lo scuro, non il contrario. */
+--navbar-on:var(--green-800);
+--navbar-pill:color-mix(in srgb, var(--green-800) 16%, var(--surface-1));
+--navbar-pill-ink:var(--green-700); --navbar-shadow:rgba(30,45,34,0.14);
 --icona-accento:var(--clay-400);
 --scheda-bg:color-mix(in srgb, var(--clay) 20%, var(--surface-1));
 --scheda-bd:color-mix(in srgb, var(--clay) 55%, var(--surface-1));
@@ -467,6 +472,18 @@ color-scheme:light;
    stato acceso: un pulsante non e' uno sfondo. */
 --verde-bg:color-mix(in srgb, var(--brand) 20%, var(--surface-1));
 --verde-bd:color-mix(in srgb, var(--brand) 55%, var(--surface-1));
+/* IL TASTO PRIMARIO: TINTO, NON PIENO. (23/08/2026, chiesto da Alessandro
+   indicando `.btn-arancio`: «si vede bene, ma spinge un po' meno».)
+   Stessa struttura dell'arancione — fondo velato, filo e scritta del colore.
+   MA LA SCRITTA NON PUO' ESSERE `--brand`. Misurato: il verde del marchio su
+   un fondo velato di se stesso fa 2,35:1, cioe' si vede e non si legge. Il
+   verde scuro fa 6,22:1. *L'arancione se lo puo' permettere di piu' — 2,79:1
+   — perche' e' una tinta calda a saturazione piena, ma anche lui e' sotto la
+   soglia: vedi la voce aperta nel diario.* */
+--primario-bg:color-mix(in srgb, var(--brand) 14%, var(--surface-1));
+--primario-fg:var(--green-700);
+--primario-bd:color-mix(in srgb, var(--brand) 42%, transparent);
+--primario-bg-hover:color-mix(in srgb, var(--brand) 22%, var(--surface-1));
 --navbar-hover:rgba(18,22,15,0.05);
 
 /* zone del bersaglio: restano quelle che sono, e' anatomia, non stile */
@@ -534,7 +551,11 @@ color-scheme:dark;
 --timer-dgr-bd:var(--red-400);    --timer-dgr-fg:var(--red-400);
 
 --navbar-bg:var(--surface-1); --navbar-line:var(--border); --navbar-fg:var(--text-3);
---navbar-on:var(--green-400); --navbar-pill:color-mix(in srgb, var(--green-400) 18%, var(--surface-2));
+/* Anche qui 12%: la pastiglia era al 18% dal 21/08 e la scritta stava a
+   4,14:1. Nessuno se n'era accorto perche' al buio si legge lo stesso — fino
+   al giorno che la guardi con gli occhi stanchi, che e' il giorno in cui
+   serve. */
+--navbar-on:var(--green-400); --navbar-pill:color-mix(in srgb, var(--green-400) 12%, var(--surface-2));
 --navbar-pill-ink:var(--green-400); --navbar-shadow:rgba(0,0,0,0.45);
 --icona-accento:var(--clay-400);
 --scheda-bg:color-mix(in srgb, var(--clay) 22%, var(--surface-2));
@@ -543,6 +564,16 @@ color-scheme:dark;
    velatura sul fondo piu' scuro sparirebbe. */
 --verde-bg:color-mix(in srgb, var(--brand) 22%, var(--surface-2));
 --verde-bd:color-mix(in srgb, var(--brand) 55%, var(--surface-2));
+/* Al buio la scritta e' il verde chiaro: qui il fondo e' scuro, quindi il
+   rapporto si rovescia e `--brand` va benissimo. */
+/* 12%, NON 18%. Al buio la velatura schiarisce il fondo e AVVICINA i due
+   colori invece di allontanarli: a 18% la scritta scendeva a 4,14:1, sotto
+   la soglia. Misurato, non guardato — a occhio 18 e 12 al buio si somigliano
+   moltissimo. */
+--primario-bg:color-mix(in srgb, var(--brand) 12%, var(--surface-2));
+--primario-fg:var(--brand);
+--primario-bd:color-mix(in srgb, var(--brand) 48%, transparent);
+--primario-bg-hover:color-mix(in srgb, var(--brand) 20%, var(--surface-2));
 --navbar-hover:rgba(255,255,255,0.06);
 
 --qsag:var(--slate-400);
@@ -662,8 +693,14 @@ color-scheme:light;
 --timer-dgr-bg:var(--red-100);    --timer-dgr-bd:var(--red-700);   --timer-dgr-fg:var(--red-700);
 
 --navbar-bg:var(--sand-50); --navbar-line:var(--sand-400); --navbar-fg:var(--sand-700);
+/* LA SCRITTA BIANCA SULLA PASTIGLIA VERDE STAVA A 2,66:1, e non e' un
+   difetto di oggi: c'era anche prima, qui e nel tema chiaro. E' saltato fuori
+   misurando altro. *Il tema che esiste APPOSTA per leggersi in piena luce
+   aveva, nella barra, il contrasto peggiore dell'app.*
+   La pastiglia resta piena — al sole il tinto non si vede — e cambia
+   l'inchiostro: scuro su verde fa 6,89:1. */
 --navbar-on:var(--green-900); --navbar-pill:var(--green-900);
---navbar-pill-ink:var(--sand-50); --navbar-shadow:rgba(18,22,15,0.22);
+--navbar-pill-ink:var(--sand-900); --navbar-shadow:rgba(18,22,15,0.22);
 --icona-accento:var(--clay-400);
 --scheda-bg:color-mix(in srgb, var(--clay) 20%, var(--surface-1));
 --scheda-bd:color-mix(in srgb, var(--clay) 70%, var(--surface-1));
@@ -672,6 +709,15 @@ color-scheme:light;
    una zona. Il verde segue la stessa regola. */
 --verde-bg:color-mix(in srgb, var(--brand) 20%, var(--surface-1));
 --verde-bd:color-mix(in srgb, var(--brand) 70%, var(--surface-1));
+/* AL SOLE IL TASTO RESTA PIENO, ED E' IL MOTIVO PER CUI QUESTO TEMA ESISTE.
+   Il tinto e' piu' garbato al chiuso; in piena luce «piu' garbato» vuol dire
+   «non si vede». Chi accende il Sole ha gia' detto che gli serve il massimo
+   stacco, e togliergli il pieno sarebbe dargli il contrario di quello che ha
+   chiesto. Passa dai token, quindi non serve nessuna regola per tema. */
+--primario-bg:var(--brand);
+--primario-fg:var(--brand-ink);
+--primario-bd:transparent;
+--primario-bg-hover:var(--brand);
 --navbar-hover:rgba(18,22,15,0.08);
 
 --qsag:var(--slate-700);
@@ -935,7 +981,9 @@ transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--eas
            background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
 .btn:active{ transform:scale(0.97); filter:brightness(0.97); }
 .btn:disabled{ opacity:0.4; cursor:default; }
-.btn-primary{ background:var(--accent); border-color:transparent; color:var(--accent-ink); font-weight:700; }
+.btn-primary{ background:var(--primario-bg); border-color:var(--primario-bd);
+  color:var(--primario-fg); font-weight:800; }
+.btn-primary:not(:disabled):hover{ background:var(--primario-bg-hover); border-color:var(--brand); }
 .btn-primary:active{ }
 .btn-block{ width:100%; }
 /* I "fantasma" erano bianco su bianco con un filo di bordo: si leggevano come
@@ -17007,7 +17055,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-verde-velato";
+var BUILD_STAMP = "2026-08-23-verde-tinto";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17016,7 +17064,7 @@ var BUILD_STAMP = "2026-08-23-verde-velato";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-rientro";
+var BUILD_PARENT = "2026-08-23-verde-velato";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
