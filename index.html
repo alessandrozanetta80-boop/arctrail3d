@@ -2275,6 +2275,52 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   letter-spacing:.06em; text-transform:uppercase;
   color:var(--danger-role); cursor:pointer; }
 .chat-canc.aperto{ display:block; }
+/* ══ L'ELENCO DELLE CONVERSAZIONI ══════════════════════════════════════════
+   (23/08/2026, stesso stile della chat.) Erano cinque schede quadrate con un
+   bordo ciascuna, dentro un'altra scheda: sei riquadri annidati per dire
+   cinque nomi.
+   *In un elenco, il bordo intorno a ogni voce non separa: raddoppia.* Quello
+   che separa e' una riga sottile, e costa un pixel invece di quattro lati.
+   La forma e' quella che tutti hanno gia' imparato: pastiglia con l'iniziale,
+   nome sopra, ultimo messaggio sotto in una riga sola, e a destra la colonna
+   del tempo — quando, e quanti non letti. */
+.conv-lista{ display:flex; flex-direction:column; }
+.conv-riga{ display:flex; align-items:center; gap:var(--s-3); width:100%;
+  text-align:left; background:none; border:none;
+  border-bottom:1px solid var(--border);
+  padding:var(--s-3) var(--s-1); cursor:pointer; font-family:inherit;
+  transition:background var(--dur-2) var(--ease); }
+.conv-riga:last-child{ border-bottom:none; }
+.conv-riga:hover{ background:var(--surface-2); }
+.conv-riga:active{ background:var(--surface-2); }
+/* L'INIZIALE, non un'immagine. Nessuno qui ha una foto, e un cerchio grigio
+   uguale per tutti non aiuta a distinguere niente: la lettera si'. */
+.conv-segno{ flex:0 0 auto; width:var(--s-7); height:var(--s-7);
+  border-radius:var(--r-pill); display:flex; align-items:center;
+  justify-content:center; font-weight:800; font-size:var(--t-lg);
+  background:var(--verde-bg); color:var(--green-700);
+  border:1px solid var(--verde-bd); }
+.conv-testo{ flex:1 1 auto; min-width:0; }
+.conv-nome{ font-weight:700; font-size:var(--t-md); color:var(--text-1);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* Una riga sola, e tagliata: l'anteprima serve a riconoscere la
+   conversazione, non a leggerla. */
+.conv-ultimo{ font-size:var(--t-sm); color:var(--text-3); margin-top:var(--s-1);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.conv-riga.nuovo .conv-ultimo{ color:var(--text-1); font-weight:700; }
+.conv-lato{ flex:0 0 auto; display:flex; flex-direction:column;
+  align-items:flex-end; gap:var(--s-1); }
+.conv-quando{ font-size:var(--t-2xs); color:var(--text-3); white-space:nowrap;
+  font-variant-numeric:tabular-nums; }
+.conv-riga.nuovo .conv-quando{ color:var(--green-700); font-weight:700; }
+/* IL PALLINO DEI NON LETTI ERA ROSSO. Il rosso in questa app vuol dire
+   guaio — la segnalazione, il comando che cancella. Un messaggio non letto
+   non e' un guaio: e' una cosa da fare. Verde, come il resto. */
+.conv-bollo{ min-width:var(--s-4); height:var(--s-4); padding:0 var(--s-1);
+  border-radius:var(--r-pill); background:var(--brand); color:var(--brand-ink);
+  font-size:var(--t-2xs); font-weight:800; display:flex; align-items:center;
+  justify-content:center; }
+
 /* La riga in cui si scrive: il campo cresce, il tasto no. */
 .chat-scrivi{ display:flex; gap:var(--s-2); align-items:flex-end; }
 .chat-scrivi textarea{ flex:1 1 auto; min-width:0; resize:none; }
@@ -4379,6 +4425,7 @@ dm_send: "Invia",
 dm_error: "Messaggio non inviato, riprova.",
 dm_no_messages: "Nessun messaggio: scrivi tu per primo.",
 chat_today: "Oggi", chat_yesterday: "Ieri", chat_read: "Letto",
+chat_you: "Tu:", dm_unread: "Non letto",
 dm_delete_chat: "Elimina conversazione",
 dm_delete_chat_confirm: "Confermi? La conversazione viene cancellata per entrambi.",
 dm_back: "\u2190 Messaggi",
@@ -5005,6 +5052,7 @@ dm_send: "Send",
 dm_error: "Message not sent, try again.",
 dm_no_messages: "No messages: write the first one.",
 chat_today: "Today", chat_yesterday: "Yesterday", chat_read: "Read",
+chat_you: "You:", dm_unread: "Unread",
 dm_delete_chat: "Delete conversation",
 dm_delete_chat_confirm: "Are you sure? The conversation is deleted for both of you.",
 dm_back: "\u2190 Messages",
@@ -5655,6 +5703,7 @@ dm_send: "Envoyer",
 dm_error: "Message non envoy\u00e9, r\u00e9essayez.",
 dm_no_messages: "Aucun message : \u00e9crivez le premier.",
 chat_today: "Aujourd\u2019hui", chat_yesterday: "Hier", chat_read: "Lu",
+chat_you: "Vous\u00a0:", dm_unread: "Non lu",
 dm_delete_chat: "Supprimer la conversation",
 dm_delete_chat_confirm: "Confirmer\u00a0? La conversation est supprim\u00e9e pour vous deux.",
 dm_back: "\u2190 Messages",
@@ -6305,6 +6354,7 @@ dm_send: "Senden",
 dm_error: "Nachricht nicht gesendet, versuche es erneut.",
 dm_no_messages: "Keine Nachrichten: schreib du als Erster.",
 chat_today: "Heute", chat_yesterday: "Gestern", chat_read: "Gelesen",
+chat_you: "Du:", dm_unread: "Ungelesen",
 dm_delete_chat: "Unterhaltung l\u00f6schen",
 dm_delete_chat_confirm: "Best\u00e4tigen? Die Unterhaltung wird f\u00fcr beide gel\u00f6scht.",
 dm_back: "\u2190 Nachrichten",
@@ -6954,6 +7004,7 @@ dm_send: "G\u00f6nder",
 dm_error: "Mesaj g\u00f6nderilemedi, tekrar dene.",
 dm_no_messages: "Mesaj yok: ilk yazan sen ol.",
 chat_today: "Bug\u00fcn", chat_yesterday: "D\u00fcn", chat_read: "Okundu",
+chat_you: "Sen:", dm_unread: "Okunmad\u0131",
 dm_delete_chat: "Sohbeti sil",
 dm_delete_chat_confirm: "Onayl\u0131yor musun? Sohbet iki taraf i\u00e7in de silinir.",
 dm_back: "\u2190 Mesajlar",
@@ -7617,6 +7668,7 @@ dm_send: "\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c",
 dm_error: "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435 \u043d\u0435 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e, \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437.",
 dm_no_messages: "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0439 \u043d\u0435\u0442: \u043d\u0430\u043f\u0438\u0448\u0438\u0442\u0435 \u043f\u0435\u0440\u0432\u044b\u043c.",
 chat_today: "\u0421\u0435\u0433\u043e\u0434\u043d\u044f", chat_yesterday: "\u0412\u0447\u0435\u0440\u0430", chat_read: "\u041f\u0440\u043e\u0447\u0438\u0442\u0430\u043d\u043e",
+chat_you: "\u0412\u044b:", dm_unread: "\u041d\u0435 \u043f\u0440\u043e\u0447\u0438\u0442\u0430\u043d\u043e",
 dm_delete_chat: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043a\u0443",
 dm_delete_chat_confirm: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u0435\u0442\u0435? \u041f\u0435\u0440\u0435\u043f\u0438\u0441\u043a\u0430 \u0443\u0434\u0430\u043b\u044f\u0435\u0442\u0441\u044f \u0443 \u043e\u0431\u043e\u0438\u0445.",
 dm_back: "\u2190 \u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f",
@@ -8280,6 +8332,7 @@ dm_send: "Enviar",
 dm_error: "Mensaje no enviado, int\u00e9ntalo otra vez.",
 dm_no_messages: "No hay mensajes: escribe t\u00fa primero.",
 chat_today: "Hoy", chat_yesterday: "Ayer", chat_read: "Le\u00eddo",
+chat_you: "T\u00fa:", dm_unread: "Sin leer",
 dm_delete_chat: "Eliminar la conversaci\u00f3n",
 dm_delete_chat_confirm: "\u00bfConfirmas? La conversaci\u00f3n se borra para los dos.",
 dm_back: "\u2190 Mensajes",
@@ -8943,6 +8996,7 @@ dm_send: "Skicka",
 dm_error: "Meddelandet skickades inte, f\u00f6rs\u00f6k igen.",
 dm_no_messages: "Inga meddelanden: skriv du f\u00f6rst.",
 chat_today: "I dag", chat_yesterday: "I g\u00e5r", chat_read: "L\u00e4st",
+chat_you: "Du:", dm_unread: "Ol\u00e4st",
 dm_delete_chat: "Radera konversationen",
 dm_delete_chat_confirm: "Bekr\u00e4ftar du? Konversationen raderas f\u00f6r er b\u00e5da.",
 dm_back: "\u2190 Meddelanden",
@@ -9606,6 +9660,7 @@ dm_send: "Verzenden",
 dm_error: "Bericht niet verzonden, probeer het opnieuw.",
 dm_no_messages: "Geen berichten: schrijf jij als eerste.",
 chat_today: "Vandaag", chat_yesterday: "Gisteren", chat_read: "Gelezen",
+chat_you: "Jij:", dm_unread: "Ongelezen",
 dm_delete_chat: "Gesprek verwijderen",
 dm_delete_chat_confirm: "Bevestig je? Het gesprek wordt voor jullie allebei verwijderd.",
 dm_back: "\u2190 Berichten",
@@ -17318,7 +17373,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-chat-nota";
+var BUILD_STAMP = "2026-08-23-elenco";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17327,7 +17382,7 @@ var BUILD_STAMP = "2026-08-23-chat-nota";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-chat-profonda";
+var BUILD_PARENT = "2026-08-23-chat-nota";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -19847,27 +19902,51 @@ if(!myDirectChats.length){
 card.appendChild(el('<div class="nota">'+t("dm_empty")+'</div>'));
 } else {
 var locale = (LANG_META[state.lang]||LANG_META.it).locale;
+/* L'ELENCO, con la forma che tutti hanno gia' imparato. (23/08/2026.)
+   Prima era una scheda con bordo per ogni conversazione, dentro un'altra
+   scheda. *In un elenco il bordo intorno a ogni voce non separa: raddoppia.*
+   Adesso e' una fila di righe divise da un filo.
+   Quattro cose cambiate, e ognuna nasce da quello che si vedeva:
+   1. C'E' UN SEGNO. L'iniziale in una pastiglia: in un elenco di nomi
+      l'occhio cerca una forma prima di leggere.
+   2. LA CHIOCCIOLA E' SPARITA dal nome. `@Robin Hood` non e' un username:
+      e' un nome con una chiocciola davanti. La chiocciola resta dove serve —
+      nella ricerca, dove si scrive davvero un username.
+   3. IL PREFISSO ERA UNA FRECCIA. `→ Riki1` non si legge: chi l'ha scritto?
+      Adesso dice `Tu:`, che e' quello che quella freccia voleva dire.
+   4. IL PALLINO DEI NON LETTI ERA ROSSO. Il rosso qui vuol dire guaio. Un
+      messaggio non letto e' una cosa da fare, non un guaio. */
+var lista = el('<div class="conv-lista"></div>');
 myDirectChats.forEach(function(c){
 var altro = dmOther(c);
 if(isUserBlocked(altro.uid)) return;
 var nuovo = dmIsUnread(c);
 var quando = "";
-if(c.lastAt && c.lastAt.toDate){
-var dt = c.lastAt.toDate();
-var oggi = (new Date()).toDateString() === dt.toDateString();
-quando = oggi ? dt.toLocaleTimeString(locale,{hour:"2-digit",minute:"2-digit"}) : dt.toLocaleDateString(locale);
-}
-var row = el('<button style="width:100%;text-align:left;background:'+(nuovo?"var(--bg-panel-2)":"transparent")+';border:1px solid '+(nuovo?"var(--accent-soft)":"var(--line)")+';border-radius:var(--r-sm);padding:var(--s-2) var(--s-3);margin-bottom:var(--s-2);cursor:pointer;color:var(--cream);"></button>');
-row.appendChild(el('<div style="display:flex;justify-content:space-between;align-items:center;gap:var(--s-2);">'+
-'<span style="font-weight:'+(nuovo?"800":"700")+';font-size:0.92rem;">@'+escapeHtml(altro.name)+(nuovo?' <span style="font-size:var(--t-xs);background:var(--danger);color:#fff;border-radius:var(--r-pill);padding:1px var(--s-1);vertical-align:middle;">'+t("dm_new_badge")+'</span>':'')+'</span>'+
-'<span style="font-size:var(--t-xs);color:var(--muted);white-space:nowrap;">'+quando+'</span></div>'));
+if(c.lastAt && c.lastAt.toDate) quando = quandoBreve(c.lastAt.toDate(), locale);
+var iniziale = (altro.name || "?").trim().charAt(0).toUpperCase() || "?";
+var row = el('<button type="button" class="conv-riga'+(nuovo?" nuovo":"")+'"></button>');
+row.appendChild(el('<span class="conv-segno" aria-hidden="true">'+escapeHtml(iniziale)+'</span>'));
+var testo = el('<span class="conv-testo"></span>');
+testo.appendChild(el('<span class="conv-nome">'+escapeHtml(altro.name)+'</span>'));
 if(c.lastText){
-var prefisso = (c.lastSenderUid === (currentUser&&currentUser.uid)) ? "\u2192 " : "";
-row.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+prefisso+escapeHtml(c.lastText)+'</div>'));
+/* «Tu:» solo se l'ultimo messaggio e' mio. In una conversazione a due il
+   nome dell'altro sarebbe ovvio, e scriverlo sarebbe rumore. */
+var mio = (c.lastSenderUid === (currentUser && currentUser.uid));
+testo.appendChild(el('<span class="conv-ultimo">'+(mio ? escapeHtml(t("chat_you"))+" " : "")+escapeHtml(c.lastText)+'</span>'));
 }
+row.appendChild(testo);
+var lato = el('<span class="conv-lato"></span>');
+if(quando) lato.appendChild(el('<span class="conv-quando">'+escapeHtml(quando)+'</span>'));
+/* Il bollo non porta un numero: il dato di lettura sta sulla conversazione,
+   non sui singoli messaggi, quindi QUANTI non letti ci siano non lo sa
+   nessuno. *Un numero inventato e' peggio di nessun numero* — vale la stessa
+   regola delle spunte. */
+if(nuovo) lato.appendChild(el('<span class="conv-bollo" aria-label="'+escapeHtml(t("dm_unread"))+'">\u2022</span>'));
+row.appendChild(lato);
 row.addEventListener("click", function(){ openDirectChat(altro.uid, altro.name); });
-card.appendChild(row);
+lista.appendChild(row);
 });
+card.appendChild(lista);
 }
 wrap.appendChild(card);
 
@@ -19974,6 +20053,26 @@ return oggi ? ora : (dt.toLocaleDateString(locale) + " " + ora);
 /* IL GIORNO, scritto come lo direbbe qualcuno a voce. (23/08/2026.)
    «23/08/2026» in mezzo a una conversazione e' un timbro, non una data. Se
    e' oggi si dice oggi, se e' ieri si dice ieri, e solo dopo si scrive. */
+/* IL TEMPO IN UN ELENCO E' UNA COLONNA STRETTA. (23/08/2026.)
+   `21/08/2026` sono dieci caratteri per dire una cosa che si capisce con
+   quattro. Oggi si dice l'ora, ieri si dice ieri, nella settimana si dice il
+   giorno, prima si scrive la data corta — l'anno solo se non e' quest'anno.
+   *Piu' una cosa e' vicina, piu' si e' precisi: e' come parla la gente.* */
+function quandoBreve(dt, locale){
+if(!dt) return "";
+locale = locale || (state.lang || "it");
+var ora = new Date();
+var giorni = Math.floor((ora - dt) / (24*60*60*1000));
+if(dt.toDateString() === ora.toDateString())
+return dt.toLocaleTimeString(locale, { hour:"2-digit", minute:"2-digit" });
+var ieri = new Date(ora.getTime() - 24*60*60*1000);
+if(dt.toDateString() === ieri.toDateString()) return t("chat_yesterday");
+if(giorni < 7) return dt.toLocaleDateString(locale, { weekday:"short" });
+if(dt.getFullYear() === ora.getFullYear())
+return dt.toLocaleDateString(locale, { day:"2-digit", month:"2-digit" });
+return dt.toLocaleDateString(locale);
+}
+
 function giornoDi(dt){
 if(!dt) return "";
 var locale = state.lang || "it";
