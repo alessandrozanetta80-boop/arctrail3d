@@ -12754,8 +12754,35 @@ h.appendChild(pastigliaFirma);
 // nessuno. Sta nella riga delle scorciatoie, dove arriva il pollice e dove
 // puo' portarsi dietro la parola.
 var azioni = [];
+/* LA CASETTA DICEVA UNA COSA E NE FACEVA UN'ALTRA. (23/08/2026, detto da
+   Alessandro dalla schermata Attrezzatura: «il tasto casa e' unicamente per
+   la home page, che io ho gia' sotto».)
+
+   Quel tasto non porta alla Home: porta al MENU DELLA SCHEDA IN CUI SEI.
+   Dall'attrezzatura riporta al profilo, dai campi ai campi, dal mercatino al
+   mercatino. Il comportamento e' giusto ed e' l'unica via d'uscita da una
+   schermata di secondo livello — a sbagliare era il segno.
+
+   *Una casetta che porta al profilo e' peggio di nessuna icona: la Home c'e'
+   gia' nella barra in fondo, quindi chi la vede in cima crede che siano due
+   porte per lo stesso posto e ne prova una a caso.*
+
+   La cura non e' mettere l'icona del profilo — sarebbe giusta li' e sbagliata
+   nelle altre quattro schede. L'icona SEGUE la scheda: la stessa che la barra
+   in fondo mostra accesa, e la stessa parola. Cosi' il tasto dice sempre dove
+   porta, e nel profilo — che nella barra non c'e' — dice profilo. */
+var CASA_DI = {
+  home:     ["navhome",   "nav_home"],
+  campi:    ["navfield",  "nav_fields"],
+  tira:     ["navshoot",  "nav_shoot"],
+  market:   ["navmarket", "nav_market"],
+  profilo:  ["navprofile","nav_profile"],
+  compagnie:["navclub",   "nav_clubs"],
+  attivita: ["navhome",   "nav_home"]
+};
+var doveTorna = CASA_DI[state.tab] || CASA_DI.home;
 if(showHome){
-azioni.push({ id:"menu", glifo:"home", testo:t("nav_menu"), conParola:true, vai:function(){
+azioni.push({ id:"menu", pieno:doveTorna[0], glifo:"home", testo:"\u2190 "+t(doveTorna[1]), conParola:true, vai:function(){
 if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; timerRunning = false; timerRemaining = null; timerTargetKey = null; }
 if(state.screen === "session-follow"){ stopFollowingSession(); state.followSessionId = null; }
 if(duranteGiro){ homeOverride = true; }
@@ -17134,7 +17161,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-porte-riparate";
+var BUILD_STAMP = "2026-08-23-casa-onesta";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17143,7 +17170,7 @@ var BUILD_STAMP = "2026-08-23-porte-riparate";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-ingranaggio";
+var BUILD_PARENT = "2026-08-23-porte-riparate";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
