@@ -2285,31 +2285,52 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    nome sopra, ultimo messaggio sotto in una riga sola, e a destra la colonna
    del tempo — quando, e quanti non letti. */
 .conv-lista{ display:flex; flex-direction:column; }
+/* L'imbottitura verticale scende a `--s-2`: con due righe di testo la riga
+   si regge da sola, e a `--s-3` diventava alta quasi cento pixel — cinque
+   conversazioni e lo schermo e' finito. */
 .conv-riga{ display:flex; align-items:center; gap:var(--s-3); width:100%;
   text-align:left; background:none; border:none;
   border-bottom:1px solid var(--border);
-  padding:var(--s-3) var(--s-1); cursor:pointer; font-family:inherit;
+  padding:var(--s-2) var(--s-1); cursor:pointer; font-family:inherit;
   transition:background var(--dur-2) var(--ease); }
 .conv-riga:last-child{ border-bottom:none; }
 .conv-riga:hover{ background:var(--surface-2); }
 .conv-riga:active{ background:var(--surface-2); }
 /* L'INIZIALE, non un'immagine. Nessuno qui ha una foto, e un cerchio grigio
    uguale per tutti non aiuta a distinguere niente: la lettera si'. */
-.conv-segno{ flex:0 0 auto; width:var(--s-7); height:var(--s-7);
+/* La pastiglia scende da `--s-7` a `--s-6`: alta quanto le due righe di
+   testo che le stanno accanto, non piu' di loro. Un segno piu' grande del
+   contenuto che accompagna smette di accompagnare e comincia a comandare. */
+.conv-segno{ flex:0 0 auto; width:var(--s-6); height:var(--s-6);
   border-radius:var(--r-pill); display:flex; align-items:center;
-  justify-content:center; font-weight:800; font-size:var(--t-lg);
+  justify-content:center; font-weight:800; font-size:var(--t-md);
   background:var(--verde-bg); color:var(--green-700);
   border:1px solid var(--verde-bd); }
-.conv-testo{ flex:1 1 auto; min-width:0; }
+/* LA COLONNA DOVEVA ESSERE UNA COLONNA, E NON LO ERA. (23/08/2026, secondo
+   giro: «Robin Hooddai».)
+   I due pezzi sono `<span>`, cioe' testo in linea: senza dirlo, stanno uno
+   accanto all'altro sulla stessa riga e il nome si incolla all'anteprima.
+   *Il difetto non era nel copione: era che il foglio dava per scontata una
+   cosa che nessuno aveva scritto.* Un contenitore che deve impilare lo deve
+   dire, altrimenti impila solo per fortuna. */
+.conv-testo{ flex:1 1 auto; min-width:0;
+  display:flex; flex-direction:column; justify-content:center; }
 .conv-nome{ font-weight:700; font-size:var(--t-md); color:var(--text-1);
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 /* Una riga sola, e tagliata: l'anteprima serve a riconoscere la
    conversazione, non a leggerla. */
 .conv-ultimo{ font-size:var(--t-sm); color:var(--text-3); margin-top:var(--s-1);
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* Chi ha parlato e' piu' scuro del messaggio: si distingue senza aggiungere
+   niente, e la riga resta una riga sola. */
+.conv-ultimo b{ font-weight:700; color:var(--text-2); }
 .conv-riga.nuovo .conv-ultimo{ color:var(--text-1); font-weight:700; }
+/* La colonna del tempo si allinea IN ALTO, sulla riga del nome: l'ora
+   appartiene al nome, non all'anteprima. Centrata galleggiava in mezzo alle
+   due righe e non sembrava di nessuna delle due. */
 .conv-lato{ flex:0 0 auto; display:flex; flex-direction:column;
-  align-items:flex-end; gap:var(--s-1); }
+  align-items:flex-end; gap:var(--s-1); align-self:flex-start;
+  padding-top:var(--s-1); }
 .conv-quando{ font-size:var(--t-2xs); color:var(--text-3); white-space:nowrap;
   font-variant-numeric:tabular-nums; }
 .conv-riga.nuovo .conv-quando{ color:var(--green-700); font-weight:700; }
@@ -17373,7 +17394,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-elenco";
+var BUILD_STAMP = "2026-08-23-elenco-due";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17382,7 +17403,7 @@ var BUILD_STAMP = "2026-08-23-elenco";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-chat-nota";
+var BUILD_PARENT = "2026-08-23-elenco";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -19929,10 +19950,18 @@ row.appendChild(el('<span class="conv-segno" aria-hidden="true">'+escapeHtml(ini
 var testo = el('<span class="conv-testo"></span>');
 testo.appendChild(el('<span class="conv-nome">'+escapeHtml(altro.name)+'</span>'));
 if(c.lastText){
-/* «Tu:» solo se l'ultimo messaggio e' mio. In una conversazione a due il
-   nome dell'altro sarebbe ovvio, e scriverlo sarebbe rumore. */
+/* CHI HA PARLATO SI DICE SEMPRE, E SEMPRE ALLO STESSO MODO. (23/08/2026,
+   chiesto da Alessandro: «meglio con i :».)
+   Prima il prefisso c'era solo sui propri messaggi: due righe accanto si
+   leggevano in due modi diversi — `Tu: Riki1` e `dai` — e chi guarda deve
+   imparare che l'assenza di una cosa vuol dire qualcosa. *Un'informazione
+   che si legge nell'assenza di un segno non e' un'informazione: e' un
+   indovinello.*
+   Il nome dell'altro e' accorciato: nella colonna dell'anteprima serve a
+   dire CHI, non a ripetere per intero un nome che sta gia' sopra. */
 var mio = (c.lastSenderUid === (currentUser && currentUser.uid));
-testo.appendChild(el('<span class="conv-ultimo">'+(mio ? escapeHtml(t("chat_you"))+" " : "")+escapeHtml(c.lastText)+'</span>'));
+var chi = mio ? t("chat_you") : (altro.name || "").split(/\s+/)[0] + ":";
+testo.appendChild(el('<span class="conv-ultimo"><b>'+escapeHtml(chi)+'</b> '+escapeHtml(c.lastText)+'</span>'));
 }
 row.appendChild(testo);
 var lato = el('<span class="conv-lato"></span>');
