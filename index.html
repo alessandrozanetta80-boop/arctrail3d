@@ -16985,7 +16985,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-22-prato";
+var BUILD_STAMP = "2026-08-23-rientro";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -16994,7 +16994,7 @@ var BUILD_STAMP = "2026-08-22-prato";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-22-terra";
+var BUILD_PARENT = "2026-08-22-prato";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -21929,8 +21929,38 @@ swReloaded = true;
 window.location.reload();
 });
 }
-// Rientro dopo una lunga pausa: l'app si ricarica da sola, cosi' riparte pulita
-// e prende anche l'eventuale versione nuova. Non lo fa mai durante un giro.
+/* IL RIENTRO DOPO UNA PAUSA — ED E' QUI CHE STAVA IL REFRESH ALL'APERTURA.
+   (23/08/2026, dopo che Alessandro lo ha segnalato per la terza volta.)
+
+   Le due volte precedenti si e' guardato il service worker, e la seconda
+   volta la cura era giusta: `avevaControllore` distingue la prima presa di
+   possesso da un aggiornamento vero, e da allora quel ramo non ricarica piu'
+   per niente. Ma il refresh si vedeva ancora, perche' NON VENIVA DA LI'.
+
+   Veniva da qui sotto. Una PWA su telefono non si CHIUDE quando esci: si
+   SOSPENDE. Quindi «aprire l'app», quasi sempre, vuol dire riportare in primo
+   piano quella di ieri sera — e se sono passati piu' di venti minuti, cioe'
+   praticamente sempre, la pagina si ricaricava.
+
+   *E' un auto-refresh all'apertura a tutti gli effetti. Non lo sembrava
+   perche' nel codice sta sotto il nome «rientro da una pausa», che e' come lo
+   vede chi ha scritto la riga, non come lo vede chi apre l'app.*
+
+   PEGGIO: NON FACEVA NEMMENO QUELLO PER CUI ERA STATO SCRITTO. Il commento
+   diceva «prende anche l'eventuale versione nuova». `reg.update()` e'
+   asincrono e nessuno lo aspettava: il `reload()` partiva subito dopo, e
+   rileggeva dalla cache del service worker — cioe' ESATTAMENTE la versione di
+   prima. Costava un lampo bianco e non portava niente.
+
+   LA CURA E' NON RICARICARE, E LASCIAR DECIDERE A CHI SA GIA' DECIDERE.
+   Si chiede l'aggiornamento e basta. Se ne arriva uno vero, il service worker
+   nuovo prende il comando e `controllerchange` qui sopra ricarica — con
+   `avevaControllore` a true, quindi la ricarica ha un motivo e mostra
+   qualcosa di nuovo. Se non arriva niente, non succede niente: l'app riprende
+   dove l'avevi lasciata.
+
+   `render()` copre il motivo buono che restava: ridisegnare con i dati
+   freschi. E' quello che «ripartire pulita» voleva dire, e costa zero. */
 var appHiddenAt = 0;
 document.addEventListener("visibilitychange", function(){
 if(document.hidden){ appHiddenAt = Date.now(); return; }
@@ -21942,7 +21972,7 @@ if(fermo < 20 * 60 * 1000) return;
 if(!DEV_MODE && navigator.serviceWorker && navigator.serviceWorker.getRegistration){
 navigator.serviceWorker.getRegistration().then(function(reg){ if(reg) reg.update(); }).catch(function(){});
 }
-window.location.reload();
+render();
 });
 
 // Ridimensionando la finestra del browser si passa da telefono a computer:
