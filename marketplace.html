@@ -123,6 +123,11 @@
    cioe' da dentro, e due grammatiche visive nella stessa app si notano piu'
    di qualunque colore. (21/08/2026, versione `squadrato`.) */
 --r-sm:3px; --r-md:4px; --r-lg:6px; --r-xl:8px; --r-pill:999px;
+/* Il raggio della bolla, con lo stesso nome e lo stesso valore dell'app.
+   Qui era `16px` scritto dentro la regola: un numero vicino, ma un numero.
+   *Due bolle che si somigliano perche' qualcuno ha scelto due volte lo
+   stesso numero somigliano finche' non lo si cambia in un posto solo.* */
+--r-bolla:14px;
 /* ───── BERSAGLIO MINIMO ───── */
 --hit:44px;
 /* ───── MOVIMENTO · una curva, tre durate ───── */
@@ -158,6 +163,21 @@ color-scheme:light;
 --primario-bd:color-mix(in srgb, var(--brand) 42%, transparent);
 --acceso-bg:color-mix(in srgb, var(--brand) 16%, var(--surface-1));
 --acceso-fg:var(--green-700); --acceso-bd:var(--brand);
+/* L'ARANCIONE ERA UN ALTRO ARANCIONE. (23/08/2026, detto da Alessandro: «non
+   mi sembra lo stesso arancione».) Aveva ragione: l'app usa `clay-400`
+   (`#FF4D00`) in tutti e tre i temi, il mercatino usava `clay-role`, che qui
+   e' `clay-600` al chiaro e `clay-700` al sole. Due arancioni diversi.
+   `--clay-role` NON si tocca: lo usano il prezzo e i contatori, dove serve
+   scuro per leggersi sul foglio. Il tasto ha un ruolo suo.
+   LA SCRITTA E' `clay-500`, NON `clay-400`. Copiare `.btn-arancio` dell'app
+   avrebbe copiato anche il suo difetto: li' la scritta e' `--clay` sul suo
+   stesso velo e fa **2,79:1** — e' la voce B6 di STATO.md, l'unico colore
+   dell'app che non passa la misura. *Un difetto noto non si porta in un
+   secondo file per coerenza: la coerenza si fa sulla forma, non sull'errore.*
+   Un gradino piu' scuro: 4,13:1, e l'arancione si vede uguale. */
+--arancio-bg:color-mix(in srgb, var(--clay-400) 14%, var(--surface-1));
+--arancio-fg:var(--clay-500);
+--arancio-bd:color-mix(in srgb, var(--clay-400) 42%, transparent);
 --bolla-mia:color-mix(in srgb, var(--brand) 38%, var(--surface-1));
 --bolla-sua:var(--surface-1);
 --clay-role:var(--clay-600); --icona-accento:var(--clay-400); --clay-role-d:var(--clay-700); --gold-role:var(--gold-700);
@@ -205,6 +225,11 @@ color-scheme:dark;
 --primario-bd:color-mix(in srgb, var(--brand) 48%, transparent);
 --acceso-bg:color-mix(in srgb, var(--brand) 16%, var(--surface-2));
 --acceso-fg:var(--brand); --acceso-bd:var(--brand);
+/* Al buio il rapporto si rovescia: la scritta e' l'arancione pieno, che sul
+   velo scuro fa 4,09:1. */
+--arancio-bg:color-mix(in srgb, var(--clay-400) 14%, var(--surface-2));
+--arancio-fg:var(--clay-400);
+--arancio-bd:color-mix(in srgb, var(--clay-400) 48%, transparent);
 --bolla-mia:color-mix(in srgb, var(--brand) 38%, var(--surface-1));
 --bolla-sua:var(--surface-1);
 --clay-role:var(--clay-400); --icona-accento:var(--clay-400); --clay-role-d:var(--clay-500); --gold-role:var(--gold-400);
@@ -253,6 +278,9 @@ color-scheme:light;
 --primario-bg:var(--brand); --primario-fg:var(--brand-ink);
 --primario-bd:transparent;
 --acceso-bg:var(--brand); --acceso-fg:var(--brand-ink); --acceso-bd:var(--brand);
+/* Al sole pieno, come tutti gli altri tasti. */
+--arancio-bg:var(--clay-400); --arancio-fg:var(--sand-900);
+--arancio-bd:transparent;
 --bolla-mia:color-mix(in srgb, var(--brand) 52%, var(--surface-1));
 --bolla-sua:var(--surface-1);
 --clay-role:var(--clay-700); --icona-accento:var(--clay-400); --clay-role-d:var(--clay-800); --gold-role:var(--gold-800);
@@ -342,10 +370,13 @@ input[type="number"],.range-row input{
 /* Solo il segno, quadrato come la lettera del profilo che gli sta accanto:
    due tasti della stessa fila con due forme diverse sembrano due cose
    diverse. */
+/* Gli stessi colori della voce accesa nella barra della home: `--acceso-*`
+   e' esattamente quella pastiglia — velatura al 16%, inchiostro verde
+   scuro. *Non «simile»: lo stesso token.* */
 .tb-back{width:38px;height:38px;padding:0;border-radius:var(--r-s);
-  background:var(--primario-bg);border:1px solid var(--primario-bd);
+  background:var(--acceso-bg);border:1px solid var(--acceso-bd);
   display:flex;align-items:center;justify-content:center;cursor:pointer;
-  flex-shrink:0;text-decoration:none;color:var(--primario-fg);}
+  flex-shrink:0;text-decoration:none;color:var(--acceso-fg);}
 .tb-back:active{opacity:.85}
 .tb-back-txt{white-space:nowrap}
 .tb-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
@@ -374,7 +405,7 @@ input[type="number"],.range-row input{
    pastiglia con dentro una lettera e' una persona, e le persone in questa
    app sono tonde ovunque. Il tasto casa e' un comando. */
 .tb-avatar{width:38px;height:38px;border-radius:50%;
-  background:var(--verde-bg);color:var(--acceso-fg);border:1px solid var(--verde-bd);
+  background:var(--acceso-bg);color:var(--acceso-fg);border:1px solid var(--acceso-bd);
   display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;cursor:pointer;flex-shrink:0;font-family:inherit;}
 section{display:none}
 section.active{display:block}
@@ -426,8 +457,8 @@ border:1px solid var(--primario-bd);font-weight:800;width:100%}
 .chip-wrap{position:relative;flex-shrink:0}
 .chip-dot{display:none;width:8px;height:8px;border-radius:50%;background:var(--bark);position:absolute;top:6px;right:6px;}
 .chip-dot.show{display:block}
-.btn-crea{flex:1;height:var(--hit);display:flex;align-items:center;justify-content:center;gap:7px;background:var(--bark);color:var(--on-chrome);border:none;border-radius:var(--r-p);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:none;transition:background var(--dur-1),transform var(--dur-1);}
-.btn-crea:active{background:var(--bark-d);transform:scale(.98)}
+.btn-crea{flex:1;height:var(--hit);display:flex;align-items:center;justify-content:center;gap:7px;background:var(--arancio-bg);color:var(--arancio-fg);border:1px solid var(--arancio-bd);border-radius:var(--r-p);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:none;transition:background var(--dur-1),transform var(--dur-1);}
+.btn-crea:active{background:color-mix(in srgb, var(--clay-400) 24%, var(--surface-1));transform:scale(.98)}
 .result-info{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 2px;font-size:12.5px;color:var(--muted);}
 .result-clear{background:none;border:none;font-family:inherit;font-size:12.5px;color:var(--accent);font-weight:600;cursor:pointer;padding:0;min-height:var(--hit);display:inline-flex;align-items:center;}
 .listings{padding:8px 16px}
@@ -680,7 +711,7 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
    `unreadBy` booleano, che dice «c'e' qualcosa di nuovo», non FINO A QUANDO
    ha letto. *Un segno che non sa rispondere e' peggio di nessun segno*, e
    vale la terza volta come la prima. */
-.chat-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.chat-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:2px;background:var(--bg)}
 .chat-turno{display:flex;flex-direction:column;margin-top:14px}
 .chat-turno:first-child{margin-top:0}
 .chat-turno.mio{align-items:flex-end}
@@ -690,18 +721,32 @@ body.logged.chat-aperta .fullscr{padding-bottom:0}
 .chat-giorno{align-self:center;margin:16px 0 8px;padding:4px 12px;border-radius:var(--r-pill);
 background:var(--bg-p);border:1px solid var(--line);font-size:10.5px;font-weight:700;
 letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.bub{position:relative;max-width:80%;padding:10px 13px;border-radius:16px;font-size:14px;line-height:1.5;margin-top:2px}
+.bub{position:relative;max-width:80%;padding:10px 13px;border-radius:var(--r-bolla);font-size:14px;line-height:1.5;margin-top:2px;border:1px solid transparent}
 .bub:first-of-type{margin-top:0}
+/* LA CODA, come nell'app: sulla PRIMA bolla del turno, non sull'ultima.
+   Segna DA DOVE parte il turno, come il trattino di un elenco; in fondo
+   sembrerebbe una firma. E' un bordo colorato, quindi prende il fondo per
+   nome — `--bolla-mia` e `--bolla-sua` — perche' un triangolo di sette pixel
+   che resta indietro non lo nota nessuno. */
+.chat-turno .bub:first-of-type::after{content:"";position:absolute;top:0;width:0;height:0;border:7px solid transparent}
+.chat-turno.mio .bub:first-of-type{border-top-right-radius:var(--r-xs,2px)}
+.chat-turno.suo .bub:first-of-type{border-top-left-radius:var(--r-xs,2px)}
+.chat-turno.mio .bub:first-of-type::after{right:-6px;border-top-color:var(--bolla-mia);border-right:0}
+.chat-turno.suo .bub:first-of-type::after{left:-6px;border-top-color:var(--bolla-sua);border-left:0}
 /* L'ora galleggia a destra sulla riga dell'ultima parola: fuori sarebbe una
    riga in piu' per messaggio. Va inserita PRIMA del testo — un float si
    aggancia alla riga in cui compare. */
 .bub .ora{float:right;margin:8px 0 0 8px;font-size:10.5px;color:var(--muted);
 line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
-.bub.them{background:var(--bg-p);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
+/* I TRE LIVELLI, come nell'app: il flusso incassato piu' scuro, e le bolle
+   che ci galleggiano sopra. Prima la bolla dell'altro era `--bg-p` sul
+   flusso — praticamente lo stesso colore, cioe' una bolla che affonda nel
+   suo contenitore invece di starci sopra. */
+.bub.them{background:var(--bolla-sua);border-color:var(--line);align-self:flex-start;box-shadow:var(--elev-1);border-bottom-left-radius:4px}
 /* LA BOLLA PROPRIA, come nella chat dell'app: tinta, non piena. Qui il
    fondo del flusso e' piu' chiaro che nell'app, quindi vale il 38% del tema
    chiaro — misurato li', non ricopiato a occhio. */
-.bub.me{background:var(--bolla-mia);color:var(--text-1);align-self:flex-end;border-bottom-right-radius:4px}
+.bub.me{background:var(--bolla-mia);color:var(--ink);border-color:color-mix(in srgb, var(--brand) 55%, var(--surface-1));align-self:flex-end;box-shadow:var(--elev-1);border-bottom-right-radius:4px}
 .bub-offer{align-self:center;width:calc(100% - 32px);background:color-mix(in srgb,var(--gold) 10%,transparent);border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:var(--r-m);padding:14px;text-align:center;}
 .bub-offer-amt{font-size:24px;font-weight:800;color:var(--gold);margin-bottom:4px}
 .bub-offer-lbl{font-size:12.5px;color:var(--muted)}
@@ -1027,7 +1072,7 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
      dire se questo file e' UGUALE a quello online, non se e' avanti o
      indietro. Era la voce 7 delle cose aperte nel diario del mercatino, ed e'
      chiusa nella stessa mossa in cui il timbro e' salito. -->
-<body data-build="2026-08-23-barra" data-parent="2026-08-23-mercatino-chiaro">
+<body data-build="2026-08-23-arancio" data-parent="2026-08-23-barra">
 <div id="app">
 <header class="topbar">
   <div class="tb-left">
@@ -1055,7 +1100,13 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
       <img class="tb-mark" src="logo.webp" alt="" aria-hidden="true">
       <span class="tb-logo-txt">Marketplace</span>
     </div>
-    <a href="https://arctrail3d.com/index.html" class="tb-back" data-tt="back_title" data-ta="back_title"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></a>
+    <!-- LA CASETTA E' QUELLA DELL'APP, non un disegno somigliante. (23/08/2026,
+       chiesto da Alessandro: «gli stessi colori di quella sulla barra nella
+       home».) Prima era un tettuccio a due linee fatto qui: la stessa idea,
+       un'altra mano. Adesso e' `navhome`, copiata dal file dell'app col suo
+       puntino arancione — *la porta di casa e' un segno solo, e chi lo vede
+       in due posti deve vedere due volte la stessa cosa.* -->
+    <a href="https://arctrail3d.com/index.html" class="tb-back" data-tt="back_title" data-ta="back_title"><svg viewBox="0 0 200 200" width="21" height="21" fill="currentColor" aria-hidden="true"><g transform="translate(100 100) scale(1.0) translate(-100 -100) translate(0.00 -2.00)"><path fill-rule="evenodd" d="M100,26 L180,96 L180,174 L20,174 L20,96 Z M100,42 L169,101 L169,163 L31,163 L31,101 Z"/><path d="M89,163 V139 a11,11 0 0 1 22,0 v24 Z" fill="var(--icona-accento)"/></g></svg></a>
   </div>
   <nav class="bnav" id="bnav">
   <button class="bnav-item on" id="navMkt"><div class="bnav-iw"><svg viewBox="0 0 200 200" width="22" height="22" fill="currentColor" aria-hidden="true"><g transform="translate(100 100) scale(0.9924) translate(-100 -100) translate(7.62 -3.88)"><path d="M140.36,83.49l-7.55-20.72-7.43-20.45-15.09,6.25a29.22,29.22,0,0,0-2.38,13l11-4.58,5.7,15.68,2.2,6,7.59,20.89-32,72.14a5.92,5.92,0,0,1-3.32,3.16,6,6,0,0,1-4.58-.11L48,154.14a6,6,0,0,1-3-7.89L76.77,74.47l13-5.39a51.89,51.89,0,0,1-.69-11.71L68.44,65.94,34.83,141.76a17.07,17.07,0,0,0,8.69,22.5L90.07,184.9a17.07,17.07,0,0,0,22.5-8.69L146.35,100Z"/><circle cx="106.83" cy="87.35" r="12.26"/><rect x="83.15" y="106.57" width="8.23" height="35.92" transform="translate(-61.9 154.06) rotate(-66.18)"/><rect x="76.13" y="122.47" width="8.23" height="35.92" transform="translate(-80.63 157.12) rotate(-66.18)"/><g fill="var(--icona-accento)"><path d="M135.84,81.62l-7.08-7a52.47,52.47,0,0,0,10.57-14.87,23.49,23.49,0,0,0,1-16.85c-2.83-9-7.9-12.59-15.93-11.34-6.73,1.05-12.78,5.37-16.59,11.86C96.26,63,110.17,83.54,110.31,83.74l-8.19,5.67c-.73-1-17.64-26-2.91-51,5.34-9.07,13.94-15.14,23.64-16.65,7.56-1.18,21.11-.39,27,18.18a33.45,33.45,0,0,1-1.43,24A62.07,62.07,0,0,1,135.84,81.62Z"/></g></g></svg></div><span data-t="nav_market">Marketplace</span></button>
