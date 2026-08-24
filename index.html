@@ -1662,6 +1662,12 @@ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
 .stat-box{ flex:1; display:flex; flex-direction:column; align-items:center; background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-2) var(--s-1); }
 .stat-box .stat-num{ font-family:var(--font-num); font-variant-numeric:tabular-nums; font-weight:800; font-size:var(--t-xl); color:var(--brand-soft); }
 .stat-box .stat-lbl{ font-size:var(--t-2xs); text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:2px; }
+/* Il record e' l'unico dei quattro che si va a rivedere: prende l'oro del
+   TOTALE della pista, cosi' l'occhio lo trova senza leggere le etichette. */
+.stat-box-record{ border-color:var(--gold-600); }
+.stat-box-record .stat-num{ color:var(--gold-role); }
+.home-num-record{ border-color:var(--gold-600); }
+.home-num-record b{ color:var(--gold-role); }
 .timer-box{ margin:var(--s-2) 0 var(--s-5); }
 /* Da fermo ha un colore suo (ambra sul chiaro): non e' nessuno dei tre codici
    dell'app, quindi al sole non lo si scambia per "gara" o "prepara". */
@@ -18515,7 +18521,7 @@ var q = el('<div class="home-numeri"></div>');
 q.appendChild(el('<div class="home-num"><b>'+st.giri+'</b><span>'+escapeHtml(t("home_rounds_word"))+'</span></div>'));
 q.appendChild(el('<div class="home-num"><b>'+st.piazzole+'</b><span>'+escapeHtml(t("diario_targets_word"))+'</span></div>'));
 q.appendChild(el('<div class="home-num"><b>'+st.media+'</b><span>'+escapeHtml(t("diario_media"))+'</span></div>'));
-q.appendChild(el('<div class="home-num"><b>'+st.meglio+'</b><span>'+escapeHtml(t("diario_record"))+'</span></div>'));
+q.appendChild(el('<div class="home-num home-num-record"><b>'+st.meglio+'</b><span>'+escapeHtml(t("diario_record"))+'</span></div>'));
 sc.appendChild(q);
 wrap.appendChild(sc);
 var gc = el('<div class="card"></div>');
@@ -18798,7 +18804,7 @@ var best = Math.max.apply(null, myTotals);
 var statsRow = el('<div class="stats-row"></div>');
 statsRow.appendChild(el('<div class="stat-box"><span class="stat-num">'+myTotals.length+'</span><span class="stat-lbl">'+t("stats_rounds")+'</span></div>'));
 statsRow.appendChild(el('<div class="stat-box"><span class="stat-num">'+avg+'</span><span class="stat-lbl">'+t("stats_avg")+'</span></div>'));
-statsRow.appendChild(el('<div class="stat-box"><span class="stat-num">'+best+'</span><span class="stat-lbl">'+t("stats_best")+'</span></div>'));
+statsRow.appendChild(el('<div class="stat-box stat-box-record"><span class="stat-num">'+best+'</span><span class="stat-lbl">'+t("stats_best")+'</span></div>'));
 histCard.appendChild(statsRow);
 }
 var histList = el('<div style="margin-top:var(--s-1);"></div>');
