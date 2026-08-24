@@ -401,6 +401,20 @@ color-scheme:light;
    oro davvero vivo, non puo' essere inchiostro: deve essere un fondo, con
    sopra --solid-ink. Vedi Una cosa unica. */
 --gold-role:var(--gold-600);
+/* ══ IL COLORE QUANDO SCRIVE SU FONDO CHIARO ══════════════════
+   (24/08/2026.) All'app mancava un gradino che il mercatino ha gia'
+   (`--arancio-fg`) e che la vetrina usa di continuo: il colore che deve
+   fare da INCHIOSTRO su una superficie chiara.
+   `--brand-soft` NON e' quel gradino, e il nome inganna: e' il verde « per
+   fondi scuri », e su bianco fa 2,66:1. Era usato lo stesso su fondo chiaro
+   in cinque punti — fra questi i link della scheda Campi, che sul vecchio
+   fondo rosa stavano a 2,06:1.
+   `--gold-role` regge sul foglio bianco (5,5) ma non su `--surface-2`, dove
+   scende a 4,22. *Un gradino che vale su una superficie e non sulla sua
+   vicina non e' un ruolo: e' un caso fortunato.*
+   Questi due valgono su TUTTE le superfici chiare del tema. Misurati:
+   verde 7,04 sul bianco e 6,31 su `--surface-2`; oro 6,65 e 5,95. */
+--brand-testo:var(--green-700); --gold-testo:var(--gold-800);
 /* l'interruttore del Sole quando e' acceso: una coppia per tema, perche'
    l'oro cambia valore fra i tre e un fondo scritto a mano una volta sola
    sarebbe illeggibile in due casi su tre */
@@ -476,19 +490,48 @@ color-scheme:light;
 --navbar-pill:color-mix(in srgb, var(--green-800) 16%, var(--surface-1));
 --navbar-pill-ink:var(--green-700); --navbar-shadow:rgba(30,45,34,0.14);
 --icona-accento:var(--clay-400);
---scheda-bg:color-mix(in srgb, var(--clay) 20%, var(--surface-1));
---scheda-bd:color-mix(in srgb, var(--clay) 55%, var(--surface-1));
-/* IL VERDE NON AVEVA LA SUA VELATURA, E SI VEDEVA. (23/08/2026.)
-   L'argilla ha `--scheda-bg` da sempre: sulle superfici grandi compare
-   VELATA, mai piena. L'oro fa lo stesso (`.btn-standings`, 14%). Il verde
-   no: sulle fasce grandi era `--brand` pieno, e accanto a due colori velati
-   sembrava l'unico che spinge.
+/* ══ L'ARGILLA NON E' PIU' UN FONDO ════════════════════════
+   (24/08/2026, detto da Alessandro guardando Borgodale: « il fondo
+   dell'elemento selezionato e' rosa e si legge male ».)
+
+   Non era il colore a essere sbagliato: era il TRATTAMENTO, e si misura.
+   `--scheda-bg` era argilla al 20% sul bianco, cioe' #FFDBCC. Un arancione
+   a saturazione piena steso su una superficie chiara non resta arancione:
+   perde saturazione e vira al salmone. Quello che si vedeva su Borgodale
+   non era l'argilla dell'app, era un rosa che non aveva scelto nessuno.
+   *Il verde puo' permetterselo — vedi `--verde-bg` qui sotto — perche' e'
+   meno luminoso e piu' vicino ai neutri caldi del foglio: velato resta se
+   stesso. L'argilla no. Non e' un'incoerenza, sono due colori diversi.*
+
+   LA CURA VIENE DALLA VETRINA, E NON E' UN COLORE: E' UN GESTO. Nella
+   vetrina l'argilla non fa MAI da fondo — e' la punta da 9px davanti a
+   un'etichetta, il filetto da 2px sotto la voce aperta, l'anello del fuoco.
+   Sempre piccola e sempre PIENA. Qui succede lo stesso: il fondo passa a un
+   gradino di superficie neutro e l'argilla si concentra nel bordo.
+   **Si vede piu' di prima, non meno**: tre pixel pieni battono duecento
+   diluiti.
+
+   E SOTTO IL ROSA C'ERANO QUATTRO MISURE ROTTE, che nessuno vedeva proprio
+   perche' il rosa e' chiaro e sembrava innocuo: il verde del marchio ci
+   faceva 2,06:1 in `.fin-record`, `.attr-pred` e `.pp-tondo`, e i link
+   della scheda Campi — telefono, mail, sito — pure. Sul fondo nuovo le
+   stesse scritte stanno fra 5,25 e 6,31.
+   *Un fondo sbagliato non si limita a essere brutto: si porta dietro tutto
+   quello che ci sta scritto sopra, e lo fa in silenzio.* */
+--scheda-bg:var(--surface-2);
+--scheda-bd:var(--clay);
+/* IL VERDE HA LA SUA VELATURA. (23/08/2026, e la riga e' cambiata il 24.)
+   Sulle fasce grandi il verde era `--brand` pieno, e accanto ai colori
+   velati sembrava l'unico che spinge.
    *Non era una questione di tinta ma di TRATTAMENTO: due colori su tre
    avevano un ruolo per stare sul fondo, il terzo no — e quel terzo e' quello
    di casa, cioe' quello che si vede piu' spesso.*
-   Stessa formula dell'argilla, cosi' quando si cambia il modo di velare si
-   cambia in un posto solo. Il verde PIENO resta dov'e' un comando o uno
-   stato acceso: un pulsante non e' uno sfondo. */
+   QUI C'ERA SCRITTO « stessa formula dell'argilla », e dal 24/08 non e'
+   piu' vero: l'argilla ha smesso di velare. Il verde vela da solo, ed e'
+   giusto cosi' — la velatura non e' una regola generale, e' quello che
+   serve a un colore che sta su superfici grandi senza doverle comandare.
+   Il verde PIENO resta dov'e' un comando o uno stato acceso: un pulsante
+   non e' uno sfondo. */
 --verde-bg:color-mix(in srgb, var(--brand) 20%, var(--surface-1));
 --verde-bd:color-mix(in srgb, var(--brand) 55%, var(--surface-1));
 /* IL PANNELLO DELLA HOME. (23/08/2026, portato dalla vetrina del sito.)
@@ -579,6 +622,11 @@ color-scheme:dark;
 --brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:var(--sand-900);
 --chart-line:var(--green-400);   /* al buio serve il verde chiaro: 3:1 */
 --clay:var(--clay-400); --clay-ink:var(--sand-900); --gold-role:var(--gold-400);
+/* Al buio il rapporto si rovescia e i gradini accesi sono gia' quelli buoni
+   da scrivere: verde 6,28 su `--surface-1` e 5,89 su `--surface-2`, oro
+   6,54 e 6,13. Il ruolo esiste lo stesso, con gli stessi nomi, perche' un
+   componente non deve sapere in che tema si trova. */
+--brand-testo:var(--green-400); --gold-testo:var(--gold-400);
 --sun-on-bg:var(--gold-400); --sun-on-fg:#1A1305;
 --danger-role:var(--red-400); --success-role:var(--green-success-dk);
 /* Al buio la paglia resta paglia — e' l'oggetto — ma il vuoto segue la
@@ -627,10 +675,15 @@ color-scheme:dark;
 --navbar-on:var(--green-400); --navbar-pill:color-mix(in srgb, var(--green-400) 12%, var(--surface-2));
 --navbar-pill-ink:var(--green-400); --navbar-shadow:rgba(0,0,0,0.45);
 --icona-accento:var(--clay-400);
---scheda-bg:color-mix(in srgb, var(--clay) 22%, var(--surface-2));
---scheda-bd:color-mix(in srgb, var(--clay) 55%, var(--surface-2));
-/* Al buio si parte da `--surface-2`, come l'argilla qui accanto: una
-   velatura sul fondo piu' scuro sparirebbe. */
+/* Al buio il gradino va verso l'ALTO: la scheda aperta SALE a `--surface-2`
+   invece di scendere, o non si staccherebbe dal fondo. Il filetto d'argilla
+   e' lo stesso dei tre temi, e qui e' anche il piu' forte: 5,02 sulla carta
+   della scheda, cioe' al buio l'argilla piena regge perfino come scritta. */
+--scheda-bg:var(--surface-2);
+--scheda-bd:var(--clay);
+/* Al buio la velatura parte da `--surface-2` e non da `--surface-1`: sul
+   fondo piu' scuro sparirebbe. Fino al 24/08 questa riga diceva « come
+   l'argilla qui accanto », e non vale piu': l'argilla non vela. */
 --verde-bg:color-mix(in srgb, var(--brand) 22%, var(--surface-2));
 --verde-bd:color-mix(in srgb, var(--brand) 55%, var(--surface-2));
 /* Al buio il pannello non puo' essere piu' scuro del fondo: sparirebbe.
@@ -734,6 +787,12 @@ color-scheme:light;
 --brand:var(--green-900); --brand-soft:var(--green-900); --brand-ink:var(--sand-900);
 --chart-line:var(--green-900);   /* al sole il verde piu' scuro, sul bianco */
 --clay:var(--clay-400); --clay-ink:var(--sand-900); --gold-role:var(--gold-400);
+/* Al sole le superfici sono bianco e `--sand-200`, quindi servono gli stessi
+   gradini scuri del chiaro: verde 7,04 e 5,88, oro 6,65 e 5,55. Qui
+   `--gold-role` e' `--gold-400`, che su `--sand-200` fa 2,13 — cioe' il
+   tema fatto apposta per leggersi al sole era quello in cui l'oro non si
+   leggeva. */
+--brand-testo:var(--green-700); --gold-testo:var(--gold-800);
 --sun-on-bg:var(--gold-800); --sun-on-fg:var(--sand-50);
 --danger-role:var(--red-700); --success-role:var(--green-800);
 
@@ -803,11 +862,16 @@ color-scheme:light;
 --navbar-on:var(--green-900); --navbar-pill:var(--green-900);
 --navbar-pill-ink:var(--sand-900); --navbar-shadow:rgba(18,22,15,0.22);
 --icona-accento:var(--clay-400);
---scheda-bg:color-mix(in srgb, var(--clay) 20%, var(--surface-1));
---scheda-bd:color-mix(in srgb, var(--clay) 70%, var(--surface-1));
-/* Al sole il bordo e' piu' marcato dell'argilla al chiuso (70% invece di
-   55%): la velatura da sola, in piena luce, non basta a dire dove finisce
-   una zona. Il verde segue la stessa regola. */
+/* Al sole `--surface-2` e' `--sand-200`, cioe' un gradino piu' marcato che
+   al chiuso: 1,20 contro 1,12. Non e' pignoleria — in piena luce una
+   differenza di poche unita' di luminanza sparisce del tutto, e la scheda
+   aperta tornerebbe indistinguibile da quelle chiuse. A dire dov'e' resta
+   comunque il filetto, che al sole e' l'unica cosa che si vede da lontano. */
+--scheda-bg:var(--surface-2);
+--scheda-bd:var(--clay);
+/* Il verde invece la velatura ce l'ha, e al sole la tiene piu' marcata
+   (70% invece di 55%): da sola, in piena luce, non basta a dire dove
+   finisce una zona. */
 --verde-bg:color-mix(in srgb, var(--brand) 20%, var(--surface-1));
 --verde-bd:color-mix(in srgb, var(--brand) 70%, var(--surface-1));
 /* AL SOLE IL PANNELLO NON E' SCURO, E QUESTO E' IL PUNTO.
@@ -1825,7 +1889,12 @@ table.score-table th, table.score-table td{ border:1px solid #999 !important; }
 .cp-select-row label{ display:block; font-size:var(--t-xs); font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:var(--s-1); }
 .cp-select-row select{ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:var(--t-md); }
 .cp-info-row{ display:flex; align-items:center; gap:var(--s-2); font-size:var(--t-sm); color:var(--cream); padding:var(--s-1) 0; }
-.cp-info-row a{ color:var(--accent-soft); text-decoration:none; font-weight:600; }
+/* IL VERDE DEI LINK ERA QUELLO DEI FONDI SCURI, E QUESTI STANNO SU FONDO
+   CHIARO. (24/08/2026.) `--accent-soft` su bianco fa 2,66:1, e sul vecchio
+   fondo rosa della scheda Campi 2,06: telefono, mail e sito erano le tre
+   scritte meno leggibili dell'app, e sono anche le tre per cui si apre la
+   scheda. Adesso 7,04 sul bianco e 6,31 sul fondo della scheda. */
+.cp-info-row a{ color:var(--brand-testo); text-decoration:none; font-weight:600; }
 .cp-info-row.placeholder{ color:var(--muted); font-style:italic; }
 .cp-percorso-card{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-lg); padding:var(--s-3) var(--s-4); margin-bottom:var(--s-2); cursor:pointer; }
 .cp-percorso-top{ display:flex; justify-content:space-between; align-items:center; }
@@ -1885,7 +1954,7 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
 .comp-riga.on{ background:var(--verde-bg); }
 .comp-riga .mini{ flex:0 0 auto; width:var(--s-6); height:var(--s-6); border-radius:var(--r-sm);
   background:var(--surface-1); border:1px solid var(--border); display:flex;
-  align-items:center; justify-content:center; color:var(--accent-soft); }
+  align-items:center; justify-content:center; color:var(--brand-testo); }
 
 /* ══════════ LA SCHEDA SI APRE SOTTO LA RIGA (21/08/2026) ══════════ */
 /* Prima si apriva IN FONDO all'elenco: toccata una compagnia a meta' di
@@ -1912,12 +1981,29 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
 .campi-testa{ font-size:var(--t-xs); color:var(--muted); margin:var(--s-3) 0 var(--s-2); }
 /* La scheda si apre SOTTO la riga toccata, dentro l'elenco: una scheda che si
    apre in fondo alla pagina fa sembrare che toccare non abbia fatto niente. */
-.campo-scheda{ background:var(--scheda-bg); border:1px solid var(--scheda-bd);
+/* ED E' DISEGNATA COME `.comp-dettaglio`, PERCHE' E' LO STESSO OGGETTO.
+   (24/08/2026.) Compagnie e Campi sono due elenchi della stessa cosa vista
+   da due domande diverse — lo dice gia' il commento sopra `.campi-testa` —
+   e la scheda che si apre sotto la riga toccata e' la stessa scheda.
+   Compagnie era gia' cosi': fondo neutro, filo intorno, filetto a sinistra.
+   Campi era rimasta indietro col fondo tinto d'argilla, ed era l'unica
+   schermata dove il tinto si vedeva grande. *Non c'e' un disegno nuovo qui:
+   c'e' una schermata che raggiunge l'altra.*
+   Il filetto passa da 1px a 3px, quindi il contenuto rientra di due pixel:
+   e' l'unico effetto sull'impaginazione, ed e' quello che `.comp-dettaglio`
+   ha da sempre. */
+.campo-scheda{ background:var(--scheda-bg); border:1px solid var(--border);
+  border-left:3px solid var(--scheda-bd);
   border-radius:var(--r-md); padding:var(--s-3); margin:0 0 var(--s-3); }
 .campo-scheda .chi{ color:var(--muted); }
 /* Un campo dove qualcuno si allena domani non e' lo stesso campo: e' l'unica
-   riga della scheda che parla di persone, e prende l'oro. */
-.campo-scheda .allena{ color:var(--gold); font-weight:700; }
+   riga della scheda che parla di persone, e prende l'oro.
+   L'ORO PERO' E' QUELLO CHE SCRIVE, NON QUELLO CHE SI VEDE. (24/08/2026.)
+   `--gold-role` e' pensato come inchiostro sul foglio BIANCO (5,5); sul
+   fondo della scheda scendeva a 4,22, e nel tema Sole — dove vale
+   `--gold-400` — a 2,13. Il tema fatto apposta per il sole era quello in
+   cui questa riga non si leggeva. Adesso 5,95 / 6,13 / 5,55. */
+.campo-scheda .allena{ color:var(--gold-testo); font-weight:700; }
 .campo-scheda .btn + .btn{ margin-top:var(--s-2); }
 .campi-nota{ font-size:var(--t-xs); color:var(--muted); margin-bottom:var(--s-2); }
 .campi-seguito{ margin-top:var(--s-3); }
@@ -3516,8 +3602,13 @@ text-transform:uppercase; color:var(--text-3); }
 .fin-vs.giu{ color:var(--text-2); }
 .fin-record{ display:inline-flex; align-items:center; gap:var(--s-2);
   margin-top:var(--s-3); padding:var(--s-2) var(--s-3); border-radius:var(--r-lg);
-  background:var(--scheda-bg); border:1px solid var(--accent);
-  color:var(--accent); font-weight:800; font-size:var(--t-sm); }
+/* IL RECORD PARLA LA LINGUA DELLE COSE SCELTE. (24/08/2026.) Era verde del
+   marchio, bordo e scritta, su un fondo velato d'argilla: 2,06:1, la misura
+   peggiore dell'app. `--acceso-*` e' la terna che l'app usa gia' per dire
+   « e' questa qui » (`.chip.active`, i filtri del pannello), ed e' misurata
+   nei tre temi: 6,13 / 4,51 / 6,95. */
+  background:var(--acceso-bg); border:1px solid var(--acceso-bd);
+  color:var(--acceso-fg); font-weight:800; font-size:var(--t-sm); }
 /* I numeri stanno su una riga sola e si stringono: sono da due a cinque, e il
    loro numero dipende da cosa il giro sapeva davvero (la durata solo se
    l'ora d'inizio c'era, la prima freccia solo dove ce n'e' piu' di una). */
@@ -3564,8 +3655,11 @@ text-transform:uppercase; color:var(--text-3); }
 .attr-card{ margin-bottom:var(--s-3); }
 .attr-testa{ display:flex; align-items:center; gap:var(--s-2); margin-bottom:var(--s-2); }
 .attr-testa b{ font-size:var(--t-md); font-weight:800; }
-.attr-pred{ font-size:var(--t-xs); font-weight:700; color:var(--accent);
-  background:var(--scheda-bg); border:1px solid var(--scheda-bd);
+/* Stessa terna del record, e per lo stesso motivo: « predefinito » e' una
+   scelta gia' fatta, non un richiamo. Prima era verde su velatura
+   d'argilla, 2,06:1. */
+.attr-pred{ font-size:var(--t-xs); font-weight:700; color:var(--acceso-fg);
+  background:var(--acceso-bg); border:1px solid var(--acceso-bd);
   border-radius:var(--r-lg); padding:2px var(--s-2); }
 .attr-riga{ font-size:var(--t-sm); color:var(--text-2); line-height:1.5; }
 .attr-note{ font-size:var(--t-sm); color:var(--text-3); font-style:italic;
@@ -3589,10 +3683,12 @@ text-transform:uppercase; color:var(--text-3); }
    tondo con le iniziali al posto di una foto che nessuno ha caricato. */
 .pp-card{ }
 .pp-testa{ display:flex; align-items:center; gap:var(--s-3); margin-bottom:var(--s-3); }
+/* Le iniziali erano verde marchio su velatura d'argilla: 2,06:1 su quello
+   che fa da faccia a chi non ha caricato una foto. Stessa terna del record. */
 .pp-tondo{ flex:0 0 auto; width:56px; height:56px; border-radius:50%;
-  background:var(--scheda-bg); border:1px solid var(--scheda-bd);
+  background:var(--acceso-bg); border:1px solid var(--acceso-bd);
   display:flex; align-items:center; justify-content:center;
-  font-weight:800; font-size:var(--t-lg); color:var(--accent); }
+  font-weight:800; font-size:var(--t-lg); color:var(--acceso-fg); }
 .pp-chi{ min-width:0; }
 .pp-chi b{ display:block; font-size:var(--t-lg); font-weight:800; line-height:1.2; }
 .pp-chi span{ display:block; font-size:var(--t-sm); color:var(--text-3); }
@@ -3755,7 +3851,11 @@ text-transform:uppercase; color:var(--text-3); }
   margin-top:var(--s-1); }
 /* Nel diario la nota e' la voce di chi ha tirato, non un dato: corsivo, e il
    filo a sinistra la stacca dai numeri senza farne un'altra scheda. */
-.diario-nota{ border-left:3px solid var(--scheda-bd); padding-left:var(--s-3);
+/* IL FILO DELLA NOTA E' NEUTRO, E DAL 24/08 E' UNA SCELTA. Il filetto
+   d'argilla adesso vuol dire « questo e' aperto », ed e' uno per schermata.
+   Le note in una pagina di diario sono tante: un segnale che si ripete
+   smette di essere un segnale e diventa un motivo decorativo. */
+.diario-nota{ border-left:3px solid var(--border-strong); padding-left:var(--s-3);
   margin:var(--s-2) 0 var(--s-3); font-style:italic; color:var(--text-2);
   font-size:var(--t-sm); line-height:1.5; }
 
@@ -3775,7 +3875,10 @@ text-transform:uppercase; color:var(--text-3); }
   margin-top:2px; line-height:1.3; }
 /* «l'ultima volta» non e' un consiglio dell'app: e' un fatto che viene dal tuo
    storico. Percio' e' una pastiglia sobria, non un richiamo. */
-.reg-sotto{ background:var(--scheda-bg); border-color:var(--scheda-bd);
+/* E DAL 24/08 IL CODICE FA QUELLO CHE LA RIGA SOPRA DICE. Portava la
+   velatura d'argilla e il suo bordo, cioe' esattamente il richiamo che il
+   commento escludeva. Adesso e' un gradino di superficie e un filo. */
+.reg-sotto{ background:var(--surface-2); border-color:var(--border);
   margin-top:0; }
 .reg-riga.on{ margin-bottom:0; }
 .reg-ultima{ flex:0 0 auto; align-self:flex-start; font-size:var(--t-xs); font-weight:700;
@@ -3786,7 +3889,9 @@ text-transform:uppercase; color:var(--text-3); }
    Ha il bordo pieno, non tratteggiato come il promemoria del percorso in
    corso: quello ricorda una cosa che sai, questo dice una cosa che credevi
    persa. */
-.resume-banner.ritrovato{ border-style:solid; border-color:var(--accent);
+/* Questo E' un segnale — una cosa che credevi persa — quindi tiene
+   l'argilla, ma piena e sul bordo invece che diluita sul fondo. */
+.resume-banner.ritrovato{ border-style:solid; border-color:var(--scheda-bd);
   background:var(--scheda-bg); }
 .ritrovato-tit{ font-weight:800; font-size:var(--t-md); margin-bottom:var(--s-1); }
 .ritrovato-riga{ color:var(--text-2); margin-bottom:var(--s-3); }
@@ -17879,7 +17984,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-24-pannello-porte";
+var BUILD_STAMP = "2026-08-24-filetto";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17888,7 +17993,7 @@ var BUILD_STAMP = "2026-08-24-pannello-porte";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-porte";
+var BUILD_PARENT = "2026-08-24-pannello-porte";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
