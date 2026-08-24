@@ -170,8 +170,8 @@
    Questi cinque numeri non si cambiano per estetica. */
 --punto-ss:#E8722F;     /* superspot — l'argilla di prima del 22/08 */
 --punto-spot:#6FBF3F;   /* spot */
---punto-sag:#5C7794;    /* sagoma */
---punto-perfetto:#D8574E;
+--punto-sag:#6F89A5;    /* sagoma — schiarito il 24/08: con l'inchiostro scuro era 3,98 */
+--punto-perfetto:#DA5F56;  /* alzato il 24/08: era 4,75 */
 --punto-zero:#D3D7CB;   /* il neutro freddo di prima della rotazione dei sand */
 
 /* IL TEMA SCURO HA I SUOI CINQUE, ed erano agganciati alle famiglie come gli
@@ -210,6 +210,9 @@
 --sand-900:#17130E;
 --moss-900:#0F1412; --moss-800:#16201C; --moss-700:#1A2620; --moss-600:#2A362F;
 --moss-500:#3B4A41; --moss-300:#9AA39C; --moss-200:#C7CFC5; --moss-100:#EDE6D6;
+/* i tre gradini chiari che reggono sul fondo scuro della testata:
+   7,78 · 6,40 · 6,20. Le versioni piene ci cadrebbero sotto. */
+--verde-testata:#7ACB3F; --argilla-testata:#FF8348; --rosso-testata:#FF7A7A;
 
 /* ───── SPAZIO · 4 / 8 / 12 / 16 / 24 / 32 / 48 ─────
    La regola era gia' scritta in cima a questo file da mesi ("nessun 6,
@@ -1017,7 +1020,14 @@ header.top{ background:var(--eroe-bg); color:var(--eroe-ink);
 header.top{ margin-top:calc(var(--s-4) * -1 + env(safe-area-inset-top));
   padding-top:calc(var(--s-2) + env(safe-area-inset-top)); }
 header.top .brandblock .brand-title{ color:var(--eroe-ink); }
-header.top .sub, header.top .bar-btn{ color:var(--eroe-eti); }
+header.top .sub{ color:var(--eroe-eti); }
+header.top .bar-btn{ color:var(--moss-100); }
+/* Il verde dell'app (#66B132) su questo fondo fa 5,89: passa, ma e' la stessa
+   famiglia del fondo e quindi stacca poco. Un gradino piu' su — stessa tinta,
+   piu' luce — arriva a 7,78 e si vede da lontano. L'argilla schiarita a 6,40
+   fa lo stesso mestiere dall'altra parte della ruota. */
+header.top .bar-btn.tinta-verde{ color:var(--verde-testata); --icona-accento:var(--argilla-testata); }
+header.top .bar-btn.tinta-argilla{ color:var(--rosso-testata); }
 header.top .bar-btn:hover{ background:color-mix(in srgb, var(--eroe-ink) 12%, transparent); }
 /* Nella Home il pannello sta attaccato alla testata: sono due pezzi dello
    stesso blocco, e il filo in mezzo li farebbe sembrare due cose. */
@@ -1636,7 +1646,12 @@ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
 /* Fondo pieno, cifra bianca, in TUTTI i temi. Il ragionamento scritto per il
    chiaro ("il colore lo si legge da lontano, il numero da vicino") vale
    identico al buio: non c'e' motivo di avere due disegni. */
-.quick-btn{ color:var(--solid-ink); border:1.5px solid rgba(0,0,0,0.12); box-shadow:none; }
+.quick-btn{ color:var(--solid-ink); border:2px solid rgba(0,0,0,0.28); box-shadow:none; }
+.tastiera .quick-btn.superspot{ border-color:var(--punto-ss-scuro); }
+.tastiera .quick-btn.spot{ border-color:var(--punto-spot-scuro); }
+.tastiera .quick-btn.sagoma{ border-color:var(--punto-sag-scuro); }
+.tastiera .quick-btn.perfect{ border-color:var(--punto-perfetto-scuro); }
+.tastiera .quick-btn.zero{ border-color:var(--punto-zero-scuro); }
 .quick-btn.superspot{ background:var(--score-ss); }
 .quick-btn.spot{ background:var(--score-spot); }
 .quick-btn.sagoma{ background:var(--score-sag); }
@@ -1676,6 +1691,8 @@ margin-bottom:var(--s-4); transition:color var(--dur-3) var(--ease); }
 .timer-pause-btn{ width:100%; }
 .shots-strip{ display:flex; gap:var(--s-1); justify-content:center; flex-wrap:wrap; margin:var(--s-3) 0 var(--s-1); }
 .shot-pill{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-pill); padding:var(--s-1) var(--s-3); font-size:var(--t-sm); font-weight:700; color:var(--cream); }
+/* Il primo del giro si vede senza contare: fondo oro, come il TOTALE. */
+.shot-pill-primo{ background:var(--gold-200); border-color:var(--gold-600); color:var(--gold-800); }
 table.score-table{ width:100%; border-collapse:collapse; font-size:var(--t-sm); }
 table.score-table th, table.score-table td{ padding:var(--s-2) var(--s-1); text-align:center; border-bottom:1px solid var(--line); }
 table.score-table th{ color:var(--muted); font-weight:600; font-size:var(--t-xs); text-transform:uppercase; letter-spacing:.05em; }
@@ -3561,7 +3578,7 @@ flex-direction:column; justify-content:flex-end; overflow:hidden; }
 .pista-testa{ flex:0 0 auto; margin-bottom:var(--s-3); }
 .pista-passo-riga{ display:flex; align-items:center; justify-content:space-between;
 gap:var(--s-2); margin-bottom:var(--s-2); }
-.pista-passo{ font-size:var(--t-xs); font-weight:600; letter-spacing:.09em;
+.pista-passo{ font-size:var(--t-xs); font-weight:800; letter-spacing:.12em;
 text-transform:uppercase; color:var(--text-3); }
 .pista-testa .progress-track{ margin-bottom:0; }
 /* ── dove si tira, e dove sono i punti (21/08/2026, PRD 16.1) ──
@@ -3827,10 +3844,11 @@ text-transform:uppercase; color:var(--text-3); }
   gap:var(--s-2); width:100%; padding:var(--s-2) 0; background:none; border:0;
   font:inherit; color:inherit; cursor:pointer; }
 .profilo-segno{ display:inline-flex; align-items:center; justify-content:center;
-  width:var(--s-7); height:var(--s-7); border-radius:var(--r-sm);
+  width:64px; height:64px; border-radius:var(--r-pill);
   background:color-mix(in srgb, var(--brand) 12%, var(--surface-2));
+  border:2px solid color-mix(in srgb, var(--brand) 38%, transparent);
   color:var(--brand); }
-.profilo-nome{ font-size:var(--t-md); font-weight:800; letter-spacing:-0.01em;
+.profilo-nome{ font-size:var(--t-lg); font-weight:800; letter-spacing:-0.01em;
   color:var(--text-1); }
 .profilo-chi{ font-size:var(--t-xs); color:var(--text-3); }
 /* La freccia gira: e' l'unico modo per sapere, guardando, se sotto c'e' altro. */
@@ -3954,10 +3972,11 @@ font-weight:600; color:var(--text-3); }
 .pista-andamento{ flex:0 0 auto; padding:var(--s-3) 0 var(--s-2); }
 .pista-tot{ display:flex; align-items:baseline; justify-content:space-between;
 gap:var(--s-3); padding-top:var(--s-2); border-top:1px solid var(--border); }
-.pista-tot .eti{ font-size:var(--t-xs); font-weight:600; letter-spacing:.09em;
+.pista-tot .eti{ font-size:var(--t-xs); font-weight:700; letter-spacing:.12em;
 text-transform:uppercase; color:var(--text-3); }
-.pista-tot .num{ font-family:var(--font-display); font-weight:700;
-font-size:var(--t-xl); line-height:1; color:var(--gold-role); }
+.pista-tot .num{ font-family:var(--font-display); font-weight:800;
+font-size:var(--t-2xl); line-height:.92; color:var(--gold-role);
+letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
 /* Le piazzole chiuse: numero piccolo sopra, punteggio sotto. UNA RIGA SOLA,
    le piu' recenti a destra. Andare a capo la farebbe crescere senza limite e
    tornerebbe a rubare spazio alla scena: e' l'errore appena corretto. Quello
@@ -13676,6 +13695,9 @@ var classi = conParola
 var b = el('<button type="button" class="'+classi+' no-print"></button>');
 b.setAttribute("title", a.titolo || a.testo);
 b.setAttribute("aria-label", a.titolo || a.testo);
+/* Sulla pastiglia chiara si scrive sempre in tinta: il verde e' il colore
+   dell'app, l'argilla e' riservata a cio' che avverte. */
+if(!conParola){ b.classList.add(a.pericolo ? "tinta-argilla" : "tinta-verde"); }
 /* Tre modi di segnare un tasto, in ordine di precisione: una bandiera dice
    dove sei, un segno pieno e' quello che l'app usa per quella porta ovunque,
    un glifo di linea e' il ripiego. */
@@ -17984,7 +18006,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-24-filetto";
+var BUILD_STAMP = "2026-08-24-mirino";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17993,7 +18015,7 @@ var BUILD_STAMP = "2026-08-24-filetto";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-24-pannello-porte";
+var BUILD_PARENT = "2026-08-24-filetto";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -22254,10 +22276,25 @@ var isLast = state.target >= state.format;
 var card = el('<div class="card target-stage"></div>');
 card.appendChild(el('<div class="mode-badge">'+escapeHtml(modeLabel(state.mode))+'</div>'));
 card.appendChild(el('<div class="archer-turn">'+(isLast ? t("round_done") : t("target_done"))+'</div>'));
-card.appendChild(el('<div class="big-target-num">'+state.target+'</div>'));
+function totaleGiro(a){
+var e = state.scores[a.id] || [];
+var n = 0;
+for(var i=0;i<e.length;i++){ if(e[i] && typeof e[i].total === "number"){ n += e[i].total; } }
+return n;
+}
+var io_ = state.archers[0];
+card.appendChild(el('<div class="big-target-num">'
++ (isLast ? totaleGiro(io_) : state.target) + '</div>'));
 
 var strip = el('<div class="shots-strip"></div>');
-state.archers.forEach(function(a){
+var fila = state.archers.slice();
+if(isLast){ fila.sort(function(x,y){ return totaleGiro(y) - totaleGiro(x); }); }
+fila.forEach(function(a, idx){
+if(isLast){
+strip.appendChild(el('<span class="shot-pill'+(idx===0 ? ' shot-pill-primo' : '')+'">'
++ escapeHtml(a.name)+': '+totaleGiro(a)+'</span>'));
+return;
+}
 var entries = state.scores[a.id];
 var ent = entries[state.target-1];
 if(ent){ strip.appendChild(el('<span class="shot-pill">'+escapeHtml(a.name)+': '+ent.total+'</span>')); }
