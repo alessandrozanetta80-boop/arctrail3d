@@ -1212,6 +1212,38 @@ border:1.5px solid color-mix(in srgb, var(--tone-train-solid) var(--tone-border)
 border:1.5px solid color-mix(in srgb, var(--tone-race-solid) var(--tone-border), transparent); box-shadow:none; }
 .menu-btn.prepara{ background:var(--tone-prep-bg); color:var(--tone-prep-fg);
 border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border), transparent); box-shadow:none; }
+/* ══ LE TRE PORTE PERDONO LA SCATOLA E TENGONO IL TONO ════════════════════
+   (23/08/2026, chiesto da Alessandro: «prova 1 e 3».)
+
+   Erano tre riquadri tinti, ognuno col suo fondo velato e il suo bordo: da
+   lontano tre scatole colorate, e il nome dentro pesava quanto la scatola.
+   Nella vetrina non ci sono scatole: ci sono fasce a tutta larghezza, un filo
+   che le separa, un accento che dice di cosa si parla.
+
+   IL COLORE NON SI PERDE, CAMBIA MESTIERE. Prima era il fondo, adesso e' una
+   barretta a sinistra: verde allenamento, argilla gara, oro prepara. Serve a
+   distinguere i tre modi — ed e' l'unica cosa che quel colore ha sempre
+   fatto. Il fondo velato era il mezzo, non il fine.
+
+   E LE TRE PESANO ANCORA UGUALE. Non e' pigrizia: e' una decisione presa due
+   volte, il 20/08, quando l'allenamento era pieno e grande e Alessandro disse
+   «cosi' grosso mi disturba». Tre fasce identiche tranne l'accento la
+   rispettano meglio di tre scatole, perche' adesso nemmeno la cornice
+   suggerisce una gerarchia che non c'e'.
+   Il punto di partenza lo da' la Home col suo tasto pieno: qui si e' gia'
+   scelto di tirare, si sceglie solo *come*. */
+.menu-btn.training, .menu-btn.gara, .menu-btn.prepara{
+  background:none; border:0; border-bottom:1px solid var(--border);
+  border-left:3px solid var(--porta-tono);
+  border-radius:0; box-shadow:none; margin-bottom:0;
+  color:var(--text-1); padding-left:var(--s-3); }
+.menu-btn.training{ --porta-tono:var(--tone-train-solid); }
+.menu-btn.gara{     --porta-tono:var(--tone-race-solid); }
+.menu-btn.prepara{  --porta-tono:var(--tone-prep-solid); }
+/* Il tocco tinge la fascia col suo tono, appena: e' la risposta al dito e
+   deve durare quanto il dito. */
+.menu-btn.training:active, .menu-btn.gara:active, .menu-btn.prepara:active{
+  background:color-mix(in srgb, var(--porta-tono) 14%, transparent); }
 /* L'inchiostro dentro la pastiglia SEGUE LA PASTIGLIA, non il tema: chiara
    la pastiglia, scuro il disegno; scura la pastiglia, chiaro il disegno.
    Erano tre bianchi scritti a mano, e con le pastiglie accese il bianco non
@@ -3549,6 +3581,22 @@ text-transform:uppercase; color:var(--text-3); }
 .hm-voce{ min-width:0; }
 .hm-voce b{ font-variant-numeric:tabular-nums; }
 .hm-voce:first-child b{ font-size:var(--t-3xl); }
+/* ══ IL NUMERO GRANDE E' ARGILLA ══════════════════════════════════════════
+   (23/08/2026.) Nella vetrina la cosa che si ricorda e' un numero enorme
+   colorato — «ZERO tacche di segnale». Nell'app i numeri grandi c'erano, ma
+   tutti dello stesso nero del testo intorno: nessuno era IL numero. Questo lo
+   e': la media del mese, la cifra per cui si apre la Home. I tre sotto il
+   filetto restano neri, perche' la spiegano — se si colorano anche loro non
+   si colora niente.
+
+   PERCHE' `--tone-race-fg` E NON `--clay`. L'argilla accesa su fondo crema
+   sta a 3,0 di contrasto: passa per il testo grande e basta, e al sole
+   «passa per il pelo» vuol dire che non si legge. `--tone-race-fg` e'
+   l'argilla che l'app usa gia' per SCRIVERE — profonda sul chiaro, viva sullo
+   scuro — e sta sopra 5 in tutti e tre i temi.
+   *L'argilla accesa e' delle cose che si premono. Questa non si preme, si
+   legge.* */
+.home-mese-dati > .hm-voce:first-child b{ color:var(--tone-race-fg); }
 /* Il filetto e' quello che trasforma quattro cifre in una tabella: sopra il
    numero con cui ci si giudica, sotto quelli che lo spiegano. */
 .hm-riga{ display:flex; margin-top:var(--s-3); padding-top:var(--s-3);
@@ -17762,7 +17810,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-elenco";
+var BUILD_STAMP = "2026-08-23-porte";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17771,7 +17819,7 @@ var BUILD_STAMP = "2026-08-23-elenco";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-accesi";
+var BUILD_PARENT = "2026-08-23-elenco";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
