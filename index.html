@@ -433,10 +433,10 @@ color-scheme:light;
    prende il verde scuro: 5,76:1. *Non e' un'eccezione al sistema, e' il
    sistema che finalmente distingue «colore della voce» da «colore di un
    segno appoggiato sul fondo».* */
---tone-train-bg:var(--green-200); --tone-train-fg:var(--green-800); --tone-train-solid:var(--lime-500);
+--tone-train-bg:var(--green-200); --tone-train-fg:var(--green-700); --tone-train-solid:var(--lime-500);
 --tone-train-ico:var(--green-700); --tone-race-ico:var(--clay-600); --tone-prep-ico:var(--gold-600);
 --tone-race-bg:var(--clay-200);  --tone-race-fg:var(--clay-600);   --tone-race-solid:var(--clay-400);
---tone-prep-bg:var(--gold-200);  --tone-prep-fg:var(--gold-600);   --tone-prep-solid:var(--gold-400);
+--tone-prep-bg:var(--gold-200);  --tone-prep-fg:var(--gold-800);   --tone-prep-solid:var(--gold-400);
 --tone-border:60%;
 /* L'INCHIOSTRO SOPRA UNA TINTA PIENA — uno solo, per tutto il tema.
    Vale per la pastiglia dei tre comandi e per i cinque tasti del punteggio:
@@ -497,6 +497,32 @@ color-scheme:light;
    quello non e' un riquadro da leggere ma la porta da cui si entra. */
 --eroe-bg:var(--moss-700); --eroe-ink:var(--sand-100);
 --eroe-eti:var(--moss-300);
+/* ══ LE TRE PORTE SONO UN PANNELLO ═══════════════════════════════════════
+   (23/08/2026, l'idea e' di Alessandro: «e andare a scurire leggermente il
+   colore di sfondo dei 3 tasti cosi' da poter usare i colori non
+   modificati?».)
+
+   E' la mossa giusta e la ragione e' misurabile: su questo fondo i tre toni
+   ACCESI — gli stessi dei filetti, senza versioni scure — stanno tutti sopra
+   soglia. Verde 5,89 · argilla 4,70 · oro 6,13. **Il fondo scende a prendere
+   i colori invece di far salire i colori verso il fondo.**
+
+   PERCHE' NON IL LICHENE DELLA VETRINA (`#3A4A3E`), che era piu' bello e
+   staccava meglio dalla testata: li' l'argilla accesa fa 2,83 — sotto la
+   soglia perfino come semplice elemento grafico, dove basterebbe 3. E questo
+   ha spiegato una cosa della vetrina che non si vedeva guardandola: **sopra
+   il lichene, la vetrina non usa mai l'argilla come inchiostro.** «GIRO.» e'
+   argilla ma e' alto 64px; altrove l'arancione e' sempre un blocco pieno con
+   la scritta sopra. Il lichene regge il crema, non l'argilla scritta.
+
+   IL TITOLO E' CREMA, NON COLORATO — scelto da Alessandro fra le due prove.
+   Le tre voci pesano uguale (deciso il 20/08), e tre nomi colorati in colonna
+   suggeriscono una gerarchia che non c'e': il colore resta il segnale
+   laterale, il nome resta un nome. */
+--porte-bg:var(--moss-700); --porte-tit:var(--sand-100);
+--porte-sub:var(--moss-300); --porte-linea:rgba(245,242,237,0.13);
+--segno-train:var(--tone-train-solid); --segno-race:var(--tone-race-solid);
+--segno-prep:var(--tone-prep-solid);
 /* IL TASTO PRIMARIO: TINTO, NON PIENO. (23/08/2026, chiesto da Alessandro
    indicando `.btn-arancio`: «si vede bene, ma spinge un po' meno».)
    Stessa struttura dell'arancione — fondo velato, filo e scritta del colore.
@@ -612,6 +638,22 @@ color-scheme:dark;
    dalla parte opposta. */
 --eroe-bg:var(--moss-600); --eroe-ink:var(--sand-100);
 --eroe-eti:var(--moss-300);
+/* Al buio le porte fanno come il pannello: salgono di un gradino invece di
+   scendere, o non si staccherebbero dal fondo. I toni accesi restano. */
+--porte-bg:var(--moss-600); --porte-tit:var(--sand-100);
+--porte-sub:var(--moss-300); --porte-linea:rgba(245,242,237,0.13);
+/* AL BUIO I SEGNI PRENDONO L'ALTRA TINTA, e il banco l'ha detto prima di
+   noi: il segno della gara stava a 2,55 sul pannello, cioe' sotto la soglia
+   dei tre anche solo come elemento grafico.
+   Il perche' e' istruttivo. `--solid` al buio SCENDE (`--clay-500`), perche'
+   e' il colore da RIEMPIRE: una pastiglia scura con la scritta chiara sopra.
+   Ma il segno non e' una pastiglia, e' inchiostro appoggiato sul pannello —
+   e sul pannello scuro l'inchiostro deve salire, non scendere. Al buio la
+   tinta giusta e' quella che il tema chiama gia' `-fg`.
+   *Lo stesso nome fa due mestieri opposti a seconda di cosa gli sta sotto:
+   e' la stessa distinzione fra riempire e scrivere di tutta questa giornata.* */
+--segno-train:var(--tone-train-fg); --segno-race:var(--tone-race-fg);
+--segno-prep:var(--tone-prep-fg);
 /* Al buio la scritta e' il verde chiaro: qui il fondo e' scuro, quindi il
    rapporto si rovescia e `--brand` va benissimo. */
 /* 12%, NON 18%. Al buio la velatura schiarisce il fondo e AVVICINA i due
@@ -711,7 +753,7 @@ color-scheme:light;
    tenue si toglie di mezzo */
 /* Stessa correzione sui tre comandi del menu: la PASTIGLIA e' un fondo, e
    quindi va viva; il TESTO accanto e' testo, e quindi resta scuro. */
---tone-train-bg:var(--sand-50); --tone-train-fg:var(--green-900); --tone-train-solid:var(--lime-500);
+--tone-train-bg:var(--sand-50); --tone-train-fg:var(--green-700); --tone-train-solid:var(--lime-500);
 --tone-race-bg:var(--sand-50);  --tone-race-fg:var(--clay-800);   --tone-race-solid:var(--clay-400);
 --tone-prep-bg:var(--sand-50);  --tone-prep-fg:var(--gold-800);   --tone-prep-solid:var(--gold-400);
 /* Al sole il fondo e' bianco: il verde del marchio ci fa 2,66:1. Stesso
@@ -776,6 +818,16 @@ color-scheme:light;
    gli serve.* */
 --eroe-bg:var(--sand-50); --eroe-ink:var(--sand-900);
 --eroe-eti:var(--sand-500);
+/* AL SOLE LE PORTE RESTANO CHIARE, come il pannello e per lo stesso motivo:
+   in piena luce un fondo scuro si legge peggio, non meglio. Ma allora i toni
+   accesi non reggono piu' sopra il bianco (verde 2,66), quindi qui il segno
+   passa alla versione «da scrivere» di ciascun colore — la stessa che porta
+   il testo dentro le porte tinte. *Il pannello non e' un colore, e' un
+   ruolo: ogni tema lo risolve come gli serve.* */
+--porte-bg:var(--sand-50); --porte-tit:var(--sand-900);
+--porte-sub:var(--sand-600); --porte-linea:var(--sand-300);
+--segno-train:var(--tone-train-fg); --segno-race:var(--tone-race-fg);
+--segno-prep:var(--tone-prep-fg);
 /* AL SOLE IL TASTO RESTA PIENO, ED E' IL MOTIVO PER CUI QUESTO TEMA ESISTE.
    Il tinto e' piu' garbato al chiuso; in piena luce «piu' garbato» vuol dire
    «non si vede». Chi accende il Sole ha gia' detto che gli serve il massimo
@@ -1233,17 +1285,34 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
    Il punto di partenza lo da' la Home col suo tasto pieno: qui si e' gia'
    scelto di tirare, si sceglie solo *come*. */
 .menu-btn.training, .menu-btn.gara, .menu-btn.prepara{
-  background:none; border:0; border-bottom:1px solid var(--border);
-  border-left:3px solid var(--porta-tono);
+  background:var(--porte-bg); border:0; border-bottom:1px solid var(--porte-linea);
+  border-left:4px solid var(--porta-segno);
   border-radius:0; box-shadow:none; margin-bottom:0;
-  color:var(--text-1); padding-left:var(--s-3); }
-.menu-btn.training{ --porta-tono:var(--tone-train-solid); }
-.menu-btn.gara{     --porta-tono:var(--tone-race-solid); }
-.menu-btn.prepara{  --porta-tono:var(--tone-prep-solid); }
+  color:var(--porte-tit); padding-left:var(--s-3); }
+/* L'ultima non porta la linea: il pannello finisce, non si interrompe —
+   come l'ultima riga di un elenco. */
+.menu-btn.prepara{ border-bottom-color:transparent; }
+.menu-btn.training .menu-txt, .menu-btn.gara .menu-txt, .menu-btn.prepara .menu-txt{
+  color:var(--porte-tit); }
+.menu-btn.training .menu-sub, .menu-btn.gara .menu-sub, .menu-btn.prepara .menu-sub{
+  color:var(--porte-sub); opacity:1; }
+/* Il segno prende il tono del suo modo: e' l'unica cosa colorata di ogni
+   riga, e per questo dice tutto da sola. */
+.menu-btn.training .menu-icon, .menu-btn.gara .menu-icon, .menu-btn.prepara .menu-icon{
+  color:var(--porta-segno); }
+/* Due tinte per modo: quella per RIEMPIRE (il segno sul pannello scuro) e
+   quella per SCRIVERE (usata dal tema Sole, dove il fondo e' bianco). */
+/* Ogni porta pesca il proprio segno dal ruolo che il tema ha dichiarato: sul
+   pannello scuro il tono acceso, sul bianco del Sole quello da scrivere. Il
+   modo lo sa la porta, il colore lo sa il tema, e nessuno dei due deve
+   sapere l'altro. */
+.menu-btn.training{ --porta-tono:var(--tone-train-solid); --porta-segno:var(--segno-train); }
+.menu-btn.gara{     --porta-tono:var(--tone-race-solid);  --porta-segno:var(--segno-race); }
+.menu-btn.prepara{  --porta-tono:var(--tone-prep-solid);  --porta-segno:var(--segno-prep); }
 /* Il tocco tinge la fascia col suo tono, appena: e' la risposta al dito e
    deve durare quanto il dito. */
 .menu-btn.training:active, .menu-btn.gara:active, .menu-btn.prepara:active{
-  background:color-mix(in srgb, var(--porta-tono) 14%, transparent); }
+  background:color-mix(in srgb, var(--porta-tono) 18%, var(--porte-bg)); }
 /* L'inchiostro dentro la pastiglia SEGUE LA PASTIGLIA, non il tema: chiara
    la pastiglia, scuro il disegno; scura la pastiglia, chiaro il disegno.
    Erano tre bianchi scritti a mano, e con le pastiglie accese il bianco non
@@ -4769,7 +4838,7 @@ msg_delete_mine: "Elimina il mio messaggio",
 market_opening: "Apro il Marketplace\u2026",
 hist_delete_one: "Elimina questo giro",
 hist_delete_confirm: "Confermi? Il giro viene cancellato da questo dispositivo e dal backup.",
-pg_locked_body: "Prepara gara è ancora in lavorazione: per ora è aperto solo a chi collabora allo sviluppo. Quando sarà pronto verrà aperto a tutti.",
+pg_locked_body: "Prepara gara è ancora in lavorazione: per ora è aperto solo a chi collabora allo sviluppo. Quando sarà pronto verrà aperto alle compagnie.",
 // Chat diretta tra due arcieri
 dm_title: "Messaggi",
 dm_sub: "Scrivi in privato a un altro arciere iscritto ad ArcTrail 3D.",
@@ -5398,7 +5467,7 @@ msg_delete_mine: "Delete my message",
 market_opening: "Opening the Marketplace\u2026",
 hist_delete_one: "Delete this round",
 hist_delete_confirm: "Are you sure? The round is deleted from this device and from the backup.",
-pg_locked_body: "Competition setup is still being worked on: for now it is open only to those helping with development. It will be opened to everyone once it is ready.",
+pg_locked_body: "Competition setup is still being worked on: for now it is open only to those helping with development. It will be opened to clubs once it is ready.",
 dm_title: "Messages",
 dm_sub: "Write privately to another archer registered on ArcTrail 3D.",
 dm_search_label: "Search for an archer",
@@ -6050,7 +6119,7 @@ msg_delete_mine: "Supprimer mon message",
 market_opening: "Ouverture du Marketplace\u2026",
 hist_delete_one: "Supprimer ce tour",
 hist_delete_confirm: "Confirmer\u00a0? Le tour est supprim\u00e9 de cet appareil et de la sauvegarde.",
-pg_locked_body: "La préparation des concours est encore en chantier : pour l’instant elle est ouverte seulement à ceux qui participent au développement. Elle sera ouverte à tous quand elle sera prête.",
+pg_locked_body: "La préparation des concours est encore en chantier : pour l’instant elle est ouverte seulement à ceux qui participent au développement. Elle sera ouverte aux compagnies quand elle sera prête.",
 dm_title: "Messages",
 dm_sub: "\u00c9crivez en priv\u00e9 \u00e0 un autre archer inscrit sur ArcTrail 3D.",
 dm_search_label: "Chercher un archer",
@@ -6702,7 +6771,7 @@ msg_delete_mine: "Meine Nachricht l\u00f6schen",
 market_opening: "Marketplace wird ge\u00f6ffnet\u2026",
 hist_delete_one: "Diese Runde l\u00f6schen",
 hist_delete_confirm: "Best\u00e4tigen? Die Runde wird von diesem Ger\u00e4t und aus dem Backup gel\u00f6scht.",
-pg_locked_body: "Die Wettkampfvorbereitung ist noch in Arbeit: vorerst ist sie nur für die Mitwirkenden an der Entwicklung offen. Sobald sie fertig ist, wird sie für alle geöffnet.",
+pg_locked_body: "Die Wettkampfvorbereitung ist noch in Arbeit: vorerst ist sie nur für die Mitwirkenden an der Entwicklung offen. Sobald sie fertig ist, wird sie für die Vereine geöffnet.",
 dm_title: "Nachrichten",
 dm_sub: "Schreibe privat an einen anderen Sch\u00fctzen, der bei ArcTrail 3D angemeldet ist.",
 dm_search_label: "Einen Sch\u00fctzen suchen",
@@ -7353,7 +7422,7 @@ msg_delete_mine: "Mesaj\u0131m\u0131 sil",
 market_opening: "Pazar yeri a\u00e7\u0131l\u0131yor\u2026",
 hist_delete_one: "Bu turu sil",
 hist_delete_confirm: "Onayl\u0131yor musun? Tur bu cihazdan ve yedekten silinir.",
-pg_locked_body: "Yarışma hazırlığı hâlâ üzerinde çalışılıyor: şimdilik yalnızca geliştirmeye yardım edenlere açık. Hazır olduğunda herkese açılacak.",
+pg_locked_body: "Yarışma hazırlığı hâlâ üzerinde çalışılıyor: şimdilik yalnızca geliştirmeye yardım edenlere açık. Hazır olduğunda kulüplere açılacak.",
 dm_title: "Mesajlar",
 dm_sub: "ArcTrail 3D'ye kay\u0131tl\u0131 ba\u015fka bir ok\u00e7uya \u00f6zel yaz.",
 dm_search_label: "Bir ok\u00e7u ara",
@@ -8018,7 +8087,7 @@ msg_delete_mine: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u043c\u043e\u0451 
 market_opening: "\u041e\u0442\u043a\u0440\u044b\u0432\u0430\u044e \u0431\u0430\u0440\u0430\u0445\u043e\u043b\u043a\u0443\u2026",
 hist_delete_one: "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u044d\u0442\u043e\u0442 \u043a\u0440\u0443\u0433",
 hist_delete_confirm: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u0435\u0442\u0435? \u041a\u0440\u0443\u0433 \u0443\u0434\u0430\u043b\u044f\u0435\u0442\u0441\u044f \u0441 \u044d\u0442\u043e\u0433\u043e \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u0430 \u0438 \u0438\u0437 \u0440\u0435\u0437\u0435\u0440\u0432\u043d\u043e\u0439 \u043a\u043e\u043f\u0438\u0438.",
-pg_locked_body: "Подготовка турнира ещё в работе: пока она открыта только тем, кто помогает с разработкой. Когда будет готова, откроем её для всех.",
+pg_locked_body: "Подготовка турнира ещё в работе: пока она открыта только тем, кто помогает с разработкой. Когда будет готова, откроем её для клубов.",
 dm_title: "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f",
 dm_sub: "\u041d\u0430\u043f\u0438\u0448\u0438\u0442\u0435 \u043b\u0438\u0447\u043d\u043e \u0434\u0440\u0443\u0433\u043e\u043c\u0443 \u0441\u0442\u0440\u0435\u043b\u043a\u0443, \u0437\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u043e\u043c\u0443 \u0432 ArcTrail 3D.",
 dm_search_label: "\u041d\u0430\u0439\u0442\u0438 \u0441\u0442\u0440\u0435\u043b\u043a\u0430",
@@ -8683,7 +8752,7 @@ msg_delete_mine: "Eliminar mi mensaje",
 market_opening: "Abriendo el Marketplace\u2026",
 hist_delete_one: "Eliminar esta ronda",
 hist_delete_confirm: "\u00bfConfirmas? La ronda se borra de este dispositivo y de la copia de seguridad.",
-pg_locked_body: "La preparación de competiciones todavía está en obras: por ahora está abierta solo a quienes colaboran en el desarrollo. Se abrirá a todos cuando esté lista.",
+pg_locked_body: "La preparación de competiciones todavía está en obras: por ahora está abierta solo a quienes colaboran en el desarrollo. Se abrirá a los clubes cuando esté lista.",
 dm_title: "Mensajes",
 dm_sub: "Escribe en privado a otro arquero registrado en ArcTrail 3D.",
 dm_search_label: "Busca un arquero",
@@ -9348,7 +9417,7 @@ msg_delete_mine: "Radera mitt meddelande",
 market_opening: "\u00d6ppnar Marketplace\u2026",
 hist_delete_one: "Radera den h\u00e4r rundan",
 hist_delete_confirm: "Bekr\u00e4ftar du? Rundan raderas fr\u00e5n den h\u00e4r enheten och fr\u00e5n s\u00e4kerhetskopian.",
-pg_locked_body: "Tävlingsförberedelse är fortfarande under arbete: just nu är den bara öppen för dem som hjälper till med utvecklingen. Den öppnas för alla när den är klar.",
+pg_locked_body: "Tävlingsförberedelse är fortfarande under arbete: just nu är den bara öppen för dem som hjälper till med utvecklingen. Den öppnas för föreningarna när den är klar.",
 dm_title: "Meddelanden",
 dm_sub: "Skriv privat till en annan skytt som \u00e4r registrerad p\u00e5 ArcTrail 3D.",
 dm_search_label: "S\u00f6k en skytt",
@@ -10013,7 +10082,7 @@ msg_delete_mine: "Mijn bericht verwijderen",
 market_opening: "Marketplace wordt geopend\u2026",
 hist_delete_one: "Deze ronde verwijderen",
 hist_delete_confirm: "Bevestig je? De ronde wordt van dit apparaat en uit de back-up verwijderd.",
-pg_locked_body: "Wedstrijdvoorbereiding is nog in de maak: voorlopig is hij alleen open voor wie meehelpt aan de ontwikkeling. Hij gaat voor iedereen open zodra hij klaar is.",
+pg_locked_body: "Wedstrijdvoorbereiding is nog in de maak: voorlopig is hij alleen open voor wie meehelpt aan de ontwikkeling. Hij gaat voor verenigingen open zodra hij klaar is.",
 dm_title: "Berichten",
 dm_sub: "Schrijf priv\u00e9 naar een andere boogschutter die op ArcTrail 3D is ingeschreven.",
 dm_search_label: "Zoek een boogschutter",
@@ -17810,7 +17879,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-23-porte";
+var BUILD_STAMP = "2026-08-24-pannello-porte";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -17819,7 +17888,7 @@ var BUILD_STAMP = "2026-08-23-porte";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-23-elenco";
+var BUILD_PARENT = "2026-08-23-porte";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
