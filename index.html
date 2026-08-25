@@ -301,6 +301,30 @@
    pagina smette di sembrare montata da due persone diverse.
    `--bordo` cambia da telefono a computer, e la gola lo segue da sola. */
 --bordo:var(--s-4); --gola:var(--bordo);
+/* ══ IL GUSCIO E' UNO ═════════════════════════════════════════════════════
+   (25/08/2026.) La larghezza dell'app da computer era scritta in due posti
+   che dovevano combaciare e non si conoscevano: `#app{max-width:1060px}` e la
+   fascia chiara del fondo pagina, disegnata a mano a `50% ± 545px` con la
+   sfumatura a `± 610px`. I due numeri venivano dallo stesso calcolo — meta'
+   guscio, piu' un filo — ma nessuno dei due lo diceva.
+
+   *Due costanti che devono restare d'accordo e non si citano a vicenda
+   restano d'accordo finche' nessuno tocca la prima.* Il giorno che il guscio
+   fosse cresciuto, la fascia sarebbe rimasta dov'era: la colonna sarebbe
+   uscita dal foglio, ed e' esattamente l'effetto «l'app galleggia in mezzo a
+   un vuoto» — il foglio smette di stare sotto quello che regge.
+
+   Adesso c'e' `--shell`, e la fascia se lo calcola. Un numero solo da
+   cambiare, e non puo' andare fuori posto.
+
+   1200px, dove prima erano 1060: su un monitor da 1366 in su la colonna
+   respira e le griglie di schede prendono lo spazio che c'e'. Il valore vive
+   qui, in cima, non dentro una media query: le fasce lo leggono da fuori. */
+--shell:1200px;
+/* Le due colonne strette hanno un nome, e il nome dice il mestiere. Non sono
+   il guscio: stanno DENTRO il guscio, che resta largo uguale su tutte le
+   schermate. Qui i valori del telefono; le fasce da computer li rialzano. */
+--col-lettura:620px;
 
 /* ───── LA PRIMA SCHERMATA ─────
    Si apre a casa, non in mezzo al bosco: fondo chiaro e testo scuro,
@@ -1915,14 +1939,17 @@ per tutte le schermate e la colonna di lettura vive dentro. */
 /* Il margine della pagina cresce, e con lui la gola: `--gola` e' definita in
    funzione di `--bordo`, quindi basta cambiare questo. */
 :root{ --bordo:var(--s-5); }
-#app{ max-width:900px; padding:20px var(--bordo) 44px; }
+/* Il guscio e' lo stesso di tutte le larghezze: qui la finestra e' piu'
+   stretta del tetto, quindi l'app prende quello che c'e' meno il margine —
+   che e' quello che serve su un tablet. */
+#app{ max-width:var(--shell); padding:20px var(--bordo) 44px; }
 /* Le fasce escono dal margine della PAGINA, e sul computer il margine e' un
    altro: senza questa riga restano rientrate di otto pixel e si rileggono
    come le carte di prima. E' il motivo per cui il disegno nuovo, da computer,
    sembrava identico al vecchio. */
 .strati, .menu-cols > .card, .menu-cols > .home-sezione > .card{
   margin-left:calc(var(--bordo) * -1); margin-right:calc(var(--bordo) * -1); }
-#app.narrow > :not(header.top){ width:100%; max-width:620px; margin-left:auto; margin-right:auto; }
+#app.narrow > :not(header.top){ width:100%; max-width:var(--col-lettura); margin-left:auto; margin-right:auto; }
 header.top{ height:72px; margin-bottom:20px; }
 header.top .logo{ width:56px; height:56px; }
 header.top h1{ font-size:var(--t-lg); }
@@ -1958,7 +1985,17 @@ height:auto; min-height:60px; padding:var(--s-2) var(--s-3) var(--s-2) var(--s-2
 flex-wrap:wrap; row-gap:8px;
 background:var(--navbar-bg); border:1px solid var(--navbar-line); border-radius:var(--r-lg);
 box-shadow:0 3px 14px var(--navbar-shadow); backdrop-filter:none; -webkit-backdrop-filter:none;
-margin-top:0; margin-bottom:var(--s-4); margin-left:0; margin-right:0;
+/* L'INSEGNA ARRIVA DOVE ARRIVANO LE FASCE, ANCHE SUL TABLET. (25/08/2026.)
+   Erano due zeri. Sopra i 900px una riga piu' in basso rimette i margini
+   negativi (21/08: «la barra sopra e' piu' stretta delle tabelle sotto»), ma
+   nella fascia 760-900 quella riga non arriva, e qui gli zeri restavano
+   l'ultima parola: insegna 24..729, fasce sotto 0..753. Quarantotto pixel di
+   disallineamento fra la barra e tutto quello che regge.
+   *Il difetto era stato curato una volta sola, alla larghezza in cui era
+   stato visto.* Adesso il valore e' `--bordo`, che cambia da solo con la
+   fascia — 24 qui, 32 da computer — e le due regole dicono la stessa cosa. */
+margin-top:0; margin-bottom:var(--s-4);
+margin-left:calc(var(--bordo) * -1); margin-right:calc(var(--bordo) * -1);
 }
 /* Anche le sezioni sono bersagli: da tablet si toccano col dito. */
 .tabbar-wide > button{ min-height:var(--hit); }
@@ -3115,10 +3152,10 @@ font-family:var(--font-num); padding:var(--s-1) 0; }
 body{
   background:
     linear-gradient(90deg,
-      transparent calc(50% - 610px),
-      color-mix(in srgb, var(--surface-1) 55%, transparent) calc(50% - 545px),
-      color-mix(in srgb, var(--surface-1) 55%, transparent) calc(50% + 545px),
-      transparent calc(50% + 610px)),
+      transparent calc(50% - var(--shell) / 2 - 80px),
+      color-mix(in srgb, var(--surface-1) 55%, transparent) calc(50% - var(--shell) / 2 - 15px),
+      color-mix(in srgb, var(--surface-1) 55%, transparent) calc(50% + var(--shell) / 2 + 15px),
+      transparent calc(50% + var(--shell) / 2 + 80px)),
     radial-gradient(ellipse 1100px 620px at 10% -10%, var(--wash-1), transparent 62%),
     radial-gradient(ellipse 900px 560px at 105% 8%, var(--wash-2), transparent 58%),
     radial-gradient(ellipse 1000px 700px at 50% 116%, var(--wash-3), transparent 62%),
@@ -3126,8 +3163,8 @@ body{
 }
 html{ scroll-behavior:smooth; }
 html.no-smooth{ scroll-behavior:auto; }
-:root{ --bordo:var(--s-6); }
-#app{ max-width:1060px; padding:20px var(--bordo) 76px; }
+:root{ --bordo:var(--s-6); --col-lettura:660px; }
+#app{ max-width:var(--shell); padding:20px var(--bordo) 76px; }
 .strati, .menu-cols > .card, .menu-cols > .home-sezione > .card{
   margin-left:calc(var(--bordo) * -1); margin-right:calc(var(--bordo) * -1); }
 /* La colonna di lettura, non il guscio: vedi la nota nel blocco dei 760px.
@@ -3138,7 +3175,7 @@ html.no-smooth{ scroll-behavior:auto; }
    in colonna, e li' un margine automatico spegne lo stretch: senza la
    larghezza dichiarata la pista si stringeva sul contenuto — misurata a 8px,
    cioe' la tastiera del giro ridotta a una scheggia. Provato, non dedotto. */
-#app.narrow > :not(header.top){ width:100%; max-width:660px; margin-left:auto; margin-right:auto; }
+#app.narrow > :not(header.top){ width:100%; max-width:var(--col-lettura); margin-left:auto; margin-right:auto; }
 
 /* ── 2. La testata: un'insegna, non una barra grigia ─────────────────── */
 /* L'insegna era un blocco verde scuro sopra una pagina chiara: due meta'
@@ -3205,7 +3242,7 @@ header.top > .tabbar-wide{ flex:1 0 100%; order:2; min-width:0;
    «la barra sopra e' piu' stretta delle tabelle sotto».) Le fasce escono dal
    margine della pagina, la testata no: due larghezze diverse nella stessa
    colonna si vedono subito, e sembrano un errore di montaggio. Lo erano. */
-header.top{ margin-left:calc(var(--s-6) * -1); margin-right:calc(var(--s-6) * -1); }
+header.top{ margin-left:calc(var(--bordo) * -1); margin-right:calc(var(--bordo) * -1); }
 header.top::after{ display:none; }
 /* IL NOME DELL'APP ERA SCRITTO IN BIANCO SU FONDO BIANCO. (21/08/2026,
    segnalato da Alessandro: «da web non c'e' la scritta ArcTrail 3D».)
@@ -18284,7 +18321,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-modulo";
+var BUILD_STAMP = "2026-08-25-guscio";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18293,7 +18330,7 @@ var BUILD_STAMP = "2026-08-25-modulo";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-misure";
+var BUILD_PARENT = "2026-08-25-modulo";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
