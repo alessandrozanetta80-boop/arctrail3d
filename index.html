@@ -3660,11 +3660,19 @@ border-radius:var(--r-md); display:flex; align-items:center; gap:var(--s-2); }
    crema e si legge da sola: se domani il filetto sparisse, la voce accesa
    sarebbe comunque leggibile, solo indistinguibile. */
 .tabw{ position:relative; }
+/* IL FILETTO SEMBRAVA SPOSTATO A SINISTRA. (25/08/2026, visto da Alessandro:
+   «rimane l'impressione che sia sbilanciato, non so perche'».)
+   Il perche' e' geometrico: era largo quanto il pulsante, cioe' **icona piu'
+   parola**, e l'occhio lo confronta con la parola sola. Il centro del filetto
+   cadeva a sinistra del centro di «Home» di mezza icona esatta.
+   Ora e' agganciato all'etichetta e non al pulsante: sottolinea quello che
+   sottolineava sulla vetrina, cioe' il nome della sezione. */
 .tabw.on{ background:none; border-color:transparent; color:var(--eroe-ink); }
 .tabw.on > svg{ color:var(--eroe-ink); }
 .tabw.on .tab-lbl{ font-weight:800; }
-.tabw.on::after{ content:""; position:absolute; left:var(--s-3); right:var(--s-3);
-  bottom:0; height:3px; border-radius:var(--r-pill); background:var(--clay); }
+.tabw.on .tab-lbl{ position:relative; }
+.tabw.on .tab-lbl::after{ content:""; position:absolute; left:0; right:0;
+  bottom:-6px; height:3px; border-radius:var(--r-pill); background:var(--clay); }
 @media (hover:hover) and (pointer:fine){
 .tabbar button:not(.on):hover{ background:var(--navbar-hover); color:var(--text-1); }
 }
@@ -18222,7 +18230,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-riga";
+var BUILD_STAMP = "2026-08-25-filetto";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18231,7 +18239,7 @@ var BUILD_STAMP = "2026-08-25-riga";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-carbone";
+var BUILD_PARENT = "2026-08-25-riga";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
