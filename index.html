@@ -1714,7 +1714,13 @@ border:2px solid var(--bark); flex:0 0 auto; }
 .ring-badge.empty{ opacity:0.35; background:var(--ring-empty-bg); border-color:var(--ring-empty-bd); color:var(--muted); }
 .ring-name{ font-size:var(--t-2xs); color:var(--muted); max-width:56px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .rank-row.first td{ color:var(--accent-soft); font-weight:700; }
-.total-col{ font-weight:800; color:var(--gold-role); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
+/* L'ORO VA AL PRIMO, NON A TUTTI. (24/08/2026.) In tutta l'app l'oro dice
+   «questo e' il numero che conta»: il TOTALE della pista, il Record del
+   diario. Qui lo prendeva ogni riga della colonna — cosi' il vincitore
+   restava verde e i secondi erano gli unici in oro, cioe' il contrario.
+   Il primo tiene l'oro, gli altri l'inchiostro pieno. */
+.total-col{ font-weight:800; color:var(--text-1); font-family:var(--font-num); font-variant-numeric:tabular-nums; }
+.rank-row.first .total-col{ color:var(--gold-role); }
 /* ── LA SCHEDA: si firma, e poi passa di mano ──────────────────────────────
    Il terzo mestiere della scheda di carta. Registrare era gia' risolto, e
    meglio della carta; testimoniare lo dice la pastiglia durante il giro. Qui
@@ -1975,9 +1981,16 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
 .comp-riga:last-child{ border-bottom:0; }
 .comp-riga:active{ background:var(--surface-2); }
 .comp-riga.on{ background:var(--verde-bg); }
-.comp-riga .mini{ flex:0 0 auto; width:var(--s-6); height:var(--s-6); border-radius:var(--r-sm);
-  background:var(--surface-1); border:1px solid var(--border); display:flex;
-  align-items:center; justify-content:center; color:var(--brand-testo); }
+/* IL SEGNO PERDE LA SUA SCATOLA. (24/08/2026.) Il riquadro attorno al
+   segnaposto era l'ultimo pezzo della vecchia «pila di tasti»: tolta la
+   cornice alla riga, restavano centoquarantadue quadretti con fondo e bordo,
+   tutti identici, che da lontano ridisegnavano la colonna che si era appena
+   sciolta. Il segno diventa un tondo appena accennato, come la tessera del
+   profilo sulla Home: si vede che c'e', non si mette in fila. */
+.comp-riga .mini{ flex:0 0 auto; width:var(--s-6); height:var(--s-6);
+  border-radius:var(--r-pill); background:color-mix(in srgb, var(--brand) 10%, transparent);
+  border:0; display:flex; align-items:center; justify-content:center;
+  color:var(--brand-testo); }
 
 /* ══════════ LA SCHEDA SI APRE SOTTO LA RIGA (21/08/2026) ══════════ */
 /* Prima si apriva IN FONDO all'elenco: toccata una compagnia a meta' di
@@ -2001,7 +2014,16 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
    pigrizia: sono due elenchi della stessa cosa vista da due domande diverse,
    e due disegni direbbero che sono due cose. Cambia cosa sta in grassetto —
    li' il nome, qui il luogo — che e' la differenza vera. */
-.campi-testa{ font-size:var(--t-xs); color:var(--muted); margin:var(--s-3) 0 var(--s-2); }
+/* Il conteggio dei campi e' il dato che dice quanto vale questa schermata:
+   stava a --t-xs in grigio spento, cioe' come una didascalia. Sale di due
+   gradini e prende l'inchiostro pieno — stessa scelta del Record nel diario
+   e del TOTALE nella pista: il numero che conta si vede. */
+.campi-testa{ font-size:var(--t-md); font-weight:800; color:var(--text-1);
+  text-transform:uppercase; letter-spacing:.08em;
+  margin:var(--s-3) 0 var(--s-2); }
+/* 24/08: il commento qui sopra descriveva questa modifica da giorni, ma il
+   CSS era rimasto a --t-xs in grigio spento. La nota diceva una cosa e il
+   file ne faceva un'altra: adesso combaciano. */
 /* La scheda si apre SOTTO la riga toccata, dentro l'elenco: una scheda che si
    apre in fondo alla pagina fa sembrare che toccare non abbia fatto niente. */
 /* ED E' DISEGNATA COME `.comp-dettaglio`, PERCHE' E' LO STESSO OGGETTO.
@@ -10881,6 +10903,32 @@ return mode.targetArrows[state.target-1];
 return mode.arrowsPerTarget;
 }
 function modeLabel(key){ return t("mode_"+key+"_label"); }
+/* LA DISCIPLINA CONGELATA NELLA LINGUA DI ALLORA. (24/08/2026.)
+   I giri salvati prima che lo storico scrivesse `modeKey` conservano solo
+   `modeLabel`, cioe' la parola COM'ERA il giorno del giro. Chi ha segnato dei
+   giri con l'app in francese se li ritrova per sempre sotto «Entrainement»
+   anche leggendo in italiano — e peggio, quei giri finiscono in un GRUPPO
+   SEPARATO dai loro gemelli italiani, perche' il raggruppamento usa quella
+   stringa come chiave. Qui si risale: si cerca in TUTTI i dizionari quale
+   chiave produce quella parola, e da li' si ritraduce in quella di adesso.
+   Restituisce null se non e' l'etichetta di nessun modo in nessuna lingua. */
+var _chiaveDaEtichetta = null;
+function modeKeyDaLabel(label){
+if(!label) return null;
+if(_chiaveDaEtichetta === null){
+_chiaveDaEtichetta = {};
+for(var lg in STRINGS){
+if(!Object.prototype.hasOwnProperty.call(STRINGS, lg)) continue;
+var d = STRINGS[lg];
+for(var k in d){
+if(!Object.prototype.hasOwnProperty.call(d, k)) continue;
+var m = /^mode_(.+)_label$/.exec(k);
+if(m && typeof d[k] === "string" && d[k]){ _chiaveDaEtichetta[d[k]] = m[1]; }
+}
+}
+}
+return _chiaveDaEtichetta[label] || null;
+}
 function modeTag(key){ return t("mode_"+key+"_tag"); }
 /* COME SI CONTA, in tre parole. (21/08/2026, PRD §14: ogni regolamento deve
    dire quante frecce e come si conta — «do not show unexplained abbreviations
@@ -18012,7 +18060,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-24-mirino";
+var BUILD_STAMP = "2026-08-24-podio";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18021,7 +18069,7 @@ var BUILD_STAMP = "2026-08-24-mirino";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-24-filetto";
+var BUILD_PARENT = "2026-08-24-mirino";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -18727,9 +18775,19 @@ Object.keys(ltPerModo).forEach(function(k){
 var e = ltPerModo[k];
 if(!e || !e.name) return;
 if(!isMyResult({ name: e.name, ownerUid: e.ownerUid || null, isSelf: e.isSelf === true })) return;
-var mk = e.modeKey || e.modeLabel || "?";
+var chiave = e.modeKey || modeKeyDaLabel(e.modeLabel);
+var mk = chiave || e.modeLabel || "?";
 var g = perModo[mk];
-if(!g){ g = perModo[mk] = { label: e.modeLabel || mk, rounds:0, sum:0, best:0, bestDate:null }; }
+if(!g){
+var nome = e.modeLabel || mk;
+if(chiave){
+var tr = modeLabel(chiave);
+/* t() restituisce la chiave quando non trova la parola: in quel caso
+   meglio l'etichetta vecchia di una chiave grezza sotto gli occhi. */
+if(tr && tr.indexOf("mode_") !== 0){ nome = tr; }
+}
+g = perModo[mk] = { label: nome, rounds:0, sum:0, best:0, bestDate:null };
+}
 g.rounds += (e.rounds || 0);
 g.sum += (e.sum || 0);
 if((e.best || 0) > g.best){ g.best = e.best; g.bestDate = e.bestDate || null; }
@@ -18813,7 +18871,7 @@ hist.slice(0,20).forEach(function(h, hIdx){
 var d = new Date(h.date);
 var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 var winner = h.results.length ? h.results[0] : null;
-var mLabel = h.modeKey ? modeLabel(h.modeKey) : (h.modeLabel || modeLabel("training"));
+var mLabel = modeLabel(h.modeKey || modeKeyDaLabel(h.modeLabel) || "training");
 var row = el('<div class="timeline-row" style="cursor:pointer;position:relative;padding-right:var(--s-5);"></div>');
 row.appendChild(el('<div class="timeline-icon">'+icon("target",16)+'</div>'));
 var content = el('<div class="timeline-content"></div>');
@@ -18873,7 +18931,7 @@ backBtnEmpty.addEventListener("click", function(){ state.screen = "history"; sav
 wrap.appendChild(backBtnEmpty);
 return wrap;
 }
-var mLabel = h.modeKey ? modeLabel(h.modeKey) : (h.modeLabel || modeLabel("training"));
+var mLabel = modeLabel(h.modeKey || modeKeyDaLabel(h.modeLabel) || "training");
 var locale = (LANG_META[state.lang]||LANG_META.it).locale;
 var d = new Date(h.date);
 var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
@@ -22288,7 +22346,14 @@ var n = 0;
 for(var i=0;i<e.length;i++){ if(e[i] && typeof e[i].total === "number"){ n += e[i].total; } }
 return n;
 }
-var io_ = state.archers[0];
+/* Chi tiene il telefono NON e' state.archers[0]: quella e' la fila di tiro,
+   che ruota ad ogni piazzola. Si riconosce dal nome del profilo. */
+var mioNome = (state.profile && (state.profile.username || state.profile.nomeCognome)) || "";
+var io_ = null;
+for(var ia=0; ia<state.archers.length; ia++){
+if(state.archers[ia] && state.archers[ia].name === mioNome){ io_ = state.archers[ia]; break; }
+}
+if(!io_){ io_ = state.archers[0]; }
 card.appendChild(el('<div class="big-target-num">'
 + (isLast ? totaleGiro(io_) : state.target) + '</div>'));
 
