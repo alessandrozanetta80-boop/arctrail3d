@@ -922,7 +922,24 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
     transition:background var(--dur-2), color var(--dur-2);
   }
   .bnav-item svg{ width:18px; height:18px; flex-shrink:0; transition:transform var(--dur-2) }
-  .bnav-item.on{ background:rgba(96,169,102,.15); color:var(--green-400) }
+  /* ══ LA VOCE ACCESA E' UN FILETTO, COME NELL'APP ═══════════════════════
+     (25/08/2026, chiesto da Alessandro: la stessa cura fatta un'ora fa
+     sull'insegna dell'app.) Era una pastiglia verde velata: un rettangolo in
+     piu' dentro una barra che ha gia' quattro voci, e — cosa peggiore — un
+     verde acceso dove l'app ormai usa un filetto argilla. *Due sezioni dello
+     stesso sito che segnalano «sei qui» in due modi diversi non sembrano due
+     sezioni: sembrano due app.*
+
+     Il filetto sta sotto la PAROLA, non sotto il pulsante: nell'app era largo
+     quanto icona piu' parola e si vedeva a occhio che pendeva a sinistra di
+     mezza icona. Qui la geometria e' la stessa, quindi lo si scrive gia'
+     giusto. */
+  .bnav-item.on{ background:none; color:var(--chrome-ink) }
+  .bnav-item.on > span{ position:relative }
+  .bnav-item.on > span::after{
+    content:""; position:absolute; left:0; right:0; bottom:-6px;
+    height:3px; border-radius:var(--r-pill); background:var(--clay-400);
+  }
   .nbadge{ top:-4px; right:-7px }
 
   /* La riga di ricerca diventa un pannello. */
@@ -1085,7 +1102,7 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
      dire se questo file e' UGUALE a quello online, non se e' avanti o
      indietro. Era la voce 7 delle cose aperte nel diario del mercatino, ed e'
      chiusa nella stessa mossa in cui il timbro e' salito. -->
-<body data-build="2026-08-25-carbone" data-parent="2026-08-23-arancio">
+<body data-build="2026-08-25-filetto" data-parent="2026-08-25-carbone">
 <div id="app">
 <header class="topbar">
   <div class="tb-left">
