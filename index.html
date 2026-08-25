@@ -2551,8 +2551,8 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    bianca: senza un confine dichiarato il verde sfuma nel foglio e la testata
    perde il suo bordo. E' lo stesso filo che divide le righe dell'elenco —
    *quello che separa nell'app e' sempre un pixel, mai un disegno.* */
-.comp-fascia{ position:relative; height:calc(var(--s-7) + var(--s-4));
-  background:var(--verde-bg); border-bottom:1px solid var(--verde-bd); }
+.comp-fascia{ position:relative; height:var(--s-6);
+  background:var(--eroe-bg); border-bottom:1px solid var(--border); }
 .comp-fascia svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
 .comp-stemma{ position:absolute; left:var(--s-4); bottom:calc(var(--s-5) * -1); width:var(--s-7);
   height:var(--s-7); border-radius:var(--r-md); background:var(--surface-1);
@@ -2560,7 +2560,8 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   color:var(--accent-soft); box-shadow:var(--elev-2); }
 .comp-dentro{ padding:var(--s-6) var(--s-4) var(--s-4); display:flex; flex-direction:column;
   gap:var(--s-3); }
-.comp-nome{ margin:0; font-size:var(--t-lg); font-weight:800; line-height:1.2; }
+.comp-nome{ margin:0; font-size:var(--t-xl); font-weight:800; line-height:1.15;
+  font-family:var(--font-display); letter-spacing:-.01em; }
 .comp-sotto{ display:flex; align-items:center; gap:var(--s-2); flex-wrap:wrap;
   font-size:var(--t-sm); color:var(--muted); }
 /* I NUMERI SONO SOLO QUELLI VERI. Non c'e' «iscritti» perche' l'app non sa
@@ -16428,10 +16429,6 @@ var testa = el('<div class="comp-testa"></div>');
    Il richiamo al bersaglio e' l'unico segno d'identita' della fascia: era
    l'ultima cosa da lasciare sbiadire. */
 var fascia = el('<div class="comp-fascia"></div>');
-fascia.innerHTML = '<svg viewBox="0 0 360 64" preserveAspectRatio="none" aria-hidden="true">'
-+ '<circle cx="310" cy="24" r="17" fill="none" stroke="var(--tone-race-fg)" stroke-width="1.6"></circle>'
-+ '<circle cx="310" cy="24" r="9" fill="none" stroke="var(--tone-race-fg)" stroke-width="1.6"></circle>'
-+ '</svg>';
 var stemma = el('<span class="comp-stemma"></span>');
 stemma.innerHTML = navIcon("navclub", 26, "due");
 fascia.appendChild(stemma);
@@ -18070,7 +18067,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-24-icone";
+var BUILD_STAMP = "2026-08-24-scudo";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18079,7 +18076,7 @@ var BUILD_STAMP = "2026-08-24-icone";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-24-podio";
+var BUILD_PARENT = "2026-08-24-icone";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
