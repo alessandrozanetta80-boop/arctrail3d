@@ -17604,6 +17604,43 @@ if(ago.indexOf(q) < 0) return;
 } else if(miaReg && c.regione !== miaReg) return;
 out.push(cod);
 });
+/* ══ CON UNA RICERCA IN CORSO, L'ORDINE ALFABETICO NON E' UN ORDINE ═══════
+   (25/08/2026.) L'elenco era sempre ordinato per luogo, anche quando si stava
+   cercando qualcosa. Chi scrive «cerri» vede prima «Alba», «Bergamo»,
+   «Cerrione» — la riga che ha chiesto sta in mezzo alle altre, e su un
+   telefono in mezzo a sessanta righe vuol dire scorrere per trovarla.
+
+   Adesso, e SOLO quando c'e' una ricerca, davanti vanno le righe che
+   cominciano con quello che si e' scritto: prima il luogo, poi il nome della
+   compagnia, poi tutto il resto in ordine alfabetico come prima. *Non e' un
+   punteggio inventato: e' la differenza fra «comincia con» e «contiene»,
+   che e' l'unica cosa che si puo' sapere senza aggiungere dati.*
+
+   QUELLO CHE NON SI PUO' FARE: ordinare per distanza. Le 663 compagnie hanno
+   luogo, provincia e regione — **nessuna ha le coordinate**. Una distanza
+   qui sarebbe un numero inventato, ed e' esattamente la cosa che questo
+   elenco non deve fare. Senza ricerca l'ordine resta alfabetico dentro la
+   propria regione, che e' il ripiego onesto: vicino per regione, non per
+   chilometri. */
+if(q){
+var rango = function(cod){
+var c = COMPAGNIE[cod];
+var luogo = String(c.luogo || "").toLowerCase();
+var nome = String(c.nome || "").toLowerCase();
+if(luogo.indexOf(q) === 0) return 0;
+if(nome.indexOf(q) === 0) return 1;
+// una parola che comincia con la ricerca vale piu' di una lettera in mezzo
+if(luogo.indexOf(" " + q) >= 0 || luogo.indexOf("," + q) >= 0) return 2;
+if(nome.indexOf(" " + q) >= 0) return 3;
+return 4;
+};
+out.sort(function(x,y){
+var rx = rango(x), ry = rango(y);
+if(rx !== ry) return rx - ry;
+return String(COMPAGNIE[x].luogo).localeCompare(String(COMPAGNIE[y].luogo), "it");
+});
+return out;
+}
 out.sort(function(x,y){ return String(COMPAGNIE[x].luogo).localeCompare(String(COMPAGNIE[y].luogo), "it"); });
 return out;
 }
@@ -18704,7 +18741,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-iniziale";
+var BUILD_STAMP = "2026-08-25-pertinenza";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18713,7 +18750,7 @@ var BUILD_STAMP = "2026-08-25-iniziale";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-ultimo";
+var BUILD_PARENT = "2026-08-25-iniziale";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
