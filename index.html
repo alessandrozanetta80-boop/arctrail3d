@@ -18779,7 +18779,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-ruoli";
+var BUILD_STAMP = "2026-08-25-libera";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18788,7 +18788,7 @@ var BUILD_STAMP = "2026-08-25-ruoli";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-assetto";
+var BUILD_PARENT = "2026-08-25-ruoli";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -23504,12 +23504,47 @@ formato: state.format
 };
 return state.consegna;
 }
-// In allenamento non si consegna niente a nessuno. Dire "consegna la scheda" a
-// chi tira da solo dietro casa e' lo stesso errore del badge della modalita':
-// un'etichetta che non parla di niente.
+// LA SCHEDA SI FIRMA E SI CONSEGNA SOLO IN UNA GARA VERA. (25/08/2026.)
+//
+// Fino a oggi bastava che il MODO fosse uno da gara — Round 3D, Percorso,
+// Tracciato, Battuta. Ma quei modi sono esattamente quelli che si usano in
+// **Gara libera**, cioe' quando si tira il regolamento per conto proprio: la
+// schermata finale chiedeva le firme e diceva "Consegna la scheda", e la
+// scheda non andava da nessuna parte. Alessandro, provandola: *«e' una gara
+// libera, non ci deve essere firma la scheda e inviala, perche' intanto non
+// va nessuno»*.
+//
+// Non era solo un'etichetta di troppo: **fermava**. Finche' la scheda non e'
+// consegnata il tasto per uscire resta secondario, e da soli
+// `consegna_manca` chiede "la firma di un altro arciere" che non c'e'. Il
+// rito di chiusura di una gara, messo in fondo a un giro fatto per conto
+// proprio, diventa una porta che non si apre.
+//
+// **Il modo non dice se e' una gara: dice come si contano i punti.** Sono due
+// domande diverse, ed e' il punto 1-bis di *Cosa manca* — «staccare la gara
+// ufficiale dal formato di gara: le parole sono due e i piani sono tre».
+//
+// Oggi la risposta e' NO SEMPRE, e non e' una semplificazione: **nessun giro
+// nasce ancora da una gara.** Prepara Gara prepara e non fa partire niente, e
+// gli arcieri di un giro sono `{id, name}` senza nessun legame con
+// l'iscrizione (STATO C1). Non esiste un giro di cui si possa dire che la sua
+// scheda va consegnata a qualcuno.
+//
+// COSA RIACCENDERE, E QUANDO. Quando il giro sapra' da quale gara viene, qui
+// si torna a rispondere di si' **per quel giro** — non per il suo modo. La
+// macchina delle firme, della consegna e delle sue quindici parole in nove
+// lingue non e' stata tolta: e' rimasta intera dietro questa riga, ed e'
+// l'unica cosa da cambiare.
+//
+// (La riga delle firme sulla STAMPA resta: due righe vuote su un foglio di
+// carta non chiedono niente a nessuno, e chi stampa lo fa apposta.)
+function giroDaGaraUfficiale(){
+return false;
+}
 function schedaVisibile(){
 var fed = FEDERATIONS[state.federation || "fiarc"];
-return !!fed && fed.garaModes.indexOf(state.mode) !== -1;
+if(!fed || fed.garaModes.indexOf(state.mode) === -1) return false;
+return giroDaGaraUfficiale();
 }
 // La consegna deve sopravvivere alla schermata: finisce sulla riga di
 // cronologia gia' salvata e sulla copia in cloud. Senza, domani la scheda
