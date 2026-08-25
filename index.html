@@ -214,6 +214,30 @@
    7,78 · 6,40 · 6,20. Le versioni piene ci cadrebbero sotto. */
 --verde-testata:#7ACB3F; --argilla-testata:#FF8348; --rosso-testata:#FF7A7A;
 --oro-testata:#E8B33D;
+/* ══ IL CARBONE DELLA BANDA ═══════════════════════════════════════════════
+   (25/08/2026, chiesto da Alessandro: «non il nero nero, quel nero
+   sbiadito — quello della vetrina».)
+
+   Non e' un colore nuovo inventato qui: e' MISURATO dalla vetrina del sito.
+   Li' la testata e' `#2D2926` al 94% sopra il fondo crema, e quello che
+   l'occhio vede e' la mescolanza dei due — `#393532`. Il valore che stava
+   scritto nel file (`#2D2926`) non e' mai stato il colore che si vede: e'
+   l'ingrediente. *Copiare l'esadecimale della vetrina avrebbe dato una
+   banda piu' scura di quella che piaceva, e nessuno avrebbe capito perche'.*
+
+   PERCHE' NON I VERDI DI CASA. `--moss-700` (#1A2620) e' il nero-verde con
+   cui erano fatte testata e porte: sopra il fondo crema legge come nero
+   pieno, e su una fascia larga quanto lo schermo il nero pieno pesa il
+   doppio di quanto pesa in un riquadro. Il carbone e' un neutro caldo —
+   stessa tinta a 37° del fondo, come tutti i neutri di questa tavolozza —
+   quindi non litiga col verde del marchio: gli fa da fondale.
+
+   E' PIU' CHIARO, QUINDI I CONTRASTI SCENDONO. Sul carbone: crema 10,9 ·
+   verde acceso 4,57 · argilla accesa 3,65 · oro 6,1. Il crema e i grigi
+   restano testo; l'argilla accesa qui **non e' piu' inchiostro da leggere**,
+   resta segno grafico (soglia 3). Chi vorra' scriverci sopra in arancione
+   usi `--argilla-testata`, che e' nato per questo. */
+--pece:#393532; --pece-alto:#4A443F;
 
 /* ───── SPAZIO · 4 / 8 / 12 / 16 / 24 / 32 / 48 ─────
    La regola era gia' scritta in cima a questo file da mesi ("nessun 6,
@@ -542,8 +566,16 @@ color-scheme:light;
    Al chiuso e' il bosco: fondo profondo, scritta di carta. E' l'unico posto
    dell'app dove il rapporto si rovescia, ed e' voluto — serve a dire che
    quello non e' un riquadro da leggere ma la porta da cui si entra. */
---eroe-bg:var(--moss-700); --eroe-ink:var(--sand-100);
+--eroe-bg:var(--pece); --eroe-ink:var(--sand-100);
 --eroe-eti:var(--moss-300);
+/* I quattro token che la banda presta a quello che ci sta dentro: filo,
+   sezioni, pastiglia della sezione aperta. Esistono perche' nel tema Sole la
+   banda e' CHIARA, e una regola scritta a mano dentro `header.top` la
+   renderebbe illeggibile proprio nel tema fatto per vederci. */
+--eroe-linea:color-mix(in srgb, var(--sand-100) 14%, transparent);
+--eroe-nav-fg:var(--sand-300); --eroe-nav-on:var(--verde-testata);
+--eroe-nav-pill:color-mix(in srgb, var(--verde-testata) 18%, transparent);
+--eroe-nav-ink:var(--verde-testata);
 /* ══ LE TRE PORTE SONO UN PANNELLO ═══════════════════════════════════════
    (23/08/2026, l'idea e' di Alessandro: «e andare a scurire leggermente il
    colore di sfondo dei 3 tasti cosi' da poter usare i colori non
@@ -566,7 +598,7 @@ color-scheme:light;
    Le tre voci pesano uguale (deciso il 20/08), e tre nomi colorati in colonna
    suggeriscono una gerarchia che non c'e': il colore resta il segnale
    laterale, il nome resta un nome. */
---porte-bg:var(--moss-700); --porte-tit:var(--sand-100);
+--porte-bg:var(--pece); --porte-tit:var(--sand-100);
 --porte-sub:var(--moss-300); --porte-linea:rgba(245,242,237,0.13);
 --segno-train:var(--green-400); --segno-race:var(--clay-400);
 --segno-prep:var(--oro-testata);
@@ -693,11 +725,15 @@ color-scheme:dark;
 /* Al buio il pannello non puo' essere piu' scuro del fondo: sparirebbe.
    Sale di un gradino invece di scendere — e' sempre lui che si stacca, solo
    dalla parte opposta. */
---eroe-bg:var(--moss-600); --eroe-ink:var(--sand-100);
+--eroe-bg:var(--pece); --eroe-ink:var(--sand-100);
 --eroe-eti:var(--moss-300);
+--eroe-linea:color-mix(in srgb, var(--sand-100) 14%, transparent);
+--eroe-nav-fg:var(--sand-300); --eroe-nav-on:var(--verde-testata);
+--eroe-nav-pill:color-mix(in srgb, var(--verde-testata) 18%, transparent);
+--eroe-nav-ink:var(--verde-testata);
 /* Al buio le porte fanno come il pannello: salgono di un gradino invece di
    scendere, o non si staccherebbero dal fondo. I toni accesi restano. */
---porte-bg:var(--moss-600); --porte-tit:var(--sand-100);
+--porte-bg:var(--pece); --porte-tit:var(--sand-100);
 --porte-sub:var(--moss-300); --porte-linea:rgba(245,242,237,0.13);
 /* AL BUIO I SEGNI PRENDONO L'ALTRA TINTA, e il banco l'ha detto prima di
    noi: il segno della gara stava a 2,55 sul pannello, cioe' sotto la soglia
@@ -886,6 +922,11 @@ color-scheme:light;
    gli serve.* */
 --eroe-bg:var(--sand-50); --eroe-ink:var(--sand-900);
 --eroe-eti:var(--sand-500);
+/* Qui la banda e' chiara, quindi i prestiti valgono al contrario: sono gli
+   stessi valori che la barra delle sezioni aveva gia' in questo tema. */
+--eroe-linea:var(--sand-400);
+--eroe-nav-fg:var(--sand-700); --eroe-nav-on:var(--green-900);
+--eroe-nav-pill:var(--green-900); --eroe-nav-ink:var(--sand-900);
 /* AL SOLE LE PORTE RESTANO CHIARE, come il pannello e per lo stesso motivo:
    in piena luce un fondo scuro si legge peggio, non meglio. Ma allora i toni
    accesi non reggono piu' sopra il bianco (verde 2,66), quindi qui il segno
@@ -1030,6 +1071,36 @@ header.top .bar-btn{ color:var(--moss-100); }
 header.top .bar-btn.tinta-verde{ color:var(--verde-testata); --icona-accento:var(--argilla-testata); }
 header.top .bar-btn.tinta-argilla{ color:var(--rosso-testata); }
 header.top .bar-btn:hover{ background:color-mix(in srgb, var(--eroe-ink) 12%, transparent); }
+/* ══ IL NOME DELL'APP ERA SPARITO DA COMPUTER ═════════════════════════════
+   (25/08/2026, segnalato da Alessandro: «non si vede piu' ArcTrail 3D».)
+
+   Non era una tinta sbagliata: erano DUE REGOLE CHE NON SI PARLAVANO. Sopra
+   i 760px la testata diventa un'insegna staccata e prende il fondo della
+   barra sezioni (`--navbar-bg`, che nel tema chiaro e' bianco); il nome pero'
+   e' rimasto `--eroe-ink`, cioe' crema, che era giusto finche' la testata
+   era il pannello scuro. Bianco su bianco: 1,05. Da telefono si leggeva —
+   ed e' per questo che ci ha messo giorni a farsi vedere.
+
+   LA CURA NON E' RICOLORARE IL NOME, E' DECIDERE DI CHE COLORE E' LA BANDA.
+   Un nome che cambia colore a seconda della larghezza della finestra e' la
+   stessa trappola un giro dopo. Qui la banda e' scura sempre, e siccome le
+   due regole da computer chiedono `var(--navbar-bg)`, basta rispondere
+   diversamente **dentro** la testata: la variabile si risolve sull'elemento,
+   quindi nessuna delle due regole va toccata e nessuna delle due puo'
+   tornare a vincere. Le sezioni che ci vivono dentro prendono i prestiti
+   della banda, che ogni tema ha gia' dichiarato per conto suo. */
+header.top{
+  --navbar-bg:var(--eroe-bg); --navbar-line:var(--eroe-linea);
+  --navbar-fg:var(--eroe-nav-fg); --navbar-on:var(--eroe-nav-on);
+  --navbar-pill:var(--eroe-nav-pill); --navbar-pill-ink:var(--eroe-nav-ink);
+  --border:var(--eroe-linea);
+}
+/* ARC · TRAIL · 3D, come sulla vetrina. (25/08/2026.) Il verde in mezzo e'
+   la sola macchia di colore della riga, e fa il mestiere che sulla vetrina
+   fa gia': si riconosce il marchio prima di leggere la parola. Sul carbone
+   il verde acceso fa 4,57, e questa scritta e' 20px in grassetto. */
+header.top .brand-title{ color:var(--eroe-ink); }
+header.top .brand-title b{ color:var(--verde-testata); font-weight:inherit; }
 /* Nella Home il pannello sta attaccato alla testata: sono due pezzi dello
    stesso blocco, e il filo in mezzo li farebbe sembrare due cose. */
 .strati > .home-eroe:first-child{ border-top:0; }
@@ -3093,6 +3164,18 @@ header.top .home-btn.small{
   box-shadow:0 8px 18px -10px color-mix(in srgb, var(--clay) 90%, transparent);
 }
 header.top .home-btn.small:hover{ background:color-mix(in srgb, var(--clay) 88%, white); border-color:transparent; }
+/* I tasti erano pastiglie color foglio: nate quando l'insegna era bianca,
+   sopra il carbone diventavano tre francobolli chiari nella riga piu' in
+   vista. Di vetro come sulla vetrina — e il tasto della federazione resta
+   pieno, perche' `.small` pesa di piu' e non lo tocca nessuno. */
+header.top .home-btn{
+  background:color-mix(in srgb, var(--eroe-ink) 10%, transparent);
+  border-color:var(--eroe-linea); color:var(--eroe-ink);
+}
+header.top .home-btn:hover{
+  background:color-mix(in srgb, var(--eroe-ink) 18%, transparent);
+  border-color:var(--eroe-ink); color:var(--eroe-ink);
+}
 
 /* ── I TASTI SI FERMANO ALLA LORO SCRITTA ────────────────────────────────
    (21/08/2026, chiesto da Alessandro.) Un tasto largo tutto lo schermo, su
@@ -13577,7 +13660,7 @@ var largo = (typeof window.matchMedia === "function") && window.matchMedia("(min
 var h = el(
 '<header class="top">'+
 '<div class="brandblock"><div class="logo">'+logoSVG(52)+'</div>'+
-'<div class="headtxt"><span class="brand-title">ArcTrail 3D</span></div></div>'+
+'<div class="headtxt"><span class="brand-title">Arc<b>Trail</b> 3D</span></div></div>'+
 '</header>'
 );
 
@@ -18067,7 +18150,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-24-scudo";
+var BUILD_STAMP = "2026-08-25-carbone";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18076,7 +18159,7 @@ var BUILD_STAMP = "2026-08-24-scudo";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-24-icone";
+var BUILD_PARENT = "2026-08-24-scudo";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

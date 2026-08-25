@@ -98,7 +98,16 @@
 /* La testata scura e' CHROME, non superficie: resta uguale in tutti e tre i
    temi, come la cornice di una finestra. Per questo i suoi valori stanno fra
    i primitivi e non nella mappa dei ruoli. */
---chrome-1:#1C2C21; --chrome-2:#132018; --chrome-3:#182620;
+/* IL CHROME E' IL CARBONE DELLA VETRINA. (25/08/2026, chiesto da
+   Alessandro: «non il nero nero, quel nero sbiadito».) Erano tre verdi
+   quasi neri: su una fascia larga quanto la finestra leggevano come nero
+   pieno, e accanto alla stessa banda dell'app — che oggi e' carbone —
+   sarebbero stati due neri diversi a un tocco di distanza.
+   `#393532` e' quello che si vede sulla vetrina del sito: li' la testata e'
+   `#2D2926` al 94% sopra il crema, e il colore che arriva all'occhio e' la
+   mescolanza dei due. Gli altri due gradini restano per il rilievo, ma di un
+   soffio: la vetrina e' piatta, e il volume qui non lo chiedeva nessuno. */
+--chrome-1:#3E3A36; --chrome-2:#393532; --chrome-3:#403B36;
 --chrome-ink:#EDE6D6; --chrome-ink-2:#9AA39C; --on-chrome:#FFFFFF;
 
 /* ───── CARATTERI · due famiglie, tre mestieri ───── */
@@ -856,13 +865,11 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
     box-shadow:0 18px 40px -28px rgba(20,35,25,.75), inset 0 1px 0 rgba(255,255,255,.05);
     isolation:isolate;
   }
-  .topbar::after{
-    content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
-    border-radius:var(--r-xl);
-    background:
-      radial-gradient(520px 150px at 14% -60%, rgba(96,169,102,.20), transparent 70%),
-      radial-gradient(420px 130px at 92% 150%, rgba(232,114,47,.14), transparent 70%);
-  }
+  /* I DUE ALONI SONO SPARITI CON IL NERO CHE LI GIUSTIFICAVA. (25/08/2026.)
+     Un velo verde a sinistra e uno arancione a destra: sopra il verde quasi
+     nero erano un accenno, sopra il carbone — che e' un neutro — diventano
+     due macchie di tinta su una fascia che deve fare da fondale. *La vetrina,
+     che e' il modello, la banda ce l'ha piatta.* */
   .tb-left{ flex:1 1 0; min-width:0 }
   .tb-right{ flex:1 1 0; justify-content:flex-end }
   .tb-logo{ flex:0 1 auto; min-width:0; gap:9px }
@@ -889,7 +896,13 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
     color:var(--primario-fg); box-shadow:none;
     transition:background var(--dur-2), border-color var(--dur-2), transform var(--dur-2);
   }
-  .tb-logo-txt{ font-size:19px; letter-spacing:-.2px }
+  /* IL NOME NON SI VEDEVA. (25/08/2026, segnalato da Alessandro insieme a
+     quello dell'app.) `.tb-logo-txt` prende `--ink`, cioe' l'inchiostro del
+     foglio: giusto sulla barra chiara del telefono, nero su nero qui, dove
+     da computer la barra e' sempre scura. L'inchiostro della banda esisteva
+     gia' (`--chrome-ink`) e nessuno gliel'aveva dato. */
+  .tb-logo-txt{ font-size:19px; letter-spacing:-.2px; color:var(--chrome-ink) }
+  .tb-logo-txt b{ color:var(--green-400); font-weight:inherit }
   .tb-avatar{ width:38px; height:38px; border:2px solid var(--line); transition:border-color var(--dur-2) }
 
   .bnav{
@@ -1072,7 +1085,7 @@ line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
      dire se questo file e' UGUALE a quello online, non se e' avanti o
      indietro. Era la voce 7 delle cose aperte nel diario del mercatino, ed e'
      chiusa nella stessa mossa in cui il timbro e' salito. -->
-<body data-build="2026-08-23-arancio" data-parent="2026-08-23-barra">
+<body data-build="2026-08-25-carbone" data-parent="2026-08-23-arancio">
 <div id="app">
 <header class="topbar">
   <div class="tb-left">
