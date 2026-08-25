@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title id="titoloPagina">ArcTrail 3D — la casa digitale del tiro con l'arco 3D</title>
+<meta name="description" id="descPagina" content="Trova i campi di tiro 3D, segna ogni freccia anche senza rete, tieni il diario dei tuoi giri e incontra gli arcieri vicino a te. Gratis, in nove lingue.">
+<link rel="alternate" hreflang="it" href="https://arctrail3d.com/?lang=it">
+<link rel="alternate" hreflang="en" href="https://arctrail3d.com/?lang=en">
+<link rel="alternate" hreflang="fr" href="https://arctrail3d.com/?lang=fr">
+<link rel="alternate" hreflang="de" href="https://arctrail3d.com/?lang=de">
+<link rel="alternate" hreflang="tr" href="https://arctrail3d.com/?lang=tr">
+<link rel="alternate" hreflang="ru" href="https://arctrail3d.com/?lang=ru">
+<link rel="alternate" hreflang="es" href="https://arctrail3d.com/?lang=es">
+<link rel="alternate" hreflang="sv" href="https://arctrail3d.com/?lang=sv">
+<link rel="alternate" hreflang="nl" href="https://arctrail3d.com/?lang=nl">
+<link rel="alternate" hreflang="x-default" href="https://arctrail3d.com/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex"><!-- ANTEPRIMA: non va indicizzata -->
+<style>
+/* Il carattere arriva da Google con le stesse tre righe dell'app (sopra, nella
+   testa), e le fotografie sono file veri accanto a questo. Nell'anteprima
+   stavano tutti dentro il file: 830 KB, di cui 75 di pagina vera. Una vetrina
+   la si guarda una volta sola nella vita, spesso in mezzo a un campo con una
+   tacca di rete: quello che pesa e non serve, qui costa piu' che altrove. */
+
+/* ══════════════════════════════════════════════════════════════
+   ArcTrail 3D — VETRINA (anteprima)
+   File autonomo. Non condivide una sola variabile con index.html:
+   i nomi qui sotto sono tutti nuovi e vivono solo dentro .vetrina.
+   ══════════════════════════════════════════════════════════════ */
+.vetrina{
+  /* --- i colori --- */
+  --osso:#F5F2ED;          /* fondo, lo stesso dell'app */
+  --osso-2:#EAE5DC;
+  --pece:#2D2926;          /* inchiostro scuro */
+  --lichene:#4A5D4E;       /* verde scuro: fondi, testata */
+  --lichene-fondo:#3A4A3E;
+  --prato:#66B132;         /* il verde vivo dell'app */
+  --argilla:#FF4D00;       /* il richiamo, con parsimonia */
+  --sedimento:#8B7E74;
+  --scisto:#D9D4CC;
+  --bianco:#FFFFFF;
+
+  /* --- i caratteri --- */
+  /* Un carattere solo, tre pesi — la stessa pila di index.html.
+     I due nomi restano separati perche' i mestieri sono diversi: se un
+     giorno i titoli tornano a essere un carattere a se', si cambia qui. */
+  --titolo:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --testo:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+
+  /* --- le misure --- */
+  --gutter:clamp(20px,5vw,72px);
+  --max:1240px;
+  /* L'altezza della testata serve in due posti: alla testata stessa e
+     all'eroe, che deve stare in quello che avanza. Scritta due volte, una
+     delle due sarebbe rimasta indietro. */
+  --testata:67px;
+  /* E la fascia dei tre, che sopra i 960 e' una riga sola: sta nella prima
+     schermata insieme all'eroe, quindi il suo posto va sottratto prima, non
+     dopo. Sotto i 960 diventa tre righe impilate e questo conto non vale
+     piu' — la sottrazione infatti sta solo nel blocco largo. */
+  --fascia:86px;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+body{margin:0}
+
+.vetrina{
+  background:var(--osso); color:var(--pece);
+  font-family:var(--testo); font-size:17px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:clip;
+}
+.vetrina img{display:block; max-width:100%}
+.vetrina a{color:inherit}
+
+/* ── tipografia ────────────────────────────────────────────── */
+/* PERCHE' LE MISURE SONO CAMBIATE. Barlow Condensed era stretto: la stessa
+   riga in Inter occupa un 15-20% in piu' e andrebbe a capo dove prima stava
+   distesa. Quindi i tetti scendono, e in cambio sale il peso: 800, che e' il
+   peso dei titoli dell'app.
+   La crenatura segue la taglia, non il gusto: in alto le maiuscole grandi si
+   stringono (-.02em, il valore di index.html), in basso si allargano. */
+.vetrina h1,.vetrina h2,.vetrina h3,.vetrina .display{
+  font-family:var(--titolo); font-weight:800;
+  text-transform:uppercase; letter-spacing:-.02em;
+  line-height:.95; margin:0;
+}
+/* L'H1 DELL'EROE HA TRE <br> MESSI A MANO: sono tre righe volute, e se una
+   va a capo da sola diventano quattro e la composizione si rompe senza dire
+   niente. Non e' una misura scelta a occhio: la riga piu' lunga — «Il tuo
+   prossimo» — in Inter 800 maiuscolo chiede **8,58em**, misurati sul vero
+   carattere. Sopra i 960px l'eroe e' una colonna del 46% con margini al
+   4,5%, cioe' 0,37 della pagina: 0,37 / 8,58 = 4,3vw, e 4,2 lascia un dito.
+   Sotto i 960 la colonna diventa tutta la pagina e la misura cambia
+   mestiere — sta piu' sotto, nel blocco a 960. */
+.vetrina h1{font-size:clamp(40px,4.2vw,64px)}
+.vetrina h2{font-size:clamp(31px,4.4vw,54px); line-height:.98}
+.vetrina h3{font-size:clamp(20px,2vw,24px); line-height:1.12; letter-spacing:-.005em}
+.vetrina p{margin:0 0 1em}
+.vetrina .occhiello{
+  font-family:var(--testo); font-size:12px; font-weight:700;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--sedimento); margin:0 0 18px;
+  display:flex; align-items:flex-start; gap:10px;
+}
+.vetrina .occhiello::before{
+  content:""; width:9px; height:9px; flex:0 0 auto; margin-top:5px;
+  background:var(--argilla);
+  clip-path:polygon(50% 100%,0 0,100% 0); /* la punta della freccia */
+}
+.vetrina .guida{font-size:clamp(17px,1.6vw,19px); color:#5A5249; max-width:44ch}
+.vetrina h2 + .guida{margin-top:20px}
+
+
+/* I DUE TASTI DELL'EROE FRA I 960 E I 1140. Sopra i 960 l'eroe torna a due
+   colonne e i tasti tornano affiancati — ma la colonna del 46% a 1024px vale
+   379px, e la coppia ne chiede 448 gia' in italiano. Fra queste due larghezze
+   si impilano, come fanno sotto i 960: meglio due tasti pieni uno sopra
+   l'altro che uno lungo con sotto uno corto e storto.
+   Trovato il 24/08/2026 da banco-vetrina.js, che misura quattro larghezze —
+   ed e' un difetto VECCHIO, non delle traduzioni: c'era anche in italiano. */
+@media (min-width:961px) and (max-width:1140px){
+  .eroe-tasti .tasto{width:100%; justify-content:center}
+}
+
+/* ── contenitore ───────────────────────────────────────────── */
+.wrap{max-width:var(--max); margin:0 auto; padding:0 var(--gutter)}
+
+
+/* ── il selettore della lingua ──────────────────────────────────
+   Dentro c'e' un <select> VERO, disteso sopra tutto e trasparente: cosi' su
+   ogni telefono si apre la rotella di sistema invece di un menu disegnato a
+   mano, arriva col tasto tab e lo legge un lettore di schermo. Quello che si
+   vede e' l'etichetta sotto.
+   I nomi delle lingue NON si traducono mai: chi cerca la propria la cerca
+   scritta come la scrive lui. */
+.vetrina .lingua{
+  position:relative; display:inline-flex; align-items:center; gap:7px;
+  border:1px solid rgba(255,255,255,.26); border-radius:3px;
+  padding:7px 11px; color:var(--osso);
+  font-size:12px; font-weight:700; letter-spacing:.06em;
+  transition:border-color .18s ease;
+}
+.vetrina .lingua:hover{border-color:rgba(255,255,255,.55)}
+.vetrina .lingua:focus-within{border-color:var(--osso); outline:2px solid rgba(245,242,237,.35); outline-offset:2px}
+.vetrina .lingua-punta{width:10px; height:6px; flex:0 0 auto; opacity:.7}
+.vetrina .lingua-sigla{display:none}
+.vetrina .lingua select{
+  position:absolute; inset:0; width:100%; height:100%;
+  opacity:0; border:0; cursor:pointer; -webkit-appearance:none; appearance:none;
+  font:inherit; color:inherit;
+}
+/* La rotella di sistema disegna le opzioni col tema del sistema: su fondo
+   scuro il testo nero su nero sparisce, ed e' l'unico posto dove serve dirlo. */
+.vetrina .lingua option{color:#000; background:#fff}
+@media (max-width:860px){
+  .vetrina .lingua-nome{display:none}
+  .vetrina .lingua-sigla{display:inline}
+}
+
+/* ── testata ───────────────────────────────────────────────── */
+.testata{
+  position:sticky; top:0; z-index:80;
+  background:rgba(45,41,38,.94);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.10);
+  color:var(--osso);
+}
+.testata .wrap{display:flex; align-items:center; gap:26px; height:calc(var(--testata) - 1px)}
+.marchio{display:flex; align-items:center; gap:11px; text-decoration:none; flex:0 0 auto}
+.marchio .segno{width:30px; height:30px; border-radius:7px; flex:0 0 auto}
+.marchio .nome{
+  font-family:var(--titolo); font-size:20px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.01em; color:var(--osso);
+}
+.marchio .nome b{color:var(--prato); font-weight:700}
+.menu{display:flex; gap:24px; margin-left:14px}
+.menu a{
+  text-decoration:none; font-size:13px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:rgba(245,242,237,.72); padding:6px 0; position:relative;
+}
+.menu a:hover{color:var(--osso)}
+.menu a::after{
+  content:""; position:absolute; left:0; right:100%; bottom:0; height:2px;
+  background:var(--argilla); transition:right .22s ease;
+}
+.menu a:hover::after{right:0}
+.testata .destra{margin-left:auto; display:flex; align-items:center; gap:12px}
+.lingua{
+  background:none; border:1px solid rgba(255,255,255,.26); color:var(--osso);
+  font:inherit; font-size:12px; font-weight:700; letter-spacing:.1em;
+  padding:7px 11px; border-radius:3px; cursor:pointer;
+}
+.lingua:hover{border-color:rgba(255,255,255,.55)}
+.accedi{
+  text-decoration:none; font-size:13px; font-weight:600;
+  color:rgba(245,242,237,.8); padding:8px 4px;
+}
+.accedi:hover{color:var(--osso)}
+
+/* ── tasti ─────────────────────────────────────────────────── */
+.tasto{
+  display:inline-flex; align-items:center; gap:11px;
+  /* 15px e non 19: i due tasti dell'eroe stanno affiancati dentro la colonna
+     del 46%, e in Inter la coppia chiedeva 478px dove ce n'erano 474. Per
+     quattro pixel il secondo tasto scendeva sotto il primo — non un errore
+     che salta all'occhio, solo due tasti che sembrano meno decisi. */
+  font-family:var(--titolo); font-size:15px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.04em;
+  padding:15px 24px; border-radius:3px; border:2px solid transparent;
+  text-decoration:none; cursor:pointer; transition:transform .12s ease, background .18s ease;
+  white-space:nowrap;
+}
+.tasto:active{transform:translateY(1px)}
+.tasto svg{width:17px; height:17px; flex:0 0 auto}
+.tasto-1{background:var(--argilla); color:#fff}
+.tasto-1:hover{background:#E64500}
+.tasto-2{background:transparent; color:var(--pece); border-color:rgba(45,41,38,.32)}
+.tasto-2:hover{border-color:var(--pece)}
+.su-scuro .tasto-2{color:var(--osso); border-color:rgba(245,242,237,.42)}
+.su-scuro .tasto-2:hover{border-color:var(--osso)}
+.tasto-min{font-size:15px; padding:11px 18px}
+
+
+/* IL TASTO DELLA TESTATA HA DUE FORME. «Apri l'app» in italiano sta ovunque;
+   «Открыть приложение» no, e su un telefono in russo la barra usciva di 88px.
+   Sotto gli 860 si legge la forma corta — la stessa soglia della sigla della
+   lingua, cosi' la testata cambia tutta insieme invece che a pezzi. */
+.vetrina .apri-corto{display:none}
+@media (max-width:860px){
+  .vetrina .apri-lungo{display:none}
+  .vetrina .apri-corto{display:inline}
+}
+
+/* ── eroe ──────────────────────────────────────────────────── */
+.eroe{display:grid; grid-template-columns:minmax(0,46fr) minmax(0,54fr); background:var(--lichene-fondo)}
+.eroe-testo{
+  background:var(--lichene-fondo); color:var(--osso);
+  padding:clamp(30px,3.8vw,64px) clamp(24px,4.5vw,64px) clamp(28px,3.4vw,56px);
+  display:flex; flex-direction:column; justify-content:center;
+  /* PERCHE' NON E' PIU' 78vh. Il conto giusto non e' «tre quarti di
+     schermo»: e' «tutto quello che avanza sotto la testata», altrimenti su
+     un portatile basso i due tasti finiscono sotto il bordo — e i due tasti
+     sono la porta d'ingresso. `svh` e non `vh` perche' sul telefono `vh`
+     conta anche la barra del browser, che al primo tocco sparisce.
+     Il tetto a 720 serve sul monitor alto: oltre, l'eroe diventa un muro. */
+  min-height:min(78vh,700px);
+  min-height:min(calc(100svh - var(--testata) - var(--fascia)),680px);
+}
+.eroe-testo .occhiello{color:rgba(245,242,237,.68)}
+.eroe h1{color:var(--osso)}
+.eroe h1 .acceso{color:var(--argilla)}
+.eroe-testo .guida{color:rgba(245,242,237,.82); margin:26px 0 32px; max-width:38ch}
+.eroe-tasti{display:flex; gap:12px; flex-wrap:wrap}
+.eroe-foto{position:relative; overflow:hidden; min-height:360px}
+.eroe-foto img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:52% 20%}
+.eroe-foto::after{ /* la foto si fonde nel pannello, non ci sbatte contro */
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(90deg,rgba(58,74,62,.92) 0%,rgba(58,74,62,.30) 16%,rgba(58,74,62,0) 38%);
+}
+
+/* ── fascia dei tre ────────────────────────────────────────── */
+.fascia{background:var(--pece); color:var(--osso)}
+.fascia .wrap{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; padding-top:0; padding-bottom:0}
+.fascia .voce{display:flex; align-items:center; gap:14px; padding:22px 0}
+.fascia .voce + .voce{padding-left:26px; border-left:1px solid rgba(245,242,237,.14)}
+.fascia svg{width:26px; height:26px; flex:0 0 auto; color:var(--prato)}
+.fascia .t{font-family:var(--titolo); font-size:17px; font-weight:800; text-transform:uppercase; letter-spacing:.01em; line-height:1.05}
+.fascia .s{font-size:13px; color:rgba(245,242,237,.6); margin-top:3px}
+
+/* ── il picchetto: la firma della pagina ───────────────────── */
+.piazzola{position:relative; padding:clamp(64px,8vw,116px) 0}
+.piazzola .wrap{position:relative}
+.picchetto{
+  display:flex; align-items:baseline; gap:14px; margin-bottom:26px;
+}
+.picchetto .palo{
+  width:38px; height:48px; flex:0 0 auto; position:relative;
+  background:linear-gradient(180deg,#7A6A55,#5E5142);
+  border-radius:2px 2px 0 0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--titolo); font-size:18px; font-weight:800; letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums; color:#F1E9DA; line-height:1;
+  box-shadow:inset 0 -14px 12px -12px rgba(0,0,0,.5);
+}
+.picchetto .palo::after{
+  content:""; position:absolute; left:50%; top:100%; width:4px; height:16px;
+  transform:translateX(-50%); background:#5E5142;
+}
+.picchetto .eti{
+  font-size:12px; font-weight:700; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--sedimento);
+}
+.scura .picchetto .eti{color:rgba(245,242,237,.55)}
+.scura{background:var(--lichene); color:var(--osso)}
+.scura h2,.scura h3{color:var(--osso)}
+.scura .guida{color:rgba(245,242,237,.8)}
+.pece{background:var(--pece); color:var(--osso)}
+.pece h2,.pece h3{color:var(--osso)}
+.pece .guida{color:rgba(245,242,237,.78)}
+
+/* ── i cinque pilastri ─────────────────────────────────────── */
+.pilastri{margin-top:44px; border-top:1px solid var(--scisto)}
+.pilastro{
+  display:grid; grid-template-columns:minmax(0,14rem) minmax(0,1fr);
+  gap:0 32px; align-items:start;
+  padding:26px 0; border-bottom:1px solid var(--scisto);
+  transition:background .2s ease;
+}
+.pilastro:hover{background:var(--osso-2)}
+.pilastro h3{margin:0}
+.pilastro p{margin:0; color:#5A5249; font-size:16px; padding-top:3px}
+
+/* ── blocchi con foto ──────────────────────────────────────── */
+.duo{display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px,4.5vw,64px); align-items:center}
+.duo.inverso .duo-foto{order:2}
+.duo-foto{position:relative; border-radius:4px; overflow:hidden; align-self:stretch; min-height:280px}
+.duo-foto img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+.duo-testo h2{margin-bottom:20px}
+
+/* ── i cartellini (campi, allenamenti) ─────────────────────── */
+.schede{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-top:30px}
+.scheda{
+  background:var(--bianco); border:1px solid var(--scisto); border-radius:4px;
+  padding:18px 20px;
+}
+.scura .scheda,.pece .scheda{background:rgba(255,255,255,.055); border-color:rgba(245,242,237,.16)}
+.scheda .capo{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:9px}
+.scheda .nome{font-family:var(--titolo); font-size:19px; font-weight:800; text-transform:uppercase; letter-spacing:.005em; line-height:1.05}
+.scura .scheda .nome,.pece .scheda .nome{color:var(--osso)}
+/* La fessura a destra del nome. Si chiamava `.distanza` e conteneva «18 km»:
+   ma la schermata Campi dell'app non misura distanze — cerca per zona e dice
+   «In {regione} · {n} campi». Un nome di classe che descrive una cosa che il
+   prodotto non fa e' il primo posto da cui riparte l'errore. */
+.spalla{
+  font-size:12px; font-weight:700; letter-spacing:.06em; color:var(--argilla);
+  white-space:nowrap;
+}
+.scheda .righe{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:13.5px; color:var(--sedimento)}
+.scura .scheda .righe,.pece .scheda .righe{color:rgba(245,242,237,.66)}
+.bollo{
+  display:inline-block; font-size:11px; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; padding:3px 8px; border-radius:2px;
+  background:rgba(102,177,50,.16); color:#3A631C; margin-top:11px;
+}
+.scura .bollo,.pece .bollo{background:rgba(102,177,50,.22); color:#A8DE86}
+
+.promessa{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; margin:28px 0 0}
+.promessa .grosso{
+  font-family:var(--titolo); font-weight:800; font-size:clamp(46px,5.2vw,66px);
+  letter-spacing:-.02em; line-height:.9; color:var(--argilla); text-transform:uppercase;
+}
+.promessa .sotto{
+  font-size:13px; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
+  color:rgba(245,242,237,.62); max-width:16ch; line-height:1.5;
+}
+
+/* ── i numeri dell'andamento ───────────────────────────────── */
+.numeri{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:2px; margin-top:30px}
+.numero{padding:20px 22px; background:rgba(255,255,255,.055); border:1px solid rgba(245,242,237,.14)}
+.numero .v{font-family:var(--titolo); font-size:42px; font-weight:800; letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums; line-height:.95; color:var(--osso)}
+.numero .e{font-size:12px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:rgba(245,242,237,.58); margin-top:9px}
+
+/* ── federazioni ───────────────────────────────────────────── */
+.fed{display:flex; flex-wrap:wrap; gap:9px; margin-top:28px}
+.fed span{
+  font-family:var(--titolo); font-size:15px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.04em; padding:8px 13px; border:1px solid var(--scisto);
+  border-radius:3px; color:#4A443D; background:var(--bianco);
+}
+/* Quella del tuo paese si distingue col bordo e con l'inchiostro, non con la
+   grandezza: se cambiasse misura si sposterebbero tutte le altre, e l'ordine
+   e' gia' il segnale principale. */
+.fed span.mia{ border-color:var(--prato); color:var(--pece); }
+
+/* ── richiamo finale ───────────────────────────────────────── */
+.finale{background:var(--lichene); color:var(--osso); text-align:center; padding:clamp(64px,9vw,124px) 0}
+.finale h2{margin-bottom:30px}
+.finale .tasti{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+
+/* ── piede ─────────────────────────────────────────────────── */
+.piede{background:var(--pece); color:rgba(245,242,237,.62); padding:44px 0 34px; font-size:14px}
+.piede .wrap{display:flex; flex-wrap:wrap; gap:26px; align-items:center}
+.piede a{text-decoration:none; color:rgba(245,242,237,.62)}
+.piede a:hover{color:var(--osso)}
+.piede .link{display:flex; gap:22px; flex-wrap:wrap}
+.piede .fine{margin-left:auto; font-size:13px; color:rgba(245,242,237,.4)}
+
+/* ── comparsa allo scorrimento ─────────────────────────────── */
+.sale{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
+.sale.dentro{opacity:1; transform:none}
+@media (prefers-reduced-motion:reduce){ .sale{opacity:1; transform:none; transition:none} }
+
+/* ── il piccolo ────────────────────────────────────────────── */
+/* IL MENU CADE PRIMA DI QUANTO CADEVA. (Nuova, e non e' un capriccio: e' il
+   conto della testata.) Le cinque voci non sono cambiate, ma il nome accanto
+   al marchio si', perche' Inter e' piu' largo di un condensato. Fra 961 e
+   1040 la somma non tornava piu' e la barra sbordava di una trentina di
+   pixel — senza barra di scorrimento, quindi senza che si vedesse.
+   Il menu se ne va a 1040 invece che a 960. L'eroe resta a due colonne fino
+   a 960 come prima: sono due soglie diverse perche' sono due problemi
+   diversi, e tenerle insieme era la ragione per cui una delle due sbagliava. */
+@media (max-width:1040px){ .menu{display:none} }
+
+@media (max-width:960px){
+  .menu{display:none}
+  .eroe{grid-template-columns:1fr}
+  /* Qui la colonna e' tutta la pagina, quindi il titolo puo' crescere molto
+     di piu' del 4,2vw di sopra. Il pavimento e' 30px e non 34: a 320px di
+     schermo i margini restano 24 fissi, e «Il tuo prossimo» a 8,58em non ci
+     sta oltre i 31. Meglio piccolo che a capo. */
+  .vetrina h1{font-size:clamp(30px,9.4vw,62px)}
+  /* 34svh e non 52vh, con un tetto. Il conto: sotto la foto ci sono
+     l'occhiello, tre righe di titolo, la guida e i due tasti impilati —
+     circa 470px che non si comprimono. Quello che avanza e' la foto, non il
+     contrario. `svh` perche' sul telefono `vh` conta anche la barra del
+     browser, che sparisce al primo tocco: con `vh` la foto nasceva piu'
+     alta di quanto lo schermo fosse davvero. */
+  .eroe-testo{min-height:min(calc(100svh - var(--testata)),720px)}
+  .eroe-foto{order:-1; min-height:min(34svh,320px)}
+  .eroe-foto::after{background:linear-gradient(180deg,rgba(58,74,62,0) 55%,rgba(58,74,62,.95) 100%)}
+  .eroe-testo{min-height:0; padding-top:34px}
+  .fascia .wrap{grid-template-columns:1fr}
+  .fascia .voce + .voce{padding-left:0; border-left:0; border-top:1px solid rgba(245,242,237,.14)}
+  .duo,.duo.inverso{grid-template-columns:minmax(0,1fr)}
+  .duo-testo .tasto{white-space:normal; width:100%; justify-content:center; text-align:center}
+  .duo.inverso .duo-foto{order:0}
+  .pilastro{grid-template-columns:1fr; gap:8px}
+}
+@media (max-width:600px){
+  /* La testata non ci sta in 390px. Cade «Accedi»: e' la porta di servizio,
+     e la porta principale — «Apri l'app» — resta, piu' stretta. */
+  .accedi{display:none}
+  .testata .wrap{gap:10px}
+  .testata .destra{gap:8px}
+  .marchio .nome{font-size:17px}
+  .marchio .segno{width:26px; height:26px; border-radius:6px}
+  .lingua{padding:6px 8px; font-size:11px}
+  .tasto-min{font-size:15px; padding:9px 13px}
+  .promessa{flex-direction:column; gap:10px}
+  .promessa .sotto{max-width:30ch}
+}
+/* SOTTO I 380 LA TESTATA NON CI STA PIU'. Con Barlow ci stava: «ARCTRAIL 3D»
+   in un condensato occupa un quinto in meno. Qui non si toglie niente — il
+   nome e la porta d'ingresso restano tutti e due — si stringe. */
+@media (max-width:380px){
+  .vetrina{--gutter:16px}
+  .marchio{gap:8px}
+  .marchio .segno{width:24px; height:24px; border-radius:5px}
+  .marchio .nome{font-size:14px; letter-spacing:.005em}
+  .tasto-min{font-size:13px; padding:8px 10px; letter-spacing:.03em}
+  .testata .destra{gap:6px}
+}
+
+/* SCHERMI BASSI. Non e' una questione di larghezza ma di altezza: un
+   telefono piccolo e un portatile vecchio hanno lo stesso problema, cioe'
+   che sotto la testata avanza poco. Qui si stringono le distanze, non si
+   toglie niente. */
+@media (max-height:700px) and (max-width:960px){
+  .eroe-foto{min-height:min(24svh,240px)}
+  .eroe-testo{padding-top:22px; padding-bottom:22px}
+  .eroe-testo .guida{margin:14px 0 18px}
+}
+
+@media (max-width:520px){
+  .vetrina{font-size:16px}
+  .eroe-tasti .tasto,.finale .tasto{width:100%; justify-content:center}
+}
+:where(.vetrina) a:focus-visible,:where(.vetrina) button:focus-visible{
+  outline:3px solid var(--argilla); outline-offset:3px;
+}
+</style>
+</head>
+<!-- Il timbro, come marketplace.html: `data-build` dice quale versione e'
+     questa, `data-parent` da quale e' nata. La prima anteprima non ne aveva
+     nessuno — quindi il genitore e' dichiarato per nome, non inventato. -->
+<body data-build="2026-08-25-vetrina-fascia" data-parent="2026-08-25-vetrina-regioni">
+<div class="vetrina">
+
+<!-- ══════════ TESTATA ══════════ -->
+<header class="testata">
+  <div class="wrap">
+    <a class="marchio" href="#">
+      <!-- IL MARCHIO VERO. In produzione la sorgente torna src="logo.webp",
+           che sta nella stessa cartella su GitHub.
+           Qui dentro c'e' lo stesso marchio ridotto a 96px (4 KB invece di 43):
+           si vede a 30, e portarsi 532px per mostrarne 30 non ha senso.
+           Il fondo crema e' cotto dentro i pixel e non si toglie: su un fondo
+           scuro gli anelli si fondono. Quindi non si finge che sia ritagliato —
+           si arrotondano gli angoli, e dichiara quello che e': l'icona dell'app. -->
+      <img class="segno" src="logo.webp" width="30" height="30" alt="" aria-hidden="true">
+      <span class="nome">Arc<b>Trail</b> 3D</span>
+    </a>
+    <nav class="menu">
+      <a href="#cosa" data-k="nav_cosa">Cosa fa</a>
+      <a href="#campi" data-k="nav_campi">Campi</a>
+      <a href="#allenamenti" data-k="nav_all">Allenamenti</a>
+      <a href="#compagnie" data-k="nav_club">Compagnie</a>
+      <a href="#federazioni" data-k="nav_fed">Federazioni</a>
+    </nav>
+    <div class="destra">
+      <div class="lingua"><span class="lingua-nome" id="linguaNome">Italiano</span><span class="lingua-sigla" id="linguaSigla">IT</span><svg class="lingua-punta" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><select id="sceltaLingua" aria-label="Lingua / Language"><option value="it">Italiano</option><option value="en">English</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="es">Español</option><option value="sv">Svenska</option><option value="nl">Nederlands</option></select></div>
+      <a class="accedi" data-app href="/" data-k="nav_accedi">Accedi</a>
+      <a class="tasto tasto-1 tasto-min" data-app href="/"><span class="apri-lungo" data-k="nav_apri">Apri l'app</span><span class="apri-corto" data-k="nav_apri_breve">Apri</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ EROE ══════════ -->
+<section class="eroe">
+  <div class="eroe-testo">
+    <p class="occhiello" data-k="eroe_occhiello">La casa digitale del tiro con l'arco 3D</p>
+    <h1>
+      <span data-k="eroe_h1_a">Il tuo prossimo</span><br>
+      <span class="acceso" data-k="eroe_h1_b">giro.</span><br>
+      <span data-k="eroe_h1_c">È là fuori.</span>
+    </h1>
+    <p class="guida" data-k="eroe_guida">Trova i campi 3D, segna ogni freccia, tieni il diario dei tuoi giri e incontra gli arcieri vicino a te.</p>
+    <div class="eroe-tasti">
+      <a class="tasto tasto-1" data-app href="/">
+        <span data-k="cta_inizia">Inizia a tirare</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="tasto tasto-2" href="#campi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        <span data-k="cta_campo">Trova un campo</span>
+      </a>
+    </div>
+  </div>
+  <div class="eroe-foto">
+    <img src="vetrina-eroe.webp" data-k-alt="alt_eroe" alt="Tre arcieri alla piazzola 14 di un percorso 3D nel bosco: una arciera segna il punteggio sul telefono, la sagoma è più avanti sul sentiero.">
+  </div>
+</section>
+
+<!-- ══════════ FASCIA DEI TRE ══════════ -->
+<section class="fascia">
+  <div class="wrap">
+    <div class="voce">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8.8a16 16 0 0 1 20 0M5 12.6a11 11 0 0 1 14 0M8.4 16.3a6 6 0 0 1 7.2 0"/><circle cx="12" cy="20" r="1.3" fill="currentColor"/></svg>
+      <div>
+        <div class="t" data-k="tre_rete_t">Senza rete</div>
+        <div class="s" data-k="tre_rete_s">Nel bosco segna lo stesso.</div>
+      </div>
+    </div>
+    <div class="voce">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.6 20 6v6.2c0 4.6-3.3 7.9-8 9.2-4.7-1.3-8-4.6-8-9.2V6l8-3.4Z"/><path d="M9 12.2l2.2 2.2L15.4 10" stroke-linecap="round"/></svg>
+      <div>
+        <div class="t" data-k="tre_reg_t">I regolamenti</div>
+        <div class="s" data-k="tre_reg_s">FIARC, FITARCO e altri.</div>
+      </div>
+    </div>
+    <div class="voce">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.6 20a6.4 6.4 0 0 1 12.8 0"/><path d="M16.4 5.2a3.2 3.2 0 0 1 0 5.6M18.2 20a6.4 6.4 0 0 0-2.6-5.1"/></svg>
+      <div>
+        <div class="t" data-k="tre_club_t">Compagnie</div>
+        <div class="s" data-k="tre_club_s">Allenamenti aperti e gare.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 01 · COSA FA ══════════ -->
+<section class="piazzola" id="cosa">
+  <div class="wrap sale">
+    <div class="picchetto">
+      <div class="palo">01</div>
+      <div class="eti" data-k="s1_eti">Cosa fa</div>
+    </div>
+    <h2 data-k="s1_h2">Cinque cose, e le fa tutte in tasca.</h2>
+    <div class="pilastri">
+      <div class="pilastro">
+        <h3 data-k="p1_t">Scopri</h3>
+        <p data-k="p1_p">Campi 3D, compagnie, allenamenti e gare vicino a te.</p>
+      </div>
+      <div class="pilastro">
+        <h3 data-k="p2_t">Tira</h3>
+        <p data-k="p2_p">Segni allenamenti e giri regolamentari dal telefono, freccia per freccia.</p>
+      </div>
+      <div class="pilastro">
+        <h3 data-k="p3_t">Migliora</h3>
+        <p data-k="p3_p">Punteggi, storico e andamento: quello che hai fatto davvero.</p>
+      </div>
+      <div class="pilastro">
+        <h3 data-k="p4_t">Incontra</h3>
+        <p data-k="p4_p">Allenamenti aperti, compagnie e altri arcieri.</p>
+      </div>
+      <div class="pilastro">
+        <h3 data-k="p5_t">Gareggia</h3>
+        <p data-k="p5_p">Gare, iscrizioni, scheda di gara e classifiche.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 02 · SENZA RETE ══════════ -->
+<section class="piazzola pece">
+  <div class="wrap sale">
+    <div class="duo">
+      <div class="duo-foto"><img src="vetrina-senza-rete.webp" data-k-alt="alt_corda" alt="Mani che sistemano la corda su un arco ricurvo, seduto ai margini del percorso."></div>
+      <div class="duo-testo">
+        <div class="picchetto">
+          <div class="palo">02</div>
+          <div class="eti" data-k="s2_eti">Senza rete</div>
+        </div>
+        <h2 data-k="s2_h2">Fatta per dove non prende.</h2>
+        <p class="guida" data-k="s2_guida">Segni il giro anche quando la tacca sparisce. ArcTrail tiene il punteggio sul telefono e lo mette in salvo appena il segnale torna.</p>
+        <p class="promessa">
+          <span class="grosso" data-k="s2_zero">Zero</span>
+          <span class="sotto" data-k="s2_sotto">Tacche di segnale servono per segnare una freccia</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 03 · I CAMPI ══════════ -->
+<section class="piazzola" id="campi">
+  <div class="wrap sale">
+    <div class="picchetto">
+      <div class="palo">03</div>
+      <div class="eti" data-k="s3_eti">I campi</div>
+    </div>
+    <h2 data-k="s3_h2">Trova il prossimo campo.</h2>
+    <p class="guida" data-k="s3_guida">Cerchi per zona e vedi cosa c'è: quanti bersagli, quale federazione, se ci si può allenare.</p>
+    <div class="schede">
+      <!-- Tre regioni diverse, non tre paesi della stessa valle. I nomi sono
+           inventati e verificati contro `compagnie-data.js`: una scheda finta
+           con addosso il nome di una compagnia vera le attribuirebbe un numero
+           di bersagli e degli allenamenti aperti che nessuno le ha chiesto. -->
+      <div class="scheda">
+        <div class="capo"><div class="nome">Valle Antrona 3D</div><div class="spalla">Piemonte</div></div>
+        <div class="righe"><span>Antronapiana (VB)</span><span>·</span><span data-k="s3_b30">30 bersagli</span><span>·</span><span>FIARC</span></div>
+        <div class="bollo" data-k="s3_aperti">Allenamenti aperti</div>
+      </div>
+      <div class="scheda">
+        <div class="capo"><div class="nome">Colline Metallifere 3D</div><div class="spalla">Toscana</div></div>
+        <div class="righe"><span>Massa Marittima (GR)</span><span>·</span><span data-k="s3_b28">28 bersagli</span><span>·</span><span>FIARC</span></div>
+        <div class="bollo" data-k="s3_aperti">Allenamenti aperti</div>
+      </div>
+      <div class="scheda">
+        <div class="capo"><div class="nome">Monti Cimini 3D</div><div class="spalla">Lazio</div></div>
+        <div class="righe"><span>Soriano nel Cimino (VT)</span><span>·</span><span data-k="s3_b24">24 bersagli</span><span>·</span><span>FITARCO</span></div>
+      </div>
+    </div>
+    <p style="margin-top:30px"><a class="tasto tasto-2" data-app href="/" data-k="s3_cta">Guarda i campi</a></p>
+  </div>
+</section>
+
+<!-- ══════════ 04 · L'ANDAMENTO ══════════ -->
+<section class="piazzola scura">
+  <div class="wrap sale">
+    <div class="duo inverso">
+      <div class="duo-foto"><img src="vetrina-andamento.webp" data-k-alt="alt_cervo" alt="Sagoma di cervo con tre frecce nel kill, l'arciere si avvicina con l'arco scarico."></div>
+      <div class="duo-testo">
+        <div class="picchetto">
+          <div class="palo">04</div>
+          <div class="eti" data-k="s4_eti">L'andamento</div>
+        </div>
+        <h2 data-k="s4_h2">Ogni giro racconta qualcosa.</h2>
+        <p class="guida" data-k="s4_guida">Media, migliore giro, bersagli tirati, come vai su ogni campo. Numeri tuoi, presi dai tuoi giri — nessuna previsione, nessun consiglio inventato.</p>
+        <div class="numeri">
+          <div class="numero"><div class="v">212</div><div class="e" data-k="s4_media">Media</div></div>
+          <div class="numero"><div class="v">226</div><div class="e" data-k="s4_miglior">Miglior giro</div></div>
+          <div class="numero"><div class="v">582</div><div class="e" data-k="s4_bersagli">Bersagli tirati</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 05 · GLI ALLENAMENTI ══════════ -->
+<section class="piazzola" id="allenamenti">
+  <div class="wrap sale">
+    <div class="duo">
+      <div class="duo-foto"><img src="vetrina-allenamenti.webp" data-k-alt="alt_istruttore" alt="Un istruttore corregge la posizione di un ragazzo in trazione verso una sagoma; gli altri guardano da dietro la linea di tiro."></div>
+      <div class="duo-testo">
+        <div class="picchetto">
+          <div class="palo">05</div>
+          <div class="eti" data-k="s5_eti">Gli allenamenti</div>
+        </div>
+        <h2 data-k="s5_h2">Organizza un allenamento.</h2>
+        <p class="guida" data-k="s5_guida">Vedi chi si allena vicino a te, annunci il tuo turno e ti unisci a quello di qualcun altro. Poi vi trovate al campo.</p>
+        <div class="schede" style="grid-template-columns:1fr">
+          <div class="scheda">
+            <div class="capo"><div class="nome">Selva del Montello 3D</div><div class="spalla" data-k="s5_posti">3 posti</div></div>
+            <div class="righe"><span data-k="s5_oggi">Oggi · 14:00</span><span>·</span><span>Nervesa della Battaglia (TV)</span><span>·</span><span data-k="s3_b24">24 bersagli</span></div>
+          </div>
+        </div>
+        <p style="margin-top:24px"><a class="tasto tasto-2" data-app href="/" data-k="s5_cta">Trova un allenamento</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 06 · LE COMPAGNIE ══════════ -->
+<section class="piazzola pece" id="compagnie">
+  <div class="wrap sale">
+    <div class="duo inverso">
+      <div class="duo-foto"><img src="vetrina-compagnie.webp" data-k-alt="alt_compound" alt="Arciere in trazione con arco compound, controluce di prima mattina."></div>
+      <div class="duo-testo">
+        <div class="picchetto">
+          <div class="palo">06</div>
+          <div class="eti" data-k="s6_eti">Le compagnie</div>
+        </div>
+        <h2 data-k="s6_h2">Fatta per gli arcieri. Utile alle compagnie.</h2>
+        <p class="guida" data-k="s6_guida">Chi tiene un campo può descriverlo, annunciare gli allenamenti, ricevere le segnalazioni di chi trova una sagoma rotta, scrivere ai soci e organizzare le gare.</p>
+        <p style="margin-top:26px"><a class="tasto tasto-1" data-app href="/" data-k="s6_cta">Porta la tua compagnia su ArcTrail</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FEDERAZIONI ══════════ -->
+<section class="piazzola" id="federazioni" style="padding-top:clamp(48px,6vw,80px)">
+  <div class="wrap sale">
+    <div class="picchetto">
+      <div class="palo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F1E9DA" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.4"/></svg>
+      </div>
+      <div class="eti" data-k="s7_eti">I regolamenti</div>
+    </div>
+    <h2 data-k="s7_h2">Scegli la tua federazione.</h2>
+    <p class="guida" data-k="s7_guida">ArcTrail conosce i punteggi e i formati di gara di più federazioni. La imposti alla prima apertura, e l'app conta come contano loro.</p>
+    <!-- Vuoto apposta: lo riempie `disponiFederazioni()`, e l'ordine dipende
+         dalla lingua. Scritte a mano erano sedici sigle in ordine fisso, con
+         le due italiane davanti: un tedesco trovava la sua nona. -->
+    <div class="fed" id="fed"></div>
+    <p style="margin-top:22px; font-size:14px; color:var(--sedimento)" data-k="s7_nota">ArcTrail 3D è un'app indipendente. Nessuna di queste federazioni la patrocina o la certifica.</p>
+  </div>
+</section>
+
+<!-- ══════════ RICHIAMO FINALE ══════════ -->
+<section class="finale su-scuro">
+  <div class="wrap sale">
+    <p class="occhiello" style="justify-content:center; color:rgba(245,242,237,.62)" data-k="fin_occhiello">Gratis, in nove lingue</p>
+    <h2 data-k="fin_h2">Il tuo prossimo giro comincia qui.</h2>
+    <div class="tasti">
+      <a class="tasto tasto-1" data-app href="/">
+        <span data-k="cta_inizia">Inizia a tirare</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="tasto tasto-2" href="#campi" data-k="cta_campo">Trova un campo</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PIEDE ══════════ -->
+<footer class="piede">
+  <div class="wrap">
+    <div class="link">
+      <a href="/presentazione.html" data-k="pi_cose">Che cos'è</a>
+      <a href="mailto:info@arctrail3d.com" data-k="pi_aiuto">Assistenza</a>
+      <a href="/privacy.html" data-k="pi_privacy">Privacy</a>
+      <a href="/termini.html" data-k="pi_termini">Condizioni</a>
+      <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a>
+    </div>
+    <div class="fine">© 2026 ArcTrail 3D</div>
+  </div>
+</footer>
+
+</div>
+
+<script>
+(function(){
+
+  /* ── LA LINGUA ───────────────────────────────────────────────
+     La vetrina parla le stesse nove lingue dell'app, e sceglie da sola.
+
+     NON dalla posizione, e il motivo e' che sono due cose diverse: un
+     italiano in Francia vuole l'italiano. La posizione dice dove sei, non
+     che lingua parli — e chi legge questa pagina spesso sta guardando un
+     campo all'estero, cioe' proprio il caso in cui le due non coincidono.
+     In piu' chiederla fa comparire un permesso del browser sulla pagina che
+     si vede una volta sola nella vita.
+
+     L'ordine e': l'indirizzo (?lang=fr), poi la scelta gia' fatta qui, poi
+     la lingua del telefono. Se non e' una delle nove si cade sull'INGLESE,
+     non sull'italiano — e' la stessa regola di linguaProbabile() nell'app,
+     scritta il 20/08: fra due lingue che non capisci l'inglese e' quella che
+     qualcuno capisce.
+
+     E la scelta viaggia: i link che entrano nell'app portano ?lang= con se',
+     perche' l'app quel parametro lo legge gia'. */
+  var LINGUE = ["it","en","fr","de","tr","ru","es","sv","nl"];
+  var PAROLE = {"nav_cosa":{"it":"Cosa fa","en":"Features","fr":"Fonctions","de":"Funktionen","tr":"Neler yapar","ru":"Возможности","es":"Funciones","sv":"Funktioner","nl":"Functies"},"nav_campi":{"it":"Campi","en":"Fields","fr":"Parcours","de":"Parcours","tr":"Parkurlar","ru":"Площадки","es":"Campos","sv":"Banor","nl":"Parcoursen"},"nav_all":{"it":"Allenamenti","en":"Trainings","fr":"Entraînements","de":"Trainings","tr":"Antrenmanlar","ru":"Тренировки","es":"Entrenamientos","sv":"Träningar","nl":"Trainingen"},"nav_club":{"it":"Compagnie","en":"Clubs","fr":"Clubs","de":"Vereine","tr":"Kulüpler","ru":"Клубы","es":"Clubes","sv":"Klubbar","nl":"Clubs"},"nav_fed":{"it":"Federazioni","en":"Federations","fr":"Fédérations","de":"Verbände","tr":"Federasyonlar","ru":"Федерации","es":"Federaciones","sv":"Förbund","nl":"Bonden"},"nav_accedi":{"it":"Accedi","en":"Sign in","fr":"Se connecter","de":"Anmelden","tr":"Giriş yap","ru":"Войти","es":"Entrar","sv":"Logga in","nl":"Inloggen"},"nav_apri":{"it":"Apri l'app","en":"Open the app","fr":"Ouvrir l'app","de":"App öffnen","tr":"Uygulamayı aç","ru":"Открыть","es":"Abrir la app","sv":"Öppna appen","nl":"App openen"},"eroe_occhiello":{"it":"La casa digitale del tiro con l'arco 3D","en":"The digital home of 3D archery","fr":"La maison numérique du tir à l'arc 3D","de":"Das digitale Zuhause des 3D-Bogensports","tr":"3D okçuluğun dijital evi","ru":"Цифровой дом 3D-стрельбы из лука","es":"La casa digital del tiro con arco 3D","sv":"Det digitala hemmet för 3D-bågskytte","nl":"Het digitale thuis van 3D-handboogschieten"},"eroe_h1_a":{"it":"Il tuo prossimo","en":"Your next","fr":"Ton prochain","de":"Deine nächste","tr":"Bir sonraki","ru":"Следующий","es":"Tu próxima","sv":"Din nästa","nl":"Jouw volgende"},"eroe_h1_b":{"it":"giro.","en":"round.","fr":"parcours.","de":"Runde.","tr":"turun.","ru":"круг.","es":"ronda.","sv":"runda.","nl":"ronde."},"eroe_h1_c":{"it":"È là fuori.","en":"Out there.","fr":"Il est là-bas.","de":"Dort draußen.","tr":"Dışarıda.","ru":"уже там.","es":"Está ahí fuera.","sv":"Där ute.","nl":"Daarbuiten."},"eroe_guida":{"it":"Trova i campi 3D, segna ogni freccia, tieni il diario dei tuoi giri e incontra gli arcieri vicino a te.","en":"Discover 3D fields, score every round, track your progress and connect with archers around you.","fr":"Trouve les parcours 3D, marque chaque flèche, garde le carnet de tes parcours et rencontre les archers près de chez toi.","de":"Finde 3D-Parcours, notiere jeden Pfeil, führe dein Rundenbuch und triff Bogenschützen in deiner Nähe.","tr":"3D parkurları bul, her oku kaydet, turlarının günlüğünü tut ve yakınındaki okçularla tanış.","ru":"Находи 3D-площадки, записывай каждую стрелу, веди дневник кругов и знакомься с лучниками рядом.","es":"Encuentra campos 3D, anota cada flecha, lleva el diario de tus rondas y conoce a los arqueros cerca de ti.","sv":"Hitta 3D-banor, notera varje pil, för dagbok över dina rundor och möt bågskyttar nära dig.","nl":"Vind 3D-parcoursen, noteer elke pijl, houd een logboek van je rondes bij en ontmoet schutters bij jou in de buurt."},"cta_inizia":{"it":"Inizia a tirare","en":"Start shooting","fr":"Commencer","de":"Loslegen","tr":"Atışa başla","ru":"Начать круг","es":"Empezar","sv":"Börja skjuta","nl":"Beginnen"},"cta_campo":{"it":"Trova un campo","en":"Find a field","fr":"Voir les parcours","de":"Parcours finden","tr":"Parkur bul","ru":"Найти площадку","es":"Buscar un campo","sv":"Hitta en bana","nl":"Parcours vinden"},"tre_rete_t":{"it":"Senza rete","en":"Works offline","fr":"Sans réseau","de":"Ohne Netz","tr":"Şebekesiz","ru":"Без сети","es":"Sin cobertura","sv":"Utan täckning","nl":"Zonder bereik"},"tre_rete_s":{"it":"Nel bosco segna lo stesso.","en":"Score where reception ends.","fr":"Dans les bois, ça marque quand même.","de":"Im Wald zählt sie trotzdem.","tr":"Ormanda da kaydeder.","ru":"В лесу всё равно считает.","es":"En el bosque anota igual.","sv":"Fungerar även i skogen.","nl":"In het bos noteert hij gewoon door."},"tre_reg_t":{"it":"I regolamenti","en":"Federation rules","fr":"Les règlements","de":"Die Regelwerke","tr":"Kurallar","ru":"Правила","es":"Los reglamentos","sv":"Regelverken","nl":"De reglementen"},"tre_reg_s":{"it":"{fed} e altri.","en":"{fed} and more.","fr":"{fed} et d'autres.","de":"{fed} und mehr.","tr":"{fed} ve diğerleri.","ru":"{fed} и другие.","es":"{fed} y más.","sv":"{fed} med flera.","nl":"{fed} en meer."},"tre_club_t":{"it":"Compagnie","en":"Clubs","fr":"Clubs","de":"Vereine","tr":"Kulüpler","ru":"Клубы","es":"Clubes","sv":"Klubbar","nl":"Clubs"},"tre_club_s":{"it":"Allenamenti aperti e gare.","en":"Open trainings and events.","fr":"Entraînements ouverts et compétitions.","de":"Offene Trainings und Turniere.","tr":"Açık antrenmanlar ve yarışmalar.","ru":"Открытые тренировки и турниры.","es":"Entrenamientos abiertos y competiciones.","sv":"Öppna träningar och tävlingar.","nl":"Open trainingen en wedstrijden."},"s1_eti":{"it":"Cosa fa","en":"What it does","fr":"Ce qu'elle fait","de":"Was sie kann","tr":"Ne yapar","ru":"Что умеет","es":"Qué hace","sv":"Vad den gör","nl":"Wat het doet"},"s1_h2":{"it":"Cinque cose, e le fa tutte in tasca.","en":"Five things, all from your pocket.","fr":"Cinq choses, et toutes dans ta poche.","de":"Fünf Dinge, alle aus der Hosentasche.","tr":"Beş şey, hepsi cebinde.","ru":"Пять вещей, и все — в кармане.","es":"Cinco cosas, y todas en el bolsillo.","sv":"Fem saker, alla i fickan.","nl":"Vijf dingen, allemaal uit je broekzak."},"p1_t":{"it":"Scopri","en":"Discover","fr":"Découvrir","de":"Entdecken","tr":"Keşfet","ru":"Находи","es":"Descubre","sv":"Upptäck","nl":"Ontdek"},"p1_p":{"it":"Campi 3D, compagnie, allenamenti e gare vicino a te.","en":"3D fields, clubs, trainings and events near you.","fr":"Parcours 3D, clubs, entraînements et compétitions près de toi.","de":"3D-Parcours, Vereine, Trainings und Turniere in deiner Nähe.","tr":"Yakınındaki 3D parkurlar, kulüpler, antrenmanlar ve yarışmalar.","ru":"3D-площадки, клубы, тренировки и турниры рядом с тобой.","es":"Campos 3D, clubes, entrenamientos y competiciones cerca de ti.","sv":"3D-banor, klubbar, träningar och tävlingar nära dig.","nl":"3D-parcoursen, clubs, trainingen en wedstrijden bij jou in de buurt."},"p2_t":{"it":"Tira","en":"Shoot","fr":"Tirer","de":"Schießen","tr":"Atış","ru":"Стрельба","es":"Tirar","sv":"Skjut","nl":"Schieten"},"p2_p":{"it":"Segni allenamenti e giri regolamentari dal telefono, freccia per freccia.","en":"Score training and official federation rounds from your phone.","fr":"Note les entraînements et les parcours officiels depuis ton téléphone, flèche après flèche.","de":"Notiere Trainings und offizielle Runden vom Handy, Pfeil für Pfeil.","tr":"Antrenmanları ve resmî turları telefonundan, ok ok kaydet.","ru":"Записывай тренировки и официальные круги с телефона, стрела за стрелой.","es":"Anota entrenamientos y rondas oficiales desde el móvil, flecha a flecha.","sv":"Notera träningar och officiella rundor från telefonen, pil för pil.","nl":"Noteer trainingen en officiële rondes op je telefoon, pijl voor pijl."},"p3_t":{"it":"Migliora","en":"Improve","fr":"Progresser","de":"Verbessern","tr":"İlerle","ru":"Улучшай","es":"Mejora","sv":"Förbättra","nl":"Verbeter"},"p3_p":{"it":"Punteggi, storico e andamento: quello che hai fatto davvero.","en":"Your scores, history and progress over time.","fr":"Scores, historique et progression : ce que tu as vraiment fait.","de":"Punkte, Verlauf und Entwicklung: was du wirklich geschafft hast.","tr":"Puanlar, geçmiş ve gelişim: gerçekte ne yaptığın.","ru":"Очки, история и динамика: то, что ты действительно сделал.","es":"Puntuaciones, historial y evolución: lo que has hecho de verdad.","sv":"Poäng, historik och utveckling: det du faktiskt har gjort.","nl":"Scores, geschiedenis en ontwikkeling: wat je echt hebt gedaan."},"p4_t":{"it":"Incontra","en":"Connect","fr":"Rencontrer","de":"Vernetzen","tr":"Tanış","ru":"Знакомься","es":"Conecta","sv":"Möt","nl":"Ontmoet"},"p4_p":{"it":"Allenamenti aperti, compagnie e altri arcieri.","en":"Open trainings, clubs and other archers.","fr":"Entraînements ouverts, clubs et autres archers.","de":"Offene Trainings, Vereine und andere Bogenschützen.","tr":"Açık antrenmanlar, kulüpler ve diğer okçular.","ru":"Открытые тренировки, клубы и другие лучники.","es":"Entrenamientos abiertos, clubes y otros arqueros.","sv":"Öppna träningar, klubbar och andra bågskyttar.","nl":"Open trainingen, clubs en andere schutters."},"p5_t":{"it":"Gareggia","en":"Compete","fr":"Concourir","de":"Antreten","tr":"Yarış","ru":"Соревнуйся","es":"Compite","sv":"Tävla","nl":"Strijd"},"p5_p":{"it":"Gare, iscrizioni, scheda di gara e classifiche.","en":"Events, registrations, scorecards and results.","fr":"Compétitions, inscriptions, feuille de marque et classements.","de":"Turniere, Anmeldungen, Wertungszettel und Ranglisten.","tr":"Yarışmalar, kayıtlar, skor kartı ve sıralamalar.","ru":"Турниры, регистрации, карточка и результаты.","es":"Competiciones, inscripciones, hoja de marcaje y clasificaciones.","sv":"Tävlingar, anmälningar, protokoll och resultat.","nl":"Wedstrijden, inschrijvingen, scorekaart en uitslagen."},"s2_eti":{"it":"Senza rete","en":"Offline","fr":"Hors réseau","de":"Offline","tr":"Çevrimdışı","ru":"Офлайн","es":"Sin conexión","sv":"Offline","nl":"Offline"},"s2_h2":{"it":"Fatta per dove non prende.","en":"Built for everywhere.","fr":"Faite pour là où ça ne capte pas.","de":"Gemacht für Orte ohne Empfang.","tr":"Çekmediği yerler için yapıldı.","ru":"Сделано для мест без связи.","es":"Hecha para donde no hay cobertura.","sv":"Gjord för där täckningen tar slut.","nl":"Gemaakt voor waar geen bereik is."},"s2_guida":{"it":"Segni il giro anche quando la tacca sparisce. ArcTrail tiene il punteggio sul telefono e lo mette in salvo appena il segnale torna.","en":"Score your round even when reception disappears. ArcTrail keeps your activity safe and synchronises when you reconnect.","fr":"Tu notes ton parcours même quand la barre disparaît. ArcTrail garde le score sur le téléphone et le met à l'abri dès que le signal revient.","de":"Du notierst die Runde auch dann, wenn der Balken verschwindet. ArcTrail hält den Stand auf dem Handy und sichert ihn, sobald das Signal zurück ist.","tr":"Çubuk kaybolsa da turu kaydedersin. ArcTrail puanı telefonda tutar ve sinyal döner dönmez güvene alır.","ru":"Ты записываешь круг, даже когда деления пропали. ArcTrail держит счёт в телефоне и сохраняет его, как только сигнал вернётся.","es":"Anotas la ronda aunque desaparezca la cobertura. ArcTrail guarda la puntuación en el móvil y la pone a salvo en cuanto vuelve la señal.","sv":"Du noterar rundan även när staplarna försvinner. ArcTrail håller poängen i telefonen och sparar den så fort signalen är tillbaka.","nl":"Je noteert de ronde ook als de streepjes verdwijnen. ArcTrail houdt de score op de telefoon en zet hem veilig zodra het signaal terug is."},"s2_zero":{"it":"Zero","en":"Zero","fr":"Zéro","de":"Null","tr":"Sıfır","ru":"Ноль","es":"Cero","sv":"Noll","nl":"Nul"},"s2_sotto":{"it":"Tacche di segnale servono per segnare una freccia","en":"Bars of signal are needed to score an arrow","fr":"Barres de réseau nécessaires pour marquer une flèche","de":"Balken Empfang braucht es für einen Pfeil","tr":"Bir oku kaydetmek için gereken sinyal çubuğu","ru":"делений сети нужно, чтобы записать стрелу","es":"Barras de cobertura hacen falta para anotar una flecha","sv":"Staplar krävs för att notera en pil","nl":"Streepjes bereik heb je nodig voor een pijl"},"s3_eti":{"it":"I campi","en":"Fields","fr":"Les parcours","de":"Die Parcours","tr":"Parkurlar","ru":"Площадки","es":"Los campos","sv":"Banorna","nl":"De parcoursen"},"s3_h2":{"it":"Trova il prossimo campo.","en":"Find your next field.","fr":"Trouve ton prochain parcours.","de":"Finde deinen nächsten Parcours.","tr":"Bir sonraki parkurunu bul.","ru":"Найди свою следующую площадку.","es":"Encuentra tu próximo campo.","sv":"Hitta din nästa bana.","nl":"Vind je volgende parcours."},"s3_guida":{"it":"Cerchi per zona e vedi cosa c'è: quanti bersagli, quale federazione, se ci si può allenare.","en":"Search by area and see what's there: how many targets, which federation, whether trainings are open.","fr":"Tu cherches par zone et tu vois ce qu'il y a : combien de cibles, quelle fédération, si on peut s'y entraîner.","de":"Du suchst nach Gegend und siehst, was es gibt: wie viele Ziele, welcher Verband, ob Training möglich ist.","tr":"Bölgeye göre ararsın ve ne olduğunu görürsün: kaç hedef, hangi federasyon, antrenman yapılabiliyor mu.","ru":"Ищешь по району и видишь, что там есть: сколько мишеней, какая федерация, можно ли тренироваться.","es":"Buscas por zona y ves qué hay: cuántas dianas, qué federación, si se puede entrenar.","sv":"Du söker på område och ser vad som finns: hur många mål, vilket förbund, om träning är öppen.","nl":"Je zoekt op gebied en ziet wat er is: hoeveel doelen, welke bond, of er getraind kan worden."},"s3_b30":{"it":"30 bersagli","en":"30 targets","fr":"30 cibles","de":"30 Ziele","tr":"30 hedef","ru":"30 мишеней","es":"30 dianas","sv":"30 mål","nl":"30 doelen"},"s3_b28":{"it":"28 bersagli","en":"28 targets","fr":"28 cibles","de":"28 Ziele","tr":"28 hedef","ru":"28 мишеней","es":"28 dianas","sv":"28 mål","nl":"28 doelen"},"s3_b24":{"it":"24 bersagli","en":"24 targets","fr":"24 cibles","de":"24 Ziele","tr":"24 hedef","ru":"24 мишеней","es":"24 dianas","sv":"24 mål","nl":"24 doelen"},"s3_aperti":{"it":"Allenamenti aperti","en":"Open trainings","fr":"Entraînements ouverts","de":"Offene Trainings","tr":"Açık antrenmanlar","ru":"Открытые тренировки","es":"Entrenamientos abiertos","sv":"Öppna träningar","nl":"Open trainingen"},"s3_cta":{"it":"Guarda i campi","en":"Explore fields","fr":"Explorer les parcours","de":"Parcours ansehen","tr":"Parkurlara bak","ru":"Смотреть площадки","es":"Ver los campos","sv":"Se banorna","nl":"Bekijk parcoursen"},"s4_eti":{"it":"L'andamento","en":"Progress","fr":"La progression","de":"Die Entwicklung","tr":"Gelişim","ru":"Динамика","es":"La evolución","sv":"Utvecklingen","nl":"De ontwikkeling"},"s4_h2":{"it":"Ogni giro racconta qualcosa.","en":"Every round tells a story.","fr":"Chaque parcours raconte quelque chose.","de":"Jede Runde erzählt etwas.","tr":"Her tur bir şey anlatır.","ru":"Каждый круг что-то рассказывает.","es":"Cada ronda cuenta algo.","sv":"Varje runda berättar något.","nl":"Elke ronde vertelt iets."},"s4_guida":{"it":"Media, migliore giro, bersagli tirati, come vai su ogni campo. Numeri tuoi, presi dai tuoi giri — nessuna previsione, nessun consiglio inventato.","en":"Average, best round, targets shot, how you do on each field. Your own numbers, from your own rounds — no predictions, no invented coaching.","fr":"Moyenne, meilleur parcours, cibles tirées, comment tu t'en sors sur chaque parcours. Tes chiffres, tirés de tes parcours — aucune prévision, aucun conseil inventé.","de":"Schnitt, beste Runde, geschossene Ziele, wie du auf jedem Parcours abschneidest. Deine Zahlen, aus deinen Runden — keine Prognosen, keine erfundenen Tipps.","tr":"Ortalama, en iyi tur, atılan hedefler, her parkurda nasıl gittiğin. Kendi turlarından alınan kendi sayıların — tahmin yok, uydurma öğüt yok.","ru":"Среднее, лучший круг, отстрелянные мишени, как идут дела на каждой площадке. Твои цифры из твоих кругов — никаких прогнозов, никаких выдуманных советов.","es":"Media, mejor ronda, dianas tiradas, cómo te va en cada campo. Números tuyos, sacados de tus rondas — sin predicciones, sin consejos inventados.","sv":"Snitt, bästa runda, skjutna mål, hur det går på varje bana. Dina egna siffror, från dina egna rundor — inga prognoser, inga påhittade råd.","nl":"Gemiddelde, beste ronde, geschoten doelen, hoe je het op elk parcours doet. Jouw cijfers, uit jouw rondes — geen voorspellingen, geen verzonnen adviezen."},"s4_media":{"it":"Media","en":"Average","fr":"Moyenne","de":"Schnitt","tr":"Ortalama","ru":"Среднее","es":"Media","sv":"Snitt","nl":"Gemiddelde"},"s4_miglior":{"it":"Miglior giro","en":"Best round","fr":"Meilleur parcours","de":"Beste Runde","tr":"En iyi tur","ru":"Лучший круг","es":"Mejor ronda","sv":"Bästa runda","nl":"Beste ronde"},"s4_bersagli":{"it":"Bersagli tirati","en":"Targets shot","fr":"Cibles tirées","de":"Geschossene Ziele","tr":"Atılan hedefler","ru":"Отстрелянные мишени","es":"Dianas tiradas","sv":"Skjutna mål","nl":"Geschoten doelen"},"s5_eti":{"it":"Gli allenamenti","en":"Trainings","fr":"Les entraînements","de":"Die Trainings","tr":"Antrenmanlar","ru":"Тренировки","es":"Los entrenamientos","sv":"Träningarna","nl":"De trainingen"},"s5_h2":{"it":"Organizza un allenamento.","en":"Set up a training.","fr":"Organise un entraînement.","de":"Organisiere ein Training.","tr":"Bir antrenman düzenle.","ru":"Организуй тренировку.","es":"Organiza un entrenamiento.","sv":"Ordna en träning.","nl":"Organiseer een training."},"s5_guida":{"it":"Vedi chi si allena vicino a te, annunci il tuo turno e ti unisci a quello di qualcun altro. Poi vi trovate al campo.","en":"See who is training nearby, announce your own session and join someone else's. Then you meet at the field.","fr":"Tu vois qui s'entraîne près de toi, tu annonces ta séance et tu rejoins celle de quelqu'un d'autre. Ensuite vous vous retrouvez sur le parcours.","de":"Du siehst, wer in deiner Nähe trainiert, kündigst deine eigene Runde an und schließt dich der von jemand anderem an. Dann trefft ihr euch am Parcours.","tr":"Yakınında kimin antrenman yaptığını görürsün, kendi seansını duyurursun ve başkasınınkine katılırsın. Sonra parkurda buluşursunuz.","ru":"Видишь, кто тренируется рядом, объявляешь свою тренировку и присоединяешься к чужой. Потом встречаетесь на площадке.","es":"Ves quién entrena cerca de ti, anuncias tu sesión y te unes a la de otra persona. Luego quedáis en el campo.","sv":"Du ser vem som tränar nära dig, annonserar ditt eget pass och går med i någon annans. Sedan ses ni på banan.","nl":"Je ziet wie er bij jou in de buurt traint, kondigt je eigen sessie aan en sluit je aan bij die van iemand anders. Daarna spreek je af op het parcours."},"s5_posti":{"it":"3 posti","en":"3 spots","fr":"3 places","de":"3 Plätze","tr":"3 yer","ru":"3 места","es":"3 plazas","sv":"3 platser","nl":"3 plekken"},"s5_oggi":{"it":"Oggi · 14:00","en":"Today · 2:00 PM","fr":"Aujourd'hui · 14h00","de":"Heute · 14:00","tr":"Bugün · 14:00","ru":"Сегодня · 14:00","es":"Hoy · 14:00","sv":"Idag · 14:00","nl":"Vandaag · 14:00"},"s5_cta":{"it":"Trova un allenamento","en":"Find a training","fr":"Trouver un entraînement","de":"Training finden","tr":"Antrenman bul","ru":"Найти тренировку","es":"Buscar un entrenamiento","sv":"Hitta en träning","nl":"Training vinden"},"s6_eti":{"it":"Le compagnie","en":"Clubs","fr":"Les clubs","de":"Die Vereine","tr":"Kulüpler","ru":"Клубы","es":"Los clubes","sv":"Klubbarna","nl":"De clubs"},"s6_h2":{"it":"Fatta per gli arcieri. Utile alle compagnie.","en":"Built for archers. Useful for clubs.","fr":"Faite pour les archers. Utile aux clubs.","de":"Für Bogenschützen gemacht. Für Vereine nützlich.","tr":"Okçular için yapıldı. Kulüpler için faydalı.","ru":"Сделано для лучников. Полезно клубам.","es":"Hecha para los arqueros. Útil para los clubes.","sv":"Gjord för bågskyttar. Nyttig för klubbar.","nl":"Gemaakt voor schutters. Nuttig voor clubs."},"s6_guida":{"it":"Chi tiene un campo può descriverlo, annunciare gli allenamenti, ricevere le segnalazioni di chi trova una sagoma rotta, scrivere ai soci e organizzare le gare.","en":"If you run a field you can describe it, announce trainings, receive reports when someone finds a broken target, message your members and organise events.","fr":"Qui gère un parcours peut le décrire, annoncer les entraînements, recevoir les signalements quand quelqu'un trouve une cible cassée, écrire aux membres et organiser les compétitions.","de":"Wer einen Parcours betreut, kann ihn beschreiben, Trainings ankündigen, Meldungen über ein kaputtes Ziel erhalten, den Mitgliedern schreiben und Turniere organisieren.","tr":"Bir parkuru işleten onu tanıtabilir, antrenman duyurabilir, kırık hedef bildirimlerini alabilir, üyelerine yazabilir ve yarışma düzenleyebilir.","ru":"Кто содержит площадку, может её описать, объявлять тренировки, получать сообщения о сломанной мишени, писать членам клуба и проводить турниры.","es":"Quien gestiona un campo puede describirlo, anunciar los entrenamientos, recibir los avisos de quien encuentra una diana rota, escribir a los socios y organizar las competiciones.","sv":"Den som sköter en bana kan beskriva den, annonsera träningar, ta emot rapporter när någon hittar ett trasigt mål, skriva till medlemmarna och ordna tävlingar.","nl":"Wie een parcours beheert kan het beschrijven, trainingen aankondigen, meldingen ontvangen van een kapot doel, de leden aanschrijven en wedstrijden organiseren."},"s6_cta":{"it":"Porta la tua compagnia su ArcTrail","en":"Bring your club to ArcTrail","fr":"Amène ton club sur ArcTrail","de":"Bring deinen Verein zu ArcTrail","tr":"Kulübünü ArcTrail'e getir","ru":"Приведи свой клуб в ArcTrail","es":"Trae tu club a ArcTrail","sv":"Ta med din klubb till ArcTrail","nl":"Breng je club naar ArcTrail"},"s7_eti":{"it":"I regolamenti","en":"Rulesets","fr":"Les règlements","de":"Regelwerke","tr":"Kural setleri","ru":"Своды правил","es":"Los reglamentos","sv":"Regelverk","nl":"Reglementen"},"s7_h2":{"it":"Scegli la tua federazione.","en":"Pick your federation.","fr":"Choisis ta fédération.","de":"Wähle deinen Verband.","tr":"Federasyonunu seç.","ru":"Выбери свою федерацию.","es":"Elige tu federación.","sv":"Välj ditt förbund.","nl":"Kies je bond."},"s7_guida":{"it":"ArcTrail conosce i punteggi e i formati di gara di più federazioni. La imposti alla prima apertura, e l'app conta come contano loro.","en":"ArcTrail knows the scoring systems and round formats of several federations. You set yours the first time you open the app, and it counts the way they count.","fr":"ArcTrail connaît les barèmes et les formats de compétition de plusieurs fédérations. Tu règles la tienne à la première ouverture, et l'app compte comme eux comptent.","de":"ArcTrail kennt die Wertungen und Wettkampfformate mehrerer Verbände. Du stellst deinen beim ersten Öffnen ein, und die App zählt so, wie sie zählen.","tr":"ArcTrail birçok federasyonun puanlamalarını ve yarışma formatlarını bilir. İlk açılışta kendi federasyonunu ayarlarsın ve uygulama onların saydığı gibi sayar.","ru":"ArcTrail знает системы подсчёта и форматы соревнований нескольких федераций. Свою ты задаёшь при первом открытии, и приложение считает так, как считают они.","es":"ArcTrail conoce las puntuaciones y los formatos de competición de varias federaciones. Ajustas la tuya al abrir la app por primera vez, y cuenta como cuentan ellos.","sv":"ArcTrail kan poängsystemen och tävlingsformaten hos flera förbund. Du ställer in ditt första gången du öppnar appen, och appen räknar som de räknar.","nl":"ArcTrail kent de scoresystemen en wedstrijdformats van meerdere bonden. Je stelt de jouwe in bij de eerste keer openen, en de app telt zoals zij tellen."},"s7_nota":{"it":"ArcTrail 3D è un'app indipendente. Nessuna di queste federazioni la patrocina o la certifica.","en":"ArcTrail 3D is an independent app. None of these federations endorses or certifies it.","fr":"ArcTrail 3D est une application indépendante. Aucune de ces fédérations ne la parraine ni ne la certifie.","de":"ArcTrail 3D ist eine unabhängige App. Keiner dieser Verbände unterstützt oder zertifiziert sie.","tr":"ArcTrail 3D bağımsız bir uygulamadır. Bu federasyonların hiçbiri onu desteklemez ya da onaylamaz.","ru":"ArcTrail 3D — независимое приложение. Ни одна из этих федераций его не поддерживает и не сертифицирует.","es":"ArcTrail 3D es una app independiente. Ninguna de estas federaciones la patrocina ni la certifica.","sv":"ArcTrail 3D är en fristående app. Inget av dessa förbund stöder eller certifierar den.","nl":"ArcTrail 3D is een onafhankelijke app. Geen van deze bonden ondersteunt of certificeert hem."},"fin_occhiello":{"it":"Gratis, in nove lingue","en":"Free, in nine languages","fr":"Gratuit, en neuf langues","de":"Kostenlos, in neun Sprachen","tr":"Ücretsiz, dokuz dilde","ru":"Бесплатно, на девяти языках","es":"Gratis, en nueve idiomas","sv":"Gratis, på nio språk","nl":"Gratis, in negen talen"},"fin_h2":{"it":"Il tuo prossimo giro comincia qui.","en":"Your next round starts here.","fr":"Ton prochain parcours commence ici.","de":"Deine nächste Runde beginnt hier.","tr":"Bir sonraki turun burada başlıyor.","ru":"Твой следующий круг начинается здесь.","es":"Tu próxima ronda empieza aquí.","sv":"Din nästa runda börjar här.","nl":"Jouw volgende ronde begint hier."},"pi_cose":{"it":"Che cos'è","en":"About","fr":"À propos","de":"Über die App","tr":"Nedir","ru":"О приложении","es":"Qué es","sv":"Om appen","nl":"Over de app"},"pi_aiuto":{"it":"Assistenza","en":"Support","fr":"Assistance","de":"Hilfe","tr":"Destek","ru":"Поддержка","es":"Soporte","sv":"Support","nl":"Ondersteuning"},"pi_privacy":{"it":"Privacy","en":"Privacy","fr":"Confidentialité","de":"Datenschutz","tr":"Gizlilik","ru":"Конфиденциальность","es":"Privacidad","sv":"Integritet","nl":"Privacy"},"pi_termini":{"it":"Condizioni","en":"Terms","fr":"Conditions","de":"Bedingungen","tr":"Koşullar","ru":"Условия","es":"Condiciones","sv":"Villkor","nl":"Voorwaarden"},"doc_title":{"it":"ArcTrail 3D — la casa digitale del tiro con l'arco 3D","en":"ArcTrail 3D — the digital home of 3D archery","fr":"ArcTrail 3D — la maison numérique du tir à l'arc 3D","de":"ArcTrail 3D — das digitale Zuhause des 3D-Bogensports","tr":"ArcTrail 3D — 3D okçuluğun dijital evi","ru":"ArcTrail 3D — цифровой дом 3D-стрельбы из лука","es":"ArcTrail 3D — la casa digital del tiro con arco 3D","sv":"ArcTrail 3D — det digitala hemmet för 3D-bågskytte","nl":"ArcTrail 3D — het digitale thuis van 3D-handboogschieten"},"doc_desc":{"it":"Trova i campi di tiro 3D, segna ogni freccia anche senza rete, tieni il diario dei tuoi giri e incontra gli arcieri vicino a te. Gratis, in nove lingue.","en":"Find 3D archery fields, score every arrow even offline, keep a diary of your rounds and meet archers near you. Free, in nine languages.","fr":"Trouve les parcours de tir 3D, marque chaque flèche même sans réseau, garde le carnet de tes parcours et rencontre les archers près de chez toi. Gratuit, en neuf langues.","de":"Finde 3D-Bogenparcours, notiere jeden Pfeil auch ohne Netz, führe dein Rundenbuch und triff Bogenschützen in deiner Nähe. Kostenlos, in neun Sprachen.","tr":"3D okçuluk parkurlarını bul, şebeke olmadan da her oku kaydet, turlarının günlüğünü tut ve yakınındaki okçularla tanış. Ücretsiz, dokuz dilde.","ru":"Находи площадки для 3D-стрельбы, записывай каждую стрелу даже без сети, веди дневник кругов и знакомься с лучниками рядом. Бесплатно, на девяти языках.","es":"Encuentra campos de tiro 3D, anota cada flecha incluso sin cobertura, lleva el diario de tus rondas y conoce a los arqueros cerca de ti. Gratis, en nueve idiomas.","sv":"Hitta 3D-banor, notera varje pil även utan täckning, för dagbok över dina rundor och möt bågskyttar nära dig. Gratis, på nio språk.","nl":"Vind 3D-parcoursen, noteer elke pijl ook zonder bereik, houd een logboek van je rondes bij en ontmoet schutters bij jou in de buurt. Gratis, in negen talen."},"alt_eroe":{"it":"Tre arcieri alla piazzola 14 di un percorso 3D nel bosco: una arciera segna il punteggio sul telefono, la sagoma è più avanti sul sentiero.","en":"Three archers at station 14 of a 3D course in the woods: one is scoring on her phone, the target animal stands further along the trail.","fr":"Trois archers au pas de tir 14 d'un parcours 3D en forêt : une archère note le score sur son téléphone, la cible est plus loin sur le sentier.","de":"Drei Bogenschützen an Station 14 eines 3D-Parcours im Wald: eine notiert den Stand auf dem Handy, das Ziel steht weiter vorn am Weg.","tr":"Ormandaki bir 3D parkurun 14. istasyonunda üç okçu: biri telefonundan puan kaydediyor, hedef patikada ileride duruyor.","ru":"Трое лучников на четырнадцатом рубеже 3D-трассы в лесу: одна записывает счёт в телефоне, мишень стоит дальше по тропе.","es":"Tres arqueros en el puesto 14 de un recorrido 3D en el bosque: una anota la puntuación en el móvil, la diana está más adelante en el sendero.","sv":"Tre bågskyttar vid station 14 på en 3D-bana i skogen: en noterar poängen i telefonen, målet står längre fram på stigen.","nl":"Drie schutters bij station 14 van een 3D-parcours in het bos: een noteert de score op haar telefoon, het doel staat verderop langs het pad."},"alt_corda":{"it":"Mani che sistemano la corda su un arco ricurvo, seduto ai margini del percorso.","en":"Hands setting the string on a recurve bow, sitting at the edge of the course.","fr":"Des mains ajustent la corde d'un arc classique, assis en bordure du parcours.","de":"Hände richten die Sehne an einem Recurvebogen, sitzend am Rand des Parcours.","tr":"Parkurun kenarında oturarak klasik yayın kirişini düzelten eller.","ru":"Руки поправляют тетиву классического лука, сидя на краю трассы.","es":"Manos ajustando la cuerda de un arco recurvo, sentado al borde del recorrido.","sv":"Händer som sätter strängen på en recurvebåge, sittande i kanten av banan.","nl":"Handen die de pees op een recurveboog zetten, gezeten aan de rand van het parcours."},"alt_cervo":{"it":"Sagoma di cervo con tre frecce nel kill, l'arciere si avvicina con l'arco scarico.","en":"Deer target with three arrows in the kill zone, the archer walking up with an unloaded bow.","fr":"Cible cerf avec trois flèches dans le kill, l'archer s'approche, arc déchargé.","de":"Hirschziel mit drei Pfeilen in der Killzone, der Schütze kommt mit entladenem Bogen näher.","tr":"Kill bölgesinde üç ok bulunan geyik hedefi, okçu boş yayla yaklaşıyor.","ru":"Мишень-олень с тремя стрелами в убойной зоне, лучник подходит с разряженным луком.","es":"Diana de ciervo con tres flechas en el kill, el arquero se acerca con el arco descargado.","sv":"Hjortmål med tre pilar i killzonen, skytten går fram med obelastad båge.","nl":"Hertendoel met drie pijlen in de killzone, de schutter loopt erheen met een lege boog."},"alt_istruttore":{"it":"Un istruttore corregge la posizione di un ragazzo in trazione verso una sagoma; gli altri guardano da dietro la linea di tiro.","en":"An instructor correcting a young archer at full draw towards a target; the others watch from behind the shooting line.","fr":"Un entraîneur corrige la position d'un jeune en pleine allonge vers une cible ; les autres regardent derrière la ligne de tir.","de":"Ein Trainer korrigiert die Haltung eines Jugendlichen im Vollauszug auf ein Ziel; die anderen schauen hinter der Schießlinie zu.","tr":"Bir eğitmen, hedefe tam çekişte duran bir gencin duruşunu düzeltiyor; diğerleri atış çizgisinin arkasından izliyor.","ru":"Тренер поправляет позицию юноши в полном растяжении на мишень; остальные смотрят из-за линии стрельбы.","es":"Un instructor corrige la postura de un chico en apertura completa hacia una diana; los demás miran desde detrás de la línea de tiro.","sv":"En instruktör rättar hållningen på en ung skytt i fullt drag mot ett mål; de andra ser på bakom skjutlinjen.","nl":"Een instructeur corrigeert de houding van een jongen op vol trekken naar een doel; de anderen kijken toe achter de schietlijn."},"alt_compound":{"it":"Arciere in trazione con arco compound, controluce di prima mattina.","en":"Archer at full draw with a compound bow, backlit in the early morning.","fr":"Archer en pleine allonge avec un arc à poulies, à contre-jour au petit matin.","de":"Schütze im Vollauszug mit Compoundbogen, im Gegenlicht des frühen Morgens.","tr":"Sabahın erken saatlerinde arkadan ışıkla, makaralı yayla tam çekişte bir okçu.","ru":"Лучник в полном растяжении с блочным луком, против света ранним утром.","es":"Arquero en apertura completa con arco compuesto, a contraluz de primera hora.","sv":"Skytt i fullt drag med compoundbåge, i motljus tidig morgon.","nl":"Schutter op vol trekken met een compoundboog, tegenlicht in de vroege ochtend."},"nav_apri_breve":{"it":"Apri","en":"Open","fr":"Ouvrir","de":"Öffnen","tr":"Aç","ru":"Открыть","es":"Abrir","sv":"Öppna","nl":"Openen"}};
+  var CHIAVE = "arctrail-vetrina-lingua";
+
+  /* ── LE FEDERAZIONI ──────────────────────────────────────────
+     Copiate da COUNTRY_FEDERATIONS in index.html: sedici, undici paesi.
+     Non si scelgono qui — se l'app ne aggiunge una, questa riga va rifatta,
+     ed e' lo stesso patto del colore e del carattere.
+
+     Prima erano scritte a mano in ordine fisso, e tre erano SBAGLIATE:
+     c'erano World Archery, IFAA e SCF, che nell'app non si possono scegliere,
+     e mancavano SwissArchery, OeBSV e Archery GB, che si scelgono. La vetrina
+     prometteva tre federazioni che non ci sono e taceva tre che ci sono.
+
+     L'ordine adesso segue la lingua, con la stessa mappa dell'app: chi legge
+     in tedesco trova DFBV per prima, non nona. Chi non ha un paese suo nella
+     lista le vede nell'ordine scritto qui. */
+  var FEDERAZIONI = [
+    { paese:"it", sigle:["FIARC","FITARCO"] },
+    { paese:"fr", sigle:["FFTA","FFTL"] },
+    { paese:"ch", sigle:["SwissArchery","FAAS"] },
+    { paese:"at", sigle:["\u00d6BSV"] },
+    { paese:"de", sigle:["DFBV"] },
+    { paese:"uk", sigle:["Archery GB","NFAS","EFAA"] },
+    { paese:"tr", sigle:["TOF"] },
+    { paese:"ru", sigle:["\u0420\u0424\u0421\u041b"] },
+    { paese:"es", sigle:["RFETA"] },
+    { paese:"nl", sigle:["NHB"] },
+    { paese:"se", sigle:["SBF"] }
+  ];
+  /* Stessa mappa di LANG_TO_COUNTRY nell'app. L'inglese porta al Regno Unito:
+     e' un'ipotesi, ma e' la stessa che fa gia' l'app, e due ipotesi diverse
+     sulla stessa domanda sono peggio di una sbagliata. */
+  var LINGUA_PAESE = { it:"it", fr:"fr", de:"de", tr:"tr", ru:"ru", es:"es", sv:"se", nl:"nl", en:"uk" };
+
+  /* Le federazioni del paese di chi legge, in ordine alfabetico, al massimo
+     due. Serve in due posti — la fascia in cima e l'elenco piu' sotto — e
+     un elenco calcolato in due modi diverge al primo che ne cambia uno. */
+  function sigleMie(l){
+    var mio = LINGUA_PAESE[l] || "", fuori = [], i, j;
+    for (i = 0; i < FEDERAZIONI.length; i++)
+      if (FEDERAZIONI[i].paese === mio)
+        for (j = 0; j < FEDERAZIONI[i].sigle.length; j++) fuori.push(FEDERAZIONI[i].sigle[j]);
+    if (!fuori.length)
+      for (i = 0; i < FEDERAZIONI.length; i++)
+        for (j = 0; j < FEDERAZIONI[i].sigle.length; j++) fuori.push(FEDERAZIONI[i].sigle[j]);
+    fuori.sort(function(a,b){ return a.localeCompare(b, "en"); });
+    return fuori.slice(0, 2);
+  }
+
+  function disponiFederazioni(l){
+    var cassetto = document.getElementById("fed");
+    if (!cassetto) return;
+    var mio = LINGUA_PAESE[l] || "";
+    var prima = [], poi = [], i, j;
+    for (i = 0; i < FEDERAZIONI.length; i++){
+      var riga = FEDERAZIONI[i];
+      for (j = 0; j < riga.sigle.length; j++){
+        (riga.paese === mio ? prima : poi).push({ sigla:riga.sigle[j], mia:riga.paese === mio });
+      }
+    }
+    /* In ordine alfabetico dentro i due gruppi. Il confronto e' fissato
+       sull'inglese perche' l'ordine non deve cambiare con la lingua della
+       pagina: cambia gia' QUALI stanno davanti, e due cose che si muovono
+       insieme non si distinguono piu'. Il cirillico finisce in fondo. */
+    function alfabetico(a, b){ return a.sigla.localeCompare(b.sigla, "en"); }
+    prima.sort(alfabetico); poi.sort(alfabetico);
+    var tutte = prima.concat(poi);
+    cassetto.textContent = "";
+    for (i = 0; i < tutte.length; i++){
+      var s = document.createElement("span");
+      s.textContent = tutte[i].sigla;
+      if (tutte[i].mia) s.className = "mia";
+      cassetto.appendChild(s);
+    }
+  }
+
+  function linguaProbabile(){
+    var q = "";
+    try{ q = (new URLSearchParams(window.location.search)).get("lang") || ""; }catch(e){}
+    if (LINGUE.indexOf(q) >= 0) return q;
+    var scelta = "";
+    try{ scelta = localStorage.getItem(CHIAVE) || ""; }catch(e){}
+    if (LINGUE.indexOf(scelta) >= 0) return scelta;
+    var b = "";
+    try{ b = String(navigator.language || navigator.userLanguage || "").toLowerCase().slice(0,2); }catch(e){}
+    return (LINGUE.indexOf(b) >= 0) ? b : "en";
+  }
+
+  function parla(l){
+    if (LINGUE.indexOf(l) < 0) l = "en";
+    var n, i, v;
+    n = document.querySelectorAll("[data-k]");
+    for (i = 0; i < n.length; i++){
+      v = PAROLE[n[i].getAttribute("data-k")];
+      if (v && v[l] !== undefined){
+        /* «{fed}» diventa le federazioni di chi legge. Prima la frase diceva
+           «FIARC, FITARCO e altri» in tutte e nove le lingue: un tedesco
+           leggeva in tedesco che l'app conosce due federazioni italiane. */
+        n[i].textContent = (v[l].indexOf("{fed}") < 0) ? v[l]
+                           : v[l].replace("{fed}", sigleMie(l).join(", "));
+      }
+    }
+    n = document.querySelectorAll("[data-k-alt]");
+    for (i = 0; i < n.length; i++){
+      v = PAROLE[n[i].getAttribute("data-k-alt")];
+      if (v && v[l] !== undefined) n[i].setAttribute("alt", v[l]);
+    }
+    document.documentElement.lang = l;
+    document.title = PAROLE.doc_title[l];
+    var d = document.getElementById("descPagina");
+    if (d) d.setAttribute("content", PAROLE.doc_desc[l]);
+    n = document.querySelectorAll("a[data-app]");
+    for (i = 0; i < n.length; i++) n[i].setAttribute("href", "/?lang=" + l);
+    var nome = document.getElementById("linguaNome");
+    var sigla = document.getElementById("linguaSigla");
+    var sel = document.getElementById("sceltaLingua");
+    if (sel){ sel.value = l; if (nome) nome.textContent = sel.options[sel.selectedIndex].textContent; }
+    if (sigla) sigla.textContent = l.toUpperCase();
+    disponiFederazioni(l);
+  }
+
+  var sel = document.getElementById("sceltaLingua");
+  parla(linguaProbabile());
+  if (sel) sel.addEventListener("change", function(){
+    var l = sel.value;
+    parla(l);
+    try{ localStorage.setItem(CHIAVE, l); }catch(e){}
+    /* L'indirizzo segue la scelta: cosi' un link copiato dalla barra apre
+       la pagina nella stessa lingua per chi lo riceve. */
+    try{
+      var u = new URL(window.location.href);
+      u.searchParams.set("lang", l);
+      history.replaceState(null, "", u.toString());
+    }catch(e){}
+  });
+
+
+  /* --- comparsa allo scorrimento --- */
+  var elementi = document.querySelectorAll(".sale");
+  if (!("IntersectionObserver" in window) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    for (var j = 0; j < elementi.length; j++) elementi[j].classList.add("dentro");
+    return;
+  }
+  var occhio = new IntersectionObserver(function(righe){
+    righe.forEach(function(r){
+      if (r.isIntersecting){ r.target.classList.add("dentro"); occhio.unobserve(r.target); }
+    });
+  }, { rootMargin: "0px 0px -12% 0px" });
+  for (var k = 0; k < elementi.length; k++) occhio.observe(elementi[k]);
+})();
+</script>
+</body>
+</html>
