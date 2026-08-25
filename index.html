@@ -4133,6 +4133,11 @@ text-transform:uppercase; color:var(--text-3); }
    grafico, che e' un'altra domanda, resta dentro. */
 .home-mese-vuota .hm-vuota-testo{ font-size:var(--t-sm); color:var(--text-3);
   margin-top:var(--s-2); }
+/* L'ultimo giro riusa il pannello dei numeri: stessa cifra grande, stessa
+   etichetta minuscola sotto. Cambia solo cosa dice l'etichetta — li' il campo
+   invece dell'unita' — quindi non serve un disegno nuovo. */
+.home-ultimo .hm-vuota-testo{ font-size:var(--t-sm); color:var(--text-3); margin-top:var(--s-2); }
+.home-ultimo .ug-record{ display:inline-block; margin-top:var(--s-2); }
 /* LA PORTA DEL PROFILO. Il segno e' grande perche' e' l'unica cosa della
    schermata che rappresenta una PERSONA, non un numero: si riconosce prima di
    leggerla. Tutto in colonna e centrato — un bersaglio che si vede da mezzo
@@ -15319,6 +15324,10 @@ meglio: meglio,
 nelMese: mese.length > 0,
 ultimo: ultimo,
 delta: (ultimo && precedente) ? (ultimo.punti - precedente.punti) : null,
+/* Serve a scegliere fra le due frasi che l'app ha gia': confrontare due giri
+   sullo STESSO campo e' un paragone; su campi diversi e' un'informazione con
+   un asterisco, e la frase lo dice. */
+stessoCampo: !!(ultimo && precedente && ultimo.dove && ultimo.dove === precedente.dove),
 eRecord: !!(ultimo && ultimo.punti >= meglio && miei.length > 1)
 };
 }
@@ -15579,6 +15588,45 @@ strati.appendChild(eroe);
  * cercare apposta. *E si ricorda com'era lasciata.*
  */
 var n = homeNumeri();
+
+/* ══ L'ULTIMO GIRO ERA CALCOLATO E NON LO VEDEVA NESSUNO ══════════════════
+   (25/08/2026.) `homeNumeri()` restituiva da sempre `ultimo`, `delta` ed
+   `eRecord` — il punteggio dell'ultimo giro, di quanto e' cambiato rispetto
+   al precedente, e se e' un record. **Nessuna riga del file li leggeva.**
+   Tre valori giusti, calcolati a ogni apertura, buttati via.
+
+   Stanno qui e non piu' in basso perche' e' la seconda domanda di chi apre
+   l'app: la prima e' «tiro adesso?» — e quella e' il tasto sopra — la seconda
+   e' «com'e' andata l'ultima volta?». I numeri del mese, che sono una media,
+   rispondono a una terza domanda piu' lenta.
+
+   NESSUNA PAROLA NUOVA. La frase del confronto e' `fin_vs_qui` / `fin_vs`,
+   che il finale del giro usa gia' in nove lingue e distingue da sola il
+   paragone sullo stesso campo da quello su campi diversi; il cartellino del
+   record e' `fin_record_nuovo`. *Quando la frase giusta c'e' gia', inventarne
+   una seconda vuol dire tradurla di nuovo e dire la stessa cosa in due modi.*
+
+   E non compare durante un giro: li' sopra c'e' gia' la striscia del percorso
+   in corso, e due schede che parlano di due giri diversi nello stesso posto
+   sono una domanda, non un riassunto. */
+if(n && n.ultimo && !state.roundActive){
+var ug = el('<div class="strato home-ultimo"></div>');
+ug.appendChild(el('<div class="strato-eti">'+escapeHtml(t("diario_last_rounds"))+'</div>'));
+var ugDati = el('<div class="home-mese-dati"></div>');
+ugDati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(n.ultimo.punti))+'</b><i>'
+  + escapeHtml(n.ultimo.dove || t("fin_punti")) + '</i></span>'));
+ug.appendChild(ugDati);
+if(n.delta !== null){
+var segno = (n.delta > 0 ? "+" : "") + n.delta;
+ug.appendChild(el('<div class="hm-vuota-testo">'
+  + escapeHtml(t(n.stessoCampo ? "fin_vs_qui" : "fin_vs", { n: segno })) + '</div>'));
+}
+if(n.eRecord){
+ug.appendChild(el('<div class="al-tag ug-record">'+escapeHtml(t("fin_record_nuovo"))+'</div>'));
+}
+strati.appendChild(ug);
+}
+
 if(!n){
 /* PRIMA DEL PRIMO GIRO NON SI MOSTRANO QUATTRO ZERI: SI DICE COSA
    COMPARIRA'. (21/08/2026.) La regola vecchia diceva che un cruscotto a zero
@@ -18626,7 +18674,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-stati-due";
+var BUILD_STAMP = "2026-08-25-ultimo";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18635,7 +18683,7 @@ var BUILD_STAMP = "2026-08-25-stati-due";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-distruttivo";
+var BUILD_PARENT = "2026-08-25-stati-due";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
