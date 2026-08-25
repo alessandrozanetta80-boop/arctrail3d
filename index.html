@@ -4021,6 +4021,17 @@ text-transform:uppercase; color:var(--text-3); }
   background:var(--acceso-bg); border:1px solid var(--acceso-bd);
   border-radius:var(--r-lg); padding:2px var(--s-2); }
 .attr-riga{ font-size:var(--t-sm); color:var(--text-2); line-height:1.5; }
+.attr-avanzate{ margin:var(--s-3) 0; }
+.attr-avanzate > summary{ cursor:pointer; list-style:none; min-height:var(--hit);
+  display:flex; align-items:center; gap:var(--s-2);
+  font-size:var(--t-2xs); font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--text-3); }
+.attr-avanzate > summary::-webkit-details-marker{ display:none; }
+.attr-avanzate > summary::before{ content:""; width:0; height:0; flex:0 0 auto;
+  border-left:5px solid transparent; border-right:5px solid transparent;
+  border-top:6px solid var(--clay); transform:rotate(-90deg);
+  transition:transform var(--dur-2) var(--ease); }
+.attr-avanzate[open] > summary::before{ transform:rotate(0deg); }
 .attr-note{ font-size:var(--t-sm); color:var(--text-3); font-style:italic;
   margin-top:var(--s-2); }
 /* Il numero dell assetto e un giudizio sull arco: finche non ha abbastanza
@@ -5480,6 +5491,7 @@ attr_titolo: "Attrezzatura",
 attr_hint: "Gli assetti che usi. Ogni giro si porta dietro quello con cui l’hai tirato.",
 attr_nuovo: "+ Nuovo assetto",
 attr_vuoto: "Il primo che aggiungi diventa quello predefinito.",
+attr_dettagli: "Dettagli tecnici",
 attr_vuoto_tit: "Nessun assetto",
 attr_nome: "Nome dell’assetto",
 attr_nome_ph: "Es. Longbow da caccia",
@@ -6138,6 +6150,7 @@ attr_titolo: "Equipment",
 attr_hint: "The setups you use. Every round remembers the one you shot it with.",
 attr_nuovo: "+ New setup",
 attr_vuoto: "The first one you add becomes the default.",
+attr_dettagli: "Technical details",
 attr_vuoto_tit: "No setups",
 attr_nome: "Setup name",
 attr_nome_ph: "E.g. Hunting longbow",
@@ -6795,6 +6808,7 @@ attr_titolo: "Équipement",
 attr_hint: "Vos configurations. Chaque parcours retient celle avec laquelle vous avez tiré.",
 attr_nuovo: "+ Nouvelle configuration",
 attr_vuoto: "La première ajoutée devient celle par défaut.",
+attr_dettagli: "D\u00e9tails techniques",
 attr_vuoto_tit: "Aucune configuration",
 attr_nome: "Nom",
 attr_nome_ph: "Ex. Longbow de chasse",
@@ -7452,6 +7466,7 @@ attr_titolo: "Ausrüstung",
 attr_hint: "Deine Setups. Jede Runde merkt sich, mit welchem du geschossen hast.",
 attr_nuovo: "+ Neues Setup",
 attr_vuoto: "Das erste wird automatisch zum Standard.",
+attr_dettagli: "Technische Details",
 attr_vuoto_tit: "Noch kein Setup",
 attr_nome: "Name des Setups",
 attr_nome_ph: "z.B. Jagd-Langbogen",
@@ -8128,6 +8143,7 @@ attr_titolo: "Ekipman",
 attr_hint: "Kullandığın setler. Her tur hangisiyle atış yaptığını hatırlar.",
 attr_nuovo: "+ Yeni set",
 attr_vuoto: "Eklediğin ilk set varsayılan olur.",
+attr_dettagli: "Teknik ayr\u0131nt\u0131lar",
 attr_vuoto_tit: "Set yok",
 attr_nome: "Set adı",
 attr_nome_ph: "Örn. Av yayı",
@@ -8798,6 +8814,7 @@ attr_titolo: "Снаряжение",
 attr_hint: "Ваши комплекты. Каждый раунд помнит, чем вы стреляли.",
 attr_nuovo: "+ Новый комплект",
 attr_vuoto: "Первый станет основным.",
+attr_dettagli: "\u0422\u0435\u0445\u043d\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0434\u0435\u0442\u0430\u043b\u0438",
 attr_vuoto_tit: "\u041a\u043e\u043c\u043f\u043b\u0435\u043a\u0442\u043e\u0432 \u043d\u0435\u0442",
 attr_nome: "Название",
 attr_nome_ph: "Напр. Охотничий лонгбоу",
@@ -9468,6 +9485,7 @@ attr_titolo: "Equipo",
 attr_hint: "Tus configuraciones. Cada ronda recuerda con cuál la tiraste.",
 attr_nuovo: "+ Nueva configuración",
 attr_vuoto: "La primera que añadas será la predeterminada.",
+attr_dettagli: "Detalles t\u00e9cnicos",
 attr_vuoto_tit: "Sin configuraciones",
 attr_nome: "Nombre",
 attr_nome_ph: "Ej. Longbow de caza",
@@ -10138,6 +10156,7 @@ attr_titolo: "Utrustning",
 attr_hint: "Dina uppställningar. Varje runda minns vilken du sköt med.",
 attr_nuovo: "+ Ny uppställning",
 attr_vuoto: "Den första blir standard.",
+attr_dettagli: "Tekniska detaljer",
 attr_vuoto_tit: "Inga uppst\u00e4llningar",
 attr_nome: "Namn",
 attr_nome_ph: "T.ex. Jaktlongbow",
@@ -10808,6 +10827,7 @@ attr_titolo: "Uitrusting",
 attr_hint: "Je opstellingen. Elke ronde onthoudt waarmee je hebt geschoten.",
 attr_nuovo: "+ Nieuwe opstelling",
 attr_vuoto: "De eerste wordt de standaard.",
+attr_dettagli: "Technische details",
 attr_vuoto_tit: "Geen opstellingen",
 attr_nome: "Naam",
 attr_nome_ph: "Bijv. Jachtlongbow",
@@ -18750,7 +18770,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-media";
+var BUILD_STAMP = "2026-08-25-assetto";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18759,7 +18779,7 @@ var BUILD_STAMP = "2026-08-25-media";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-pertinenza";
+var BUILD_PARENT = "2026-08-25-media";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -19056,7 +19076,27 @@ azioni.appendChild(pre);
 var arc = el('<button class="btn btn-ghost btn-sm">'+t(a.archiviato ? "attr_riprendi" : "attr_archivia")+'</button>');
 arc.addEventListener("click", function(){
 var l = caricaAttrezzi();
-l.forEach(function(x){ if(x.id === a.id){ x.archiviato = !x.archiviato; if(x.archiviato) x.predefinito = false; } });
+/* ══ DA OGGI UN ASSETTO SA QUANDO E' NATO E QUANDO E' STATO MESSO VIA ═════
+   (25/08/2026.) Due campi nuovi, e nessuno dei due si vede ancora:
+     `creato`      — messo alla nascita di un assetto nuovo
+     `archiviatoIl`— messo quando lo si archivia, tolto se lo si riprende
+   Sono `Date.now()`, cioe' lo stesso formato dei tempi che l'app usa gia'.
+
+   MIGRAZIONE, ed e' voluta che sia nulla: gli assetti che esistono gia' NON
+   li tocca nessuno. Restano senza le due date, e restano validi — chi legge
+   deve trattare l'assenza come «non lo so», mai come una data finta. *Mettere
+   `Date.now()` sui vecchi vorrebbe dire scrivere che sono nati oggi, che e'
+   falso per tutti quanti.* Da qui in avanti i nuovi ce l'hanno; i vecchi si
+   riconoscono perche' non ce l'hanno.
+
+   Non si mostrano ancora da nessuna parte: servirebbero due etichette in nove
+   lingue, e quelle si aggiungono quando si decide di mostrarle. Intanto il
+   dato comincia a esistere, che e' la parte che non si puo' recuperare dopo. */
+l.forEach(function(x){ if(x.id === a.id){
+x.archiviato = !x.archiviato;
+if(x.archiviato){ x.predefinito = false; x.archiviatoIl = Date.now(); }
+else { delete x.archiviatoIl; }
+} });
 salvaAttrezzi(l); render();
 });
 azioni.appendChild(arc);
@@ -19114,10 +19154,33 @@ manoRow.appendChild(chip);
 });
 card.appendChild(manoRow);
 
-campo("frecce", t("attr_frecce"), a.frecce, "text", "Easton X10");
-campo("spine", t("attr_spine"), a.spine, "text", "500");
-campo("lunghezza", t("attr_lunghezza"), a.lunghezza, "text", "28");
-campo("punta", t("attr_punta"), a.punta, "number", "100");
+/* ══ LE MISURE DELLE FRECCE SI APRONO, NON SI SUBISCONO ═══════════════════
+   (25/08/2026.) Il modulo chiedeva tutto di seguito: nome, arco, marca,
+   modello, libbre, mano, frecce, spine, lunghezza, punta, note. Undici campi
+   in fila. Chi ha comprato l'arco il mese scorso lo spine non lo sa, e undici
+   caselle vuote non insegnano niente: insegnano che l'app e' per gli altri.
+
+   Le prime sei restano fuori — sono quelle a cui chiunque sa rispondere e
+   sono quelle che compaiono nell'elenco. Le quattro delle frecce stanno
+   dentro un `<details>`, chiuse se sono vuote e **gia' aperte se qualcosa e'
+   scritto**: chi le ha compilate non deve ritrovarle nascoste.
+
+   Non e' un campo in meno: e' lo stesso modulo che smette di chiedere tutto
+   insieme. I nomi degli `input` non cambiano, quindi il salvataggio e ogni
+   assetto gia' registrato restano quelli di prima. */
+var haFrecce = !!(a.frecce || a.spine || a.lunghezza || a.punta);
+var avanzate = el('<details class="attr-avanzate"'+(haFrecce ? " open" : "")+'></details>');
+avanzate.appendChild(el('<summary>'+escapeHtml(t("attr_dettagli"))+'</summary>'));
+var dentroAv = el('<div></div>');
+avanzate.appendChild(dentroAv);
+card.appendChild(avanzate);
+var campoIn = function(dove, chiave, etichetta, valore, tipo, ph){
+dove.appendChild(el('<div class="cp-select-row"><label>'+escapeHtml(etichetta)+'</label><input type="'+(tipo||"text")+'" id="as_'+chiave+'" value="'+escapeHtml(valore==null?"":String(valore))+'" placeholder="'+escapeHtml(ph||"")+'"></div>'));
+};
+campoIn(dentroAv, "frecce", t("attr_frecce"), a.frecce, "text", "Easton X10");
+campoIn(dentroAv, "spine", t("attr_spine"), a.spine, "text", "500");
+campoIn(dentroAv, "lunghezza", t("attr_lunghezza"), a.lunghezza, "text", "28");
+campoIn(dentroAv, "punta", t("attr_punta"), a.punta, "number", "100");
 card.appendChild(el('<div class="cp-select-row"><label>'+t("attr_note")+'</label><textarea class="input-field" id="as_note" rows="2"></textarea></div>'));
 
 var err = el('<div class="attr-err"></div>');
@@ -19129,7 +19192,7 @@ var nome = v("nome");
 if(!nome){ err.textContent = t("attr_serve_nome"); return; }
 var l = caricaAttrezzi();
 var dentro = l.filter(function(x){ return x.id === a.id; })[0];
-if(!dentro){ dentro = { id: a.id, archiviato:false }; l.push(dentro); }
+if(!dentro){ dentro = { id: a.id, archiviato:false, creato: Date.now() }; l.push(dentro); }
 dentro.nome = nome; dentro.arco = arcoSel; dentro.mano = manoSel;
 ["marca","modello","libbre","frecce","spine","lunghezza","punta","note"].forEach(function(k){ dentro[k] = v(k) || null; });
 // il primo assetto e' anche il predefinito: senza, ci sarebbe un elenco di
