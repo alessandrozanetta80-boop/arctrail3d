@@ -1103,6 +1103,15 @@ header.top{ margin-top:calc(var(--s-4) * -1 + env(safe-area-inset-top));
 header.top .brandblock .brand-title{ color:var(--eroe-ink); }
 header.top .sub{ color:var(--eroe-eti); }
 header.top .bar-btn{ color:var(--moss-100); }
+/* La pastiglia dell'iniziale e' quella delle conversazioni, riletta per la
+   banda: li' sta su carta e prende il verde velato chiaro, qui sta sul
+   carbone e prende il vetro con l'inchiostro della banda. Stessa forma,
+   stessa misura, stesso peso della lettera. */
+header.top .bar-ini{ width:var(--s-6); height:var(--s-6); border-radius:var(--r-pill);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-ui); font-weight:800; font-size:var(--t-md); line-height:1;
+  background:color-mix(in srgb, var(--eroe-ink) 12%, transparent);
+  border:1px solid var(--eroe-linea); color:var(--eroe-ink); }
 /* Il verde dell'app (#66B132) su questo fondo fa 5,89: passa, ma e' la stessa
    famiglia del fondo e quindi stacca poco. Un gradino piu' su — stessa tinta,
    piu' luce — arriva a 7,78 e si vede da lontano. L'argilla schiarita a 6,40
@@ -14195,8 +14204,28 @@ vai:function(){ state.screen = "messaggi"; save(); render(); }});
    altrove il profilo e' `navprofile`, una sagoma sola. Due segni per la
    stessa porta non sono un dettaglio: **insegnano che il segno non conta**, e
    da quel momento nessuna icona dell'app e' piu' affidabile. */
+/* ══ IL PROFILO DIVENTA UNA LETTERA ═══════════════════════════════════════
+   (25/08/2026, detto da Alessandro: «si vede poco, non so se ingrandirlo o
+   renderlo piu' visibile».)
+
+   Ingrandirlo non bastava: erano tre icone nude in fila, stessa misura e
+   stesso verde — campanella, fumetto, sagoma — e una sagoma piu' grande in
+   mezzo a due uguali resta una sagoma. *Il problema non era la dimensione: era
+   che nessuno dei tre segni dice «questo sei tu».*
+
+   Una lettera dentro un cerchio si legge come una persona, non come un
+   comando. E non e' un disegno nuovo: e' `.conv-segno`, la pastiglia che
+   l'app usa gia' per chi scrive nelle conversazioni, e la stessa che il
+   mercatino ha in cima. Portarla anche qui vuol dire una cosa in meno da
+   imparare passando da una parte all'altra.
+
+   Se il nome manca resta la sagoma: una pastiglia con dentro un punto
+   interrogativo sarebbe peggio dell'icona che c'era. */
 if(state.screen === "menu" && state.tab !== "profilo"){
-azioni.push({ id:"profilo", glifo:"users", pieno:"navprofile", testo:t("nav_profile"), vai:function(){
+var chiSono = (state.profile && (state.profile.username || state.profile.nomeCognome)) || "";
+var iniz = chiSono.trim().charAt(0).toUpperCase();
+azioni.push({ id:"profilo", glifo:"users", pieno:"navprofile",
+  lettera: iniz || null, testo:t("nav_profile"), vai:function(){
 state.tab = "profilo"; save(); render();
 }});
 }
@@ -14290,6 +14319,7 @@ if(!conParola){ b.classList.add(a.pericolo ? "tinta-argilla" : "tinta-verde"); }
    dove sei, un segno pieno e' quello che l'app usa per quella porta ovunque,
    un glifo di linea e' il ripiego. */
 if(a.bandiera){ b.innerHTML = '<span class="bar-flag">'+a.bandiera+'</span>'; }
+else if(a.lettera && !conParola){ b.innerHTML = '<span class="bar-ini" aria-hidden="true">'+escapeHtml(a.lettera)+'</span>'; }
 else if(a.pieno){ b.innerHTML = navIcon(a.pieno, conParola ? 18 : 22, "due"); }
 else { b.innerHTML = icon(a.glifo, conParola ? 17 : 20); }
 if(conParola) b.appendChild(document.createTextNode(a.testo));
@@ -18674,7 +18704,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-ultimo";
+var BUILD_STAMP = "2026-08-25-iniziale";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18683,7 +18713,7 @@ var BUILD_STAMP = "2026-08-25-ultimo";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-stati-due";
+var BUILD_PARENT = "2026-08-25-ultimo";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
