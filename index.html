@@ -1701,6 +1701,10 @@ textarea.input-field{ resize:none; }
    legge. Sale a --text-2 e resta distinto dal testo pieno. */
 .checkbox-row{ display:flex; align-items:flex-start; gap:var(--s-2); margin:var(--s-3) 0 0;
   font-size:var(--t-sm); line-height:1.45; color:var(--text-2); cursor:pointer; }
+/* LA CASELLA E' 17px, MA IL BERSAGLIO E' LA RIGA. Il `<label>` avvolge
+   casella e testo, quindi si tocca ovunque: il riempimento verticale porta la
+   riga sopra i 44 anche quando il testo e' una parola sola. */
+.checkbox-row{ min-height:var(--hit); padding:var(--s-1) 0; }
 .checkbox-row input[type=checkbox]{ width:auto; min-height:0; flex:none; margin-top:2px; }
 .checkbox-row b{ color:var(--text-1); font-weight:700; }
 .checkbox-row .nota{ display:block; margin-top:var(--s-1); }
@@ -2048,7 +2052,14 @@ table.score-table th, table.score-table td{ border:1px solid #999 !important; }
 .print-signatures, .print-header{ display:none; }
 /* ---------- COMPAGNIE ---------- */
 .cp-select-row{ margin-bottom:var(--s-3); }
-.cp-select-row label{ display:block; font-size:var(--t-xs); font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:var(--s-1); }
+/* LE ETICHETTE DEI CAMPI SALGONO DI UN GRADINO. (25/08/2026, misurato.)
+   `--t-xs` a 390px risolve a 12,0px: sotto la soglia di 13 che vale per
+   un'etichetta di modulo, e per giunta in maiuscoletto spaziato, che a quella
+   taglia si legge peggio del minuscolo. *Un'etichetta e' l'unica cosa che
+   dice cosa scrivere in quel campo: e' informazione, non decoro.*
+   `--t-sm` risolve a 14,0. Le altre etichette della scala non si toccano —
+   `--t-xs` porta anche note e occhielli, che sono un'altra cosa. */
+.cp-select-row label{ display:block; font-size:var(--t-sm); font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:var(--s-1); }
 .cp-select-row select{ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:var(--t-md); }
 .cp-info-row{ display:flex; align-items:center; gap:var(--s-2); font-size:var(--t-sm); color:var(--cream); padding:var(--s-1) 0; }
 /* IL VERDE DEI LINK ERA QUELLO DEI FONDI SCURI, E QUESTI STANNO SU FONDO
@@ -2094,11 +2105,16 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
 #app.narrow.modulo > :not(header.top){ max-width:var(--col-modulo); }
 
 .pf-fed-row{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-2) var(--s-3); margin-bottom:var(--s-2); }
-.pf-fed-check{ display:flex; align-items:center; gap:var(--s-2); font-size:var(--t-sm); font-weight:600; cursor:pointer; }
+/* LA RIGA DELLA FEDERAZIONE E' UN BERSAGLIO, NON UNA SCRITTA. (25/08/2026,
+   misurata a 23px: la casella e' 17 e il testo una parola sola, quindi la
+   riga si stringeva sul contenuto.) E' la scelta piu' importante del modulo —
+   da lei dipende come l'app conta i punti — e si tocca con una mano.
+   Il `<label>` avvolge gia' casella e nome: basta dargli l'altezza. */
+.pf-fed-check{ display:flex; align-items:center; gap:var(--s-2); min-height:var(--hit); font-size:var(--t-sm); font-weight:600; cursor:pointer; }
 .pf-fed-check input{ width:17px; height:17px; accent-color:var(--accent-soft); outline:1.5px solid var(--checkbox-border); outline-offset:2px; border-radius:3px; }
 .pf-tessera{ margin-top:var(--s-2); display:none; }
 .pf-tessera.show{ display:block; }
-.pf-tessera label{ font-size:var(--t-xs); color:var(--muted); font-weight:700; margin-bottom:var(--s-1); display:block; text-transform:uppercase; letter-spacing:.05em; }
+.pf-tessera label{ font-size:var(--t-sm); color:var(--muted); font-weight:700; margin-bottom:var(--s-1); display:block; text-transform:uppercase; letter-spacing:.05em; }
 .pf-tessera input{ width:100%; padding:var(--s-2) var(--s-2); border-radius:var(--r-xs); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:var(--t-sm); }
 /* Le due tendine stanno su una riga sola: sono la stessa domanda in due
    gradini, non due domande. */
@@ -2920,7 +2936,12 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   margin-bottom:var(--s-2); }
 .club-scelto b{ font-weight:700; font-size:var(--t-md); color:var(--text-1);
   min-width:0; overflow:hidden; text-overflow:ellipsis; }
-.club-togli{ flex:0 0 auto; width:var(--s-5); height:var(--s-5);
+/* IL BERSAGLIO E' 44, IL SEGNO RESTA 24. (25/08/2026, misurato: era 24x24,
+   il piu' piccolo elemento premibile dell'app.) Non si ingrandisce la croce —
+   diventerebbe pesante in una riga che e' fatta di nomi — si allarga quello
+   che si puo' toccare intorno. *Il disegno e la zona sensibile sono due cose
+   diverse, e solo la seconda ha una soglia.* */
+.club-togli{ flex:0 0 auto; width:var(--hit); height:var(--hit);
   display:flex; align-items:center; justify-content:center;
   background:none; border:none; border-radius:var(--r-pill);
   color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer;
@@ -18502,7 +18523,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-bianchi";
+var BUILD_STAMP = "2026-08-25-bersagli";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18511,7 +18532,7 @@ var BUILD_STAMP = "2026-08-25-bianchi";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-rimedio";
+var BUILD_PARENT = "2026-08-25-bianchi";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
