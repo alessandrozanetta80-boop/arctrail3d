@@ -3780,16 +3780,38 @@ header.top .brandblock{ background:none; padding:0; border-radius:0; }
    stato fatto il 21/08 per una ragione precisa: **installata sulla schermata
    Home il problema non esiste**, perche' in modalita' app la barra degli
    indirizzi non c'e' — ed e' come si usa sul campo. */
+/* ══ LA BARRA NON AVEVA MARGINE, E SI VEDEVA SOLO SULL'ULTIMA VOCE ═════════
+   (25/08/2026, seconda segnalazione di Alessandro sulla stessa barra: «i
+   tasti, marketplace e' tutto a destra».)
+
+   La prima cura, dello stesso giorno, aveva reso le quattro celle UGUALI, ed
+   erano uguali davvero — misurate: 86/86/86/86 a 360px, 99 a 412. Il difetto
+   che restava non era la larghezza delle celle: era che **la barra andava da
+   bordo a bordo dello schermo**. Dentro la sua cella «Marketplace» ha 2 pixel
+   d'aria per parte (81px di parola in 86 di cella), quindi la sua ultima
+   lettera finiva a **due pixel dal vetro** — mentre «Home» ne aveva 27.
+
+   *Le celle erano in bilancia e la barra no.* Un margine ai due capi non
+   sposta niente fra le voci: sposta tutte e quattro dentro. E si vede solo
+   sull'ultima, perche' e' l'unica parola abbastanza lunga da arrivare fino
+   li' — le altre tre stavano larghe e nessuno se n'era accorto.
+
+   OTTO PIXEL, non sedici come il margine di pagina: la barra e' un bordo
+   dello schermo, non un contenuto appoggiato sopra, e sedici le farebbero
+   perdere trentadue pixel di cella — cioe' proprio quelli che alla parola
+   lunga servono. Otto bastano perche' l'aria passi da 2 a 10. */
 .tabbar-bottom{ position:fixed; left:0; right:0; bottom:0; max-width:520px; margin:0 auto;
 border-top:2px solid var(--navbar-on); background:var(--navbar-bg);
-box-shadow:0 -10px 26px var(--navbar-shadow); padding-bottom:env(safe-area-inset-bottom);
+box-shadow:0 -10px 26px var(--navbar-shadow);
+padding-left:var(--s-2); padding-right:var(--s-2);
+padding-bottom:env(safe-area-inset-bottom);
 transform:translateZ(0); -webkit-backface-visibility:hidden; backface-visibility:hidden; }
 .tabbar button{ background:none; border:1px solid transparent; cursor:pointer;
 font-family:inherit; color:var(--navbar-fg);
 transition:color var(--dur-2) var(--ease), background var(--dur-2) var(--ease); }
 .tabbar .tab-lbl{ line-height:1.1; }
 /* in fondo, sul telefono: icona sopra, parola sotto */
-.tabn{ flex:1; min-height:var(--hit); padding:var(--s-2) var(--s-1);
+.tabn{ flex:1 1 0; min-width:0; min-height:var(--hit); padding:var(--s-2) var(--s-1);
 display:flex; flex-direction:column; align-items:center; gap:var(--s-1); }
 /* SUGLI SCHERMI PICCOLI SI STRINGE LA CELLA, NON LA PAROLA. (20/08/2026.)
    Misurato a 320px — iPhone SE, e i telefoni piccoli che restano in giro —
@@ -3815,9 +3837,7 @@ display:flex; flex-direction:column; align-items:center; gap:var(--s-1); }
 @media (max-width:359px){
 .tabn{ padding-left:0; padding-right:0; gap:2px; }
 }
-@media (max-width:359px){
-.tabn .tab-lbl{ font-size:var(--t-2xs); letter-spacing:-.02em; }
-}
+
 /* 48x32 e icona 24: tre misure della scala, dove prima erano 46x29 e 21.
    Non e' vezzo di ordine. Le icone piene hanno l'inchiostro all'82% della
    loro finestra, quindi a 21px erano 17 punti di disegno dentro una
@@ -3845,6 +3865,42 @@ width:48px; height:32px; border-radius:var(--r-lg); border:1px solid transparent
    spazio e' quello che e'. */
 .tabn .tab-lbl{ font-size:var(--t-2xs); font-weight:700; text-align:center;
   text-transform:uppercase; letter-spacing:0.04em; }
+/* ATTENZIONE ALL'ORDINE: questi due blocchi devono stare DOPO la regola qui
+   sopra, non prima. Fino a oggi stavano prima, e siccome hanno la stessa
+   forza vinceva l'ultima scritta — cioe' la regola base. **La spaziatura
+   stretta sotto i 360px, scritta il 20/08 e ritoccata il 25, non e' mai
+   entrata in vigore.** Non dava nessun errore: semplicemente la parola
+   restava larga uguale, e la prova era stata fatta guardando il codice.
+/* LA SOGLIA E' SALITA DA 359 A 374, E NON A CASO. (25/08/2026.) Con le celle
+   finalmente uguali, «MARKETPLACE» misura 89px e a 360px la sua cella ne ha
+   86: sforava di uno. Con la spaziatura stretta la parola scende a 81 e
+   rientra. La soglia sta a 400 e non a 360: a 375 e a 390 — cioe' gli iPhone
+   e gli Android piu' diffusi — la parola larga lasciava uno e due pixel
+   d'aria, che sullo schermo si legge come «tocca il bordo». Con la
+   spaziatura stretta l'aria diventa cinque e sette. Sopra i 400 lo spazio
+   c'e' e le lettere tornano larghe. */
+@media (max-width:400px){
+.tabn .tab-lbl{ font-size:var(--t-2xs); letter-spacing:-.02em; }
+}
+/* Con gli otto pixel di margine la barra ha quattro pixel di cella in meno, e
+   a 360px «Marketplace» tornava a riempire la sua cella esatta: 81 di parola
+   in 82 di cella, zero d'aria. Un altro mezzo centesimo di em le fa spazio.
+   *Il margine si e' preso quello che serviva alla parola, ed e' un baratto
+   giusto: due pixel dentro la cella non li vede nessuno, otto dal vetro si.* */
+@media (max-width:374px){
+.tabn .tab-lbl{ letter-spacing:-.045em; }
+}
+/* SOTTO I 341 PIXEL LA BILANCIA PERDE, E SI PERDE APPOSTA. A 320px le quattro
+   celle uguali sono 76px e «MARKETPLACE», anche stretta, ne chiede 81: non
+   c'e' spaziatura che basti. Qui `min-width` torna automatica, cioe' la
+   quarta cella si prende quello che le serve e le altre tre si stringono un
+   po' — sono di nuovo leggermente diverse, e va bene.
+   *Una parola che esce dallo schermo e' peggio di quattro celle non uguali:
+   la prima non si legge, le seconde si notano soltanto.* E vale su un
+   telefono che nel 2026 e' l'eccezione, non la regola. */
+@media (max-width:340px){
+.tabn{ min-width:auto; }
+}
 /* ══ E LA BARRA PARLA LA STESSA LINGUA DELLE ETICHETTE ════════════════════
    (23/08/2026, chiesto da Alessandro nella stessa riga: «anche la barra deve
    essere adeguata».) Le quattro parole in fondo sono etichette come tutte le
