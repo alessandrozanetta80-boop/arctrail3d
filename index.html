@@ -15340,7 +15340,16 @@ return x.data.getFullYear() === ora.getFullYear() && x.data.getMonth() === ora.g
 // La media e' del MESE: un numero che non si muove mai non e' una notizia.
 // Se questo mese non si e' ancora tirato, si prende tutto lo storico e lo
 // si dice cambiando etichetta, invece di mostrare un vuoto.
-var base = mese.length ? mese : miei;
+/* STESSA REGOLA DEL DIARIO: non si mescolano formati. (25/08/2026.)
+   Questa e' la cifra grande arancione della Home — la piu' guardata dell'app.
+   Sommava allenamenti da 12 piazzole e gare da 24 e ne faceva una media, che
+   e' un numero che non descrive nessuno dei due giri e si muove col
+   calendario. `gruppoOmogeneo` tiene il gruppo di formato piu' numeroso; se
+   i formati sono tutti uguali — il caso normale — il numero e' identico a
+   ieri. La formula sta scritta per esteso accanto a `gruppoOmogeneo`. */
+var baseTutta = mese.length ? mese : miei;
+var gruppoHome = gruppoOmogeneo(baseTutta.map(function(x){ return { format:x.formato, punti:x.punti, piazzole:x.piazzole }; }));
+var base = gruppoHome.lista.length ? gruppoHome.lista : baseTutta;
 var somma = 0; base.forEach(function(x){ somma += x.punti; });
 var piazz = 0; base.forEach(function(x){ piazz += x.piazzole; });
 var meglio = 0; miei.forEach(function(x){ if(x.punti > meglio) meglio = x.punti; });
@@ -18741,7 +18750,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-pertinenza";
+var BUILD_STAMP = "2026-08-25-media";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18750,7 +18759,7 @@ var BUILD_STAMP = "2026-08-25-pertinenza";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-iniziale";
+var BUILD_PARENT = "2026-08-25-pertinenza";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -19356,6 +19365,47 @@ cloudCard.appendChild(coppia);
 return cloudCard;
 }
 
+/* ══ UNA MEDIA FRA FORMATI DIVERSI NON E' UNA MEDIA ═══════════════════════
+   (25/08/2026.) `media = somma / numero di giri`, su TUTTI i giri. Chi tira
+   un allenamento da 12 piazzole (~120 punti) e una gara da 24 (~280) vedeva
+   scritto **200** — un numero che non descrive nessuno dei due, e che si
+   muove ogni volta che cambia il MISCUGLIO invece che il tiro. *Una media
+   che sale perche' questo mese hai tirato piu' gare non e' un miglioramento:
+   e' un'illusione ottica con l'aria di un dato.*
+
+   La cura non e' una formula nuova: e' contare solo quello che si puo'
+   contare insieme.
+
+   FORMULA. Si raggruppano i giri per `format` (il numero di piazzole).
+   Vince il gruppo piu' numeroso; a parita' il piu' recente. La media e' la
+   somma dei punti di QUEL gruppo diviso il numero dei suoi giri, e
+   l'etichetta dice su quanti giri e di quale formato.
+     media = Σ punti(giri con format = F) / conteggio(giri con format = F)
+   Se i giri hanno tutti lo stesso formato — il caso normale di chi tira una
+   disciplina sola — il numero non cambia di un punto rispetto a ieri.
+
+   COSA RESTA FUORI, e va detto: i giri senza `format` (i piu' vecchi, salvati
+   prima che il campo esistesse) finiscono in un gruppo loro e non si mescolano
+   con gli altri. E il riepilogo permanente `loadLifetime()` somma punti e giri
+   SENZA il formato: quando i formati sono piu' d'uno non lo si usa piu' per
+   la media, perche' quella somma e' gia' un miscuglio e non si puo' piu'
+   separare. Il record, che e' un massimo e non una media, continua a
+   prenderlo — un massimo non si sporca mescolando. */
+function gruppoOmogeneo(giri){
+if(!giri || !giri.length) return { lista:[], formato:null, misto:false };
+var per = {};
+giri.forEach(function(g){
+var f = String(g.format || "?");
+if(!per[f]) per[f] = [];
+per[f].push(g);
+});
+var chiavi = Object.keys(per);
+if(chiavi.length === 1) return { lista: giri, formato: giri[0].format || null, misto:false };
+var vinc = chiavi[0];
+chiavi.forEach(function(k){ if(per[k].length > per[vinc].length) vinc = k; });
+return { lista: per[vinc], formato: (vinc === "?" ? null : Number(vinc)), misto:true };
+}
+
 function diarioScreen(parte){
 var soloRecord = (parte === "record");
 var tutto = !parte;
@@ -19384,9 +19434,14 @@ head.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-h
 if(tutto || soloRecord) wrap.appendChild(head);
 } else {
 var best = mine[0], sum = 0;
-mine.forEach(function(m){ sum += m.total; if(m.total > best.total) best = m; });
-var media = Math.round(sum / mine.length);
-var roundsCount = mine.length;
+mine.forEach(function(m){ if(m.total > best.total) best = m; });
+// Il record guarda TUTTI i giri: un massimo non si sporca mescolando.
+// La media guarda solo il gruppo omogeneo.
+var gruppo = gruppoOmogeneo(mine);
+gruppo.lista.forEach(function(m){ sum += m.total; });
+var media = Math.round(sum / gruppo.lista.length);
+var roundsCount = gruppo.lista.length;
+var formatoMedia = gruppo.formato;
 
 // Il riepilogo permanente sopravvive al taglio dello storico: se conosce un record
 // pi\u00f9 alto o pi\u00f9 giri di quelli ancora in memoria, vincono i suoi numeri.
@@ -19400,12 +19455,21 @@ ltRounds += (e.rounds || 0);
 ltSum += (e.sum || 0);
 if((e.best || 0) > ltBest){ ltBest = e.best; ltBestLabel = e.modeLabel || ""; }
 });
-if(ltRounds > roundsCount){ roundsCount = ltRounds; }
-if(ltRounds > 0 && ltSum > 0 && ltRounds >= mine.length){ media = Math.round(ltSum / ltRounds); }
+/* Il riepilogo permanente somma senza il formato: se qui i formati sono piu'
+   d'uno, quella somma e' gia' un miscuglio e non si puo' separare — quindi
+   non la si usa per la media. Il conteggio dei giri invece resta suo, perche'
+   contare giri e' giusto in tutti i casi. */
+if(!gruppo.misto && ltRounds > roundsCount){ roundsCount = ltRounds; }
+if(!gruppo.misto && ltRounds > 0 && ltSum > 0 && ltRounds >= mine.length){ media = Math.round(ltSum / ltRounds); }
 var bestTotal = best.total, bestLabel = best.modeLabel || "";
 if(ltBest > bestTotal){ bestTotal = ltBest; bestLabel = ltBestLabel; }
 
-var last5 = mine.slice(0, 5), prev5 = mine.slice(5, 10);
+/* STESSA REGOLA PER LA PERCENTUALE. Confrontare la media di cinque giri con
+   quella dei cinque precedenti ha senso solo se sono lo stesso formato: se
+   nei primi cinque ci sono tre gare e nei secondi una, il «+18%» misura il
+   calendario, non l'arciere. Si confrontano i giri del gruppo omogeneo. */
+var perTrend = gruppo.lista;
+var last5 = perTrend.slice(0, 5), prev5 = perTrend.slice(5, 10);
 var trend = "", trendUp = false;
 if(prev5.length >= 2){
 var a5 = last5.reduce(function(s,m){ return s+m.total; },0)/last5.length;
@@ -19416,7 +19480,10 @@ if(d !== 0){ trend = t("diario_trend",{d:(d>0?"+":"")+d}); trendUp = (d>0); }
 
 var grid = el('<div style="display:flex;gap:var(--s-2);margin-bottom:var(--s-1);"></div>');
 grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);"><div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div><div style="font-size:var(--t-xl);font-weight:800;color:var(--gold);line-height:1.2;">'+bestTotal+'</div><div style="font-size:var(--t-xs);color:var(--muted);">'+escapeHtml(bestLabel||"")+'</div></div>'));
-grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);"><div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div><div style="font-size:var(--t-xl);font-weight:800;color:var(--cream);line-height:1.2;">'+media+'</div><div style="font-size:var(--t-xs);color:var(--muted);">'+t("diario_on_rounds",{n:roundsCount})+'</div></div>'));
+grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);"><div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div><div style="font-size:var(--t-xl);font-weight:800;color:var(--cream);line-height:1.2;">'+media+'</div><div style="font-size:var(--t-xs);color:var(--muted);">'
+  + t("diario_on_rounds",{n:roundsCount})
+  + (formatoMedia ? (" \u00b7 " + formatoMedia + " " + t("diario_targets_word")) : "")
+  + '</div></div>'));
 head.appendChild(grid);
 if(trend){ head.appendChild(el('<div style="font-size:var(--t-sm);color:'+(trendUp?"var(--success)":"var(--muted)")+';margin-top:var(--s-2);font-weight:700;">'+escapeHtml(trend)+'</div>')); }
 if(tutto || soloRecord) wrap.appendChild(head);
