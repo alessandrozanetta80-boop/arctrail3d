@@ -4343,8 +4343,20 @@ border-color:var(--gold-400); color:var(--gold-400); }
    due righe e la striscia diventava alta il doppio del tasto che la contiene:
    un comando spezzato sembra due comandi. Il testo a sinistra puo' accorciarsi
    quanto serve, il comando no. */
+/* IL RIMEDIO SI TOCCA CAMMINANDO. (25/08/2026, revisione dei bersagli sulla
+   pista.) Misurato: la striscia era alta 44 e il tasto dentro 36. Trentasei
+   pixel sono sotto la soglia di chiunque — Apple ne chiede 44, Material 48 —
+   e questo non e' un comando qualunque: si preme **subito dopo aver sbagliato
+   il tasto**, cioe' nell'unico momento in cui la mano ha gia' dimostrato di
+   non essere precisa. *Il tasto per rimediare a un tocco storto non puo'
+   essere il piu' piccolo della schermata.*
+   Quarantotto, non di piu': la striscia sta sopra la tastiera, e ogni pixel
+   che prende lo toglie alla scena. Gli altri due numeri non si toccano —
+   `--hit` e' 44 in tutta l'app e cambiarlo qui vorrebbe dire cambiarlo
+   ovunque, che non e' una modifica alla pista. */
+.striscia-annulla{ min-height:48px; }
 .striscia-annulla button{ display:inline-flex; align-items:center; gap:var(--s-1);
-flex:0 0 auto; white-space:nowrap; min-height:36px; padding:0 var(--s-2);
+flex:0 0 auto; white-space:nowrap; min-height:48px; padding:0 var(--s-2);
 background:none; border:none; color:var(--clay); font-family:inherit;
 font-size:var(--t-sm); font-weight:700; cursor:pointer; border-radius:var(--r-sm); }
 
@@ -4790,6 +4802,29 @@ flushErrorQueue();
 // c'e' qualcosa da dire. Vedi cercaGiroSulCloud: se qui il giro c'e',
 // questa non fa niente — il telefono che hai in mano ha sempre ragione.
 cercaGiroSulCloud();
+/* (La direzione opposta — il giro aperto QUI che deve ripartire verso il
+   cloud — sta dentro `cercaGiroSulCloud` stessa: e' lo stesso momento e la
+   stessa domanda, e tenerle in due posti vuol dire dimenticarne una.)
+   VECCHIA NOTA, RESTA PERCHE' SPIEGA IL CASO. (25/08/2026.)
+   `cercaGiroSulCloud` guarda in una direzione sola — dal cloud al telefono —
+   e quando il giro e' gia' aperto qui non fa niente. Giusto per lei, ma
+   restava scoperto il caso simmetrico: **riaprire l'app in mezzo a un giro.**
+
+   Cosa si vedeva. Il giro riparte da `localStorage` intatto, ma `giroNube`
+   nasce a «locale», cioe' l'etichetta *«Sul telefono»* — che in questa app
+   vuol dire una cosa precisa: «non hai fatto l'accesso, questo giro esiste
+   solo qui». A un utente collegato, con dodici piazzole segnate e una copia
+   da mandare, quella riga diceva il falso in tutti e due i sensi: sottraeva
+   un accesso che c'era, e nascondeva una copia che aspettava.
+
+   E non era solo una parola: **finche' nessuno chiamava `salvaGiroSulCloud`
+   la copia non ripartiva** — la prima occasione era la piazzola dopo, e
+   all'ultima piazzola non c'e' una piazzola dopo. *Chi ricarica la pagina
+   alla ventiquattresima aveva l'ultima piazzola solo sul telefono.*
+
+   Una riga, e usa la strada che c'e' gia': senza rete `salvaGiroSulCloud`
+   mette «Parte con la rete» e la scrittura resta in coda; con la rete parte e
+   diventa «Al sicuro». E non riscrive niente se non e' cambiato nulla. */
 db.collection("users").doc(user.uid).get().then(function(doc){
 if(!doc.exists){
 var pendingProfileRaw = null;
@@ -11554,8 +11589,8 @@ var giroNube = { stato:"locale", errore:"", inviato:"" };
    diverso da quello che si sta guardando. */
 var ultimoFinale = null;
 
-function statoGiroTesto(){
-switch(giroNube.stato){
+function statoGiroTesto(quale){
+switch((quale || giroNube).stato){
 case "invio":   return { cl:"in-corso", txt:t("giro_stato_invio") };
 case "salvato": return { cl:"fatto",    txt:t("giro_stato_salvato") };
 case "coda":    return { cl:"in-corso", txt:t("giro_stato_coda") };
@@ -11565,11 +11600,15 @@ default:        return { cl:"",         txt:t("giro_stato_locale") };
 }
 
 function dipingiStatoGiro(){
-var n = document.querySelector(".pista-stato");
+var n = document.querySelector(".pista-sotto .pista-stato");
 if(!n) return;
 var s = statoGiroTesto();
 n.className = "pista-stato " + s.cl;
-n.textContent = s.txt;
+/* «Non inviato» diceva cosa era successo e non cosa fare. La parola in piu'
+   compare solo nello stato in cui c'e' qualcosa da fare, e il tocco funziona
+   solo li': un cartellino che risponde sempre sembra un tasto, e nella pista
+   di tasti che non segnano punti non ne servono. */
+n.textContent = (giroNube.stato === "errore") ? (s.txt + " \u00b7 " + t("pg_retry")) : s.txt;
 }
 
 /* Salva il giro in corso. `subito` salta l'attesa: si usa quando il giro
@@ -11604,7 +11643,15 @@ timbro: (typeof BUILD_STAMP === "string") ? BUILD_STAMP : "?",
 aggiornato: firebase.firestore.FieldValue.serverTimestamp()
 }).then(function(){
 giroNube.inviato = corpo;
-giroNube.stato = "salvato";
+/* NON SI DICE «AL SICURO» MENTRE LA RETE NON C'E'. (25/08/2026.)
+   Con la memoria offline accesa una scrittura puo' risolversi in locale: la
+   promessa dice di si' e il documento non ha ancora lasciato il telefono.
+   Qui dentro quella risposta diventava «Al sicuro», che e' l'unica bugia che
+   questa riga non puo' permettersi — *e' la riga che uno guarda per decidere
+   se puo' spegnere il telefono.*
+   Se la rete non c'e' resta «Parte con la rete», e il rientro in linea fa
+   ripartire il salvataggio: allora la parola cambia per davvero. */
+giroNube.stato = (navigator.onLine === false) ? "coda" : "salvato";
 dipingiStatoGiro();
 }).catch(function(err){
 giroNube.stato = "errore";
@@ -11636,7 +11683,15 @@ try{ ref.delete().catch(function(){}); }catch(e){}
    vale, in mezzo a un percorso, sarebbe la domanda peggiore possibile. */
 var giroRitrovato = null;
 function cercaGiroSulCloud(){
-if(state.roundActive === true || state.screen === "round" || state.screen === "summary") return;
+if(state.roundActive === true || state.screen === "round" || state.screen === "summary"){
+  /* Il giro aperto QUI non si sovrascrive mai — ma va MANDATO. Prima questo
+     era un `return` secco, e chi riapriva l'app in mezzo a un giro restava
+     senza copia fino alla piazzola dopo. Le due direzioni sono la stessa
+     domanda posta nello stesso momento: se stanno in due posti, uno dei due
+     si dimentica. */
+  if(state.roundActive === true) salvaGiroSulCloud(true);
+  return;
+}
 var ref = cloudGiroRef();
 if(!ref) return;
 ref.get().then(function(snap){
@@ -11695,8 +11750,19 @@ save(); render();
 
 // Tornando la rete, quello che era in coda parte da solo: la riga deve
 // smettere di dire «si invia da solo» senza aspettare la piazzola dopo.
+/* TORNANDO LA RETE RIPARTE ANCHE QUELLO CHE ERA FALLITO. (25/08/2026.)
+   Prima ripartiva solo la coda. Una scrittura andata in errore — non «senza
+   rete», proprio rifiutata — restava ferma fino alla piazzola dopo, e
+   all'ultima piazzola non c'e' una piazzola dopo. *Il caso in cui il rientro
+   in linea serve di piu' era l'unico che non lo usava.* */
 window.addEventListener("online", function(){
-if(state.roundActive && giroNube.stato === "coda"){ salvaGiroSulCloud(true); }
+/* Tutti gli stati tranne quello in corso. Dopo un ricarico da offline il
+   giro riparte da «locale» — nessuno gli ha ancora detto che c'e' una copia
+   da mandare — e con la vecchia condizione quel caso restava fuori proprio
+   perche' era il piu' silenzioso. `salvaGiroSulCloud` sa gia' non fare
+   niente se non e' cambiato nulla. */
+if(state.roundActive && giroNube.stato !== "invio"){ salvaGiroSulCloud(true); }
+if(finaleNube.stato === "coda" || finaleNube.stato === "errore"){ riprovaCopiaFinale(); }
 });
 window.addEventListener("offline", function(){
 if(state.roundActive && giroNube.stato === "invio"){ giroNube.stato = "coda"; dipingiStatoGiro(); }
@@ -11738,9 +11804,42 @@ function roundDocId(dateISO){
 return String(dateISO || "").replace(/[^0-9]/g, "").slice(0, 17) || String(Date.now());
 }
 
+/* ══ IL GIRO FINITO SI METTE AL SICURO DA SOLO, E LO DICE ═════════════════
+   (25/08/2026.) La copia partiva gia' da sola — questa funzione la chiama
+   `summaryScreen` appena il giro entra nello storico — ma **non lo diceva a
+   nessuno**: se falliva, l'errore finiva in `cloudSyncState.lastError`, che
+   si legge solo aprendo la scheda del backup nel profilo. Da fuori, un giro
+   copiato e un giro perso avevano lo stesso aspetto.
+
+   E siccome non lo diceva, sotto ci era stato messo un tasto: «Salva sul
+   cloud», in fondo al finale. *Un tasto che chiede a mano una cosa che la
+   macchina fa gia' e' un tasto che dice «non fidarti».* Chi lo premeva
+   rifaceva una scrittura gia' fatta; chi non lo premeva restava col dubbio, e
+   il dubbio era la sola cosa che il tasto risolveva davvero.
+
+   Adesso il finale porta lo stesso cartellino della pista, con le stesse
+   cinque parole, e il tasto non serve piu'.
+
+   NIENTE DOPPIONI, e non e' una precauzione nuova: l'id del documento nasce
+   dalla data del giro (`roundDocId`), quindi riprovare riscrive lo stesso
+   documento. Si puo' premere «riprova» dieci volte: restano un giro e una
+   riga nel diario. */
+var finaleNube = { stato:"locale", errore:"", fatto:"" };
+
+function dipingiStatoFinale(){
+var n = document.querySelector(".finale-stato");
+if(!n) return;
+var s = statoGiroTesto(finaleNube);
+n.className = "finale-stato pista-stato " + s.cl;
+n.textContent = (finaleNube.stato === "errore") ? (s.txt + " \u00b7 " + t("pg_retry")) : s.txt;
+}
+
 function backupRoundToCloud(roundEntry){
 var ref = cloudHistoryRef();
 if(!ref || !roundEntry) return;
+finaleNube.stato = (navigator.onLine === false) ? "coda" : "invio";
+finaleNube.errore = "";
+dipingiStatoFinale();
 try{
 ref.doc(roundDocId(roundEntry.date)).set({
 date: roundEntry.date,
@@ -11754,10 +11853,34 @@ nota: roundEntry.nota || null,
 assetto: roundEntry.assetto || null,
 assettoNome: roundEntry.assettoNome || null,
 savedAt: firebase.firestore.FieldValue.serverTimestamp()
-}, { merge: true }).catch(function(err){
+}, { merge: true }).then(function(){
+finaleNube.stato = "salvato";
+finaleNube.fatto = roundDocId(roundEntry.date);
+dipingiStatoFinale();
+}).catch(function(err){
 cloudSyncState.lastError = describeFirebaseError(err);
+finaleNube.stato = "errore";
+finaleNube.errore = cloudSyncState.lastError;
+dipingiStatoFinale();
 });
-}catch(e){ cloudSyncState.lastError = describeFirebaseError(e); }
+}catch(e){
+cloudSyncState.lastError = describeFirebaseError(e);
+finaleNube.stato = "errore";
+finaleNube.errore = cloudSyncState.lastError;
+dipingiStatoFinale();
+}
+}
+
+/* Riprova la copia del giro che si sta guardando. Dopo un riavvio la riga
+   dello storico c'e' ancora e `state.roundEntryDate` dice quale: si ripesca
+   da li' invece di tenersela in memoria, che dopo un ricarico non ci sarebbe
+   piu'. */
+function riprovaCopiaFinale(){
+var quando = state.roundEntryDate;
+if(!quando) return;
+var riga = null;
+loadHistory().forEach(function(h){ if(h && h.date === quando) riga = h; });
+if(riga) backupRoundToCloud(riga);
 }
 
 // Invia sul cloud i giri locali che non ci sono ancora (per chi aveva gi\u00e0 storico
@@ -18370,7 +18493,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-rubrica";
+var BUILD_STAMP = "2026-08-25-rimedio";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18379,7 +18502,7 @@ var BUILD_STAMP = "2026-08-25-rubrica";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-guscio";
+var BUILD_PARENT = "2026-08-25-rubrica";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -22237,7 +22360,11 @@ if(state.campo) dove.push(escapeHtml(state.campo));
 dove.push(escapeHtml(modeLabel(state.mode)));
 sotto.appendChild(el('<span class="pista-dove">'+dove.join(" \u00b7 ")+'</span>'));
 var st = statoGiroTesto();
-sotto.appendChild(el('<span class="pista-stato '+st.cl+'">'+escapeHtml(st.txt)+'</span>'));
+var chipStato = el('<span class="pista-stato '+st.cl+'">'+escapeHtml(st.txt)+'</span>');
+chipStato.addEventListener("click", function(){
+if(giroNube.stato === "errore") salvaGiroSulCloud(true);
+});
+sotto.appendChild(chipStato);
 testa.appendChild(sotto);
 testa.appendChild(regola);
 
@@ -23405,12 +23532,30 @@ piazzFlow.appendChild(pCard);
 detailCard.appendChild(piazzFlow);
 wrap.appendChild(detailCard);
 
-/* LA COPIA SUL CLOUD ALLA FINE DEL GIRO. (22/08/2026, chiesto da Alessandro.)
-   E' il solo momento in cui esiste un giro che sul cloud non c'e' ancora, e
-   l'unico in cui uno ci pensa senza doverselo ricordare. Sta DOPO i numeri e
-   dopo il dettaglio, non prima: prima si guarda cosa si e' fatto, poi lo si
-   mette al sicuro. */
-if(currentUser) wrap.appendChild(cloudBackupCard());
+/* LA COPIA SUL CLOUD ALLA FINE DEL GIRO — ADESSO E' UNA RIGA, NON UN TASTO.
+   (25/08/2026. La scheda con i due tasti era stata messa qui il 22/08: «e' il
+   solo momento in cui esiste un giro che sul cloud non c'e' ancora».
+   La premessa era sbagliata — la copia parte da sola da quando il giro entra
+   nello storico, due righe piu' su — e quello che mancava non era il
+   comando: era **dirlo**.)
+   Stesse cinque parole della pista, stesso cartellino. Si tocca solo quando
+   c'e' qualcosa da riprovare; le altre quattro volte e' una riga che si
+   legge. I due tasti restano nel profilo, che e' dove si va quando si cambia
+   telefono. */
+/* La condizione e' «c'e' un cloud a cui parlare», non «hai fatto l'accesso»:
+   sono la stessa cosa oggi, ma la prima e' quella vera — ed e' l'unica che un
+   banco possa mettere alla prova senza un account. */
+if(cloudHistoryRef()){
+var rigaFin = el('<div class="pista-sotto finale-sotto"></div>');
+rigaFin.appendChild(el('<span class="pista-dove">'+escapeHtml(t("diario_cloud_title"))+'</span>'));
+var chipFin = el('<span class="finale-stato pista-stato"></span>');
+rigaFin.appendChild(chipFin);
+wrap.appendChild(rigaFin);
+chipFin.addEventListener("click", function(){
+if(finaleNube.stato === "errore") riprovaCopiaFinale();
+});
+setTimeout(dipingiStatoFinale, 0);
+}
 
 // La scheda sta dopo i numeri, come sulla carta: prima si legge, poi si firma.
 var consegnaAperta = false;
