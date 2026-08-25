@@ -2329,15 +2329,29 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    gia', ed e' quello gia' misurato dal banco dei contrasti. */
 /* IL TASTO SI SMORZA, MA POCO. (24/08/2026.) L'argilla piena su una fascia
    scura larga tutto lo schermo abbaglia. Un velo di fondo sotto il colore la
-   spegne — ma OGNI punto di velo lo paga la scritta sopra, che e' scura:
-   a colore pieno il testo sta a 5,56, al 92% scende a 4,91, all'86% e' gia'
-   sotto la soglia. 92% e' il massimo che si puo' togliere senza rendere
-   illeggibile la parola per cui il tasto esiste. La fascia decide da sola
-   quanto velo mettere, cosi' chiaro e scuro non hanno bisogno di due regole. */
+   spegne — ma OGNI punto di velo lo paga la scritta sopra, che e' scura.
+
+   I NUMERI SONO CAMBIATI COL FONDO. (25/08/2026, visto da Alessandro:
+   «avendo fatto passare il nero piu' a grigio, l'arancione e' tornato
+   fortissimo».) Aveva ragione, e la causa era proprio qui: il velo e' un
+   `color-mix` **col fondo**, e il fondo si e' schiarito. Stessa regola,
+   stesso 92%, colore piu' acceso di ieri. *Un valore relativo non protesta
+   quando cambia la cosa a cui e' relativo: si limita a fare un'altra cosa.*
+
+   Rimisurato sul carbone, con la scritta scura sopra e la soglia di 3 per
+   staccarsi dal pannello:
+     100%  testo 5,56 · stacco 3,65
+      92%  testo 5,00 · stacco 3,28   ← ieri
+      86%  testo 4,62 · stacco 3,04   ← oggi, ed e' il fondo corsa
+      84%  testo 4,48 · stacco 2,95   sotto tutte e due le soglie
+   86% e' il massimo che si puo' togliere tenendo leggibile la parola per cui
+   il tasto esiste. Per andare piu' giu' bisogna cambiare mestiere alla
+   scritta — bianca su un'argilla piu' cupa — e non e' una limatura: e' un
+   altro tasto. */
 .btn-porta{
-  background:color-mix(in srgb, var(--clay) 92%, var(--eroe-bg));
+  background:color-mix(in srgb, var(--clay) 86%, var(--eroe-bg));
   color:var(--clay-ink);
-  border-color:color-mix(in srgb, var(--clay) 92%, var(--eroe-bg));
+  border-color:color-mix(in srgb, var(--clay) 86%, var(--eroe-bg));
   font-family:var(--font-display); font-weight:800;
   text-transform:uppercase; letter-spacing:0.05em; }
 .btn-porta:hover{ background:var(--clay-500); border-color:var(--clay-500); }
@@ -3133,6 +3147,35 @@ header.top{
 header.top > .tabbar-wide{ flex:1 0 100%; order:2; min-width:0;
   justify-content:center; flex-wrap:wrap; padding-top:var(--s-2);
   border-top:1px solid var(--border); }
+/* ══ UNA RIGA SOLA, E STAVOLTA CI STA ════════════════════════════════════
+   (25/08/2026, chiesto da Alessandro: «questa banda e' veramente abnorme,
+   sposterei di nuovo in alto Home, Campi, Tira, Marketplace».)
+
+   Il 21/08 aveva chiesto il contrario — «dobbiamo tornare a dividerla, cosi'
+   e' un bordello» — e aveva ragione allora: le sezioni erano CINQUE, ognuna
+   con la sua pastiglia, e su una riga sola si spingevano col marchio e coi
+   comandi. Quando lo spazio finiva cedeva quello che capitava, e il
+   risultato cambiava con la lingua.
+
+   Da allora sono cambiate due cose, ed e' per questo che oggi la risposta e'
+   diversa: le sezioni sono **quattro** (Compagnie e' rientrata nel profilo il
+   22/08) e la voce accesa non e' piu' una pastiglia ma un filetto, che non
+   aggiunge nemmeno un pixel. Misurato sulle nove lingue: la riga piu' larga
+   e' la russa, e ci sta sopra i 1180px. Sotto quella misura le sezioni
+   tornano a capo — **e ci vanno perche' lo decidiamo qui**, non perche' lo
+   spazio e' finito a meta' parola.
+
+   *La banda passa da due righe a una: sulla Home da computer erano 150px in
+   cima a ogni schermata per dire due cose che stanno in 64.* */
+/* Chiude e riapre il blocco da 900: una media query dentro un'altra il CSS
+   la ignora in silenzio, e la regola sembra scritta ma non c'e'. */
+}
+@media (min-width:1180px){
+  header.top > .tabbar-wide{ flex:1 1 auto; order:1;
+    padding-top:0; border-top:0; flex-wrap:nowrap; }
+  header.top .head-actions{ order:2; }
+}
+@media (min-width:900px){
 /* LA TESTATA ARRIVA DOVE ARRIVANO LE FASCE. (21/08/2026, visto da Alessandro:
    «la barra sopra e' piu' stretta delle tabelle sotto».) Le fasce escono dal
    margine della pagina, la testata no: due larghezze diverse nella stessa
@@ -3400,6 +3443,13 @@ header.top .brandblock{ order:0; }
 header.top .head-actions{ order:1; }
 header.top .tabbar-wide{ order:2; flex-basis:100%; }
 }
+/* E da 1180 in su tornano in riga: qui c'e' posto. (25/08/2026.) Deve stare
+   dopo il blocco qui sopra, che e' scritto apposta per avere la meglio. */
+@media (min-width:1180px){
+header.top .head-actions{ order:2; }
+header.top .tabbar-wide{ order:1; flex-basis:auto; flex:1 1 auto;
+  padding-top:0; border-top:0; flex-wrap:nowrap; }
+}
 /* ── Pannello admin: elenco utenti ──────────────────────────────────────
    Solo l'admin vede questa roba: testi in italiano, niente t().          */
 .adm-tot{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-1);margin:2px 0 var(--s-3);}
@@ -3591,8 +3641,30 @@ width:48px; height:32px; border-radius:var(--r-lg); border:1px solid transparent
 .tabw{ flex:0 1 auto; min-width:0; min-height:var(--hit); padding:var(--s-1) var(--s-3);
 border-radius:var(--r-md); display:flex; align-items:center; gap:var(--s-2); }
 .tabw .tab-lbl{ font-size:var(--t-sm); font-weight:600; white-space:nowrap; }
-.tabw.on{ background:var(--navbar-pill); border-color:var(--navbar-on); color:var(--navbar-pill-ink); }
+/* ══ LA VOCE ACCESA E' UN FILETTO ════════════════════════════════════════
+   (25/08/2026, chiesto da Alessandro: «invece del quadratino verde metterei
+   soltanto una striscia arancione sotto» — ed e' gia' il linguaggio della
+   vetrina del sito, dove il menu si sottolinea in argilla.)
+
+   La pastiglia aveva un mestiere vero: al sole il solo cambio di colore del
+   testo non si vede. Ma quel mestiere lo fa **sulla barra in fondo del
+   telefono**, che sta al sole e si tocca col dito. Qui siamo dentro
+   un'insegna scura, su un computer, al chiuso: la pastiglia e' un rettangolo
+   in piu' che ripete quello che il filetto dice meglio e senza ingombro.
+
+   *E' il motivo per cui questa regola e' scritta su `.tabw` e non su
+   `.tabn`: la barra del telefono non la tocca nessuno.*
+
+   L'argilla accesa sul carbone fa 3,65 — sopra la soglia dei tre che vale
+   per un segno grafico, che e' quello che il filetto e'. La parola resta
+   crema e si legge da sola: se domani il filetto sparisse, la voce accesa
+   sarebbe comunque leggibile, solo indistinguibile. */
+.tabw{ position:relative; }
+.tabw.on{ background:none; border-color:transparent; color:var(--eroe-ink); }
+.tabw.on > svg{ color:var(--eroe-ink); }
 .tabw.on .tab-lbl{ font-weight:800; }
+.tabw.on::after{ content:""; position:absolute; left:var(--s-3); right:var(--s-3);
+  bottom:0; height:3px; border-radius:var(--r-pill); background:var(--clay); }
 @media (hover:hover) and (pointer:fine){
 .tabbar button:not(.on):hover{ background:var(--navbar-hover); color:var(--text-1); }
 }
@@ -18150,7 +18222,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-carbone";
+var BUILD_STAMP = "2026-08-25-riga";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18159,7 +18231,7 @@ var BUILD_STAMP = "2026-08-25-carbone";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-24-scudo";
+var BUILD_PARENT = "2026-08-25-carbone";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
