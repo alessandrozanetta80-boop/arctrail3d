@@ -4887,7 +4887,7 @@ db.collection("app_config").doc("admin").set({ uid: currentUser.uid, email: curr
 db.collection("compagnie_admin").doc("01VERB").get().then(function(doc){
 if(!doc.exists || !doc.data().adminUid){
 db.collection("compagnie_admin").doc("01VERB").set({ adminUid: currentUser.uid }, { merge: true })
-.then(function(){ compagnieAdminCache = null; }).catch(function(){});
+.then(function(){ compagnieAdminCache = null; compagniaAdminUna = {}; }).catch(function(){});
 }
 }).catch(function(){});
 }
@@ -13053,7 +13053,9 @@ var COMPAGNIE_NOMI_PROVINCIA = { BI:"Biella", NO:"Novara", AL:"Alessandria", TO:
 var COMPAGNIE_REGIONI = ["Piemonte", "Valle d'Aosta", "Liguria", "Lombardia", "Veneto", "Trentino-Alto Adige", "Friuli-Venezia Giulia", "Emilia-Romagna", "Toscana", "Marche", "Umbria", "Lazio", "Abruzzo", "Molise", "Campania", "Puglia", "Basilicata", "Calabria", "Sicilia", "Sardegna"];
 
 // ── ADMIN COMPAGNIE ──────────────────────────────────────────────────────────
-var compagnieAdminCache = null; // { codice: { adminUid, lat, lng, tel, email, sito } }
+// SOLO le compagnie di cui questo utente e' referente. Non e' un dettaglio di
+// prestazione: e' il motivo per cui i dati degli altri non passano di qui.
+var compagnieAdminCache = null; // { codice: { adminUid, referente, emailComp, tel, sito, indirizzo, note } }
 // Vale solo per la sessione: se restasse in state, il referente si ritroverebbe
 // per sempre davanti la schermata di registrazione dopo averla aperta una volta.
 /* QUALE SCHEDA DELL'AREA COMPAGNIA e' aperta. `null` vuol dire «scegli tu»:
@@ -13078,14 +13080,60 @@ var campoAttivo = null;
    dopo il ridisegno la porta sotto gli occhi, una volta sola. */
 var compVaiGiu = false;
 
-function loadCompagnieAdmin(cb){
+/* ══ L'APP SCARICAVA LA RUBRICA DI TUTTE LE COMPAGNIE ═════════════════════
+   (25/08/2026, revisione di sicurezza.)
+
+   Qui c'era `db.collection("compagnie_admin").get()`: **la collezione
+   intera**, addosso a ogni utente che apriva l'area compagnia. Dentro ogni
+   documento ci sono il nome del referente, la sua email, il suo telefono e le
+   note del campo — dati che il referente scrive per la SUA compagnia, non per
+   farli leggere a tutti gli iscritti dell'app.
+
+   E non era una svista di lettura: **l'app ne usava quattro campi in croce.**
+   Chi sono io referente (una query sul mio uid), sono referente di questa
+   (un documento), e a chi mando la segnalazione (un documento). Tre domande
+   strette a cui si rispondeva portandosi a casa l'archivio.
+
+   *Quello che il client scarica, il client ce l'ha:* nascondere i campi nella
+   schermata non li toglie dalla memoria del telefono ne' dalla console del
+   browser. La sola cura vera e' non chiederli.
+
+   Restano due strade, e nessuna delle due legge piu' di quello che le serve:
+     · `caricaMieCompagnieAdmin`  — query `adminUid == il mio uid`. Torna solo
+       i documenti di cui sono referente, e la cache tiene solo quelli.
+     · `caricaCompagniaAdmin`     — un documento solo, quello chiesto.
+
+   CIO' CHE QUESTA MOSSA **NON** FA, e va detto: Firestore non sa nascondere
+   un campo dentro un documento che concede. Finche' referente, email, tel e
+   note stanno nello stesso documento di `adminUid`, chi legge quel documento
+   li vede tutti. Separarli vuol dire spezzare il documento in due — pubblico
+   e privato — e riscrivere le regole in console: e' scritto nel resoconto,
+   non si fa di nascosto insieme a una limatura. */
+function caricaMieCompagnieAdmin(cb){
 if(compagnieAdminCache){ cb(compagnieAdminCache); return; }
-if(!db){ cb({}); return; }
-db.collection("compagnie_admin").get().then(function(snap){
+if(!db || !currentUser){ cb({}); return; }
+db.collection("compagnie_admin").where("adminUid", "==", currentUser.uid).get()
+.then(function(snap){
 var map = {};
 snap.forEach(function(doc){ map[doc.id] = doc.data(); });
 compagnieAdminCache = map;
 cb(map);
+}).catch(function(){ cb({}); });
+}
+
+/* Un documento solo. La cache di sessione evita di richiederlo a ogni
+   ridisegno, e non si mescola con quella delle mie: sono due cose diverse —
+   una dice «cosa amministro», l'altra «cosa sto guardando adesso». */
+var compagniaAdminUna = {};
+function caricaCompagniaAdmin(codice, cb){
+if(!codice){ cb({}); return; }
+if(compagniaAdminUna[codice]){ cb(compagniaAdminUna[codice]); return; }
+if(compagnieAdminCache && compagnieAdminCache[codice]){ cb(compagnieAdminCache[codice]); return; }
+if(!db){ cb({}); return; }
+db.collection("compagnie_admin").doc(codice).get().then(function(doc){
+var d = (doc && doc.exists) ? doc.data() : {};
+compagniaAdminUna[codice] = d;
+cb(d);
 }).catch(function(){ cb({}); });
 }
 
@@ -13095,7 +13143,7 @@ cb(map);
 function myAdminClubCodes(){
 if(!currentUser || !db) return [];
 if(!compagnieAdminCache){
-loadCompagnieAdmin(function(){ render(); });
+caricaMieCompagnieAdmin(function(){ render(); });
 return null;
 }
 var out = [];
@@ -13124,6 +13172,7 @@ db.collection("compagnie_admin").doc(codice).set(info, { merge:true })
 if(!compagnieAdminCache) compagnieAdminCache = {};
 if(!compagnieAdminCache[codice]) compagnieAdminCache[codice] = {};
 Object.assign(compagnieAdminCache[codice], info);
+if(compagniaAdminUna[codice]) Object.assign(compagniaAdminUna[codice], info);
 onDone();
 }).catch(onErr);
 }
@@ -16941,8 +16990,8 @@ sotto.appendChild(infoCard);
 
 // ── SEZIONE ADMIN COMPAGNIA ─────────────────────────────────────────────
 (function(codice){
-loadCompagnieAdmin(function(adminMap){
-var isAdmin = currentUser && adminMap[codice] && adminMap[codice].adminUid === currentUser.uid;
+caricaCompagniaAdmin(codice, function(dati){
+var isAdmin = currentUser && dati && dati.adminUid === currentUser.uid;
 var isAppAdmin = isAdmin || (currentUser && currentUser.email === ADMIN_EMAIL);
 var hasPending = false; // controlliamo Firestore solo se serve
 
@@ -17395,8 +17444,8 @@ wrap.appendChild(compagniaMiaCard(codice));
 var body = el('<div></div>');
 wrap.appendChild(body);
 
-loadCompagnieAdmin(function(adminMap){
-var info = adminMap[codice] || {};
+caricaCompagniaAdmin(codice, function(dati){
+var info = dati || {};
 var isAdmin = currentUser && info.adminUid === currentUser.uid;
 body.innerHTML = "";
 
@@ -18171,7 +18220,7 @@ ok.disabled = true;
 db.collection("compagnie_admin").doc(r.codice).set({ adminUid: r.richiedenteUid }, { merge:true })
 .then(function(){ return doc.ref.update({ stato:"approved" }); })
 .then(function(){
-compagnieAdminCache = null; // la cache va rifatta, e' cambiato un referente
+compagnieAdminCache = null; compagniaAdminUna = {}; // e' cambiato un referente
 sendPushViaFirestore(r.richiedenteUid, t("club_space_title"), nomeComp);
 loadClubRequests();
 }).catch(function(){ ok.disabled = false; });
@@ -18321,7 +18370,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-guscio";
+var BUILD_STAMP = "2026-08-25-rubrica";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18330,7 +18379,7 @@ var BUILD_STAMP = "2026-08-25-guscio";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-modulo";
+var BUILD_PARENT = "2026-08-25-guscio";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -19622,8 +19671,8 @@ status: "open",
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }).then(function(){
 // Avvisa il referente della compagnia con la notifica gia' in uso nell'app
-loadCompagnieAdmin(function(adminMap){
-var adm = adminMap[frCod] || {};
+caricaCompagniaAdmin(frCod, function(dati){
+var adm = dati || {};
 var adminUid = adm.adminUid;
 // Il referente riceve SEMPRE il contenuto della segnalazione, anche quando
 // e' lui stesso ad averla scritta: e' il messaggio che gli serve avere sotto mano.
