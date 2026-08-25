@@ -213,6 +213,7 @@
 /* i tre gradini chiari che reggono sul fondo scuro della testata:
    7,78 · 6,40 · 6,20. Le versioni piene ci cadrebbero sotto. */
 --verde-testata:#7ACB3F; --argilla-testata:#FF8348; --rosso-testata:#FF7A7A;
+--oro-testata:#E8B33D;
 
 /* ───── SPAZIO · 4 / 8 / 12 / 16 / 24 / 32 / 48 ─────
    La regola era gia' scritta in cima a questo file da mesi ("nessun 6,
@@ -451,7 +452,7 @@ color-scheme:light;
    sistema che finalmente distingue «colore della voce» da «colore di un
    segno appoggiato sul fondo».* */
 --tone-train-bg:var(--green-200); --tone-train-fg:var(--green-700); --tone-train-solid:var(--lime-500);
---tone-train-ico:var(--green-700); --tone-race-ico:var(--clay-600); --tone-prep-ico:var(--gold-600);
+--tone-train-ico:var(--green-400); --tone-race-ico:var(--clay-400); --tone-prep-ico:var(--oro-testata);
 --tone-race-bg:var(--clay-200);  --tone-race-fg:var(--clay-600);   --tone-race-solid:var(--clay-400);
 --tone-prep-bg:var(--gold-200);  --tone-prep-fg:var(--gold-800);   --tone-prep-solid:var(--gold-400);
 --tone-border:60%;
@@ -567,8 +568,8 @@ color-scheme:light;
    laterale, il nome resta un nome. */
 --porte-bg:var(--moss-700); --porte-tit:var(--sand-100);
 --porte-sub:var(--moss-300); --porte-linea:rgba(245,242,237,0.13);
---segno-train:var(--tone-train-solid); --segno-race:var(--tone-race-solid);
---segno-prep:var(--tone-prep-solid);
+--segno-train:var(--green-400); --segno-race:var(--clay-400);
+--segno-prep:var(--oro-testata);
 /* IL TASTO PRIMARIO: TINTO, NON PIENO. (23/08/2026, chiesto da Alessandro
    indicando `.btn-arancio`: «si vede bene, ma spinge un po' meno».)
    Stessa struttura dell'arancione — fondo velato, filo e scritta del colore.
@@ -2255,8 +2256,17 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    scuro sta a 5,56:1 e il bianco a 3,4. La vetrina usa il bianco e li' regge
    perche' e' testo grande in grassetto — ma qui il numero migliore c'era
    gia', ed e' quello gia' misurato dal banco dei contrasti. */
+/* IL TASTO SI SMORZA, MA POCO. (24/08/2026.) L'argilla piena su una fascia
+   scura larga tutto lo schermo abbaglia. Un velo di fondo sotto il colore la
+   spegne — ma OGNI punto di velo lo paga la scritta sopra, che e' scura:
+   a colore pieno il testo sta a 5,56, al 92% scende a 4,91, all'86% e' gia'
+   sotto la soglia. 92% e' il massimo che si puo' togliere senza rendere
+   illeggibile la parola per cui il tasto esiste. La fascia decide da sola
+   quanto velo mettere, cosi' chiaro e scuro non hanno bisogno di due regole. */
 .btn-porta{
-  background:var(--clay); color:var(--clay-ink); border-color:var(--clay);
+  background:color-mix(in srgb, var(--clay) 92%, var(--eroe-bg));
+  color:var(--clay-ink);
+  border-color:color-mix(in srgb, var(--clay) 92%, var(--eroe-bg));
   font-family:var(--font-display); font-weight:800;
   text-transform:uppercase; letter-spacing:0.05em; }
 .btn-porta:hover{ background:var(--clay-500); border-color:var(--clay-500); }
@@ -18060,7 +18070,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-24-podio";
+var BUILD_STAMP = "2026-08-24-icone";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18069,7 +18079,7 @@ var BUILD_STAMP = "2026-08-24-podio";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-24-mirino";
+var BUILD_PARENT = "2026-08-24-podio";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
