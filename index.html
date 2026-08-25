@@ -214,6 +214,21 @@
    7,78 · 6,40 · 6,20. Le versioni piene ci cadrebbero sotto. */
 --verde-testata:#7ACB3F; --argilla-testata:#FF8348; --rosso-testata:#FF7A7A;
 --oro-testata:#E8B33D;
+/* ══ DUE COLONNE STRETTE, NON UNA ═════════════════════════════════════════
+   (25/08/2026.) `#app.narrow` nasce per le schermate che si LEGGONO — il
+   giro, il riepilogo, la chat — dove la riga corta e' un pregio: sopra i 75
+   caratteri l'occhio perde il capo della riga successiva. Ma nella stessa
+   lista c'erano anche le schermate che si COMPILANO, e li' la riga corta non
+   e' un pregio: e' una colonna di campi larga meta' finestra, con le opzioni
+   delle federazioni schiacciate in un tubo.
+
+   *Non e' un difetto della pagina del profilo: e' una misura sola usata per
+   due mestieri diversi.* Da qui in poi sono due:
+     --col-lettura  620/660  testo che si legge di seguito
+     --col-modulo   720      campi, etichette, scelte da toccare
+   Chi compila prende la seconda dichiarandolo (`#app.narrow.modulo`), quindi
+   nessun'altra schermata cambia larghezza. */
+--col-modulo:720px;
 /* ══ IL CARBONE DELLA BANDA ═══════════════════════════════════════════════
    (25/08/2026, chiesto da Alessandro: «non il nero nero, quel nero
    sbiadito — quello della vetrina».)
@@ -2022,6 +2037,16 @@ table.score-table th, table.score-table td{ border:1px solid #999 !important; }
 .cp-select-row select, .cp-select-row input[type=text], .cp-select-row input[type=email]{
 width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg-panel); color:var(--cream); font-size:var(--t-md);
 }
+/* Le schermate da compilare. `.narrow.modulo` pesa piu' di `.narrow`, quindi
+   questa riga basta da sola per tutte e due le fasce — 760-900 e oltre i 900 —
+   e non tocca le due regole che ci sono gia'. Sta FUORI da ogni @media
+   apposta: scritta dentro quello dei 900, nella fascia di mezzo non
+   esisterebbe, e la colonna resterebbe da lettura proprio sulle finestre
+   piccole da computer. *Una regola dentro una media query vale solo li'.*
+   Sotto i 760 nessuna delle tre esiste: la colonna e' larga quanto lo schermo
+   meno il respiro laterale di `#app`, che e' quello che serve. */
+#app.narrow.modulo > :not(header.top){ max-width:var(--col-modulo); }
+
 .pf-fed-row{ background:var(--bg-panel-2); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-2) var(--s-3); margin-bottom:var(--s-2); }
 .pf-fed-check{ display:flex; align-items:center; gap:var(--s-2); font-size:var(--t-sm); font-weight:600; cursor:pointer; }
 .pf-fed-check input{ width:17px; height:17px; accent-color:var(--accent-soft); outline:1.5px solid var(--checkbox-border); outline-offset:2px; border-radius:3px; }
@@ -12161,6 +12186,12 @@ app.style.paddingBottom = "92px";
 
 // Schermate che su computer restano a colonna stretta: si tira col pollice,
 // e un modulo o una chat larghi tutto lo schermo si leggono peggio.
+/* Le schermate che si compilano: colonna da modulo, non da lettura. Sono un
+   sottoinsieme di NARROW_SCREENS — restano strette, ma di 720 invece di 660.
+   Elenco corto apposta: qui si aggiunge una schermata quando la si e'
+   guardata, non per simmetria. */
+var FORM_SCREENS = { "profile-edit":1 };
+
 var NARROW_SCREENS = {
 "round":1, "summary":1, "registration":1, "setup":1, "profile-registration":1,
 "profile-edit":1, "attrezzatura":1, "profilo-pubblico":1, "training-setup":1, "gara-setup":1, "open-training-create":1,
@@ -12516,6 +12547,7 @@ function paintScreen(){
 var app = document.getElementById("app");
 app.innerHTML = "";
 app.classList.toggle("narrow", !state.lang || authState !== "ready" || !!NARROW_SCREENS[state.screen]);
+app.classList.toggle("modulo", authState === "ready" && !!FORM_SCREENS[state.screen]);
 // La pista e' l'unica schermata che non scorre: #app diventa una colonna
 // flessibile perche' la tastiera possa stare in fondo senza posizione fissa.
 // LA REGOLA "NON SCORRE" SEGUE LA SCHERMATA CHE SI VEDE, NON LO STATO.
@@ -18252,7 +18284,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-misure";
+var BUILD_STAMP = "2026-08-25-modulo";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18261,7 +18293,7 @@ var BUILD_STAMP = "2026-08-25-misure";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-filetto";
+var BUILD_PARENT = "2026-08-25-misure";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
