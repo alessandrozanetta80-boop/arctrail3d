@@ -17851,6 +17851,15 @@ body.innerHTML = "";
 
 // ── Chi non e' referente: puo' solo chiedere di diventarlo ────────────────
 if(!isAdmin){
+/* ══ A CHI NON HA FATTO L'ACCESSO NON SI CHIEDE DI GESTIRE ═══════════════
+   (25/08/2026, trovato provando i quattro ruoli.) Il tasto «Chiedi di gestire
+   la tua compagnia» compariva anche a chi non e' collegato — e li' non poteva
+   funzionare: `requestAdminCompagnia` ha bisogno di `currentUser` e si ferma
+   subito. *Un tasto che non puo' fare quello che dice non e' un invito: e' un
+   vicolo cieco con l'aria di una porta.*
+   Chi non e' collegato vede la compagnia come la vedono tutti; la richiesta
+   ricompare appena l'accesso c'e'. */
+if(!currentUser) return;
 var claimCard = el('<div class="card"></div>');
 claimCard.appendChild(el('<div class="nota stacco">'+t("club_space_claim_hint")+'</div>'));
 var claimBtn = el('<button class="btn btn-primary btn-block">'+t("club_space_claim")+'</button>');
@@ -18770,7 +18779,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-assetto";
+var BUILD_STAMP = "2026-08-25-ruoli";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18779,7 +18788,7 @@ var BUILD_STAMP = "2026-08-25-assetto";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-media";
+var BUILD_PARENT = "2026-08-25-assetto";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
