@@ -1939,9 +1939,107 @@ color:var(--success-role); }
 .section-block-header{ font-size:var(--t-xs); text-transform:uppercase; letter-spacing:.08em; font-weight:800; padding:var(--s-1) var(--s-2); border-radius:var(--r-pill); display:inline-block; margin-bottom:var(--s-2); }
 .splash-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:82dvh; text-align:center; gap:var(--s-1); }
 .splash-logo{ width:160px; height:160px; margin-bottom:var(--s-3); filter:drop-shadow(0 8px 20px color-mix(in srgb, var(--brand) 35%, transparent)); animation:splashLogo .7s cubic-bezier(.2,.8,.2,1) both; }
-.splash-title{ font-size:var(--t-2xl); color:var(--accent-soft); margin:0; animation:splashUp .6s ease .15s both; }
-.splash-tag{ color:var(--muted); font-size:var(--t-sm); margin-bottom:var(--s-5); letter-spacing:.03em; animation:splashUp .6s ease .3s both; }
+/* ══ LA PORTA — 25/08/2026, seconda passata ═══════════════════════════════
+   La prima passata aveva sistemato la GERARCHIA (un solo riquadro, una riga
+   di testo per l'accesso, il piede alleggerito) ma parlava ancora la lingua
+   dell'app: tasti tondi, titolo in tondo, colori del segnapunti. Alessandro:
+   *«ci serve qualcosa in stile vetrina»*.
+
+   Sta in mezzo a due pagine e deve somigliare a QUELLA DA CUI SI ARRIVA, non
+   a quella in cui si va: chi la vede ha ancora negli occhi l'eroe della
+   vetrina, e un salto di lingua li' dentro si legge come «sono finito da
+   un'altra parte».
+
+   Cosa si porta dietro dalla vetrina, e sono quattro cose sole:
+     · l'occhiello — riga minuscola, spaziata, con la punta di freccia arancio
+     · il titolo in maiuscolo pesante, interlinea stretta, tracking negativo
+     · i due tasti squadrati affiancati: uno pieno argilla, uno di solo bordo
+     · il fondo osso, che nell'app c'era gia' e si chiama `--setup-bg`
+
+   COSA NON SI E' COPIATO, E PERCHE'. Nella vetrina i titoli usano `clamp()`
+   e gli esadecimali stanno in chiaro: qui non si puo' — `controlla-token.js`
+   dice di no a tutti e due, ed e' giusto che lo dica. Si usano la scala
+   `--t-*` e i token che esistono gia'. **L'argilla e il suo inchiostro sono
+   `--clay` e `--clay-ink`, che i tre temi dichiarano gia' e che il banco dei
+   contrasti misura a 5,56:1** — non il bianco sull'arancio, che sarebbe stato
+   la copia comoda e sta sotto soglia. */
+.porta{ text-align:center; max-width:460px; margin:0 auto; padding:var(--s-5) var(--s-4) var(--s-6); }
+.porta .marchio{ display:flex; justify-content:center; margin-bottom:var(--s-5); }
+/* L'occhiello: dice cos'e' questa cosa in due parole, e la punta di freccia
+   e' lo stesso segno che apre ogni sezione della vetrina. */
+.porta .occhiello{ display:inline-flex; align-items:center; gap:var(--s-2);
+  font-size:var(--t-xs); font-weight:700; letter-spacing:0.16em;
+  text-transform:uppercase; color:var(--text-3); margin-bottom:var(--s-3); }
+.porta .occhiello::before{ content:""; width:9px; height:9px; flex:0 0 auto;
+  background:var(--clay); clip-path:polygon(50% 100%, 0 0, 100% 0); }
+.porta h1{ font-family:var(--font-display); font-weight:800;
+  text-transform:uppercase; letter-spacing:-0.02em; line-height:0.98;
+  font-size:var(--t-2xl); color:var(--text-1); margin:0 0 var(--s-3);
+  text-wrap:balance; }
+.porta .guida{ max-width:38ch; margin:0 auto var(--s-5); font-size:var(--t-sm);
+  line-height:1.55; color:var(--text-2); }
+/* I due tasti affiancati, che scendono uno sotto l'altro quando non ci stanno:
+   e' lo stesso comportamento dell'eroe della vetrina, ed e' l'unica cosa che
+   `banco-vetrina.js` guarda da sempre su quella coppia. */
+.porta .coppia{ display:flex; gap:var(--s-2); justify-content:center; flex-wrap:wrap; }
+/* `flex:1 1 auto` e non la larghezza del contenuto: e' l'unica riga che
+   impedisce ai due tasti di spezzarsi STORTI. Con la larghezza naturale,
+   in francese, russo e spagnolo la coppia non ci sta a 390px e il secondo
+   scende sotto il primo, piu' corto — due tasti che sembrano meno decisi,
+   e nessuno se ne accorge provando in italiano. Cosi' invece o stanno in
+   riga divisi a meta', o scendono tutti e due a piena larghezza.
+   Trovato da `banco-porta.js` la prima volta che ha girato.
+   E LA BASE E' `0`, NON `auto`. Con `auto` ognuno parte dalla larghezza della
+   propria parola e lo spazio in piu' si divide in parti uguali: il risultato
+   sono due tasti DIVERSI, piu' largo quello con la parola piu' lunga.
+   Alessandro: *«dai la stessa dimensione ai 2 tasti»*. Partendo da zero, la
+   larghezza la decide solo lo spazio, e sono identici in tutte e nove le
+   lingue — che e' l'unica versione in cui la coppia sembra una scelta
+   invece che un caso. */
+.porta .coppia .btn{ flex:1 1 0; font-size:var(--t-sm); font-weight:800;
+  text-transform:uppercase; letter-spacing:0.04em; border-radius:var(--r-sm);
+  padding:var(--s-4) var(--s-5); min-width:0; }
+.porta .btn-argilla{ background:var(--clay); color:var(--clay-ink); border-color:var(--clay); }
+.porta .btn-argilla:not(:disabled):hover{ background:var(--clay); border-color:var(--clay-ink); }
+.porta .btn-bordo{ background:none; color:var(--text-1); border-color:var(--border-strong); }
+.porta .btn-bordo:not(:disabled):hover{ background:none; border-color:var(--text-1); }
+/* Quello che viene DOPO la decisione: installare, e l'avviso che l'app e' in
+   prova. Piu' in basso, piu' piccolo, piu' stretto — non perche' conti poco,
+   ma perche' non e' quello per cui si e' aperta la pagina. Qui i tasti non
+   sono tasti: se lo fossero, sulla pagina ci sarebbero quattro riquadri e
+   di nuovo nessun ordine. */
+.porta .piede{ display:flex; flex-direction:column; align-items:center; gap:var(--s-3);
+  margin-top:var(--s-6); }
+.porta .piede .btn{ min-width:0; padding:var(--s-2); font-size:var(--t-sm);
+  background:none; border-color:transparent; color:var(--text-2);
+  font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+.porta .piede .btn:not(:disabled):hover{ background:none; color:var(--text-1); }
+/* L'avviso non e' un paragrafo appoggiato sulla pagina: e' una fascia con un
+   filetto argilla a sinistra, la stessa forma che la vetrina usa per le note
+   sotto le sezioni. Un blocco di testo minuto senza niente intorno, in fondo
+   a una schermata, si legge come una didascalia dimenticata — e questo invece
+   dice una cosa che conta, che i dati possono sparire. */
+.porta .nota{ font-size:var(--t-xs); color:var(--text-2); line-height:1.5;
+  text-align:left; max-width:38ch; display:none;
+  border-left:2px solid var(--clay); padding:var(--s-2) 0 var(--s-2) var(--s-3); }
+.porta .nota.aperta{ display:block; }
+.porta .nota b{ display:block; color:var(--text-1); font-weight:800;
+  text-transform:uppercase; letter-spacing:0.08em; font-size:var(--t-xs);
+  margin-bottom:var(--s-1); }
+.porta .nota a{ color:var(--accent-soft); font-weight:700; }
 .splash-wrap .btn{ min-width:200px; padding:var(--s-4) var(--s-5); font-size:var(--t-lg); animation:splashUp .6s ease .45s both; }
+/* NEL PIEDE I TASTI NON SONO TASTI. Alla prima foto la gerarchia era
+   rovesciata: «Registrati» e' tinto — chiaro, con la scritta verde — mentre
+   «Installa» e «Indietro» sono `btn-ghost`, cioe' riquadro pieno con bordo
+   marcato e scritta nera. Il piu' importante era il piu' debole.
+   Non si e' irrobustito il pieno (quello e' la voce B7, e vale per tutta
+   l'app): si sono ALLEGGERITI gli altri due. Nel piede restano parole con
+   sotto una riga, e sulla pagina c'e' un riquadro solo — quindi non c'e'
+   piu' niente da decidere su da dove cominciare. */
+.splash-piede .btn{ min-width:0; padding:var(--s-2); font-size:var(--t-sm);
+  background:none; border-color:transparent; color:var(--text-2);
+  font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+.splash-piede .btn:not(:disabled):hover{ background:none; color:var(--text-1); }
 @keyframes splashLogo{ 0%{ opacity:0; transform:scale(0.6) rotate(-8deg); } 100%{ opacity:1; transform:scale(1) rotate(0deg); } }
 @keyframes splashUp{ 0%{ opacity:0; transform:translateY(14px); } 100%{ opacity:1; transform:translateY(0); } }
 .big-target-num{ font-size:var(--t-3xl); font-weight:800; color:var(--brand-soft); font-family:var(--font-num); font-variant-numeric:tabular-nums; margin:var(--s-1) 0 var(--s-2); line-height:1; position:relative; display:inline-block; }
@@ -5758,7 +5856,7 @@ home_register_btn: "Registrati", home_login_link: "Hai gi\u00e0 un account?", ho
 home_install_btn: "Installa l'app sul telefono",
 home_install_ios_text: "<b>Su iPhone:</b> tocca il pulsante <b>Condividi</b> in basso nel browser (il quadrato con la freccia verso l'alto), poi scegli <b>\u201cAggiungi alla schermata Home\u201d</b>. Comparir\u00e0 un'icona come per qualsiasi altra app.",
 home_install_generic_text: "Cerca l'icona di installazione nella barra dell'indirizzo (in alto), oppure apri il menu del browser (di solito i tre puntini in alto a destra) e cerca la voce <b>\u201cInstalla app\u201d</b>.",
-home_dev_title: "\u26a0\ufe0f App in fase di sviluppo",
+home_dev_title: "App in fase di sviluppo",
 home_dev_text: "Per segnalare errori o malfunzionamenti: {email} — {sito}. I dati inseriti in questa fase potrebbero essere cancellati o azzerati.",
 profile_title: "Crea il tuo profilo", 
 profile_nome: "Nome e cognome", profile_username: "Username", profile_username_hint: "(quello che vedono gli altri in classifica)",
@@ -6382,7 +6480,7 @@ compagnie_paese_vuoto: "There are no clubs listed for your country yet. If you k
 compagnie_provincia: "Province", compagnie_punteggi_word: "scores recorded", compagnie_punteggio: "Score", compagnie_regione: "Region",
 compagnie_salva: "Save", compagnie_title: "Clubs", compagnie_tutti: "All", country_uk: "United Kingdom", country_turkey: "Turkey", country_russia: "Russia", country_spain: "Spain", country_netherlands: "Netherlands", country_sweden: "Sweden", 
 home_dev_text: "To report bugs or issues: {email} — {sito}. Data entered at this stage may be deleted or reset.",
-home_dev_title: "\u26a0\ufe0f App under development", home_install_btn: "Install the app on your phone",
+home_dev_title: "App under development", home_install_btn: "Install the app on your phone",
 home_install_generic_text: "Look for the install icon in the address bar (at the top), or open the browser menu (usually the three dots top right) and look for <b>\u201cInstall app\u201d</b>.",
 home_install_ios_text: "<b>On iPhone:</b> tap the <b>Share</b> button at the bottom of the browser (the square with an upward arrow), then choose <b>\u201cAdd to Home Screen\u201d</b>. An icon will appear just like any other app.",
 home_login_link: "Already have an account?", home_login_link_word: "Log in", home_pitch_title: "The scorecard for 3D archery", home_pitch_body: "Score your arrows on the course even with no signal, and find it all again in your journal. It knows your federation’s rules.",
@@ -7040,7 +7138,7 @@ compagnie_paese_vuoto: "Aucun club n’est encore répertorié pour votre pays. 
 compagnie_provincia: "Province", compagnie_punteggi_word: "scores enregistr\u00e9s", compagnie_punteggio: "Score", compagnie_regione: "R\u00e9gion",
 compagnie_salva: "Enregistrer", compagnie_title: "Clubs", compagnie_tutti: "Tous", country_uk: "Royaume-Uni", country_turkey: "Turquie", country_russia: "Russie", country_spain: "Espagne", country_netherlands: "Pays-Bas", country_sweden: "Su\u00e8de", 
 home_dev_text: "Pour signaler un bug ou un problème : {email} — {sito}. Les données saisies à ce stade peuvent être supprimées ou réinitialisées.",
-home_dev_title: "\u26a0\ufe0f Application en cours de d\u00e9veloppement", home_install_btn: "Installer l’application sur le t\u00e9l\u00e9phone",
+home_dev_title: "Application en cours de d\u00e9veloppement", home_install_btn: "Installer l’application sur le t\u00e9l\u00e9phone",
 home_install_generic_text: "Cherchez l’ic\u00f4ne d’installation dans la barre d’adresse (en haut), ou ouvrez le menu du navigateur (g\u00e9n\u00e9ralement les trois points en haut \u00e0 droite) et cherchez <b>\u00ab Installer l’application \u00bb</b>.",
 home_install_ios_text: "<b>Sur iPhone :</b> appuyez sur le bouton <b>Partager</b> en bas du navigateur (le carr\u00e9 avec une fl\u00e8che vers le haut), puis choisissez <b>\u00ab Sur l’\u00e9cran d’accueil \u00bb</b>. Une ic\u00f4ne appara\u00eetra comme pour toute autre application.",
 home_login_link: "Vous avez d\u00e9j\u00e0 un compte\u00a0?", home_login_link_word: "Se connecter", home_pitch_title: "Le marqueur pour le tir à l’arc 3D", home_pitch_body: "Note tes flèches sur le parcours même sans réseau, et retrouve tout dans ton carnet. Il connaît le règlement de ta fédération.",
@@ -7698,7 +7796,7 @@ compagnie_paese_vuoto: "Für dein Land sind noch keine Vereine eingetragen. Wenn
 compagnie_provincia: "Provinz", compagnie_punteggi_word: "erfasste Ergebnisse", compagnie_punteggio: "Ergebnis", compagnie_regione: "Region",
 compagnie_salva: "Speichern", compagnie_title: "Vereine", compagnie_tutti: "Alle", country_uk: "Vereinigtes K\u00f6nigreich", country_turkey: "T\u00fcrkei", country_russia: "Russland", country_spain: "Spanien", country_netherlands: "Niederlande", country_sweden: "Schweden", 
 home_dev_text: "Um Fehler oder Probleme zu melden: {email} — {sito}. In dieser Phase eingegebene Daten können gelöscht oder zurückgesetzt werden.",
-home_dev_title: "\u26a0\ufe0f App in Entwicklung", home_install_btn: "App auf dem Handy installieren",
+home_dev_title: "App in Entwicklung", home_install_btn: "App auf dem Handy installieren",
 home_install_generic_text: "Suche das Installationssymbol in der Adressleiste (oben), oder \u00f6ffne das Browsermen\u00fc (meist die drei Punkte oben rechts) und suche <b>\u201eApp installieren\u201c</b>.",
 home_install_ios_text: "<b>Auf dem iPhone:</b> Tippe unten im Browser auf <b>Teilen</b> (das Quadrat mit dem Pfeil nach oben), dann w\u00e4hle <b>\u201eZum Home-Bildschirm\u201c</b>. Ein Symbol erscheint wie bei jeder anderen App.",
 home_login_link: "Hast du schon ein Konto?", home_login_link_word: "Anmelden", home_pitch_title: "Der Punktezähler für 3D-Bogenschießen", home_pitch_body: "Trag deine Pfeile auf dem Parcours ein, auch ohne Empfang, und finde alles im Tagebuch wieder. Er kennt die Regeln deines Verbands.",
@@ -8403,7 +8501,7 @@ home_register_btn: "Kay\u0131t ol", home_login_link: "Zaten hesab\u0131n var m\u
 home_install_btn: "Uygulamay\u0131 telefona kur",
 home_install_ios_text: "<b>iPhone\u2019da:</b> taray\u0131c\u0131n\u0131n altındaki <b>Payla\u015f</b> d\u00fc\u011fmesine (yukar\u0131 ok i\u015faretli kare) dokun, sonra <b>\u201cAna Ekrana Ekle\u201d</b>y\u0131 se\u00e7. Di\u011fer uygulamalar gibi bir simge belirir.",
 home_install_generic_text: "Adres \u00e7ubu\u011funda (yukar\u0131da) kurulum simgesini ara, ya da taray\u0131c\u0131 men\u00fcs\u00fcn\u00fc (genelde sa\u011f üstteki \u00fc\u00e7 nokta) a\u00e7\u0131p <b>\u201cUygulamay\u0131 y\u00fckle\u201d</b> se\u00e7ene\u011fini bul.",
-home_dev_title: "\u26a0\ufe0f Uygulama geli\u015ftirme a\u015famas\u0131nda",
+home_dev_title: "Uygulama geli\u015ftirme a\u015famas\u0131nda",
 home_dev_text: "Hata veya sorun bildirmek için: {email} — {sito}. Bu aşamada girilen veriler silinebilir veya sıfırlanabilir.",
 profile_title: "Profilini olu\u015ftur", 
 profile_nome: "Ad ve soyad", profile_username: "Kullan\u0131c\u0131 ad\u0131", profile_username_hint: "(di\u011ferlerinin s\u0131ralamada g\u00f6rd\u00fc\u011f\u00fc isim)",
@@ -9074,7 +9172,7 @@ home_register_btn: "Зарегистрироваться", home_login_link: "У�
 home_install_btn: "Установить приложение на телефон",
 home_install_ios_text: "<b>На iPhone:</b> нажмите кнопку <b>Поделиться</b> внизу браузера (квадрат со стрелкой вверх), затем выберите <b>«Добавить на экран Домой»</b>. Появится значок, как у любого другого приложения.",
 home_install_generic_text: "Найдите значок установки в адресной строке (вверху), либо откройте меню браузера (обычно три точки справа вверху) и найдите пункт <b>«Установить приложение»</b>.",
-home_dev_title: "⚠️ Приложение в разработке",
+home_dev_title: "Приложение в разработке",
 home_dev_text: "Чтобы сообщить об ошибках: {email} — {sito}. Данные, введённые на этом этапе, могут быть удалены или сброшены.",
 profile_title: "Создайте свой профиль", 
 profile_nome: "Имя и фамилия", profile_username: "Имя пользователя", profile_username_hint: "(то, что видят остальные в рейтинге)",
@@ -9745,7 +9843,7 @@ home_register_btn: "Registrarse", home_login_link: "\u00bfYa tienes una cuenta?"
 home_install_btn: "Instalar la app en el tel\u00e9fono",
 home_install_ios_text: "<b>En iPhone:</b> toca el bot\u00f3n <b>Compartir</b> en la parte inferior del navegador (el cuadrado con la flecha hacia arriba), luego elige <b>\u201cA\u00f1adir a pantalla de inicio\u201d</b>. Aparecer\u00e1 un icono como el de cualquier otra app.",
 home_install_generic_text: "Busca el icono de instalaci\u00f3n en la barra de direcciones (arriba), o abre el men\u00fa del navegador (normalmente los tres puntos arriba a la derecha) y busca la opci\u00f3n <b>\u201cInstalar app\u201d</b>.",
-home_dev_title: "\u26a0\ufe0f App en fase de desarrollo",
+home_dev_title: "App en fase de desarrollo",
 home_dev_text: "Para informar de errores o fallos: {email} — {sito}. Los datos introducidos en esta fase podrían borrarse o reiniciarse.",
 profile_title: "Crea tu perfil", 
 profile_nome: "Nombre y apellidos", profile_username: "Nombre de usuario", profile_username_hint: "(lo que ven los dem\u00e1s en la clasificaci\u00f3n)",
@@ -10416,7 +10514,7 @@ home_register_btn: "Registrera dig", home_login_link: "Har du redan ett konto?",
 home_install_btn: "Installera appen p\u00e5 telefonen",
 home_install_ios_text: "<b>P\u00e5 iPhone:</b> tryck p\u00e5 knappen <b>Dela</b> l\u00e4ngst ner i webbl\u00e4saren (fyrkanten med pilen upp\u00e5t), v\u00e4lj sedan <b>\u201dL\u00e4gg till p\u00e5 hemsk\u00e4rmen\u201d</b>. En ikon dyker upp precis som f\u00f6r vilken annan app som helst.",
 home_install_generic_text: "Leta efter installationsikonen i adressf\u00e4ltet (l\u00e4ngst upp), eller \u00f6ppna webbl\u00e4sarens meny (oftast de tre punkterna uppe till h\u00f6ger) och leta efter <b>\u201dInstallera app\u201d</b>.",
-home_dev_title: "\u26a0\ufe0f Appen \u00e4r under utveckling",
+home_dev_title: "Appen \u00e4r under utveckling",
 home_dev_text: "För att rapportera fel eller problem: {email} — {sito}. Uppgifter som anges i det här skedet kan raderas eller nollställas.",
 profile_title: "Skapa din profil", 
 profile_nome: "F\u00f6r- och efternamn", profile_username: "Anv\u00e4ndarnamn", profile_username_hint: "(det andra ser i resultatlistan)",
@@ -11087,7 +11185,7 @@ home_register_btn: "Registreren", home_login_link: "Heb je al een account?", hom
 home_install_btn: "Installeer de app op je telefoon",
 home_install_ios_text: "<b>Op iPhone:</b> tik op de knop <b>Delen</b> onderaan de browser (het vierkant met de pijl omhoog), kies dan <b>\u201cZet op beginscherm\u201d</b>. Er verschijnt een icoon zoals bij elke andere app.",
 home_install_generic_text: "Zoek naar het installatie-icoon in de adresbalk (bovenaan), of open het menu van de browser (meestal de drie puntjes rechtsboven) en zoek naar <b>\u201cApp installeren\u201d</b>.",
-home_dev_title: "\u26a0\ufe0f App in ontwikkeling",
+home_dev_title: "App in ontwikkeling",
 home_dev_text: "Om fouten of problemen te melden: {email} — {sito}. Gegevens die in deze fase worden ingevoerd, kunnen worden gewist of gereset.",
 profile_title: "Maak je profiel aan", 
 profile_nome: "Voor- en achternaam", profile_username: "Gebruikersnaam", profile_username_hint: "(wat anderen zien in het klassement)",
@@ -13519,23 +13617,62 @@ var PROFILE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longb
 var ADMIN_CONTACT_EMAIL = "info@arctrail3d.com";
 var ADMIN_SITE = "arctrail3d.com";
 
+/* LA PORTA DELL'APP, RIFATTA IL 25/08/2026.
+ *
+ * Dallo scambio della radice questa schermata non e' piu' la prima cosa che
+ * si vede: prima c'e' la vetrina, che racconta e mostra, e a quel punto ti
+ * manda qui. Alessandro, guardandole una dopo l'altra: *«non possiamo avere
+ * una pagina cosi' orribile tra la vetrina e l'app»*.
+ *
+ * Le tre cose che non andavano, e nessuna era il colore:
+ *
+ * 1. NON DICEVA DOVE SEI. Un marchio e tre tasti. Chi arriva ha appena letto
+ *    una pagina intera e atterra su un cancello anonimo: il filo si spezza
+ *    li'. Le due righe che lo riannodano ESISTONO GIA' in nove lingue —
+ *    `home_pitch_title` e `home_pitch_body` — ed erano diventate quasi morte:
+ *    `setupScreen()` le mostra solo `if(!state.lang)`, e da quando si arriva
+ *    dalla vetrina la lingua c'e' sempre. Erano scritte per questo momento.
+ *
+ * 2. TRE TASTI UGUALI NON HANNO UN ORDINE. Registrati, Accedi e Installa
+ *    avevano la stessa larghezza e quasi lo stesso peso, quindi l'occhio non
+ *    sapeva da dove cominciare e la scelta che conta pesava come le altre due.
+ *    Adesso ce n'e' uno solo pieno; «hai gia' un account? accedi» e' una riga
+ *    di testo, e l'installazione scende in fondo con l'avviso.
+ *
+ * 3. «INDIETRO» NON ANDAVA INDIETRO: azzerava la lingua e riportava alla
+ *    scelta della lingua — un'impostazione travestita da navigazione. Adesso
+ *    torna alla vetrina, che e' il posto da cui si e' arrivati davvero, e si
+ *    porta dietro la lingua. **Sparisce quando l'app e' aperta dall'icona:**
+ *    li' fuori non c'e' niente, e mandare alla radice farebbe rimbalzare
+ *    indietro dal salto della vetrina, in cerchio.
+ */
 function welcomeScreen(){
-var wrap = el('<div class="splash-wrap"></div>');
-var logo = el('<div class="splash-logo"></div>');
-logo.innerHTML = logoSVG(150);
+var wrap = el('<div class="porta"></div>');
+var logo = el('<div class="marchio"></div>');
+logo.innerHTML = logoSVG(96);
 wrap.appendChild(logo);
 
-var regBtn = el('<button class="btn btn-primary" style="min-width:220px;">'+t("home_register_btn")+'</button>');
+/* L'occhiello e' il nome del prodotto, e non e' una scorciatoia per non
+   tradurre: un nome proprio si scrive uguale in nove lingue, e qui serve
+   solo a dire «sei arrivato», non a spiegare. La spiegazione e' la riga
+   sotto, che nove traduzioni ce le ha gia'. */
+wrap.appendChild(el('<div class="occhiello">ArcTrail 3D</div>'));
+wrap.appendChild(el('<h1>'+escapeHtml(t("home_pitch_title"))+'</h1>'));
+wrap.appendChild(el('<p class="guida">'+escapeHtml(t("home_pitch_body"))+'</p>'));
+
+var coppia = el('<div class="coppia"></div>');
+var regBtn = el('<button class="btn btn-argilla">'+t("home_register_btn")+'</button>');
 regBtn.addEventListener("click", function(){ state.screen = "profile-registration"; save(); render(); });
-wrap.appendChild(regBtn);
+coppia.appendChild(regBtn);
+var loginBtn = el('<button class="btn btn-bordo" id="welcomeLoginLink">'+t("home_login_link_word")+'</button>');
+coppia.appendChild(loginBtn);
+wrap.appendChild(coppia);
 
-var loginBtn = el('<button class="btn btn-ghost" id="welcomeLoginLink" style="min-width:220px;margin-top:var(--s-2);">'+t("home_login_link_word")+'</button>');
-wrap.appendChild(loginBtn);
-
+var piede = el('<div class="piede"></div>');
 var isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 if(!isStandalone){
-var installBtn = el('<button class="btn btn-ghost" style="min-width:220px;margin-top:var(--s-2);">'+icon("target",18)+' '+t("home_install_btn")+'</button>');
-var installInstructions = el('<div class="install-hint" style="max-width:320px;margin-top:var(--s-3);text-align:left;display:none;"></div>');
+var installBtn = el('<button class="btn">'+icon("target",18)+' '+t("home_install_btn")+'</button>');
+var installInstructions = el('<div class="nota"></div>');
 installBtn.addEventListener("click", function(){
 if(deferredInstallPrompt){
 deferredInstallPrompt.prompt();
@@ -13544,23 +13681,31 @@ return;
 }
 var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 installInstructions.innerHTML = isIOS ? t("home_install_ios_text") : t("home_install_generic_text");
-installInstructions.style.display = "block";
+installInstructions.classList.add("aperta");
 });
-wrap.appendChild(installBtn);
-wrap.appendChild(installInstructions);
+piede.appendChild(installBtn);
+piede.appendChild(installInstructions);
 }
 
 var devText = t("home_dev_text", {
-email: '<a href="mailto:'+ADMIN_CONTACT_EMAIL+'" style="color:var(--accent-soft);font-weight:700;">'+ADMIN_CONTACT_EMAIL+'</a>',
-sito: '<a href="https://'+ADMIN_SITE+'" target="_blank" rel="noopener" style="color:var(--accent-soft);font-weight:700;">'+ADMIN_SITE+'</a>'
+email: '<a href="mailto:'+ADMIN_CONTACT_EMAIL+'">'+ADMIN_CONTACT_EMAIL+'</a>',
+sito: '<a href="https://'+ADMIN_SITE+'" target="_blank" rel="noopener">'+ADMIN_SITE+'</a>'
 });
-var devBox = el('<div class="install-hint" style="max-width:320px;margin-top:var(--s-6);text-align:left;"></div>');
-devBox.innerHTML = '<b>'+t("home_dev_title")+'</b><br>'+devText;
-wrap.appendChild(devBox);
+var devBox = el('<div class="nota aperta"></div>');
+// niente <br>: il titolo dell'avviso adesso e' un blocco, e il <br> gli
+// aggiungeva una riga vuota sotto — un buco che sembra una spaziatura
+// sbagliata e non lo e'.
+devBox.innerHTML = '<b>'+t("home_dev_title")+'</b>'+devText;
+piede.appendChild(devBox);
 
-var backBtn = el('<button class="btn btn-ghost btn-block" style="max-width:300px;margin-top:20px;">'+t("back_step")+'</button>');
-backBtn.addEventListener("click", function(){ state.lang = null; save(); render(); });
-wrap.appendChild(backBtn);
+if(!isStandalone){
+var backBtn = el('<button class="btn">'+t("back_step")+'</button>');
+backBtn.addEventListener("click", function(){
+window.location.href = "/" + (state.lang ? "?lang=" + encodeURIComponent(state.lang) : "");
+});
+piede.appendChild(backBtn);
+}
+wrap.appendChild(piede);
 
 setTimeout(function(){
 var link = document.getElementById("welcomeLoginLink");
@@ -18779,7 +18924,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-radice";
+var BUILD_STAMP = "2026-08-25-porta";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18788,7 +18933,7 @@ var BUILD_STAMP = "2026-08-25-radice";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-libera";
+var BUILD_PARENT = "2026-08-25-radice";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
