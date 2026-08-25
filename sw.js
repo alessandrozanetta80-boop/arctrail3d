@@ -153,18 +153,23 @@ self.addEventListener("notificationclick", function(event){
 // Il service worker nuovo il telefono se lo prende da solo, perche' il
 // browser rilegge SEMPRE questo file dalla rete: e' l'unica cosa che non
 // passa dalla cache, ed e' per questo che la cura sta qui e non altrove.
-var CACHE_NAME = "arctrail3d-v120";
+var CACHE_NAME = "arctrail3d-v121";
 // Alzata a v19 il 20/08 per lo stesso motivo di sempre: e' cambiato
 // `index.html`, che sta in APP_SHELL: senza il nome nuovo il telefono
 // continuerebbe a servire la copia di prima e la correzione non si
 // vedrebbe. Stessa regola del BUILD_STAMP, stesso motivo.
-var CACHE_PARENT = "arctrail3d-v119";
+var CACHE_PARENT = "arctrail3d-v120";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
 var APP_SHELL = [
+  // Dal 25/08/2026 sono DUE documenti, non uno: la radice e' la vetrina e
+  // l'app sta in `app.html`. Le fotografie della vetrina NON stanno qui — sono
+  // mezzo megabyte, e questo elenco serve ad aprire l'APP senza rete, non a
+  // tenere offline una cartolina che si guarda una volta.
   "./",
   "index.html",
+  "app.html",
   "manifest.json",
   "logo.webp",
   "logo.jpg",
@@ -246,6 +251,35 @@ function fromNetwork(request, cache, ms){
   });
 }
 
+// IL RIPIEGO, E PERCHE' NON PUO' PIU' ESSERE UNO SOLO.
+//
+// Prima qui c'era `caches.match("index.html")`, secco: se una richiesta
+// nostra non tornava entro tre secondi e non era in cache, si serviva
+// `index.html`. Finche' `index.html` ERA l'app, era il ripiego giusto.
+//
+// Dal 25/08/2026 `index.html` e' la vetrina. Con quella riga, un telefono in
+// 4G scarso che apre l'app si sarebbe ritrovato la cartolina promozionale —
+// e chi apre la vetrina, l'app. Il ripiego avrebbe servito
+// **sistematicamente la pagina sbagliata**, e solo sulle connessioni lente:
+// cioe' proprio in mezzo a un campo.
+//
+// Due regole, e la prima conta piu' della seconda:
+//
+//   1. SOLO PER LE NAVIGAZIONI. Servire un documento HTML al posto di
+//      un'immagine o di un foglio di stile e' peggio di un errore: il
+//      browser non protesta, prova a interpretarlo, e quello che si rompe
+//      lo si scopre altrove.
+//   2. Il documento giusto per QUELL'indirizzo. L'app e il mercatino
+//      ripiegano sull'app; tutto il resto sulla vetrina.
+function ripiego(request, cache){
+  if(request.mode !== "navigate") return undefined;
+  var p = "";
+  try{ p = new URL(request.url).pathname; }catch(e){ p = ""; }
+  var doc = (p.indexOf("app.html") >= 0 || p.indexOf("marketplace.html") >= 0)
+          ? "app.html" : "index.html";
+  return cache.match(doc).then(function(d){ return d || cache.match("./"); });
+}
+
 self.addEventListener("fetch", function(event){
   if(event.request.method !== "GET") return;
   var url = event.request.url;
@@ -281,7 +315,7 @@ self.addEventListener("fetch", function(event){
     caches.open(CACHE_NAME).then(function(cache){
       return fromNetwork(event.request, cache, NET_TIMEOUT).catch(function(){
         return cache.match(event.request).then(function(cached){
-          return cached || caches.match("index.html") || caches.match("./");
+          return cached || ripiego(event.request, cache);
         });
       });
     })

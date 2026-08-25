@@ -19,8 +19,8 @@
 <link rel="icon" href="/logo.jpg">
 <style>
 :root{
-  --ink:#10201D; --teal:#315B35; --amber:#C8551A;
-  --paper:#F7F6F3; --card:#FFFFFF; --line:#E3E1DA; --muted:#5C6B67;
+  --ink:#201D18; --teal:#455648; --amber:#C8551A;
+  --paper:#F5F2ED; --card:#FFFFFF; --line:#E4E1DB; --muted:#71665E;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -32,7 +32,7 @@ body{
 header{background:var(--ink); color:#fff; padding:18px 20px}
 .hwrap{max-width:760px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
 .brand{font-weight:800; letter-spacing:.02em; font-size:17px}
-.brand span{color:#7FCB8A}
+.brand span{color:#AEBEB1}
 .back{margin-left:auto; color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.35);
   padding:7px 13px; border-radius:999px; font-size:14px; font-weight:600}
 .back:hover{background:rgba(255,255,255,.12)}
@@ -48,13 +48,21 @@ h3{font-size:16px; margin:22px 0 6px}
 p,li{margin:0 0 12px}
 ul{padding-left:20px}
 a{color:var(--teal)}
+/* L'anello di fuoco, uguale a quello dell'app e a quello della vetrina.
+   Qui serviva piu' che altrove: queste pagine si aprono da un link, spesso
+   con la tastiera, e le uniche cose premibili — le bandierine della lingua
+   e il tasto di ritorno — non avevano nessun fuoco visibile.
+   `--amber` regge come elemento grafico su tutti i fondi di questa pagina:
+   4,40 sulla card, 3,94 sul foglio, 3,82 sulla testata scura. */
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid var(--amber); outline-offset:3px }
 table{width:100%; border-collapse:collapse; margin:14px 0; font-size:15px}
 th,td{text-align:left; vertical-align:top; padding:10px 12px; border:1px solid var(--line); background:var(--card)}
-th{background:#EFEEE9; font-weight:700}
+th{background:#F0EEEA; font-weight:700}
 .wrapper{overflow-x:auto}
 .cta{display:inline-block; background:var(--teal); color:#fff; text-decoration:none;
   font-weight:700; padding:12px 20px; border-radius:10px; margin-top:6px}
-.cta:hover{background:#244426}
+.cta:hover{background:#334036}
 footer{border-top:1px solid var(--line); margin-top:44px; padding-top:18px; color:var(--muted); font-size:14px}
 footer a{margin-right:16px}
 @media (min-width:760px){ h1{font-size:32px} main{padding-top:34px} }
@@ -64,7 +72,13 @@ footer a{margin-right:16px}
   border-radius:999px; padding:5px 11px; font:inherit; font-size:13px; font-weight:700;
   letter-spacing:.04em; cursor:pointer}
 .langpick button[aria-current="true"]{background:#fff; color:var(--ink); border-color:#fff}
-.prevale{background:#FFF6E9; border:1px solid #E8CFA6; border-left:4px solid var(--amber);
+/* Stessa carta e stesso filo di `.lead`: e' lo stesso oggetto, e a dire di
+   che genere e' basta il colore del picchetto. Fino al 24/08 aveva un
+   lavaggio `#FFF1EA` con un filo `#F0CDBB`, cioe' l'ambra stesa — lo stesso
+   difetto che l'app aveva sulla scheda dei campi, e con lo stesso esito: su
+   una superficie chiara un arancione diluito diventa rosa. */
+.prevale{
+  background:var(--card); border:1px solid var(--line); border-left:4px solid var(--amber);
   border-radius:12px; padding:13px 16px; margin:0 0 26px; font-size:14.5px; line-height:1.55}
 .prevale p{margin:0}
 [data-l]{display:none}
@@ -183,7 +197,7 @@ footer a{margin-right:16px}
   <p>Se cambiamo il modo in cui trattiamo i dati aggiorniamo questa pagina e la data in alto. Se la modifica è rilevante, te lo segnaliamo dentro l'app.</p>
 
   <footer>
-    <a href="/">App</a>
+    <a href="/app.html">App</a>
     <a href="/presentazione.html">Presentazione</a>
     <a href="/termini.html">Termini d'uso</a>
     <a href="/elimina-account.html">Elimina account</a>
@@ -293,7 +307,7 @@ footer a{margin-right:16px}
   <p>If we change the way we handle data we will update this page and the date at the top. If the change is significant, we will tell you inside the app.</p>
 
   <footer>
-    <a href="/">App</a>
+    <a href="/app.html">App</a>
     <a href="/presentazione.html">Overview</a>
     <a href="/termini.html">Terms of use</a>
     <a href="/elimina-account.html">Delete account</a>

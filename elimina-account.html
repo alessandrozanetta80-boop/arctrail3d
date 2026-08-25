@@ -9,8 +9,8 @@
 <link rel="icon" href="/logo.jpg">
 <style>
 :root{
-  --ink:#10201D; --teal:#116E62; --amber:#C25E18;
-  --paper:#F7F6F3; --card:#FFFFFF; --line:#E3E1DA; --muted:#5C6B67;
+  --ink:#201D18; --teal:#526756; --amber:#CC3D00;
+  --paper:#F5F2ED; --card:#FFFFFF; --line:#E4E1DB; --muted:#71665E;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -22,7 +22,7 @@ body{
 header{background:var(--ink); color:#fff; padding:18px 20px}
 .hwrap{max-width:720px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
 .brand{font-weight:800; letter-spacing:.02em; font-size:17px}
-.brand span{color:#7FD4C4}
+.brand span{color:#BBC8BD}
 .back{margin-left:auto; color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.35);
   padding:7px 13px; border-radius:999px; font-size:14px; font-weight:600}
 .back:hover{background:rgba(255,255,255,.12)}
@@ -36,19 +36,29 @@ ul{padding-left:20px}
 a{color:var(--teal)}
 .way{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin:18px 0}
 .way h2{margin:0 0 8px; padding:0; border:0; font-size:19px}
-.tag{display:inline-block; background:#E6F1EE; color:var(--teal); font-size:13px; font-weight:700;
+.tag{display:inline-block; background:#ECEFEC; color:var(--teal); font-size:13px; font-weight:700;
   padding:4px 10px; border-radius:999px; margin-bottom:10px; letter-spacing:.02em; text-transform:uppercase}
-.tag.alt{background:#FBEDE1; color:#8A4413}
+.tag.alt{background:#FFE2D6; color:#8F2B00}
 ol.steps{padding-left:20px; margin:0}
 ol.steps li{margin-bottom:8px}
 label{display:block; font-weight:700; font-size:15px; margin:16px 0 6px}
 input[type=email]{width:100%; padding:13px 14px; font-size:16px; border:1px solid var(--line);
   border-radius:10px; background:#fff; color:var(--ink); font-family:inherit}
-input[type=email]:focus{outline:2px solid var(--teal); outline-offset:1px; border-color:var(--teal)}
+/* Il fuoco e' argilla, come nell'app e come nella vetrina: il filo del campo
+   e l'anello dicono la stessa cosa con lo stesso colore. */
+input[type=email]:focus{outline:3px solid var(--amber); outline-offset:3px; border-color:var(--amber)}
+/* L'anello di fuoco, uguale a quello dell'app e a quello della vetrina.
+   Qui serviva piu' che altrove: queste pagine si aprono da un link, spesso
+   con la tastiera, e le uniche cose premibili — le bandierine della lingua
+   e il tasto di ritorno — non avevano nessun fuoco visibile.
+   `--amber` regge come elemento grafico su tutti i fondi di questa pagina:
+   4,96 sulla card, 4,44 sul foglio, 3,39 sulla testata scura. */
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid var(--amber); outline-offset:3px }
 button{width:100%; margin-top:14px; background:var(--amber); color:#fff; border:0; border-radius:10px;
   padding:14px 18px; font-size:16px; font-weight:700; font-family:inherit; cursor:pointer}
-button:hover{background:#A94F13}
-button:disabled{background:#C9C6BF; cursor:not-allowed}
+button:hover{background:#A63200}
+button:disabled{background:#CCC5BB; cursor:not-allowed}
 .hint{font-size:14px; color:var(--muted); margin-top:10px}
 .msg{margin-top:12px; font-size:15px; font-weight:600; color:var(--teal); min-height:22px}
 .cols{display:grid; gap:16px; margin:16px 0}
@@ -131,7 +141,7 @@ footer a{margin-right:16px}
   <p>Scrivi a <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a>. Il trattamento dei tuoi dati è descritto nell'<a href="/privacy.html">Informativa sulla privacy</a>.</p>
 
   <footer>
-    <a href="/">App</a>
+    <a href="/app.html">App</a>
     <a href="/privacy.html">Privacy</a>
     <a href="/termini.html">Termini d'uso</a>
     <p>ArcTrail 3D — info@arctrail3d.com</p>

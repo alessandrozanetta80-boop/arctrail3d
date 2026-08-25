@@ -17,8 +17,8 @@
 <link rel="icon" href="/logo.jpg">
 <style>
 :root{
-  --ink:#10201D; --teal:#315B35; --amber:#C8551A;
-  --paper:#F7F6F3; --card:#FFFFFF; --line:#E3E1DA; --muted:#5C6B67;
+  --ink:#201D18; --teal:#455648; --amber:#C8551A;
+  --paper:#F5F2ED; --card:#FFFFFF; --line:#E4E1DB; --muted:#71665E;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -30,7 +30,7 @@ body{
 header{background:var(--ink); color:#fff; padding:18px 20px}
 .hwrap{max-width:760px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
 .brand{font-weight:800; letter-spacing:.02em; font-size:17px}
-.brand span{color:#7FCB8A}
+.brand span{color:#AEBEB1}
 .back{margin-left:auto; color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.35);
   padding:7px 13px; border-radius:999px; font-size:14px; font-weight:600}
 .back:hover{background:rgba(255,255,255,.12)}
@@ -47,10 +47,24 @@ h3{font-size:16px; margin:22px 0 6px}
 p,li{margin:0 0 12px}
 ul{padding-left:20px}
 a{color:var(--teal)}
+/* L'anello di fuoco, uguale a quello dell'app e a quello della vetrina.
+   Qui serviva piu' che altrove: queste pagine si aprono da un link, spesso
+   con la tastiera, e le uniche cose premibili — le bandierine della lingua
+   e il tasto di ritorno — non avevano nessun fuoco visibile.
+   `--amber` regge come elemento grafico su tutti i fondi di questa pagina:
+   4,40 sulla card, 3,94 sul foglio, 3,82 sulla testata scura. */
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid var(--amber); outline-offset:3px }
 .cta{display:inline-block; background:var(--teal); color:#fff; text-decoration:none;
   font-weight:700; padding:13px 22px; border-radius:10px; margin:8px 0 4px}
-.cta:hover{background:#244426}
-.note{background:#FDF3E7; border:1px solid #EFD3B4; border-left:4px solid var(--amber);
+.cta:hover{background:#334036}
+/* Stessa carta e stesso filo di `.lead`: e' lo stesso oggetto, e a dire di
+   che genere e' basta il colore del picchetto. Fino al 24/08 aveva un
+   lavaggio `#FFF1EA` con un filo `#F0CDBB`, cioe' l'ambra stesa — lo stesso
+   difetto che l'app aveva sulla scheda dei campi, e con lo stesso esito: su
+   una superficie chiara un arancione diluito diventa rosa. */
+.note{
+  background:var(--card); border:1px solid var(--line); border-left:4px solid var(--amber);
   border-radius:12px; padding:14px 16px; margin:18px 0}
 .note p{margin:0}
 dl{margin:0}
@@ -66,7 +80,7 @@ footer a{margin-right:16px}
 <header>
   <div class="hwrap">
     <div class="brand">ArcTrail<span> 3D</span></div>
-    <a class="back" href="/">Apri l'app</a>
+    <a class="back" href="/app.html">Apri l'app</a>
   </div>
 </header>
 
@@ -74,9 +88,9 @@ footer a{margin-right:16px}
 
   <div class="hero">
     <svg width="72" height="72" viewBox="0 0 72 72" role="img" aria-label="Zone di punteggio di una sagoma 3D">
-      <ellipse cx="36" cy="36" rx="33" ry="33" fill="none" stroke="#E3E1DA" stroke-width="2"/>
-      <ellipse cx="36" cy="36" rx="22" ry="22" fill="none" stroke="#C9CEC4" stroke-width="2"/>
-      <ellipse cx="36" cy="36" rx="12" ry="12" fill="none" stroke="#315B35" stroke-width="2.5"/>
+      <ellipse cx="36" cy="36" rx="33" ry="33" fill="none" stroke="#E4E1DB" stroke-width="2"/>
+      <ellipse cx="36" cy="36" rx="22" ry="22" fill="none" stroke="#D1CCC2" stroke-width="2"/>
+      <ellipse cx="36" cy="36" rx="12" ry="12" fill="none" stroke="#455648" stroke-width="2.5"/>
       <circle cx="36" cy="36" r="4" fill="#C8551A"/>
     </svg>
     <div>
@@ -89,7 +103,7 @@ footer a{margin-right:16px}
     <p>Il tiro con l'arco 3D è uno sport bellissimo, ma di nicchia e molto frammentato: ogni federazione ha i suoi regolamenti, ogni paese le sue federazioni. ArcTrail 3D le raccoglie in un'app sola. Segni il punteggio piazzola per piazzola dal telefono, il conteggio lo fa l'app, e a fine giro il risultato è già salvato nel tuo diario — anche se nel bosco non prende.</p>
   </div>
 
-  <p><a class="cta" href="/">Apri ArcTrail 3D</a></p>
+  <p><a class="cta" href="/app.html">Apri ArcTrail 3D</a></p>
 
   <h2>Cosa fa</h2>
 
@@ -134,7 +148,7 @@ footer a{margin-right:16px}
   <h2>Come si installa</h2>
   <p>Non serve nessuno store: ArcTrail 3D è un'applicazione web che si installa direttamente dal browser e poi si apre come una qualsiasi app, con la sua icona.</p>
   <ul>
-    <li><strong>Android</strong> — apri <a href="/">arctrail3d.com</a> con Chrome e scegli <em>Installa app</em> dal menu.</li>
+    <li><strong>Android</strong> — apri <a href="/app.html">arctrail3d.com</a> con Chrome e scegli <em>Installa app</em> dal menu.</li>
     <li><strong>iPhone e iPad</strong> — apri il sito con Safari, poi <em>Condividi</em> e <em>Aggiungi a Home</em>.</li>
     <li><strong>Computer</strong> — funziona anche nel browser, comodo per rivedere lo storico su uno schermo grande.</li>
   </ul>
@@ -167,10 +181,10 @@ footer a{margin-right:16px}
   <p>Più arcieri ci sono, più tutto questo funziona. L'idea di fondo è semplice: che un arciere 3D — in Italia, in Francia, in Turchia — abbia un posto solo in cui trovare gli altri.</p>
   <p>Suggerimenti, errori e richieste sono benvenuti: <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a></p>
 
-  <p><a class="cta" href="/">Apri ArcTrail 3D</a></p>
+  <p><a class="cta" href="/app.html">Apri ArcTrail 3D</a></p>
 
   <footer>
-    <a href="/">App</a>
+    <a href="/app.html">App</a>
     <a href="/privacy.html">Privacy</a>
     <a href="/termini.html">Termini d'uso</a>
     <a href="/elimina-account.html">Elimina account</a>
