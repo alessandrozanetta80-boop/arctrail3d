@@ -1265,7 +1265,7 @@ color:var(--text-1); white-space:nowrap; display:block; }
 header.top .brandblock{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 header.top h1{ font-size:var(--t-lg); margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-soft); }
 header.top .sub{ font-size:var(--t-xs); color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
-.home-btn{ background:var(--bark); border:none; color:#fff; border-radius:var(--r-sm);
+.home-btn{ background:var(--bark); border:none; color:var(--sand-50); border-radius:var(--r-sm);
 height:44px; padding:0 var(--s-4); font-size:var(--t-sm); font-weight:700; cursor:pointer;
 display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; flex:0 0 auto;
 line-height:1; letter-spacing:0.01em; }
@@ -1362,9 +1362,18 @@ transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--eas
 .btn-ghost{ background:var(--surface-2); border:1px solid var(--border-strong); color:var(--text-1); }
 .btn-ghost .menu-sub{ color:var(--text-3); }
 .btn-sm{ padding:var(--s-2) var(--s-3); font-size:var(--t-sm); }
-.btn-danger{ background:var(--danger); border-color:transparent; color:#fff; }
+/* IL BIANCO SUI PIENI E' UN PRIMITIVO, NON UNA PAROLA. (25/08/2026.)
+   Quattro componenti scrivevano `color:#fff` a mano — il tasto della testata,
+   il distruttivo, il distruttivo armato e l'icona editoriale. Il valore e'
+   identico a `--sand-50`, quindi a schermo non cambia niente: cambia che il
+   bianco adesso ha un posto solo da cui viene. *Un colore scritto a mano
+   dentro un componente e' un colore che il tema non puo' piu' raggiungere,
+   anche quando nessuno voleva che fosse fuori portata.*
+   Restano scritti a mano i colori della STAMPA, ed e' voluto: quella non e'
+   una schermata, e l'inchiostro su carta non segue il tema. */
+.btn-danger{ background:var(--danger); border-color:transparent; color:var(--sand-50); }
 .btn-ghost-danger{ background:color-mix(in srgb, var(--danger-role) 12%, var(--surface-1)); border:1px solid color-mix(in srgb, var(--danger-role) 55%, transparent); color:var(--danger-role); }
-.btn-armed{ background:var(--danger) !important; color:#fff !important; border-color:transparent !important; }
+.btn-armed{ background:var(--danger) !important; color:var(--sand-50) !important; border-color:transparent !important; }
 .btn-standings{ background:color-mix(in srgb, var(--gold-role) 14%, var(--surface-1));
 border:1px solid color-mix(in srgb, var(--gold-role) 55%, transparent);
 color:var(--gold-role); font-weight:800; box-shadow:none; }
@@ -1889,7 +1898,7 @@ color:var(--success-role); }
 .empty-state-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-lg); margin-bottom:var(--s-2); text-wrap:balance; }
 .empty-state-body{ font-size:var(--t-sm); color:var(--muted); line-height:1.55; margin-bottom:var(--s-4); }
 .editorial-block{ text-align:center; padding:20px var(--s-2); }
-.editorial-icon{ width:44px; height:44px; border-radius:50%; background:var(--qsag); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto var(--s-3); }
+.editorial-icon{ width:44px; height:44px; border-radius:50%; background:var(--qsag); color:var(--sand-50); display:flex; align-items:center; justify-content:center; margin:0 auto var(--s-3); }
 .editorial-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-lg); line-height:1.45; margin-bottom:var(--s-3); text-wrap:balance; }
 .editorial-body{ font-size:var(--t-sm); color:var(--muted); line-height:1.6; max-width:360px; margin:0 auto; }
 .timeline-row{ display:flex; align-items:center; gap:var(--s-3); padding:var(--s-2) var(--s-3); background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:var(--r-sm); margin-bottom:var(--s-2); }
@@ -18493,7 +18502,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-rimedio";
+var BUILD_STAMP = "2026-08-25-bianchi";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18502,7 +18511,7 @@ var BUILD_STAMP = "2026-08-25-rimedio";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-rubrica";
+var BUILD_PARENT = "2026-08-25-rimedio";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
