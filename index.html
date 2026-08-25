@@ -1373,6 +1373,23 @@ transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--eas
    una schermata, e l'inchiostro su carta non segue il tema. */
 .btn-danger{ background:var(--danger); border-color:transparent; color:var(--sand-50); }
 .btn-ghost-danger{ background:color-mix(in srgb, var(--danger-role) 12%, var(--surface-1)); border:1px solid color-mix(in srgb, var(--danger-role) 55%, transparent); color:var(--danger-role); }
+/* ══ IL DISTRUTTIVO DI CONTORNO E' UNA VARIANTE, NON UNA RIGA COPIATA ══════
+   (25/08/2026.) Sei schermate scrivevano la stessa coppia di dichiarazioni
+   dentro un `style=`: «Elimina account», «Cancella la chat», «Elimina il
+   giro», «Revoca», «Elimina l'allenamento», «Pulisci le segnalazioni chiuse».
+   Sei copie della stessa idea, e nessuna sapeva delle altre — il giorno che
+   il rosso cambia gradino, cinque restano indietro e non se ne accorge
+   nessuno, perche' stanno su schermate diverse e non si vedono mai insieme.
+   *Una regola scritta sei volte non e' una regola: e' un'abitudine.*
+
+   Il disegno resta ESATTAMENTE quello di prima — contorno e scritta rossi,
+   fondo del tasto. Questa non e' l'occasione per cambiare come si vedono: e'
+   l'occasione per dare loro un posto solo da cui cambiare.
+   `.btn-ghost-danger`, col fondo velato, resta per il distruttivo che deve
+   pesare di piu'. */
+.btn-outline-danger{ color:var(--danger); border-color:var(--danger); }
+.btn-outline-danger:not(:disabled):hover{ border-color:var(--danger);
+  background:color-mix(in srgb, var(--danger-role) 10%, transparent); }
 .btn-armed{ background:var(--danger) !important; color:var(--sand-50) !important; border-color:transparent !important; }
 .btn-standings{ background:color-mix(in srgb, var(--gold-role) 14%, var(--surface-1));
 border:1px solid color-mix(in srgb, var(--gold-role) 55%, transparent);
@@ -15183,7 +15200,7 @@ save(); render();
 ferri.appendChild(msgBtn);
 }
 if(isOwner){
-var delBtn = el('<button class="btn btn-ghost btn-sm" style="color:var(--danger);border-color:var(--danger);">'+t("ot_delete_btn")+'</button>');
+var delBtn = el('<button class="btn btn-ghost btn-outline-danger btn-sm">'+t("ot_delete_btn")+'</button>');
 (function(otId){
 delBtn.addEventListener("click", function(){
 if(!confirm(t("ot_confirm_delete"))) return;
@@ -16239,7 +16256,7 @@ logoutBtn2.addEventListener("click", function(){
 auth.signOut().then(function(){ stopOpenTrainings(); authState = "needLogin"; currentUser = null; render(); });
 });
 setCard.appendChild(logoutBtn2);
-var delAccBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-3);color:var(--danger);border-color:var(--danger);">'+t("acc_delete_btn")+'</button>');
+var delAccBtn = el('<button class="btn btn-ghost btn-outline-danger btn-block btn-sm" style="margin-top:var(--s-3);">'+t("acc_delete_btn")+'</button>');
 delAccBtn.addEventListener("click", function(){ state.screen = "account-delete"; save(); render(); });
 setCard.appendChild(delAccBtn);
 }
@@ -17795,7 +17812,7 @@ var toggleBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin
 toggleBtn.addEventListener("click", function(){ state.clubShowClosed = !state.clubShowClosed; save(); caricaSegnalazioni(); });
 repList.appendChild(toggleBtn);
 
-var pulisciBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);color:var(--danger);border-color:var(--danger);">'+t("club_reports_clear")+' ('+chiuse.length+')</button>');
+var pulisciBtn = el('<button class="btn btn-ghost btn-outline-danger btn-block btn-sm" style="margin-top:var(--s-2);">'+t("club_reports_clear")+' ('+chiuse.length+')</button>');
 repList.appendChild(pulisciBtn);
 armDoubleConfirm(pulisciBtn, t("club_reports_clear_confirm"), function(){
 var batch = db.batch();
@@ -18018,7 +18035,7 @@ db.collection("users").doc(row.id).update({betaTester: !row.betaTester})
 });
 act.appendChild(betaBtn);
 
-var revBtn = el('<button class="btn btn-ghost btn-sm" style="border-color:var(--danger);color:var(--danger);">'+t("admin_revoke_btn")+'</button>');
+var revBtn = el('<button class="btn btn-ghost btn-outline-danger btn-sm">'+t("admin_revoke_btn")+'</button>');
 revBtn.addEventListener("click", function(){
 if(!window.confirm("Revocare l\u0027accesso a " + (nome || user || row.email) + "?")) return;
 revBtn.disabled = true;
@@ -18399,7 +18416,7 @@ var sessListWrap = el('<div id="adminSessListWrap"><div class="nota">'+t("admin_
 sessCard.appendChild(sessListWrap);
 admPanel("sessioni", sessCard);
 
-var closeAllBtn = el('<button class="btn" style="width:100%;margin-bottom:var(--s-2);background:var(--danger);color:#fff;font-size:var(--t-sm);">&#128465; Chiudi tutte le sessioni attive</button>');
+var closeAllBtn = el('<button class="btn btn-danger btn-block btn-sm" style="margin-bottom:var(--s-2);">&#128465; Chiudi tutte le sessioni attive</button>');
 closeAllBtn.addEventListener("click", function(){
 if(!confirm("Chiudere TUTTE le sessioni attive?")) return;
 db.collection("sessions").where("status","==","active").get().then(function(snap){
@@ -18523,7 +18540,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-bersagli";
+var BUILD_STAMP = "2026-08-25-distruttivo";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18532,7 +18549,7 @@ var BUILD_STAMP = "2026-08-25-bersagli";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-bianchi";
+var BUILD_PARENT = "2026-08-25-bersagli";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -19471,7 +19488,7 @@ setTimeout(function(){ shareBtn.innerHTML = icon("share",16)+' '+t("share_btn");
 });
 wrap.appendChild(shareBtn);
 
-var delRoundBtn = el('<button class="btn btn-ghost btn-block no-print" style="margin-top:var(--s-2);color:var(--danger);border-color:var(--danger);">'+t("hist_delete_one")+'</button>');
+var delRoundBtn = el('<button class="btn btn-ghost btn-outline-danger btn-block no-print" style="margin-top:var(--s-2);">'+t("hist_delete_one")+'</button>');
 wrap.appendChild(delRoundBtn);
 armDoubleConfirm(delRoundBtn, t("hist_delete_confirm"), function(){
 deleteHistoryRound(state.historyIndex);
@@ -20743,7 +20760,7 @@ card.appendChild(wordInp);
 var statusEl = el('<div style="font-size:var(--t-sm);margin:var(--s-2) 0 0;min-height:20px;line-height:1.45;"></div>');
 card.appendChild(statusEl);
 
-var goBtn = el('<button class="btn btn-block" style="margin-top:var(--s-2);background:var(--danger);color:#fff;border:none;">'+t("acc_delete_do")+'</button>');
+var goBtn = el('<button class="btn btn-danger btn-block" style="margin-top:var(--s-2);">'+t("acc_delete_do")+'</button>');
 goBtn.addEventListener("click", function(){
 if((wordInp.value||"").trim().toUpperCase() !== t("acc_delete_word")){
 statusEl.style.color = "var(--danger)";
@@ -21472,7 +21489,7 @@ statusEl.textContent = t("dm_error");
 });
 });
 
-var delChatBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);color:var(--danger);border-color:var(--danger);">'+t("dm_delete_chat")+'</button>');
+var delChatBtn = el('<button class="btn btn-ghost btn-outline-danger btn-block btn-sm" style="margin-top:var(--s-2);">'+t("dm_delete_chat")+'</button>');
 card.appendChild(delChatBtn);
 armDoubleConfirm(delChatBtn, t("dm_delete_chat_confirm"), function(){
 delChatBtn.disabled = true;
