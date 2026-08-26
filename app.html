@@ -13782,7 +13782,16 @@ piede.appendChild(devBox);
 if(!isStandalone){
 var backBtn = el('<button class="btn">'+t("back_step")+'</button>');
 backBtn.addEventListener("click", function(){
-window.location.href = "/" + (state.lang ? "?lang=" + encodeURIComponent(state.lang) : "");
+/* `index.html`, NON `/`. (25/08/2026, Alessandro: «il tasto che dovrebbe
+   andare alla vetrina non funziona».)
+   Una barra iniziale vuol dire «la radice del DOMINIO»: funziona solo
+   perche' il sito sta su arctrail3d.com. Aperto da qualunque altro
+   indirizzo — la pagina di GitHub Pages sotto `/arctrail3d/`, una copia in
+   una sottocartella, il file in locale — quella barra porta fuori dal sito,
+   e il tasto sembra rotto perche' arriva su una pagina che non c'entra.
+   Il collegamento relativo va dove sta il file, sempre. E' la stessa forma
+   che la vetrina usa per i suoi sette «Apri l'app»: `app.html?lang=xx`. */
+window.location.href = "index.html" + (state.lang ? "?lang=" + encodeURIComponent(state.lang) : "");
 });
 piede.appendChild(backBtn);
 }
@@ -19040,7 +19049,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-ritocchi";
+var BUILD_STAMP = "2026-08-25-indietro";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19049,7 +19058,7 @@ var BUILD_STAMP = "2026-08-25-ritocchi";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-porta";
+var BUILD_PARENT = "2026-08-25-ritocchi";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
