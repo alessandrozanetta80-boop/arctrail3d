@@ -481,7 +481,7 @@ body{margin:0}
 <!-- Il timbro, come marketplace.html: `data-build` dice quale versione e'
      questa, `data-parent` da quale e' nata. La prima anteprima non ne aveva
      nessuno — quindi il genitore e' dichiarato per nome, non inventato. -->
-<body data-build="2026-08-25-vetrina-radice" data-parent="2026-08-25-vetrina-vere">
+<body data-build="2026-08-26-vetrina" data-parent="2026-08-25-vetrina-radice">
 <div class="vetrina">
 
 <!-- ══════════ TESTATA ══════════ -->
@@ -811,9 +811,43 @@ body{margin:0}
 
      `location.replace` e non `href`: se no il tasto indietro dell'app
      riporta qui, e da li' si riparte in cerchio. */
+  /* ── MA CHI CI VIENE MANDATO DALL'APP RESTA ──────────────────────
+     (26/08/2026. Alessandro, tre volte: «il tasto per la vetrina non
+     funziona».) Il salto qui sopra scattava SEMPRE, e quindi anche per chi
+     arrivava dal tasto «Indietro» dell'app: partiva la navigazione, questa
+     pagina si apriva, e mezzo secondo dopo lo rispediva da dove veniva.
+     Il tasto funzionava benissimo. Era questa riga a disfare il lavoro.
+
+     `da=app` vuol dire «questa pagina l'ha chiesta qualcuno», ed e' l'unica
+     cosa che il salto non sapeva. Chi preme l'icona non ce l'ha, e salta
+     come prima.
+
+     LA SCELTA SI RICORDA PER LA SESSIONE, se no una ricarica — o il gesto di
+     tirare giu' la pagina — rimbalzerebbe di nuovo, e sarebbe la stessa
+     bugia con un passo in piu'. Muore chiudendo la scheda: la prossima volta
+     dall'icona si salta ancora.
+
+     E POI L'INDIRIZZO SI PULISCE. Un `?da=app` appiccicato finirebbe nei
+     link copiati dalla barra e nei preferiti, e li' vorrebbe dire
+     «non saltare mai piu'» a gente che non ha mai premuto niente.
+     Si toglie solo lui: `lang` resta, e la lingua e' l'altra meta' di
+     questo viaggio. */
   try{
-    if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches
-        || window.navigator.standalone === true){
+    var voluta = false;
+    try{
+      if (/[?&]da=app(&|$)/.test(window.location.search || "")){
+        voluta = true;
+        sessionStorage.setItem("arctrail-vetrina-voluta", "1");
+        var pulito = new URL(window.location.href);
+        pulito.searchParams.delete("da");
+        history.replaceState(null, "", pulito.toString());
+      } else if (sessionStorage.getItem("arctrail-vetrina-voluta") === "1"){
+        voluta = true;
+      }
+    }catch(e){}
+    if (!voluta &&
+        (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches
+         || window.navigator.standalone === true)){
       var q = "";
       try{ q = window.location.search || ""; }catch(e){}
       window.location.replace("app.html" + q);
