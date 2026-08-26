@@ -1316,7 +1316,20 @@ position:relative; z-index:1; }
    Le piastrelle hanno gia' un bordo loro, e stavano dentro un riquadro che ne
    aveva un altro; con l'icona, che ne ha un terzo, erano TRE cornici
    annidate. Qui, di primo livello, vale anche sul telefono. */
-.menu-cols .card:has(> .menu-btn):not(:has(input)):not(:has(select)):not(:has(textarea)){
+/* MA NON SE E' `riga-lunga`. (26/08/2026, Alessandro: «il tasto dei campi per
+   segnalare un problema fa ancora cagare».)
+   Aveva ragione, e il difetto non era il tasto: era che INTORNO non c'era
+   piu' niente. Questa regola toglie il riquadro a una scheda fatta di sole
+   porte — giusto, quando le porte hanno un bordo loro. Ma ottocento righe
+   piu' giu' ce n'e' un'altra, altrettanto giusta, che dice: *dentro una
+   scheda una riga e' una riga*, e toglie fondo e bordo al tasto.
+   Le due insieme fanno una riga dentro una scheda che non esiste: niente
+   contorno, niente scatola, appoggiata sullo sfondo in mezzo a riquadri
+   bianchi. **Nessuna delle due e' sbagliata da sola**, ed e' per questo che
+   rileggendo il foglio non si vedeva.
+   `riga-lunga` marca gia' le schede con UNA azione sola, e la regola gemella
+   qui sotto la escludeva gia'. Questa se n'era dimenticata. */
+.menu-cols .card:has(> .menu-btn):not(.riga-lunga):not(:has(input)):not(:has(select)):not(:has(textarea)){
   background:transparent; border:0; box-shadow:none;
   /* SOLO SOPRA E SOTTO. (22/08/2026.) Qui c'era `padding:0`, e azzerava anche
      i fianchi. Questa regola e' piu' specifica di quella del margine di
@@ -18030,7 +18043,14 @@ card.appendChild(inp);
    La scelta NON si salva: alla prossima apertura si riparte dalla propria
    nazione, con regione e provincia da scegliere. */
 var campiStato = state.campiStato || state.country || "it";
-var righeCampi = el('<div class="cp-due"></div>');
+/* LA NAZIONE PRENDE UNA RIGA SUA, REGIONE E PROVINCIA STANNO IN COPPIA.
+   (26/08/2026.) Erano tutte e tre nella stessa riga a colonne uguali, e
+   «Nazione dove tiri» — che e' la piu' lunga delle tre etichette, in tutte
+   e nove le lingue — andava a capo. Un'etichetta su due righe alza il suo
+   campo e lascia l'altro dov'era: le due tendine finivano sfalsate, e da
+   fuori sembra un errore di impaginazione invece che una parola lunga.
+   Sta sopra anche per un motivo che non e' di spazio: e' il filtro piu'
+   largo, e i tre imbuti si leggono dall'alto in basso. */
 var statoRow = el('<div class="cp-select-row"><label>'+t("setup_country_label")+'</label><select id="campiSelStato"></select></div>');
 var statoSel = statoRow.querySelector("select");
 COUNTRY_LIST.forEach(function(cy){
@@ -18042,7 +18062,8 @@ statoSel.addEventListener("change", function(){
 state.campiStato = statoSel.value; state.campiRegione = null; state.campiProvincia = null;
 campoAttivo = null; save(); render();
 });
-righeCampi.appendChild(statoRow);
+card.appendChild(statoRow);
+var righeCampi = el('<div class="cp-due"></div>');
 
 function campiDelPaese(cod){
 var c = COMPAGNIE[cod];
@@ -19271,7 +19292,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-federazione";
+var BUILD_STAMP = "2026-08-26-scatola";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19280,7 +19301,7 @@ var BUILD_STAMP = "2026-08-26-federazione";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-marchio";
+var BUILD_PARENT = "2026-08-26-federazione";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
