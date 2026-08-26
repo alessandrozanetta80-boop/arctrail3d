@@ -11846,7 +11846,13 @@ fitarco: { circuiti:["wa"], garaModes: ["fitarco3d"], trainingMode:"fitarco_trai
 ffta: { circuiti:["wa"], garaModes: ["ffta_tir3d"], trainingMode:"ffta_training" },
 swissarchery: { circuiti:["wa"], garaModes: ["swissarchery_3d"], trainingMode:"swissarchery_training" },
 turkey: { circuiti:["wa"], garaModes: ["turkey_3d"], trainingMode:"turkey_training" },
-russia: { circuiti:["wa"], garaModes: ["russia_3d"], trainingMode:"russia_training" },
+/* FUORI DALLE SCELTE DAL 26/08/2026, DENTRO AL MOTORE. Non si sceglie piu'
+   (non e' nell'elenco dei paesi ne' in quello delle tessere), ma chi ce
+   l'ha gia' nel profilo continua a contare col suo regolamento e a
+   rivedere il suo storico. *Togliere il barème avrebbe fatto cadere quella
+   persona su FIARC, in silenzio.* Torna scegliibile rimettendo la riga in
+   COUNTRY_LIST, COUNTRY_FEDERATIONS e PROFILE_FEDERATIONS. */
+russia: { circuiti:["wa"], garaModes: ["russia_3d"], trainingMode:"russia_training", fuoriElenco:true },
 spain: { circuiti:["wa"], garaModes: ["spain_3d"], trainingMode:"spain_training" },
 sweden: { circuiti:["wa"], garaModes: ["sweden_3d"], trainingMode:"sweden_training" },
 faas: { circuiti:["ifaa"], garaModes: ["ifaa_3d","ifaa_hunting"], trainingMode:"ifaa_training" },
@@ -13874,7 +13880,11 @@ return wrap;
 
 // ---------- SELEZIONE NAZIONE ----------
 // La lingua scelta suggerisce la nazione piu' probabile, che viene messa in cima e aperta.
-var LANG_TO_COUNTRY = { it:"it", fr:"fr", de:"de", tr:"tr", ru:"ru", es:"es", sv:"se", nl:"nl", en:"uk" };
+/* Il russo non ha un paese suggerito: la Russia e' fuori dall'elenco dal
+   26/08/2026 (dati non recuperabili). La LINGUA resta, ed e' giusto: un
+   russo puo' tirare in Italia. Senza voce qui, la tendina delle nazioni si
+   apre vuota e sceglie lui, invece di partire da un paese che non c'e'. */
+var LANG_TO_COUNTRY = { it:"it", fr:"fr", de:"de", tr:"tr", es:"es", sv:"se", nl:"nl", en:"uk" };
 
 var COUNTRY_LIST = [
 { code:"it", flag:"\uD83C\uDDEE\uD83C\uDDF9", key:"country_italy" },
@@ -13884,7 +13894,6 @@ var COUNTRY_LIST = [
 { code:"de", flag:"\uD83C\uDDE9\uD83C\uDDEA", key:"country_germany" },
 { code:"uk", flag:"\uD83C\uDDEC\uD83C\uDDE7", key:"country_uk" },
 { code:"tr", flag:"\uD83C\uDDF9\uD83C\uDDF7", key:"country_turkey" },
-{ code:"ru", flag:"\uD83C\uDDF7\uD83C\uDDFA", key:"country_russia" },
 { code:"es", flag:"\uD83C\uDDEA\uD83C\uDDF8", key:"country_spain" },
 { code:"nl", flag:"\uD83C\uDDF3\uD83C\uDDF1", key:"country_netherlands" },
 { code:"se", flag:"\uD83C\uDDF8\uD83C\uDDEA", key:"country_sweden" }
@@ -13898,7 +13907,6 @@ at: [ {code:"oebsv", label:"\u00d6BSV", url:"https://www.archeryaustria.net"} ],
 de: [ {code:"dsb", label:"DSB", url:"https://www.dsb.de"}, {code:"dfbv", label:"DFBV", url:"https://www.dfbv.de"} ],
 uk: [ {code:"archerygb", label:"Archery GB", url:"https://www.archerygb.org"}, {code:"nfas", label:"NFAS", url:"https://nfas.net"}, {code:"efaa", label:"EFAA", url:"https://efaafieldarcher.com"} ],
 tr: [ {code:"turkey", label:"TOF", url:"https://www.turkarchery.org"} ],
-ru: [ {code:"russia", label:"\u0420\u0424\u0421\u041b", url:"https://archery-3d.ru"} ],
 es: [ {code:"spain", label:"RFETA", url:"https://www.rfeta.es"} ],
 nl: [ {code:"nhb", label:"KHSN", url:"https://www.handboogsport.nl"} ],
 se: [ {code:"sweden", label:"SBF", url:"https://www.bagskytte.se"}, {code:"sff", label:"SFF"} ]
@@ -14128,7 +14136,7 @@ var PROFILE_FEDERATIONS = [
 {code:"swissarchery", label:"SwissArchery"}, {code:"faas", label:"FAAS"},
 {code:"oebsv", label:"\u00d6BSV"}, {code:"dfbv", label:"DFBV"},
 {code:"archerygb", label:"Archery GB"}, {code:"nfas", label:"NFAS"}, {code:"efaa", label:"EFAA"},
-{code:"turkey", label:"TOF"}, {code:"russia", label:"\u0420\u0424\u0421\u041b"},
+{code:"turkey", label:"TOF"},
 {code:"spain", label:"RFETA"}, {code:"sweden", label:"SBF"}, {code:"nhb", label:"KHSN"},
 {code:"sff", label:"SFF"}, {code:"dsb", label:"DSB"},
 {code:"fidasc", label:"FIDASC"}
@@ -19729,7 +19737,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-storico-lapide";
+var BUILD_STAMP = "2026-08-26-senza-russia";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19738,7 +19746,7 @@ var BUILD_STAMP = "2026-08-26-storico-lapide";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-nazione";
+var BUILD_PARENT = "2026-08-26-storico-lapide";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
