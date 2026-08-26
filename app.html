@@ -1279,6 +1279,8 @@ header.top .brand-title{ font-family:var(--font-ui); font-weight:800;
 font-size:var(--t-md); letter-spacing:-0.02em; text-transform:none;
 color:var(--text-1); white-space:nowrap; display:block; }
 header.top .brandblock{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+/* Da <button> ad <a> (26/08): stesso vestito, niente sottolineatura. */
+header.top a.brandblock{ text-decoration:none; color:inherit; cursor:pointer; }
 header.top h1{ font-size:var(--t-lg); margin:0; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-soft); }
 header.top .sub{ font-size:var(--t-xs); color:var(--muted); margin-top:2px; letter-spacing:0.04em; }
 .home-btn{ background:var(--bark); border:none; color:var(--sand-50); border-radius:var(--r-sm);
@@ -1662,6 +1664,33 @@ background:none; width:auto; height:auto; }
 text-transform:uppercase; color:var(--text-3);
 margin:var(--s-3) 0 var(--s-1); line-height:1.3; }
 .card > .campo-eti:first-of-type{ margin-top:var(--s-2); }
+
+/* ── LA SEGNALAZIONE DI UN PROBLEMA (26/08/2026) ──
+   Alessandro: «non ha una forma, non una struttura: seguire le linee guida
+   che abbiamo usato su tutta l'app». Il modulo era scritto tutto in stile in
+   linea — etichette, griglia dei tipi, righe dell'elenco — e i tasti del
+   tipo si ridipingevano dal copione, cioe' fuori dai temi. Le regole stanno
+   qui, le etichette sono `.campo-eti` come ovunque, e lo stato acceso e' una
+   classe: cosi' i tre temi lo tingono da soli. */
+.fr-tipi{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2);
+margin-bottom:var(--s-2); }
+.fr-tipi button{ padding:var(--s-3) var(--s-2); border-radius:var(--r-sm);
+border:1px solid var(--border-strong); background:var(--surface-2);
+color:var(--text-1); font-size:var(--t-sm); font-weight:700; cursor:pointer;
+line-height:1.25; }
+.fr-tipi button.on{ background:var(--accent); border-color:var(--accent);
+color:var(--accent-ink); }
+.fr-lista{ max-height:180px; overflow-y:auto; border:1px solid var(--border);
+border-radius:var(--r-sm); margin-bottom:var(--s-2); display:none; }
+.fr-lista.aperta{ display:block; }
+.fr-lista .fr-voce{ padding:var(--s-2) var(--s-3);
+border-bottom:1px solid var(--border); font-size:var(--t-sm); cursor:pointer; }
+.fr-lista .fr-voce:last-child{ border-bottom:none; }
+.fr-stato{ font-size:var(--t-sm); margin-bottom:var(--s-2); min-height:20px;
+text-align:center; color:var(--danger-role); }
+.fr-stato.quieto{ color:var(--text-3); }
+.fr-stato.bene{ color:var(--accent-soft); }
+.fr-stato.avviso{ color:var(--gold); }
 .ra-nome{ display:inline-flex; align-items:center; min-height:32px;
 padding:0 var(--s-3); border-radius:var(--r-pill); background:var(--surface-2);
 border:1px solid var(--border); color:var(--text-1);
@@ -5743,6 +5772,7 @@ giro_trovato_riprendi: "Riprendi il giro",
 giro_trovato_butta: "Scarta il giro",
 giro_trovato_butta_conferma: "Scartare il giro? Tocca di nuovo",
 campi_cerca_ph: "Cerca un campo, un paese, una provincia…",
+campi_scegli: "Scegli regione e provincia qui sopra, oppure cerca per nome.",
 campi_qui: "In {reg} · {n} campi",
 campi_conto: "{n} campi",
 campi_conto_uno: "1 campo",
@@ -6403,6 +6433,7 @@ giro_trovato_riprendi: "Resume round",
 giro_trovato_butta: "Discard the round",
 giro_trovato_butta_conferma: "Discard the round? Tap again",
 campi_cerca_ph: "Search a field, a town, a province…",
+campi_scegli: "Pick a region and province above, or search by name.",
 campi_qui: "In {reg} · {n} fields",
 campi_conto: "{n} fields",
 campi_conto_uno: "1 field",
@@ -7062,6 +7093,7 @@ giro_trovato_riprendi: "Reprendre le parcours",
 giro_trovato_butta: "Abandonner le parcours",
 giro_trovato_butta_conferma: "Abandonner le parcours ? Touchez à nouveau",
 campi_cerca_ph: "Cherchez un terrain, une ville, un département…",
+campi_scegli: "Choisissez la région et le département ci-dessus, ou cherchez par nom.",
 campi_qui: "En {reg} · {n} terrains",
 campi_conto: "{n} terrains",
 campi_conto_uno: "1 terrain",
@@ -7721,6 +7753,7 @@ giro_trovato_riprendi: "Runde fortsetzen",
 giro_trovato_butta: "Runde verwerfen",
 giro_trovato_butta_conferma: "Runde verwerfen? Nochmal tippen",
 campi_cerca_ph: "Parcours, Ort oder Provinz suchen…",
+campi_scegli: "Wähle oben Region und Provinz, oder suche nach Namen.",
 campi_qui: "In {reg} · {n} Parcours",
 campi_conto: "{n} Parcours",
 campi_conto_uno: "1 Parcours",
@@ -8399,6 +8432,7 @@ giro_trovato_riprendi: "Tura devam et",
 giro_trovato_butta: "Turu at",
 giro_trovato_butta_conferma: "Tur atılsın mı? Tekrar dokun",
 campi_cerca_ph: "Saha, şehir ya da il ara…",
+campi_scegli: "Yukarıdan bölge ve il seç, ya da adla ara.",
 campi_qui: "{reg} · {n} saha",
 campi_conto: "{n} saha",
 campi_conto_uno: "1 saha",
@@ -9071,6 +9105,7 @@ giro_trovato_riprendi: "Продолжить раунд",
 giro_trovato_butta: "Удалить раунд",
 giro_trovato_butta_conferma: "Удалить раунд? Нажмите ещё раз",
 campi_cerca_ph: "Поиск площадки, города или провинции…",
+campi_scegli: "Выберите регион и провинцию выше или ищите по названию.",
 campi_qui: "{reg} · площадок: {n}",
 campi_conto: "Площадок: {n}",
 campi_conto_uno: "Площадок: 1",
@@ -9743,6 +9778,7 @@ giro_trovato_riprendi: "Reanudar la ronda",
 giro_trovato_butta: "Descartar la ronda",
 giro_trovato_butta_conferma: "¿Descartar la ronda? Toca otra vez",
 campi_cerca_ph: "Busca un campo, un pueblo, una provincia…",
+campi_scegli: "Elige región y provincia arriba, o busca por nombre.",
 campi_qui: "En {reg} · {n} campos",
 campi_conto: "{n} campos",
 campi_conto_uno: "1 campo",
@@ -10415,6 +10451,7 @@ giro_trovato_riprendi: "Återuppta rundan",
 giro_trovato_butta: "Kasta rundan",
 giro_trovato_butta_conferma: "Kasta rundan? Tryck igen",
 campi_cerca_ph: "Sök bana, ort eller län…",
+campi_scegli: "Välj region och län ovan, eller sök på namn.",
 campi_qui: "I {reg} · {n} banor",
 campi_conto: "{n} banor",
 campi_conto_uno: "1 bana",
@@ -11087,6 +11124,7 @@ giro_trovato_riprendi: "Ronde hervatten",
 giro_trovato_butta: "Ronde weggooien",
 giro_trovato_butta_conferma: "Ronde weggooien? Tik nog eens",
 campi_cerca_ph: "Zoek een veld, plaats of provincie…",
+campi_scegli: "Kies hierboven regio en provincie, of zoek op naam.",
 campi_qui: "In {reg} · {n} velden",
 campi_conto: "{n} velden",
 campi_conto_uno: "1 veld",
@@ -14416,24 +14454,32 @@ var largo = (typeof window.matchMedia === "function") && window.matchMedia("(min
 
 var h = el(
 '<header class="top">'+
-/* IL MARCHIO E' UN TASTO. (25/08/2026, chiesto da Alessandro: «non possiamo
-   rendere logo e nome come un tasto che riporta diretti alla home?».)
-   E' la convenzione che tutti hanno gia' imparato altrove, e finora l'app
-   era l'unico posto dove non funzionava: si guardava, si toccava, e non
-   succedeva niente. *Un elemento che sembra premibile e non lo e' costa piu'
-   di uno che non lo sembra: la prima volta si prova, la seconda si impara
-   che qui no, e da li' in poi si diffida anche degli altri.*
-   Fa esattamente quello che fa la casetta della barra in fondo — stessa
-   riga, non una copia scritta due volte con due comportamenti che un
-   giorno divergono. */
-'<button class="brandblock" type="button" aria-label="'+escapeHtml(t("nav_home"))+'">'+
+/* IL MARCHIO PORTA ALLA VETRINA. (26/08/2026, Alessandro, dopo una giornata
+   in cui il tasto «alla vetrina» non funzionava mai: «sto premendo il tasto
+   che si e' creato con il logo e ArcTrail 3D, e non mi da' nessun segnale».)
+
+   IL 25/08 LO AVEVA CHIESTO LUI STESSO agganciato alla Home — e QUEL GIORNO
+   la home del sito e l'app erano la stessa pagina. Poi la radice e'
+   cambiata: `index.html` e' diventato la vetrina, e «la home» si e' spaccata
+   in due — la scheda Home dell'app e la porta di casa del sito. Il marchio
+   era rimasto sulla prima. Cosi' chi stava sulla Home lo premeva e non
+   succedeva NIENTE: nessun segnale, nessun errore. Un giorno intero passato
+   a cercare il guasto in altri tre tasti, mentre il tasto era questo.
+
+   La convenzione che tutti conoscono e' l'altra: il marchio in alto porta
+   alla pagina di casa del SITO. Per la scheda Home c'e' la casetta nella
+   barra in fondo, sempre visibile: le due porte restano entrambe, ognuna
+   col suo mestiere.
+
+   E' UN <a>, NON UN <button>: naviga anche se un copione piu' su si rompe,
+   e tenendolo premuto si legge dove porta. `?da=app` perche' la vetrina non
+   rispedisca indietro chi ci viene apposta; la lingua viaggia insieme, come
+   da ogni altra porta fra le due pagine. */
+'<a class="brandblock" href="index.html?da=app'+(state.lang ? "&amp;lang="+encodeURIComponent(state.lang) : "")+'">'+
 '<div class="logo">'+logoSVG(52)+'</div>'+
-'<div class="headtxt"><span class="brand-title">Arc<b>Trail</b> 3D</span></div></button>'+
+'<div class="headtxt"><span class="brand-title">Arc<b>Trail</b> 3D</span></div></a>'+
 '</header>'
 );
-
-var marchio = h.querySelector(".brandblock");
-if(marchio) marchio.addEventListener("click", vaiAllaHome);
 
 // La pastiglia della firma sta accanto al marchio, prima delle azioni (che
 // hanno margin-left:auto e restano a destra). Non e' un'azione: e' l'unica
@@ -17909,17 +17955,99 @@ var inp = el('<input type="search" id="campiQ" class="input-field in-modulo" aut
 'placeholder="'+escapeHtml(t("campi_cerca_ph"))+'" value="'+escapeHtml(campiQ)+'" aria-label="'+escapeHtml(t("campi_cerca_ph"))+'">');
 card.appendChild(inp);
 
+/* ══ NAZIONE, REGIONE, PROVINCIA — E NESSUNA SCELTA FATTA AL POSTO TUO ════
+   (26/08/2026, Alessandro: «mi si apre direttamente in Piemonte, che e' una
+   merda. Devo avere la possibilita' con il menu a tendina di selezionarmi
+   Stato, Regione e Provincia, per tutti gli Stati».)
+
+   Prima la regione era decisa dall'app — quella della propria compagnia — e
+   non c'era nessuna tendina per cambiarla: chi voleva un campo in Liguria
+   doveva SCRIVERE «Liguria» nella ricerca, cioe' conoscere gia' la risposta
+   per poterla chiedere. La preselezione era nata per non mostrare seicento
+   campi in fila; la cura giusta non era scegliere al posto tuo, era non
+   mostrare NIENTE finche' non scegli — con l'invito scritto.
+
+   Le tendine sono le stesse di «Compagnie», stesse etichette, stesse parole
+   segnaposto: due schermate che filtrano le stesse 663 righe non devono
+   avere due grammatiche.
+
+   LA NAZIONE E' UN FILTRO, NON UN'IMPOSTAZIONE. Cambiare qui la tendina non
+   tocca `state.country` ne' la federazione: guardi i campi di un altro
+   paese, non ci traslochi. Dentro la propria nazione vale il filtro di
+   federazione di sempre; in una nazione altrui si mostra tutto quello che
+   c'e' — oggi niente, e allora si dice con lo stato vuoto che gia' esiste.
+   La scelta NON si salva: alla prossima apertura si riparte dalla propria
+   nazione, con regione e provincia da scegliere. */
+var campiStato = state.campiStato || state.country || "it";
+var righeCampi = el('<div class="cp-due"></div>');
+var statoRow = el('<div class="cp-select-row"><label>'+t("setup_country_label")+'</label><select id="campiSelStato"></select></div>');
+var statoSel = statoRow.querySelector("select");
+COUNTRY_LIST.forEach(function(cy){
+var opt = el('<option value="'+cy.code+'">'+cy.flag+' '+escapeHtml(t(cy.key))+'</option>');
+if(campiStato === cy.code) opt.setAttribute("selected","selected");
+statoSel.appendChild(opt);
+});
+statoSel.addEventListener("change", function(){
+state.campiStato = statoSel.value; state.campiRegione = null; state.campiProvincia = null;
+campoAttivo = null; save(); render();
+});
+righeCampi.appendChild(statoRow);
+
+function campiDelPaese(cod){
+var c = COMPAGNIE[cod];
+if(compagniaPaese(cod) !== campiStato) return false;
+if(campiStato === (state.country || "it") && !compagniaFederazioneOk(cod)) return false;
+return eUnCampo(c);
+}
+var regioniCampi = {};
+Object.keys(typeof COMPAGNIE !== "undefined" ? COMPAGNIE : {}).forEach(function(cod){
+if(campiDelPaese(cod)) regioniCampi[COMPAGNIE[cod].regione] = true;
+});
+var regRowC = el('<div class="cp-select-row"><label>'+t("compagnie_regione")+'</label><select id="campiSelRegione"></select></div>');
+var regSelC = regRowC.querySelector("select");
+regSelC.appendChild(el('<option value="">'+t("compagnie_pick_regione")+'</option>'));
+Object.keys(regioniCampi).sort(function(x,y){ return x.localeCompare(y,"it"); }).forEach(function(r){
+var opt = el('<option value="'+escapeHtml(r)+'">'+escapeHtml(r)+'</option>');
+if(state.campiRegione === r) opt.setAttribute("selected","selected");
+regSelC.appendChild(opt);
+});
+regSelC.addEventListener("change", function(){
+state.campiRegione = regSelC.value || null; state.campiProvincia = null;
+campoAttivo = null; save(); render();
+});
+righeCampi.appendChild(regRowC);
+
+if(state.campiRegione){
+var provCampi = {};
+Object.keys(COMPAGNIE).forEach(function(cod){
+if(!campiDelPaese(cod)) return;
+if(COMPAGNIE[cod].regione !== state.campiRegione) return;
+if(COMPAGNIE[cod].provincia !== "\u2014") provCampi[COMPAGNIE[cod].provincia] = true;
+});
+var provRowC = el('<div class="cp-select-row"><label>'+t("compagnie_provincia")+'</label><select id="campiSelProvincia"></select></div>');
+var provSelC = provRowC.querySelector("select");
+provSelC.appendChild(el('<option value="">'+t("compagnie_pick_provincia")+'</option>'));
+Object.keys(provCampi).sort(function(x,y){
+var lx = COMPAGNIE_NOMI_PROVINCIA[x]||x, ly = COMPAGNIE_NOMI_PROVINCIA[y]||y;
+return lx.localeCompare(ly,"it");
+}).forEach(function(pv){
+var opt = el('<option value="'+pv+'">'+escapeHtml((COMPAGNIE_NOMI_PROVINCIA[pv]||pv)+" ("+pv+")")+'</option>');
+if(state.campiProvincia === pv) opt.setAttribute("selected","selected");
+provSelC.appendChild(opt);
+});
+provSelC.addEventListener("change", function(){
+state.campiProvincia = provSelC.value || null;
+campoAttivo = null; save(); render();
+});
+righeCampi.appendChild(provRowC);
+}
+card.appendChild(righeCampi);
+
 var testa = el('<div class="campi-testa"></div>');
 var elenco = el('<div></div>');
 card.appendChild(testa);
 card.appendChild(elenco);
 wrap.appendChild(card);
-
-// La regione di partenza: quella della propria compagnia. Senza, la prima
-// cosa che si vede sarebbe un elenco di seicento campi in ordine alfabetico,
-// che non e' una risposta a nessuna domanda.
-var mioCod = myClubCode();
-var miaReg = (mioCod && typeof COMPAGNIE !== "undefined" && COMPAGNIE[mioCod]) ? COMPAGNIE[mioCod].regione : null;
 
 function eUnCampo(c){ return c && c.luogo && c.luogo !== "—"; }
 
@@ -17928,12 +18056,15 @@ q = String(q||"").trim().toLowerCase();
 var out = [];
 Object.keys(COMPAGNIE).forEach(function(cod){
 var c = COMPAGNIE[cod];
-if(!compagniaVisibile(cod)) return;
-if(!eUnCampo(c)) return;
+if(!campiDelPaese(cod)) return;
 if(q){
 var ago = (c.luogo+" "+c.nome+" "+c.provincia+" "+c.regione+" "+cod).toLowerCase();
 if(ago.indexOf(q) < 0) return;
-} else if(miaReg && c.regione !== miaReg) return;
+} else {
+if(!state.campiRegione) return;
+if(c.regione !== state.campiRegione) return;
+if(state.campiProvincia && c.provincia !== state.campiProvincia) return;
+}
 out.push(cod);
 });
 /* ══ CON UNA RICERCA IN CORSO, L'ORDINE ALFABETICO NON E' UN ORDINE ═══════
@@ -18015,10 +18146,17 @@ var cercando = !!String(q||"").trim();
 
 var uno = (trovati.length === 1);
 var conto = uno ? t("campi_conto_uno") : t("campi_conto", { n: trovati.length });
-testa.textContent = (cercando || !miaReg) ? conto
-: (uno ? t("campi_qui_uno", { reg: miaReg }) : t("campi_qui", { reg: miaReg, n: trovati.length }));
+var dove = state.campiProvincia ? ((COMPAGNIE_NOMI_PROVINCIA[state.campiProvincia]||state.campiProvincia)) : state.campiRegione;
+testa.textContent = (cercando || !dove) ? (cercando ? conto : "")
+: (uno ? t("campi_qui_uno", { reg: dove }) : t("campi_qui", { reg: dove, n: trovati.length }));
 
 elenco.innerHTML = "";
+if(!cercando && !state.campiRegione){
+/* Niente regione, niente elenco: seicento campi in fila non sono una
+   risposta, e una regione scelta dall'app non e' una scelta. */
+elenco.appendChild(el('<div class="nota stacco">'+escapeHtml(t("campi_scegli"))+'</div>'));
+return;
+}
 if(!trovati.length){
 elenco.appendChild(el('<div class="nota stacco">'+escapeHtml(cercando ? t("campi_nessuno", { q: String(q).trim() }) : t("campi_nessuno_qui"))+'</div>'));
 return;
@@ -19082,7 +19220,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-tre";
+var BUILD_STAMP = "2026-08-26-marchio";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19091,7 +19229,7 @@ var BUILD_STAMP = "2026-08-26-tre";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-vetrina";
+var BUILD_PARENT = "2026-08-26-tre";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -20451,14 +20589,15 @@ var wrap = el('<div></div>');
 if(frEsito){ wrap.appendChild(schermoSegnalazioneFatta()); return wrap; }
 var card = el('<div class="card"></div>');
 
-// Intestazione: cosa stai facendo e dove finisce la segnalazione
-var head = el('<div style="display:flex;align-items:flex-start;gap:var(--s-2);margin-bottom:var(--s-3);"></div>');
-head.appendChild(el('<span style="flex-shrink:0;width:38px;height:38px;border-radius:var(--r-sm);background:color-mix(in srgb, var(--danger) 18%, transparent);border:1px solid color-mix(in srgb, var(--danger) 45%, transparent);color:var(--danger);display:flex;align-items:center;justify-content:center;">'+icon("warn",20)+'</span>'));
-head.appendChild(el('<div><div style="font-weight:800;font-size:var(--t-lg);color:var(--cream);line-height:1.25;">'+t("fr_report_title")+'</div><div class="nota dopo">'+t("fr_report_sub")+'</div></div>'));
-card.appendChild(head);
+/* L'intestazione e' il titolo di sezione di tutta l'app — occhiello
+   arancione compreso — non un riquadro suo con l'icona del pericolo.
+   Il pericolo qui non c'e': si sta AVVISANDO di un problema, non
+   facendone uno. Il rosso resta dove distrugge o avverte davvero. */
+card.appendChild(el('<h2 class="section-title">'+t("fr_report_title")+'</h2>'));
+card.appendChild(el('<div class="nota dopo">'+t("fr_report_sub")+'</div>'));
 
 // ── Campo: stessa selezione da elenco usata per gli allenamenti ────────────
-card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("fr_report_field")+'</label>'));
+card.appendChild(el('<div class="campo-eti">'+t("fr_report_field")+'</div>'));
 var frCod = null, frLabel = "";
 // Precompilo con la compagnia dell'utente: quasi sempre e' il campo dove sta tirando
 if(state.profile && state.profile.compagnia){ frCod = state.profile.compagnia; frLabel = state.profile.compagniaNome || state.profile.compagnia; }
@@ -20476,19 +20615,19 @@ var selName = el('<b></b>');
 var selClear = el('<button type="button" class="club-togli" title="'+escapeHtml(t("profile_club_remove"))+'" aria-label="'+escapeHtml(t("profile_club_remove"))+'">\u00d7</button>');
 selDiv.appendChild(selName); selDiv.appendChild(selClear);
 var searchInp = el('<input type="text" class="input-field cerca" placeholder="'+escapeHtml(t("fr_field_search"))+'">');
-var listDiv = el('<div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:var(--s-3);display:none;"></div>');
+var listDiv = el('<div class="fr-lista"></div>');
 card.appendChild(selDiv); card.appendChild(searchInp); card.appendChild(listDiv);
 
 function refreshField(){
 if(frCod){ selDiv.style.display = "flex"; selName.textContent = frLabel; searchInp.style.display = "none"; }
 else { selDiv.style.display = "none"; searchInp.style.display = ""; }
-listDiv.style.display = "none";
+listDiv.classList.remove("aperta");
 }
 selClear.addEventListener("click", function(){ frCod = null; frLabel = ""; refreshField(); });
 searchInp.addEventListener("input", function(){
 var q = searchInp.value.trim().toLowerCase();
 listDiv.innerHTML = "";
-if(!q || typeof COMPAGNIE === "undefined"){ listDiv.style.display = "none"; return; }
+if(!q || typeof COMPAGNIE === "undefined"){ listDiv.classList.remove("aperta"); return; }
 var found = 0;
 Object.keys(COMPAGNIE).forEach(function(cod){
 if(found >= 30) return;
@@ -20496,39 +20635,34 @@ var c = COMPAGNIE[cod];
 var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "");
 if(label.toLowerCase().indexOf(q) === -1) return;
 found++;
-var row = el('<div style="padding:var(--s-2) var(--s-3);border-bottom:1px solid var(--line);font-size:var(--t-sm);cursor:pointer;">'+escapeHtml(label)+'</div>');
+var row = el('<div class="fr-voce">'+escapeHtml(label)+'</div>');
 row.addEventListener("click", function(){ frCod = cod; frLabel = label; searchInp.value = ""; refreshField(); });
 listDiv.appendChild(row);
 });
-listDiv.style.display = found ? "block" : "none";
+listDiv.classList.toggle("aperta", found > 0);
 });
 refreshField();
 
 // ── Tipo di problema ──────────────────────────────────────────────────────
-card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("fr_type_label")+'</label>'));
+card.appendChild(el('<div class="campo-eti">'+t("fr_type_label")+'</div>'));
 var tipo = "target";
-var tipoWrap = el('<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2);margin-bottom:var(--s-4);"></div>');
+var tipoWrap = el('<div class="fr-tipi"></div>');
 var tipoBtns = {};
 [["target",t("fr_type_target")],["stake",t("fr_type_stake")],["path",t("fr_type_path")],["other",t("fr_type_other")]].forEach(function(pair){
 var k = pair[0];
-var b = el('<button style="padding:var(--s-3) var(--s-2);border-radius:var(--r-sm);border:1px solid var(--line);background:var(--bg-panel-2);color:var(--cream);font-size:var(--t-sm);font-weight:700;cursor:pointer;line-height:1.25;">'+pair[1]+'</button>');
+var b = el('<button type="button">'+pair[1]+'</button>');
 tipoBtns[k] = b;
 b.addEventListener("click", function(){ tipo = k; refreshTipo(); });
 tipoWrap.appendChild(b);
 });
 function refreshTipo(){
-Object.keys(tipoBtns).forEach(function(k){
-var on = (k === tipo);
-tipoBtns[k].style.background = on ? "var(--accent)" : "var(--bg-panel-2)";
-tipoBtns[k].style.color = on ? "var(--accent-ink)" : "var(--cream)";
-tipoBtns[k].style.borderColor = on ? "var(--accent)" : "var(--line)";
-});
+Object.keys(tipoBtns).forEach(function(k){ tipoBtns[k].classList.toggle("on", k === tipo); });
 }
 card.appendChild(tipoWrap);
 refreshTipo();
 
 // ── Piazzola: precompilata con quella dove sei se il giro e' in corso ──────
-card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("fr_piazzola_label")+'</label>'));
+card.appendChild(el('<div class="campo-eti">'+t("fr_piazzola_label")+'</div>'));
 var pzSel = el('<select class="input-field in-modulo corto"></select>');
 pzSel.appendChild(el('<option value="">'+t("fr_piazzola_none")+'</option>'));
 for(var pz=1; pz<=40; pz++){ pzSel.appendChild(el('<option value="'+pz+'">'+pz+'</option>')); }
@@ -20536,23 +20670,25 @@ if(state.roundActive && state.target){ pzSel.value = String(state.target); }
 card.appendChild(pzSel);
 
 // ── Descrizione ───────────────────────────────────────────────────────────
-card.appendChild(el('<label style="font-size:var(--t-sm);color:var(--muted);display:block;margin-bottom:var(--s-1);">'+t("fr_report_desc")+'</label>'));
+card.appendChild(el('<div class="campo-eti">'+t("fr_report_desc")+'</div>'));
 var descInp = el('<textarea class="input-field in-modulo" placeholder="'+escapeHtml(t("fr_report_desc_ph"))+'" rows="4"></textarea>');
 card.appendChild(descInp);
 
-var status = el('<div style="font-size:var(--t-sm);margin-bottom:var(--s-2);min-height:20px;text-align:center;"></div>');
+var status = el('<div class="fr-stato"></div>');
 card.appendChild(status);
 
 var backTo = state.frFrom || "menu";
 
-var sendBtn = el('<button class="btn btn-danger btn-block" style="margin-bottom:var(--s-2);">'+t("fr_report_send")+'</button>');
+/* Il tasto d'invio non e' rosso: inviare una segnalazione e' la cosa
+   GIUSTA da fare qui, non una distruzione da cui mettere in guardia. */
+var sendBtn = el('<button class="btn btn-primary btn-block stacco">'+t("fr_report_send")+'</button>');
 sendBtn.addEventListener("click", function(){
-status.style.color = "var(--danger)";
+status.className = "fr-stato";
 if(!frCod){ status.textContent = t("fr_report_field"); searchInp.focus(); return; }
 if(!descInp.value.trim()){ status.textContent = t("fr_report_desc"); descInp.focus(); return; }
 if(!db || !currentUser){ status.textContent = t("fr_report_error"); return; }
 sendBtn.disabled = true;
-status.style.color = "var(--muted)";
+status.className = "fr-stato quieto";
 status.textContent = t("fr_report_send") + "\u2026";
 try{
 db.collection("field_reports").add({
@@ -20593,7 +20729,7 @@ if(adminUid !== currentUser.uid){
 sendPushViaFirestore(currentUser.uid, t("notif_self_report_title"),
 t(adminUid ? "notif_self_report_body" : "notif_self_report_body_noadmin", { field: frLabel }));
 }
-status.style.color = adminUid ? "var(--accent-soft)" : "var(--gold)";
+status.className = "fr-stato " + (adminUid ? "bene" : "avviso");
 status.textContent = adminUid ? t("fr_sent_to",{name:frLabel}) : t("fr_no_admin_warn");
 
 // L'email non puo' partire da sola senza un server: si apre gia' pronta
@@ -20620,13 +20756,13 @@ render();
 }).catch(function(err){
 console.error("field report:", err);
 sendBtn.disabled = false;
-status.style.color = "var(--danger)";
+status.className = "fr-stato";
 status.textContent = t("fr_report_error");
 });
 }catch(e){
 console.error("field report:", e);
 sendBtn.disabled = false;
-status.style.color = "var(--danger)";
+status.className = "fr-stato";
 status.textContent = "Errore: " + (e && e.message ? e.message : e);
 }
 });
