@@ -2285,6 +2285,18 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
    Il `<label>` avvolge gia' casella e nome: basta dargli l'altezza. */
 .pf-fed-check{ display:flex; align-items:center; gap:var(--s-2); min-height:var(--hit); font-size:var(--t-sm); font-weight:600; cursor:pointer; }
 .pf-fed-check input{ width:17px; height:17px; accent-color:var(--accent-soft); outline:1.5px solid var(--checkbox-border); outline-offset:2px; border-radius:3px; }
+/* LA TENDINA CHE AGGIUNGE. Larga quanto la scheda perche' e' la domanda,
+   non un accessorio della riga sotto. */
+.fed-aggiungi{ width:100%; min-height:var(--hit); padding:var(--s-2) var(--s-3);
+  margin-bottom:var(--s-2); border:1px solid var(--line); border-radius:var(--r-md);
+  background:var(--bg-panel); color:var(--cream); font:inherit; font-size:var(--t-sm); cursor:pointer; }
+/* Bandiera, sigla, e la × in fondo. La × e' un tasto con un'area vera: era
+   gia' la lezione del tasto che toglie la compagnia. */
+.pf-fed-testa{ display:flex; align-items:center; gap:var(--s-2); min-height:var(--hit); font-size:var(--t-sm); }
+.pf-fed-testa b{ flex:1 1 auto; min-width:0; font-weight:700; }
+.pf-fed-togli{ flex:0 0 auto; width:var(--hit); height:var(--hit); display:flex;
+  align-items:center; justify-content:center; background:none; border:0;
+  color:var(--muted); font-size:var(--t-lg); line-height:1; cursor:pointer; }
 .pf-tessera{ margin-top:var(--s-2); display:none; }
 .pf-tessera.show{ display:block; }
 .pf-tessera label{ font-size:var(--t-sm); color:var(--muted); font-weight:700; margin-bottom:var(--s-1); display:block; text-transform:uppercase; letter-spacing:.05em; }
@@ -5496,6 +5508,7 @@ profile_club_hint: "Serve per vedere gli allenamenti riservati al tuo campo.",
 profile_club_none: "Nessuna compagnia",
 profile_club_search: "Cerca la tua compagnia…",
 profile_club_remove: "Togli la compagnia",
+profile_fed_add: "Aggiungi una federazione", profile_fed_remove: "Togli la federazione",
 fr_report_btn_short: "Segnala",
 fr_report_sub: "La segnalazione arriva alla compagnia che gestisce il campo, non a un servizio esterno.",
 fr_field_search: "Cerca il campo…",
@@ -6132,6 +6145,7 @@ profile_club_hint: "It is needed to see the trainings reserved for your field.",
 profile_club_none: "No club",
 profile_club_search: "Search for your club\u2026",
 profile_club_remove: "Remove club",
+profile_fed_add: "Add a federation", profile_fed_remove: "Remove federation",
 fr_report_btn_short: "Report",
 fr_report_sub: "The report goes to the club that manages the field, not to an outside service.",
 fr_field_search: "Search for the field\u2026",
@@ -6792,6 +6806,7 @@ profile_club_hint: "N\u00e9cessaire pour voir les entra\u00eenements r\u00e9serv
 profile_club_none: "Aucun club",
 profile_club_search: "Cherchez votre club\u2026",
 profile_club_remove: "Retirer le club",
+profile_fed_add: "Ajouter une f\u00e9d\u00e9ration", profile_fed_remove: "Retirer la f\u00e9d\u00e9ration",
 fr_report_btn_short: "Signaler",
 fr_report_sub: "Le signalement arrive au club qui g\u00e8re le terrain, pas \u00e0 un service ext\u00e9rieur.",
 fr_field_search: "Cherchez le terrain\u2026",
@@ -7452,6 +7467,7 @@ profile_club_hint: "Wird gebraucht, um die Trainings auf deinem Parcours zu sehe
 profile_club_none: "Kein Verein",
 profile_club_search: "Deinen Verein suchen\u2026",
 profile_club_remove: "Verein entfernen",
+profile_fed_add: "Verband hinzuf\u00fcgen", profile_fed_remove: "Verband entfernen",
 fr_report_btn_short: "Melden",
 fr_report_sub: "Die Meldung geht an den Verein, der den Parcours betreut, nicht an einen fremden Dienst.",
 fr_field_search: "Parcours suchen\u2026",
@@ -8112,6 +8128,7 @@ profile_club_hint: "Kendi alan\u0131na ayr\u0131lm\u0131\u015f antrenmanlar\u013
 profile_club_none: "Kul\u00fcp yok",
 profile_club_search: "Kul\u00fcb\u00fcn\u00fc ara\u2026",
 profile_club_remove: "Kul\u00fcb\u00fc kald\u0131r",
+profile_fed_add: "Federasyon ekle", profile_fed_remove: "Federasyonu kald\u0131r",
 fr_report_btn_short: "Bildir",
 fr_report_sub: "Bildirim, alan\u0131 y\u00f6neten kul\u00fcbe gider, d\u0131\u015far\u0131dan bir servise de\u011fil.",
 fr_field_search: "Alan\u0131 ara\u2026",
@@ -8785,6 +8802,7 @@ profile_club_hint: "\u041d\u0443\u0436\u0435\u043d, \u0447\u0442\u043e\u0431\u04
 profile_club_none: "\u0411\u0435\u0437 \u043a\u043b\u0443\u0431\u0430",
 profile_club_search: "\u041d\u0430\u0439\u0434\u0438\u0442\u0435 \u0441\u0432\u043e\u0439 \u043a\u043b\u0443\u0431\u2026",
 profile_club_remove: "\u0423\u0431\u0440\u0430\u0442\u044c \u043a\u043b\u0443\u0431",
+profile_fed_add: "\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0444\u0435\u0434\u0435\u0440\u0430\u0446\u0438\u044e", profile_fed_remove: "\u0423\u0431\u0440\u0430\u0442\u044c \u0444\u0435\u0434\u0435\u0440\u0430\u0446\u0438\u044e",
 fr_report_btn_short: "\u0421\u043e\u043e\u0431\u0449\u0438\u0442\u044c",
 fr_report_sub: "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435 \u043f\u043e\u043f\u0430\u0434\u0430\u0435\u0442 \u0432 \u043a\u043b\u0443\u0431, \u043a\u043e\u0442\u043e\u0440\u044b\u0439 \u043e\u0431\u0441\u043b\u0443\u0436\u0438\u0432\u0430\u0435\u0442 \u043f\u043e\u043b\u0435, \u0430 \u043d\u0435 \u0432\u043e \u0432\u043d\u0435\u0448\u043d\u044e\u044e \u0441\u043b\u0443\u0436\u0431\u0443.",
 fr_field_search: "\u041d\u0430\u0439\u0434\u0438\u0442\u0435 \u043f\u043e\u043b\u0435\u2026",
@@ -9458,6 +9476,7 @@ profile_club_hint: "Hace falta para ver los entrenamientos reservados a tu campo
 profile_club_none: "Sin club",
 profile_club_search: "Busca tu club\u2026",
 profile_club_remove: "Quitar el club",
+profile_fed_add: "A\u00f1adir una federaci\u00f3n", profile_fed_remove: "Quitar la federaci\u00f3n",
 fr_report_btn_short: "Avisar",
 fr_report_sub: "El aviso llega al club que gestiona el campo, no a un servicio externo.",
 fr_field_search: "Busca el campo\u2026",
@@ -10131,6 +10150,7 @@ profile_club_hint: "Beh\u00f6vs f\u00f6r att se tr\u00e4ningarna p\u00e5 din ban
 profile_club_none: "Ingen klubb",
 profile_club_search: "S\u00f6k din klubb\u2026",
 profile_club_remove: "Ta bort klubben",
+profile_fed_add: "L\u00e4gg till f\u00f6rbund", profile_fed_remove: "Ta bort f\u00f6rbundet",
 fr_report_btn_short: "Rapportera",
 fr_report_sub: "Rapporten g\u00e5r till klubben som sk\u00f6ter banan, inte till n\u00e5gon utomst\u00e5ende tj\u00e4nst.",
 fr_field_search: "S\u00f6k banan\u2026",
@@ -10804,6 +10824,7 @@ profile_club_hint: "Nodig om de trainingen op jouw veld te zien.",
 profile_club_none: "Geen vereniging",
 profile_club_search: "Zoek je vereniging\u2026",
 profile_club_remove: "Club verwijderen",
+profile_fed_add: "Federatie toevoegen", profile_fed_remove: "Federatie verwijderen",
 fr_report_btn_short: "Melden",
 fr_report_sub: "De melding gaat naar de vereniging die het veld beheert, niet naar een externe dienst.",
 fr_field_search: "Zoek het veld\u2026",
@@ -13823,6 +13844,153 @@ var PROFILE_FEDERATIONS = [
 {code:"spain", label:"RFETA"}, {code:"sweden", label:"SBF"}, {code:"nhb", label:"NHB"}
 ];
 var PROFILE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longbow", storico:"Storico" };
+
+/* ══ LE FEDERAZIONI: UNA TENDINA, NON UNA COLONNA ═════════════════════════
+   (26/08/2026, Alessandro: «mettiamo una tendina per le federazioni con una
+   bandiera di fianco che indichi la nazionalita' di ognuna».)
+
+   IL DIFETTO ERA IL RUMORE, NON IL CONTROLLO. Il profilo mostrava sedici
+   riquadri a chiunque: un italiano scorreva quindici federazioni che non lo
+   riguardano per trovare la sua. E le sigle da sole non dicono da dove
+   vengono — NFAS, EFAA, NHB, SBF sono quattro parole senza paese.
+
+   MA LA DOMANDA HA PIU' DI UNA RISPOSTA, e una tendina normale ne accetta
+   una sola. Chi e' FIARC **e** FITARCO ha due tessere diverse, e sostituire
+   le caselle con un `<select>` gliene toglierebbe una: sarebbe una funzione
+   che sparisce, non una schermata piu' corta. Quindi la tendina non SCEGLIE,
+   AGGIUNGE — e sotto restano solo le federazioni che hai davvero, ognuna
+   con la sua tessera e una × per toglierla.
+
+   LA BANDIERA NON E' UN TERZO ELENCO. `COUNTRY_FEDERATIONS` sa gia' in quale
+   paese sta ogni federazione e `COUNTRY_LIST` ha gia' le bandiere: qui non
+   si scrive niente a mano. *Un elenco copiato invecchia il giorno che entra
+   la federazione numero diciassette, e non lo dice a nessuno — e' esattamente
+   quello che il 16/08 aveva lasciato cinque paesi senza tessera.*
+   Se una federazione non avesse un paese, resta senza bandiera: meglio nuda
+   che sotto quella sbagliata.
+
+   I gruppi sono in ordine alfabetico **per nome del paese nella lingua di
+   chi guarda**, non per codice: in olandese «Duitsland» non sta dove sta
+   «Germania». */
+function paeseDiFederazione(code){
+for(var k in COUNTRY_FEDERATIONS){
+if(!Object.prototype.hasOwnProperty.call(COUNTRY_FEDERATIONS, k)) continue;
+var l = COUNTRY_FEDERATIONS[k];
+for(var i=0;i<l.length;i++){ if(l[i].code === code) return k; }
+}
+return null;
+}
+function paeseMeta(code){
+for(var i=0;i<COUNTRY_LIST.length;i++){
+if(COUNTRY_LIST[i].code === code) return { flag:COUNTRY_LIST[i].flag, nome:t(COUNTRY_LIST[i].key) };
+}
+return { flag:"", nome:"" };
+}
+function fedLabel(code){
+for(var i=0;i<PROFILE_FEDERATIONS.length;i++){ if(PROFILE_FEDERATIONS[i].code === code) return PROFILE_FEDERATIONS[i].label; }
+return code;
+}
+/* I paesi in ordine alfabetico, ognuno con le sue federazioni: e' l'ordine
+   della tendina E l'ordine delle righe scelte. Uno solo, perche' due ordini
+   diversi nella stessa schermata sono due schermate. */
+function federazioniPerPaese(){
+var per = {};
+PROFILE_FEDERATIONS.forEach(function(f){
+var p = paeseDiFederazione(f.code) || "";
+if(!per[p]) per[p] = [];
+per[p].push(f);
+});
+var lingua = state.lang || "it";
+return Object.keys(per).sort(function(a,b){
+return paeseMeta(a).nome.localeCompare(paeseMeta(b).nome, lingua);
+}).map(function(p){ return { paese:p, meta:paeseMeta(p), feds:per[p] }; });
+}
+
+/* Il blocco vero. `preselezione` e' l'elenco gia' salvato ([{code,tessera}]);
+   `avvisa` serve alla schermata di modifica per spegnere «salvato» appena si
+   tocca qualcosa. Torna un `<div>` che contiene, per ogni federazione scelta,
+   una riga con `data-fed` e il campo `data-tessera-fed`: **il contratto con
+   chi salva non cambia**, cambia solo come ci si arriva. */
+function bloccoFederazioni(preselezione, avvisa){
+var wrap = el('<div></div>');
+var scelte = {};
+(preselezione||[]).forEach(function(f){ if(f && f.code) scelte[f.code] = f.tessera || ""; });
+var sel = el('<select class="fed-aggiungi"></select>');
+var lista = el('<div></div>');
+wrap.appendChild(sel); wrap.appendChild(lista);
+
+/* Prima di ridisegnare si raccolgono le tessere gia' scritte: la riga viene
+   rifatta da zero a ogni aggiunta, e senza questo un numero appena battuto
+   sparirebbe scegliendo la seconda federazione. */
+function raccogli(){
+Array.prototype.forEach.call(lista.querySelectorAll("input[data-tessera-fed]"), function(inp){
+scelte[inp.getAttribute("data-tessera-fed")] = inp.value;
+});
+}
+
+function ridisegna(){
+var gruppi = federazioniPerPaese();
+
+sel.innerHTML = "";
+sel.appendChild(el('<option value="" disabled selected>'+escapeHtml(t("profile_fed_add"))+'</option>'));
+var rimaste = 0;
+gruppi.forEach(function(g){
+var liberi = g.feds.filter(function(f){ return !Object.prototype.hasOwnProperty.call(scelte, f.code); });
+if(!liberi.length) return;
+rimaste += liberi.length;
+var og = el('<optgroup label="'+escapeHtml((g.meta.flag ? g.meta.flag+"  " : "")+g.meta.nome)+'"></optgroup>');
+liberi.forEach(function(f){ og.appendChild(el('<option value="'+f.code+'">'+escapeHtml(f.label)+'</option>')); });
+sel.appendChild(og);
+});
+/* Quando non ne resta nessuna la tendina sparisce, invece di restare li'
+   aperta su un elenco vuoto. */
+sel.style.display = rimaste ? "" : "none";
+
+lista.innerHTML = "";
+gruppi.forEach(function(g){
+g.feds.forEach(function(f){
+if(!Object.prototype.hasOwnProperty.call(scelte, f.code)) return;
+var row = el('<div class="pf-fed-row" data-fed="'+f.code+'"></div>');
+var testa = el('<div class="pf-fed-testa"></div>');
+if(g.meta.flag) testa.appendChild(el('<span class="bar-flag">'+g.meta.flag+'</span>'));
+testa.appendChild(el('<b>'+escapeHtml(f.label)+'</b>'));
+var togli = el('<button type="button" class="pf-fed-togli" title="'+escapeHtml(t("profile_fed_remove"))+'" aria-label="'+escapeHtml(t("profile_fed_remove"))+'">\u00d7</button>');
+togli.addEventListener("click", function(){
+raccogli();
+delete scelte[f.code];
+ridisegna();
+if(avvisa) avvisa();
+});
+testa.appendChild(togli);
+row.appendChild(testa);
+row.appendChild(el('<div class="pf-tessera show"><label>'+escapeHtml(t("profile_tessera",{fed:f.label}))+'</label><input type="text" data-tessera-fed="'+f.code+'" value="'+escapeHtml(scelte[f.code]||"")+'"></div>'));
+lista.appendChild(row);
+});
+});
+}
+
+sel.addEventListener("change", function(){
+if(!sel.value) return;
+raccogli();
+scelte[sel.value] = scelte[sel.value] || "";
+ridisegna();
+if(avvisa) avvisa();
+});
+
+ridisegna();
+return wrap;
+}
+/* Quello che il salvataggio legge. Prima girava sulle caselle; adesso gira
+   sulle righe, che ci sono solo se sono state scelte. */
+function federazioniScelte(wrap){
+var out = [];
+Array.prototype.forEach.call(wrap.querySelectorAll(".pf-fed-row[data-fed]"), function(row){
+var code = row.getAttribute("data-fed");
+var inp = row.querySelector('input[data-tessera-fed="'+code+'"]');
+out.push({ code: code, tessera: inp ? inp.value.trim() : "" });
+});
+return out;
+}
 var ADMIN_CONTACT_EMAIL = "info@arctrail3d.com";
 var ADMIN_SITE = "arctrail3d.com";
 
@@ -13981,18 +14149,11 @@ rigaPw2.appendChild(campoPassword("pfPasswordConfirm", "new-password"));
 card.appendChild(rigaPw2);
 
 card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("profile_federazioni")+'</h2>'));
-var fedWrap = el('<div></div>');
-PROFILE_FEDERATIONS.forEach(function(f){
-var row = el('<div class="pf-fed-row"></div>');
-var check = el('<label class="pf-fed-check"><input type="checkbox" data-fed="'+f.code+'"><span>'+f.label+'</span></label>');
-row.appendChild(check);
-var tesseraBox = el('<div class="pf-tessera"><label>'+t("profile_tessera",{fed:f.label})+'</label><input type="text" data-tessera-fed="'+f.code+'"></div>');
-row.appendChild(tesseraBox);
-check.querySelector("input").addEventListener("change", function(e){
-tesseraBox.classList.toggle("show", e.target.checked);
-});
-fedWrap.appendChild(row);
-});
+/* LA FEDERAZIONE GIA' DETTA NON SI RICHIEDE. Chi arriva qui l'ha appena
+   scelta nella schermata di avvio: ripresentargli sedici caselle vuote e'
+   chiedergli due volte la stessa cosa. La sua riga e' gia' aperta, col campo
+   della tessera pronto, e la tendina serve a chi ne ha una seconda. */
+var fedWrap = bloccoFederazioni(state.federation ? [{code:state.federation, tessera:""}] : []);
 card.appendChild(fedWrap);
 
 card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("profile_arco")+'</h2>'));
@@ -14030,14 +14191,7 @@ var password = document.getElementById("pfPassword").value;
 var passwordConfirm = document.getElementById("pfPasswordConfirm").value;
 var privacy = document.getElementById("pfPrivacy").checked;
 var terms = document.getElementById("pfTerms").checked;
-var federazioni = [];
-Array.prototype.forEach.call(fedWrap.querySelectorAll('input[type=checkbox][data-fed]'), function(cb){
-if(cb.checked){
-var code = cb.getAttribute("data-fed");
-var tesseraInput = fedWrap.querySelector('input[data-tessera-fed="'+code+'"]');
-federazioni.push({ code: code, tessera: tesseraInput ? tesseraInput.value.trim() : "" });
-}
-});
+var federazioni = federazioniScelte(fedWrap);
 if(!nomeCognome || !username || !email || !arcoSel || !privacy || !terms || federazioni.length === 0){
 errorMsg.textContent = t("profile_error");
 return;
@@ -14180,22 +14334,7 @@ card.appendChild(el('<div class="cp-select-row"><label>'+t("profile_username")+'
 card.appendChild(el('<label class="checkbox-row sotto-campo"><input type="checkbox" id="peHideName"'+(profile.nomeNascosto?' checked':'')+'><span><b>'+t("profile_hide_name")+'</b><span class="nota">'+t("profile_hide_name_note")+'</span></span></label>'));
 
 card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("profile_federazioni")+'</h2>'));
-var fedWrap = el('<div></div>');
-var existingFedMap = {};
-(profile.federazioni||[]).forEach(function(f){ existingFedMap[f.code] = f.tessera || ""; });
-PROFILE_FEDERATIONS.forEach(function(f){
-var already = existingFedMap.hasOwnProperty(f.code);
-var row = el('<div class="pf-fed-row"></div>');
-var check = el('<label class="pf-fed-check"><input type="checkbox" data-fed="'+f.code+'"'+(already?' checked':'')+'><span>'+f.label+'</span></label>');
-row.appendChild(check);
-var tesseraBox = el('<div class="pf-tessera'+(already?' show':'')+'"><label>'+t("profile_tessera",{fed:f.label})+'</label><input type="text" data-tessera-fed="'+f.code+'" value="'+escapeHtml(already?existingFedMap[f.code]:"")+'"></div>');
-row.appendChild(tesseraBox);
-check.querySelector("input").addEventListener("change", function(e){
-tesseraBox.classList.toggle("show", e.target.checked);
-if(savedMsg) savedMsg.textContent = "";
-});
-fedWrap.appendChild(row);
-});
+var fedWrap = bloccoFederazioni(profile.federazioni||[], function(){ if(savedMsg) savedMsg.textContent = ""; });
 card.appendChild(fedWrap);
 
 // Compagnia di appartenenza: serve per filtrare gli allenamenti riservati
@@ -14462,14 +14601,7 @@ saveBtn.addEventListener("click", function(){
 var nomeCognome = document.getElementById("peNome").value.trim();
 var nomeNascosto = document.getElementById("peHideName").checked;
 var username = document.getElementById("peUsername").value.trim();
-var federazioni = [];
-Array.prototype.forEach.call(fedWrap.querySelectorAll('input[type=checkbox][data-fed]'), function(cb){
-if(cb.checked){
-var code = cb.getAttribute("data-fed");
-var tesseraInput = fedWrap.querySelector('input[data-tessera-fed="'+code+'"]');
-federazioni.push({ code: code, tessera: tesseraInput ? tesseraInput.value.trim() : "" });
-}
-});
+var federazioni = federazioniScelte(fedWrap);
 var bioVal = (function(){ var b = document.getElementById("peBio"); return b ? String(b.value||"").trim().slice(0,160) : (profile.bio||""); })();
 var mostraNum = (function(){ var b = document.getElementById("peNumeri"); return b ? !!b.checked : (profile.mostraNumeri === true); })();
 state.profile = {
@@ -19292,7 +19424,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-scatola";
+var BUILD_STAMP = "2026-08-26-tendina-fed";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19301,7 +19433,7 @@ var BUILD_STAMP = "2026-08-26-scatola";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-federazione";
+var BUILD_PARENT = "2026-08-26-scatola";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
