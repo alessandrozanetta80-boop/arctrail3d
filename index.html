@@ -394,8 +394,16 @@ body{margin:0}
 }
 .promessa .sotto{
   font-size:13px; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
-  color:rgba(245,242,237,.62); max-width:16ch; line-height:1.5;
+  /* CREMA SU CREMA. (26/08/2026, seconda volta in un giorno.) Il colore era
+     scritto per un fondo scuro, ma la sezione «Senza rete» ha il fondo
+     chiaro: sotto il grande ZERO c'era una riga che diceva DI COSA sono zero,
+     e non si vedeva. Restava un numero senza unita' di misura.
+     Il ripiego e' il colore del testo normale; sul fondo scuro lo riporta la
+     riga sotto. *Un colore fisso dentro un componente che vive su due fondi
+     e' sbagliato meta' delle volte, e nessuno sa quale meta'.* */
+  color:rgba(60,54,46,.72); max-width:16ch; line-height:1.5;
 }
+.scura .promessa .sotto,.pece .promessa .sotto{color:rgba(245,242,237,.62)}
 
 /* ── i numeri dell'andamento ───────────────────────────────── */
 .numeri{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:2px; margin-top:30px}
@@ -496,6 +504,23 @@ body{margin:0}
      scheda di tre righe erano quasi tutti margine. */
   .schede{gap:10px}
   .scheda{padding:12px 14px}
+  /* LE FOTO RESTANO. (26/08/2026 — le avevo tolte sul telefono, Alessandro:
+     «no, voglio le foto».) Erano il modo sbagliato di risolvere il problema
+     giusto: la pagina era lunga, e togliere le fotografie e' togliere il
+     mestiere — questa e' una vetrina di tiro nel bosco, non un foglio di
+     specifiche.
+     Diventano invece una BANDA: 150px invece di 200, larghe quanto la
+     colonna. Una fotografia larga e bassa si legge in un colpo e non spinge
+     il testo sotto l'orizzonte; una quadrata chiede uno schermo per se'.
+     Il ritaglio si sposta in alto, dove nelle quattro immagini c'e' il
+     soggetto: tagliando in altezza si perde il basso, non il centro. */
+  .duo-foto{min-height:150px}
+  .duo-foto img{object-position:50% 38%}
+  /* I tre numeri stanno su tre: sono cifre corte, e su due colonne il terzo
+     restava solo con un buco accanto. */
+  .numeri{grid-template-columns:repeat(3,1fr)}
+  .numero{padding:12px 10px}
+  .numero .v{font-size:28px}
   /* I tre numeri dell'andamento: quarantadue pixel di cifra sono giusti su un
      monitor, non su una colonna larga 360. */
   .numero{padding:14px 16px}
@@ -548,7 +573,7 @@ body{margin:0}
 <!-- Il timbro, come marketplace.html: `data-build` dice quale versione e'
      questa, `data-parent` da quale e' nata. La prima anteprima non ne aveva
      nessuno — quindi il genitore e' dichiarato per nome, non inventato. -->
-<body data-build="2026-08-26-vetrina-telefono" data-parent="2026-08-26-vetrina-senza-russia">
+<body data-build="2026-08-26-vetrina-banda" data-parent="2026-08-26-vetrina-telefono">
 <div class="vetrina">
 
 <!-- ══════════ TESTATA ══════════ -->
