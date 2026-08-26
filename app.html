@@ -3255,6 +3255,10 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
 .chat-scrivi .btn{ flex:0 0 auto; }
 .nota.blocco{ display:block; margin-bottom:var(--s-1); }
 .nota.stacco{ margin-bottom:var(--s-2); }
+/* Una nota centrata. Era `style="text-align:center"` scritto in linea, e
+   ha fatto salire il conto del guardiano di uno: il tetto non si alza per
+   far passare un file, si accorcia il file. */
+.nota.nota-centro{ text-align:center; }
 .nota.stacco-3{ margin-bottom:var(--s-3); }
 .nota.dopo{ margin-top:var(--s-1); }
 .card-hint{ font-size:var(--t-sm); color:var(--muted); line-height:1.5; margin-bottom:var(--s-3); }
@@ -5242,6 +5246,10 @@ loadOpenTrainings();
 startNotificationsListener();
 refreshPushToken();
 startDirectChatsListener();
+// I giri tirati su un altro dispositivo scendono qui. Sta insieme agli altri
+// ascoltatori perche' e' la stessa domanda: cosa e' successo mentre non
+// guardavo?
+riallineaStorico();
 // Admin app: assegna automaticamente 01VERB se non ancora assegnato
 if(currentUser && currentUser.email === ADMIN_EMAIL && db){
 // L'app dell'admin lascia scritto il proprio uid: serve a chi si registra per
@@ -12482,12 +12490,15 @@ if(!ref){ if(cb) cb(null, 0); return; }
 var hist = loadHistory();
 if(!hist.length){ if(cb) cb(null, 0); return; }
 ref.get().then(function(snap){
-var have = {}, gone = {};
+var have = {}, gone = {}, giaSepolti = {};
 snap.forEach(function(d){
 have[d.id] = true;
 var dd = d.data();
-if(dd && dd.deleted === true) gone[d.id] = true;
+if(dd && dd.deleted === true){ gone[d.id] = true; giaSepolti[d.id] = true; }
 });
+/* `giaSepolti` e' l'elenco di quello che il CLOUD sa gia' cancellato, tenuto
+   da parte prima che le due liste si mescolino. Serve alla riga delle lapidi
+   qui sotto, e senza di lui quell'informazione va persa nel merge. */
 // lapidi note a questo dispositivo + lapidi trovate sul cloud
 var del = loadDeletedRounds();
 var k;
@@ -12502,9 +12513,22 @@ if(!h || !h.date) return false;
 var id = roundDocId(h.date);
 return !have[id] && !gone[id];
 });
-// lapidi locali non ancora arrivate sul cloud (cancellazioni fatte offline)
+/* ══ UNA CANCELLAZIONE FATTA SENZA RETE NON ARRIVAVA MAI ══════════════════
+   (26/08/2026, trovato da `banco-storico-due-schermi.js`.)
+
+   Qui c'era `if(!have[k])`: la lapide saliva solo per i giri che sul cloud
+   NON C'ERANO. Ma il caso vero e' l'opposto — si cancella un giro che sul
+   cloud c'e' gia', ed e' proprio quello che ha bisogno di essere seppellito.
+   Con la rete la lapide parte subito da `markRoundsDeleted`, quindi il buco
+   si vedeva solo cancellando **senza rete**: il giro spariva dal telefono,
+   restava vivo sul cloud, e all'apertura successiva del computer tornava su
+   tutti e due i dispositivi. Da fuori sembrava che l'app rifiutasse di
+   cancellare.
+
+   La domanda giusta non e' «il cloud ce l'ha?», e' **«il cloud sa che e'
+   stato cancellato?»** */
 var tomb = [];
-for(k in del){ if(!have[k]) tomb.push(k); }
+for(k in del){ if(!giaSepolti[k]) tomb.push(k); }
 if(!todo.length && !tomb.length){ if(cb) cb(null, 0); return; }
 var batch = db.batch();
 todo.slice(0, 400).forEach(function(h){
@@ -12525,6 +12549,40 @@ return batch.commit().then(function(){ if(cb) cb(null, todo.length); });
 }).catch(function(err){
 cloudSyncState.lastError = describeFirebaseError(err);
 if(cb) cb(err, 0);
+});
+}
+
+/* ══ LO STORICO SI RIALLINEA DA SOLO, UNA VOLTA PER APERTURA ═══════════════
+   (26/08/2026, segnalato da Alessandro: «ho punteggi decisamente diversi su
+   smartphone e su desktop».)
+
+   Lo storico vive in `localStorage`, che e' del singolo browser. I giri
+   salgono da soli sul cloud appena finiti; **non scendevano mai da soli.**
+   Il travaso all'ingiu' esisteva — `restoreHistoryFromCloud` — ma dietro un
+   tasto, dentro la scheda «Copia di sicurezza» del diario: chiedeva
+   all'arciere di ricordarsi di premerlo su ogni dispositivo, cioe' di sapere
+   che il problema c'era.
+
+   Risultato: ogni dispositivo conosceva solo i giri tirati SU DI LUI, e
+   media, record e traguardi erano calcolati su meta' dei dati.
+
+   `giaRiallineato` vive **fuori da `state`** apposta: non deve finire in
+   `localStorage`, o si riaprirebbe l'app domani con la sincronizzazione
+   gia' «fatta». Azzerandosi a ogni ricarico, la frequenza e' quella giusta
+   — una volta per apertura, non una per `render()`. */
+var giaRiallineato = false;
+function riallineaStorico(){
+if(giaRiallineato) return;
+if(DEV_MODE || !db || !currentUser) return;
+giaRiallineato = true;
+/* Prima si SCENDE: e' quello che mancava. Poi si sale, ed e' solo la rete
+   per i giri che una volta non erano riusciti a partire. */
+restoreHistoryFromCloud(function(err, n){
+// Si ridisegna solo se e' arrivato qualcosa: i numeri a schermo sono stati
+// calcolati sui dati di prima, e adesso sono sbagliati. A vuoto, invece, un
+// render() in apertura fa solo sfarfallare la Home.
+if(!err && n > 0) render();
+pushLocalHistoryToCloud(function(){});
 });
 }
 
@@ -13793,7 +13851,7 @@ wrap.appendChild(c3);
 var sceltaCompleta = !!(setupCountry && state.federation &&
   (COUNTRY_FEDERATIONS[setupCountry] || []).some(function(f){ return f.code === state.federation; }));
 if(setupCountry && !sceltaCompleta){
-wrap.appendChild(el('<div class="nota stacco" style="text-align:center;">'+escapeHtml(t("setup_pick_fed"))+'</div>'));
+wrap.appendChild(el('<div class="nota stacco nota-centro">'+escapeHtml(t("setup_pick_fed"))+'</div>'));
 }
 if(sceltaCompleta){
 var ok = el('<button class="btn btn-primary btn-block" style="padding:var(--s-4);font-size:var(--t-lg);">'+t("setup_done_btn")+'</button>');
@@ -13842,7 +13900,7 @@ uk: [ {code:"archerygb", label:"Archery GB", url:"https://www.archerygb.org"}, {
 tr: [ {code:"turkey", label:"TOF", url:"https://www.turkarchery.org"} ],
 ru: [ {code:"russia", label:"\u0420\u0424\u0421\u041b", url:"https://archery-3d.ru"} ],
 es: [ {code:"spain", label:"RFETA", url:"https://www.rfeta.es"} ],
-nl: [ {code:"nhb", label:"NHB", url:"https://www.handboogsport.nl"} ],
+nl: [ {code:"nhb", label:"KHSN", url:"https://www.handboogsport.nl"} ],
 se: [ {code:"sweden", label:"SBF", url:"https://www.bagskytte.se"}, {code:"sff", label:"SFF"} ]
 };
 // ---------- COMPAGNIE: dati ----------
@@ -14071,7 +14129,7 @@ var PROFILE_FEDERATIONS = [
 {code:"oebsv", label:"\u00d6BSV"}, {code:"dfbv", label:"DFBV"},
 {code:"archerygb", label:"Archery GB"}, {code:"nfas", label:"NFAS"}, {code:"efaa", label:"EFAA"},
 {code:"turkey", label:"TOF"}, {code:"russia", label:"\u0420\u0424\u0421\u041b"},
-{code:"spain", label:"RFETA"}, {code:"sweden", label:"SBF"}, {code:"nhb", label:"NHB"},
+{code:"spain", label:"RFETA"}, {code:"sweden", label:"SBF"}, {code:"nhb", label:"KHSN"},
 {code:"sff", label:"SFF"}, {code:"dsb", label:"DSB"},
 {code:"fidasc", label:"FIDASC"}
 ];
@@ -19671,7 +19729,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-nazione";
+var BUILD_STAMP = "2026-08-26-storico-lapide";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19680,7 +19738,7 @@ var BUILD_STAMP = "2026-08-26-nazione";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-circuiti-e-hunting";
+var BUILD_PARENT = "2026-08-26-nazione";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
