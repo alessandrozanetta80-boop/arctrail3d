@@ -269,8 +269,15 @@ body{margin:0}
    guida che sta sopra: e' una precisazione, non una seconda promessa. */
 .nota-stato{font-size:15px;opacity:.78;margin-top:-8px}
 /* Le tre colonne della visione stanno su tre, non su cinque: sono tre tempi,
-   e cinque colonne li farebbero leggere come altrettante funzioni. */
-@media(min-width:760px){.casa-tre{grid-template-columns:repeat(3,1fr)}}
+   e cinque colonne li farebbero leggere come altrettante funzioni.
+   ── E PER ANNI NON SONO STATE TRE. (26/08/2026.) La riga qui sotto c'era
+   gia', ma `.pilastri` era `display:block`: `grid-template-columns` su un
+   blocco non fa niente, in silenzio. Le tre colonne erano tre righe alte
+   ottocento pixel, e la sezione non ci stava in una finestra.
+   *Una proprieta' di griglia scritta su un elemento che griglia non e' non
+   da' errore: obbedisce a nessuno.* */
+@media(min-width:760px){.casa-tre{display:grid; grid-template-columns:repeat(3,1fr); gap:0 32px}
+  .casa-tre .pilastro{grid-template-columns:minmax(0,1fr); gap:8px; align-content:start}}
 .eroe-foto{position:relative; overflow:hidden; min-height:360px}
 .eroe-foto img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:52% 20%}
 .eroe-foto::after{ /* la foto si fonde nel pannello, non ci sbatte contro */
@@ -288,7 +295,16 @@ body{margin:0}
 .fascia .s{font-size:13px; color:rgba(245,242,237,.6); margin-top:3px}
 
 /* ── il picchetto: la firma della pagina ───────────────────── */
-.piazzola{position:relative; padding:clamp(64px,8vw,116px) 0}
+/* LA TESTATA STA SOPRA, E L'ANCORA NON LO SAPEVA. (26/08/2026.) Premendo una
+   voce del menu si saltava alla cima della sezione — che finiva **dietro** i
+   67px di testata fissa. Il numero della piazzola e la sua etichetta erano
+   coperti, e la sezione sembrava cominciare a meta'. `scroll-margin-top` e'
+   la riga che dice al salto di fermarsi piu' su.
+   E il respiro scende da 116 a 88 sul grande: due sezioni su undici non
+   entravano in una finestra da 830px, e centoventi pixel di aria in meno si
+   sentono meno di una riga tagliata. */
+.piazzola{position:relative; padding:clamp(56px,6vw,88px) 0; scroll-margin-top:84px}
+.eroe,.fascia,.finale{scroll-margin-top:84px}
 .piazzola .wrap{position:relative}
 .picchetto{
   display:flex; align-items:baseline; gap:14px; margin-bottom:26px;
@@ -319,16 +335,23 @@ body{margin:0}
 .pece .guida{color:rgba(245,242,237,.78)}
 
 /* ── i cinque pilastri ─────────────────────────────────────── */
-.pilastri{margin-top:44px; border-top:1px solid var(--scisto)}
+.pilastri{margin-top:32px; border-top:1px solid var(--scisto)}
 .pilastro{
   display:grid; grid-template-columns:minmax(0,14rem) minmax(0,1fr);
   gap:0 32px; align-items:start;
-  padding:26px 0; border-bottom:1px solid var(--scisto);
+  padding:20px 0; border-bottom:1px solid var(--scisto);
   transition:background .2s ease;
 }
 .pilastro:hover{background:var(--osso-2)}
 .pilastro h3{margin:0}
 .pilastro p{margin:0; color:#5A5249; font-size:16px; padding-top:3px}
+/* SUL FONDO SCURO QUEL GRIGIO SPARIVA. (26/08/2026, visto da Alessandro.)
+   `#5A5249` su `#4A5D4E` fa 1,1:1 — sotto la soglia di qualunque cosa: il
+   testo c'era, si vedeva l'ingombro, e non si leggeva. Il titolo era chiaro
+   perche' `.scura h3` era gia' coperto; il paragrafo no, e nessuno l'aveva
+   guardato perche' `controlla-contrasto.js` guarda l'app, non la vetrina. */
+.scura .pilastro p,.pece .pilastro p{color:rgba(245,242,237,.74)}
+.scura .pilastro:hover,.pece .pilastro:hover{background:rgba(255,255,255,.05)}
 
 /* ── blocchi con foto ──────────────────────────────────────── */
 .duo{display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px,4.5vw,64px); align-items:center}
@@ -447,6 +470,37 @@ body{margin:0}
   .duo.inverso .duo-foto{order:0}
   .pilastro{grid-template-columns:1fr; gap:8px}
 }
+
+/* ══ IL FIATO DELLE SEZIONI SUL TELEFONO ═══════════════════════════════════
+   (26/08/2026, Alessandro: «ce n'e' qualcuna un po' lunga».) Misurato su
+   360x780, che e' lo schermo piu' stretto fra quelli veri: **nove sezioni su
+   undici superavano una schermata**, e la pagina intera ne contava 11,4.
+
+   Il conto diceva dove stava il grasso, e non era il testo:
+     · 112px di padding su OGNI sezione (56 sopra + 56 sotto);
+     · 280px di foto nelle quattro sezioni che ce l'hanno;
+     · 126px per ognuna delle cinque voci di «Cosa fa», su un elemento che
+       sul piccolo diventa due righe.
+
+   Si toglie da li' e non dalle parole. *Su un telefono si scorre, e va bene:
+   il difetto non e' che la pagina sia lunga, e' che ogni singola sezione
+   chieda piu' di uno schermo per essere letta. Una sezione che non ci sta
+   non si legge come una cosa sola.* */
+@media (max-width:760px){
+  .piazzola{padding:40px 0}
+  .duo-foto{min-height:200px}
+  .pilastro{padding:14px 0; gap:4px}
+  .pilastri{margin-top:24px}
+  /* Le schede degli esempi: tre riquadri con l'aria di un tabellone. Sul
+     piccolo l'aria di dentro conta quanto quella di fuori — 143px per una
+     scheda di tre righe erano quasi tutti margine. */
+  .schede{gap:10px}
+  .scheda{padding:12px 14px}
+  /* I tre numeri dell'andamento: quarantadue pixel di cifra sono giusti su un
+     monitor, non su una colonna larga 360. */
+  .numero{padding:14px 16px}
+  .numero .v{font-size:34px}
+}
 @media (max-width:600px){
   /* La testata non ci sta in 390px. Cade «Accedi»: e' la porta di servizio,
      e la porta principale — «Apri l'app» — resta, piu' stretta. */
@@ -494,7 +548,7 @@ body{margin:0}
 <!-- Il timbro, come marketplace.html: `data-build` dice quale versione e'
      questa, `data-parent` da quale e' nata. La prima anteprima non ne aveva
      nessuno — quindi il genitore e' dichiarato per nome, non inventato. -->
-<body data-build="2026-08-26-vetrina-senza-russia" data-parent="2026-08-26-vetrina-khsn">
+<body data-build="2026-08-26-vetrina-telefono" data-parent="2026-08-26-vetrina-senza-russia">
 <div class="vetrina">
 
 <!-- ══════════ TESTATA ══════════ -->
