@@ -4219,6 +4219,13 @@ text-transform:uppercase; color:var(--text-3); }
   color:var(--success); }
 .attr-numeri.poco{ color:var(--text-3); font-weight:400; }
 .attr-azioni{ display:flex; flex-wrap:wrap; gap:var(--s-2); margin-top:var(--s-3); }
+/* IL TASTO CHE CANCELLA SI VEDE CHE CANCELLA. (26/08/2026.) Non e' rosso
+   pieno: e' un fantasma come i suoi vicini, con l'inchiostro del pericolo.
+   Un rettangolo rosso in mezzo a tre grigi tira l'occhio piu' di «Rimetti in
+   uso», che e' la cosa che di solito si vuole; il colore qui deve dire cosa
+   fa, non chiamare. E sta in fondo alla riga, ultimo. */
+.attr-azioni .attr-butta{ color:var(--danger-role);
+border-color:color-mix(in srgb, var(--danger-role) 40%, var(--line)); margin-left:auto; }
 .attr-lbl{ display:block; font-size:var(--t-sm); color:var(--muted);
   margin:var(--s-3) 0 var(--s-1); }
 .attr-archi{ flex-wrap:wrap; margin-bottom:var(--s-1); }
@@ -5694,6 +5701,7 @@ attr_archivia: "Archivia",
 attr_riprendi: "Rimetti in uso",
 attr_archiviati: "Archiviati",
 attr_archiviati_hint: "Non compaiono nella scelta, ma restano scritti nei giri già tirati.",
+attr_confirm_delete: "Cancellare «{nome}» per sempre? I giri già tirati con questo assetto non cambiano.",
 attr_media_con: "Media {media} a piazzola, su {n} giri",
 attr_pochi_giri: "{n} giro/i: la media compare dopo {min}.",
 attr_assetto: "Assetto",
@@ -6353,6 +6361,7 @@ attr_archivia: "Archive",
 attr_riprendi: "Put back in use",
 attr_archiviati: "Archived",
 attr_archiviati_hint: "They no longer appear in the picker, but stay named in past rounds.",
+attr_confirm_delete: "Delete “{nome}” for good? Rounds already shot with it do not change.",
 attr_media_con: "{media} per target on average, over {n} rounds",
 attr_pochi_giri: "{n} round(s): the average shows after {min}.",
 attr_assetto: "Setup",
@@ -7011,6 +7020,7 @@ attr_archivia: "Archiver",
 attr_riprendi: "Remettre en service",
 attr_archiviati: "Archivées",
 attr_archiviati_hint: "Elles ne sont plus proposées, mais restent nommées dans les parcours passés.",
+attr_confirm_delete: "Supprimer « {nome} » définitivement ? Les parcours déjà tirés ne changent pas.",
 attr_media_con: "Moyenne {media} par cible, sur {n} parcours",
 attr_pochi_giri: "{n} parcours : la moyenne apparaît après {min}.",
 attr_assetto: "Configuration",
@@ -7669,6 +7679,7 @@ attr_archivia: "Archivieren",
 attr_riprendi: "Wieder verwenden",
 attr_archiviati: "Archiviert",
 attr_archiviati_hint: "Sie erscheinen nicht mehr zur Auswahl, bleiben aber in alten Runden benannt.",
+attr_confirm_delete: "„{nome}“ endgültig löschen? Bereits geschossene Runden ändern sich nicht.",
 attr_media_con: "Schnitt {media} pro Ziel, über {n} Runden",
 attr_pochi_giri: "{n} Runde(n): der Schnitt erscheint ab {min}.",
 attr_assetto: "Setup",
@@ -8346,6 +8357,7 @@ attr_archivia: "Arşivle",
 attr_riprendi: "Yeniden kullan",
 attr_archiviati: "Arşivlenmiş",
 attr_archiviati_hint: "Seçimde çıkmaz, ama eski turlarda adı kalır.",
+attr_confirm_delete: "“{nome}” kalıcı olarak silinsin mi? Atılmış turlar değişmez.",
 attr_media_con: "Hedef başına {media} ortalama, {n} turda",
 attr_pochi_giri: "{n} tur: ortalama {min} turdan sonra görünür.",
 attr_assetto: "Set",
@@ -9017,6 +9029,7 @@ attr_archivia: "В архив",
 attr_riprendi: "Вернуть в работу",
 attr_archiviati: "Архив",
 attr_archiviati_hint: "В выборе не появляются, но остаются в прошлых раундах.",
+attr_confirm_delete: "Удалить «{nome}» навсегда? Уже отстрелянные круги не изменятся.",
 attr_media_con: "В среднем {media} на мишень, за {n} раундов",
 attr_pochi_giri: "{n} раунд(ов): среднее появится после {min}.",
 attr_assetto: "Комплект",
@@ -9688,6 +9701,7 @@ attr_archivia: "Archivar",
 attr_riprendi: "Volver a usar",
 attr_archiviati: "Archivadas",
 attr_archiviati_hint: "Ya no aparecen al elegir, pero siguen nombradas en las rondas pasadas.",
+attr_confirm_delete: "¿Eliminar «{nome}» para siempre? Las rondas ya tiradas no cambian.",
 attr_media_con: "Media {media} por diana, en {n} rondas",
 attr_pochi_giri: "{n} ronda(s): la media aparece a partir de {min}.",
 attr_assetto: "Configuración",
@@ -10359,6 +10373,7 @@ attr_archivia: "Arkivera",
 attr_riprendi: "Använd igen",
 attr_archiviati: "Arkiverade",
 attr_archiviati_hint: "De visas inte i valet, men står kvar i tidigare rundor.",
+attr_confirm_delete: "Ta bort ”{nome}” för alltid? Redan skjutna rundor ändras inte.",
 attr_media_con: "Snitt {media} per mål, över {n} rundor",
 attr_pochi_giri: "{n} runda/rundor: snittet visas efter {min}.",
 attr_assetto: "Uppställning",
@@ -11030,6 +11045,7 @@ attr_archivia: "Archiveren",
 attr_riprendi: "Weer gebruiken",
 attr_archiviati: "Gearchiveerd",
 attr_archiviati_hint: "Ze verschijnen niet meer bij de keuze, maar blijven benoemd in oude rondes.",
+attr_confirm_delete: "“{nome}” definitief verwijderen? Al geschoten rondes veranderen niet.",
 attr_media_con: "Gemiddeld {media} per doel, over {n} rondes",
 attr_pochi_giri: "{n} ronde(s): het gemiddelde verschijnt vanaf {min}.",
 attr_assetto: "Opstelling",
@@ -12798,7 +12814,17 @@ var lastMoved  = false;
 // chat diverse sono la stessa schermata per il browser, ma non per chi legge.
 // Se nasce un'altra schermata "di dettaglio", il suo identificativo va qui.
 function scrollKey(){
-var extra = state.dmUid || state.compagniaAttiva || "";
+/* `compagniaAttiva` NON STA PIU' QUI. (26/08/2026, Alessandro: «quando
+   clicco sulla scheda di una compagnia la pagina riparte dall'alto, e poi
+   devo scendere di nuovo per ritrovarla».)
+   La scheda della compagnia non e' un'altra schermata: si apre DENTRO
+   l'elenco, sotto la riga che si e' toccata. Ma stando qui cambiava la
+   chiave, e una chiave nuova non ha nessuno scorrimento da ricordare:
+   l'elenco tornava in cima. Poi `compVaiGiu` faceva scorrere fin giu' alla
+   scheda — cioe' rimediava con un'animazione a un salto che non doveva
+   esserci, e alla chiusura non rimediava niente.
+   `dmUid` invece resta: due chat sono davvero due schermate diverse. */
+var extra = state.dmUid || "";
 return String(state.screen)+"|"+String(state.tab)+"|"+String(authState)+"|"+String(extra);
 }
 
@@ -16048,30 +16074,20 @@ strati.appendChild(vic);
    «inizia un giro, poi la tabella questo mese, gli allenamenti aperti; niente
    di piu', il resto va nelle sezioni apposite».)
 
-   IL PROFILO RESTA, e lo ha chiesto Alessandro. Non e' una scorciatoia come
-   le altre: e' il posto da cui si passa per il diario, l'attrezzatura e lo
-   spazio compagnia — cioe' tre stanze che dalla barra non hanno piu' una
-   porta. */
-/* IL PROFILO NON E' PIU' UN TASTO FANTASMA IN FONDO. (21/08/2026, chiesto da
-   Alessandro: «deve essere molto piu' visibile, icona piu' grossa e la
-   scritta sotto, una roba bella e impattante».)
-   Era la cosa meno visibile della schermata — grigio su grigio, in coda —
-   per una porta che ne apre tre: il diario, l'attrezzatura e lo spazio
-   compagnia. Adesso e' una fascia sua: il segno grande, il nome sotto, e chi
-   ha un nome utente se lo legge scritto. */
-var sc = el('<div class="strato profilo-porta"></div>');
-var bProf = el('<button class="profilo-tessera"></button>');
-/* NIENTE SAGOMA QUI. (25/08/2026, Alessandro: «togliere icona profilo da
-   home».) In cima alla stessa schermata c'e' gia' la lettera dentro il
-   cerchio, che dice «questo sei tu» meglio di qualunque sagoma. Ripetere il
-   segno due volte nella stessa pagina non aggiunge niente: fa solo sembrare
-   che siano due porte diverse. */
-bProf.appendChild(el('<span class="profilo-nome">'+escapeHtml(t("menu_profile"))+'</span>'));
-var uProf = (state.profile && (state.profile.username || state.profile.nomeCognome)) || "";
-if(uProf) bProf.appendChild(el('<span class="profilo-chi">'+escapeHtml(uProf)+'</span>'));
-bProf.addEventListener("click", function(){ state.tab = "profilo"; save(); render(); });
-sc.appendChild(bProf);
-strati.appendChild(sc);
+   E DAL 26/08 IL PROFILO NON E' PIU' LA QUARTA. (Alessandro: «togliamo il
+   tasto del profilo nella home page, quello che avevamo detto ieri che
+   lasciavamo; adesso lo togliamo perche' intanto la' sopra funziona bene».)
+
+   *La ragione per cui era rimasto e' scaduta, e vale la pena scriverlo
+   invece di cancellare e basta:* stava qui perche' era l'unica porta verso
+   diario, attrezzatura e spazio compagnia, che dalla barra non si
+   raggiungevano piu'. Il 25/08 la pastiglia con l'iniziale e' diventata fissa
+   in cima a OGNI schermata, e quella porta si e' aperta da un'altra parte.
+   Due porte per la stessa stanza, a mezzo schermo di distanza, non sono una
+   comodita': sono una domanda su quale delle due sia quella giusta.
+
+   Se la pastiglia in alto tornasse a comparire solo a volte, questo blocco
+   va rimesso: era il suo ripiego. */
 wrap.appendChild(strati);
 
 return wrap;
@@ -19066,7 +19082,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-vetrina";
+var BUILD_STAMP = "2026-08-26-tre";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19075,7 +19091,7 @@ var BUILD_STAMP = "2026-08-26-vetrina";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-indietro";
+var BUILD_PARENT = "2026-08-26-vetrina";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -19159,7 +19175,22 @@ contactCard.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.6;">
 var mailBtn = el('<button class="btn btn-block btn-segnala" style="margin-top:var(--s-2);">'+t("welcome_note_report")+'</button>');
 mailBtn.addEventListener("click", function(){ openAdminChat(); });
 contactCard.appendChild(mailBtn);
-contactCard.appendChild(el('<a class="btn btn-ghost btn-block btn-sm" href="/presentazione.html" target="_blank" rel="noopener" style="margin-top:var(--s-2);text-align:center;text-decoration:none;">'+t("legal_about")+'</a>'));
+/* «COS'E' ARCTRAIL 3D» APRE LA VETRINA, NON LA VECCHIA PRESENTAZIONE.
+   (26/08/2026, Alessandro, quarta volta: «il tasto della vetrina non
+   funziona ancora».)
+   E QUESTA VOLTA IL MOTIVO ERA UN ALTRO: il tasto sistemato stamattina sta
+   nella porta d'ingresso, che si vede SOLO da sconnessi. Chi e' dentro —
+   cioe' Alessandro, sempre — non aveva NESSUN tasto verso la vetrina, da
+   nessuna parte. Il tasto funzionava; era irraggiungibile.
+   Questa riga esisteva gia' e portava a `presentazione.html`, la pagina di
+   testo che raccontava l'app prima che esistesse la vetrina. Ora che la
+   vetrina E' quella pagina, fatta meglio e in nove lingue, tenerle tutte e
+   due vorrebbe dire due risposte diverse alla stessa domanda.
+   `?da=app` perche' la vetrina non rispedisca indietro chi ci viene apposta;
+   niente `target="_blank"`: dentro l'app installata una scheda nuova e' un
+   browser che si apre sopra, e «Apri l'app» in cima alla vetrina e' la
+   strada del ritorno. */
+contactCard.appendChild(el('<a class="btn btn-ghost btn-block btn-sm" href="index.html?da=app'+(state.lang ? "&amp;lang="+encodeURIComponent(state.lang) : "")+'" style="margin-top:var(--s-2);text-align:center;text-decoration:none;">'+t("legal_about")+'</a>'));
 var legalRow2 = el('<div style="display:flex;gap:var(--s-2);margin-top:var(--s-2);"></div>');
 legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/privacy.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_privacy")+'</a>'));
 legalRow2.appendChild(el('<a class="btn btn-ghost btn-sm" href="/termini.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_terms")+'</a>'));
@@ -19396,6 +19427,25 @@ else { delete x.archiviatoIl; }
 salvaAttrezzi(l); render();
 });
 azioni.appendChild(arc);
+/* SI CANCELLA SOLO DA ARCHIVIATO, E NON E' UN GIRO IN PIU' PER NIENTE.
+   (26/08/2026, Alessandro: «dare la possibilita' di cancellare completamente
+   l'attrezzatura che uno ha messo, se non vuole tenersela li'».)
+   Il tasto sta accanto a «Rimetti in uso» e non fra i vivi, per la regola
+   gia' scritta il 25/08: *un comando distruttivo accanto a quello che si
+   preme sempre si tocca per sbaglio.* Archiviare e' reversibile, cancellare
+   no — e chi ha archiviato ha gia' detto una volta «questo non lo uso piu'».
+   I GIRI GIA' TIRATI NON SI TOCCANO. Il nome dell'assetto e' scritto dentro
+   ognuno di loro: quello resta, e resta giusto. Sparisce la scheda, non la
+   storia. */
+if(a.archiviato){
+var del = el('<button class="btn btn-ghost btn-sm attr-butta">'+t("ot_delete_btn")+'</button>');
+del.addEventListener("click", function(){
+if(!confirm(t("attr_confirm_delete", { nome: a.nome || "" }))) return;
+salvaAttrezzi(caricaAttrezzi().filter(function(x){ return x.id !== a.id; }));
+render();
+});
+azioni.appendChild(del);
+}
 card.appendChild(azioni);
 return card;
 }
