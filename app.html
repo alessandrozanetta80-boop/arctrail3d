@@ -2481,6 +2481,22 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   border-radius:var(--r-md); border:2px solid var(--setup-line-strong);
   background:var(--setup-card); color:var(--setup-ink); font-family:inherit;
   font-weight:600; }
+/* I RIQUADRI DELLA FEDERAZIONE, SOLO ALLA PRIMA VOLTA. (26/08/2026.)
+   Erano quattro colori esadecimali scritti dentro l'attributo `style`, cioe'
+   fuori dai temi e fuori dal guardiano. Adesso prendono gli stessi token
+   della schermata che li ospita: se il verde cambia, cambiano con lui. */
+.vetrina .fed-scelta{ width:100%; min-height:56px; display:flex;
+  align-items:center; gap:var(--s-2); padding:var(--s-3) var(--s-4);
+  margin-bottom:var(--s-2); border-radius:var(--r-md); cursor:pointer;
+  text-align:left; font-family:inherit; font-size:var(--t-lg); font-weight:700;
+  background:var(--setup-card); border:2px solid var(--setup-line-strong);
+  color:var(--setup-ink); }
+.vetrina .fed-scelta > span:first-child{ flex:1; }
+.vetrina .fed-scelta.on{ background:var(--accent); border-color:var(--accent);
+  color:var(--accent-ink); }
+.vetrina .fed-spunta{ font-size:var(--t-lg); }
+.vetrina .passo-vuoto{ font-size:var(--t-sm); color:var(--setup-ink-2);
+  padding:var(--s-2) 0; }
 /* ══════════════ LA HOME A STRATI (21/08/2026, versione `strati`) ══════════
 
    Cambia il MODO in cui la prima schermata si legge, non cosa dice. Restano
@@ -13472,15 +13488,50 @@ var c3 = el('<div class="passo"></div>');
 c3.appendChild(el('<label>3 &middot; '+t("setup_fed_label")+'</label>'));
 
 if(feds.length === 0){
-c3.appendChild(el('<div style="font-size:var(--t-sm);color:#5A6B5F;padding:var(--s-2) 0;">'+t("coming_soon")+'</div>'));
-} else {
+c3.appendChild(el('<div class="passo-vuoto">'+t("coming_soon")+'</div>'));
+}
+/* ══ DUE MODI DI CHIEDERE LA STESSA COSA, E NON E' UN'INCOERENZA ══════════
+   (26/08/2026, Alessandro: «nelle impostazioni facciamo un menu a tendina,
+   una volta che siamo dentro l'app, cosi' non abbiamo una colonna lunga
+   chilometri».)
+
+   LA PRIMA VOLTA le federazioni restano riquadri larghi. Chi apre l'app non
+   sta cambiando un'impostazione: sta DECIDENDO, e per decidere deve vedere
+   le alternative tutte insieme. Una tendina chiusa mostra una risposta e
+   nasconde la domanda — e in UK sono tre, in Svizzera due.
+
+   DA DENTRO L'APP e' un'altra scena. La scelta e' gia' fatta, la si tocca
+   una volta l'anno, e la schermata la si apre per cambiare UNA riga: la
+   colonna di riquadri e' spazio speso per una cosa che si sa gia'. La
+   tendina e' la stessa dei due passi qui sopra — lingua e nazione — quindi
+   la schermata diventa tre righe uguali invece di due righe e una colonna.
+
+   *Il discrimine e' `state.federation`: se c'e', non e' una prima volta.*
+   E se cambi nazione, la federazione della vecchia non vale piu': la tendina
+   riparte da vuota, che e' il solo modo di non tenere in piedi un accoppiata
+   impossibile (FIARC in Svezia). */
+else if(state.federation){
+var selFed = el('<select id="setupSelFed"></select>');
+var fedQui = (state.country === setupCountry) ? state.federation : null;
+if(!fedQui) selFed.appendChild(el('<option value="" disabled selected>'+t("setup_fed_label")+'</option>'));
+feds.forEach(function(f){
+var opt = el('<option value="'+f.code+'">'+escapeHtml(f.label)+'</option>');
+if(fedQui === f.code) opt.setAttribute("selected","selected");
+selFed.appendChild(opt);
+});
+selFed.addEventListener("change", function(){
+if(!selFed.value) return;
+state.country = setupCountry;
+state.federation = selFed.value;
+save(); render();
+});
+c3.appendChild(selFed);
+}
+else {
 feds.forEach(function(f){
 var scelta = (state.country === setupCountry && state.federation === f.code);
-var b = el('<button style="width:100%;min-height:56px;display:flex;align-items:center;gap:var(--s-2);padding:var(--s-3) var(--s-4);margin-bottom:var(--s-2);border-radius:var(--r-md);cursor:pointer;text-align:left;font-family:inherit;font-size:var(--t-lg);font-weight:700;'+
-(scelta
-? 'background:#315B35;border:2px solid #315B35;color:#fff;'
-: 'background:#FFFFFF;border:2px solid #C9CFC7;color:#1A1D1B;')+'"></button>');
-b.innerHTML = '<span style="flex:1;">'+escapeHtml(f.label)+'</span>'+(scelta ? '<span style="font-size:var(--t-lg);">\u2713</span>' : '');
+var b = el('<button type="button" class="fed-scelta'+(scelta?" on":"")+'"></button>');
+b.innerHTML = '<span>'+escapeHtml(f.label)+'</span>'+(scelta ? '<span class="fed-spunta">\u2713</span>' : '');
 b.addEventListener("click", function(){
 state.country = setupCountry;
 state.federation = f.code;
@@ -19220,7 +19271,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-marchio";
+var BUILD_STAMP = "2026-08-26-federazione";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19229,7 +19280,7 @@ var BUILD_STAMP = "2026-08-26-marchio";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-tre";
+var BUILD_PARENT = "2026-08-26-marchio";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
