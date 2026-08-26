@@ -1152,7 +1152,14 @@ header.top .brand-title b{ color:var(--verde-testata); font-weight:inherit; }
 /* Nella Home il pannello sta attaccato alla testata: sono due pezzi dello
    stesso blocco, e il filo in mezzo li farebbe sembrare due cose. */
 .strati > .home-eroe:first-child{ border-top:0; }
-header.top .brandblock{ display:flex; align-items:center; gap:var(--s-3); min-width:0; flex:0 0 auto; }
+/* Da oggi e' un <button>, quindi va spogliato del vestito che il browser
+   mette addosso ai bottoni — fondo, bordo, carattere di sistema — se no in
+   cima all'app comparirebbe un rettangolo grigio col marchio dentro.
+   L'anello di fuoco resta: e' l'unica cosa che dice, a chi naviga da
+   tastiera, che questo e' un comando. */
+header.top .brandblock{ display:flex; align-items:center; gap:var(--s-3); min-width:0; flex:0 0 auto;
+  background:none; border:none; padding:0; margin:0; font-family:inherit; color:inherit;
+  cursor:pointer; text-align:left; -webkit-appearance:none; appearance:none; }
 header.top .logo{ width:var(--hit); height:var(--hit); flex:0 0 auto; }
 /* Il marchio: una misura sola, che arriva da --mark. Dentro l'insegna la
    riscrive il contenitore, quindi non c'e' piu' niente da battere. */
@@ -2559,13 +2566,26 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    il tasto esiste. Per andare piu' giu' bisogna cambiare mestiere alla
    scritta — bianca su un'argilla piu' cupa — e non e' una limatura: e' un
    altro tasto. */
+/* SMORZATO DI UN GRADINO. (25/08/2026, Alessandro: «e' tornato troppo
+   forte», sia in chiaro sia in scuro.)
+   Era argilla all'86% col fondo dell'eroe — #E24805 — con l'inchiostro
+   SCURO: un arancione a saturazione quasi piena, il colore piu' acceso di
+   tutta la schermata, su un tasto largo quanto la pagina.
+
+   ABBASSARE E BASTA NON SI POTEVA: misurato, la mano scura sull'arancione
+   perde contrasto appena il fondo si scurisce — 4,55 all'86%, 3,77 al 74%,
+   cioe' sotto soglia prima ancora di essersi smorzato abbastanza. La leva
+   giusta era l'altra: **si scende col fondo E si gira l'inchiostro sul
+   crema.** Al 70% fa 4,67:1 in chiaro e 5,14:1 in scuro — piu' leggibile di
+   prima, e molto meno urlato.
+   *L'arancione perde forza abbassando la luce, non togliendo il colore.* */
 .btn-porta{
-  background:color-mix(in srgb, var(--clay) 86%, var(--eroe-bg));
-  color:var(--clay-ink);
-  border-color:color-mix(in srgb, var(--clay) 86%, var(--eroe-bg));
+  background:color-mix(in srgb, var(--clay) 70%, var(--eroe-bg));
+  color:var(--sand-100);
+  border-color:color-mix(in srgb, var(--clay) 70%, var(--eroe-bg));
   font-family:var(--font-display); font-weight:800;
   text-transform:uppercase; letter-spacing:0.05em; }
-.btn-porta:hover{ background:var(--clay-500); border-color:var(--clay-500); }
+.btn-porta:hover{ background:var(--clay-600); border-color:var(--clay-600); }
 
 /* Gli strati escono dai margini della pagina: il gradino fra l'uno e l'altro
    e' il fondo pagina che si vede in mezzo, non un bordo disegnato. */
@@ -2752,6 +2772,11 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
   font-weight:800; }
 .btn-arancio:hover{ background:color-mix(in srgb, var(--clay) 22%, var(--surface-1));
   border-color:var(--clay); }
+/* Il tasto che apre l'app di posta e' un <a>: senza queste righe uscirebbe
+   sottolineato e allineato a sinistra come un collegamento qualunque. */
+.btn-posta{ text-decoration:none; display:flex; align-items:center; justify-content:center; }
+.btn-chiudi{ background:var(--bg-panel-2); }
+.fr-senza-mail{ font-size:var(--t-sm); color:var(--gold); }
 
 /* IL ROSSO DELLA SEGNALAZIONE. Rosso perche' e' l'unico comando dell'app che
    dice «qualcosa non va», e quello si cerca con l'occhio, non con la memoria.
@@ -5466,7 +5491,7 @@ fr_email_none: "Questa compagnia non ha ancora indicato una email nel suo spazio
 fr_mail_subject: "Segnalazione sul percorso — {field}",
 fr_report_close: "Chiudi",
 nav_market: "Marketplace",
-market_locked_body: "Il Marketplace è in prova con un gruppo ristretto di arcieri. Appena è pronto lo apriamo a tutti.",
+market_locked_body: "Il Marketplace è in fase di sviluppo. Appena sarà pronto, lo apriremo a tutti.",
 journal_title: "Il mio diario",
 journal_sub: "I tuoi progressi e tutti i giri salvati su questo dispositivo.",
 journal_tab_trend: "Andamento",
@@ -6100,7 +6125,7 @@ fr_email_none: "This club has not entered an email in its space yet.",
 fr_mail_subject: "Course report \u2014 {field}",
 fr_report_close: "Close",
 nav_market: "Marketplace",
-market_locked_body: "The Marketplace is being tested with a small group of archers. As soon as it is ready we will open it to everyone.",
+market_locked_body: "The Marketplace is still under development. As soon as it is ready we will open it to everyone.",
 journal_title: "My journal",
 journal_sub: "Your progress and all the rounds saved on this device.",
 journal_tab_trend: "Trend",
@@ -6758,7 +6783,7 @@ fr_email_none: "Ce club n’a pas encore indiqu\u00e9 d’e-mail dans son espace
 fr_mail_subject: "Signalement sur le parcours \u2014 {field}",
 fr_report_close: "Fermer",
 nav_market: "Marketplace",
-market_locked_body: "Le Marketplace est en test avec un petit groupe d’archers. D\u00e8s qu’il sera pr\u00eat nous l’ouvrirons \u00e0 tous.",
+market_locked_body: "Le Marketplace est en cours de d\u00e9veloppement. D\u00e8s qu\u2019il sera pr\u00eat nous l\u2019ouvrirons \u00e0 tous.",
 journal_title: "Mon carnet",
 journal_sub: "Vos progr\u00e8s et tous les tours enregistr\u00e9s sur cet appareil.",
 journal_tab_trend: "\u00c9volution",
@@ -7416,7 +7441,7 @@ fr_email_none: "Dieser Verein hat in seinem Bereich noch keine E-Mail angegeben.
 fr_mail_subject: "Meldung zum Parcours \u2014 {field}",
 fr_report_close: "Schlie\u00dfen",
 nav_market: "Marketplace",
-market_locked_body: "Der Marketplace wird mit einer kleinen Gruppe von Sch\u00fctzen getestet. Sobald er fertig ist, \u00f6ffnen wir ihn f\u00fcr alle.",
+market_locked_body: "Der Marketplace ist noch in Entwicklung. Sobald er fertig ist, \u00f6ffnen wir ihn f\u00fcr alle.",
 journal_title: "Mein Tagebuch",
 journal_sub: "Deine Fortschritte und alle auf diesem Ger\u00e4t gespeicherten Runden.",
 journal_tab_trend: "Verlauf",
@@ -8074,7 +8099,7 @@ fr_email_none: "Bu kul\u00fcp alan\u0131nda hen\u00fcz bir e-posta belirtmemi\u0
 fr_mail_subject: "Parkur bildirimi \u2014 {field}",
 fr_report_close: "Kapat",
 nav_market: "Pazar yeri",
-market_locked_body: "Pazar yeri k\u00fc\u00e7\u00fck bir ok\u00e7u grubuyla deneniyor. Haz\u0131r olur olmaz herkese a\u00e7aca\u011f\u0131z.",
+market_locked_body: "Pazar yeri hen\u00fcz geli\u015ftirme a\u015famas\u0131nda. Haz\u0131r olur olmaz herkese a\u00e7aca\u011f\u0131z.",
 journal_title: "G\u00fcnl\u00fc\u011f\u00fcm",
 journal_sub: "Geli\u015fimin ve bu cihaza kaydedilmi\u015f b\u00fct\u00fcn turlar.",
 journal_tab_trend: "Gidi\u015fat",
@@ -8745,7 +8770,7 @@ fr_email_none: "\u042d\u0442\u043e\u0442 \u043a\u043b\u0443\u0431 \u043f\u043e\u
 fr_mail_subject: "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435 \u043e \u043c\u0430\u0440\u0448\u0440\u0443\u0442\u0435 \u2014 {field}",
 fr_report_close: "\u0417\u0430\u043a\u0440\u044b\u0442\u044c",
 nav_market: "\u0411\u0430\u0440\u0430\u0445\u043e\u043b\u043a\u0430",
-market_locked_body: "\u0411\u0430\u0440\u0430\u0445\u043e\u043b\u043a\u0430 \u043f\u0440\u043e\u0445\u043e\u0434\u0438\u0442 \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0443 \u0441 \u043d\u0435\u0431\u043e\u043b\u044c\u0448\u043e\u0439 \u0433\u0440\u0443\u043f\u043f\u043e\u0439 \u0441\u0442\u0440\u0435\u043b\u043a\u043e\u0432. \u041a\u0430\u043a \u0442\u043e\u043b\u044c\u043a\u043e \u0432\u0441\u0451 \u0431\u0443\u0434\u0435\u0442 \u0433\u043e\u0442\u043e\u0432\u043e, \u043c\u044b \u043e\u0442\u043a\u0440\u043e\u0435\u043c \u0435\u0451 \u0434\u043b\u044f \u0432\u0441\u0435\u0445.",
+market_locked_body: "\u0411\u0430\u0440\u0430\u0445\u043e\u043b\u043a\u0430 \u0435\u0449\u0451 \u0432 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u043a\u0435. \u041a\u0430\u043a \u0442\u043e\u043b\u044c\u043a\u043e \u0432\u0441\u0451 \u0431\u0443\u0434\u0435\u0442 \u0433\u043e\u0442\u043e\u0432\u043e, \u043c\u044b \u043e\u0442\u043a\u0440\u043e\u0435\u043c \u0435\u0451 \u0434\u043b\u044f \u0432\u0441\u0435\u0445.",
 journal_title: "\u041c\u043e\u0439 \u0434\u043d\u0435\u0432\u043d\u0438\u043a",
 journal_sub: "\u0412\u0430\u0448 \u043f\u0440\u043e\u0433\u0440\u0435\u0441\u0441 \u0438 \u0432\u0441\u0435 \u043a\u0440\u0443\u0433\u0438, \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d\u043d\u044b\u0435 \u043d\u0430 \u044d\u0442\u043e\u043c \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u0435.",
 journal_tab_trend: "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430",
@@ -9416,7 +9441,7 @@ fr_email_none: "Este club todav\u00eda no ha indicado un email en su espacio.",
 fr_mail_subject: "Aviso sobre el recorrido \u2014 {field}",
 fr_report_close: "Cerrar",
 nav_market: "Marketplace",
-market_locked_body: "El Marketplace est\u00e1 en pruebas con un grupo reducido de arqueros. En cuanto est\u00e9 listo lo abriremos a todos.",
+market_locked_body: "El Marketplace est\u00e1 en fase de desarrollo. En cuanto est\u00e9 listo lo abriremos a todos.",
 journal_title: "Mi diario",
 journal_sub: "Tus progresos y todas las rondas guardadas en este dispositivo.",
 journal_tab_trend: "Evoluci\u00f3n",
@@ -10087,7 +10112,7 @@ fr_email_none: "Den h\u00e4r klubben har \u00e4nnu inte angett n\u00e5gon e-post
 fr_mail_subject: "Rapport om banan \u2014 {field}",
 fr_report_close: "St\u00e4ng",
 nav_market: "Marketplace",
-market_locked_body: "Marketplace testas med en liten grupp skyttar. S\u00e5 snart den \u00e4r klar \u00f6ppnar vi den f\u00f6r alla.",
+market_locked_body: "Marketplace \u00e4r fortfarande under utveckling. S\u00e5 snart den \u00e4r klar \u00f6ppnar vi den f\u00f6r alla.",
 journal_title: "Min dagbok",
 journal_sub: "Dina framsteg och alla rundor som sparats p\u00e5 den h\u00e4r enheten.",
 journal_tab_trend: "Utveckling",
@@ -10758,7 +10783,7 @@ fr_email_none: "Deze vereniging heeft nog geen e-mailadres in haar ruimte opgege
 fr_mail_subject: "Melding over het parcours \u2014 {field}",
 fr_report_close: "Sluiten",
 nav_market: "Marketplace",
-market_locked_body: "De Marketplace wordt getest met een kleine groep boogschutters. Zodra hij klaar is openen we hem voor iedereen.",
+market_locked_body: "De Marketplace is nog in ontwikkeling. Zodra hij klaar is openen we hem voor iedereen.",
 journal_title: "Mijn dagboek",
 journal_sub: "Je vooruitgang en alle rondes die op dit apparaat zijn opgeslagen.",
 journal_tab_trend: "Verloop",
@@ -14319,6 +14344,16 @@ wrap.appendChild(card);
 return wrap;
 }
 
+/* UNA SOLA VIA PER CAMBIARE SCHEDA. La barra in fondo e il marchio in cima
+   portano allo stesso posto: se il come fosse scritto due volte, il giorno
+   che cambia una riga cambierebbe solo meta' dell'app. */
+function vaiAllaScheda(key){
+state.tab = key; state.screen = "menu"; homeOverride = false;
+compTab = null; campiQ = ""; campoAttivo = null;
+save(); forgetScroll(); render();
+}
+function vaiAllaHome(){ vaiAllaScheda("home"); }
+
 // ---------- SPLASH ----------
 // Struttura sempre uguale: logo a sinistra, nome, comando a destra.
 function header(){
@@ -14329,10 +14364,24 @@ var largo = (typeof window.matchMedia === "function") && window.matchMedia("(min
 
 var h = el(
 '<header class="top">'+
-'<div class="brandblock"><div class="logo">'+logoSVG(52)+'</div>'+
-'<div class="headtxt"><span class="brand-title">Arc<b>Trail</b> 3D</span></div></div>'+
+/* IL MARCHIO E' UN TASTO. (25/08/2026, chiesto da Alessandro: «non possiamo
+   rendere logo e nome come un tasto che riporta diretti alla home?».)
+   E' la convenzione che tutti hanno gia' imparato altrove, e finora l'app
+   era l'unico posto dove non funzionava: si guardava, si toccava, e non
+   succedeva niente. *Un elemento che sembra premibile e non lo e' costa piu'
+   di uno che non lo sembra: la prima volta si prova, la seconda si impara
+   che qui no, e da li' in poi si diffida anche degli altri.*
+   Fa esattamente quello che fa la casetta della barra in fondo — stessa
+   riga, non una copia scritta due volte con due comportamenti che un
+   giorno divergono. */
+'<button class="brandblock" type="button" aria-label="'+escapeHtml(t("nav_home"))+'">'+
+'<div class="logo">'+logoSVG(52)+'</div>'+
+'<div class="headtxt"><span class="brand-title">Arc<b>Trail</b> 3D</span></div></button>'+
 '</header>'
 );
+
+var marchio = h.querySelector(".brandblock");
+if(marchio) marchio.addEventListener("click", vaiAllaHome);
 
 // La pastiglia della firma sta accanto al marchio, prima delle azioni (che
 // hanno margin-left:auto e restano a destra). Non e' un'azione: e' l'unica
@@ -14395,7 +14444,7 @@ if(duranteGiro && currentUser){
 azioni.push({ id:"segnala", glifo:"warn", testo:t("fr_report_btn_short"), titolo:t("fr_report_title"),
 conParola:true, pericolo:true, vai:function(){
 state.frFrom = state.screen;
-state.screen = "field-report"; save(); render();
+frEsito = null; state.screen = "field-report"; save(); render();
 }});
 }
 }
@@ -14442,7 +14491,14 @@ vai:function(){ state.screen = "messaggi"; save(); render(); }});
 
    Se il nome manca resta la sagoma: una pastiglia con dentro un punto
    interrogativo sarebbe peggio dell'icona che c'era. */
-if(state.screen === "menu" && state.tab !== "profilo"){
+/* E OVUNQUE, NON SOLO NEL MENU. (25/08/2026, Alessandro: «mettere A ovunque
+   al posto dell'icona profilo in alto a destra».)
+   La lettera compariva solo `if(state.screen === "menu" && state.tab !==
+   "profilo")`: dentro un giro, in una scheda, nella compagnia, in cima non
+   c'era piu' niente. Una pastiglia che dice «questo sei tu» ha senso proprio
+   quando sparisce tutto il resto — e una cosa che c'e' a volte si smette di
+   cercarla. */
+{
 var chiSono = (state.profile && (state.profile.username || state.profile.nomeCognome)) || "";
 var iniz = chiSono.trim().charAt(0).toUpperCase();
 azioni.push({ id:"profilo", glifo:"users", pieno:"navprofile",
@@ -15979,7 +16035,11 @@ strati.appendChild(vic);
    ha un nome utente se lo legge scritto. */
 var sc = el('<div class="strato profilo-porta"></div>');
 var bProf = el('<button class="profilo-tessera"></button>');
-bProf.appendChild(el('<span class="profilo-segno">'+navIcon("navprofile",28,"due")+'</span>'));
+/* NIENTE SAGOMA QUI. (25/08/2026, Alessandro: «togliere icona profilo da
+   home».) In cima alla stessa schermata c'e' gia' la lettera dentro il
+   cerchio, che dice «questo sei tu» meglio di qualunque sagoma. Ripetere il
+   segno due volte nella stessa pagina non aggiunge niente: fa solo sembrare
+   che siano due porte diverse. */
 bProf.appendChild(el('<span class="profilo-nome">'+escapeHtml(t("menu_profile"))+'</span>'));
 var uProf = (state.profile && (state.profile.username || state.profile.nomeCognome)) || "";
 if(uProf) bProf.appendChild(el('<span class="profilo-chi">'+escapeHtml(uProf)+'</span>'));
@@ -16210,7 +16270,7 @@ b = el('<button class="tabn'+(on?" on":"")+'" aria-current="'+(on?"page":"false"
 '<span class="tab-pill">'+navIcon(tb[1],24)+'</span>'+
 '<span class="tab-lbl">'+tb[2]+'</span></button>');
 }
-b.addEventListener("click", function(){ state.tab = key; state.screen = "menu"; homeOverride = false; compTab = null; campiQ = ""; campoAttivo = null; save(); forgetScroll(); render(); });
+b.addEventListener("click", function(){ vaiAllaScheda(key); });
 bar.appendChild(b);
 });
 return bar;
@@ -17984,7 +18044,7 @@ if(currentUser){
 var actCard = el('<div class="card campi-seguito riga-lunga"></div>');
 
 var repBtn = el('<button class="btn btn-ghost btn-block menu-btn riga-attenzione"><span class="menu-icon">'+navIcon("azavviso",24,"unica")+'</span><span class="menu-txt">'+t("fr_report_open_btn")+'<span class="menu-sub">'+t("fr_report_sub")+'</span></span></button>');
-repBtn.addEventListener("click", function(){ state.frFrom = "menu"; state.screen = "field-report"; save(); render(); });
+repBtn.addEventListener("click", function(){ state.frFrom = "menu"; frEsito = null; state.screen = "field-report"; save(); render(); });
 actCard.appendChild(repBtn);
 wrap.appendChild(actCard);
 }
@@ -18980,7 +19040,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-25-porta";
+var BUILD_STAMP = "2026-08-25-ritocchi";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -18989,7 +19049,7 @@ var BUILD_STAMP = "2026-08-25-porta";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-25-radice";
+var BUILD_PARENT = "2026-08-25-porta";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -20261,8 +20321,58 @@ riempiFirma(n);
 }
 
 // ── SEGNALAZIONE PERCORSO ──────────────────────────────────────────────────
+/* LA SEGNALAZIONE PARTIVA E LA MAIL SPARIVA. (25/08/2026, Alessandro:
+ * «segnalazione percorso non lascia tempo di mandare mail».)
+ *
+ * L'email non puo' partire da sola senza un server, quindi dopo l'invio
+ * compariva un tasto che apre l'app di posta gia' compilata. Quel tasto era
+ * appeso al DOM **e basta**: nessuna variabile se lo ricordava.
+ *
+ * E mezzo secondo dopo l'invio arriva, a chi ha segnalato, la notifica di
+ * conferma. Il listener delle notifiche chiama `render()` — giustamente, e'
+ * la riga che il 19/08 ha smesso di far mentire lo schermo — e `render()`
+ * ricostruisce questa schermata da zero: modulo vuoto, tasto della posta
+ * sparito. *Non era «poco tempo»: era che la schermata rinasceva senza
+ * memoria di quello che era appena successo.*
+ *
+ * Adesso l'esito sta in `frEsito`, fuori dalla funzione. Il ridisegno lo
+ * ritrova e ridisegna la schermata di conferma invece del modulo. Si azzera
+ * uscendo, che e' l'unico momento in cui la segnalazione e' davvero finita.
+ *
+ * *Regola generale, gia' imparata due volte in questo file: quello che vive
+ * solo nel DOM non esiste. Il primo ridisegno se lo porta via, e il ridisegno
+ * arriva quando meno lo aspetti — qui addirittura per colpa della cosa
+ * stessa che si era appena fatta.*
+ */
+var frEsito = null;
+
+/* La conferma, disegnata dai dati e non dai resti del modulo: cosi' e' la
+   stessa la prima volta e a ogni ridisegno successivo. */
+function schermoSegnalazioneFatta(){
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("fr_report_title")+'</h2>'));
+var st = el('<div class="nota stacco"></div>');
+st.textContent = frEsito.testo || "";
+card.appendChild(st);
+card.appendChild(el('<div class="nota stacco">'+t("fr_email_hint")+'</div>'));
+if(frEsito.href){
+card.appendChild(el('<a href="'+frEsito.href+'" class="btn btn-ghost btn-block btn-posta">'+t("fr_email_btn")+'</a>'));
+} else {
+card.appendChild(el('<div class="fr-senza-mail">'+t("fr_email_none")+'</div>'));
+}
+var chiudi = el('<button class="btn btn-block btn-chiudi">'+t("fr_report_close")+'</button>');
+chiudi.addEventListener("click", function(){
+var dove = frEsito.torna || "menu";
+frEsito = null;
+state.screen = dove; save(); render();
+});
+card.appendChild(chiudi);
+return card;
+}
+
 function fieldReportScreen(){
 var wrap = el('<div></div>');
+if(frEsito){ wrap.appendChild(schermoSegnalazioneFatta()); return wrap; }
 var card = el('<div class="card"></div>');
 
 // Intestazione: cosa stai facendo e dove finisce la segnalazione
@@ -20389,8 +20499,17 @@ var adminUid = adm.adminUid;
 // Il referente riceve SEMPRE il contenuto della segnalazione, anche quando
 // e' lui stesso ad averla scritta: e' il messaggio che gli serve avere sotto mano.
 if(adminUid){
+/* CON LA STRADA DENTRO. (25/08/2026, Alessandro: «arriva notifica su app
+   che non si puo' aprire per vedere i dettagli».)
+   Partiva senza `dest`, quindi `destinazioneNotifica()` rispondeva null e la
+   riga nel centro notifiche non era premibile: diceva che c'era una
+   segnalazione e lasciava cercare dove si legge. Il posto e' lo spazio
+   compagnia, che e' anche dove il referente la puo' chiudere.
+   Passa per `dest` e non per `apri`, che lo scrivono le funzioni sul server:
+   cosi' non serve nessun deploy per accendere questa strada. */
 sendPushViaFirestore(adminUid, t("fr_notif_title"),
-t("fr_notif_body", { name: myDisplayName(), desc: descInp.value.trim().slice(0,90) }));
+t("fr_notif_body", { name: myDisplayName(), desc: descInp.value.trim().slice(0,90) }),
+{ k:"club-space", code: frCod });
 }
 // A chi segnala va la conferma, ma solo se non e' gia' lui il referente:
 // altrimenti riceverebbe due notifiche per la stessa cosa.
@@ -20404,8 +20523,7 @@ status.textContent = adminUid ? t("fr_sent_to",{name:frLabel}) : t("fr_no_admin_
 // L'email non puo' partire da sola senza un server: si apre gia' pronta
 // nell'app di posta dell'utente, che deve solo premere invia.
 sendBtn.style.display = "none";
-var mailWrap = el('<div style="margin-bottom:var(--s-2);"></div>');
-mailWrap.appendChild(el('<div class="nota stacco">'+t("fr_email_hint")+'</div>'));
+var hrefMail = null;
 if(adm.emailComp){
 var corpo = [
 t("fr_report_field")+": "+frLabel,
@@ -20416,15 +20534,12 @@ descInp.value.trim(),
 "",
 "\u2014 "+myDisplayName()+" (ArcTrail 3D)"
 ].filter(function(x){ return x !== ""; }).join("\n");
-var href = "mailto:"+adm.emailComp
+hrefMail = "mailto:"+adm.emailComp
 +"?subject="+encodeURIComponent(t("fr_mail_subject",{field:frLabel}))
 +"&body="+encodeURIComponent(corpo);
-mailWrap.appendChild(el('<a href="'+href+'" class="btn btn-ghost btn-block" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">'+t("fr_email_btn")+'</a>'));
-} else {
-mailWrap.appendChild(el('<div style="font-size:var(--t-sm);color:var(--gold);">'+t("fr_email_none")+'</div>'));
 }
-card.insertBefore(mailWrap, cancelBtn);
-cancelBtn.textContent = t("fr_report_close");
+frEsito = { testo: status.textContent, href: hrefMail, torna: backTo };
+render();
 });
 }).catch(function(err){
 console.error("field report:", err);
@@ -22096,6 +22211,12 @@ if(d && d.k === "ot" && d.id) return { etichetta: t("notif_open_msg"), k:"ot", v
 // si conferma dal pannello di chi tiene l'app: si conferma nel proprio spazio
 // compagnia, e l'avviso deve portarci — altrimenti dice «c'e' una cosa da
 // fare» e lascia cercare dove si fa.
+/* Anche da `dest`, non solo da `apri`: `apri` lo scrivono le Cloud Functions,
+   `dest` puo' scriverlo l'app. Senza questa riga la segnalazione di un
+   percorso arrivava muta — vedi 25/08/2026. */
+if(d && d.k === "club-space" && currentUser){
+return { etichetta: t("club_space_title"), k:"club-space", val: d.code || n.clubCode || myClubCode() || "" };
+}
 if(n.apri === "club-space" && currentUser){
 return { etichetta: t("club_space_title"), k:"club-space", val: n.clubCode || myClubCode() || "" };
 }
