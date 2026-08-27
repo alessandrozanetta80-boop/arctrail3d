@@ -5344,9 +5344,15 @@ var IS_BETA_TESTER = false; // impostato da onAuthReady leggendo il campo betaTe
 // ATTENZIONE: quando i vantaggi varranno soldi veri, il controllo dovra' stare
 // in una Cloud Function, non qui: questo booleano vive nel telefono.
 var IS_PREMIUM = false;
-// Data di apertura delle registrazioni: da qui in avanti l'email va confermata
-// prima di entrare. Chi si era registrato PRIMA non viene toccato, altrimenti
-// l'apertura sbatterebbe fuori tutti quelli che sono gia' dentro.
+// RITIRATA IL 28/08/2026, e non e' piu' letta da nessuno.
+// Diceva: da questa data in avanti l'email va confermata prima di entrare, e
+// chi si era registrato PRIMA non viene toccato. E' caduta quando le regole
+// di Firestore hanno cominciato a chiedere `email_verified`: quella data nel
+// token non c'e', quindi il telefono e il database avrebbero risposto due
+// cose diverse alla stessa domanda. Vedi `needsEmailVerification()`.
+// La riga resta perche' la data e' un fatto (il giorno in cui si sono aperte
+// le registrazioni) e serve a leggere `metadata.creationTime` di un iscritto
+// vecchio dal pannello. Si puo' togliere: non la legge piu' il codice.
 var EMAIL_VERIFY_SINCE = Date.parse("2026-08-14T00:00:00Z");
 // DOVE SI TORNA DOPO AVER APERTO IL LINK DI UN'EMAIL. (19/08/2026.)
 // Senza queste impostazioni la pagina di Firebase, dopo il cambio password o
@@ -5388,17 +5394,27 @@ throw err;
 });
 }
 
+/* LA CONFERMA VALE PER TUTTI, ANCHE PER CHI E' ENTRATO PRIMA. (28/08/2026.)
+   Qui c'era `return created >= EMAIL_VERIFY_SINCE`: chi si era iscritto prima
+   del 14/08/2026 non vedeva questa schermata. Era una gentilezza giusta
+   finche' l'unica porta era il telefono.
+   Dal 28/08 le regole di Firestore chiedono `email_verified` per tutto cio'
+   che rende una persona visibile agli altri, e **nel token di Firebase quella
+   data non esiste**: le regole non la possono guardare. Un campo scritto dal
+   client non servirebbe — sarebbe il client stesso a poterlo falsificare.
+   Quindi restava una scelta sola, e non e' fra sicuro e comodo: e' fra una
+   SCHERMATA che dice cosa fare e un `permission-denied` MUTO. Chi non ha mai
+   confermato l'indirizzo, da qui in avanti, trova la schermata di conferma
+   col tasto per rimandare l'email. Nessuno resta chiuso fuori senza una
+   strada per rientrare.
+   *Questa modifica STRINGE: va pubblicata PRIMA delle regole (regola 18).* */
 function needsEmailVerification(user){
 if(!user || user.emailVerified) return false;
 // Vale solo per chi entra con email e password: gli altri metodi di accesso
 // hanno gia' un indirizzo verificato dal fornitore.
 var hasPwd = false;
 (user.providerData || []).forEach(function(pd){ if(pd && pd.providerId === "password") hasPwd = true; });
-if(!hasPwd) return false;
-var created = 0;
-try{ created = Date.parse(user.metadata && user.metadata.creationTime ? user.metadata.creationTime : ""); }catch(e){}
-if(!created) return false;
-return created >= EMAIL_VERIFY_SINCE;
+return hasPwd;
 }
 
 // ── REGISTRAZIONE ERRORI ───────────────────────────────────────
@@ -20315,7 +20331,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-27-turchia";
+var BUILD_STAMP = "2026-08-28-conferma";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -20324,7 +20340,7 @@ var BUILD_STAMP = "2026-08-27-turchia";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-27-senza-turchia";
+var BUILD_PARENT = "2026-08-27-turchia";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
