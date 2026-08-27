@@ -980,17 +980,34 @@ color-scheme:light;
    passa alla versione «da scrivere» di ciascun colore — la stessa che porta
    il testo dentro le porte tinte. *Il pannello non e' un colore, e' un
    ruolo: ogni tema lo risolve come gli serve.* */
---porte-bg:var(--sand-50); --porte-tit:var(--sand-900);
---porte-sub:var(--sand-600); --porte-linea:var(--sand-300);
---segno-train:var(--tone-train-fg); --segno-race:var(--tone-race-fg);
---segno-prep:var(--tone-prep-fg);
-/* QUI I DUE MESTIERI SI DIVIDONO DAVVERO. (27/08/2026, Alessandro: «fino a
-   ieri i colori erano accesi, nessuno aveva detto di renderli scuri».)
-   L'inchiostro resta scuro perche' sul bianco deve leggersi; il filetto torna
-   acceso perche' e' un blocco pieno e non deve leggersi, deve vedersi.
-   Sono gli stessi tre pieni degli altri temi: lime, argilla, oro. */
---filo-train:var(--tone-train-solid); --filo-race:var(--tone-race-solid);
---filo-prep:var(--tone-prep-solid);
+/* LE TRE PORTE NEL SOLE SONO QUELLE DEGLI ALTRI DUE TEMI, E BASTA.
+   (27/08/2026, Alessandro: «il colore dei tasti, lo sfondo deve [restare]
+   come era».)
+
+   Qui il Sole si era inventato delle porte sue: pannello bianco, titolo nero,
+   e per forza i tre toni nelle versioni scure, perche' su bianco quelli accesi
+   non si leggono. Ne uscivano tre colori che nel resto dell'app non esistono.
+
+   LO SBAGLIO NON ERANO I COLORI, ERA IL PANNELLO. Nel tema chiaro la pagina e'
+   bianca e le porte sono di pece lo stesso: sono un pannello scuro appoggiato
+   su una pagina chiara, ed e' li' che i tre toni accesi tornano. Il Sole aveva
+   cambiato il fondo del pannello e i colori l'avevano seguito.
+   Rimesso il pannello, i colori tornano da soli — sono gli stessi valori, riga
+   per riga, del tema chiaro.
+
+   LO SFONDO DELLA PAGINA NON SI TOCCA: `--surface` resta bianco, il Sole resta
+   il tema chiaro. Cambia il pannello delle porte, non la pagina. */
+--porte-bg:var(--pece); --porte-tit:var(--sand-100);
+--porte-sub:var(--moss-300); --porte-linea:rgba(245,242,237,0.13);
+--segno-train:var(--green-400); --segno-race:var(--clay-400);
+--segno-prep:var(--oro-testata);
+--filo-train:var(--segno-train); --filo-race:var(--segno-race);
+--filo-prep:var(--segno-prep);
+/* `--tone-train-ico` NON si tocca: nel Sole resta il verde scuro, perche' lo
+   legge una pastiglia che sta sulla PAGINA bianca, non sul pannello delle
+   porte. Il disegno dentro la placca lo tinge gia' `--segno-train`, qui
+   sopra. Due token che sembrano la stessa cosa e stanno su due fondi diversi:
+   e' il motivo per cui esistono separati. */
 /* AL SOLE IL TASTO RESTA PIENO, ED E' IL MOTIVO PER CUI QUESTO TEMA ESISTE.
    Il tinto e' piu' garbato al chiuso; in piena luce «piu' garbato» vuol dire
    «non si vede». Chi accende il Sole ha gia' detto che gli serve il massimo
@@ -20269,7 +20286,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-27-sole-acceso";
+var BUILD_STAMP = "2026-08-27-porte-sole";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -20278,7 +20295,7 @@ var BUILD_STAMP = "2026-08-27-sole-acceso";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-27-colori-porte";
+var BUILD_PARENT = "2026-08-27-sole-acceso";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
