@@ -4955,8 +4955,15 @@ color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer; }
     background:var(--porte-bg);
     border:0;
     border-left:5px solid var(--porta-segno);
-    border-radius:8px;
-    box-shadow:0 2px 6px rgba(23,19,14,.16);
+    /* 8px scritto a mano era gia' `--r-xl`: stesso disegno, ma adesso se la
+       scala cambia cambia anche qui. */
+    border-radius:var(--r-xl);
+    /* NIENTE OMBRA. Sui due temi scuri non si vedeva (nero su pece); nel tema
+       Sole invece si vedeva eccome, ed era un grigio scritto a mano che
+       nessun tema puo' correggere. Le porte si staccano col filetto colorato
+       a sinistra, che e' l'unica cosa colorata della riga: un'ombra in piu'
+       aggiunge peso e non aggiunge informazione. */
+    box-shadow:none;
     overflow:hidden;
     align-items:center;
   }
@@ -5003,8 +5010,16 @@ color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer; }
     line-height:1.22;
     font-weight:400;
     letter-spacing:0;
-    color:var(--moss-200);
-    opacity:.88;
+    /* IL COLORE LO SA IL TEMA, NON QUESTA RIGA. (27/08/2026.)
+       Qui c'era `--moss-200` all'88%: un verde chiarissimo, uguale per tutti
+       e tre i temi. Misurato contro il fondo della porta:
+         chiaro  4,68 -> 7,61   (troppo acceso, il sottotitolo urlava)
+         scuro   4,68 -> 7,61   (idem)
+         Sole    6,94 -> 1,60   (fondo bianco: SPARIVA)
+       `--porte-sub` vale `--moss-300` sui fondi scuri e `--sand-600` sul
+       bianco del Sole. E' l'unica riga che serve. */
+    color:var(--porte-sub);
+    opacity:1;
   }
 
   /* Chevron piccolo e centrato: non deve competere con il titolo. */
@@ -5061,15 +5076,17 @@ color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer; }
     margin-bottom:5px;
   }
 
-  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training .menu-icon{
-    background:color-mix(in srgb, var(--segno-train) 9%, var(--sand-100));
-  }
-  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara .menu-icon{
-    background:color-mix(in srgb, var(--segno-race) 9%, var(--sand-100));
-  }
-  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara .menu-icon{
-    background:color-mix(in srgb, var(--segno-prep) 10%, var(--sand-100));
-  }
+  /* LE PLACCHE TORNANO AVORIO LISCIO. (27/08/2026.)
+     Qui le tre placche prendevano una velatura del proprio tono — verdina,
+     rosata, sabbia dorata. Il colore era mescolato su `--sand-100` scritto a
+     mano, quindi restava lo stesso in tutti e tre i temi: nel Sole, dove il
+     fondo della porta e' bianco, tre avori appena diversi fra loro su bianco
+     non dicono niente e sporcano.
+     Il modo lo dice gia' il filetto a sinistra e il segno dentro la placca,
+     che il tono ce l'hanno da `--porta-segno`. Una terza voce che ripete lo
+     stesso in tono minore toglie forza alle prime due.
+     Se la velatura si rivuole, va rifatta su `--porte-bg` invece che su un
+     avorio fisso: cosi' seguirebbe il tema invece di ignorarlo. */
 }
 </style>
 
@@ -20231,7 +20248,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-home-stretta";
+var BUILD_STAMP = "2026-08-27-colori-porte";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -20240,7 +20257,7 @@ var BUILD_STAMP = "2026-08-26-home-stretta";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-porte-basse";
+var BUILD_PARENT = "2026-08-26-home-stretta";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
