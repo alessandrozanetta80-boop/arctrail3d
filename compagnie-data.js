@@ -5060,5 +5060,63 @@
     "UKD5C0BE81": { nome:"Wyre Hall Field Archers", regione:"NFAS", provincia:"\u2014", luogo:"NFAS", paese:"uk", completa:false },
     "UK4DBBE99A": { nome:"Ye Olde Delph Bowmen", regione:"NFAS", provincia:"\u2014", luogo:"NFAS", paese:"uk", completa:false },
     "UK60D45BDD": { nome:"Yelverton Bowmen", regione:"NFAS", provincia:"\u2014", luogo:"NFAS", paese:"uk", completa:false },
-    "UKD7BCC7AC": { nome:"Yew Tree Field Archers", regione:"NFAS", provincia:"\u2014", luogo:"NFAS", paese:"uk", completa:false }
+    "UKD7BCC7AC": { nome:"Yew Tree Field Archers", regione:"NFAS", provincia:"\u2014", luogo:"NFAS", paese:"uk", completa:false },
+
+    /* ══ TURCHIA — TOF ═══════════════════════════════════
+       (27/08/2026.) Trentotto club, e la fonte e' UNA SOLA: la lista
+       partenti della gara 3D Bozoklar del 24/09/2017. Di trentasette si sa
+       che quel giorno erano a una gara 3D, e nient'altro; di uno solo
+       (Bozoklar) il sito dice che il 3D lo fa ancora.
+       **Percio' sono tutti `completa:false`, e non e' una svista:** un nome
+       che appare in un elenco e non ha ne' indirizzo ne' recapito e' un
+       nome, non una compagnia. Nove anni sono tanti, e qualcuno avra'
+       chiuso.
+       I 800 club iscritti alla TGTOF NON sono qui: essere iscritti alla
+       federazione non vuol dire tirare in 3D, e mettere ottocento nomi
+       avrebbe fatto sembrare pieno un elenco che non lo e'.
+       `regione` porta la provincia solo quando si legge nel nome del club;
+       negli altri ventisei casi porta «TOF». *Nessuna geolocalizzazione
+       inventata:* un paese sbagliato manda un arciere a fare due ore di
+       macchina.
+       I nomi sono rifatti dal MAIUSCOLO d'origine con le regole turche
+       (I→ı, İ→i). La normalizzazione che veniva col file era rotta:
+       diceva «Atli» per «Atlı» e «Gençli̇k» con un punto orfano. */
+    "TRA9E07639": { nome:"Adana Geleneksel Atlı O.K.", regione:"Adana", provincia:"\u2014", luogo:"Adana", paese:"tr", completa:false },
+    "TR0F7E721D": { nome:"Alper Tunga G.T.O. Spor Kulübü", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR257BAF19": { nome:"Altay Atlı O. Ve Savaş Sanatları", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR2A18D16F": { nome:"Ankara Akıncılar T. Atlı O.K.", regione:"Ankara", provincia:"\u2014", luogo:"Ankara", paese:"tr", completa:false },
+    "TRD45AE413": { nome:"Anok Gençlik Ve Spor Kulübü", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TRE2A78EE6": { nome:"Aslan Geleneksel Spor Kulübü", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TRB7651A06": { nome:"Atıcılar Tekkesi G.O.K.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR7FBBFDE2": { nome:"Bartın G.O.K.", regione:"Bartın", provincia:"\u2014", luogo:"Bartın", paese:"tr", completa:false },
+    "TRC220EEFC": { nome:"Bartın Kemankeşler", regione:"Bartın", provincia:"\u2014", luogo:"Bartın", paese:"tr", completa:false },
+    "TRD5E217A4": { nome:"Beyoklar S. K.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR0BB1F8FF": { nome:"Bozoklar O.İ.S.K.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TRB2E905E1": { nome:"Bulcuk Spor", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR100E8101": { nome:"Bursa G.O.K.", regione:"Bursa", provincia:"\u2014", luogo:"Bursa", paese:"tr", completa:false },
+    "TR910768F3": { nome:"Cebelibereket G. O. S. K.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TRE0D55078": { nome:"Düz-Ok Geleneksel T. O.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR6AF9E0C8": { nome:"Elbistan Alp'lık Okulu Ve O.K.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR983557C4": { nome:"Gazi Osman Paşa Atlı O.S.K.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR5F7724D5": { nome:"Germiyan G.O.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR13032AC8": { nome:"Hasok Bursa", regione:"Bursa", provincia:"\u2014", luogo:"Bursa", paese:"tr", completa:false },
+    "TR1261F7DA": { nome:"İstanbul Geleneksel Okçuluk", regione:"İstanbul", provincia:"\u2014", luogo:"İstanbul", paese:"tr", completa:false },
+    "TRE88C56F7": { nome:"İzmir Atlı Okçuluk", regione:"İzmir", provincia:"\u2014", luogo:"İzmir", paese:"tr", completa:false },
+    "TR6800EC2D": { nome:"Kavvas Okçuluk", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TRE282F4AB": { nome:"Kırşehir Geleneksel Ve Atlı Okçuluk", regione:"Kırşehir", provincia:"\u2014", luogo:"Kırşehir", paese:"tr", completa:false },
+    "TR92469160": { nome:"Melikşah G.T.O.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TREAD69724": { nome:"Mersin Kasırga Geleneksel O.", regione:"Mersin", provincia:"\u2014", luogo:"Mersin", paese:"tr", completa:false },
+    "TRB1D8CABE": { nome:"Nasreddin Hoca Atlı Ve Yaya O.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TRE88322C4": { nome:"Okspor - Okculuk İhtisas Kulübü", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TRADF0F644": { nome:"Okçuluk Spor Kulübü / Kocaeli", regione:"Kocaeli", provincia:"\u2014", luogo:"Kocaeli", paese:"tr", completa:false },
+    "TR3BA19F4B": { nome:"Onok Okçuluk Spor Kulübü", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR29B0DA6F": { nome:"Onoklar Spor Kulübü", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TRCB6A158F": { nome:"Porsuk Gençlik Ve Spor Kulübü", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR5830E728": { nome:"Sehir Geleneksel Okçuluk", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR4633359F": { nome:"Türkoğlu Avasım G.O.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR95C49D70": { nome:"Yozgat Bozok Okçuluk", regione:"Yozgat", provincia:"\u2014", luogo:"Yozgat", paese:"tr", completa:false },
+    "TRA898286F": { nome:"Yıldırım Cirit Ve Okçuluk Kulübü", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR1FEC2BDB": { nome:"Yıldırım O.İ. S. K.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR5569D707": { nome:"Ümraniye Bel. G. O. K.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false },
+    "TR99179DE8": { nome:"Şenok Okçuluk İ. S. K.", regione:"TOF", provincia:"\u2014", luogo:"TOF", paese:"tr", completa:false }
   };
