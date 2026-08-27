@@ -5073,6 +5073,91 @@ color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer; }
 }
 </style>
 
+
+<style id="home-compatta-v2">
+/* HOME — SOLO Ultimo giro + Questo mese.
+   Hero, header, CTA, bottom navigation e JS restano invariati. */
+
+/* Le due sezioni diventano piu' basse e piu' dense. */
+.home-ultimo,
+.home-mese{
+  padding-top:12px !important;
+  padding-bottom:12px !important;
+}
+
+.home-ultimo .strato-eti,
+.home-mese .home-mese-capo{
+  margin-bottom:6px !important;
+}
+
+/* ULTIMO GIRO: numero importante, ma meno da poster. */
+.home-ultimo .home-mese-dati{
+  margin-top:8px !important;
+}
+.home-ultimo .hm-voce:first-child b{
+  font-size:clamp(3rem,12vw,4.4rem) !important;
+  line-height:.88 !important;
+}
+.home-ultimo .hm-voce i{
+  margin-top:6px !important;
+  font-size:var(--t-xs) !important;
+  line-height:1.25 !important;
+}
+.home-ultimo .hm-vuota-testo{
+  margin-top:6px !important;
+  line-height:1.35 !important;
+}
+.home-ultimo .ug-record{ margin-top:6px !important; }
+
+/* QUESTO MESE: pannello tecnico, con media dominante e tre KPI compatti. */
+.home-mese .home-mese-dati{
+  margin-top:8px !important;
+}
+.home-mese .home-mese-dati > .hm-voce:first-child b{
+  font-size:clamp(2.8rem,10vw,4rem) !important;
+  line-height:.9 !important;
+}
+.home-mese .hm-voce i{
+  margin-top:5px !important;
+  line-height:1.2 !important;
+}
+.home-mese .hm-riga{
+  margin-top:10px !important;
+  padding-top:10px !important;
+}
+.home-mese .hm-riga .hm-voce{
+  padding-left:12px !important;
+}
+.home-mese .hm-riga .hm-voce b{
+  font-size:var(--t-md) !important;
+  line-height:1 !important;
+}
+.home-mese .hm-riga .hm-voce i{
+  font-size:var(--t-2xs) !important;
+  letter-spacing:.06em !important;
+}
+
+/* Se il grafico mensile viene aperto, anche il suo ingresso resta compatto. */
+.home-mese-dentro{
+  margin-top:12px !important;
+  padding-top:12px !important;
+}
+
+@media (max-width:520px){
+  .home-ultimo,
+  .home-mese{
+    padding-top:10px !important;
+    padding-bottom:10px !important;
+  }
+  .home-ultimo .hm-voce:first-child b{
+    font-size:clamp(2.8rem,16vw,4rem) !important;
+  }
+  .home-mese .home-mese-dati > .hm-voce:first-child b{
+    font-size:clamp(2.6rem,14vw,3.7rem) !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <noscript>
