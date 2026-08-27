@@ -871,25 +871,25 @@ color-scheme:light;
 --border:var(--sand-500); --border-strong:var(--sand-900);
 
 /* marchio e codici: i gradini piu' scuri di ogni famiglia */
---brand:var(--green-900); --brand-soft:var(--green-900); --brand-ink:var(--sand-900);
---chart-line:var(--green-900);   /* al sole il verde piu' scuro, sul bianco */
+--brand:var(--green-600); --brand-soft:var(--green-400); --brand-ink:var(--sand-900);
+--chart-line:var(--green-400);   /* al sole il verde piu' scuro, sul bianco */
 --clay:var(--clay-400); --clay-ink:var(--sand-900); --gold-role:var(--gold-400);
 /* Al sole le superfici sono bianco e `--sand-200`, quindi servono gli stessi
    gradini scuri del chiaro: verde 7,04 e 5,88, oro 6,65 e 5,55. Qui
    `--gold-role` e' `--gold-400`, che su `--sand-200` fa 2,13 — cioe' il
    tema fatto apposta per leggersi al sole era quello in cui l'oro non si
    leggeva. */
---brand-testo:var(--green-700); --gold-testo:var(--gold-800);
---sun-on-bg:var(--gold-800); --sun-on-fg:var(--sand-50);
---danger-role:var(--red-700); --success-role:var(--green-800);
+--brand-testo:var(--green-400); --gold-testo:var(--gold-400);
+--sun-on-bg:var(--gold-400); --sun-on-fg:#1A1305;
+--danger-role:var(--red-400); --success-role:var(--green-success-dk);
 
 /* il bersaglio da anelli e' paglia: al sole la paglia e' chiara, non fangosa */
 --ring-bg-a:var(--straw-200); --ring-bg-b:var(--straw-500); --ring-ink:var(--straw-900);
---ring-empty-bg:var(--sand-250); --ring-empty-bd:var(--sand-900);
+--ring-empty-bg:var(--moss-600); --ring-empty-bd:var(--moss-500);
 
 /* niente ombre: al sole non si vedono e mangiano contrasto */
 --elev-1:none; --elev-2:none; --elev-3:none;
---focus-ring:0 0 0 3px color-mix(in srgb, var(--brand) 55%, transparent);
+--focus-ring:0 0 0 3px color-mix(in srgb, var(--brand-soft) 34%, transparent);
 
 /* niente velo di colore, niente grana */
 --wash-1:transparent; --wash-2:transparent; --wash-3:transparent;
@@ -899,13 +899,13 @@ color-scheme:light;
    tenue si toglie di mezzo */
 /* Stessa correzione sui tre comandi del menu: la PASTIGLIA e' un fondo, e
    quindi va viva; il TESTO accanto e' testo, e quindi resta scuro. */
---tone-train-bg:var(--sand-50); --tone-train-fg:var(--green-700); --tone-train-solid:var(--lime-500);
---tone-race-bg:var(--sand-50);  --tone-race-fg:var(--clay-800);   --tone-race-solid:var(--clay-400);
---tone-prep-bg:var(--sand-50);  --tone-prep-fg:var(--gold-800);   --tone-prep-solid:var(--gold-400);
+--tone-train-bg:color-mix(in srgb, var(--green-600) 24%, var(--surface-1)); --tone-train-fg:var(--green-400); --tone-train-solid:var(--green-500);
+--tone-race-bg:color-mix(in srgb, var(--clay-500) 24%, var(--surface-1));  --tone-race-fg:var(--clay-400);   --tone-race-solid:var(--clay-500);
+--tone-prep-bg:color-mix(in srgb, var(--gold-500) 24%, var(--surface-1));  --tone-prep-fg:var(--gold-400);   --tone-prep-solid:var(--gold-500);
 /* Al sole il fondo e' bianco: il verde del marchio ci fa 2,66:1. Stesso
    verde scuro del tema chiaro, 7,04:1. */
---tone-train-ico:var(--green-700); --tone-race-ico:var(--tone-race-fg); --tone-prep-ico:var(--tone-prep-fg);
---tone-border:100%; --solid-ink:var(--sand-900);
+--tone-train-ico:var(--tone-train-fg); --tone-race-ico:var(--tone-race-fg); --tone-prep-ico:var(--tone-prep-fg);
+--tone-border:55%; --solid-ink:var(--sand-50);
 /* il vuoto del bersaglio e le superfici tenui non devono restare veli */
 --checkbox-border:var(--sand-900);
 
@@ -928,16 +928,19 @@ color-scheme:light;
 
    Nero su ciascun fondo: 8,3 / 8,9 / 4,8 / 6,2 / 15,1. Il quarto e il terzo
    stanno sotto il 7 ma sopra il 4,5, e queste sono cifre grandi e grasse. */
---score-ss:var(--punto-ss); --score-spot:var(--punto-spot); --score-sag:var(--punto-sag);
---score-perfect:var(--punto-perfetto); --score-zero:var(--punto-zero);
+--score-ss:var(--punto-ss-scuro); --score-spot:var(--punto-spot-scuro); --score-sag:var(--punto-sag-scuro);
+--score-perfect:var(--punto-perfetto-scuro); --score-zero:var(--punto-zero-scuro);
 
 /* il timer perde il gradiente: due tinte che si mescolano al sole sono una
    tinta sola, e sporca */
---timer-idle-bg:var(--gold-100);
---timer-idle-bd:var(--gold-800); --timer-idle-fg:var(--gold-800);
---timer-run-bg:var(--green-200);  --timer-run-bd:var(--green-900); --timer-run-fg:var(--green-900);
---timer-warn-bg:var(--gold-200);  --timer-warn-bd:var(--gold-800); --timer-warn-fg:var(--gold-800);
---timer-dgr-bg:var(--red-100);    --timer-dgr-bd:var(--red-700);   --timer-dgr-fg:var(--red-700);
+/* IL FONDO DELLA PASTIGLIA FERMA RESTA CHIARO. Dal buio si prendono i
+   COLORI, non le superfici: questo era un gradiente di muschio scuro e
+   qui sotto la pagina e' bianca. */
+--timer-idle-bg:linear-gradient(135deg,var(--moss-700),var(--moss-800));
+--timer-idle-bd:var(--border-strong); --timer-idle-fg:var(--text-1);
+--timer-run-bg:color-mix(in srgb, var(--green-600) 18%, var(--surface-1));  --timer-run-bd:var(--green-400); --timer-run-fg:var(--green-400);
+--timer-warn-bg:color-mix(in srgb, var(--gold-400) 15%, var(--surface-1));  --timer-warn-bd:var(--gold-400); --timer-warn-fg:var(--gold-400);
+--timer-dgr-bg:color-mix(in srgb, var(--red-400) 15%, var(--surface-1));    --timer-dgr-bd:var(--red-400);   --timer-dgr-fg:var(--red-400);
 
 --navbar-bg:var(--sand-50); --navbar-line:var(--sand-400); --navbar-fg:var(--sand-700);
 /* LA SCRITTA BIANCA SULLA PASTIGLIA VERDE STAVA A 2,66:1, e non e' un
@@ -946,8 +949,8 @@ color-scheme:light;
    aveva, nella barra, il contrasto peggiore dell'app.*
    La pastiglia resta piena — al sole il tinto non si vede — e cambia
    l'inchiostro: scuro su verde fa 6,89:1. */
---navbar-on:var(--green-900); --navbar-pill:var(--green-900);
---navbar-pill-ink:var(--sand-900); --navbar-shadow:rgba(18,22,15,0.22);
+--navbar-on:var(--green-400); --navbar-pill:color-mix(in srgb, var(--green-400) 12%, var(--surface-2));
+--navbar-pill-ink:var(--green-400); --navbar-shadow:rgba(18,22,15,0.22);
 --icona-accento:var(--clay-400);
 /* Al sole `--surface-2` e' `--sand-200`, cioe' un gradino piu' marcato che
    al chiuso: 1,20 contro 1,12. Non e' pignoleria — in piena luce una
@@ -959,21 +962,21 @@ color-scheme:light;
 /* Il verde invece la velatura ce l'ha, e al sole la tiene piu' marcata
    (70% invece di 55%): da sola, in piena luce, non basta a dire dove
    finisce una zona. */
---verde-bg:color-mix(in srgb, var(--brand) 20%, var(--surface-1));
---verde-bd:color-mix(in srgb, var(--brand) 70%, var(--surface-1));
+--verde-bg:color-mix(in srgb, var(--brand) 22%, var(--surface-2));
+--verde-bd:color-mix(in srgb, var(--brand) 55%, var(--surface-2));
 /* AL SOLE IL PANNELLO NON E' SCURO, E QUESTO E' IL PUNTO.
    In piena luce uno schermo scuro annega: la retroilluminazione non ha
    niente da spingere. Qui il pannello resta il piu' chiaro che c'e' e a
    distinguerlo e' la porta arancione, che in luce si vede da lontano.
    *Il pannello non e' un colore: e' un ruolo, e ogni tema lo risolve come
    gli serve.* */
---eroe-bg:var(--sand-50); --eroe-ink:var(--sand-900);
---eroe-eti:var(--sand-500);
+--eroe-bg:var(--pece); --eroe-ink:var(--sand-100);
+--eroe-eti:var(--moss-300);
 /* Qui la banda e' chiara, quindi i prestiti valgono al contrario: sono gli
    stessi valori che la barra delle sezioni aveva gia' in questo tema. */
---eroe-linea:var(--sand-400);
---eroe-nav-fg:var(--sand-700); --eroe-nav-on:var(--green-900);
---eroe-nav-pill:var(--green-900); --eroe-nav-ink:var(--sand-900);
+--eroe-linea:color-mix(in srgb, var(--sand-100) 14%, transparent);
+--eroe-nav-fg:var(--sand-300); --eroe-nav-on:var(--verde-testata);
+--eroe-nav-pill:color-mix(in srgb, var(--verde-testata) 18%, transparent); --eroe-nav-ink:var(--verde-testata);
 /* AL SOLE LE PORTE RESTANO CHIARE, come il pannello e per lo stesso motivo:
    in piena luce un fondo scuro si legge peggio, non meglio. Ma allora i toni
    accesi non reggono piu' sopra il bianco (verde 2,66), quindi qui il segno
@@ -999,15 +1002,15 @@ color-scheme:light;
    il tema chiaro. Cambia il pannello delle porte, non la pagina. */
 --porte-bg:var(--pece); --porte-tit:var(--sand-100);
 --porte-sub:var(--moss-300); --porte-linea:rgba(245,242,237,0.13);
---segno-train:var(--green-400); --segno-race:var(--clay-400);
---segno-prep:var(--oro-testata);
+--segno-train:var(--tone-train-fg); --segno-race:var(--tone-race-fg);
+--segno-prep:var(--tone-prep-fg);
 --filo-train:var(--segno-train); --filo-race:var(--segno-race);
 --filo-prep:var(--segno-prep);
-/* `--tone-train-ico` NON si tocca: nel Sole resta il verde scuro, perche' lo
-   legge una pastiglia che sta sulla PAGINA bianca, non sul pannello delle
-   porte. Il disegno dentro la placca lo tinge gia' `--segno-train`, qui
-   sopra. Due token che sembrano la stessa cosa e stanno su due fondi diversi:
-   e' il motivo per cui esistono separati. */
+/* (27/08/2026 — nota corretta. Qui c'era scritto che `--tone-train-ico` nel
+   Sole restava verde scuro. Non e' piu' vero: nella stessa giornata TUTTI i
+   colori d'accento del Sole sono passati a quelli del tema scuro, questo
+   compreso. La nota vecchia raccontava una decisione superata da un'ora
+   dopo, ed e' peggio di nessuna nota.) */
 /* AL SOLE IL TASTO RESTA PIENO, ED E' IL MOTIVO PER CUI QUESTO TEMA ESISTE.
    Il tinto e' piu' garbato al chiuso; in piena luce «piu' garbato» vuol dire
    «non si vede». Chi accende il Sole ha gia' detto che gli serve il massimo
@@ -1015,21 +1018,21 @@ color-scheme:light;
    chiesto. Passa dai token, quindi non serve nessuna regola per tema. */
 /* Al sole niente velature nate per il chiuso: la bolla propria e' piu'
    carica, perche' in piena luce una tinta leggera e' una tinta assente. */
---bolla-mia:color-mix(in srgb, var(--brand) 52%, var(--surface-1));
+--bolla-mia:color-mix(in srgb, var(--brand) 38%, var(--surface-1));
 --bolla-sua:var(--surface-1);
 /* Al sole resta piena, per lo stesso motivo del tasto: in piena luce una
    tinta leggera e' una tinta assente, e qui in piu' bisogna capire QUALE
    delle tre e' accesa camminando. */
---acceso-bg:var(--brand);
---acceso-fg:var(--brand-ink);
+--acceso-bg:color-mix(in srgb, var(--brand) 16%, var(--surface-2));
+--acceso-fg:var(--brand);
 --acceso-bd:var(--brand);
---primario-bg:var(--brand);
---primario-fg:var(--brand-ink);
---primario-bd:transparent;
---primario-bg-hover:var(--brand);
+--primario-bg:color-mix(in srgb, var(--brand) 12%, var(--surface-2));
+--primario-fg:var(--brand);
+--primario-bd:color-mix(in srgb, var(--brand) 48%, transparent);
+--primario-bg-hover:color-mix(in srgb, var(--brand) 20%, var(--surface-2));
 --navbar-hover:rgba(18,22,15,0.08);
 
---qsag:var(--slate-700);
+--qsag:var(--slate-400);
 
 /* ───── ALIAS · ridichiarati, e sopra c'e' scritto perche' ───── */
 --bg:var(--surface); --bg-panel:var(--surface-1); --bg-panel-2:var(--surface-2);
@@ -20286,7 +20289,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-27-porte-sole";
+var BUILD_STAMP = "2026-08-27-sole-colori-del-buio";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -20295,7 +20298,7 @@ var BUILD_STAMP = "2026-08-27-porte-sole";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-27-sole-acceso";
+var BUILD_PARENT = "2026-08-27-porte-sole";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
