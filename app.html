@@ -1444,7 +1444,18 @@ color:var(--gold-role); font-weight:800; box-shadow:none; }
    `--porta-h` e' la stessa per tutte e tre. La descrizione si ferma a due
    righe — la nota di qui sotto ne chiedeva una sola, ma in nove lingue una
    sola non basta, e un limite che nessuno rispetta non e' un limite. */
-:root{ --porta-h:calc(var(--s-7) + var(--s-6)); }
+/* L'ALTEZZA DELLE PORTE STA IN UN NUMERO SOLO, E SI ABBASSA LI'.
+   (26/08/2026, Alessandro: «riduci l'altezza».) Da 48+32 a 48+16: il quadrato
+   dell'icona e' alto 48 e detta il minimo vero, quindi quello che si toglie e'
+   solo aria. Resta UN numero per tutte e tre, che era il motivo per cui
+   `--porta-h` esiste dal 23/08.
+
+   *E una nota sul metodo, perche' e' costata mezz'ora:* per due giri ho letto
+   le misure da una COPIA VECCHIA del file, e ho concluso che le modifiche non
+   prendessero. Avevano preso. **Una misura fatta sul file sbagliato non dice
+   «non so»: dice una cosa precisa e falsa**, ed e' piu' pericolosa di non
+   misurare affatto. La copia di prova si rigenera PRIMA di ogni lettura. */
+:root{ --porta-h:calc(var(--s-7) + var(--s-4)); }
 .menu-btn{ padding:var(--s-3) var(--s-4); font-size:var(--t-md);
 text-align:left; justify-content:flex-start; margin-bottom:var(--s-2);
 position:relative; overflow:hidden; border-radius:var(--r-md); }
@@ -1491,7 +1502,11 @@ width:var(--s-6); height:var(--s-6); }
 .menu-btn .menu-sub{ font-family:var(--font-ui); font-weight:400; letter-spacing:0; }
 /* La descrizione va a una riga sola: e' un aiuto, non una spiegazione. Se non
    ci sta, il titolo non era abbastanza chiaro e si aggiusta il titolo. */
-.menu-btn .menu-sub{ font-size:var(--t-xs); font-weight:400; opacity:0.8;
+/* IL SOTTOTITOLO PASSA DA `--t-xs` A `--t-sm`. Dodici pixel su un pannello
+   scuro, in piedi e al sole, si intuiscono piu' che leggersi — e il contrasto
+   (4,68) e' gia' giusto, quindi il problema era la misura, non la tinta.
+   Il gradino in piu' non allunga la riga: la detta il quadrato dell'icona. */
+.menu-btn .menu-sub{ font-size:var(--t-sm); font-weight:400; opacity:0.8;
 margin-top:2px; line-height:1.35; }
 /* Due righe e non tre: senza il tetto, una traduzione lunga rifa' il difetto
    delle altezze diverse dalla porta di servizio. */
@@ -1566,7 +1581,13 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
      la punta e sembra un difetto di stampa. */
   overflow:hidden;
   display:flex; align-items:center; gap:var(--s-3);
-  padding:var(--s-3) var(--s-3) var(--s-3) var(--s-3); }
+  /* PIU' BASSE DI OTTO PIXEL L'UNA, E IL TESTO NON PERDE NIENTE.
+     (26/08/2026, Alessandro: «riduci l'altezza» + «il sottotitolo leggibile
+     anche sotto il sole» — due richieste che tirano in direzioni opposte se si
+     tocca il corpo del testo.) Si toglie l'aria sopra e sotto, non le lettere:
+     il quadrato dell'icona è alto 48 e detta gia' l'altezza minima della riga,
+     quindi il padding verticale in piu' non stava tenendo su niente. */
+  padding:var(--s-2) var(--s-3); }
 /* IL QUADRATO CHIARO DELL'ICONA. Il segno colorato dentro un rettangolo
    avorio: e' l'unico punto chiaro su fondo pece, e in pieno sole è quello che
    si trova per primo. Fisso, non elastico: tre quadrati di misure diverse
@@ -2838,7 +2859,15 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
    gola, come il titolo di sezione sopra di loro. Due rientri diversi nella
    stessa colonna sono la ragione per cui l'etichetta «PROFILO» e le icone
    sotto non partivano dallo stesso punto. */
+/* IL RIENTRO TORNA, PERCHE' ADESSO C'E' UN FONDO. (26/08/2026.) Era azzerato
+   il 23/08, quando le porte erano fasce trasparenti e il testo doveva stare
+   nella stessa colonna del titolo di sezione. Da quando la porta è una scheda
+   col fondo pece, un testo appoggiato al bordo non è allineato: è tagliato.
+   Le porte fanno eccezione; le altre righe di `.menu-cols` restano a zero. */
 .menu-cols > .card > .menu-btn{ padding-left:0; padding-right:0; }
+.menu-cols > .card > .menu-btn.training,
+.menu-cols > .card > .menu-btn.gara,
+.menu-cols > .card > .menu-btn.prepara{ padding-left:var(--s-3); padding-right:var(--s-3); }
 /* La freccia (il `::after` qui sopra) sta in coda alla riga: dice che si
    entra. Con `margin-left:auto` resta incollata al bordo destro anche quando
    il titolo e' corto. */
@@ -19941,7 +19970,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-porte-schede";
+var BUILD_STAMP = "2026-08-26-porte-basse";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19950,7 +19979,7 @@ var BUILD_STAMP = "2026-08-26-porte-schede";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-tre-porte";
+var BUILD_PARENT = "2026-08-26-porte-schede";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
