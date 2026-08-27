@@ -12364,7 +12364,15 @@ fiarc: { circuiti:["fiarc","ifaa"], garaModes: ["round3d","percorso","tracciato"
 fitarco: { circuiti:["wa"], garaModes: ["fitarco3d"], trainingMode:"fitarco_training" },
 ffta: { circuiti:["wa"], garaModes: ["ffta_tir3d"], trainingMode:"ffta_training" },
 swissarchery: { circuiti:["wa"], garaModes: ["swissarchery_3d"], trainingMode:"swissarchery_training" },
-turkey: { circuiti:["wa"], garaModes: ["turkey_3d"], trainingMode:"turkey_training" },
+/* FUORI DALLE SCELTE DAL 27/08/2026, DENTRO AL MOTORE. Stessa strada gia'
+   fatta per la russia il 26/08: la TOF non si sceglie piu' (non e' nell'elenco
+   dei paesi ne' in quello delle tessere), ma chi ce l'ha gia' nel profilo
+   continua a contare col suo regolamento e a rivedere il suo storico.
+   *Togliere il bareme avrebbe fatto cadere quella persona su FIARC, in
+   silenzio, e i suoi giri passati avrebbero cambiato punteggio da soli.*
+   Torna scegliibile rimettendo la riga in COUNTRY_LIST, COUNTRY_FEDERATIONS e
+   PROFILE_FEDERATIONS, e togliendo `fuoriElenco`. */
+turkey: { circuiti:["wa"], garaModes: ["turkey_3d"], trainingMode:"turkey_training", fuoriElenco:true },
 /* FUORI DALLE SCELTE DAL 26/08/2026, DENTRO AL MOTORE. Non si sceglie piu'
    (non e' nell'elenco dei paesi ne' in quello delle tessere), ma chi ce
    l'ha gia' nel profilo continua a contare col suo regolamento e a
@@ -14412,7 +14420,6 @@ var COUNTRY_LIST = [
 { code:"at", flag:"\uD83C\uDDE6\uD83C\uDDF9", key:"country_austria" },
 { code:"de", flag:"\uD83C\uDDE9\uD83C\uDDEA", key:"country_germany" },
 { code:"uk", flag:"\uD83C\uDDEC\uD83C\uDDE7", key:"country_uk" },
-{ code:"tr", flag:"\uD83C\uDDF9\uD83C\uDDF7", key:"country_turkey" },
 { code:"es", flag:"\uD83C\uDDEA\uD83C\uDDF8", key:"country_spain" },
 { code:"nl", flag:"\uD83C\uDDF3\uD83C\uDDF1", key:"country_netherlands" },
 { code:"se", flag:"\uD83C\uDDF8\uD83C\uDDEA", key:"country_sweden" }
@@ -14425,7 +14432,6 @@ ch: [ {code:"swissarchery", label:"SwissArchery", url:"https://www.swissarchery.
 at: [ {code:"oebsv", label:"\u00d6BSV", url:"https://www.archeryaustria.net"} ],
 de: [ {code:"dsb", label:"DSB", url:"https://www.dsb.de"}, {code:"dfbv", label:"DFBV", url:"https://www.dfbv.de"} ],
 uk: [ {code:"archerygb", label:"Archery GB", url:"https://www.archerygb.org"}, {code:"nfas", label:"NFAS", url:"https://nfas.net"}, {code:"efaa", label:"EFAA", url:"https://efaafieldarcher.com"} ],
-tr: [ {code:"turkey", label:"TOF", url:"https://www.turkarchery.org"} ],
 es: [ {code:"spain", label:"RFETA", url:"https://www.rfeta.es"} ],
 nl: [ {code:"nhb", label:"KHSN", url:"https://www.handboogsport.nl"} ],
 se: [ {code:"sweden", label:"SBF", url:"https://www.bagskytte.se"}, {code:"sff", label:"SFF"} ]
@@ -14655,7 +14661,6 @@ var PROFILE_FEDERATIONS = [
 {code:"swissarchery", label:"SwissArchery"}, {code:"faas", label:"FAAS"},
 {code:"oebsv", label:"\u00d6BSV"}, {code:"dfbv", label:"DFBV"},
 {code:"archerygb", label:"Archery GB"}, {code:"nfas", label:"NFAS"}, {code:"efaa", label:"EFAA"},
-{code:"turkey", label:"TOF"},
 {code:"spain", label:"RFETA"}, {code:"sweden", label:"SBF"}, {code:"nhb", label:"KHSN"},
 {code:"sff", label:"SFF"}, {code:"dsb", label:"DSB"},
 {code:"fidasc", label:"FIDASC"}
@@ -15188,6 +15193,16 @@ if(!q || typeof COMPAGNIE === "undefined"){ clubList.style.display = "none"; ret
 var found = 0;
 Object.keys(COMPAGNIE).forEach(function(cod){
 if(found >= 30) return;
+// UNA SOCIETA' SOLA NON DEVE COMPARIRE DUE VOLTE. (27/08/2026.)
+// Una compagnia iscritta sia alla FIARC sia alla FITARCO sta nel registro DUE
+// volte, con due codici veri e diversi — gli Arcieri del Dahu sono `01DAHU` e
+// `FT01100`. Non e' un dato sbagliato: sono due tessere della stessa gente, e
+// quale delle due conta dipende da che federazione ha scelto chi guarda.
+// `compagniaVisibile()` questa scelta la sa gia' fare, e la tendina della
+// compagnia la usa da sempre. Questa casella di ricerca no: pescava da tutto
+// l'elenco e le mostrava tutte e due, una sopra l'altra, identiche.
+// In Italia sono 41 le societa' che stanno da tutte e due le parti.
+if(!compagniaVisibile(cod)) return;
 var c = COMPAGNIE[cod];
 /* Si CERCA su nome e luogo insieme — chi scrive «Vignone» deve trovarla — ma
    si MOSTRA su due righe: il nome sopra, il luogo sotto piu' piccolo. Cosi'
@@ -20295,7 +20310,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-27-svezia-uk";
+var BUILD_STAMP = "2026-08-27-senza-turchia";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -20304,7 +20319,7 @@ var BUILD_STAMP = "2026-08-27-svezia-uk";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-27-spagna";
+var BUILD_PARENT = "2026-08-27-svezia-uk";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -21736,6 +21751,10 @@ if(!q || typeof COMPAGNIE === "undefined"){ listDiv.classList.remove("aperta"); 
 var found = 0;
 Object.keys(COMPAGNIE).forEach(function(cod){
 if(found >= 30) return;
+// Stessa ragione della ricerca nel profilo: senza questo filtro le societa'
+// con due tessere comparivano due volte, e chi cerca il proprio campo si
+// trovava la stessa riga ripetuta.
+if(!compagniaVisibile(cod)) return;
 var c = COMPAGNIE[cod];
 var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "");
 if(label.toLowerCase().indexOf(q) === -1) return;
