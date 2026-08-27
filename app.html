@@ -1506,6 +1506,37 @@ border:1.5px solid color-mix(in srgb, var(--tone-train-solid) var(--tone-border)
 border:1.5px solid color-mix(in srgb, var(--tone-race-solid) var(--tone-border), transparent); box-shadow:none; }
 .menu-btn.prepara{ background:var(--tone-prep-bg); color:var(--tone-prep-fg);
 border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border), transparent); box-shadow:none; }
+/* ══ E POI LA SCATOLA TORNA, PIU' STRETTA ════════════════════════════════
+   (26/08/2026, Alessandro: «forma e spaziatura e dettagli dei tasti
+   principali deve essere cosi'», con un disegno accanto.)
+
+   Il ragionamento del 23/08 qui sotto — via la scatola, resta il tono — aveva
+   ragione su un difetto vero: tre riquadri TINTI, ognuno col suo fondo velato,
+   erano tre scatole colorate che gridavano piu' del nome che contenevano.
+
+   Ma la cura aveva buttato via anche la separazione: tre fasce attaccate con
+   un filo in mezzo si leggono come UN blocco in cui bisogna trovare le righe,
+   non come tre porte fra cui scegliere. *Sono tre scelte, e tre scelte hanno
+   bisogno di tre bordi.*
+
+   Torna la scatola, con due differenze che tengono in piedi il 23/08:
+     · il fondo resta PECE per tutte e tre, non tinto. Il colore sta nella
+       barretta e nell'icona, dove non può gridare.
+     · le tre sono identiche di peso: nessuna è più grande o più piena.
+
+   E il rettangolo chiaro attorno all'icona non è decorazione: è l'unico punto
+   chiaro della scheda, e su un fondo pece è quello che l'occhio trova per
+   primo — al sole, prima ancora della parola. */
+/* LO STACCO FRA LE TRE PORTE LO FA IL VUOTO, NON UN CONTENITORE NUOVO.
+   (26/08/2026.) Il primo tentativo svuotava la scheda che le contiene per
+   dare aria ai lati — e portava via anche il padding dell'etichetta «Cosa
+   vuoi fare?», che sta lì dentro. `banco-bordi.js` l'ha detto in una riga:
+   «partono tutte dallo stesso punto: 0, 16». *Una regola che tocca il
+   contenitore tocca anche quello che non stavo guardando.*
+   Basta il margine sotto ogni porta: tre schede staccate, e la colonna della
+   schermata resta una. */
+.menu-cols .menu-btn.training, .menu-cols .menu-btn.gara{ margin-bottom:var(--s-2); }
+
 /* ══ LE TRE PORTE PERDONO LA SCATOLA E TENGONO IL TONO ════════════════════
    (23/08/2026, chiesto da Alessandro: «prova 1 e 3».)
 
@@ -1527,13 +1558,31 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
    Il punto di partenza lo da' la Home col suo tasto pieno: qui si e' gia'
    scelto di tirare, si sceglie solo *come*. */
 .menu-btn.training, .menu-btn.gara, .menu-btn.prepara{
-  background:var(--porte-bg); border:0; border-bottom:1px solid var(--porte-linea);
-  border-left:4px solid var(--porta-segno);
-  border-radius:0; box-shadow:none; margin-bottom:0;
-  color:var(--porte-tit); padding-left:var(--s-3); }
-/* L'ultima non porta la linea: il pannello finisce, non si interrompe —
-   come l'ultima riga di un elenco. */
-.menu-btn.prepara{ border-bottom-color:transparent; }
+  background:var(--porte-bg); border:0;
+  border-left:6px solid var(--porta-segno);
+  border-radius:var(--r-lg); box-shadow:none;
+  color:var(--porte-tit);
+  /* Il ritaglio serve alla barretta: senza, l'angolo arrotondato le taglia
+     la punta e sembra un difetto di stampa. */
+  overflow:hidden;
+  display:flex; align-items:center; gap:var(--s-3);
+  padding:var(--s-3) var(--s-3) var(--s-3) var(--s-3); }
+/* IL QUADRATO CHIARO DELL'ICONA. Il segno colorato dentro un rettangolo
+   avorio: e' l'unico punto chiaro su fondo pece, e in pieno sole è quello che
+   si trova per primo. Fisso, non elastico: tre quadrati di misure diverse
+   sono tre righe che non stanno in colonna. */
+/* Misura presa da `--s-7` (48px), che nella scala c'e': `--s-8` non esiste, e
+   una misura che non esiste non da' errore — lascia il quadrato grande quanto
+   l'icona, cioe' 24px, e sembra una scelta. *Il guardiano dei token esiste
+   proprio per questo, e qui l'ho scoperto misurando.* */
+.menu-btn .menu-icon{ flex:0 0 auto; width:var(--s-7); height:var(--s-7);
+  display:flex; align-items:center; justify-content:center;
+  background:var(--sand-100); border-radius:var(--r-md); }
+.menu-btn .menu-txt{ flex:1 1 auto; min-width:0; }
+/* LA FRECCIA DICE CHE SI APRE QUALCOSA. Senza, una scheda scura con dentro
+   due righe di testo sembra un cartello; con, è una porta. */
+.menu-btn::after{ content:"\203a"; flex:0 0 auto; font-size:var(--t-xl);
+  line-height:1; color:var(--porte-tit); opacity:.85; margin-left:var(--s-1); }
 .menu-btn.training .menu-txt, .menu-btn.gara .menu-txt, .menu-btn.prepara .menu-txt{
   color:var(--porte-tit); }
 .menu-btn.training .menu-sub, .menu-btn.gara .menu-sub, .menu-btn.prepara .menu-sub{
@@ -1630,9 +1679,16 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
    lasciargli lo si deve indovinare — in una lingua sola.* «Solo collaudatori»
    in tedesco e in russo e' lungo il doppio, e l'indovinello cambia risposta.
    In riga il posto se lo prende da sola, in tutte e nove. */
-.porta-spenta{ flex-wrap:wrap; }
-.porta-spenta .menu-txt{ flex:1 1 auto; min-width:0; }
-.porta-bollo{ flex:0 0 auto; align-self:center; margin-left:auto;
+/* IL `flex-wrap` MANDAVA IL TESTO SOTTO L'ICONA. (26/08/2026, visto
+   guardando: il titolo di «Prepara gara» cominciava sul bordo della scheda,
+   fuori colonna rispetto alle altre due.) Serviva quando la porta era una
+   fascia larga e la pastiglia non ci stava in riga; adesso che la porta e' una
+   scheda con l'icona nel quadrato, andare a capo significa scavalcare il
+   quadrato. Il testo e la pastiglia si impilano *dentro* la loro colonna, e
+   la fila delle tre icone resta una fila. */
+.porta-spenta .menu-txt{ flex:1 1 auto; min-width:0;
+  display:flex; flex-direction:column; align-items:flex-start; gap:var(--s-2); }
+.porta-bollo{ flex:0 0 auto; align-self:flex-start;
   font-size:var(--t-2xs); font-weight:800; text-transform:uppercase; letter-spacing:.06em;
   padding:var(--s-1) var(--s-2); border-radius:var(--r-pill); white-space:nowrap;
   background:color-mix(in srgb, var(--porta-segno) 26%, transparent);
@@ -1644,15 +1700,30 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
 .ot-gruppo{ font-size:var(--t-sm); font-weight:800; text-transform:uppercase;
   letter-spacing:.05em; margin:var(--s-3) 0 var(--s-1); }
 .ot-gruppo-club{ color:var(--segno-train); }
-.ot-gruppo-open{ color:var(--segno-race); }
+.ot-gruppo-open{ color:var(--segno-prep); }
 .ot-gruppo:first-of-type{ margin-top:var(--s-2); }
 
 /* IL QUADRATO DELLA DATA prende lo stesso tono del suo gruppo: scorrendo si
    vede il colore, non si rilegge l'intestazione. */
+/* IL QUADRATO DELLA DATA: VERDE SE E' TUO, ORO SE E' DI ALTRI.
+   (26/08/2026, Alessandro: «non usiamo l'arancione sulla seconda data
+   allenamento, magari un altro colore esistente ma non cosi' forte».)
+
+   Era argilla, e l'argilla in questa app ha un mestiere solo: **l'azione**.
+   E' il tasto «Inizia un giro», e' «Partecipo», e' la porta «Gara libera».
+   Un quadrato di data non e' un'azione — e' un'etichetta — e ogni volta che
+   quel colore finisce su qualcosa che non si preme, si preme un po' meno
+   anche dove serve. *Un colore che vuol dire due cose non ne vuol dire
+   nessuna.*
+
+   Prende l'oro, che nella palette c'e' gia' — e' la barretta di «Prepara
+   gara» — ed e' l'unico caldo che non chiama all'azione. Resta distinto dal
+   verde a colpo d'occhio, che era il punto: scorrendo si vede il colore e si
+   sa gia' se l'allenamento e' della propria compagnia. */
 .al-mio .al-quando{ background:var(--segno-train); }
-.al-fuori .al-quando{ background:var(--segno-race); }
+.al-fuori .al-quando{ background:var(--segno-prep); }
 .al-mio .al-quando, .al-fuori .al-quando{ color:var(--solid-ink); }
-.al-fuori .al-chev{ color:var(--segno-race); }
+.al-fuori .al-chev{ color:var(--segno-prep); }
 
 /* IL TASTO CHE ANNUNCIA: contorno, non pieno. Vedi la nota nel copione.
    IL COLORE E' `--tone-race-fg`, NON `--clay`. Il primo tentativo usava
@@ -1667,7 +1738,9 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
 /* E i due titoli dei gruppi pescano dallo stesso posto: sul pannello chiaro
    il tono acceso non basta, serve quello da scrivere. */
 .ot-gruppo-club{ color:var(--tone-train-fg); }
-.ot-gruppo-open{ color:var(--tone-race-fg); }
+/* Il titolo del gruppo prende la stessa tinta del quadrato che sta sotto: se
+   l'intestazione dicesse un colore e le date un altro, sarebbero due gruppi. */
+.ot-gruppo-open{ color:var(--tone-prep-fg); }
 .menu-btn.gara .menu-icon{ color:var(--tone-race-ico); }
 .menu-btn.prepara .menu-icon{ color:var(--tone-prep-ico); }
 .menu-btn .menu-txt{ color:var(--text-1); }
@@ -19868,7 +19941,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-tre-porte";
+var BUILD_STAMP = "2026-08-26-porte-schede";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19877,7 +19950,7 @@ var BUILD_STAMP = "2026-08-26-tre-porte";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-butta-assetto";
+var BUILD_PARENT = "2026-08-26-tre-porte";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
