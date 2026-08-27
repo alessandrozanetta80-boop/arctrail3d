@@ -5782,6 +5782,7 @@ attr_riprendi: "Rimetti in uso",
 attr_archiviati: "Archiviati",
 attr_archiviati_hint: "Non compaiono nella scelta, ma restano scritti nei giri già tirati.",
 attr_confirm_delete: "Cancellare «{nome}» per sempre? I giri già tirati con questo assetto non cambiano.",
+attr_confirm_delete_vuoto: "Cancellare «{nome}»? Non ci hai ancora tirato nessun giro.",
 attr_media_con: "Media {media} a piazzola, su {n} giri",
 attr_pochi_giri: "{n} giro/i: la media compare dopo {min}.",
 attr_assetto: "Assetto",
@@ -6451,6 +6452,7 @@ attr_riprendi: "Put back in use",
 attr_archiviati: "Archived",
 attr_archiviati_hint: "They no longer appear in the picker, but stay named in past rounds.",
 attr_confirm_delete: "Delete “{nome}” for good? Rounds already shot with it do not change.",
+attr_confirm_delete_vuoto: "Delete “{nome}”? You haven’t shot a single round with it yet.",
 attr_media_con: "{media} per target on average, over {n} rounds",
 attr_pochi_giri: "{n} round(s): the average shows after {min}.",
 attr_assetto: "Setup",
@@ -7119,6 +7121,7 @@ attr_riprendi: "Remettre en service",
 attr_archiviati: "Archivées",
 attr_archiviati_hint: "Elles ne sont plus proposées, mais restent nommées dans les parcours passés.",
 attr_confirm_delete: "Supprimer « {nome} » définitivement ? Les parcours déjà tirés ne changent pas.",
+attr_confirm_delete_vuoto: "Supprimer « {nome} » ? Tu n’as encore tiré aucun parcours avec.",
 attr_media_con: "Moyenne {media} par cible, sur {n} parcours",
 attr_pochi_giri: "{n} parcours : la moyenne apparaît après {min}.",
 attr_assetto: "Configuration",
@@ -7787,6 +7790,7 @@ attr_riprendi: "Wieder verwenden",
 attr_archiviati: "Archiviert",
 attr_archiviati_hint: "Sie erscheinen nicht mehr zur Auswahl, bleiben aber in alten Runden benannt.",
 attr_confirm_delete: "„{nome}“ endgültig löschen? Bereits geschossene Runden ändern sich nicht.",
+attr_confirm_delete_vuoto: "Bogen „{nome}“ löschen? Du hast damit noch keine Runde geschossen.",
 attr_media_con: "Schnitt {media} pro Ziel, über {n} Runden",
 attr_pochi_giri: "{n} Runde(n): der Schnitt erscheint ab {min}.",
 attr_assetto: "Setup",
@@ -8474,6 +8478,7 @@ attr_riprendi: "Yeniden kullan",
 attr_archiviati: "Arşivlenmiş",
 attr_archiviati_hint: "Seçimde çıkmaz, ama eski turlarda adı kalır.",
 attr_confirm_delete: "“{nome}” kalıcı olarak silinsin mi? Atılmış turlar değişmez.",
+attr_confirm_delete_vuoto: "“{nome}” silinsin mi? Onunla henüz hiç tur atmadın.",
 attr_media_con: "Hedef başına {media} ortalama, {n} turda",
 attr_pochi_giri: "{n} tur: ortalama {min} turdan sonra görünür.",
 attr_assetto: "Set",
@@ -9155,6 +9160,7 @@ attr_riprendi: "Вернуть в работу",
 attr_archiviati: "Архив",
 attr_archiviati_hint: "В выборе не появляются, но остаются в прошлых раундах.",
 attr_confirm_delete: "Удалить «{nome}» навсегда? Уже отстрелянные круги не изменятся.",
+attr_confirm_delete_vuoto: "Удалить «{nome}»? Вы ещё не прошли с ним ни одного круга.",
 attr_media_con: "В среднем {media} на мишень, за {n} раундов",
 attr_pochi_giri: "{n} раунд(ов): среднее появится после {min}.",
 attr_assetto: "Комплект",
@@ -9836,6 +9842,7 @@ attr_riprendi: "Volver a usar",
 attr_archiviati: "Archivadas",
 attr_archiviati_hint: "Ya no aparecen al elegir, pero siguen nombradas en las rondas pasadas.",
 attr_confirm_delete: "¿Eliminar «{nome}» para siempre? Las rondas ya tiradas no cambian.",
+attr_confirm_delete_vuoto: "¿Eliminar «{nome}»? Todavía no has tirado ninguna ronda con él.",
 attr_media_con: "Media {media} por diana, en {n} rondas",
 attr_pochi_giri: "{n} ronda(s): la media aparece a partir de {min}.",
 attr_assetto: "Configuración",
@@ -10517,6 +10524,7 @@ attr_riprendi: "Använd igen",
 attr_archiviati: "Arkiverade",
 attr_archiviati_hint: "De visas inte i valet, men står kvar i tidigare rundor.",
 attr_confirm_delete: "Ta bort ”{nome}” för alltid? Redan skjutna rundor ändras inte.",
+attr_confirm_delete_vuoto: "Radera ”{nome}”? Du har inte skjutit någon runda med den än.",
 attr_media_con: "Snitt {media} per mål, över {n} rundor",
 attr_pochi_giri: "{n} runda/rundor: snittet visas efter {min}.",
 attr_assetto: "Uppställning",
@@ -11198,6 +11206,7 @@ attr_riprendi: "Weer gebruiken",
 attr_archiviati: "Gearchiveerd",
 attr_archiviati_hint: "Ze verschijnen niet meer bij de keuze, maar blijven benoemd in oude rondes.",
 attr_confirm_delete: "“{nome}” definitief verwijderen? Al geschoten rondes veranderen niet.",
+attr_confirm_delete_vuoto: "„{nome}” verwijderen? Je hebt er nog geen ronde mee geschoten.",
 attr_media_con: "Gemiddeld {media} per doel, over {n} rondes",
 attr_pochi_giri: "{n} ronde(s): het gemiddelde verschijnt vanaf {min}.",
 attr_assetto: "Opstelling",
@@ -19737,7 +19746,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-senza-russia";
+var BUILD_STAMP = "2026-08-26-butta-assetto";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19746,7 +19755,7 @@ var BUILD_STAMP = "2026-08-26-senza-russia";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-storico-lapide";
+var BUILD_PARENT = "2026-08-26-senza-russia";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -20092,12 +20101,42 @@ azioni.appendChild(arc);
    I GIRI GIA' TIRATI NON SI TOCCANO. Il nome dell'assetto e' scritto dentro
    ognuno di loro: quello resta, e resta giusto. Sparisce la scheda, non la
    storia. */
-if(a.archiviato){
+/* UN ASSETTO CHE NON HA TIRATO NIENTE NON HA STORIA DA DIFENDERE.
+   (26/08/2026, seconda passata. Alessandro l'ha chiesto due volte, ed era il
+   segnale: la prima volta era stato messo SOLO fra gli archiviati, e per
+   arrivarci bisognava prima archiviare. Chi crea un assetto per sbaglio e lo
+   vuole togliere subito non trova niente e chiede di nuovo.)
+
+   La regola in cima a questo file diceva gia' la cosa giusta — *si cancella
+   solo un assetto che non ha tirato niente* — ma il codice guardava
+   `archiviato` invece dei giri. Adesso guarda i giri, che e' la domanda vera:
+     · **zero giri** → «Elimina» c'e' subito, anche fra quelli in uso. Non c'e'
+       niente da riscrivere, e la protezione proteggeva il nulla.
+     · **almeno un giro** → resta com'era: prima archivi, poi elimini. Due
+       passaggi, ed e' giusto che ce ne siano due, perche' quel nome sta
+       scritto dentro dei giri gia' tirati.
+
+   I GIRI NON SI TOCCANO MAI. Il nome dell'assetto e' copiato dentro ognuno di
+   loro (`assettoNome`): sparisce la scheda, non la storia. La conferma lo dice
+   quando c'e' qualcosa da dire, cioe' quando i giri ci sono. */
+var giriFatti = assettoNumeri(a.id).giri;
+if(a.archiviato || giriFatti === 0){
 var del = el('<button class="btn btn-ghost btn-sm attr-butta">'+t("ot_delete_btn")+'</button>');
 del.addEventListener("click", function(){
-if(!confirm(t("attr_confirm_delete", { nome: a.nome || "" }))) return;
-salvaAttrezzi(caricaAttrezzi().filter(function(x){ return x.id !== a.id; }));
-render();
+var domanda = giriFatti
+  ? t("attr_confirm_delete", { nome: a.nome || "" })
+  : t("attr_confirm_delete_vuoto", { nome: a.nome || "" });
+if(!confirm(domanda)) return;
+var resta = caricaAttrezzi().filter(function(x){ return x.id !== a.id; });
+/* Se se ne va il predefinito, qualcun altro deve prendere il posto: senza,
+   il prossimo giro parte senza assetto e la riga della scelta sparisce. */
+if(a.predefinito){
+var vivi2 = resta.filter(function(x){ return !x.archiviato; });
+if(vivi2.length && !vivi2.filter(function(x){ return x.predefinito; }).length) vivi2[0].predefinito = true;
+}
+if(state.pendingAssetto === a.id) state.pendingAssetto = null;
+salvaAttrezzi(resta);
+save(); render();
 });
 azioni.appendChild(del);
 }
