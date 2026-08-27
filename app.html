@@ -4991,184 +4991,166 @@ color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer; }
 .pannello-sotto{ margin-top:auto; padding-top:var(--s-3); flex:0 0 auto; }
 </style>
 
-<style id="arctrail-ui-home-tira-20260827">
-/* ========================================================================
-   ARCTRAIL 3D — PASSATA GRAFICA HOME + TIRA · 27/08/2026
-   Solo CSS. Nessuna logica, ID, chiave, traduzione, dato o listener toccato.
-   Baseline: mockup approvati Home/Tira del 27/08.
-   ======================================================================== */
+<style id="arctrail-ui-home-tira-v2-20260827">
+/* ARCTRAIL 3D — HOME + TIRA v2
+   Passata ESCLUSIVAMENTE grafica e conservativa.
+   Non tocca header, bottom navigation, layout globale, JS, DOM o logica.
+   Base: app(1).html + mockup Home/Tira approvati. */
 
-/* ---------- testata: più netta e vicina al mockup ---------- */
-header.top{
-  min-height:72px;
-  padding-left:var(--s-4); padding-right:var(--s-4);
-  background:var(--pece);
-}
-header.top .logo{ width:44px; height:44px; --mark:44px; }
-header.top .brand-title{ font-size:clamp(1.35rem,5.6vw,1.72rem); font-weight:800; letter-spacing:-.035em; color:var(--sand-50); }
-header.top .brand-title b{ color:var(--green-400); }
-header.top .head-actions{ gap:var(--s-1); }
-header.top .bar-btn{ color:var(--green-400); }
-header.top .bar-ini{ width:44px; height:44px; background:transparent; border:1.5px solid color-mix(in srgb,var(--sand-100) 35%,transparent); color:var(--sand-50); }
-
-/* ---------- HOME: la composizione approvata ---------- */
-.menu-cols:has(.home-eroe) .strati{ margin-top:0; }
-.menu-cols:has(.home-eroe) .strato.home-eroe{
-  margin-left:calc(var(--bordo) * -1);
-  margin-right:calc(var(--bordo) * -1);
-  margin-top:calc(var(--s-4) * -1);
-  padding:34px var(--bordo) 34px;
-  background:var(--pece);
-}
-.menu-cols:has(.home-eroe) .home-saluto{
-  font-size:var(--t-sm); letter-spacing:.08em; color:var(--moss-200); margin-bottom:var(--s-4);
-}
-.menu-cols:has(.home-eroe) .home-saluto::before{ width:10px; height:10px; background:var(--clay-400); }
-.menu-cols:has(.home-eroe) .home-domanda{
-  max-width:9ch; font-size:clamp(2.7rem,12vw,4.15rem); line-height:.94;
-  letter-spacing:-.045em; margin-bottom:var(--s-5); color:var(--sand-50);
-}
-.menu-cols:has(.home-eroe) .home-domanda .acceso{ color:var(--clay-400); }
-.menu-cols:has(.home-eroe) .btn-porta{
-  min-height:58px; border-radius:var(--r-lg);
-  background:var(--clay-400); border-color:var(--clay-400); color:var(--sand-50);
-  font-size:var(--t-lg); letter-spacing:.035em;
-}
-.menu-cols:has(.home-eroe) .btn-porta:hover,
-.menu-cols:has(.home-eroe) .btn-porta:active{ background:var(--clay-500); border-color:var(--clay-500); }
-
-/* Le due schede di performance tornano oggetti chiari, leggibili, compatti. */
+/* ========================= HOME =========================
+   L'hero approvata esiste gia' nel file base: NON la ridimensioniamo.
+   Interveniamo solo sulle schede dati, con un filo di stacco in piu'. */
 .menu-cols:has(.home-eroe) .home-ultimo,
 .menu-cols:has(.home-eroe) .home-mese,
 .menu-cols:has(.home-eroe) .home-mese-vuota{
-  margin:var(--s-4) 0 0;
-  padding:var(--s-4);
-  border:1px solid var(--border);
   border-radius:var(--r-lg);
-  background:var(--surface-1);
-  box-shadow:0 5px 18px rgba(23,19,14,.08);
+  border-color:var(--border);
+  box-shadow:0 3px 12px rgba(23,19,14,.07);
 }
 .menu-cols:has(.home-eroe) .home-ultimo .strato-eti,
 .menu-cols:has(.home-eroe) .home-mese-eti{
-  font-size:var(--t-sm); font-weight:800; letter-spacing:.12em; color:var(--text-2);
-}
-.menu-cols:has(.home-eroe) .home-ultimo .strato-eti::before,
-.menu-cols:has(.home-eroe) .home-mese-eti::before{ width:9px; height:9px; background:var(--clay-400); }
-.menu-cols:has(.home-eroe) .home-ultimo .home-mese-dati,
-.menu-cols:has(.home-eroe) .home-mese .home-mese-dati{ margin-top:var(--s-4); }
-.menu-cols:has(.home-eroe) .hm-riga{ gap:0; border-top:1px solid var(--border); padding-top:var(--s-3); }
-.menu-cols:has(.home-eroe) .hm-riga .hm-voce{ padding:0 var(--s-3); border-left:1px solid var(--border); }
-.menu-cols:has(.home-eroe) .hm-riga .hm-voce:first-child{ padding-left:0; border-left:0; }
-.menu-cols:has(.home-eroe) .hm-voce b{ font-size:var(--t-xl); font-weight:800; color:var(--text-1); }
-.menu-cols:has(.home-eroe) .hm-voce i{ font-size:var(--t-xs); font-weight:700; letter-spacing:.05em; color:var(--text-2); }
-.menu-cols:has(.home-eroe) .home-mese-dati > .hm-voce:first-child b{ font-size:clamp(2.7rem,12vw,4rem); line-height:.9; color:var(--clay-500); }
-
-/* Allenamenti in Home: riepilogo chiaro e denso. */
-.menu-cols:has(.home-eroe) .strato:has(.ot-capo){
-  margin-top:var(--s-4); padding-top:var(--s-4); border-top:1px solid var(--border);
-}
-.menu-cols:has(.home-eroe) .strato:has(.ot-capo) > .card{
-  background:transparent; border:0; box-shadow:none; padding:0; margin:0;
+  font-weight:800;
+  letter-spacing:.11em;
 }
 
-/* ---------- TIRA: tre porte scure, stessa famiglia ---------- */
+/* ========================= TIRA =========================
+   Tre porte compatte, stesso fondo pece, solo accento verde/arancio/oro.
+   Nessun hero-card gigante: altezza contenuta e testo a misura da elenco. */
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) > .card:has(.menu-btn.training){
-  background:transparent; border:0; box-shadow:none; padding:0; margin:0 0 var(--s-5);
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  padding:0;
+  margin-bottom:var(--s-4);
 }
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) > .card:has(.menu-btn.training) > h2.section-title{
-  margin-bottom:var(--s-4); font-size:var(--t-md); color:var(--text-1); letter-spacing:.08em;
+  margin-bottom:var(--s-3);
 }
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training,
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara,
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara{
-  min-height:112px; margin-bottom:var(--s-2);
-  padding:var(--s-3) var(--s-4) var(--s-3) var(--s-4);
-  border:1px solid color-mix(in srgb,var(--sand-100) 9%,transparent);
+  min-height:92px;
+  height:92px;
+  margin-bottom:var(--s-2);
+  padding:var(--s-2) var(--s-3);
+  gap:var(--s-3);
+  background:var(--porte-bg);
+  border:0;
   border-left:6px solid var(--porta-segno);
   border-radius:var(--r-lg);
-  background:linear-gradient(105deg,var(--pece-alto),var(--pece));
-  box-shadow:0 4px 14px rgba(23,19,14,.14);
-  gap:var(--s-4);
+  box-shadow:0 2px 8px rgba(23,19,14,.10);
+  overflow:hidden;
 }
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-icon{
-  width:64px; height:64px; flex:0 0 64px;
-  border-radius:var(--r-lg);
+  width:56px;
+  height:56px;
+  flex:0 0 56px;
+  border-radius:var(--r-md);
   background:var(--sand-100);
-  color:var(--porta-segno);
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-icon svg{ width:36px; height:36px; }
+.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-icon svg{
+  width:30px;
+  height:30px;
+}
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training .menu-txt,
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara .menu-txt,
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara .menu-txt{
-  font-size:var(--t-xl); color:var(--sand-50); line-height:1.05;
+  flex:1 1 auto;
+  min-width:0;
+  padding:0;
+  font-size:var(--t-lg);
+  line-height:1.12;
+  color:var(--porte-tit);
 }
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training .menu-sub,
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara .menu-sub,
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara .menu-sub{
-  margin-top:var(--s-2); font-size:var(--t-md); line-height:1.35; color:var(--moss-100); opacity:.86;
+  margin-top:var(--s-1);
+  font-size:var(--t-sm);
+  line-height:1.25;
+  color:var(--moss-200);
+  opacity:1;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  overflow:hidden;
 }
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training::after,
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara::after,
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara::after{
-  color:var(--sand-50); opacity:.95; font-size:2rem;
+  right:var(--s-3);
+  color:var(--sand-100);
+  font-size:var(--t-xl);
+  opacity:.95;
+}
+.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara.porta-spenta{
+  height:92px;
+  min-height:92px;
+}
+.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara.porta-spenta .menu-txt{
+  padding:0;
+}
+.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara.porta-spenta .porta-bollo{
+  top:var(--s-1);
+  right:var(--s-2);
+  transform:scale(.88);
+  transform-origin:top right;
 }
 
-/* La terza porta, quando realmente disabilitata, resta leggibile ma non finge di aprirsi. */
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.porta-spenta{
-  filter:saturate(.82); box-shadow:none;
-}
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.porta-spenta .menu-icon{ opacity:.7; }
-
-/* Allenamenti Tira: fondo chiaro e convenzione verde/oro. */
+/* Allenamenti: chiaro, denso; verde = compagnia, oro = aperto a tutti. */
 .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .card:has(.ot-capo){
-  background:transparent; border:0; box-shadow:none; padding:0; margin-top:var(--s-3);
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  padding:0;
 }
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .ot-capo{ padding-top:var(--s-4); border-top:1px solid var(--border); }
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .ot-capo .strato-eti{ font-size:var(--t-md); color:var(--text-1); }
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .ot-capo-sotto{ font-size:var(--t-md); color:var(--text-2); margin-top:var(--s-2); }
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .ot-gruppo{ margin-top:var(--s-4); font-size:var(--t-sm); letter-spacing:.07em; }
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .ot-gruppo-club{ color:var(--green-700); }
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .ot-gruppo-open{ color:var(--gold-800); }
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .al-mio .al-quando{ background:var(--green-600); }
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .al-fuori .al-quando{ background:var(--gold-400); }
-.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .al-fuori .al-chev{ color:var(--gold-700); }
-
-/* ---------- bottom navigation ---------- */
-.tabbar{
-  border-top:2px solid var(--green-600); box-shadow:0 -5px 18px rgba(23,19,14,.08);
+.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .ot-capo{
+  padding-top:var(--s-3);
+  border-top:1px solid var(--border);
 }
-.tabn.on .tab-pill{ border-radius:var(--r-lg); background:color-mix(in srgb,var(--green-400) 14%,var(--navbar-bg)); border-color:color-mix(in srgb,var(--green-500) 48%,transparent); }
-.tabn.on .tab-lbl{ color:var(--green-700); }
+.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .ot-gruppo-club{ color:var(--tone-train-fg); }
+.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .ot-gruppo-open{ color:var(--tone-prep-fg); }
+.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .al-mio .al-quando{ background:var(--segno-train); }
+.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .al-fuori .al-quando{ background:var(--segno-prep); }
+.menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .al-fuori .al-chev{ color:var(--segno-prep); }
 
-/* Tema Sole: stessa struttura, senza muro scuro nelle tre porte. */
+/* Tema Sole: struttura identica, ma niente pannelli scuri. */
 body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training,
 body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara,
 body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara{
-  background:var(--sand-50); border-color:var(--border-strong); border-left-color:var(--porta-segno); box-shadow:none;
+  background:var(--surface-1);
+  border:1px solid var(--border-strong);
+  border-left:6px solid var(--porta-segno);
+  box-shadow:none;
 }
 body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training .menu-txt,
 body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara .menu-txt,
-body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara .menu-txt{ color:var(--sand-900); }
+body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara .menu-txt{
+  color:var(--text-1);
+}
 body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training .menu-sub,
 body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara .menu-sub,
-body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara .menu-sub{ color:var(--sand-700); }
-body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training::after,
-body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara::after,
-body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara::after{ color:var(--sand-900); }
+body.theme-sole .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara .menu-sub{
+  color:var(--text-2);
+}
 
-@media (max-width:390px){
-  header.top{ min-height:64px; }
-  header.top .logo{ width:38px; height:38px; --mark:38px; }
-  header.top .brand-title{ font-size:1.22rem; }
-  .menu-cols:has(.home-eroe) .home-domanda{ font-size:2.55rem; }
+/* Sotto 380: si stringono aria e icona, NON la navigazione. */
+@media (max-width:379px){
   .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training,
   .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara,
-  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara{ min-height:104px; gap:var(--s-3); }
-  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-icon{ width:56px; height:56px; flex-basis:56px; }
-  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-icon svg{ width:32px; height:32px; }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara{
+    height:88px; min-height:88px; gap:var(--s-2); padding-left:var(--s-2);
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-icon{
+    width:50px; height:50px; flex-basis:50px;
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-icon svg{ width:28px; height:28px; }
 }
 </style>
-
 </head>
 <body>
 <noscript>
