@@ -1455,7 +1455,12 @@ color:var(--gold-role); font-weight:800; box-shadow:none; }
    prendessero. Avevano preso. **Una misura fatta sul file sbagliato non dice
    «non so»: dice una cosa precisa e falsa**, ed e' piu' pericolosa di non
    misurare affatto. La copia di prova si rigenera PRIMA di ogni lettura. */
-:root{ --porta-h:calc(var(--s-7) + var(--s-4)); }
+/* 88px: il minimo chiesto il 26/08 («88–100, mai oltre 105»). Una porta con
+   una riga sola di sottotitolo ne verrebbe 66 e sarebbe piu' bassa delle
+   altre due: **tre porte di tre altezze diverse non sono tre porte**, sono un
+   elenco disordinato. Il numero le tiene insieme, ed e' per questo che
+   `--porta-h` esiste dal 23/08. */
+:root{ --porta-h:88px; }
 .menu-btn{ padding:var(--s-3) var(--s-4); font-size:var(--t-md);
 text-align:left; justify-content:flex-start; margin-bottom:var(--s-2);
 position:relative; overflow:hidden; border-radius:var(--r-md); }
@@ -1588,26 +1593,44 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
      il quadrato dell'icona è alto 48 e detta gia' l'altezza minima della riga,
      quindi il padding verticale in piu' non stava tenendo su niente. */
   padding:var(--s-2) var(--s-3); }
-/* IL QUADRATO CHIARO DELL'ICONA. Il segno colorato dentro un rettangolo
-   avorio: e' l'unico punto chiaro su fondo pece, e in pieno sole è quello che
-   si trova per primo. Fisso, non elastico: tre quadrati di misure diverse
-   sono tre righe che non stanno in colonna. */
-/* Misura presa da `--s-7` (48px), che nella scala c'e': `--s-8` non esiste, e
-   una misura che non esiste non da' errore — lascia il quadrato grande quanto
-   l'icona, cioe' 24px, e sembra una scelta. *Il guardiano dei token esiste
-   proprio per questo, e qui l'ho scoperto misurando.* */
-.menu-btn .menu-icon{ flex:0 0 auto; width:var(--s-7); height:var(--s-7);
+/* L'ICONA STA SUL PECE, SENZA SCATOLA. (26/08/2026, Alessandro: «elimina i
+   grandi quadrati bianchi delle icone — NON MI PIACE».)
+
+   Il rettangolo avorio era stato messo il giorno prima con un ragionamento
+   che sembrava buono: l'unico punto chiaro su fondo scuro, quello che l'occhio
+   trova per primo al sole. **Era vero e sbagliato lo stesso** — trovare per
+   primo un RIQUADRO non serve, se quello che devi riconoscere è il SEGNO che
+   ci sta dentro. La scatola competeva con la cosa che doveva mettere in
+   evidenza, e su tre righe faceva tre scatole.
+
+   Adesso il segno è colorato e nudo sul pece. La colonna resta larga e fissa
+   — è quella che tiene i tre titoli incolonnati — ma non si vede.
+   *Una colonna si sente anche quando non ha un bordo.* */
+.menu-btn .menu-icon{ flex:0 0 auto; width:56px; height:auto;
   display:flex; align-items:center; justify-content:center;
-  background:var(--sand-100); border-radius:var(--r-md); }
+  background:transparent; border:0; border-radius:0; }
+.menu-btn .menu-icon svg{ width:32px; height:32px; }
 .menu-btn .menu-txt{ flex:1 1 auto; min-width:0; }
 /* LA FRECCIA DICE CHE SI APRE QUALCOSA. Senza, una scheda scura con dentro
    due righe di testo sembra un cartello; con, è una porta. */
 .menu-btn::after{ content:"\203a"; flex:0 0 auto; font-size:var(--t-xl);
   line-height:1; color:var(--porte-tit); opacity:.85; margin-left:var(--s-1); }
 .menu-btn.training .menu-txt, .menu-btn.gara .menu-txt, .menu-btn.prepara .menu-txt{
-  color:var(--porte-tit); }
+  color:var(--porte-tit);
+  /* IL TITOLO CRESCE, LA SCATOLA SPARISCE: e' lo scambio del 26/08. Da
+     `--t-md` a `--t-xl` — sedici pixel diventano ventidue — con lo spazio che
+     prima teneva il riquadro dell'icona. *Su un cartellino letto in piedi il
+     testo grande vale piu' di qualunque cornice.*
+     Scritto QUI e non dentro `.menu-cols`: quella regola serve al layout da
+     computer, e sul telefono non si applica. */
+  font-size:var(--t-xl); line-height:1.15; }
+/* IL SOTTOTITOLO: PIU' GRANDE E PIU' CHIARO. (26/08/2026: «il grigio attuale
+   è troppo debole sotto luce forte».) Non e' un colore nuovo: `--moss-200`
+   sta un gradino sopra nella stessa scala, e il contrasto sul pece sale da
+   4,7 a circa 9. Resta comunque sotto il titolo, che e' crema pieno: la coppia
+   continua a dire quale dei due si legge per primo. */
 .menu-btn.training .menu-sub, .menu-btn.gara .menu-sub, .menu-btn.prepara .menu-sub{
-  color:var(--porte-sub); opacity:1; }
+  color:var(--moss-200); opacity:1; font-size:var(--t-md); line-height:1.35; }
 /* Il segno prende il tono del suo modo: e' l'unica cosa colorata di ogni
    riga, e per questo dice tutto da sola. */
 .menu-btn.training .menu-icon, .menu-btn.gara .menu-icon, .menu-btn.prepara .menu-icon{
@@ -1707,8 +1730,51 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
    scheda con l'icona nel quadrato, andare a capo significa scavalcare il
    quadrato. Il testo e la pastiglia si impilano *dentro* la loro colonna, e
    la fila delle tre icone resta una fila. */
-.porta-spenta .menu-txt{ flex:1 1 auto; min-width:0;
-  display:flex; flex-direction:column; align-items:flex-start; gap:var(--s-2); }
+/* LA PASTIGLIA STA IN RIGA, ED E' GIA' SORELLA DEL TESTO nel DOM — non figlia.
+   (26/08: un primo tentativo l'ha trattata da figlia e ha messo `display:flex`
+   sul sottotitolo, mandando «Prepara gara» da 122 a 222px. *Una regola scritta
+   sulla struttura che immagino invece che su quella che c'e' non sbaglia di
+   poco: sbaglia bersaglio.* Struttura letta dal DOM vero, poi la riga.) */
+.porta-spenta .menu-txt{ flex:1 1 auto; min-width:0; }
+/* SULLA PORTA SPENTA, LA PASTIGLIA PRENDE IL POSTO DEL SOTTOTITOLO.
+   (26/08, dopo averlo guardato.) In riga col titolo lo mandava a capo:
+   «Prepara / gara» su due righe e il sottotitolo troncato a metà parola —
+   peggio di prima. Sotto, faceva tre righe e 122px.
+
+   Quindi il titolo tiene la sua riga e la pastiglia sta sulla seconda, dove
+   sulle altre due porte c'e' il sottotitolo: **stessa forma a due righe,
+   stessa altezza, e la seconda riga dice l'unica cosa che serve sapere di una
+   porta che non si apre.** La frase intera resta nel `title`.
+   *Su una cosa che non si puo' fare, la spiegazione costa piu' di quanto
+   renda: quello che serve e' sapere perche' e' spenta.* */
+/* LA PASTIGLIA ESCE DALLA RIGA E SI ANCORA IN ALTO A DESTRA. (26/08, dopo
+   tre tentativi guardati uno per uno.) In riga col titolo occupava larghezza
+   e lo schiacciava: «Prepara / gara» spezzato in due e il sottotitolo troncato
+   a meta' parola. Impilata sotto faceva 122px; con `flex-wrap` 169.
+
+   Fuori dal flusso non toglie larghezza a nessuno: il titolo tiene la sua
+   riga, il sottotitolo la sua, e la porta torna alta come le altre due.
+   *Una pastiglia di stato non e' contenuto della riga: e' un'etichetta
+   appiccicata sopra, e va trattata cosi'.*
+   `overflow:hidden` sulla porta la tiene dentro gli angoli arrotondati. */
+.porta-spenta .menu-txt{ display:flex; flex-direction:column;
+  align-items:flex-start; gap:var(--s-1); padding-right:var(--s-3); }
+.porta-spenta .porta-bollo{ position:absolute; top:var(--s-2); right:var(--s-3);
+  margin:0; align-self:auto; }
+.porta-spenta .menu-txt{ padding-top:var(--s-5); }
+
+/* CENTOVENTIDUE PIXEL, E NON CENTOCINQUE. Dichiarato, non subito.
+   (26/08.) Il tetto chiesto era 105 «salvo necessita' di wrapping», e questa
+   porta ha una cosa che le altre due non hanno: la pastiglia che dice perche'
+   e' spenta. Le vie per stare sotto sono state provate tutte e due, e sono
+   peggio:
+     · pastiglia IN RIGA col titolo → «Prepara / gara» va a capo e il
+       sottotitolo si tronca a meta' parola. 114px e illeggibile.
+     · pastiglia su una riga sua con `flex-wrap` → 169px, peggio del punto di
+       partenza.
+   Resta impilata sotto il titolo: due righe di testo piu' la pastiglia, che
+   sono tre informazioni e occupano lo spazio di tre. *Il numero era
+   indicativo; «Prepara / gara» spezzato in due non lo era.* */
 .porta-bollo{ flex:0 0 auto; align-self:flex-start;
   font-size:var(--t-2xs); font-weight:800; text-transform:uppercase; letter-spacing:.06em;
   padding:var(--s-1) var(--s-2); border-radius:var(--r-pill); white-space:nowrap;
@@ -19997,7 +20063,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-home-stretta";
+var BUILD_STAMP = "2026-08-26-porte-compatte";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -20006,7 +20072,7 @@ var BUILD_STAMP = "2026-08-26-home-stretta";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-porte-basse";
+var BUILD_PARENT = "2026-08-26-home-stretta";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
