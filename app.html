@@ -1590,6 +1590,84 @@ border:1.5px solid color-mix(in srgb, var(--tone-prep-solid) var(--tone-border),
   border:1px dashed var(--line); border-radius:var(--r-md);
   font-size:var(--t-sm); line-height:1.45; color:var(--muted); }
 .riga-chiusa b{ display:block; font-weight:700; color:var(--text-2); margin-bottom:var(--s-1); }
+
+/* ══ LA SCHERMATA TIRA, SECONDA PASSATA (26/08/2026) ═══════════════════════
+   Nessun colore nuovo: verde, argilla e oro sono i tre toni che le porte
+   usavano gia'. Cambia dove stanno.
+
+   LA FRECCIA. Le tre porte non dicevano di essere porte: fondo pece, barretta
+   colorata, nome — e niente che indicasse che portano altrove. Un chevron a
+   destra e' la convenzione piu' vecchia che c'e', e le tre schede degli
+   allenamenti qui sotto ce l'avevano gia': *senza, la stessa pagina usava due
+   linguaggi per lo stesso gesto.* */
+.menu-btn.training, .menu-btn.gara, .menu-btn.prepara{ position:relative;
+  padding-right:calc(var(--s-4) + var(--s-3)); }
+.menu-btn.training::after, .menu-btn.gara::after, .menu-btn.prepara::after{
+  content:"\203a"; position:absolute; right:var(--s-3); top:50%;
+  transform:translateY(-50%); font-size:var(--t-xl); line-height:1;
+  color:var(--porte-sub); }
+
+/* LA PORTA SPENTA. Stessa forma delle altre due, tono tolto: e' lì, non e'
+   per te. *Grigia e non tratteggiata — il tratteggio dice «provvisorio», e
+   questa non e' provvisoria: e' chiusa.* Il segno a sinistra resta d'oro ma
+   smorzato, cosi' la fila delle tre barrette non si spezza. */
+/* NIENTE `opacity` SU TUTTA LA PORTA. Era la scorciatoia ovvia e sbagliata:
+   velando il blocco intero si vela anche il testo, e su un pannello scuro al
+   sole quello che resta non si legge — mentre il brief chiede il contrario.
+   Si smorza il TONO (l'icona, il segno) e si lascia intatto l'INCHIOSTRO. */
+.porta-spenta{ cursor:default;
+  border-left-color:color-mix(in srgb, var(--porta-segno) 45%, transparent); }
+/* LA FRECCIA SE NE VA, e la regola deve pesare quanto quella che la mette.
+   Scritta `.porta-spenta::after` perdeva contro `.menu-btn.prepara::after`
+   — due classi contro una — e il chevron restava su una porta che non porta
+   da nessuna parte. *Un `content:none` che non vince e' peggio di non
+   averlo scritto: sembra fatto.* */
+.menu-btn.porta-spenta::after{ content:none; }
+.porta-spenta .menu-icon{ filter:grayscale(1); opacity:.55; }
+/* LA PASTIGLIA STA IN RIGA, NON IN POSIZIONE ASSOLUTA. Il primo tentativo la
+   metteva sopra il testo con `position:absolute`, e il testo le passava sotto:
+   *un elemento in posizione assoluta non sposta niente, e quanto spazio
+   lasciargli lo si deve indovinare — in una lingua sola.* «Solo collaudatori»
+   in tedesco e in russo e' lungo il doppio, e l'indovinello cambia risposta.
+   In riga il posto se lo prende da sola, in tutte e nove. */
+.porta-spenta{ flex-wrap:wrap; }
+.porta-spenta .menu-txt{ flex:1 1 auto; min-width:0; }
+.porta-bollo{ flex:0 0 auto; align-self:center; margin-left:auto;
+  font-size:var(--t-2xs); font-weight:800; text-transform:uppercase; letter-spacing:.06em;
+  padding:var(--s-1) var(--s-2); border-radius:var(--r-pill); white-space:nowrap;
+  background:color-mix(in srgb, var(--porta-segno) 26%, transparent);
+  color:var(--porte-tit); border:1px solid color-mix(in srgb, var(--porta-segno) 60%, transparent); }
+
+/* I DUE GRUPPI DEGLI ALLENAMENTI. Erano tutti e due d'oro, cioe' lo stesso
+   titolo scritto due volte. Verde la gente tua, argilla chi viene da fuori:
+   le stesse due tinte delle porte in cima. */
+.ot-gruppo{ font-size:var(--t-sm); font-weight:800; text-transform:uppercase;
+  letter-spacing:.05em; margin:var(--s-3) 0 var(--s-1); }
+.ot-gruppo-club{ color:var(--segno-train); }
+.ot-gruppo-open{ color:var(--segno-race); }
+.ot-gruppo:first-of-type{ margin-top:var(--s-2); }
+
+/* IL QUADRATO DELLA DATA prende lo stesso tono del suo gruppo: scorrendo si
+   vede il colore, non si rilegge l'intestazione. */
+.al-mio .al-quando{ background:var(--segno-train); }
+.al-fuori .al-quando{ background:var(--segno-race); }
+.al-mio .al-quando, .al-fuori .al-quando{ color:var(--solid-ink); }
+.al-fuori .al-chev{ color:var(--segno-race); }
+
+/* IL TASTO CHE ANNUNCIA: contorno, non pieno. Vedi la nota nel copione.
+   IL COLORE E' `--tone-race-fg`, NON `--clay`. Il primo tentativo usava
+   `--clay-ink`, che e' l'inchiostro DA SCRIVERE SOPRA l'argilla — chiaro — e
+   su fondo chiaro faceva **1,14:1**: il tasto c'era e non si leggeva.
+   *Un nome che finisce in `-ink` dice su cosa va scritto, non con cosa.*
+   `--tone-race-fg` e' l'argilla gia' scelta da ogni tema per SCRIVERE, ed e'
+   la stessa che tinge il titolo «Aperti a tutti» due centimetri sopra. */
+.ot-annuncia{ background:transparent; color:var(--tone-race-fg);
+  border:1.5px solid color-mix(in srgb, var(--tone-race-fg) 55%, transparent); font-weight:700; }
+.ot-annuncia:active{ background:color-mix(in srgb, var(--tone-race-fg) 12%, transparent); }
+/* E i due titoli dei gruppi pescano dallo stesso posto: sul pannello chiaro
+   il tono acceso non basta, serve quello da scrivere. */
+.ot-gruppo-club{ color:var(--tone-train-fg); }
+.ot-gruppo-open{ color:var(--tone-race-fg); }
 .menu-btn.gara .menu-icon{ color:var(--tone-race-ico); }
 .menu-btn.prepara .menu-icon{ color:var(--tone-prep-ico); }
 .menu-btn .menu-txt{ color:var(--text-1); }
@@ -6076,6 +6154,7 @@ pg_auto_teams_warning: "\u26a0\ufe0f Ignora eventuali gruppi gi\u00e0 decisi: ri
 pg_organizer_view_title: "Vista organizzatore \u2014 chi parte da dove", 
 pg_save_route_btn: "Salva percorso", pg_saving: "Salvataggio in corso\u2026", pg_save_error_online: "Errore nel salvataggio online ({err}). Salvato solo su questo dispositivo.",
 pg_retry: "riprova", pg_menu_btn_label: "Prepara gara", pg_menu_btn_sub: "per compagnie: piazzole, iscritti e squadre pronte in anticipo",
+beta_solo: "Solo collaudatori",
 gl_which_piazzola: "Che piazzola hai davanti?", gl_singola: "Singola", gl_mobile: "Mobile", gl_branco: "Branco (3 sagome)", gl_tempo: "Tempo limitato (3 sagome)",
 gl_1_arrow: "1 freccia", gl_3_arrows_stop: "3 frecce, si interrompe al primo mancato", gl_3_arrows_sum: "3 frecce, si sommano sempre",
 notif_section_title: "Notifiche", notif_enable_btn: "\uD83D\uDD14 Attiva notifiche su questo dispositivo", notif_off_btn: "Spegni le notifiche", notif_off_done: "Notifiche spente. Gli avvisi restano nella campanella dentro l’app.", notif_test_hint: "Manda una notifica finta a te stesso e dice a che punto della catena si interrompe. Serve per capire i «non mi arriva niente».",
@@ -6727,6 +6806,7 @@ pg_auto_teams_warning: "\u26a0\ufe0f Ignores any groups already decided: recalcu
 pg_organizer_view_title: "Organizer view \u2014 who starts where", 
 pg_save_route_btn: "Save route", pg_saving: "Saving\u2026", pg_save_error_online: "Error saving online ({err}). Saved on this device only.",
 pg_retry: "retry", pg_menu_btn_label: "Prepare Event", pg_menu_btn_sub: "for clubs: targets, participants and teams ready in advance",
+beta_solo: "Testers only",
 gl_which_piazzola: "Which target do you see?", gl_singola: "Single", gl_mobile: "Moving", gl_branco: "Group (3 targets)", gl_tempo: "Timed (3 targets)",
 gl_1_arrow: "1 arrow", gl_3_arrows_stop: "3 arrows, stops at the first miss", gl_3_arrows_sum: "3 arrows, always added up",
 notif_section_title: "Notifications", notif_enable_btn: "\uD83D\uDD14 Enable notifications on this device", notif_off_btn: "Turn notifications off", notif_off_done: "Notifications off. Alerts still appear in the bell inside the app.", notif_test_hint: "Sends a fake notification to yourself and tells you where the chain breaks. It’s here to make sense of “nothing arrives”.",
@@ -7396,6 +7476,7 @@ pg_auto_teams_warning: "\u26a0\ufe0f Ignore les groupes d\u00e9j\u00e0 d\u00e9ci
 pg_organizer_view_title: "Vue organisateur \u2014 qui part d’o\u00f9", 
 pg_save_route_btn: "Enregistrer le parcours", pg_saving: "Enregistrement en cours\u2026", pg_save_error_online: "Erreur lors de l’enregistrement en ligne ({err}). Enregistr\u00e9 uniquement sur cet appareil.",
 pg_retry: "r\u00e9essayer", pg_menu_btn_label: "Pr\u00e9parer la comp\u00e9tition", pg_menu_btn_sub: "pour les clubs\u00a0: cibles, inscrits et \u00e9quipes pr\u00eats \u00e0 l’avance",
+beta_solo: "R\u00e9serv\u00e9 aux testeurs",
 gl_which_piazzola: "Quelle cible avez-vous devant vous\u00a0?", gl_singola: "Simple", gl_mobile: "Mobile", gl_branco: "Groupe (3 cibles)", gl_tempo: "Chronom\u00e9tr\u00e9e (3 cibles)",
 gl_1_arrow: "1 fl\u00e8che", gl_3_arrows_stop: "3 fl\u00e8ches, s’arr\u00eate au premier tir manqu\u00e9", gl_3_arrows_sum: "3 fl\u00e8ches, toujours additionn\u00e9es",
 notif_section_title: "Notifications", notif_enable_btn: "\uD83D\uDD14 Activer les notifications sur cet appareil", notif_off_btn: "Désactiver les notifications", notif_off_done: "Notifications désactivées. Les alertes restent dans la cloche de l’application.", notif_test_hint: "Envoie une fausse notification à toi-même et indique où la chaîne se rompt. Sert à comprendre les « je ne reçois rien ».",
@@ -8065,6 +8146,7 @@ pg_auto_teams_warning: "\u26a0\ufe0f Ignoriert bereits festgelegte Gruppen: bere
 pg_organizer_view_title: "Organisator-Ansicht \u2014 wer startet wo", 
 pg_save_route_btn: "Strecke speichern", pg_saving: "Wird gespeichert\u2026", pg_save_error_online: "Fehler beim Online-Speichern ({err}). Nur auf diesem Ger\u00e4t gespeichert.",
 pg_retry: "erneut versuchen", pg_menu_btn_label: "Wettkampf vorbereiten", pg_menu_btn_sub: "f\u00fcr Vereine: Ziele, Teilnehmer und Teams im Voraus bereit",
+beta_solo: "Nur Tester",
 gl_which_piazzola: "Welches Ziel siehst du vor dir?", gl_singola: "Einzeln", gl_mobile: "Beweglich", gl_branco: "Gruppe (3 Ziele)", gl_tempo: "Zeitlich begrenzt (3 Ziele)",
 gl_1_arrow: "1 Pfeil", gl_3_arrows_stop: "3 Pfeile, endet beim ersten Fehlschuss", gl_3_arrows_sum: "3 Pfeile, immer zusammengez\u00e4hlt",
 notif_section_title: "Benachrichtigungen", notif_enable_btn: "\uD83D\uDD14 Benachrichtigungen auf diesem Ger\u00e4t aktivieren", notif_off_btn: "Benachrichtigungen ausschalten", notif_off_done: "Benachrichtigungen aus. Hinweise bleiben in der Glocke in der App.", notif_test_hint: "Sendet dir eine Testbenachrichtigung und sagt, an welcher Stelle die Kette reißt. Damit „es kommt nichts an“ erklärbar wird.",
@@ -8765,6 +8847,7 @@ pg_auto_teams_warning: "\u26a0\ufe0f Zaten karar verilmi\u015f gruplar\u0131 yok
 pg_organizer_view_title: "Organizat\u00f6r g\u00f6r\u00fcn\u00fcm\u00fc \u2014 kim nereden ba\u015fl\u0131yor", 
 pg_save_route_btn: "Parkuru kaydet", pg_saving: "Kaydediliyor\u2026", pg_save_error_online: "\u00c7evrimi\u00e7i kaydetme hatas\u0131 ({err}). Sadece bu cihazda kaydedildi.",
 pg_retry: "tekrar dene", pg_menu_btn_label: "Yar\u0131\u015fma Haz\u0131rla", pg_menu_btn_sub: "kul\u00fcpler i\u00e7in: hedefler, kat\u0131l\u0131mc\u0131lar ve tak\u0131mlar \u00f6nceden haz\u0131r",
+beta_solo: "Sadece test\u00e7iler",
 gl_which_piazzola: "Kar\u015f\u0131ndaki hedef hangisi?", gl_singola: "Tekli", gl_mobile: "Hareketli", gl_branco: "Grup (3 siluet)", gl_tempo: "S\u00fcreli (3 siluet)",
 gl_1_arrow: "1 ok", gl_3_arrows_stop: "3 ok, ilk \u0131sk\u0131da durur", gl_3_arrows_sum: "3 ok, her zaman toplan\u0131r",
 notif_section_title: "Bildirimler", notif_enable_btn: "\uD83D\uDD14 Bu cihazda bildirimleri etkinle\u015ftir", notif_off_btn: "Bildirimleri kapat", notif_off_done: "Bildirimler kapalı. Uyarılar uygulama içindeki zilde kalır.", notif_test_hint: "Kendine sahte bir bildirim gönderir ve zincirin nerede koptuğunu söyler. “Hiçbir şey gelmiyor” durumunu anlamak içindir.",
@@ -9447,6 +9530,7 @@ pg_auto_teams_warning: "⚠️ Игнорирует уже решённые гр
 pg_organizer_view_title: "Вид организатора — кто откуда начинает", 
 pg_save_route_btn: "Сохранить маршрут", pg_saving: "Идёт сохранение…", pg_save_error_online: "Ошибка онлайн-сохранения ({err}). Сохранено только на этом устройстве.",
 pg_retry: "повторить", pg_menu_btn_label: "Подготовить соревнование", pg_menu_btn_sub: "для клубов: мишени, участники и команды готовы заранее",
+beta_solo: "\u0422\u043e\u043b\u044c\u043a\u043e \u0442\u0435\u0441\u0442\u0435\u0440\u044b",
 gl_which_piazzola: "Какая мишень перед вами?", gl_singola: "Одиночная", gl_mobile: "Подвижная", gl_branco: "Группа (3 силуэта)", gl_tempo: "По времени (3 силуэта)",
 gl_1_arrow: "1 стрела", gl_3_arrows_stop: "3 стрелы, останавливается при первом промахе", gl_3_arrows_sum: "3 стрелы, всегда суммируются",
 notif_section_title: "Уведомления", notif_enable_btn: "🔔 Включить уведомления на этом устройстве", notif_off_btn: "Отключить уведомления", notif_off_done: "Уведомления отключены. Оповещения остаются в колокольчике внутри приложения.", notif_test_hint: "Отправляет тестовое уведомление и показывает, где рвётся цепочка. Нужно, чтобы понять «ничего не приходит».",
@@ -10129,6 +10213,7 @@ pg_auto_teams_warning: "\u26a0\ufe0f Ignora los grupos ya decididos: recalcula l
 pg_organizer_view_title: "Vista del organizador \u2014 qui\u00e9n empieza d\u00f3nde", 
 pg_save_route_btn: "Guardar recorrido", pg_saving: "Guardando\u2026", pg_save_error_online: "Error al guardar online ({err}). Guardado solo en este dispositivo.",
 pg_retry: "reintentar", pg_menu_btn_label: "Preparar competici\u00f3n", pg_menu_btn_sub: "para clubes: dianas, inscritos y equipos listos con antelaci\u00f3n",
+beta_solo: "Solo probadores",
 gl_which_piazzola: "\u00bfQu\u00e9 diana tienes delante?", gl_singola: "Individual", gl_mobile: "M\u00f3vil", gl_branco: "Grupo (3 siluetas)", gl_tempo: "Con tiempo limitado (3 siluetas)",
 gl_1_arrow: "1 flecha", gl_3_arrows_stop: "3 flechas, se detiene en el primer fallo", gl_3_arrows_sum: "3 flechas, siempre suman",
 notif_section_title: "Notificaciones", notif_enable_btn: "\uD83D\uDD14 Activar notificaciones en este dispositivo", notif_off_btn: "Desactivar las notificaciones", notif_off_done: "Notificaciones desactivadas. Los avisos siguen en la campana dentro de la app.", notif_test_hint: "Envía una notificación de prueba a ti mismo y dice dónde se corta la cadena. Sirve para entender los «no me llega nada».",
@@ -10811,6 +10896,7 @@ pg_auto_teams_warning: "\u26a0\ufe0f Ignorerar redan best\u00e4mda grupper: ber\
 pg_organizer_view_title: "Arrang\u00f6rsvy \u2014 vem b\u00f6rjar var", 
 pg_save_route_btn: "Spara runda", pg_saving: "Sparar\u2026", pg_save_error_online: "Fel vid onlinesparande ({err}). Sparad endast p\u00e5 denna enhet.",
 pg_retry: "f\u00f6rs\u00f6k igen", pg_menu_btn_label: "F\u00f6rbered t\u00e4vling", pg_menu_btn_sub: "f\u00f6r klubbar: m\u00e5l, deltagare och lag klara i f\u00f6rv\u00e4g",
+beta_solo: "Endast testare",
 gl_which_piazzola: "Vilket m\u00e5l har du framf\u00f6r dig?", gl_singola: "Enkelt", gl_mobile: "R\u00f6rligt", gl_branco: "Grupp (3 silhuetter)", gl_tempo: "Tidsbegr\u00e4nsat (3 silhuetter)",
 gl_1_arrow: "1 pil", gl_3_arrows_stop: "3 pilar, stannar vid f\u00f6rsta bommen", gl_3_arrows_sum: "3 pilar, r\u00e4knas alltid",
 notif_section_title: "Notiser", notif_enable_btn: "\uD83D\uDD14 Aktivera notiser p\u00e5 denna enhet", notif_off_btn: "Stäng av notiser", notif_off_done: "Notiser avstängda. Aviseringarna finns kvar i klockan i appen.", notif_test_hint: "Skickar en testnotis till dig själv och säger var kedjan bryts. Finns för att förstå ”det kommer inget”.",
@@ -11493,6 +11579,7 @@ pg_auto_teams_warning: "\u26a0\ufe0f Negeert reeds beslist groepen: berekent de 
 pg_organizer_view_title: "Organisatorweergave \u2014 wie begint waar", 
 pg_save_route_btn: "Ronde opslaan", pg_saving: "Opslaan\u2026", pg_save_error_online: "Fout bij online opslaan ({err}). Alleen op dit apparaat opgeslagen.",
 pg_retry: "opnieuw proberen", pg_menu_btn_label: "Wedstrijd voorbereiden", pg_menu_btn_sub: "voor verenigingen: doelen, deelnemers en teams vooraf klaar",
+beta_solo: "Alleen testers",
 gl_which_piazzola: "Welk doel heb je voor je?", gl_singola: "Enkel", gl_mobile: "Bewegend", gl_branco: "Groep (3 silhouetten)", gl_tempo: "Met tijdslimiet (3 silhouetten)",
 gl_1_arrow: "1 pijl", gl_3_arrows_stop: "3 pijlen, stopt bij de eerste misser", gl_3_arrows_sum: "3 pijlen, tellen altijd op",
 notif_section_title: "Meldingen", notif_enable_btn: "\uD83D\uDD14 Meldingen inschakelen op dit apparaat", notif_off_btn: "Meldingen uitschakelen", notif_off_done: "Meldingen uitgeschakeld. Meldingen blijven in de bel in de app.", notif_test_hint: "Stuurt een testmelding naar jezelf en zegt waar de keten breekt. Bedoeld om „er komt niets binnen” te begrijpen.",
@@ -16059,7 +16146,12 @@ var aperta = (alAperto === ot.id);
 var q = alQuando(ot);
 var chiOrganizza = escapeHtml(nomeVivo(ot.ownerUid) || ot.ownerName || "?");
 
-var blocco = el('<div class="al-blocco'+(aperta ? ' aperta' : '')+'"></div>');
+/* IL QUADRATO DELLA DATA DICE DI CHI E' L'ALLENAMENTO, e lo dice prima del
+   titolo del gruppo: scorrendo si vede il colore, non si rilegge
+   l'intestazione. Verde se e' della tua compagnia, argilla se e' aperto a
+   tutti — le stesse due tinte dei titoli qui sopra e delle porte in cima. */
+var mioClub = !!(state.profile && state.profile.compagnia && ot.clubCode === state.profile.compagnia);
+var blocco = el('<div class="al-blocco'+(aperta ? ' aperta' : '')+(mioClub ? ' al-mio' : ' al-fuori')+'"></div>');
 var riga = el('<div class="al-riga"></div>');
 
 // La riga sotto il nome del campo: l'ora, quanti sono, chi organizza. Tre
@@ -16752,11 +16844,16 @@ if(gruppoClub.length === 0 && gruppoOpen.length === 0){
 otCard.appendChild(el('<div class="nota stacco">'+t("ot_no_trainings")+'</div>'));
 }
 if(gruppoClub.length){
-otCard.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:var(--s-2) 0 2px;">'+t("ot_group_club")+'</div>'));
+/* I DUE GRUPPI ERANO TUTTI E DUE D'ORO, e quindi non erano due gruppi:
+   erano lo stesso titolo scritto due volte. (26/08/2026.) Adesso «nella tua
+   compagnia» e' verde — la gente tua, il colore di casa — e «aperti a
+   tutti» e' argilla, che nell'app vuol dire *gara, fuori, altri*. Sono le
+   due tinte che la schermata usa gia' nelle porte: nessun colore nuovo. */
+otCard.appendChild(el('<div class="ot-gruppo ot-gruppo-club">'+t("ot_group_club")+'</div>'));
 gruppoClub.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 }
 if(gruppoOpen.length){
-otCard.appendChild(el('<div style="font-size:var(--t-sm);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;margin:var(--s-3) 0 2px;">'+t("ot_group_open")+'</div>'));
+otCard.appendChild(el('<div class="ot-gruppo ot-gruppo-open">'+t("ot_group_open")+'</div>'));
 gruppoOpen.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 }
 }
@@ -16778,9 +16875,15 @@ otCard.appendChild(el('<div class="ot-nascosti">'+escapeHtml(t("ot_hidden_head")
 }
 
 if(currentUser){
-// Arancione come nell'area compagnia: lo stesso gesto non puo' avere due
-// colori in due schermate. Verde e' tirare; annunciare e' un'altra cosa.
-var createBtn = el('<button class="btn btn-block btn-arancio" style="margin-top:var(--s-2);font-size:var(--t-sm);">'+t("ot_create_btn")+'</button>');
+/* ERA IL PIENO PIU' GRANDE DELLA SCHERMATA, e stava nella sezione che deve
+   pesare MENO delle tre porte. (26/08/2026.) Un blocco arancione a tutta
+   larghezza sotto un elenco di schede chiare tira l'occhio piu' di
+   «Inizia allenamento», che e' la cosa che si fa nove volte su dieci.
+   *L'arancione resta — annunciare non e' tirare, e il gesto ha lo stesso
+   colore che ha nell'area compagnia — ma torna a essere un contorno, non un
+   pieno.* Il testo argilla su fondo chiaro sta a 5,4:1: si legge al sole
+   meglio del bianco sull'arancione, che stava a 2,8. */
+var createBtn = el('<button class="btn btn-block ot-annuncia" style="margin-top:var(--s-2);font-size:var(--t-sm);">'+t("ot_create_btn")+'</button>');
 createBtn.addEventListener("click", function(){ state.screen="open-training-create"; save(); render(); });
 otCard.appendChild(createBtn);
 }
@@ -17011,9 +17114,28 @@ menuCard.appendChild(pgBtn);
 // la funzione si mostra chiusa e dice a chi sara' aperta.
 // Quattro righe centrate con l'icona grande sono diventate due, a sinistra.
 // Le stringhe sono le stesse: cambia il peso, non il testo.
-var pgLock = el('<div class="riga-chiusa"></div>');
-pgLock.appendChild(el('<b>'+t("pg_menu_btn_label")+'</b>'));
-pgLock.appendChild(el('<span>'+t("pg_locked_body")+'</span>'));
+/* CHIUSA, MA E' UNA PORTA. (26/08/2026, Alessandro: «la disegniamo ma resta
+   chiusa ai non beta».)
+
+   Era una nota tratteggiata di quattro righe: la cosa che NON si puo' fare
+   occupava piu' schermo delle due che si possono, e rompeva la fila — due
+   porte e poi un riquadro d'altro genere. *Un avviso lungo non spiega meglio
+   di uno corto: si legge una volta e poi si scavalca, e intanto sta lì ogni
+   giorno.*
+
+   Adesso e' la terza porta, con la sua barretta d'oro e la sua icona, ma
+   **spenta**: grigia, non premibile, e con una pastiglia che dice perche'.
+   Le tre porte tornano tre, e chi non e' fra i collaudatori vede subito che
+   quella esiste e non e' per lui — che era il motivo per cui non era stata
+   fatta sparire. Il testo lungo non serve piu': lo dice la pastiglia.
+   Il tasto non e' un `<button>`: non si preme, non prende il fuoco della
+   tastiera, e chi legge con la voce sente «non disponibile». */
+var pgLock = el('<div class="btn menu-btn prepara porta-spenta" aria-disabled="true">'
++ '<span class="menu-icon">'+navIcon("azprepara",24,"unica")+'</span>'
++ '<span class="menu-txt">'+escapeHtml(t("pg_menu_btn_label"))
++ '<span class="menu-sub">'+escapeHtml(t("pg_menu_btn_sub"))+'</span></span>'
++ '<span class="porta-bollo">'+escapeHtml(t("beta_solo"))+'</span></div>');
+pgLock.setAttribute("title", t("pg_locked_body"));
 menuCard.appendChild(pgLock);
 }
 }
@@ -19746,7 +19868,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-butta-assetto";
+var BUILD_STAMP = "2026-08-26-tre-porte";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19755,7 +19877,7 @@ var BUILD_STAMP = "2026-08-26-butta-assetto";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-senza-russia";
+var BUILD_PARENT = "2026-08-26-butta-assetto";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
