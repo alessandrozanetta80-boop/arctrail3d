@@ -2768,7 +2768,14 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
 .strato.home-eroe{
   background:var(--eroe-bg); color:var(--eroe-ink);
   border-top:0; border-bottom:0;
-  padding-top:var(--s-6); padding-bottom:var(--s-6); }
+  /* DA `--s-6` A `--s-5` SOPRA E SOTTO. (26/08/2026, Alessandro: «l'attuale
+     hero e' leggermente troppo alta».) Si toglie l'aria, non il titolo ne' il
+     tasto: erano 217px, e l'«ultimo giro» cominciava a 286 — un terzo di
+     schermo prima di arrivare al numero che risponde alla domanda «come sto
+     andando?». Il titolo resta della sua misura e il tasto della sua: erano
+     le due cose che il brief chiedeva di non toccare, e sono anche le due che
+     reggono la schermata. */
+  padding-top:var(--s-5); padding-bottom:var(--s-5); }
 /* Il pannello e' la prima cosa sotto la barra: fra le due non ci va il fondo
    pagina, o sembra che qualcosa non si sia caricato. */
 .strati > .home-eroe:first-child{ margin-top:calc(var(--s-5) * -1); }
@@ -4556,6 +4563,13 @@ border-color:color-mix(in srgb, var(--danger-role) 40%, var(--line)); margin-lef
 .hm-voce{ min-width:0; }
 .hm-voce b{ font-variant-numeric:tabular-nums; }
 .hm-voce:first-child b{ font-size:var(--t-3xl); }
+/* IL NOME SOTTO IL PUNTEGGIO ERA IL TESTO PIU' PICCOLO DELLA HOME: 11px.
+   (26/08/2026, misurato.) Dice DOVE si e' tirato — o che gara era, quando il
+   campo non c'e' — ed e' la metà della risposta: un 364 senza sapere di cosa
+   è un numero e basta. Il contrasto era gia' buono (6,94): il problema era la
+   misura. Sale a `--t-sm` come la riga del confronto, e la card non cresce —
+   quel testo sta sotto un numero alto quarantaquattro. */
+.home-ultimo .hm-voce i{ font-size:var(--t-sm); font-weight:600; }
 /* ══ IL NUMERO GRANDE E' ARGILLA ══════════════════════════════════════════
    (23/08/2026.) Nella vetrina la cosa che si ricorda e' un numero enorme
    colorato — «ZERO tacche di segnale». Nell'app i numeri grandi c'erano, ma
@@ -5628,6 +5642,7 @@ diario_media: "Media",
 diario_on_rounds: "su {n} giri",
 diario_trend: "{d}% rispetto ai giri precedenti",
 diario_last_rounds: "Ultimi giri",
+home_last_round: "Ultimo giro",
 diario_targets_word: "piazzole",
 diario_record_badge: "record",
 diario_position: "{pos}\u00b0 su {tot}",
@@ -6552,6 +6567,7 @@ diario_media: "Average",
 diario_on_rounds: "over {n} rounds",
 diario_trend: "{d}% vs earlier rounds",
 diario_last_rounds: "Recent rounds",
+home_last_round: "Last round",
 diario_targets_word: "targets",
 diario_record_badge: "best",
 diario_position: "{pos} of {tot}",
@@ -7222,6 +7238,7 @@ diario_media: "Moyenne",
 diario_on_rounds: "sur {n} parcours",
 diario_trend: "{d}% par rapport aux parcours pr\u00e9c\u00e9dents",
 diario_last_rounds: "Derniers parcours",
+home_last_round: "Dernier parcours",
 diario_targets_word: "cibles",
 diario_record_badge: "record",
 diario_position: "{pos}e sur {tot}",
@@ -7892,6 +7909,7 @@ diario_media: "Schnitt",
 diario_on_rounds: "aus {n} Runden",
 diario_trend: "{d}% gegen\u00fcber fr\u00fcheren Runden",
 diario_last_rounds: "Letzte Runden",
+home_last_round: "Letzte Runde",
 diario_targets_word: "Ziele",
 diario_record_badge: "Bestwert",
 diario_position: "{pos}. von {tot}",
@@ -8561,6 +8579,7 @@ diario_media: "Ortalama",
 diario_on_rounds: "{n} turda",
 diario_trend: "\u00f6nceki turlara g\u00f6re {d}%",
 diario_last_rounds: "Son turlar",
+home_last_round: "Son tur",
 diario_targets_word: "hedef",
 diario_record_badge: "rekor",
 diario_position: "{tot} ki\u015fide {pos}.",
@@ -9244,6 +9263,7 @@ diario_media: "\u0421\u0440\u0435\u0434\u043d\u0435\u0435",
 diario_on_rounds: "\u0437\u0430 {n} \u043a\u0440\u0443\u0433\u043e\u0432",
 diario_trend: "{d}% \u043a \u043f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0438\u043c \u043a\u0440\u0443\u0433\u0430\u043c",
 diario_last_rounds: "\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0435 \u043a\u0440\u0443\u0433\u0438",
+home_last_round: "\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u043a\u0440\u0443\u0433",
 diario_targets_word: "\u043c\u0438\u0448\u0435\u043d\u0435\u0439",
 diario_record_badge: "\u0440\u0435\u043a\u043e\u0440\u0434",
 diario_position: "{pos} \u0438\u0437 {tot}",
@@ -9927,6 +9947,7 @@ diario_media: "Media",
 diario_on_rounds: "en {n} rondas",
 diario_trend: "{d}% respecto a las rondas anteriores",
 diario_last_rounds: "\u00daltimas rondas",
+home_last_round: "\u00daltima ronda",
 diario_targets_word: "dianas",
 diario_record_badge: "r\u00e9cord",
 diario_position: "{pos}.\u00ba de {tot}",
@@ -10610,6 +10631,7 @@ diario_media: "Snitt",
 diario_on_rounds: "p\u00e5 {n} rundor",
 diario_trend: "{d}% mot tidigare rundor",
 diario_last_rounds: "Senaste rundor",
+home_last_round: "Senaste rundan",
 diario_targets_word: "m\u00e5l",
 diario_record_badge: "rekord",
 diario_position: "{pos} av {tot}",
@@ -11293,6 +11315,7 @@ diario_media: "Gemiddelde",
 diario_on_rounds: "over {n} rondes",
 diario_trend: "{d}% t.o.v. eerdere rondes",
 diario_last_rounds: "Laatste rondes",
+home_last_round: "Laatste ronde",
 diario_targets_word: "doelen",
 diario_record_badge: "record",
 diario_position: "{pos}e van {tot}",
@@ -16725,7 +16748,11 @@ var n = homeNumeri();
    sono una domanda, non un riassunto. */
 if(n && n.ultimo && !state.roundActive){
 var ug = el('<div class="strato home-ultimo"></div>');
-ug.appendChild(el('<div class="strato-eti">'+escapeHtml(t("diario_last_rounds"))+'</div>'));
+/* «ULTIMO GIRO», NON «ULTIMI GIRI». (26/08/2026.) La chiave del diario e'
+   giusta li': quella schermata ne elenca tanti. Qui ce n'e' uno solo, e il
+   plurale fa cercare gli altri — e fa perdere la cosa che il numero grande
+   deve dire in mezzo secondo: che 364 e' il risultato di IERI. */
+ug.appendChild(el('<div class="strato-eti">'+escapeHtml(t("home_last_round"))+'</div>'));
 var ugDati = el('<div class="home-mese-dati"></div>');
 ugDati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(n.ultimo.punti))+'</b><i>'
   + escapeHtml(n.ultimo.dove || t("fin_punti")) + '</i></span>'));
@@ -19970,7 +19997,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-26-porte-basse";
+var BUILD_STAMP = "2026-08-26-home-stretta";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -19979,7 +20006,7 @@ var BUILD_STAMP = "2026-08-26-porte-basse";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-26-porte-schede";
+var BUILD_PARENT = "2026-08-26-porte-basse";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
