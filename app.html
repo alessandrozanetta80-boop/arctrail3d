@@ -214,6 +214,12 @@
    7,78 · 6,40 · 6,20. Le versioni piene ci cadrebbero sotto. */
 --verde-testata:#7ACB3F; --argilla-testata:#FF8348; --rosso-testata:#FF7A7A;
 --oro-testata:#E8B33D;
+/* L'inchiostro che sta SOPRA l'oro acceso quando il tasto del sole e' premuto.
+   (27/08/2026.) Era un esadecimale scritto due volte dentro i temi — una nel
+   buio e una, da oggi, nel Sole che ne ha copiato i colori. Un colore scritto
+   dentro un componente non si trova quando serve cambiarlo: adesso e' un
+   primitivo, e i due temi lo chiamano per nome. */
+--oro-inchiostro:#1A1305;
 /* ══ DUE COLONNE STRETTE, NON UNA ═════════════════════════════════════════
    (25/08/2026.) `#app.narrow` nasce per le schermate che si LEGGONO — il
    giro, il riepilogo, la chat — dove la riga corta e' un pregio: sopra i 75
@@ -706,7 +712,7 @@ color-scheme:dark;
    6,54 e 6,13. Il ruolo esiste lo stesso, con gli stessi nomi, perche' un
    componente non deve sapere in che tema si trova. */
 --brand-testo:var(--green-400); --gold-testo:var(--gold-400);
---sun-on-bg:var(--gold-400); --sun-on-fg:#1A1305;
+--sun-on-bg:var(--gold-400); --sun-on-fg:var(--oro-inchiostro);
 --danger-role:var(--red-400); --success-role:var(--green-success-dk);
 /* Al buio la paglia resta paglia — e' l'oggetto — ma il vuoto segue la
    superficie, altrimenti sarebbe una macchia chiara su fondo nero. */
@@ -880,7 +886,7 @@ color-scheme:light;
    tema fatto apposta per leggersi al sole era quello in cui l'oro non si
    leggeva. */
 --brand-testo:var(--green-400); --gold-testo:var(--gold-400);
---sun-on-bg:var(--gold-400); --sun-on-fg:#1A1305;
+--sun-on-bg:var(--gold-400); --sun-on-fg:var(--oro-inchiostro);
 --danger-role:var(--red-400); --success-role:var(--green-success-dk);
 
 /* il bersaglio da anelli e' paglia: al sole la paglia e' chiara, non fangosa */
@@ -20289,7 +20295,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-27-sole-colori-del-buio";
+var BUILD_STAMP = "2026-08-27-spagna";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -20298,7 +20304,7 @@ var BUILD_STAMP = "2026-08-27-sole-colori-del-buio";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-27-porte-sole";
+var BUILD_PARENT = "2026-08-27-sole-colori-del-buio";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
