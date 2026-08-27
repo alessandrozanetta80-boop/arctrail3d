@@ -5,6 +5,63 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title id="titoloPagina">ArcTrail 3D — il segnapunti che conosce il tuo regolamento</title>
 <meta name="description" id="descPagina" content="Segna il giro 3D col regolamento della tua federazione, anche senza rete. Diciassette federazioni, cinque circuiti, il diario dei tuoi giri. Gratis, in nove lingue.">
+<!-- L'IDENTITA' DELLA PORTA DI CASA (27/08/2026). Fino al 25/08 la radice era
+     l'app, ed era l'app a dichiarare icona, manifest, anteprima social e dati
+     strutturati. Con lo scambio la vetrina ha preso il suo posto e non ha
+     portato con se' niente di tutto questo: chi guarda da fuori — Google, il
+     riquadro di WhatsApp, il segnalibro del telefono — non trovava piu' nessuna
+     dichiarazione, ripiegava su /favicon.ico che non esisteva, e teneva
+     l'immagine che aveva in memoria da prima. Da qui il marchio vecchio nei
+     risultati di ricerca. Le stesse righe stanno in app.html: qui non sono un
+     doppione, sono il trasloco che il 25/08 non era stato fatto. -->
+<link rel="canonical" href="https://arctrail3d.com/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="icon-192.png">
+<!-- Il manifest sulla vetrina: chi arriva dalla porta di casa puo' installare
+     l'app da li'. `start_url` punta gia' ad app.html, quindi l'icona sulla
+     schermata apre l'app e non la vetrina. -->
+<link rel="manifest" href="manifest.json">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ArcTrail 3D">
+<meta property="og:title" content="ArcTrail 3D — il segnapunti che conosce il tuo regolamento">
+<meta property="og:description" content="Segna il giro 3D col regolamento della tua federazione, anche senza rete. Diciassette federazioni, cinque circuiti, il diario dei tuoi giri. Gratis, in nove lingue.">
+<meta property="og:url" content="https://arctrail3d.com/">
+<meta property="og:image" content="https://arctrail3d.com/logo.jpg">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="1024">
+<meta property="og:image:alt" content="ArcTrail 3D">
+<meta property="og:locale" content="it_IT">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="nl_NL">
+<meta property="og:locale:alternate" content="sv_SE">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta property="og:locale:alternate" content="ru_RU">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ArcTrail 3D — il segnapunti che conosce il tuo regolamento">
+<meta name="twitter:description" content="Segna il giro 3D col regolamento della tua federazione, anche senza rete. Gratis, in nove lingue.">
+<meta name="twitter:image" content="https://arctrail3d.com/logo.jpg">
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@type": "WebApplication",
+"name": "ArcTrail 3D",
+"alternateName": "ArcTrail3D",
+"description": "App gratuita per segnare i punteggi nel tiro con l'arco 3D. Funziona anche senza rete sul percorso, tiene il diario degli allenamenti e segue i regolamenti di FIARC, FITARCO, World Archery e altre federazioni.",
+"url": "https://arctrail3d.com/",
+"applicationCategory": "SportsApplication",
+"operatingSystem": "Web, Android, iOS (PWA)",
+"browserRequirements": "Richiede JavaScript",
+"inLanguage": ["it","en","fr","de","es","nl","sv","tr","ru"],
+"image": "https://arctrail3d.com/logo.jpg",
+"author": { "@type": "Person", "name": "Alessandro Zanetta" },
+"offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+}
+</script>
 <link rel="alternate" hreflang="it" href="https://arctrail3d.com/?lang=it">
 <link rel="alternate" hreflang="en" href="https://arctrail3d.com/?lang=en">
 <link rel="alternate" hreflang="fr" href="https://arctrail3d.com/?lang=fr">
@@ -584,7 +641,7 @@ body{margin:0}
 <!-- Il timbro, come marketplace.html: `data-build` dice quale versione e'
      questa, `data-parent` da quale e' nata. La prima anteprima non ne aveva
      nessuno — quindi il genitore e' dichiarato per nome, non inventato. -->
-<body data-build="2026-08-26-vetrina-club" data-parent="2026-08-26-vetrina-frase">
+<body data-build="2026-08-27-identita" data-parent="2026-08-26-vetrina-club">
 <div class="vetrina">
 
 <!-- ══════════ TESTATA ══════════ -->
