@@ -4924,6 +4924,155 @@ background:none; border:1.5px solid var(--border-strong); border-radius:var(--r-
 color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer; }
 .pannello-sotto{ margin-top:auto; padding-top:var(--s-3); flex:0 0 auto; }
 </style>
+
+<style id="arctrail-tira-mockup-fedele-v1">
+/*
+  ARCTRAIL 3D — TIRA / replica del mockup approvato
+  SOLO CSS, completamente scoped alla schermata Tira.
+  NON modifica header, bottom navigation, #app, safe-area, DOM o JavaScript.
+*/
+@media (max-width:759px){
+  /* Contenitore delle tre azioni: nessuna card esterna visibile. */
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) > .card:has(.menu-btn.training){
+    background:transparent;
+    border:0;
+    box-shadow:none;
+    padding:0;
+    margin:0 0 24px;
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) > .card:has(.menu-btn.training) > h2.section-title{
+    margin:0 0 16px;
+  }
+
+  /* Tre porte: proporzioni compatte del mockup, senza reinterpretazioni. */
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training,
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara,
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara{
+    min-height:92px;
+    padding:10px 14px 10px 10px;
+    gap:14px;
+    margin-bottom:8px;
+    background:var(--porte-bg);
+    border:0;
+    border-left:5px solid var(--porta-segno);
+    border-radius:8px;
+    box-shadow:0 2px 6px rgba(23,19,14,.16);
+    overflow:hidden;
+    align-items:center;
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara{
+    margin-bottom:0;
+  }
+
+  /* Placca chiara dell'icona: presente nel mockup, ma contenuta. */
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-icon{
+    width:56px;
+    height:56px;
+    flex:0 0 56px;
+    background:var(--sand-100);
+    border:0;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-icon svg{
+    width:29px !important;
+    height:29px !important;
+  }
+
+  /* Titolo e sottotitolo: qui era nato lo squilibrio delle versioni precedenti. */
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-txt{
+    flex:1 1 auto;
+    min-width:0;
+    padding:0;
+    font-size:19px;
+    line-height:1.12;
+    font-weight:800;
+    letter-spacing:-.015em;
+    color:var(--porte-tit);
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-sub{
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    line-clamp:2;
+    overflow:hidden;
+    margin-top:5px;
+    font-size:14px;
+    line-height:1.22;
+    font-weight:400;
+    letter-spacing:0;
+    color:var(--moss-200);
+    opacity:.88;
+  }
+
+  /* Chevron piccolo e centrato: non deve competere con il titolo. */
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training::after,
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara::after,
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara::after{
+    right:12px;
+    font-size:27px;
+    color:var(--porte-tit);
+    opacity:.9;
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training,
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara,
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara{
+    padding-right:42px;
+  }
+
+  /* La porta spenta mantiene la stessa geometria: cambia solo lo stato. */
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.porta-spenta{
+    min-height:92px;
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .porta-spenta .menu-txt{
+    padding-top:0;
+    padding-right:0;
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .porta-spenta .porta-bollo{
+    position:static;
+    order:2;
+    margin-top:4px;
+    padding:2px 7px;
+    font-size:10px;
+  }
+
+  /* Allenamenti aperti: manteniamo la densità del mockup, senza cambiare logica. */
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .ot-gruppo{
+    margin-top:14px;
+    margin-bottom:7px;
+    font-size:14px;
+    line-height:1.1;
+  }
+}
+</style>
+
+
+<style id="arctrail-tira-mockup-fedele-v2">
+/*
+  ARCTRAIL 3D — TIRA / affinamento approvato
+  SOLO CSS scoped alla schermata Tira.
+  Modifica esclusivamente: tinta leggera delle placche icona + distanza fra le tre porte.
+*/
+@media (max-width:759px){
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training,
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara{
+    margin-bottom:5px;
+  }
+
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training .menu-icon{
+    background:color-mix(in srgb, var(--segno-train) 9%, var(--sand-100));
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara .menu-icon{
+    background:color-mix(in srgb, var(--segno-race) 9%, var(--sand-100));
+  }
+  .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara .menu-icon{
+    background:color-mix(in srgb, var(--segno-prep) 10%, var(--sand-100));
+  }
+}
+</style>
+
 </head>
 <body>
 <noscript>
