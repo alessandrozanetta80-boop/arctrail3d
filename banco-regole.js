@@ -71,16 +71,43 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
   await env.clearFirestore();
 
   /* ── gli utenti esistono e sono attivi ─────────────────────────────── */
+  /* NV NON STA QUI DENTRO, e non e' una dimenticanza. (28/08/2026, primo
+     giro vero.) Prima c'era anche lui, e la prova «completa la registrazione»
+     diventava un UPDATE su un documento che esisteva gia' con
+     `betaTester:true`: cioe' un utente che si abbassa il flag da solo, che la
+     regola rifiuta — giustamente. La prova diceva no per il motivo sbagliato,
+     e il motivo sbagliato somigliava moltissimo a quello giusto.
+     Chi si registra il documento non ce l'ha: se glielo diamo noi, la prova
+     non prova piu' la registrazione. */
   await scena(async d => {
-    for (const u of [A,B,C,NV,AD])
+    for (const u of [A,B,C,AD])
       await d.doc('users/'+u.uid).set({ approved:true, betaTester:true, premium:false });
   });
 
   console.log('\n  ACCOUNT NON VERIFICATO\n');
 
-  await prova('completa la registrazione: scrive il proprio users/{uid}', () =>
+  /* I CAMPI SONO QUELLI VERI, letti da `app.html` riga 15074: email,
+     approved, createdAt, e i dati del profilo. `betaTester` e `premium` NON
+     ci sono — l'app non li scrive mai, li accende solo l'admin. Un banco che
+     scrive campi che l'app non scrive prova una registrazione che non esiste. */
+  await prova('completa la registrazione: crea il proprio users/{uid}', () =>
     assertSucceeds(db(NV).doc('users/'+NV.uid).set(
-      { approved:true, betaTester:false, premium:false, nome:'Nuovo' })));
+      { email:NV.email, approved:true, createdAt:new Date(),
+        nomeCognome:'Nuovo Iscritto', username:'nuovo', privacy:true, terms:true })));
+
+  /* Questa l'ha trovata il giro di stanotte, per sbaglio: la prova sopra
+     falliva perche' abbassava `betaTester`, e cosi' si e' visto che la
+     regola regge anche nel verso opposto. Vale la pena chiederglielo
+     apposta invece di scoprirlo di nuovo per caso. */
+  await prova('NON puo\' regalarsi betaTester', () =>
+    assertFails(db(NV).doc('users/'+NV.uid).update({ betaTester:true })));
+
+  await prova('NON puo\' regalarsi premium', () =>
+    assertFails(db(NV).doc('users/'+NV.uid).update({ premium:true })));
+
+  await prova('NON puo\' nascere gia\' collaudatore', () =>
+    assertFails(db(C).doc('users/utenteNuovo2').set(
+      { email:'x@esempio.it', approved:true, betaTester:true })));
 
   await prova('legge il proprio documento utente', () =>
     assertSucceeds(db(NV).doc('users/'+NV.uid).get()));
