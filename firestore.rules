@@ -1,7 +1,31 @@
 rules_version = '2';
 // ArcTrail 3D — regole Firestore
-// Versione 2026-08-28-verificata
-// Nata da: 2026-08-21-profilo-pubblico
+// Versione 2026-08-28-offerta
+// Nata da: 2026-08-28-verificata
+//
+// ATTENZIONE AL GENITORE. `2026-08-28-verificata` e' stata caricata su GitHub
+//  ma NON e' mai stata incollata in console: non e' mai stata attiva. Quindi
+//  il database passa da `2026-08-21-profilo-pubblico` direttamente a questa,
+//  e `verificata` esiste solo come riga di storia. *Caricato non e'
+//  pubblicato, e qui si vede quanto costa confonderli: chi leggesse la
+//  console fra sei mesi non troverebbe mai una versione che pure e' scritta
+//  nel repo.*
+//
+// NOVITA' 2026-08-28 (2) — A UN'OFFERTA SI RISPONDE UNA VOLTA SOLA
+//  La versione di stamattina permetteva al destinatario di scrivere
+//  `accepted`, `rejected` o `countered` in qualsiasi momento — anche su
+//  un'offerta gia' risolta. Si poteva accettare un'offerta rifiutata mezz'ora
+//  prima, o rifiutarne una gia' accettata: il messaggio in chat cambiava
+//  faccia dopo che la trattativa era chiusa, senza che l'altro potesse
+//  farci niente.
+//  Nel Marketplace lo stato iniziale e' `pending` — lo scrive `inviaOfferta()`
+//  e lo riscrive `inviaContro()` sull'offerta NUOVA che crea. I tre tasti
+//  compaiono con `m.status === "pending" && !isMe`, quindi una risposta si
+//  puo' dare una volta e solo su un'offerta ancora aperta. Adesso lo dicono
+//  anche le regole.
+//  `countered` NON riapre niente: chi rilancia marca `countered` il messaggio
+//  ricevuto e ne crea uno nuovo `pending`. E' quello nuovo a ricevere la
+//  risposta, quindi da `countered` non deve partire nessuna transizione.
 //
 // LEGGERE PRIMA: dal 25/08/2026 L'APP E' `app.html`. `index.html` e' la
 //  vetrina. Tutti i blocchi NOVITA' qui sotto sono anteriori e dicono
@@ -556,6 +580,11 @@ service cloud.firestore {
         // E chi preme NON e' il mittente: e' chi ha ricevuto l'offerta — i
         // tasti compaiono solo con `!isMe`. Quindi nemmeno «solo il mittente»
         // sarebbe stata la regola giusta: e' il contrario.
+        // 28/08/2026, seconda passata: aggiunto lo stato DI PARTENZA.
+        // Guardare solo dove si arriva non basta: `accepted -> rejected` e
+        // `rejected -> accepted` erano due transizioni ammesse che nell'app
+        // non esistono, e che riscrivono l'esito di una trattativa chiusa.
+        // Da `pending`, e da nient'altro.
         allow update: if isMarket()
                       && convExists(conversationId)
                       && request.auth.uid in convParticipants(conversationId)
@@ -563,6 +592,7 @@ service cloud.firestore {
                            .hasOnly(['status'])
                       && resource.data.get('type', '') == 'offer'
                       && resource.data.get('senderUid', '') != request.auth.uid
+                      && resource.data.get('status', '') == 'pending'
                       && request.resource.data.status in ['accepted','rejected','countered'];
         // senderUid e admin PRIMA del get(): se la trattativa e' gia' sparita,
         // i messaggi restano comunque cancellabili e non diventano immortali.
@@ -951,11 +981,24 @@ service cloud.firestore {
 // 2. `sessions.confirms` — SI SA QUANTE FIRME CAMBIANO, NON DI CHI SONO.
 //    `affectedKeys()` restituisce un insieme, e da un insieme non si estrae
 //    un elemento: non c'e' modo di leggere `confirms.<k>.by` e confrontarlo
-//    con chi scrive. Resta possibile, a un partecipante con client
-//    modificato:
-//      - controfirmare un tiro scrivendoci dentro l'uid di un altro;
-//      - cancellare la controfirma di un altro (una chiave alla volta).
-//    Non puo' invece toccare i TIRI, ne' il regolamento, ne' gli arcieri.
+//    con chi scrive.
+//    VALE PER TUTTI E DUE I MESTIERI, e la prima stesura di questa nota
+//    diceva solo meta' della verita'. Non e' un dettaglio: chi legge «un
+//    partecipante non-owner» conclude che dal lato dell'owner la firma sia
+//    garantita, e non lo e'.
+//      - CHI SEGUE puo' controfirmare un tiro scrivendoci dentro l'uid di un
+//        altro, e cancellare la controfirma di un altro (una chiave per
+//        volta).
+//      - CHI HA APERTO LA SESSIONE puo' fare lo stesso, e non per una
+//        dimenticanza: `confirms` DEVE stare nella sua lista, perche'
+//        `unsyncShotFromSession()` cancella `shots.<k>` e `confirms.<k>`
+//        insieme — una controfirma orfana certificherebbe un tiro che non
+//        c'e' piu'. Togliergli `confirms` significherebbe lasciare firme
+//        appese a tiri annullati, che e' un difetto peggiore.
+//    Quindi: **nessuna delle due parti ha una firma verificabile dalle
+//    regole.** Ne' l'una ne' l'altra puo' toccare i TIRI altrui, il
+//    regolamento o gli arcieri — quello resta chiuso — ma la firma dice chi
+//    l'ha messa solo perche' il client lo scrive onestamente.
 //    LA CURA VERA E' STRUTTURALE: `confirms` come sottoraccolta,
 //    `sessions/{id}/confirms/{tiro}__{uid}`, dove l'uid sta nel NOME del
 //    documento e la regola lo legge dal percorso. Stessa strada di
@@ -968,20 +1011,21 @@ service cloud.firestore {
 //    sole in otto ore, e il ramo va tolto quando non ne circolera' piu'
 //    nessuna.
 //
-// 4. LA DATA DI REGISTRAZIONE — `needsEmailVerification()` in `app.html` non
-//    chiede la conferma a chi si e' iscritto prima del 14/08/2026. Nel token
-//    di Firebase Auth quella data NON C'E': `verified()` non la puo'
-//    guardare. Un campo `createdAt` scritto dal client non servirebbe —
-//    sarebbe il client stesso a poterlo falsificare, cioe' una protezione
-//    finta.
-//    Due strade oneste, e vanno percorse PRIMA di pubblicare queste regole:
-//      (a) verificare a mano quegli account con l'Admin SDK
-//          (`admin.auth().updateUser(uid, {emailVerified:true})`), che e' il
-//          modo giusto se sono pochi e li si conosce uno per uno;
-//      (b) togliere `created >= EMAIL_VERIFY_SINCE` da
-//          `needsEmailVerification()`, cosi' chi non ha confermato vede la
-//          schermata di conferma invece di un permission-denied muto.
-//          E' una regola che STRINGE: il file del sito va PRIMA (regola 18).
+// 4. LA DATA DI REGISTRAZIONE — CHIUSA, e resta scritta perche' e' un vincolo
+//    da non riaprire. `needsEmailVerification()` non chiedeva la conferma a
+//    chi si era iscritto prima del 14/08/2026, e nel token di Firebase Auth
+//    quella data non c'e': `verified()` non la poteva guardare, quindi il
+//    telefono e il database avrebbero risposto due cose diverse alla stessa
+//    persona.
+//    Applicata la strada (b) il 28/08 con `app.html` `2026-08-28-conferma`,
+//    gia' online: l'eccezione non esiste piu' e chi non ha confermato vede la
+//    SCHERMATA di conferma, col tasto per rimandare l'email, invece di un
+//    permission-denied muto.
+//    VINCOLO CHE RESTA: nessuno rimetta una condizione sulla data di
+//    iscrizione dentro `needsEmailVerification()`. Rifarlo ricrea il
+//    disallineamento, e stavolta in silenzio — perche' il tasto continuerebbe
+//    a esserci e a non funzionare. `banco-avvio.js` esegue la funzione e fa
+//    fallire il giro se la data torna a decidere, anche sotto un altro nome.
 //
 // 5. `app_config/admin` E' LEGGIBILE DA CHIUNQUE SIA REGISTRATO, e contiene
 //    l'indirizzo email di chi tiene l'app. E' voluto (serve a

@@ -280,6 +280,68 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
   await prova('C NON modifica i messaggi della trattativa', () =>
     assertFails(db(C).doc('market_conversations/c1/messages/m1').update({ status:'rejected' })));
 
+  /* ── A UN'OFFERTA SI RISPONDE UNA VOLTA SOLA ───────────────────────────
+     Lo stato di partenza NON e' inventato: `inviaOfferta()` e `inviaContro()`
+     in `marketplace.html` creano il messaggio con `status:"pending"`, e i tre
+     tasti compaiono con `m.status === "pending" && !isMe`.
+     `countered` non riapre niente: chi rilancia marca `countered` il messaggio
+     ricevuto e ne crea uno NUOVO `pending`. E' quello nuovo a ricevere la
+     risposta — quindi da `countered` non parte nessuna transizione, e le due
+     prove qui sotto devono fallire. */
+  async function offerta(id, stato){
+    await scena(async d => d.doc('market_conversations/c1/messages/'+id).set(
+      { type:'offer', amount:80, senderUid:A.uid, senderName:'Anna',
+        status:stato, createdAt:new Date() }));
+  }
+
+  console.log('\n  UN\'OFFERTA SI RISPONDE UNA VOLTA SOLA\n');
+
+  await offerta('o1','pending');
+  await prova('pending \u2192 accepted', () =>
+    assertSucceeds(db(B).doc('market_conversations/c1/messages/o1').update({ status:'accepted' })));
+
+  await offerta('o2','pending');
+  await prova('pending \u2192 rejected', () =>
+    assertSucceeds(db(B).doc('market_conversations/c1/messages/o2').update({ status:'rejected' })));
+
+  await offerta('o3','pending');
+  await prova('pending \u2192 countered', () =>
+    assertSucceeds(db(B).doc('market_conversations/c1/messages/o3').update({ status:'countered' })));
+
+  await offerta('o4','accepted');
+  await prova('accepted \u2192 rejected: NO', () =>
+    assertFails(db(B).doc('market_conversations/c1/messages/o4').update({ status:'rejected' })));
+
+  await offerta('o5','rejected');
+  await prova('rejected \u2192 accepted: NO', () =>
+    assertFails(db(B).doc('market_conversations/c1/messages/o5').update({ status:'accepted' })));
+
+  await offerta('o6','countered');
+  await prova('countered \u2192 accepted: NO', () =>
+    assertFails(db(B).doc('market_conversations/c1/messages/o6').update({ status:'accepted' })));
+
+  await offerta('o7','countered');
+  await prova('countered \u2192 rejected: NO', () =>
+    assertFails(db(B).doc('market_conversations/c1/messages/o7').update({ status:'rejected' })));
+
+  /* Il rilancio vero, come lo fa l'app: si marca `countered` quella ricevuta
+     e se ne crea una nuova `pending`. Deve continuare a funzionare, altrimenti
+     la stretta di sopra ha spento il rilancio invece di proteggerlo. */
+  await offerta('o8','pending');
+  await prova('il rilancio dell\'app: countered sulla vecchia, e una nuova pending', async () => {
+    await assertSucceeds(db(B).doc('market_conversations/c1/messages/o8').update({ status:'countered' }));
+    await assertSucceeds(db(B).collection('market_conversations/c1/messages').add(
+      { type:'offer', amount:70, senderUid:B.uid, senderName:'Bruno',
+        status:'pending', createdAt:new Date() }));
+  });
+
+  await offerta('o9','pending');
+  await prova('nemmeno un valore inventato passa da pending', () =>
+    assertFails(db(B).doc('market_conversations/c1/messages/o9').update({ status:'venduto' })));
+
+  await prova('e A non puo\' riportare a pending la propria offerta risolta', () =>
+    assertFails(db(A).doc('market_conversations/c1/messages/o4').update({ status:'pending' })));
+
   await prova('B NON puo\' cambiare i partecipanti alla trattativa', () =>
     assertFails(db(B).doc('market_conversations/c1').update({ participants:[B.uid,C.uid] })));
 
