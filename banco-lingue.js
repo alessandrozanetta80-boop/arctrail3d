@@ -28,7 +28,7 @@ function no(riga){ console.log("  \u2717 " + riga); errori.push(riga); }
    lingue su nove non da' nessun errore: `t()` restituisce la chiave stessa e
    l'utente legge «pend_title». Qui si contano le occorrenze a inizio riga:
    devono essere nove esatte, ne' otto ne' dieci. */
-var app = fs.readFileSync(process.argv[2] || "index.html", "utf8");
+var app = fs.readFileSync(process.argv[2] || "app.html", "utf8");
 
 var DA_CONTROLLARE = [
   "pend_title","pend_body","pend_note","pend_recheck",
@@ -120,6 +120,80 @@ console.log("\n  IL RITORNO AL LOGIN");
   if(app.indexOf(c) >= 0) ok("passa da conRitorno: " + c);
   else no("invio senza indirizzo di ritorno: " + c);
 });
+
+/* ══ 4-bis. Il ritorno si porta dietro la lingua ══════════════════════
+   (20/08/2026.) Il link della verifica lo apre l'app della posta, in un
+   browser dove `localStorage` e' vuoto. Se l'indirizzo di ritorno non porta
+   niente, chi clicca ricomincia dal primo passo dell'impostazione, e la
+   lingua l'aveva gia' scelta: solo, in un altro browser.
+   Questa e' una prova di LINGUA quanto le altre di questo banco. Il difetto
+   e' che l'app parla la lingua sbagliata a chi ne aveva scelta un'altra. */
+console.log("");
+console.log("  IL RITORNO SI PORTA DIETRO LA LINGUA");
+
+function nelFile(pezzo, siTxt, noTxt){
+  if(app.indexOf(pezzo) >= 0) ok(siTxt); else no(noTxt);
+}
+nelFile("da=email",
+        "l'indirizzo di ritorno dice da dove si arriva",
+        "l'indirizzo di ritorno non dice da dove si arriva");
+nelFile('q += "&lang=" + encodeURIComponent(state.lang)',
+        "e si porta dietro la lingua scelta",
+        "l'indirizzo di ritorno non porta la lingua");
+nelFile("function leggiRitornoEmail()",
+        "e qualcuno la rilegge all'arrivo",
+        "nessuno rilegge la lingua dall'indirizzo");
+nelFile("window.history.replaceState({}, document.title, window.location.pathname)",
+        "l'indirizzo si pulisce dopo",
+        "l'indirizzo resta sporco: torna a ogni ricarica");
+
+/* L'ordine delle porte. Chi arriva da un'email ha gia' un account: se il
+   controllo cade DOPO la schermata di benvenuto, il primo tasto che vede e'
+   «Registrati», cioe' rifare la cosa che ha appena finito di fare. */
+var iEmail = app.indexOf('if(arrivaDaEmail && authState === "needLogin"){ app.appendChild(loginScreen()); return; }');
+var iBenv  = app.indexOf("app.appendChild(welcomeScreen()); return;");
+if(iEmail > -1 && iBenv > -1 && iEmail < iBenv) ok("chi arriva da un'email vede il login, non «Registrati»");
+else no("la porta dell'email cade dopo la schermata di benvenuto");
+
+/* E adesso la si fa girare davvero, che e' l'unica prova che conta. */
+var apreRit = app.indexOf("function leggiRitornoEmail(){");
+var chiudeRit = app.indexOf("return da;", apreRit);
+if(apreRit < 0 || chiudeRit < 0){ no("leggiRitornoEmail non si estrae dal file"); }
+else {
+  var corpoRit = app.slice(app.indexOf("{", apreRit) + 1, chiudeRit) + "return da;";
+  var PAESI = {};
+  LINGUE.forEach(function(l){ PAESI[l] = l; });
+  var provaRit = function(indirizzo, langGiaQui){
+    var stato = { lang: langGiaQui || undefined };
+    var pulito = false;
+    var finta = {
+      location: { search: indirizzo, pathname: "/" },
+      history: { replaceState: function(){ pulito = true; } }
+    };
+    var fn = new Function("URLSearchParams", "state", "save", "LANG_TO_COUNTRY", "window", "document", corpoRit);
+    var da = fn(URLSearchParams, stato, function(){}, PAESI, finta, { title: "" });
+    return { lang: stato.lang, da: da, pulito: pulito };
+  };
+
+  var r1 = provaRit("?da=email&lang=de");
+  if(r1.lang === "de" && r1.da === true) ok("?da=email&lang=de: tedesco, e arriva da un'email");
+  else no("?da=email&lang=de non e' stato letto (lang=" + r1.lang + ", da=" + r1.da + ")");
+
+  var r2 = provaRit("?da=email&lang=de", "it");
+  if(r2.lang === "it") ok("chi ha gia' scelto qui non si vede rigirare la lingua");
+  else no("un indirizzo vecchio ha sovrascritto la lingua scelta");
+
+  var r3 = provaRit("?da=email&lang=klingon");
+  if(r3.lang === undefined) ok("una lingua che non esiste viene ignorata");
+  else no("una lingua inventata e' entrata nello stato: " + r3.lang);
+
+  var r4 = provaRit("");
+  if(r4.da === false && r4.pulito === false) ok("senza parametri non si tocca niente");
+  else no("senza parametri l'indirizzo viene toccato lo stesso");
+
+  if(r1.pulito) ok("dopo la lettura l'indirizzo viene ripulito");
+  else no("l'indirizzo non viene ripulito");
+}
 
 /* ══ 5. Le pagine legali scelgono la lingua ═══════════════════════════════
    Si montano davvero, con jsdom, e si guarda quale dei blocchi resta acceso.

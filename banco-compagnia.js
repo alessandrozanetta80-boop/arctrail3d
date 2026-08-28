@@ -21,7 +21,10 @@
  *      dove, quanti, ci vado), e aperto ne dice di piu'. E anche l'apertura
  *      sopravvive al ridisegno.
  *   4. La data e' una data e non un dato: «21 AGO», non «2026-08-21».
- *   5. I numeri della compagnia sono veri: se non c'e' niente da contare non
+ *   5. Un percorso PROPOSTO non si presenta come vero: lo vede chi l'ha
+ *      proposto (se sparisse crederebbe di aver sbagliato a premere) e chi
+ *      deve confermarlo. A tutti gli altri non compare finche' non e' vero.
+ *   6. I numeri della compagnia sono veri: se non c'e' niente da contare non
  *      compare nessuna fascia di zeri.
  *
  * Uscita 0 = tutto a posto. Uscita 1 = almeno una prova ha detto no.
@@ -41,13 +44,17 @@ var GANCIO = NL + "window.__prova = {" +
   " entra:function(u){ currentUser = { uid:u, email:'io@esempio.it' }; }," +
   " club:function(c){ state.profile = state.profile || {}; state.profile.compagnia = c; }," +
   " scheda:function(){ return compTab; }," +
+  " referente:function(cod,uid,mail){ compagnieAdminCache = {}; compagnieAdminCache[cod] = { adminUid:uid, emailComp:mail||'' }; }," +
+  " percorsi:function(cod,lista){ percorsiCampo[cod] = { stato:'pronto', lista:lista }; }," +
+  " modulo:function(cod){ pcForm = cod; render(); }," +
+  " visibili:function(cod){ return percorsiVisibili(cod).map(function(p){ return p.id; }); }," +
   " apri:function(){ compTab = null; state.tab = 'compagnie'; state.screen = 'menu'; render(); }," +
   " vai:function(k){ compTab = k; state.tab = 'compagnie'; state.screen = 'menu'; render(); }," +
   " tira:function(){ state.tab = 'tira'; state.screen = 'menu'; render(); }," +
   " ridisegna:function(){ render(); }" +
   "};" + NL;
 
-var src = fs.readFileSync("index.html", "utf8");
+var src = fs.readFileSync("app.html", "utf8");
 if (src.indexOf("var DEV_MODE = false;") < 0) throw new Error("DEV_MODE non trovato");
 if (src.indexOf(NL + "initAuthFlow();") < 0) throw new Error("punto di aggancio non trovato");
 fs.writeFileSync(path.join(DOVE, "index.html"),
@@ -106,6 +113,87 @@ async function apri(browser, conClub) {
   await page.waitForTimeout(1200);
   return page;
 }
+
+/* ══ PRIMA DEL BROWSER, PERCHE' QUESTE SI POSSONO CHIEDERE AL FILE ═════════
+   (23/08/2026.) Lo spazio compagnia mostrava una scheda bianca con dentro
+   `nome + " — " + luogo`: «A.S.D. Arcieri del VCO & Valgrande — Via A.
+   Alberti, Vignone (VB)», tre righe di titolo in cui l'indirizzo si
+   travestiva da ragione sociale. I due dati sono separati nell'archivio da
+   sempre: li incollava la schermata.
+   E la testata giusta esisteva gia' — fascia, stemma, nome, indirizzo con lo
+   spillo — ma la vedevano solo gli arcieri. Il referente no, proprio lui che
+   quei dati li scrive.
+   Queste prove stanno QUI e non dentro il browser di proposito: girano anche
+   dove un browser non c'e', e il difetto che cercano si legge nel file. */
+var src = fs.readFileSync(process.argv[2] || "app.html", "utf8");
+console.log("\n  IL REFERENTE VEDE LA SUA COMPAGNIA COME LA VEDONO GLI ALTRI");
+prova("lo spazio compagnia usa la testata vera",
+      /wrap\.appendChild\(compagniaMiaCard\(codice\)\);/.test(src));
+/* Il nome e l'indirizzo non si incollano: sono due dati e restano due. */
+prova("il nome non e' piu' incollato all'indirizzo",
+      !/COMPAGNIE\[codice\]\.nome \+ \(COMPAGNIE\[codice\]\.luogo/.test(src));
+prova("e la testata li tiene separati, con lo spillo sull'indirizzo",
+      /class="comp-nome">'\+escapeHtml\(nome\)/.test(src) &&
+      /class="comp-sotto">'\+icon\("pin",16\)/.test(src));
+/* Una scheda che conteneva solo il proprio titolo non separava: occupava. */
+prova("non resta una scheda col solo titolo della sezione",
+      !/head\.appendChild\(el\('<h2 class="section-title">'\+t\("club_space_title"\)/.test(src));
+
+/* ── LA FASCIA ────────────────────────────────────────────────────────────
+   L'onda era `--brand-ink` al 10%, disegnata quando la fascia era verde
+   pieno. Sulla velatura del 23/08 diventava una seconda banda: staccava
+   **1,228** dalla fascia, mentre la fascia stacca **1,201** dalla scheda
+   sotto — il decoro si vedeva piu' della struttura.
+   Torna facile: chi guarda una fascia vuota e' tentato di «arricchirla». */
+console.log("\n  LA FASCIA E' PIATTA COME TUTTE LE ALTRE SUPERFICI");
+prova("non c'e' nessuna onda sotto lo stemma",
+      !/<path d="M0 40 Q90 20 180 34/.test(src));
+prova("il confine con la scheda e' un filo, non un disegno",
+      /\.comp-fascia\{[^}]*border-bottom:1px solid var\(--[a-z0-9-]+\)/.test(
+        src.replace(/\s+/g, " ")));
+/* Gli anelli sono l'unico segno d'identita' della fascia, e il loro colore
+   NON puo' essere un primitivo: al chiaro la fascia e' chiara e serve un
+   arancione scuro, al buio e' scura e lo stesso arancione crolla a 2,31. */
+prova("non c'e' nessun anello nella fascia",
+      !/comp-fascia[\s\S]{0,400}?<circle/.test(src));
+prova("e non hanno piu' un velo sopra che li sbiadisce",
+      !/<circle cx="310"[^>]*opacity="0.75"/.test(src));
+
+/* ── LE IMPOSTAZIONI DEL PROFILO ──────────────────────────────────────────
+   (23/08/2026.) Portavano dentro tre cose che il resto dell'app aveva gia'
+   smesso di fare: un verde pieno con un `#fff` scritto a mano, una crocetta
+   senza nome ne' area da premere, e «nome — luogo» incollati.
+   L'ultima e' la piu' insidiosa: quella stringa finiva in `compagniaNome`, e
+   da li' ricompariva nella pastiglia, nel profilo pubblico e negli
+   allenamenti. *E' cosi' che un indirizzo diventa parte di una ragione
+   sociale: nessuno lo scrive, lo copia una riga sola.* */
+var cssP = (src.match(/<style>([\s\S]*?)<\/style>/) || ["",""])[1].replace(/\s+/g, " ");
+console.log("\n  LE IMPOSTAZIONI DEL PROFILO SEGUONO IL RESTO");
+prova("la compagnia scelta e' tinta, non verde piena",
+      /\.club-scelto\{[^}]*background:var\(--verde-bg\)/.test(cssP) &&
+      !/background:var\(--accent\);color:var\(--accent-ink\);border-radius:var\(--r-sm\)/.test(src));
+prova("e non c'e' piu' un bianco scritto a mano nel tasto",
+      !/color:#fff;font-size:var\(--t-lg\);cursor:pointer/.test(src));
+/* Un carattere non e' un tasto: senza nome un lettore di schermo legge
+   «times», e senza area da premere il pollice lo manca.
+   IL NUMERO E' CAMBIATO, LA DOMANDA NO. (25/08/2026.) La prova pretendeva
+   `--s-5`, cioe' 24px: era la misura del giorno in cui il tasto e' nato da un
+   carattere nudo, ed era un passo avanti. Ma 24 resta sotto la soglia di
+   qualunque bersaglio, e il 25/08 il tasto e' passato a `--hit` (44).
+   *Il banco fissava il valore invece dell'intento, e cosi' e' diventato rosso
+   per un miglioramento.* Adesso chiede quello che conta: che l'area ci sia e
+   che sia quella standard dell'app. Se un giorno `--hit` cambia, questa riga
+   lo segue senza bugie. */
+prova("il tasto che toglie la compagnia ha un nome e un'area",
+      /class="club-togli"[^>]*aria-label=/.test(src) &&
+      /\.club-togli\{[^}]*width:var\(--hit\); height:var\(--hit\)/.test(cssP));
+prova("il tasto e' tradotto, non scritto in italiano",
+      /t\("profile_club_remove"\)/.test(src));
+/* Si cerca su nome e luogo insieme, si mostra su due righe, si salva il nome. */
+prova("i risultati mostrano nome e luogo su due righe",
+      /class="club-voce"><b>'\+escapeHtml\(c\.nome\)/.test(src));
+prova("e quello che si SALVA e' il nome, non la stringa incollata",
+      /clubNome = c\.nome;/.test(src) && !/clubNome = label;/.test(src));
 
 (async function () {
   var browser = await chromium.launch();
@@ -271,6 +359,80 @@ async function apri(browser, conClub) {
   prova("toccando una riga resta segnata", scelta.segnata);
   prova("e si apre la sua scheda", scelta.scheda);
   prova("con i suoi contatti veri", scelta.testo.indexOf("347 9533670") >= 0);
+
+  /* ══ 6. I percorsi: l'arciere propone, la compagnia conferma ═══════════ */
+  const PERC = [
+    { id:"p1", clubCode:"01ARTU", nome:"Percorso Rosso", piazzole:24, stato:"confermato", createdBy:"u9" },
+    { id:"p2", clubCode:"01ARTU", nome:"Anello del bosco", piazzole:12, stato:"proposto",
+      createdBy:"io1", createdByName:"Alessandro Zanetta", note:"Parte dal parcheggio in alto." },
+    { id:"p3", clubCode:"01ARTU", nome:"Percorso di un altro", piazzole:20, stato:"proposto",
+      createdBy:"qualcunaltro", createdByName:"Marco B." }
+  ];
+
+  titolo("UN PERCORSO PROPOSTO NON SI PRESENTA COME VERO");
+  await p.evaluate(function (arg) {
+    window.__prova.entra("io1");
+    window.__prova.referente("01ARTU", "un-altro-uid", "info@esempio.it");
+    window.__prova.percorsi("01ARTU", arg);
+    window.__prova.vai("mia");
+  }, PERC);
+  await p.waitForTimeout(300);
+  var visti = await p.evaluate(function () { return window.__prova.visibili("01ARTU"); });
+  prova("il confermato si vede", visti.indexOf("p1") >= 0);
+  prova("il mio proposto si vede: se sparisse crederei di aver sbagliato a premere",
+    visti.indexOf("p2") >= 0);
+  prova("quello proposto da un ALTRO non si vede: comparirebbe come vero, e non lo e'",
+    visti.indexOf("p3") < 0, visti.join(","));
+
+  var vistaArciere = await p.evaluate(function () {
+    var c = document.querySelectorAll(".cp-percorso-card");
+    return {
+      quante: c.length,
+      attesa: document.querySelectorAll(".cp-percorso-card.in-attesa").length,
+      decidi: document.querySelectorAll(".pc-decidi").length,
+      testo: document.getElementById("app").innerText.replace(/\s+/g, " ")
+    };
+  });
+  prova("due schede: il confermato e il mio", vistaArciere.quante === 2, "" + vistaArciere.quante);
+  prova("il mio e' segnato come da confermare", vistaArciere.attesa === 1);
+  prova("e lo dice a parole", vistaArciere.testo.indexOf("Aspetta la compagnia") >= 0);
+  prova("posso ritirarlo", vistaArciere.testo.indexOf("Ritira") >= 0);
+  prova("ma NON posso confermarlo io: non e' il mio campo", vistaArciere.decidi === 0);
+
+  titolo("CHI RISPONDE DEL CAMPO PUO' CONFERMARE, E VEDE TUTTO");
+  await p.evaluate(function (arg) {
+    window.__prova.entra("ref1");
+    window.__prova.referente("01ARTU", "ref1", "info@esempio.it");
+    window.__prova.percorsi("01ARTU", arg);
+    window.__prova.vai("mia");
+  }, PERC);
+  await p.waitForTimeout(300);
+  var vistaRef = await p.evaluate(function () {
+    return {
+      visibili: window.__prova.visibili("01ARTU").length,
+      decidi: document.querySelectorAll(".pc-decidi").length,
+      testo: document.getElementById("app").innerText.replace(/\s+/g, " ")
+    };
+  });
+  prova("li vede tutti e tre, anche quelli degli altri", vistaRef.visibili === 3, "" + vistaRef.visibili);
+  prova("e ha due coppie Conferma/Rifiuta", vistaRef.decidi === 2, "" + vistaRef.decidi);
+  prova("con le due parole giuste",
+    vistaRef.testo.indexOf("Conferma") >= 0 && vistaRef.testo.indexOf("Rifiuta") >= 0);
+
+  titolo("IL MODULO DICE CHE NON SI VEDE SUBITO");
+  await p.evaluate(function () { window.__prova.modulo("01ARTU"); });
+  await p.waitForTimeout(250);
+  var mod = await p.evaluate(function () {
+    var m = document.querySelector(".pc-modulo");
+    return { c: !!m, campi: m ? m.querySelectorAll("input,textarea").length : 0,
+             testo: m ? m.innerText.replace(/\s+/g, " ") : "" };
+  });
+  prova("il modulo si apre", mod.c);
+  prova("tre campi: nome, piazzole, note", mod.campi === 3, "" + mod.campi);
+  prova("e avverte che la compagnia deve confermare",
+    mod.testo.indexOf("conferma che il percorso esiste") >= 0, mod.testo.slice(0, 90));
+  prova("il tasto e' arancione: proporre e' pubblicare (PRD 9.3)",
+    await p.evaluate(function () { return !!document.querySelector(".pc-modulo .btn-arancio"); }));
 
   prova("nessun errore in pagina", p.__err.length === 0, p.__err[0]);
   await browser.close();
