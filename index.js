@@ -62,11 +62,25 @@
 // pannello conta quanti ce ne sono in coda: una coda che cresce si vede,
 // una posta che non parte in silenzio no.
 //
-// ORDINE DI APPLICAZIONE, da rispettare:
-//   1) deploy di queste funzioni   (firebase deploy --only functions)
-//   2) pubblicazione di index.html che chiama la callable
-//   3) SOLO DOPO le nuove firestore.rules
-// Al contrario, tutte le notifiche smettono di partire in silenzio.
+// ORDINE DI APPLICAZIONE, e DIPENDE DA COSA FANNO LE REGOLE.
+//
+//   REGOLE CHE STRINGONO (chiudono una porta che l'app vecchia usa):
+//     1) deploy di queste funzioni   (firebase deploy --only functions)
+//     2) pubblicazione di index.html
+//     3) SOLO DOPO le nuove firestore.rules
+//   Al contrario, tutte le notifiche smettono di partire in silenzio.
+//
+//   REGOLE CHE ALLARGANO (aprono una raccolta che prima non esisteva):
+//     1) le nuove firestore.rules
+//     2) deploy di queste funzioni
+//     3) pubblicazione di index.html
+//   Al contrario l'app nuova scrive in una raccolta senza regola, e una
+//   raccolta senza regola e' NEGATA: il tasto fallisce con permission-denied.
+//
+//   Il 20/08/2026 (`percorsi_campo` e `mail`) e' il secondo caso: le regole
+//   nuove non tolgono niente a nessuno, quindi vanno per prime. *L'ordine
+//   non e' una formula: e' una domanda su chi rimane senza permesso mentre
+//   i pezzi non sono ancora tutti al loro posto.*
 
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
