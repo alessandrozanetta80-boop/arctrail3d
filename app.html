@@ -4558,6 +4558,35 @@ border-color:color-mix(in srgb, var(--danger-role) 40%, var(--line)); margin-lef
    sembra un guasto dell'app, non una scelta di una persona. */
 .pp-privato{ margin-top:var(--s-4); font-size:var(--t-sm); color:var(--text-3);
   font-style:italic; }
+/* ══════════ LA TESTA DEL PROFILO (28/08/2026) ══════════
+   La scheda Profilo era un corridoio: cinque porte e nessuna identita'. Qui
+   sopra ci va chi sei — nome, federazione, arco, compagnia — riusando il
+   vestito del profilo pubblico invece di inventarne uno secondo: e' la stessa
+   carta d'identita', vista da dentro. Il tondo e' piu' grande perche' qui e'
+   la testa della pagina e non una riga in mezzo a un elenco; ed e' il posto
+   dove entrera' una foto il giorno che si potra' caricarne una. */
+.mp-testa{ margin-bottom:var(--s-3); }
+.mp-testa .pp-tondo{ width:72px; height:72px; font-size:var(--t-xl); }
+.mp-bandiera{ font-size:1.15em; margin-right:var(--s-1); }
+/* Il tasto sta in fondo a destra e resta un fantasma: modificare il profilo si
+   fa due volte l'anno, e un tasto pieno qui chiamerebbe piu' forte del nome. */
+.mp-azioni{ display:flex; justify-content:flex-end; margin-top:var(--s-3); }
+/* LA FASCIA DEI QUATTRO NUMERI. Non quattro schede: una sola, divisa. Quattro
+   riquadri separati per quattro cifre corte fanno sembrare importante il
+   bordo invece del numero. `.home-numeri` sta a due colonne perche' in Home i
+   numeri sono due per riga e piu' grandi; qui sono quattro e la cifra scende
+   di un gradino. */
+.mp-conti{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--s-1); }
+.mp-conti .home-num{ padding:var(--s-2) var(--s-1); }
+.mp-conti .home-num b{ font-size:var(--t-lg); }
+.mp-conti .home-num span{ font-size:var(--t-2xs); }
+/* UNA REGISTRAZIONE SPORTIVA, NON UN POST. Le righe sono quelle dello storico
+   — stesso vestito, stesso significato — con il punteggio a destra: qui il
+   numero e' il fatto, il resto e' contorno. */
+.mp-giro{ cursor:pointer; }
+.mp-giro b{ display:block; font-size:var(--t-sm); font-weight:700; line-height:1.3; }
+.mp-punti{ flex:0 0 auto; font-weight:800; font-size:var(--t-md);
+  color:var(--gold-role); font-variant-numeric:tabular-nums; }
 /* Il titolo della chat e' diventato un tasto: deve restare un titolo. */
 .btn-nudo{ background:none; border:0; padding:0; margin:0; font:inherit;
   color:inherit; text-align:left; width:100%; cursor:pointer; }
@@ -6290,7 +6319,7 @@ attr_punta: "Punta (grani)",
 attr_note: "Note",
 attr_salva: "Salva assetto",
 attr_serve_nome: "Dagli un nome, così lo riconosci.",
-attr_modifica: "Modifica",
+attr_modifica: "Modifica", prof_edit_btn: "Modifica profilo", mp_setup: "Il mio setup", mp_dove: "Dove ho tirato", mp_vedi_giri: "Vedi tutti i giri",
 attr_predefinito: "predefinito",
 attr_fai_predefinito: "Rendi predefinito",
 attr_archivia: "Archivia",
@@ -6962,7 +6991,7 @@ attr_punta: "Point (grains)",
 attr_note: "Notes",
 attr_salva: "Save setup",
 attr_serve_nome: "Give it a name, so you recognise it.",
-attr_modifica: "Edit",
+attr_modifica: "Edit", prof_edit_btn: "Edit profile", mp_setup: "My setup", mp_dove: "Where I have shot", mp_vedi_giri: "See all rounds",
 attr_predefinito: "default",
 attr_fai_predefinito: "Make default",
 attr_archivia: "Archive",
@@ -7633,7 +7662,7 @@ attr_punta: "Pointe (grains)",
 attr_note: "Notes",
 attr_salva: "Enregistrer",
 attr_serve_nome: "Donnez-lui un nom pour la reconnaître.",
-attr_modifica: "Modifier",
+attr_modifica: "Modifier", prof_edit_btn: "Modifier le profil", mp_setup: "Mon matériel", mp_dove: "Où j’ai tiré", mp_vedi_giri: "Voir tous les parcours",
 attr_predefinito: "par défaut",
 attr_fai_predefinito: "Définir par défaut",
 attr_archivia: "Archiver",
@@ -8304,7 +8333,7 @@ attr_punta: "Spitze (grain)",
 attr_note: "Notizen",
 attr_salva: "Setup speichern",
 attr_serve_nome: "Gib ihm einen Namen, damit du es wiedererkennst.",
-attr_modifica: "Bearbeiten",
+attr_modifica: "Bearbeiten", prof_edit_btn: "Profil bearbeiten", mp_setup: "Meine Ausrüstung", mp_dove: "Wo ich geschossen habe", mp_vedi_giri: "Alle Runden ansehen",
 attr_predefinito: "Standard",
 attr_fai_predefinito: "Als Standard",
 attr_archivia: "Archivieren",
@@ -8994,7 +9023,7 @@ attr_punta: "Uç (grain)",
 attr_note: "Notlar",
 attr_salva: "Seti kaydet",
 attr_serve_nome: "Tanıyabilmen için bir ad ver.",
-attr_modifica: "Düzenle",
+attr_modifica: "Düzenle", prof_edit_btn: "Profili düzenle", mp_setup: "Ekipmanım", mp_dove: "Nerelerde attım", mp_vedi_giri: "Bütün turları gör",
 attr_predefinito: "varsayılan",
 attr_fai_predefinito: "Varsayılan yap",
 attr_archivia: "Arşivle",
@@ -9678,7 +9707,7 @@ attr_punta: "Наконечник (грены)",
 attr_note: "Заметки",
 attr_salva: "Сохранить",
 attr_serve_nome: "Дайте название, чтобы узнавать.",
-attr_modifica: "Изменить",
+attr_modifica: "Изменить", prof_edit_btn: "Изменить профиль", mp_setup: "Моё снаряжение", mp_dove: "Где я стрелял", mp_vedi_giri: "Все круги",
 attr_predefinito: "основной",
 attr_fai_predefinito: "Сделать основным",
 attr_archivia: "В архив",
@@ -10362,7 +10391,7 @@ attr_punta: "Punta (granos)",
 attr_note: "Notas",
 attr_salva: "Guardar",
 attr_serve_nome: "Dale un nombre para reconocerla.",
-attr_modifica: "Editar",
+attr_modifica: "Editar", prof_edit_btn: "Editar perfil", mp_setup: "Mi equipo", mp_dove: "Dónde he tirado", mp_vedi_giri: "Ver todos los recorridos",
 attr_predefinito: "predeterminada",
 attr_fai_predefinito: "Hacer predeterminada",
 attr_archivia: "Archivar",
@@ -11046,7 +11075,7 @@ attr_punta: "Spets (grain)",
 attr_note: "Anteckningar",
 attr_salva: "Spara",
 attr_serve_nome: "Ge den ett namn så du känner igen den.",
-attr_modifica: "Ändra",
+attr_modifica: "Ändra", prof_edit_btn: "Ändra profil", mp_setup: "Min utrustning", mp_dove: "Var jag har skjutit", mp_vedi_giri: "Se alla rundor",
 attr_predefinito: "standard",
 attr_fai_predefinito: "Gör till standard",
 attr_archivia: "Arkivera",
@@ -11730,7 +11759,7 @@ attr_punta: "Punt (grein)",
 attr_note: "Notities",
 attr_salva: "Opslaan",
 attr_serve_nome: "Geef het een naam zodat je het herkent.",
-attr_modifica: "Bewerken",
+attr_modifica: "Bewerken", prof_edit_btn: "Profiel bewerken", mp_setup: "Mijn uitrusting", mp_dove: "Waar ik geschoten heb", mp_vedi_giri: "Alle rondes bekijken",
 attr_predefinito: "standaard",
 attr_fai_predefinito: "Maak standaard",
 attr_archivia: "Archiveren",
@@ -17765,8 +17794,25 @@ wrap.appendChild(regCard);
 
 // ══════════════════════ SEZIONE: PROFILO ══════════════════════
 else {
+/* La testa prima delle porte. E il titolo «Profilo» sopra le porte se ne va:
+   la barra in fondo dice gia' dove si e', la testa dice gia' di chi e' questa
+   pagina, e una terza scritta che ripete la stessa parola e' rumore. */
+var testaCard = profiloTestaCard();
+if(testaCard) wrap.appendChild(testaCard);
+
+/* L'ORDINE E' DAL GRANDE AL PICCOLO: chi sei, quanto hai fatto, cosa hai
+   fatto di recente, con cosa tiri, dove sei stato. Le porte vengono dopo:
+   sono comandi, e i comandi stanno sotto a quello che si guarda. */
+var contiCard = profiloContiCard();
+if(contiCard) wrap.appendChild(contiCard);
+var attCard = profiloAttivitaCard();
+if(attCard) wrap.appendChild(attCard);
+var setupCard = profiloSetupCard();
+if(setupCard) wrap.appendChild(setupCard);
+var doveCard = profiloDoveCard();
+if(doveCard) wrap.appendChild(doveCard);
+
 var profCard = el('<div class="card"></div>');
-profCard.appendChild(el('<h2 class="section-title">'+t("nav_profile")+'</h2>'));
 
 /* L'ORDINE E' QUELLO IN CUI SI ENTRA. (22/08/2026, dato da Alessandro:
    «diario, attrezzatura, spazio compagnia, poi impostazioni e persone
@@ -20345,7 +20391,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-28-firma";
+var BUILD_STAMP = "2026-08-28-carta";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -20354,7 +20400,7 @@ var BUILD_STAMP = "2026-08-28-firma";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-28-conferma";
+var BUILD_PARENT = "2026-08-28-firma";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -23188,6 +23234,186 @@ return wrap;
  * deducono dalla COMPAGNIA, che e' pubblica per definizione e larga come una
  * provincia. Non c'e' nessun GPS in questa schermata, e non deve entrarci.
  */
+/* LA TESTA DELLA SCHEDA PROFILO. (28/08/2026.)
+ *
+ * NON SI SALVA NIENTE DI NUOVO, e non si mostra niente che non ci fosse gia':
+ * nome, nome scelto, federazione in corso, arco, compagnia. Tutto viene da
+ * `state.profile` e da `state.country`/`state.federation`, cioe' da quello
+ * che l'arciere ha gia' scritto.
+ *
+ * QUELLO CHE NON C'E', E PERCHE'. La divisione (Freestyle, Arco Nudo...) vive
+ * solo fra gli iscritti di *Prepara gara*: nel profilo personale non esiste.
+ * Al suo posto c'e' l'arco, che esiste davvero. Scrivere una divisione
+ * inventata sarebbe una promessa che la classifica non puo' mantenere.
+ *
+ * Se il profilo non e' ancora stato compilato la testa non compare: meglio il
+ * corridoio di prima di una carta d'identita' senza nome sopra. */
+function profiloTestaCard(){
+var p = state.profile;
+if(!p || !p.nomeCognome) return null;
+
+var card = el('<div class="card mp-testa"></div>');
+var iniziali = String(p.nomeCognome).split(/\s+/).map(function(x){ return x.charAt(0); }).join("").slice(0,2).toUpperCase();
+
+var testa = el('<div class="pp-testa"></div>');
+testa.appendChild(el('<div class="pp-tondo">'+escapeHtml(iniziali)+'</div>'));
+var chi = el('<div class="pp-chi"></div>');
+chi.appendChild(el('<b>'+escapeHtml(p.nomeCognome)+'</b>'));
+if(p.username) chi.appendChild(el('<span>@'+escapeHtml(p.username)+'</span>'));
+testa.appendChild(chi);
+card.appendChild(testa);
+
+// Bandiera e federazione si compongono come nelle impostazioni, e per lo
+// stesso motivo: la sigla da sola non dice di quale paese e'.
+if(state.country && state.federation){
+var flag = "";
+for(var ci=0; ci<COUNTRY_LIST.length; ci++){ if(COUNTRY_LIST[ci].code === state.country){ flag = COUNTRY_LIST[ci].flag; break; } }
+var riga = '<span class="mp-bandiera">'+flag+'</span>'+escapeHtml(String(state.federation).toUpperCase());
+var arco = (p.arco && typeof PROFILE_BOW_LABEL !== "undefined") ? PROFILE_BOW_LABEL[p.arco] : null;
+if(arco) riga += ' &middot; '+escapeHtml(arco);
+card.appendChild(el('<div class="pp-riga">'+riga+'</div>'));
+}
+if(p.compagniaNome) card.appendChild(el('<div class="pp-riga">'+escapeHtml(p.compagniaNome)+'</div>'));
+
+var azioni = el('<div class="mp-azioni"></div>');
+var mod = el('<button class="btn btn-ghost btn-sm">'+t("prof_edit_btn")+'</button>');
+mod.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
+azioni.appendChild(mod);
+card.appendChild(azioni);
+return card;
+}
+
+/* IL RECORD. Sta scritto in due posti — qui e nel diario — e le due cifre
+ * devono restare la stessa: si leggono le stesse due fonti, lo storico e il
+ * riepilogo permanente, che sopravvive al taglio dello storico. Se un giorno
+ * il diario cambia il modo di contarlo, qui va cambiato con lui. */
+function mioRecord(){
+var meglio = 0;
+var hist = loadHistory();
+for(var i = 0; i < hist.length; i++){
+var h = hist[i]; if(!h) continue;
+var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0];
+if(r && r.total > meglio) meglio = r.total;
+}
+try{
+var lt = loadLifetime() || {};
+Object.keys(lt).forEach(function(k){
+var e = lt[k];
+if(!e || !e.name) return;
+if(!isMyResult({ name: e.name, ownerUid: e.ownerUid || null, isSelf: e.isSelf === true })) return;
+if((e.best || 0) > meglio) meglio = e.best;
+});
+}catch(e){}
+return meglio;
+}
+
+/* I QUATTRO NUMERI DEL PROFILO. Sono gli STESSI che il mondo vede nella carta
+ * pubblica, e li conta la stessa funzione: due modi di contare la stessa cosa
+ * finiscono sempre per non essere piu' d'accordo, e allora l'arciere legge due
+ * verita' diverse su se' stesso. La media e' per piazzola, non per giro:
+ * cosi' non mescola un allenamento da dodici con una gara da ventiquattro. */
+function profiloContiCard(){
+var n = mieiNumeriPubblici();
+if(!n) return null;
+var card = el('<div class="card"></div>');
+var q = el('<div class="home-numeri mp-conti"></div>');
+function numero(cifra, eti){
+q.appendChild(el('<div class="home-num"><b>'+escapeHtml(String(cifra))+'</b><span>'+escapeHtml(eti)+'</span></div>'));
+}
+numero(n.giri, t("home_rounds_word"));
+numero(n.piazzole, t("diario_targets_word"));
+numero(String(n.media).replace(".", decimaleLocale()), t("diario_media"));
+numero(mioRecord(), t("diario_record"));
+card.appendChild(q);
+return card;
+}
+
+/* GLI ULTIMI TRE GIRI. Tre e non dieci: qui si guarda «cosa ho fatto di
+ * recente», e chi vuole l'elenco ha gia' una scheda che li ha tutti. Un
+ * secondo elenco lungo sarebbe il difetto gia' visto il 20/08 fra diario e
+ * storico: due posti dove cercare, e la seconda volta si cerca in quello
+ * sbagliato. */
+function profiloAttivitaCard(){
+var hist = loadHistory();
+var miei = [];
+for(var i = 0; i < hist.length && miei.length < 3; i++){
+var h = hist[i]; if(!h) continue;
+var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0];
+if(!r) continue;
+miei.push({ hi:i, h:h, r:r });
+}
+if(!miei.length) return null;
+
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("nav_activity")+'</h2>'));
+var locale = (LANG_META[state.lang] || LANG_META.it).locale;
+miei.forEach(function(m){
+var d = new Date(m.h.date);
+var quando = isNaN(d.getTime()) ? "" : d.toLocaleDateString(locale, { day:"2-digit", month:"short" });
+var pz = (m.r.perTarget && m.r.perTarget.length) ? m.r.perTarget.length : (m.h.format || 0);
+var eti = modeLabel(m.h.modeKey || modeKeyDaLabel(m.h.modeLabel) || "training");
+var sotto = [quando, pz ? (pz + " " + t("diario_targets_word")) : "", (m.h.campo || "")].filter(Boolean).join(" \u00b7 ");
+var riga = el('<div class="timeline-row mp-giro"></div>');
+var dentro = el('<div class="timeline-content"></div>');
+dentro.appendChild(el('<b>'+escapeHtml(eti)+'</b>'));
+dentro.appendChild(el('<span class="timeline-meta">'+escapeHtml(sotto)+'</span>'));
+riga.appendChild(dentro);
+riga.appendChild(el('<span class="mp-punti">'+escapeHtml(String(m.r.total || 0))+'</span>'));
+riga.addEventListener("click", function(){
+state.historyIndex = m.hi; state.screen = "history-detail"; save(); render();
+});
+card.appendChild(riga);
+});
+var tutti = el('<button class="btn btn-ghost btn-block btn-sm">'+t("mp_vedi_giri")+'</button>');
+tutti.addEventListener("click", function(){ state.tab = "attivita"; state.screen = "menu"; save(); render(); });
+card.appendChild(tutti);
+return card;
+}
+
+/* IL SETUP. Solo l'assetto predefinito, cioe' quello con cui si tira davvero:
+ * l'elenco intero ce l'ha gia' Attrezzatura, e ripeterlo qui vorrebbe dire
+ * mantenerlo in due posti. Le tre righe sono composte come li' — stesso
+ * ordine, stessi separatori — perche' un arco descritto in due modi diversi
+ * in due schermate sembra due archi. */
+function profiloSetupCard(){
+var a = null;
+try{ a = assettoPredefinito(); }catch(e){}
+if(!a) return null;
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("mp_setup")+'</h2>'));
+var testaRiga = el('<div class="attr-testa"></div>');
+testaRiga.appendChild(el('<b>'+escapeHtml(a.nome || "?")+'</b>'));
+card.appendChild(testaRiga);
+var primo = [(typeof PROFILE_BOW_LABEL !== "undefined" && PROFILE_BOW_LABEL[a.arco]) || "", a.marca, a.modello].filter(Boolean).join(" \u00b7 ");
+var secondo = [a.frecce, a.spine ? "spine " + a.spine : ""].filter(Boolean).join(" \u00b7 ");
+var terzo = [a.libbre ? a.libbre + " lb" : "", a.lunghezza ? a.lunghezza + '"' : ""].filter(Boolean).join(" \u00b7 ");
+[primo, secondo, terzo].forEach(function(r){ if(r) card.appendChild(el('<div class="attr-riga">'+escapeHtml(r)+'</div>')); });
+var vai = el('<button class="btn btn-ghost btn-block btn-sm stacco-3">'+t("attr_titolo")+'</button>');
+vai.addEventListener("click", function(){ state.assettoAperto = null; state.screen = "attrezzatura"; save(); render(); });
+card.appendChild(vai);
+return card;
+}
+
+/* DOVE HO TIRATO, E SOLO QUELLO CHE SI PUO' DIRE.
+ *
+ * Qui il disegno chiedeva anche «8 club, 3 regioni». Non si possono scrivere:
+ * il campo del giro e' testo libero — «Cerrione» e «Fornasona, Cerrione» sono
+ * lo stesso posto e contano due — e la compagnia di un percorso l'app non la
+ * sa affatto. Un conto di club dedotto da un testo scritto a mano sarebbe un
+ * numero preciso su un dato che non lo e'.
+ *
+ * Resta il conto dei percorsi, che e' lo stesso della carta pubblica, con lo
+ * stesso margine. Questa scheda e' il posto dove entrera' la mappa il giorno
+ * che i campi avranno un nome solo. */
+function profiloDoveCard(){
+var n = mieiNumeriPubblici();
+if(!n || !n.campi) return null;
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("mp_dove")+'</h2>'));
+card.appendChild(el('<div class="pp-riga"><b>'+n.campi+'</b> '+escapeHtml(t("pp_campi").toLowerCase())+'</div>'));
+return card;
+}
+
 function profiloPubblicoScreen(){
 var wrap = el('<div></div>');
 var uid = state.profiloUid;

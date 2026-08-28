@@ -10,13 +10,11 @@ Perché l'app è fatta così. Ogni sezione è una versione: cosa è cambiato, e 
 *Indice rigenerato il 23/08/2026 dal file stesso: se una sezione
 cambia titolo, l'indice cambia con lei e non possono divergere.*
 
-## Indice — 126 sezioni
+## Indice — 124 sezioni
 
 | data | sezione | versione |
 |---|---|---|
-| 28/08/2026 | La gentilezza del 14 agosto, e il banco che nessuno aveva | `2026-08-28-conferma` |
-| 28/08/2026 | Le regole non le sa dedurre nessuno, e quattro porte lasciate aperte | `2026-08-28-verificata` |
-| 28/08/2026 | L'elenco che il commento prometteva gia' di non avere | — |
+| 28/08/2026 | Il profilo smette di essere un corridoio | `2026-08-28-carta` |
 | 27/08/2026 | Il marchio vecchio nei risultati di Google: l'identita' era rimasta nell'app | `2026-08-27-identita` |
 | 27/08/2026 | Il tema Sole, quattro registri di societa', e un banco che gridava su una decisione | `2026-08-27-senza-turchia` |
 | — | Le regole ritirate, e perché |  |
@@ -143,343 +141,115 @@ cambia titolo, l'indice cambia con lei e non possono divergere.*
 
 ---
 
-## La gentilezza del 14 agosto, e il banco che nessuno aveva *(28/08/2026, versione `2026-08-28-conferma`, nata da `2026-08-27-turchia`; `sw.js` a `arctrail3d-v139`)*
-
-Alessandro ha scelto la strada (b): via l'eccezione, la conferma dell'email
-vale per tutti. Una riga di codice, e il resto di questa voce e' su cosa e'
-venuto fuori mentre la scrivevo.
-
-### Perche' una gentilezza giusta e' diventata una trappola
-
-`needsEmailVerification()` finiva con `return created >= EMAIL_VERIFY_SINCE`.
-Chi si era iscritto prima del 14/08/2026 — il giorno in cui si sono aperte le
-registrazioni — non vedeva la schermata di conferma. Era la scelta giusta il
-giorno in cui e' stata presa: l'apertura non doveva sbattere fuori chi era
-gia' dentro.
-
-E' diventata una trappola il giorno in cui le regole di Firestore hanno
-cominciato a chiedere `email_verified`. **Nel token di Firebase la data di
-iscrizione non c'e'.** Non e' una cosa che si aggira: un campo `createdAt`
-scritto dal client sarebbe falsificabile dal client, cioe' una protezione
-finta — proprio la cosa che quel lavoro doveva togliere.
-
-Quindi la scelta non era fra sicuro e comodo. Era fra **una schermata che dice
-cosa fare** e **un `permission-denied` muto**: senza questa riga, chi non
-aveva mai confermato l'indirizzo avrebbe scoperto il problema premendo un
-tasto che non fa niente, senza nemmeno il tasto per rimandare l'email.
-
-Adesso il telefono e il database rispondono la stessa cosa alla stessa
-domanda. *Due porte che rispondono diverso sulla stessa persona non sono due
-livelli di sicurezza: sono un guasto che si presenta come un guasto d'altro.*
-
-### La costante non l'ho cancellata, e ho scritto perche'
-
-`EMAIL_VERIFY_SINCE` resta nel file e non la legge piu' nessuno. Alessandro
-aveva detto di non toccare altro, e cancellare una riga e' toccare altro. Ma
-una costante viva accanto a una regola ritirata e' esattamente la «regola
-morta letta insieme a quelle vive» di cui parla `REGOLE-LAVORO.md`: il
-prossimo che la trova crede che valga.
-
-Quindi ho fatto la cosa che costa meno di tutte e non cambia niente: le ho
-messo sopra il motivo per cui e' morta, con la data. *Una riga che si spiega
-da sola non e' un debito; una riga muta si.*
-
-### Il banco che nessuno aveva, e che serviva proprio qui
-
-`banco-lingue.js` controlla che `needsEmailVerification()` sia AGGANCIATA al
-flusso di accesso e che le parole della schermata esistano in nove lingue.
-Non guarda **cosa risponde**. Nessuno degli altri venticinque la guarda per
-niente.
-
-Cioe': la modifica di oggi — che decide chi entra e chi resta fuori — sarebbe
-passata sotto a **tutti e ventisei i banchi senza che uno alzasse la mano**.
-E' la zona che `REGOLE-LAVORO.md` chiama critica insieme al punteggio, e non
-aveva una prova.
-
-Otto prove nuove dentro `banco-avvio.js`, che e' il posto giusto perche' li'
-dentro c'e' gia' il flusso dei primi due secondi. **La funzione si esegue
-davvero**, non si legge con una regex, e non e' un vezzo: il sabotaggio
-numero due riscrive la stessa eccezione con un altro nome e senza citare
-`EMAIL_VERIFY_SINCE`, e una regex direbbe di si'. La funzione eseguita dice
-di no.
-
-Sabotato quattro volte:
-
-| cosa ho rotto | il banco |
-|---|---|
-| rimessa l'eccezione del 14/08 | ha detto no |
-| la stessa eccezione con un nome diverso | ha detto no |
-| conferma chiesta anche a chi entra con Google | ha detto no |
-| schermata tolta a tutti | ha detto no |
-
-Il terzo caso e' quello che protegge dall'errore opposto, e vale la pena
-dirlo: Firebase **non manda l'email di verifica a chi non ha una password.**
-Chiedere la conferma a chi entra con Google sarebbe una porta chiusa senza
-chiave, e da fuori somiglierebbe moltissimo a quella che abbiamo appena
-aperto.
-
-### L'ordine, e non e' invertibile
-
-Questa modifica **STRINGE**: mostra una schermata a persone che prima
-entravano diritte. Le regole nuove stringono a loro volta. Quindi vanno in
-quest'ordine, e non c'e' un ordine alternativo che funzioni:
-
-1. `app.html` e `sw.js` su GitHub, **e visti funzionare** (regola 9);
-2. `firestore.rules` su GitHub, che e' solo la copia di sicurezza;
-3. le regole incollate in console, e *Pubblica*.
-
-Al contrario — regole prima, sito dopo — chi non ha confermato trova per
-qualche minuto o per qualche ora esattamente il `permission-denied` muto che
-questa modifica e' andata a togliere. *L'ordine non e' una formalita': e' la
-domanda su chi rimane senza permesso mentre i pezzi non sono ancora tutti al
-loro posto.*
-
-`sw.js` sale a `arctrail3d-v139` perche' `app.html` sta in `APP_SHELL`: senza
-il nome nuovo il telefono continua a servire la copia di prima, e la
-correzione non si vede.
-
----
-
-## Le regole non le sa dedurre nessuno, e quattro porte lasciate aperte *(28/08/2026, `firestore.rules` a `2026-08-28-verificata`, nata da `2026-08-21-profilo-pubblico`)*
-
-### Prima: il file non c'era, e per un giro ho creduto che non esistesse
-
-Su GitHub `firestore.rules` risponde 200 e contiene un byte. Nel progetto non
-c'e'. Ho detto ad Alessandro che la copia di sicurezza era persa e che le
-regole vive stavano solo in console; lui ha risposto *«le regole le hai in
-progetto»*, e ho dovuto rispondere di no due volte prima che me le incollasse.
-
-**Ho fatto bene a non ricostruirle**, e vale la pena scrivere perche'. Sarebbe
-stato facile: leggere `app.html`, vedere quali raccolte tocca, e scrivere un
-file plausibile. Sarebbe uscito un file che *sembra* una protezione, in una
-lingua che quasi nessuno rilegge, senza dentro le cose che il codice non dice —
-perche' `market_favs` e' chiuso anche all'admin, perche' il `create` delle
-notifiche e' `false`, perche' i `delete` non passano da `isApproved()`. Quella
-terza riga da sola: senza, chi esce dalla beta resta con documenti che non puo'
-piu' cancellare, ed e' esattamente cio' che Google verifica.
-
-### Le quattro porte
-
-**1. L'email confermata valeva solo sul telefono.** `needsEmailVerification()`
-mostrava la schermata; le regole guardavano `signedIn()`. Un client Firebase
-modificato saltava la schermata e scriveva lo stesso: pubblicarsi nell'elenco
-arcieri, aprire un allenamento che vede tutta l'app, scrivere a uno sconosciuto
-in chat privata.
-
-`verified()` legge `email_verified` **dal token**, che lo scrive il server: non
-si regala da soli. Chi entra con Google ce l'ha gia' vero, quindi non chiude
-fuori nessuno di loro. *Non e' messa dappertutto, ed e' la parte che ho pensato
-piu' a lungo:* registrazione, profilo, storico, giro in corso, errori,
-notifiche ricevute e **tutti i delete** restano su `signedIn()`. Chi non ha
-confermato deve poter finire di registrarsi, e chi elimina l'account deve
-potersi portare via la propria roba anche se non ha mai confermato niente.
-
-**2. Un allenamento aperto lo poteva svuotare chiunque.** `hasOnly` sui nomi
-dei campi diceva QUALI campi si possono toccare, non COSA ci finisce dentro:
-qualunque utente loggato poteva riscrivere per intero l'elenco degli iscritti
-di un allenamento altrui. Ora la differenza fra il prima e il dopo di
-`participantUids`, **nei due versi**, puo' contenere solo il proprio uid.
-
-**3. Un invitato alla sessione poteva comandarla.** Bastava restare fra i
-partecipanti e non toccare `ownerUid`: si cambiava federazione e regolamento a
-meta' giro, si riscrivevano i tiri degli altri, si spegneva la doppia
-conferma. Adesso chi ha aperto tocca `shots`, `confirms`, `status`; chi segue
-tocca `confirms` — una firma per volta — e basta.
-
-La pulizia dopo otto ore la fa chi NON ha aperto la sessione, ed e' giusto: un
-giro abbandonato resterebbe acceso per sempre. Ma solo dopo otto ore vere,
-contate dalle regole con `request.time`, e solo per chiuderlo.
-
-**4. Un messaggio mandato si poteva riscrivere.** Nella trattativa del
-mercatino l'update era intero: si cambiava il TESTO del messaggio dell'altro,
-la data, perfino `senderUid` — cioe' si riscriveva quello che l'altro aveva
-scritto e glielo si lasciava firmato. In un posto dove si parla di prezzi era
-il buco peggiore.
-
-**Ma `allow update: if false` avrebbe spento le offerte**, e questo l'ho
-scoperto solo andando a leggere `marketplace.html` invece di fidarmi della
-richiesta. `replyOff()` e `inviaContro()` scrivono `status` per accettare,
-rifiutare o rilanciare. **E chi preme non e' il mittente: e' chi ha ricevuto
-l'offerta** — i tasti compaiono solo con `!isMe`. Quindi nemmeno «solo al
-mittente originale» era la regola giusta: era il contrario. Adesso e' un campo
-solo, sul messaggio ricevuto, con i tre valori ammessi scritti.
-
-### Quello che la revisione ha trovato accanto
-
-- **`market_listings`**: l'update guardava solo il documento vecchio. Chi
-  possedeva un annuncio poteva riscriverci dentro l'uid di un altro e
-  intestarglielo, recensioni comprese. `sellerUid` ora e' immutabile.
-- **`percorsi_campo`**: il referente decideva di quel campo perche' `clubCode`
-  era il suo. Riscrivendolo poteva spostare il percorso sotto un'altra
-  compagnia — e da quel momento nemmeno lui poteva piu' correggerlo.
-- **`market_conversations`**: il documento della trattativa era uno spazio
-  libero in cui infilare qualunque campo.
-
-### E quello che NON sono riuscito a chiudere
-
-Sta scritto in fondo a `firestore.rules`, sei punti, e sta li' e non qui perche'
-**un limite taciuto diventa una protezione creduta.** I due che contano:
-
-`open_trainings.participants` e' un elenco di MAPPE, e le regole non sanno
-scorrere un elenco: si puo' solo contare quante voci entrano ed escono. Resta
-possibile cambiare il NOME mostrato di un altro iscritto. Non e' un iscritto
-tolto — `participantUids` e' l'elenco che conta per le query e per gli avvisi,
-e quello e' chiuso — ma non lo chiamo protetto.
-
-`sessions.confirms`: `affectedKeys()` restituisce un INSIEME, e da un insieme
-non si estrae un elemento. Non c'e' modo di leggere `confirms.<k>.by` e
-confrontarlo con chi scrive. Un partecipante puo' ancora controfirmare
-scrivendoci dentro l'uid di un altro.
-
-**Per tutti e due la cura e' la stessa, ed e' strutturale:** mappa con chiave
-invece di elenco, o sottoraccolta col nome del documento che porta l'uid. E' la
-strada gia' scelta due volte in questo progetto — `shots.<chiave>` invece di
-`arrayUnion`, `giro_aperto` come sottoraccolta. Non l'ho applicata: cambia la
-forma dei documenti e vuole una migrazione, e questo era un lavoro chirurgico.
-
-### Cinquantotto prove scritte e zero eseguite
-
-`banco-regole.js` prova i casi che Alessandro ha chiesto piu' quelli trovati
-per strada. **Non ne ho eseguita nemmeno una:** l'emulatore Firestore si
-scarica da `storage.googleapis.com`, che da qui risponde `host_not_allowed`.
-Java c'e', il resto no.
-
-Quello che ho potuto fare offline e' poco e va detto per quello che e': le
-parentesi tornano (74/74, 372/372, 23/23), nessuna funzione e' chiamata senza
-essere definita, nessuna e' definita e mai usata, e il `diff` contro
-l'originale mostra quindici righe di regola tolte — tutte e quindici
-riconducibili a una delle tredici modifiche. **Non e' una prova che le regole
-funzionino.** E' una prova che non ho lasciato refusi.
-
-C'e' un terzo controllo che costa un clic e non posso fare io: **l'editor delle
-regole in console rifiuta di pubblicare un file che non compila.** Se accetta,
-la grammatica e' giusta.
-
-### Il punto che va deciso prima di premere Pubblica
-
-`needsEmailVerification()` non chiede la conferma a chi si e' iscritto **prima
-del 14/08/2026** — era la data di apertura delle registrazioni, e non volevamo
-sbattere fuori chi era gia' dentro. Nel token di Firebase quella data non c'e':
-`verified()` non la puo' guardare.
-
-Un campo `createdAt` nel documento utente non servirebbe: lo scrive il client,
-quindi il client lo puo' falsificare. *Sarebbe una protezione finta, che e'
-la cosa che questo lavoro doveva togliere, non aggiungere.*
-
-Restano due strade oneste, e sono scritte nel file. Verificare a mano quegli
-account con l'Admin SDK, oppure togliere quella data dal client — e allora e'
-una regola che STRINGE, quindi il file del sito va prima (regola 18).
-**Pubblicare le regole senza aver deciso** vuol dire che qualcuno, domani,
-trova `permission-denied` e nessuna schermata che glielo spieghi.
-
----
-
-## L'elenco che il commento prometteva gia' di non avere *(28/08/2026, nessuna versione: banchi e diari)*
-
-Sessione aperta per indurire `firestore.rules`. Non se n'e' fatto niente, e il
-motivo e' la prima cosa da scrivere.
-
-### Il file delle regole su GitHub e' vuoto
-
-Un byte, un a capo. Provato su `main` e su `master`, e confrontato con
-`pubblica.sh` che risponde 6174 byte dallo stesso indirizzo: non e' la rete.
-**La copia di sicurezza delle regole non c'e' piu'.** L'ultima versione di cui
-parlano questi archivi e' `2026-08-21-giro-al-sicuro`, e da allora sono passate
-la chat, il mercatino e le sessioni v2.
-
-Le regole vive stanno solo nella console (regola 19), e da li' vanno riprese.
-*Scriverne una versione plausibile leggendo `app.html` sarebbe stato il guasto
-peggiore possibile:* un file che sembra una protezione, che nessuno rilegge
-perche' e' scritto in una lingua che quasi nessuno legge, e che ha dentro
-esattamente le decisioni che il codice non racconta — perche' `market_favs` e'
-chiuso anche all'admin, perche' il `create` delle notifiche e' `false`.
-
-### Il banco della vetrina gridava 248 volte, e aveva torto
-
-`banco-vetrina.js` teneva in pancia sedici sigle scritte a mano. L'app ne offre
-diciassette, la vetrina ne mostra diciassette, e le sedici erano quelle di
-prima del 26/08: `NHB` invece di `KHSN`, `РФСЛ` che dalle scelte era uscita,
-niente `DSB` ne' `SFF`. Duecentoquarantotto lamentele a ogni giro, tutte false.
-
-**La cosa che fa male e' che il rimedio era gia' scritto.** Nel commento delle
-federazioni dentro `index.html`, datato 26/08, c'e': *«dal 26/08/2026 non ci si
-fida piu' della buona memoria: `banco-vetrina.js` legge le sigle DA `app.html`
-e fa fallire il giro se divergono»*. Non e' mai stato vero. Il commento
-raccontava l'intenzione al passato, e per un giorno intero chi lo leggeva —
-compreso me stamattina — ha creduto che ci fosse una macchina a guardia di
-quell'elenco. *Un commento che descrive un controllo inesistente e' peggio di
-nessun controllo, per la stessa ragione di sempre: da' una certezza, e la da'
-sbagliata.*
-
-Adesso il banco legge tre tabelle dell'app e non ha piu' niente di suo. Una
-sigla sta in vetrina se **si puo' scegliere** (`COUNTRY_FEDERATIONS`) e se
-l'app **sa contare** con lei (`FEDERATIONS`, senza `senzaRegolamento`). Le due
-condizioni non coincidono, ed e' il punto: chi e' `fuoriElenco` cade dalla
-prima e tiene il bareme, chi e' `senzaRegolamento` passa la prima e non la
-seconda. E' la stessa strada del 27/08 mattina, quando `controlla-token.js` ha
-imparato a saltare chi porta la firma `fuoriElenco` invece di gridare su una
-decisione presa apposta.
-
-Sabotato cinque volte, e cinque volte ha detto no: tolta `SFF` dalla vetrina,
-aggiunta una `IFAA` che l'app non offre, dato un bareme a `FIDASC`, rimessa la
-Russia fra le scelte, rinominata `COUNTRY_FEDERATIONS` nell'app. L'ultimo caso
-e' quello che conta di piu': se l'app non si legge il banco **si ferma**, non
-salta. Un controllo che non puo' dire di no e' spento, e spento in silenzio e'
-il modo peggiore di esserlo.
-
-Nell'uscita del banco c'era anche un `sedici` scritto a mano, che diceva
-«sedici federazioni» mentre ne contava diciassette. Adesso stampa il numero
-vero. *Era la stessa bugia dell'elenco, in una riga di prosa invece che in una
-di codice.*
-
-### La diagnosi sbagliata dentro C14, corretta
-
-`STATO.md` diceva: *«Dentro il rumore c'e' pero' una cosa vera: FIDASC e'
-nell'app e non nella vetrina»*. **Non e' vera.** FIDASC e' fuori dalla vetrina
-apposta, e la ragione sta scritta nello stesso commento di `index.html`: c'e'
-come organizzazione, il suo circuito e' HDH-IAA, e l'app non ne ha zone ne'
-bareme ne' formato — `senzaRegolamento:true`. La sezione della vetrina dice
-*«l'app conta come contano loro»*: una federazione elencata li e' una promessa
-di punteggio, non un nome messo per fare numero.
-
-L'ho ripetuta anche io ad Alessandro, a voce, prima di andare a leggere il
-commento. **Contava come vera per due letture: quella che l'ha scritta in
-`STATO.md` e la mia.** La lascio scritta qui perche' e' la forma tipica
-dell'errore in questo progetto: una cosa vera in superficie (FIDASC c'e' di
-qua e non di la) presa per un difetto senza cercare se qualcuno l'avesse gia'
-decisa. La stessa cosa che la regola 13 chiede di non fare.
-
-Il banco nuovo non puo' piu' sbagliarla, perche' non conosce FIDASC: conosce
-la regola che la esclude. Il giorno che prendera' un bareme entrera' in vetrina
-da sola.
-
-### Il tetto dei token era stato misurato da orbo
-
-Riparato il guardiano il 27/08 — prima leggeva un solo `<style>`, e con
-`/<style>/` nudo non vedeva nemmeno i blocchi con un attributo — sono comparse
-quattro regole «peggiorate»: `!important` da 3 a 35, misure fuori scala da 11 a
-22, `clamp()` da 0 a 4, raggi a mano da 9 a 10.
-
-**Nessuna di quelle righe e' nuova.** Stanno in `arctrail-tira-mockup-fedele-v1`
-e in `home-compatta-v2`, cioe' nei 246 righe di CSS su cui il guardiano non
-guardava quando `tetto-token.json` e' stato scritto. Il debito c'era gia'; si
-e' aperto l'occhio. *Un tetto misurato da orbo non e' un tetto: e' il perimetro
-di quello che si vedeva.*
-
-Il tetto non si alza (e non l'ho alzato). Le righe si sistemano, ed e' un
-lavoro suo: e' aperto come C18. Finche' non e' fatto il giro completo dice no,
-e un giro che dice sempre no vale un giro spento — che e' esattamente il
-difetto appena tolto al banco della vetrina, un piano piu' su.
-
-### E i banchi Playwright dicono no a caso su una macchina piccola
-
-Primo giro: cinque no. Rilanciati in fila con `PAR=1`: cinque si. Non era
-l'app, era il carico — sei Chromium insieme su un core solo. Sta gia' scritto
-in `STATO.md`, ma vale la pena dirlo qui perche' il primo istinto e' stato
-credere ai cinque no e cercarne la causa nel file. *Prima di aprire un file si
-riprova in fila.*
-
----
+## Il profilo smette di essere un corridoio *(28/08/2026, versione `2026-08-28-carta`, nata da `2026-08-28-firma`; `sw.js` a `arctrail3d-v142`)*
+
+La scheda Profilo era un **corridoio**: cinque porte — diario, attrezzatura,
+compagnia, impostazioni, bloccati — la copia di sicurezza, le impostazioni. Di
+chi fosse quella pagina non c'era scritto niente. Chi la apriva non trovava
+sé stesso: trovava un elenco di posti dove andare.
+
+Adesso, dall'alto: **chi sei** (tondo con le iniziali, nome, nome scelto,
+bandiera + federazione + arco, compagnia), **quanto hai fatto** (quattro
+numeri), **cosa hai fatto di recente** (tre giri), **con cosa tiri** (l'assetto
+predefinito), **dove sei stato** (il conto dei campi). Poi le porte di prima,
+intatte. L'ordine è dal grande al piccolo, e i comandi stanno sotto a quello
+che si guarda.
+
+**Non si salva niente di nuovo, e non si mostra niente che non ci fosse già.**
+Tutto viene dallo storico e dal profilo. È la stessa scelta dei traguardi del
+21/08: contare al momento invece di salvare un contatore che può divergere dai
+giri.
+
+### I quattro numeri sono quelli che vede il mondo, e li conta la stessa funzione
+
+Giri, piazzole, media — presi da `mieiNumeriPubblici()`, cioè **esattamente la
+funzione che riempie la carta pubblica**. Non ne è stata scritta una seconda
+apposta per questa schermata: due modi di contare la stessa cosa finiscono
+sempre per non essere più d'accordo, e allora l'arciere legge **due verità
+diverse su sé stesso** — quella che vede lui e quella che vedono gli altri.
+
+La media è **per piazzola**, non per giro: così non mescola un allenamento da
+dodici con una gara da ventiquattro. È la regola del 25/08 (`2026-08-25-media`)
+applicata dove serviva ancora.
+
+Il quarto numero è il **record**, e questo sì ha una funzione sua,
+`mioRecord()`, perché la carta pubblica non lo mostra. Legge le **stesse due
+fonti del diario** — lo storico e il riepilogo permanente, che sopravvive al
+taglio dello storico. *Sta scritto in due posti: se un giorno il diario cambia
+il modo di contarlo, va cambiato anche qui.* È un debito piccolo e dichiarato,
+non un'abitudine.
+
+**E c'è una cosa da guardare, non da difendere:** «Media 17,2» e «Record 467»
+stanno in due caselle vicine e non sono la stessa unità. Sono tutti e due
+numeri veri, ma due numeri accostati invitano a confrontarli, e questi due non
+si confrontano. Se al telefono la cosa disturba, la strada è togliere il
+record dalla fascia — dove non c'è posto per l'etichetta che dice di che giro
+è — e lasciarlo nel diario, che quell'etichetta la scrive.
+
+### Quello che il disegno chiedeva e non si può dare
+
+- **La foto profilo non esiste**, e non è un pezzo mancante di questa
+  schermata: non c'è un campo, non c'è uno Storage, non c'è nessuna risposta
+  alla domanda di cosa succede quando qualcuno carica una foto che non va.
+  Il tondo con le iniziali è quello che c'era già nella carta pubblica, più
+  grande. È anche il posto dove la foto entrerà, il giorno che si deciderà.
+- **La divisione nel profilo personale non esiste.** `classe` e `categoria`
+  vivono solo fra gli iscritti di *Prepara gara* — è il buco del punto 1 di
+  «Cosa manca». Al suo posto c'è l'**arco**, che esiste davvero. Scrivere una
+  divisione inventata sarebbe una promessa che la classifica non può
+  mantenere.
+- **«8 club, 3 regioni» non si può scrivere.** Il campo del giro è testo
+  libero: «Cerrione» e «Fornasona, Cerrione» sono lo stesso posto e contano
+  due. La compagnia di un percorso l'app non la sa affatto. Resta il conto dei
+  campi, con lo stesso margine della carta pubblica. *La scheda «Dove ho
+  tirato» è il posto dove entrerà la mappa il giorno che i campi avranno un
+  nome solo.*
+- **Gli applausi e le foto dei giri** non esistono da nessuna parte: non è
+  stato lasciato nessun segnaposto. Un riquadro vuoto in attesa di una
+  funzione futura si legge come un guasto, non come una promessa.
+
+### Tre giri, non dieci
+
+L'elenco è **corto apposta**. Qui si guarda «cosa ho fatto di recente»; chi
+vuole l'elenco ha già la scheda Giri, che li ha tutti, e in fondo alla scheda
+c'è la riga che ci porta. Un secondo elenco lungo qui sarebbe il difetto già
+visto il 20/08 fra diario e storico: **due posti dove cercare, e la seconda
+volta si cerca in quello sbagliato.**
+
+Le righe riusano `.timeline-row` dello storico — stesso vestito, stesso
+significato — col punteggio a destra: qui il numero è il fatto, il resto è
+contorno. Sembrano registrazioni sportive perché **sono** le registrazioni
+sportive che l'app aveva già.
+
+### L'errore, ed è di quelli che nessun banco vede
+
+La classe CSS della testa si chiamava `.prof-testa`. **Esisteva già:** è la
+testata della schermata di modifica del profilo, `display:flex` su una riga.
+Risultato, la carta d'identità si è disegnata **tutta su una riga sola** —
+tondo, nome, federazione, compagnia e tasto in fila.
+
+L'ho visto **fotografando la schermata**, non da un banco. `controlla-token.js`
+sa dire *«questa classe è nominata dal JS e non è definita da nessuna parte»*;
+non sa dire il contrario, cioè *«questo nome è già di qualcun altro»*. È il
+punto cieco simmetrico a quello che sa già guardare, e finora non era mai
+costato niente perché i nomi nuovi erano sempre stati nuovi davvero.
+
+Rinominato tutto con prefisso `mp-` (mio profilo), che non collide con niente.
+*La lezione non è «scegliere nomi più lunghi»: è che una classe nuova va
+cercata nel file prima di scriverla, come si fa con le ancore delle patch.*
+
+### Come è stato provato
+
+`controlla-sintassi` e `controlla-token` a ogni passaggio: il guardiano dello
+stile stampa **esattamente le stesse righe di prima della modifica** —
+confrontate una per una, non a occhio. Poi i banchi della zona: lingue,
+profilo pubblico, traguardi, attrezzatura, bordi, barra, home, contrasto,
+tavolozza. Tutti passati.
+
+**Quello che nessun banco ha guardato è la schermata nuova**, perché non
+esiste un banco che la conosca. È stata guardata con due fotografie, tema
+scuro e tema chiaro, a 390px — che è guardare, non provare. *Il giudizio vero
+è ancora quello del punto 0: al sole, in piedi, con una mano sola.*
 
 ## Il marchio vecchio nei risultati di Google: l'identita' era rimasta nell'app *(27/08/2026, vetrina `2026-08-27-identita`, nata da `2026-08-26-vetrina-club`; `sw.js` a `arctrail3d-v138`)*
 

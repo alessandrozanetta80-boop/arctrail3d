@@ -11,7 +11,7 @@ mai per intero: si cercano.
 | **NOTE-DESIGN.md** | perché l'app è così — archivio | si cerca |
 | **NOTE-MERCATINO.md** | perché il mercatino è così — archivio | si cerca |
 
-Aggiornato il **28/08/2026**, notte.
+Aggiornato il **28/08/2026**.
 
 ---
 
@@ -23,19 +23,20 @@ più vecchio di oggi chiama `index.html` l'app.
 
 | file | cos'è | timbro | copia buona |
 |---|---|---|---|
-| `index.html` | la vetrina, porta di casa | `2026-08-27-identita` | **GitHub** |
-| `app.html` | l'app | `2026-08-28-conferma` | **GitHub** |
+| `index.html` | la vetrina, porta di casa | `2026-08-28-firma` | **GitHub** |
+| `app.html` | l'app | `2026-08-28-carta` | **GitHub** |
 | `compagnie-data.js` | le societa', 4912 in sette paesi | — | **GitHub** |
 | `marketplace.html` | il mercatino | `2026-08-25-radice` | **GitHub** |
-| `sw.js` | | `arctrail3d-v139` | **GitHub** |
+| `sw.js` | | `arctrail3d-v142` | **GitHub** |
 | `favicon.ico` | l'icona per chi guarda da fuori | — | GitHub, caricata a mano |
 | cinque `vetrina-*.webp` | le foto della vetrina | — | GitHub, caricate a mano |
 | `index.js` | | — | GitHub *(si pubblica dal Cloud Shell)* |
-| `firestore.rules` | | `2026-08-28-offerta` | **solo la console** — vedi C19 |
+| `firestore.rules` | | — | GitHub **e** console Firebase |
 | diari, banchi, script | | — | il progetto, e nient'altro |
 | `DOPPIE-TESSERE-ITALIA.md` | le 40 società italiane con due tessere | — | il progetto |
 
-`vetrina.html` e `vetrina-anteprima.html` **non esistono più** (25/08).
+`vetrina.html` e `vetrina-anteprima.html` **non esistono più**: erano le due
+nonne della radice di adesso, cancellate il 25/08.
 
 **`controlla-base.js` confronta i TIMBRI, non il contenuto.** Succede: file
 diversi, stesso timbro, e il banco dice IN PARI. **Prima di ogni consegna** si
@@ -57,10 +58,7 @@ Per saperlo: `grep -c '^banco ' controlla-tutto.sh`.
 i tre livelli della regola 3 — veloce, normale, critico. Il giro completo resta
 obbligatorio **prima di consegnare**, a ogni livello.
 
-Al 28/08/2026: **passano tutti tranne `controlla-token.js`** (vedi C18). Se
-un banco Playwright dice no su una macchina piccola, prima di aprire un file
-si riprova con `PAR=1`: cinque su cinque erano carico, non difetti.
-`banco-regole.js` sta **fuori** dal giro: vuole l'emulatore Firestore. In una chat nuova può mancare `jsdom`:
+Al 26/08/2026: **tutti passati.** In una chat nuova può mancare `jsdom`:
 `npm install jsdom`. Se poi playwright dice che il browser non esiste, la copia
 locale è senza browser: si allinea la versione di `playwright` a quella del
 browser presente in `/opt/pw-browsers` invece di scaricarne uno nuovo.
@@ -111,7 +109,11 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
   *Scritta tre volte negli archivi, mai decisa.*
 - **B4. Il verde della testata e del marchio.** Tutto è passato al tinto il
   23/08; testata e marchio no, perché sono identità e non fondo.
-- **B6. `.btn-arancio` è a 2,79:1**, sotto soglia. Regge perché è grande e grassetto. La strada è quella del 25/08: si abbassa la luce **e** si gira l'inchiostro sul crema, non si toglie colore. Resta una decisione.
+- **B6. `.btn-arancio` è a 2,79:1**, sotto soglia. Regge perché è grande e
+  grassetto. *Il 25/08 si è imparata la strada:* l'arancione perde forza
+  **abbassando la luce e girando l'inchiostro sul crema**, non togliendo
+  colore — abbassare e basta lo porta sotto soglia prima di smorzarlo. Vale
+  anche qui, e resta una decisione.
 - **B8. I dati che il referente scrive non li vede nessuno.** L'etichetta dice
   «Compaiono agli arcieri nella scheda della compagnia»; la scheda invece
   prende tutto da `compagnie-data.js`. Referente, `tel`, `indirizzo` e `note`
@@ -126,7 +128,10 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
 - **B12. Le date degli assetti si registrano e non si vedono.** `creato` e
   `archiviatoIl` esistono dal 25/08. Mostrarle costa due etichette in nove
   lingue.
-- **B13. La cartolina del risultato.** Chiesta il 25/08, **non iniziata**: funzione nuova, ~60 stringhe. Il «Condividi» di oggi manda la scheda del GRUPPO — la cartolina personale è un altro oggetto, non una correzione di quello.
+- **B13. La cartolina del risultato.** Chiesta il 25/08, **non iniziata**:
+  funzione nuova, ~60 stringhe. Il «Condividi» di oggi manda la scheda del
+  GRUPPO, ed è giusto per la chat del gruppo: la cartolina personale è un altro
+  oggetto, non una correzione di quello.
 - **B7. Il tinto dice ancora abbastanza?** Tre tasti tinti e nessuno pieno
   lasciano l'occhio senza un punto di partenza. Si vede col pollice, non a
   scrivania.
@@ -155,19 +160,15 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
 - **C9. Il campo del giro è testo libero.** «Cerrione» e «Fornasona, Cerrione»
   sono lo stesso posto. *Un giro nato da un allenamento aperto conosce già il
   campo e lo chiede lo stesso: è il primo posto dove togliere la domanda.*
-- **C18. Il tetto dei token è stato misurato da orbo.** Riparato il guardiano
-  (27/08), sono comparse quattro regole «peggiorate» che peggiorate non sono:
-  stavano nei blocchi di stile che prima non leggeva. *Il debito c'era già; si
-  è aperto l'occhio.* Il tetto non si alza: le righe stanno quasi tutte in
-  `arctrail-tira-mockup-fedele-v1` e `home-compatta-v2`. Finché non è fatto
-  **il giro completo non passa.**
-- **C19. Le regole nuove sono SCRITTE, non pubblicate e non provate.**
-  `app.html` e `sw.js` sono online e **visti funzionare** (28/08). Resta il
-  passo che nessuna chat può fare: incollare `2026-08-28-offerta` in console e
-  premere *Pubblica*. Il database gira ancora con `2026-08-21-profilo-pubblico`
-  — `2026-08-28-verificata` è su GitHub e **non è mai stata attiva**, quindi
-  il salto è diretto. `banco-regole.js`, 68 prove, **non è mai stato eseguito**:
-  l'emulatore da qui non si scarica. Finché non gira, sono intenzioni.
+- **C21. Nessun controllo dice «questo nome di classe è già di qualcun
+  altro».** Il 28/08 `.prof-testa` è stata riusata per la testa del profilo ed
+  esisteva già nella schermata di modifica: la carta d'identità si è disegnata
+  tutta su una riga. `controlla-token.js` sa dire il contrario — classe
+  nominata dal JS e mai definita — non questo. Visto fotografando.
+- **C14. `banco-vetrina.js` ha in pancia un elenco di 16 federazioni copiato a
+  mano.** L'app ne ha 17, la vetrina 17: da lì le 248 lamentele a ogni giro,
+  che sono rumore. Dentro il rumore c'è però una cosa vera: **FIDASC è nell'app
+  e non nella vetrina.** Il banco va fatto leggere dall'app, non dalla copia.
 - **C10. Container query per le schede.** Metà fatto: sulla pagina, non sulle
   schede dentro le schermate.
 - **C11. Un solo alfabeto di icone.** Restano emoji sparse: si disegnano diverse
@@ -176,7 +177,10 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
 - **C12. Il marchio in SVG.** I file hanno il **verde vecchio dentro i pixel**:
   non si ritingono con un token. Sagoma di animale, non un
   altro bersaglio ad anelli.
-- **C13. Il bianco durante la lettura del file.** `app.html` è oltre un megabyte: fra la prima riga e `DOMContentLoaded` `#app` è vuoto, e le cure fatte coprono l'attesa della *rete*, non della *lettura*.
+- **C13. Il bianco durante la lettura del file.** `app.html` è oltre un
+  megabyte: fra la prima riga e `DOMContentLoaded` `#app` è vuoto — le cure
+  fatte coprono l'attesa della *rete*, non della *lettura*. *(Due voci portano
+  il numero C13: questa e quella del guardiano che legge un solo blocco.)*
 - **C15. L'elenco «Scopri» non ha una ricerca**, e `compagnie-data.js` ha qualche provincia sbagliata. Non è codice: è l'elenco.
 
 ### D — Mercatino
@@ -208,7 +212,7 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
 - **F2. La vetrina non è indicizzata.** I nove `hreflang` puntano alla radice,
   ma è una pagina sola: le otto lingue non italiane restano invisibili finché
   non si generano nove pagine vere.
-- **F5. Google mostra ancora il marchio vecchio: si aspetta e basta.** Il 27/08 identità e riscansione sono a posto e viste funzionare. **Nessuno può fare altro:** si chiude quando la Search Console dice «ultima scansione» dopo il 14/08.
+- **F5. Google mostra ancora il marchio vecchio: si aspetta e basta.** Il 27/08 la vetrina ha ripreso icona, manifest, anteprima social e dati strutturati, online e visti funzionare, e la riscansione della radice è stata chiesta dalla Search Console (`sc-domain:arctrail3d.com`). **Nessuno può fare altro:** si richiude quando «ultima scansione» supera il 14/08.
 - **F3. Le 702 stringhe della vetrina non le ha lette nessuno che le parli.**
   Stesso debito di D1, sulla pagina che si vede una volta sola nella vita.
 - **F4. Chi ha un segnalibro sulla radice trova la vetrina.** Voluta: un
