@@ -43,7 +43,19 @@ async function prova(nome, fn){
   try { await fn(); console.log('  \u2713 ' + nome); }
   catch (e) { guai.push(nome + '  \u2014 ' + (e.message||e)); console.log('  \u2717 ' + nome); }
 }
-function db(u){ return env.authenticatedContext(u.uid, u).firestore(); }
+/* L'UID NON VA DENTRO IL TOKEN. (28/08/2026, primo giro vero.)
+   Qui c'era `env.authenticatedContext(u.uid, u)`: il secondo argomento sono
+   le PRETESE del token, e passargli l'oggetto intero ci infilava dentro anche
+   `uid`. `createMockUserToken` lo rifiuta — vuole `sub`, e `sub` glielo mette
+   gia' `authenticatedContext` dal primo argomento.
+   Tutte e 68 le prove sono cadute qui, prima di interrogare Firestore: non
+   hanno detto niente sulle regole, hanno detto che questo file non era mai
+   stato eseguito. */
+function db(u){
+  var uid = u.uid, token = {};
+  for (var k in u) if (k !== 'uid') token[k] = u[k];
+  return env.authenticatedContext(uid, token).firestore();
+}
 
 /* Lo stato di partenza si scrive SENZA regole: preparare la scena passando
    dalle regole significa provare due cose insieme e non sapere quale ha
