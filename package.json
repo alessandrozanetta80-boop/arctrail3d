@@ -1,0 +1,13 @@
+{
+  "name": "arctrail3d-sito-banchi",
+  "version": "1.0.0",
+  "description": "Banchi di prova del sito ArcTrail 3D: controlla-base + i cinque banchi. Nulla a che vedere con il package.json della radice, che e' quello delle Cloud Functions.",
+  "private": true,
+  "scripts": {
+    "controlla": "sh controlla-tutto.sh"
+  },
+  "dependencies": {
+    "jsdom": "^30.0.1",
+    "playwright": "^1.62.1"
+  }
+}

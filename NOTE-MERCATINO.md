@@ -1,4 +1,11 @@
-# Il mercatino — note di design *(17/08/2026)*
+# NOTE DEL MERCATINO — archivio (`marketplace.html`)
+
+Perché il mercatino è fatto così. Ogni sezione è una versione.
+
+> **Questo file è un ARCHIVIO. Non si legge per intero: si cerca.**
+> Cos'è vero *oggi* lo dice `STATO.md`, sezione D.
+> Come si lavora lo dice `REGOLE-LAVORO.md`.
+> Qui c'è solo il **perché**, in ordine di quando è successo.
 
 **Questo e' il diario di `marketplace.html`. `NOTE-DESIGN.md` e' il diario
 dell'app.** Sono due file perche' sono due programmi: il mercatino ha un suo
@@ -65,6 +72,499 @@ scrive lo stesso generatore.
 
 ---
 
+*Indice rigenerato il 23/08/2026 dal file stesso: se una sezione cambia
+titolo, l'indice cambia con lei e non possono divergere.*
+
+## Indice — 46 sezioni
+
+| data | sezione | versione |
+|---|---|---|
+| 28/08/2026 | A un'offerta si risponde una volta sola | `2026-08-28-offerta` |
+| 25/08/2026 | La barra del telefono era ancora di carta, e le voci erano verdi | `2026-08-25-misure` |
+| 25/08/2026 | La barra da computer era nera, e il nome ci stava dentro di nero | `2026-08-25-carbone` |
+| 23/08/2026 | Due arancioni diversi, e la chat che aveva solo il colore | `2026-08-23-arancio` |
+| 23/08/2026 | La barra riordinata, e lo svuota-memoria | `2026-08-23-barra` |
+| 23/08/2026 | Il mercatino entra nella linea dell'app | `2026-08-23-tavolozza` |
+| — | Il difetto grosso: il mercatino non era dell'app |  |
+| — | La scheda dell'annuncio non diceva cos'era l'oggetto |  |
+| — | Le finestre del browser non sono pezzi dell'app |  |
+| — | Le cose piccole, che erano piccole davvero |  |
+| — | Il modulo di modifica si apriva dietro la schermata |  |
+| — | «Avvisi attivi» era una bugia, adesso e' un conto |  |
+| — | Le recensioni hanno una porta |  |
+| — | La lingua si eredita, non si chiede |  |
+| — | Il markup porta la chiave, non la frase |  |
+| — | Il dizionario si genera, non si scrive a mano nel file |  |
+| — | Il difetto che il banco ha trovato subito: `t` coperta |  |
+| — | Quello che NON e' stato tradotto, di proposito |  |
+| — | Il rischio, scritto perche' e' reale |  |
+| — | I quattro che si vedevano |  |
+| — | I sei che non si vedevano, e uno era il piu' frequente di tutti |  |
+| — | I preferiti seguono l'account, non il telefono |  |
+| — | La regola `market_favs` |  |
+| — | Il difetto trovato scrivendo la regola: i preferiti sopravvivevano all'account |  |
+| — | Come e' stata provata: pubblicata e guardata |  |
+| — | I due banchi |  |
+| — | Il banco della pagina: `prova-schermo-market.js` |  |
+| — | Cosa c'era, e perche' non bastava |  |
+| — | Il pezzo che mancava: `avvisaRicerche` |  |
+| — | Perche' il file e' stato toccato: una ricerca che resta qui non avvisa |  |
+| — | La riga sullo schermo, riscritta nella stessa mossa |  |
+| — | Le due copie della stessa domanda |  |
+| — | Le tre cose che il server si rifiuta di fare |  |
+| — | Il costo, dichiarato |  |
+| — | Le due cose trovate strada facendo |  |
+| — | Fuori dal mercatino, nella stessa mossa |  |
+| — | Come e' stata provata |  |
+| — | Non è stato riprogettato niente: i banchi erano la specifica |  |
+| — | Cosa è stato rimesso, file per file |  |
+| — | Tre cose decise mentre si ricostruiva |  |
+| — | E il guardiano era rosso, di nuovo per lo stesso motivo |  |
+| — | Come è stata provata |  |
+| 19/08/2026 | Il generatore era fermo, e non per il motivo scritto |  |
+| 19/08/2026 | Il ripiego delle notifiche non ripiega piu' |  |
+| — | Cosa resta aperto, in ordine |  |
+| 19/08/2026 | Il mercatino torna ai collaudatori |  |
+
+---
+## A un'offerta si risponde una volta sola *(28/08/2026, `firestore.rules` a `2026-08-28-offerta`, nata da `2026-08-28-verificata`)*
+
+La stretta di stamattina sui messaggi guardava **dove si arriva** e non **da
+dove si parte**. Il destinatario poteva scrivere `accepted`, `rejected` o
+`countered` in qualunque momento: accettare un'offerta rifiutata mezz'ora
+prima, rifiutarne una gia' accettata. Il fumetto in chat cambiava faccia dopo
+che la trattativa era chiusa, e l'altro non poteva farci niente.
+
+*Una regola che controlla solo il valore nuovo protegge la forma del dato e
+non il fatto che racconta.* Un'offerta non e' un campo: e' una cosa che
+succede una volta.
+
+### Lo stato iniziale non l'ho inventato, l'ho letto
+
+`pending`, e sta scritto in due posti: `inviaOfferta()` crea il messaggio con
+`status:"pending"`, e `inviaContro()` ne crea uno nuovo con lo stesso valore.
+La prova che sia davvero *lo stato in cui si puo' rispondere* non e' il nome:
+e' che i tre tasti si costruiscono solo dentro
+`m.status === "pending" && !isMe`. Il nome poteva essere qualunque; e' quella
+condizione a dire chi decide.
+
+### `countered` non riapre niente, e per questo non deve poter riaprire
+
+Chi rilancia marca `countered` il messaggio ricevuto e **ne crea uno nuovo**
+`pending`. E' quello nuovo a ricevere la risposta. Quindi da `countered` non
+parte nessuna transizione, e le due prove `countered -> accepted` e
+`countered -> rejected` devono fallire.
+
+Mi era stato chiesto di lasciarle passare *«salvo che il codice dimostri che
+una di queste transizioni e' realmente necessaria»*. Il codice dimostra il
+contrario: la seconda offerta e' un documento diverso, con la sua vita. Se
+`countered` potesse tornare `accepted`, si accetterebbe un'offerta che chi
+l'ha mandata considera gia' superata da una nuova.
+
+Undici prove nuove in `banco-regole.js` — le tre che devono passare, le
+quattro che devono fallire, piu' il rilancio vero come lo fa l'app (che deve
+continuare a funzionare: **una stretta che spegne il rilancio invece di
+proteggerlo sarebbe un peggioramento travestito**), un valore inventato, e il
+tentativo di riportare a `pending` un'offerta risolta. Sessantotto in tutto, e
+**nessuna eseguita**: l'emulatore da qui non si scarica.
+
+### Due note del piede corrette, e una era mia
+
+`sessions.confirms`: avevo scritto che il buco riguarda «un partecipante
+non-owner». Era mezza verita', ed e' il tipo di mezza verita' che fa danno —
+chi legge conclude che dal lato di chi ha aperto la sessione la firma sia
+garantita. **Non lo e'.** `confirms` deve stare nella lista dell'owner, perche'
+`unsyncShotFromSession()` cancella `shots.<k>` e `confirms.<k>` insieme: una
+controfirma orfana certificherebbe un tiro che non c'e' piu'. Togliergliela
+lascerebbe firme appese a tiri annullati, che e' peggio. Quindi nessuna delle
+due parti ha una firma verificabile dalle regole, e adesso c'e' scritto cosi'.
+
+Il punto sulla data del 14/08 diceva «vanno percorse PRIMA di pubblicare»:
+falso da stamattina, perche' la strada (b) e' gia' applicata e `app.html`
+`2026-08-28-conferma` e' online e visto funzionare. Riscritto come vincolo
+invece che come compito: *nessuno rimetta una condizione sulla data dentro
+`needsEmailVerification()`*, e `banco-avvio.js` fa fallire il giro se succede.
+
+### Il genitore, che e' la cosa piu' facile da sbagliare
+
+`2026-08-28-verificata` e' su GitHub e **non e' mai stata incollata in
+console**: non e' mai stata attiva. Il database passa da
+`2026-08-21-profilo-pubblico` direttamente a `2026-08-28-offerta`, e
+`verificata` resta una riga di storia.
+
+*E' esattamente il costo di confondere caricato con pubblicato:* chi leggesse
+la console fra sei mesi non troverebbe mai una versione che pure e' scritta
+nel repo, e passerebbe del tempo a cercare dove e' finita.
+
+---
+## La barra del telefono era ancora di carta, e le voci erano verdi *(25/08/2026, versione `2026-08-25-misure`, nata da `2026-08-25-carbone`)*
+
+Tre ritocchi sulla stessa barra, tutti nati affiancando due foto — il mercatino
+e l'app, sullo stesso telefono.
+
+### Dal telefono era rimasta chiara
+
+Da computer erano già due bande carbone gemelle. Dal telefono no: qui la barra
+era velata sul fondo pagina, con l'inchiostro del foglio. Non era una svista di
+oggi — era giusta finché anche la testata dell'app era chiara, e **nessuno è
+tornato a guardarla quando l'app è passata al carbone**.
+
+*Il mercatino si apre DALL'app: due testate di colore opposto a un tocco di
+distanza fanno chiedere «sono ancora dentro la stessa cosa?».*
+
+Le misure si sono allineate nello stesso movimento: 61px di altezza e marchio
+da 32, che sono quelle della testata dell'app sullo stesso telefono. Da
+computer il marchio è salito da 30 a 48 e la barra da 64 a 74 — accanto a un
+marchio da 56 quello da 30 sembrava un'altra app.
+
+Casetta e cerchio del profilo erano pastiglie verdi velate, fatte per staccarsi
+da un fondo di carta: sul carbone diventavano due macchie chiare. Ora sono di
+vetro, come i tasti della testata dell'app.
+
+### Il nome non si vedeva, e il token c'era già
+
+`.tb-logo-txt` prendeva `--ink`, l'inchiostro del foglio: giusto sulla barra
+chiara del telefono, nero su nero da computer. **L'inchiostro della banda
+esisteva già — `--chrome-ink` — e nessuno gliel'aveva dato.** *Un token che c'è
+e non viene usato è più insidioso di un token che manca: il file sembra a
+posto.*
+
+### E i due aloni sono spariti col nero che li giustificava
+
+La barra aveva un velo verde in alto a sinistra e uno arancione in basso a
+destra. Sopra il verde quasi nero erano un accenno; sopra il carbone — che è un
+neutro — diventano due macchie di tinta su una fascia che deve fare da fondale.
+*La vetrina, che è il modello, la banda ce l'ha piatta.*
+
+### La voce accesa è un filetto, come nell'app
+
+Era una pastiglia verde velata: un rettangolo in più dentro una barra che ha
+già quattro voci, e — peggio — un verde acceso dove l'app ormai usa un filetto
+argilla. Il filetto sta sotto la **parola**, non sotto il pulsante: nell'app
+era largo quanto icona più parola e pendeva a sinistra di mezza icona, misurata.
+Qui la geometria è la stessa, quindi si è scritto già giusto.
+
+Le voci sono salite da 13,5 a 15px nello stesso giro.
+
+### Il banco della tavolozza è stato corretto, non zittito
+
+`controlla-tavolozza.js` pretendeva quattro usi di `--acceso-bg`, contando anche
+casetta e lettera nella barra. Era giusto finché quella barra era di carta.
+*Un token giusto nel posto sbagliato non smette di essere il token giusto:
+smette di essere nel posto giusto.* La prova si è sdoppiata — le pastiglie del
+foglio devono ancora usarlo, i due tasti della banda devono prendere il vetro
+dell'inchiostro della banda — e la nuova è stata sabotata per vederla dire di
+no.
+
+---
+
+## La barra da computer era nera, e il nome ci stava dentro di nero *(25/08/2026, versione `2026-08-25-carbone`, nata da `2026-08-23-arancio`)*
+
+Segnalato da Alessandro con una foto dello schermo, insieme al gemello
+nell'app: «non si vede più Marketplace, è dello stesso colore della banda».
+
+**Era vero alla lettera.** Da computer la barra è scura da sempre, ma
+`.tb-logo-txt` prende `--ink`, cioè l'inchiostro del foglio: giusto sulla barra
+chiara del telefono, quasi nero sul nero qui. L'inchiostro della banda esisteva
+già — `--chrome-ink` — e nessuno gliel'aveva mai dato. *Un token che c'è e non
+viene usato è più insidioso di un token che manca: il file sembra a posto.*
+
+### Il chrome è diventato il carbone della vetrina
+
+Erano tre verdi quasi neri (`#1C2C21`, `#132018`, `#182620`). Su una fascia
+larga quanto la finestra leggevano come nero pieno, e accanto alla stessa banda
+dell'app — che da oggi è carbone — sarebbero stati **due neri diversi a un
+tocco di distanza**, che è esattamente la cosa che fa chiedere «sono ancora
+dentro la stessa app?».
+
+Ora sono `#3E3A36` · `#393532` · `#403B36`: il valore centrale è quello
+misurato sulla vetrina del sito, dove la testata è `#2D2926` al 94% sopra il
+crema. Gli altri due restano per il rilievo, ma di un soffio.
+
+### E i due aloni sono spariti col nero che li giustificava
+
+La barra aveva un velo verde in alto a sinistra e uno arancione in basso a
+destra. Sopra il verde quasi nero erano un accenno; sopra un neutro diventano
+due macchie di tinta su una fascia che deve fare da fondale. *La vetrina, che è
+il modello, la banda ce l'ha piatta.*
+
+Il nome resta «Marketplace», che è quello che il banco della tavolozza pretende
+e che è giusto: quella barra dice dove sei, non come si chiama l'app.
+
+---
+
+## Due arancioni diversi, e la chat che aveva solo il colore *(23/08/2026, versione `2026-08-23-arancio`, nata da `2026-08-23-barra`)*
+
+Tre cose viste da Alessandro guardando l'app e il mercatino uno dopo l'altro.
+*Nessun banco poteva vederle da solo: stanno in due file.*
+
+### «Non mi sembra lo stesso arancione»
+
+Aveva ragione, ed era misurabile. L'app usa **`clay-400`** (`#FF4D00`) in tutti
+e tre i temi; il mercatino usava `--clay-role`, che qui è `clay-600` al chiaro
+e `clay-700` al sole. **Due arancioni diversi**, e il tasto era pure pieno.
+
+`--clay-role` **non si tocca**: lo usano il prezzo e i contatori, dove serve
+scuro per leggersi sul foglio. Il tasto ha un ruolo suo, `--arancio-*`.
+
+### E la scritta è un gradino più scura, di proposito
+
+Copiare `.btn-arancio` dell'app avrebbe copiato anche il suo difetto: lì la
+scritta è `--clay` sul suo stesso velo e fa **2,79:1** — è la voce B6 di
+`STATO.md`, *l'unico colore dell'app che non passa la misura*.
+
+`clay-500` fa **4,13:1**, e l'arancione si vede uguale.
+
+**Un difetto noto non si porta in un secondo file per coerenza: la coerenza si
+fa sulla forma, non sull'errore.** Adesso c'è anche la prova che si può fare
+meglio senza perdere l'arancione — che è un argomento in più per chiudere B6.
+
+### La casetta era un disegno somigliante
+
+Un tettuccio a due linee fatto qui: la stessa idea, un'altra mano. Adesso è
+`navhome`, copiata dal file dell'app col suo puntino arancione. *La porta di
+casa è un segno solo, e chi lo vede in due posti deve vedere due volte la
+stessa cosa.*
+
+Casetta e lettera del profilo prendono `--acceso-*`, che **è** la pastiglia
+accesa della barra della home — non «simile»: lo stesso token.
+
+### La chat aveva preso il colore e nient'altro
+
+Mancavano la **coda**, il **raggio** e i **tre livelli**.
+
+Il raggio era `16px` scritto dentro la regola: un numero vicino a quello
+dell'app, ma un numero. *Due bolle che si somigliano perché qualcuno ha scelto
+due volte lo stesso numero somigliano finché non lo si cambia in un posto
+solo.* Adesso `--r-bolla`, stesso nome e stesso valore.
+
+E la bolla dell'altro era `--bg-p` sul flusso — praticamente lo stesso colore,
+cioè **una bolla che affonda nel suo contenitore invece di starci sopra.**
+
+### I numeri
+
+| | chiaro | scuro | sole |
+|---|---|---|---|
+| nuovo annuncio | 4,13:1 | 4,09:1 | 5,50:1 |
+| casetta e lettera | 6,13:1 | 4,51:1 | 6,89:1 |
+| bolla propria | 12,88:1 | 7,42:1 | — |
+
+### Un sabotaggio non preso
+
+Sostituendo `clay-400` con `clay-role` nel ruolo dell'arancione — cioè
+rifacendo esattamente il difetto — **il banco diceva di sì**: cercava una
+stringa in tutto il file, e quella stringa compare anche altrove.
+
+*Una prova che cerca una parola nel file trova anche le parole che non
+c'entrano.* Corretta: adesso guarda dentro la definizione del ruolo, in tutti
+e tre i temi, e dice **quale** tema diverge.
+
+### Cosa resta aperto qui accanto
+
+- **Il genitore era sbagliato quando Alessandro ha caricato durante il
+  lavoro.** `controlla-base.js` ha detto DIVERGENTE e la versione è stata
+  ri-agganciata a quella online. *È la seconda volta oggi: quando si lavora
+  mentre l'altro pubblica, il genitore va riverificato prima di consegnare, non
+  scritto all'inizio.*
+- **Niente di tutto questo è stato visto su un telefono.**
+
+---
+## La barra riordinata, e lo svuota-memoria *(23/08/2026, versione `2026-08-23-barra`, nata da `2026-08-23-mercatino-chiaro`)*
+
+### L'ordine diceva la cosa sbagliata
+
+Prima veniva il tasto di ritorno e **poi** il marchio: si entrava nella pagina
+leggendo un'uscita. *La prima cosa che si legge in una testata deve dire dove
+SEI, non da dove puoi andartene.*
+
+Adesso: marchio e nome, poi la casetta, poi la lettera del profilo. Il tasto di
+ritorno perde la parola e tiene solo il segno — **una parola accanto a
+un'icona chiara è una parola che nessuno legge.** Il nome resta nel `title` e
+in `aria-label` per chi non vede l'icona.
+
+E il tasto è quadrato come la lettera che gli sta accanto: *due tasti della
+stessa fila con due forme diverse sembrano due cose diverse.* La lettera
+invece resta tonda — una pastiglia con dentro un'iniziale è una persona, e le
+persone in quest'app sono tonde ovunque.
+
+### «BETA» è sparito
+
+Il mercatino resta in prova — ci si entra solo con `betaTester: true` — ma quel
+cartellino lo diceva **a chi era già stato fatto entrare**. *Dire «beta» a chi
+è stato scelto per provarlo non è un avvertimento: è rumore.*
+
+Con lui se n'è andato un `#F2A45E` scritto a mano, un arancione che non stava
+in nessuna famiglia.
+
+### Fraunces non c'è più
+
+Il nome del sito era scritto in `--font-display`, cioè un **serif**, mentre
+l'app scrive il proprio in Inter a peso 800. *Due nomi affiancati scritti con
+due caratteri diversi non sembrano due sezioni: sembrano due prodotti, e il
+serif è la differenza che si nota prima del colore.*
+
+Tolto anche dal caricamento: un file di carattere in meno all'avvio. Il **nome
+del ruolo resta** — `--font-display` vuol dire «il carattere dei titoli», non
+«il serif» — così il giorno che si vuole di nuovo un carattere a sé si cambia
+in un posto.
+
+*Due commenti dicevano ancora «Fraunces resta al marchio e ai titoli». Corretti
+nello stesso momento: una nota che mente è peggio di nessuna nota.*
+
+### E la lettera del profilo era rimasta nera
+
+`--accent-l` — il verde chiaro — con sopra `--chrome-2`: una pastiglia pensata
+per stare su una barra nera, su un fondo che da stamattina è chiaro. Adesso ha
+lo stesso trattamento degli altri quattro avatar. **Cinque pastiglie con
+l'iniziale nella stessa app devono essere la stessa pastiglia.**
+
+---
+
+### Lo svuota-memoria
+
+Chiesto da Alessandro, dentro Segnalazioni. Sta in fondo e separato: *non è una
+segnalazione, è l'attrezzo che si usa quando il mercatino fa cose che non si
+spiegano* — un filtro appiccicato, una ricerca salvata che non sparisce, una
+pagina che mostra roba vecchia. Qui ci arriva chi sta già cercando di capire,
+e non altrove dove qualcuno lo premerebbe per curiosità.
+
+**Cosa cancella**, e sono tutte cose che il mercatino si è scritto da solo: i
+filtri (`mf_<utente>`), l'ordinamento (`ms_<utente>`), la nota
+dell'introduzione, e le cache del service worker.
+
+**Cosa non tocca, ed è la parte che conta: l'accesso.** Le chiavi di Firebase
+stanno in IndexedDB e restano dove sono. *Uno strumento di soccorso che butta
+fuori chi lo usa non è un soccorso: è un secondo guasto.* Il banco lo verifica
+esplicitamente — sabotato con un `localStorage.clear()`, lo prende.
+
+**Nessuna finestra di conferma:** il tasto chiede due tocchi, il secondo su una
+parola diversa, e dopo cinque secondi torna com'era. Chi ha premuto per sbaglio
+lo capisce leggendo, non premendo. E chi conferma perde tre preferenze di
+visualizzazione, non dei dati: annunci, ricerche salvate e conversazioni vivono
+sul server.
+
+### E «Segnalazioni» era scritto in italiano
+
+L'unica voce del menu che non passava dal dizionario, quindi l'unica che
+restava italiana per otto lingue su nove. Adesso `rep_list_title`, con le
+altre cinque chiavi nuove.
+
+*L'ordine dei blocchi l'ho verificato riga per riga invece di assumerlo: è
+l'errore di poche ore fa, e ripeterlo lo stesso giorno sarebbe stato peggio
+della prima volta.*
+
+### Cosa resta aperto qui accanto
+
+- **Lo svuota-memoria non è mai stato premuto.** Cancella e ricarica: se
+  qualcosa va storto in mezzo, la pagina resta a metà. Va provato una volta
+  con la console aperta.
+- **Le cache che cancella sono TUTTE quelle del dominio**, comprese quelle
+  dell'app — `caches.keys()` non distingue. Non è un danno (si ricostruiscono
+  alla prima apertura) ma vuol dire che svuotare dal mercatino rallenta il
+  primo avvio dell'app.
+- **La barra non è stata vista su un telefono stretto.** Marchio, nome,
+  casetta e lettera su 360px: il nome ha già l'ellissi, ma quattro cose in
+  fila su uno schermo piccolo vanno guardate.
+
+---
+## Il mercatino entra nella linea dell'app *(23/08/2026, versione `2026-08-23-tavolozza`)*
+
+Chiesto da Alessandro dopo il ridisegno dell'app: *«adattalo al resto, così ha
+un filo logico.»* Aprendo il file è venuto fuori che il problema non era di
+stile.
+
+### La tavolozza era ferma a luglio
+
+Verde `#24602C` — uno scuro spento — contro il `#66B132` che l'app usa dal
+21/08. Argilla `#E8722F` contro `#FF4D00` dal 22/08. Oro e neutri idem.
+
+**Due applicazioni con due tavolozze diverse, sullo stesso dominio, per due
+giorni.** *Non se n'era accorto nessuno perché non si guardano mai affiancate:
+si esce dall'app, si entra qui, e in mezzo c'è un caricamento che azzera il
+ricordo del colore di prima.*
+
+### E allinearla soltanto l'avrebbe rotto
+
+`--brand-ink` era **`#FFFFFF` scritto a mano** in tutti e tre i temi. Col verde
+vecchio, scuro, il bianco sopra funzionava. Sul verde prato fa **2,66:1**.
+
+Ed è anche il motivo per cui era scritto a mano invece che con un token: *un
+valore fisso non lo raggiunge nessuna revisione della tavolozza.*
+
+### La barra era scura, e l'app ce l'ha chiara
+
+Non era un capriccio: quando il mercatino è nato il verde era scuro, e una
+barra scura ci stava. **Il mercatino si apre dall'app: due testate di colore
+opposto a un tocco di distanza sono la cosa che fa chiedere «sono ancora dentro
+la stessa cosa?».**
+
+Schiarita quella sopra restavano scure la barra in fondo e le testate a schermo
+intero — *una schermata con la testata chiara e il piede nero non è più
+coerente di com'era: è incoerente in un modo nuovo.* Zero residui.
+
+### Il logo era un disegno, non il marchio
+
+Due `<circle>` che facevano un bersaglio stilizzato: assomigliava al marchio ma
+non era il marchio, e affiancati si vedeva. *Un'app che disegna da sola il
+proprio logo ha due loghi.* Adesso è `logo.webp`, che il sito già serve e il
+service worker ha già in cache: non è un file in più.
+
+### «App» non diceva dove porta
+
+Il mercatino **è** un'app: un tasto chiamato «App» dentro un'app non distingue
+niente. E la freccia indietro suggeriva un passo nella cronologia invece di
+un'altra parte del sito.
+
+Adesso la casetta e la parola «Segnapunti». *Il nome di una porta è quello che
+ci trovi dietro, non quello che ti lasci alle spalle.*
+
+### La terza chat
+
+L'app ne ha due e il 23/08 sono state ridisegnate insieme. Questa era rimasta
+indietro. *Tre chat nella stessa applicazione che si comportano in due modi
+diversi sono peggio di tre chat brutte uguali: la seconda insegna qualcosa che
+nella terza non vale.*
+
+Arrivati: i turni di parola, l'ora **dentro** la bolla, il giorno come
+pastiglia. **Non arrivate le spunte:** qui il dato di lettura è un `unreadBy`
+booleano — dice «c'è qualcosa di nuovo», non *fino a quando* ha letto. Un segno
+che non sa rispondere è peggio di nessun segno, e vale la terza volta come la
+prima.
+
+E `ago()` resta dov'era: su un annuncio «2 mesi fa» è l'informazione giusta.
+Dentro una conversazione no — due messaggi dello stesso pomeriggio con scritto
+«3 ore fa» e «3 ore fa» non si distinguono più. *Il relativo va bene per una
+cosa sola; per una sequenza serve l'assoluto.*
+
+### Due errori commessi durante questo lavoro
+
+**Le parole finite nella lingua sbagliata.** Aggiungendo `chat_today` alle nove
+lingue ho dato per scontato che l'ordine dei blocchi fosse quello dell'app. Non
+lo è: qui viene prima il turco e poi lo spagnolo. Risultato: **«Hoy» nel blocco
+turco e «Bugün» in quello spagnolo.**
+
+*Non dà nessun errore. Il file si compila, i banchi passano, e l'app parla
+spagnolo ai turchi finché un turco non se ne lamenta.* Trovato verificando
+invece di fidarsi, e `controlla-tavolozza.js` adesso lo chiede.
+
+**Il ramo delle offerte rotto.** Il ciclo dei messaggi era un `map` con dei
+`return`; trasformandolo in `forEach` il ramo dell'offerta continuava a fare
+`return` senza appendere niente. *L'ha preso `prova-schermo-market.js` alla
+prima passata, dicendo la cosa giusta: «dopo un'offerta accettata non c'è modo
+di lasciare una recensione».*
+
+### Cosa resta aperto qui accanto
+
+- **Non è stato guardato in nessun tema.** La tavolozza è cambiata sotto a
+  cinquemila righe: i banchi dicono che i punti misurati reggono, non che tutto
+  il resto stia bene. **È la voce più importante della sezione.**
+- **I neutri non li confronta il banco.** Il mercatino ha due gradini in più
+  (`sand-250`, `sand-350`) che l'app non usa. Un neutro può divergere senza che
+  nessuno lo dica.
+- **«Segnapunti» è una parola scelta da qui, non da un arciere.** Se sul campo
+  la chiamano in un altro modo, si cambia in un posto solo.
+
+---
 ## Il difetto grosso: il mercatino non era dell'app
 
 Non era una questione di gusto. Erano **quattro cose che il resto del progetto

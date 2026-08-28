@@ -1,4 +1,19 @@
 #!/bin/bash
+#
+# I COMANDI A MANO, perche' uno script che non si puo' ricostruire a mano e'
+# una scatola nera. (Spostati qui da REGOLE-LAVORO.md il 26/08/2026: stanno
+# accanto allo script che sostituiscono, non in un file di regole.)
+#
+#   mkdir -p ~/at3d/functions && cd ~/at3d
+#   echo '{"functions":{"source":"functions"}}' > firebase.json
+#   curl -sL -o functions/index.js https://raw.githubusercontent.com/alessandrozanetta80-boop/arctrail3d/main/index.js
+#   head -2 functions/index.js
+#   cd ~/at3d/functions && npm install
+#   cd ~/at3d && firebase deploy --only functions --project arctrail3d
+#
+# Senza `npm install` il deploy si ferma su
+# «Couldn't find firebase-functions package».
+#
 # pubblica.sh — pubblica le Cloud Functions di ArcTrail 3D dal Cloud Shell.
 #
 #   bash ~/pubblica.sh

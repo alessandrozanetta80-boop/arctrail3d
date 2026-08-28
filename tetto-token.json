@@ -1,11 +1,11 @@
 {
-  "stile in linea dal JS": 423,
-  "esadecimale fuori dai primitivi": 38,
+  "stile in linea dal JS": 361,
+  "esadecimale fuori dai primitivi": 22,
   "!important fuori da stampa e movimento ridotto": 3,
   "regola per tema (body.theme-)": 3,
   "misura fuori dalla scala 4/8/12/16/24/32/48": 11,
   "clamp() su un carattere": 0,
   "carattere a mano nello stile in linea": 2,
   "raggio a mano": 9,
-  "spaziatura a mano nello stile in linea": 27
+  "spaziatura a mano nello stile in linea": 19
 }
