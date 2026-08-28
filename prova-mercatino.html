@@ -1,0 +1,1063 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet"><style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   IL SISTEMA DI STILE — tre strati, come in index.html
+
+   1. PRIMITIVI — i colori esistono, non hanno ancora un mestiere
+   2. RUOLI     — l'unico vocabolario che i componenti possono usare
+   3. ALIAS     — i vecchi nomi di questo file (--bg, --accent, --line…)
+                  rimappati sui ruoli, cosi' il CSS scritto prima funziona
+
+   Cambiare tema = riscrivere la mappa dei ruoli. Zero regole di componente.
+
+   I VALORI NON SONO SCELTI QUI: sono copiati da index.html. Prima erano
+   riscritti a mano e avevano gia' cominciato a divergere — il badge BETA
+   diceva rgba(232,114,47) e --bark diceva #D9601E, due arancioni diversi
+   nella stessa testata. Regola: un valore che sta anche in index.html non si
+   riscrive a mano, si copia.
+
+   IL BUG CHE TORNA SEMPRE — una variabile che ne cita un'altra si risolve sul
+   nodo dove e' DICHIARATA, non dove viene usata. Per questo ruoli e alias di
+   ogni tema stanno nello STESSO blocco.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ───────────────────────── STRATO 1 · PRIMITIVI ─────────────────────────── */
+:root{
+/* LA TAVOLOZZA ERA RIMASTA A LUGLIO. (23/08/2026, trovata confrontando i due
+   file mentre si allineava l'estetica.)
+   L'app ha cambiato verde il 21/08 e argilla il 22/08. Il mercatino no: qui
+   il verde era ancora `#24602C`, uno scuro spento, e l'argilla `#E8722F`.
+   **Erano due app con due tavolozze diverse, servite dallo stesso dominio, e
+   nessuno se n'era accorto** — perche' non si guardano mai una accanto
+   all'altra: si esce dall'app, si entra nel mercatino, e in mezzo c'e' un
+   caricamento che azzera il ricordo del colore di prima.
+   *Un difetto che si vede solo mettendo due schermate affiancate non lo trova
+   nessuno usando l'app: lo trova un confronto.*
+   Valori presi dall'app riga per riga, non riscritti a occhio. */
+--green-900:#66B132; --green-800:#66B132; --green-700:#3A631C; --green-600:#66B132;
+--green-500:#538F28; --green-400:#66B132; --green-200:#DEEDD4;
+--green-success:#2E7D32; --green-success-dk:#4CAF50;
+--clay-800:#8F2B00; --clay-700:#A33100; --clay-600:#B83700; --clay-500:#CC3E00;
+--clay-400:#FF4D00; --clay-200:#FFE3D6;
+--gold-800:#7A5600; --gold-700:#8A6100; --gold-600:#996B00; --gold-500:#C28800;
+--gold-400:#D69600; --gold-200:#FFEDC2; --gold-100:#FFF6E0;
+--red-700:#8E0F14; --red-600:#A81319; --red-400:#E23D2E; --red-100:#F9DCDC;
+/* I neutri ruotati sulla tinta calda del fondo, come nell'app dal 21/08:
+   erano verdolini (`#F5F6F0`), e sotto un verde prato un grigio verdastro
+   sembra sporco invece che neutro. */
+--sand-50:#FFFFFF;  --sand-100:#F5F2ED; --sand-200:#EEEAE5; --sand-250:#EDEAE0;
+--sand-300:#D3D7CB; --sand-350:#CFC9B8; --sand-400:#B4BBAC; --sand-500:#5F645C;
+--sand-600:#565D53; --sand-700:#3A403A; --sand-900:#12160F;
+--moss-900:#0F1412; --moss-800:#16201C; --moss-700:#1A2620; --moss-600:#2A362F;
+--moss-500:#3B4A41; --moss-300:#9AA39C; --moss-200:#C7CFC5; --moss-100:#EDE6D6;
+
+/* La testata scura e' CHROME, non superficie: resta uguale in tutti e tre i
+   temi, come la cornice di una finestra. Per questo i suoi valori stanno fra
+   i primitivi e non nella mappa dei ruoli. */
+--chrome-1:#1C2C21; --chrome-2:#132018; --chrome-3:#182620;
+--chrome-ink:#EDE6D6; --chrome-ink-2:#9AA39C; --on-chrome:#FFFFFF;
+
+/* ───── CARATTERI · due famiglie, tre mestieri ───── */
+--font-ui:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+/* FRAUNCES NON C'E' PIU'. (23/08/2026, chiesto da Alessandro: «il font deve
+   essere come quello dell'app».)
+   Il mercatino scriveva i titoli in un serif; l'app e' passata a Inter per
+   tutto. *Due sezioni dello stesso sito con due caratteri diversi non
+   sembrano due sezioni: sembrano due prodotti, e il serif e' la differenza
+   che si nota prima del colore.*
+   Il nome del ruolo resta — `--font-display` dice «il carattere dei titoli»,
+   non «il serif» — cosi' il giorno che si vuole di nuovo un carattere a se'
+   si cambia qui e basta.
+   Guadagno secondario: un file di carattere in meno da scaricare all'avvio. */
+--font-display:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+--font-num:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+
+/* ───── SPAZIO · 4 / 8 / 12 / 16 / 24 / 32 / 48 ───── */
+--s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
+/* ───── RAGGI · cinque, non nove ───── */
+/* Stessa scala dell'app: il mercatino si apre da un'icona della barra,
+   cioe' da dentro, e due grammatiche visive nella stessa app si notano piu'
+   di qualunque colore. (21/08/2026, versione `squadrato`.) */
+--r-sm:3px; --r-md:4px; --r-lg:6px; --r-xl:8px; --r-pill:999px;
+/* Il raggio della bolla, con lo stesso nome e lo stesso valore dell'app.
+   Qui era `16px` scritto dentro la regola: un numero vicino, ma un numero.
+   *Due bolle che si somigliano perche' qualcuno ha scelto due volte lo
+   stesso numero somigliano finche' non lo si cambia in un posto solo.* */
+--r-bolla:14px;
+/* ───── BERSAGLIO MINIMO ───── */
+--hit:44px;
+/* ───── MOVIMENTO · una curva, tre durate ───── */
+--ease:cubic-bezier(.2,.8,.2,1); --dur-1:120ms; --dur-2:180ms; --dur-3:260ms;
+}
+
+/* ───────── STRATO 2+3 · RUOLI E ALIAS — TEMA CHIARO (predefinito) ─────────
+   E' anche in :root perche' prima che parta lo script su <html> non c'e'
+   ancora nessuna classe di tema. */
+:root, html.theme-light{
+color-scheme:light;
+
+--surface:var(--sand-200); --surface-1:var(--sand-50); --surface-2:var(--sand-100);
+--text-1:var(--sand-900); --text-2:var(--sand-700); --text-3:var(--sand-600);
+--border:var(--sand-300); --border-strong:var(--sand-400);
+--brand:var(--green-800); --brand-d:var(--green-900); --brand-l:var(--green-600);
+/* L'INCHIOSTRO SUL VERDE NON PUO' PIU' ESSERE BIANCO. (23/08/2026.)
+   Col verde vecchio — uno scuro spento — il bianco sopra funzionava. Sul
+   verde prato fa **2,66:1**: si vede che c'e' una scritta e non si legge.
+   E' lo stesso identico difetto trovato stamattina nella barra dell'app, e
+   nasce dalla stessa causa: *un inchiostro scelto per un fondo, e il fondo
+   e' cambiato sotto senza che nessuno ricontrollasse chi ci sta sopra.*
+   Scuro: 6,89:1. Ed e' anche il motivo per cui era scritto a mano invece che
+   con un token — un valore fisso non lo raggiunge nessuna revisione. */
+--brand-ink:var(--sand-900);
+/* I TASTI E LE PASTIGLIE, tinti come nell'app dal 23/08. Il mercatino si
+   apre dall'app: se una porta e' velata e quella dopo e' satura, la seconda
+   sembra un'altra applicazione. */
+--verde-bg:color-mix(in srgb, var(--brand) 20%, var(--surface-1));
+--verde-bd:color-mix(in srgb, var(--brand) 55%, var(--surface-1));
+--primario-bg:color-mix(in srgb, var(--brand) 14%, var(--surface-1));
+--primario-fg:var(--green-700);
+--primario-bd:color-mix(in srgb, var(--brand) 42%, transparent);
+--acceso-bg:color-mix(in srgb, var(--brand) 16%, var(--surface-1));
+--acceso-fg:var(--green-700); --acceso-bd:var(--brand);
+/* L'ARANCIONE ERA UN ALTRO ARANCIONE. (23/08/2026, detto da Alessandro: «non
+   mi sembra lo stesso arancione».) Aveva ragione: l'app usa `clay-400`
+   (`#FF4D00`) in tutti e tre i temi, il mercatino usava `clay-role`, che qui
+   e' `clay-600` al chiaro e `clay-700` al sole. Due arancioni diversi.
+   `--clay-role` NON si tocca: lo usano il prezzo e i contatori, dove serve
+   scuro per leggersi sul foglio. Il tasto ha un ruolo suo.
+   LA SCRITTA E' `clay-500`, NON `clay-400`. Copiare `.btn-arancio` dell'app
+   avrebbe copiato anche il suo difetto: li' la scritta e' `--clay` sul suo
+   stesso velo e fa **2,79:1** — e' la voce B6 di STATO.md, l'unico colore
+   dell'app che non passa la misura. *Un difetto noto non si porta in un
+   secondo file per coerenza: la coerenza si fa sulla forma, non sull'errore.*
+   Un gradino piu' scuro: 4,13:1, e l'arancione si vede uguale. */
+--arancio-bg:color-mix(in srgb, var(--clay-400) 14%, var(--surface-1));
+--arancio-fg:var(--clay-500);
+--arancio-bd:color-mix(in srgb, var(--clay-400) 42%, transparent);
+--bolla-mia:color-mix(in srgb, var(--brand) 38%, var(--surface-1));
+--bolla-sua:var(--surface-1);
+--clay-role:var(--clay-600); --icona-accento:var(--clay-400); --clay-role-d:var(--clay-700); --gold-role:var(--gold-700);
+--danger-role:var(--red-600); --success-role:var(--green-success);
+
+--elev-1:0 1px 2px rgba(30,45,34,.05);
+--elev-2:0 1px 2px rgba(30,45,34,.05), 0 12px 24px -20px rgba(30,45,34,.35);
+--elev-3:0 1px 2px rgba(30,45,34,.06), 0 22px 44px -30px rgba(30,45,34,.55);
+--focus-ring:0 0 0 3px color-mix(in srgb, var(--brand) 24%, transparent);
+
+/* il foglio sotto la colonna, da computer */
+--page-a:#F7F6F2; --page-b:#EDEBE3;
+--band-tint:color-mix(in srgb, var(--surface-1) 55%, transparent);
+--wash-1:rgba(49,91,53,.13); --wash-2:rgba(166,121,31,.11); --wash-3:rgba(190,83,15,.10);
+--grain:.18;
+
+/* ───── ALIAS · i nomi con cui e' scritto il resto del file ───── */
+--bg:var(--surface); --bg-p:var(--surface-1); --bg-p2:var(--surface-2);
+--cream:var(--text-1); --ink-2:var(--text-2); --muted:var(--text-3);
+--line:var(--border); --line-s:var(--surface-2); --line-strong:var(--border-strong);
+--accent:var(--brand); --accent-d:var(--brand-d); --accent-l:var(--brand-l);
+--bark:var(--clay-role); --bark-d:var(--clay-role-d); --gold:var(--gold-role);
+--danger:var(--danger-role); --success:var(--success-role);
+--dark:var(--chrome-2); --dark-2:var(--chrome-3);
+--on-dark:var(--chrome-ink); --on-dark-m:var(--chrome-ink-2);
+--r-s:var(--r-sm); --r-m:var(--r-md); --r-l:var(--r-xl); --r-p:var(--r-pill);
+--sh:var(--elev-2);
+}
+
+/* ═══════════════════ TEMA SCURO — stessa mappa, altri valori ══════════════ */
+html.theme-dark{
+color-scheme:dark;
+
+--surface:var(--moss-900); --surface-1:var(--moss-800); --surface-2:var(--moss-700);
+--text-1:var(--moss-100); --text-2:var(--moss-200); --text-3:var(--moss-300);
+--border:var(--moss-600); --border-strong:var(--moss-500);
+--brand:var(--green-600); --brand-d:var(--green-500); --brand-l:var(--green-400);
+--brand-ink:var(--sand-900);
+/* Al buio la velatura schiarisce il fondo verso la scritta: 12%, non 18%.
+   Stessa misura dell'app. */
+--verde-bg:color-mix(in srgb, var(--brand) 22%, var(--surface-2));
+--verde-bd:color-mix(in srgb, var(--brand) 55%, var(--surface-2));
+--primario-bg:color-mix(in srgb, var(--brand) 12%, var(--surface-2));
+--primario-fg:var(--brand);
+--primario-bd:color-mix(in srgb, var(--brand) 48%, transparent);
+--acceso-bg:color-mix(in srgb, var(--brand) 16%, var(--surface-2));
+--acceso-fg:var(--brand); --acceso-bd:var(--brand);
+/* Al buio il rapporto si rovescia: la scritta e' l'arancione pieno, che sul
+   velo scuro fa 4,09:1. */
+--arancio-bg:color-mix(in srgb, var(--clay-400) 14%, var(--surface-2));
+--arancio-fg:var(--clay-400);
+--arancio-bd:color-mix(in srgb, var(--clay-400) 48%, transparent);
+--bolla-mia:color-mix(in srgb, var(--brand) 38%, var(--surface-1));
+--bolla-sua:var(--surface-1);
+--clay-role:var(--clay-400); --icona-accento:var(--clay-400); --clay-role-d:var(--clay-500); --gold-role:var(--gold-400);
+--danger-role:var(--red-400); --success-role:var(--green-success-dk);
+
+/* Sul nero un'ombra non si vede: a distinguere i piani sono la superficie che
+   schiarisce e il bordo. Le ombre restano, ma quasi solo come alone. */
+--elev-1:0 1px 2px rgba(0,0,0,.35);
+--elev-2:0 1px 2px rgba(0,0,0,.35), 0 12px 24px -20px rgba(0,0,0,.8);
+--elev-3:0 1px 2px rgba(0,0,0,.4), 0 22px 44px -30px rgba(0,0,0,.9);
+--focus-ring:0 0 0 3px color-mix(in srgb, var(--brand-l) 30%, transparent);
+
+--page-a:var(--moss-900); --page-b:var(--moss-800);
+--band-tint:color-mix(in srgb, var(--surface-1) 55%, transparent);
+--wash-1:rgba(96,169,102,.10); --wash-2:rgba(203,163,92,.08); --wash-3:rgba(232,114,47,.07);
+--grain:0;
+
+--bg:var(--surface); --bg-p:var(--surface-1); --bg-p2:var(--surface-2);
+--cream:var(--text-1); --ink-2:var(--text-2); --muted:var(--text-3);
+--line:var(--border); --line-s:var(--surface-2); --line-strong:var(--border-strong);
+--accent:var(--brand); --accent-d:var(--brand-d); --accent-l:var(--brand-l);
+--bark:var(--clay-role); --bark-d:var(--clay-role-d); --gold:var(--gold-role);
+--danger:var(--danger-role); --success:var(--success-role);
+--dark:var(--chrome-2); --dark-2:var(--chrome-3);
+--on-dark:var(--chrome-ink); --on-dark-m:var(--chrome-ink-2);
+--r-s:var(--r-sm); --r-m:var(--r-md); --r-l:var(--r-xl); --r-p:var(--r-pill);
+--sh:var(--elev-2);
+}
+
+/* ═══════════════════════════════ TEMA SOLE ════════════════════════════════
+   Il chiaro con i mezzi toni tolti di mezzo: foglio bianco pieno, separatori
+   quasi neri, velo e grana a zero, ombre via — un'ombra al sole non e'
+   un'elevazione, e' contrasto buttato. Nessuna misura cambia: la gerarchia al
+   sole la fanno il peso e la dimensione, non il colore. */
+html.theme-sole{
+color-scheme:light;
+
+--surface:var(--sand-50); --surface-1:var(--sand-50); --surface-2:var(--sand-100);
+--text-1:var(--sand-900); --text-2:var(--sand-900); --text-3:var(--sand-700);
+--border:var(--sand-400); --border-strong:var(--sand-900);
+--brand:var(--green-900); --brand-d:var(--green-900); --brand-l:var(--green-700);
+--brand-ink:var(--sand-900);
+/* Al sole i pieni restano pieni, per il motivo per cui questo tema esiste. */
+--verde-bg:color-mix(in srgb, var(--brand) 20%, var(--surface-1));
+--verde-bd:color-mix(in srgb, var(--brand) 70%, var(--surface-1));
+--primario-bg:var(--brand); --primario-fg:var(--brand-ink);
+--primario-bd:transparent;
+--acceso-bg:var(--brand); --acceso-fg:var(--brand-ink); --acceso-bd:var(--brand);
+/* Al sole pieno, come tutti gli altri tasti. */
+--arancio-bg:var(--clay-400); --arancio-fg:var(--sand-900);
+--arancio-bd:transparent;
+--bolla-mia:color-mix(in srgb, var(--brand) 52%, var(--surface-1));
+--bolla-sua:var(--surface-1);
+--clay-role:var(--clay-700); --icona-accento:var(--clay-400); --clay-role-d:var(--clay-800); --gold-role:var(--gold-800);
+--danger-role:var(--red-700); --success-role:#1B5E20;
+
+--elev-1:none; --elev-2:none; --elev-3:none;
+--focus-ring:0 0 0 3px var(--sand-900);
+
+--page-a:var(--sand-50); --page-b:var(--sand-50);
+--band-tint:transparent;
+--wash-1:transparent; --wash-2:transparent; --wash-3:transparent;
+--grain:0;
+
+--bg:var(--surface); --bg-p:var(--surface-1); --bg-p2:var(--surface-2);
+--cream:var(--text-1); --ink-2:var(--text-2); --muted:var(--text-3);
+--line:var(--border); --line-s:var(--border); --line-strong:var(--border-strong);
+--accent:var(--brand); --accent-d:var(--brand-d); --accent-l:var(--brand-l);
+--bark:var(--clay-role); --bark-d:var(--clay-role-d); --gold:var(--gold-role);
+--danger:var(--danger-role); --success:var(--success-role);
+--dark:var(--chrome-2); --dark-2:var(--chrome-3);
+--on-dark:var(--chrome-ink); --on-dark-m:var(--chrome-ink-2);
+--r-s:var(--r-sm); --r-m:var(--r-md); --r-l:var(--r-xl); --r-p:var(--r-pill);
+--sh:none;
+}
+
+/* ═══════════════════════════ BASE ═══════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--font-ui);
+  background:radial-gradient(ellipse 900px 500px at 8% -5%,var(--wash-1),transparent 60%),
+    radial-gradient(ellipse 700px 500px at 105% 15%,var(--wash-2),transparent 55%),
+    radial-gradient(ellipse 800px 600px at 50% 120%,var(--wash-3),transparent 60%),var(--bg);
+  color:var(--cream);min-height:100dvh;
+  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);
+  -webkit-font-smoothing:antialiased;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:var(--grain);mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* OGNI CIFRA in tabulare con lo zero barrato. Uno 0 accanto a una O non deve
+   essere una domanda, e 189 non deve sembrare 180 di sfuggita. */
+.num,.lprice,.det-price,.offer-input,.bub-offer-amt,.stat-num,.conv-time,
+.rev-date,.lspecs,.lmeta,.spec-row dd,.bub-time,
+input[type="number"],.range-row input{
+  font-family:var(--font-num);font-variant-numeric:tabular-nums slashed-zero;}
+
+/* Il carattere dei titoli. Era Fraunces, un serif; dal 23/08/2026 e' Inter
+   come nel resto del sito. La regola di prima resta valida e vale ancora la
+   pena scriverla: MAI su un dato, mai su un nome utente, mai sul titolo di un
+   annuncio — quelli sono pieni di sigle e numeri e vogliono `--font-num`. */
+/* IL NOME COL CARATTERE DELL'APP. (23/08/2026.) `--font-display` a peso 600
+   e' il carattere dei titoli editoriali; l'app scrive il proprio nome in
+   `--font-ui` a 800, stretto. *Due nomi affiancati scritti con due caratteri
+   diversi non sembrano due sezioni: sembrano due prodotti.*
+   Le altre due regole restano dov'erano: quelle SONO titoli. */
+.auth-card h1,.fscr-tb h2{font-family:var(--font-display);font-weight:600}
+.tb-logo-txt{font-family:var(--font-ui);font-weight:800;letter-spacing:-.02em}
+
+/* NIENTE `z-index` QUI, ED E' IL PEZZO CHE TENEVA LA BARRA PRIGIONIERA.
+   `z-index:1` su questo contenitore creava un contesto di impilamento: da li'
+   in giu' nessun figlio poteva superare quota 1 rispetto a chi sta fuori, e le
+   finestre di sezione (.fullscr, 100) stanno fuori. Percio' la barra delle
+   icone poteva dichiarare 105 quanto voleva — restava sotto, e da computer ci
+   restava anche la testata intera.
+   Serviva a stare sopra la grana (`body::before`, z-index 0). Non serve: la
+   grana viene prima nell'ordine del documento, quindi resta sotto lo stesso.
+   Provato, non supposto — otto schermate confrontate pixel per pixel, telefono
+   e computer, con e senza: identiche. Toglierlo non disegna niente di diverso,
+   apre soltanto la strada. */
+#app{position:relative;max-width:560px;margin:0 auto;padding:0 0 120px}
+/* LA BARRA ERA SCURA, E L'APP CE L'HA CHIARA. (23/08/2026, detto da
+   Alessandro: «il logo, il nome con un fondo diverso».)
+   Non era un caso: quando il mercatino e' nato, il verde era scuro e una
+   barra scura ci stava. Dal 21/08 l'app ha un verde prato e una testata
+   chiara, velata sul fondo con la sfocatura dietro. *Il mercatino si apre
+   DALL'app: due testate di colore opposto a un tocco di distanza sono la
+   cosa che fa chiedere «sono ancora dentro la stessa cosa?».*
+   Stesse regole dell'altra: fondo semitrasparente col velo, filo sotto,
+   inchiostro normale. */
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;height:58px;padding:0 16px;
+  border-bottom:1px solid var(--line);
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  color:var(--ink);}
+/* IL TASTO CHE RIPORTA AL SEGNAPUNTI. Su fondo chiaro il riquadro bianco
+   con l'ombra nera non ha piu' senso: era fatto per staccarsi dal buio.
+   Adesso e' tinto come tutti gli altri tasti dell'app. */
+/* Solo il segno, quadrato come la lettera del profilo che gli sta accanto:
+   due tasti della stessa fila con due forme diverse sembrano due cose
+   diverse. */
+/* Gli stessi colori della voce accesa nella barra della home: `--acceso-*`
+   e' esattamente quella pastiglia — velatura al 16%, inchiostro verde
+   scuro. *Non «simile»: lo stesso token.* */
+.tb-back{width:38px;height:38px;padding:0;border-radius:var(--r-s);
+  background:var(--acceso-bg);border:1px solid var(--acceso-bd);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  flex-shrink:0;text-decoration:none;color:var(--acceso-fg);}
+.tb-back:active{opacity:.85}
+.tb-back-txt{white-space:nowrap}
+.tb-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.tb-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tb-exit{display:none;align-items:center;gap:7px;font-family:inherit;cursor:pointer}
+.tb-logo{display:flex;align-items:center;gap:8px;flex:1 1 auto;min-width:0}
+.tb-logo-txt{font-size:17px;letter-spacing:-.3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+/* IL MARCHIO VERO, non due cerchi disegnati a mano. Il mercatino aveva un
+   bersaglio stilizzato fatto con due `<circle>`: assomigliava al marchio ma
+   non era il marchio, e affiancati si vedeva. *Un'app che disegna da sola il
+   proprio logo ha due loghi.*
+   `logo.webp` e' gia' servito dal sito e sta gia' nella cache del service
+   worker: non e' un file in piu' da caricare. */
+.tb-mark{width:30px;height:30px;flex:0 0 auto;border-radius:var(--r-s);display:block}
+/* La regola di `.beta-badge` e' stata tolta col cartellino (23/08/2026).
+   Portava anche un `#F2A45E` scritto a mano, un arancione che non sta in
+   nessuna famiglia: se un giorno il cartellino torna, si rifa' coi ruoli. */
+/* 44 e' il pavimento, non il traguardo: era 36. */
+/* LA LETTERA DEL PROFILO. Era `--accent-l` — il verde CHIARO — con
+   `--chrome-2` sopra, cioe' una pastiglia pensata per stare su una barra
+   nera. Su fondo chiaro non si stacca piu' da niente.
+   Adesso e' lo stesso trattamento degli altri quattro avatar del mercatino:
+   velata, iniziale verde scuro, filo intorno. *Cinque pastiglie con
+   l'iniziale nella stessa app devono essere la stessa pastiglia.*
+   Quadrata come il tasto casa che le sta accanto? No: TONDA, perche' una
+   pastiglia con dentro una lettera e' una persona, e le persone in questa
+   app sono tonde ovunque. Il tasto casa e' un comando. */
+.tb-avatar{width:38px;height:38px;border-radius:50%;
+  background:var(--acceso-bg);color:var(--acceso-fg);border:1px solid var(--acceso-bd);
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;cursor:pointer;flex-shrink:0;font-family:inherit;}
+section{display:none}
+section.active{display:block}
+.center-scr{min-height:calc(100dvh - 58px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;}
+.spin{width:40px;height:40px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:20px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.auth-card{background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-l);padding:28px 24px;max-width:360px;width:100%;box-shadow:var(--elev-1);}
+.auth-mark{width:56px;height:56px;background:var(--accent);border-radius:17px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:var(--elev-2);}
+.auth-card h1{font-size:22px;letter-spacing:-.5px;margin-bottom:6px}
+.auth-sub{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:22px}
+.fgroup{margin-bottom:14px}
+.flabel{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:7px;display:block;letter-spacing:.07em;text-transform:uppercase;}
+.finput{width:100%;height:48px;padding:0 14px;background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-s);font-size:15px;font-family:inherit;color:var(--cream);outline:none;transition:border-color var(--dur-1),box-shadow var(--dur-1);}
+.finput::placeholder{color:var(--muted)}
+.finput:focus{border-color:var(--accent);box-shadow:var(--focus-ring)}
+.fselect{width:100%;height:48px;padding:0 14px;background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-s);font-size:15px;font-family:inherit;color:var(--cream);outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239AA39C' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+.fselect:focus{border-color:var(--accent);box-shadow:var(--focus-ring)}
+.ftextarea{width:100%;min-height:90px;padding:12px 14px;background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-s);font-size:14px;font-family:inherit;color:var(--cream);outline:none;resize:none;line-height:1.55;}
+.ftextarea:focus{border-color:var(--accent);box-shadow:var(--focus-ring)}
+.err-msg{font-size:12.5px;color:var(--danger);margin-top:8px;display:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:48px;padding:0 20px;border:none;border-radius:var(--r-p);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:background var(--dur-1),transform var(--dur-1);letter-spacing:-.2px;}
+.btn:active{transform:scale(.98)}
+/* TINTO, come nell'app dal 23/08. Il mercatino si apre DALL'app: se una
+   porta e' velata e quella dopo e' satura, la seconda sembra un'altra
+   applicazione — e a quel punto non e' piu' un dettaglio di stile, e' una
+   domanda su dove sei finito. */
+.btn-primary{background:var(--primario-bg);color:var(--primario-fg);
+border:1px solid var(--primario-bd);font-weight:800;width:100%}
+.btn-primary:hover{background:var(--accent-d)}
+.btn-primary:disabled{opacity:.45;pointer-events:none}
+.btn-ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn-dg{background:transparent;color:var(--danger);border:1.5px solid var(--danger);width:100%}
+.btn-sm{height:var(--hit);font-size:13px;padding:0 14px}
+.btn-icon{position:relative;width:var(--hit);height:var(--hit);padding:0;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-s);color:var(--cream);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
+.search-area{padding:12px 16px;border-bottom:1px solid var(--line);background:var(--bg-p);position:sticky;top:58px;z-index:40;}
+.searchwrap{display:flex;align-items:center;gap:9px;background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-s);padding:0 14px;height:48px;}
+.searchwrap:focus-within{border-color:var(--accent);box-shadow:var(--focus-ring)}
+.searchwrap input{border:none;outline:none;background:transparent;font-size:14.5px;color:var(--cream);font-family:inherit;width:100%;min-width:0;}
+.searchwrap input::placeholder{color:var(--muted)}
+/* Sul telefono il comando primario NON divide la riga con due filtri: a 390px
+   il testo usciva dallo schermo, e un tasto tagliato a meta' e' un tasto che
+   non si legge. Le chip stanno sopra, "Nuovo annuncio" prende tutta la riga. */
+.search-row2{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.search-row2 .btn-crea{flex:1 0 100%}
+.chip{flex-shrink:0;height:var(--hit);padding:0 14px;background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-p);font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:background var(--dur-1),border-color var(--dur-1),color var(--dur-1);}
+.chip:active{transform:scale(.96)}
+.chip.on{background:var(--acceso-bg);border-color:var(--acceso-bd);color:var(--acceso-fg);font-weight:700}
+.chip-wrap{position:relative;flex-shrink:0}
+.chip-dot{display:none;width:8px;height:8px;border-radius:50%;background:var(--bark);position:absolute;top:6px;right:6px;}
+.chip-dot.show{display:block}
+.btn-crea{flex:1;height:var(--hit);display:flex;align-items:center;justify-content:center;gap:7px;background:var(--arancio-bg);color:var(--arancio-fg);border:1px solid var(--arancio-bd);border-radius:var(--r-p);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:none;transition:background var(--dur-1),transform var(--dur-1);}
+.btn-crea:active{background:color-mix(in srgb, var(--clay-400) 24%, var(--surface-1));transform:scale(.98)}
+.result-info{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 2px;font-size:12.5px;color:var(--muted);}
+.result-clear{background:none;border:none;font-family:inherit;font-size:12.5px;color:var(--accent);font-weight:600;cursor:pointer;padding:0;min-height:var(--hit);display:inline-flex;align-items:center;}
+.listings{padding:8px 16px}
+
+/* ═══ LA SCHEDA DELL'ANNUNCIO — un solo costruttore ═══════════════════════
+   Prima ce n'erano QUATTRO che disegnavano la stessa cosa (elenco, preferiti,
+   profilo del venditore, i miei annunci), tre dei quali a stile in linea. Due
+   percorsi che disegnano la stessa cosa divergono sempre, e divergono in
+   silenzio: nei preferiti un annuncio "Cerco" stampava "€ 0", perche' quella
+   copia non sapeva della differenza fra prezzo e budget.
+
+   E la riga tecnica non c'era. Il motivo per cui questo mercatino esiste
+   invece di un gruppo Facebook e' che sa cos'e' un libraggio: dirlo solo
+   dentro la scheda aperta significa non dirlo. */
+.lcard{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:start;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:12px;margin-bottom:10px;cursor:pointer;position:relative;box-shadow:none;transition:border-color var(--dur-2),transform var(--dur-1);}
+.lcard:active{transform:scale(.99);border-color:var(--accent)}
+.lthumb{width:84px;height:84px;border-radius:var(--r-s);overflow:hidden;background:var(--bg-p2);flex-shrink:0}
+.lthumb img{width:100%;height:100%;object-fit:cover;display:block}
+.lthumb-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);opacity:.55}
+.lthumb-ph svg{width:34px;height:34px}
+.lcard-fav{position:absolute;top:8px;right:8px;width:var(--hit);height:var(--hit);border-radius:50%;background:transparent;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);z-index:2;}
+.lcard-fav.on{color:var(--danger)}
+.lbody{min-width:0;padding-top:1px;padding-right:36px}
+.ltitle{font-size:15px;font-weight:700;letter-spacing:-.2px;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+/* la riga che dice COS'E': marca, tipo, libraggio, allungo, mano, spine */
+.lspecs{font-size:12.5px;color:var(--ink-2);font-weight:600;margin-bottom:2px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+/* la riga che dice DOV'E' e DA QUANDO */
+.lmeta{font-size:12px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lmeta svg{width:13px;height:13px;flex-shrink:0}
+.lfoot{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.lprice{font-size:18px;font-weight:800;letter-spacing:-.5px;color:var(--bark)}
+.lprice.aperto{font-size:14px;color:var(--gold)}
+.lcond{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:3px 9px;border-radius:var(--r-p);}
+.lcond.nuovo{background:color-mix(in srgb,var(--success) 16%,transparent);color:var(--success)}
+.lcond.ottimo{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+.lcond.buono{background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold)}
+.lcond.usato{background:color-mix(in srgb,var(--muted) 14%,transparent);color:var(--muted)}
+.lcond.cerco{background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold)}
+.lstato{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:var(--r-p);white-space:nowrap}
+.lcard .lstato{position:absolute;top:10px;right:10px;z-index:2}
+.lstato.active{background:color-mix(in srgb,var(--success) 16%,transparent);color:var(--success)}
+.lstato.paused{background:color-mix(in srgb,var(--muted) 14%,transparent);color:var(--muted)}
+.lstato.sold{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+.wanted-tag{position:absolute;top:8px;left:8px;background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold);border-radius:var(--r-p);font-size:10px;font-weight:700;padding:3px 9px;letter-spacing:.04em;pointer-events:none;}
+.empty{text-align:center;padding:52px 24px}
+.empty p{font-size:15px;font-weight:600;color:var(--muted)}
+.empty-sub{font-size:13px;color:var(--muted);margin-top:6px;opacity:.75;line-height:1.5;font-weight:400}
+/* LA BARRA STA SOPRA LE SEZIONI (notte fra il 17 e il 18/08/2026).
+   Prima era a z-index 45, cioe' SOTTO le finestre di sezione (.fullscr, 100).
+   Appena si apriva Preferiti o Messaggi le icone sparivano, e per passare da
+   una sezione all'altra bisognava prima chiudere con la freccia e poi toccare.
+   Ma quelle quattro voci sono SORELLE, non figlie: il livello sopra dice
+   «questo e' un dettaglio, chiudilo per tornare», e non era vero. Adesso la
+   barra vive a 105 — sopra le sezioni, sotto i fogli (110), che invece sono
+   compiti da finire o annullare e hanno un solo modo di uscire.
+   `display` non si accende piu' da JS: lo decide `body.logged`, cosi' il CSS
+   puo' toglierla di mezzo quando serve senza combattere con uno stile in linea. */
+/* ANCHE LA BARRA IN FONDO. (23/08/2026.) Schiarita quella sopra, questa
+   restava scura: una schermata con la testata chiara e il piede nero non e'
+   piu' coerente di com'era prima — e' incoerente in un modo nuovo.
+   Il filo bianco al 10% andava bene sul nero; su un fondo chiaro sparisce,
+   quindi diventa `--line` come tutti gli altri fili dell'app. */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:105;display:none;background:var(--bg-p);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);}
+body.logged .bnav{display:flex}
+/* Nella conversazione no: li' c'e' un campo di scrittura in fondo, e una barra
+   sopra la tastiera coprirebbe proprio quello che si sta scrivendo. Una chat
+   e' un compito, non una sezione. */
+body.chat-aperta .bnav{display:none}
+/* Lo spazio che la barra occupa, perche' le sezioni non ci finiscano sotto. */
+body.logged .fullscr{padding-bottom:calc(var(--hit) + 16px + env(safe-area-inset-bottom))}
+body.logged.chat-aperta .fullscr{padding-bottom:0}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:var(--hit);padding:8px 0;cursor:pointer;border:none;background:none;color:var(--muted);font-size:10.5px;font-weight:600;letter-spacing:.03em;font-family:inherit;transition:color var(--dur-1);}
+/* La voce accesa: `--accent-l` era il verde CHIARO, scelto per leggersi sul
+   nero. Su fondo chiaro fa il contrario. Prende il verde scuro dei tasti. */
+.bnav-item.on{color:var(--primario-fg);font-weight:800}
+.bnav-lbl,.bnav-lbl-s{white-space:nowrap}
+.bnav-lbl-s{display:none}
+@media (max-width:400px){ .bnav-lbl{display:none} .bnav-lbl-s{display:inline} }
+.bnav-iw{position:relative;display:inline-flex}
+.nbadge{position:absolute;top:-3px;right:-6px;min-width:16px;height:16px;border-radius:var(--r-p);background:var(--bark);color:var(--on-chrome);font-size:9px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 3px;}
+.nbadge.show{display:flex}
+/* I PANNELLI STANNO SOPRA LE SCHERMATE A TUTTO SCHERMO, e non e' un dettaglio.
+   Erano tutti e due a z-index 100, e a parita' di livello vince chi sta piu'
+   in basso nel documento: le schermate a tutto schermo sono scritte dopo i
+   pannelli, quindi ci finivano SOPRA. Da "I miei annunci" si toccava un
+   annuncio, il modulo di modifica si apriva davvero — `ovForm` prendeva la
+   classe `open` — e restava nascosto dietro un fondo pieno. Nessun errore,
+   nessuna traccia: il tocco sembrava non aver fatto niente, ed era l'unica
+   strada per correggere un proprio annuncio.
+   Un pannello e' sempre l'ultima cosa aperta, quindi sta sempre davanti. */
+.overlay{display:none;position:fixed;inset:0;z-index:110;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:flex-end;}
+.overlay.open{display:flex}
+.sheet{background:var(--bg-p);border-radius:24px 24px 0 0;width:100%;max-width:560px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom);max-height:92dvh;overflow-y:auto;animation:slideUp .26s var(--ease) both;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sh-handle{width:36px;height:4px;background:var(--line);border-radius:2px;margin:12px auto 0}
+.sh-head{display:flex;align-items:center;gap:10px;padding:8px 16px 12px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg-p);z-index:5;}
+.sh-head h3{font-size:17px;font-weight:700;letter-spacing:-.3px;flex:1}
+.sh-close{width:var(--hit);height:var(--hit);border-radius:50%;background:var(--bg-p2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--cream);flex-shrink:0;}
+.sh-body{padding:18px 18px 24px}
+.fullscr{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);flex-direction:column;overflow-y:auto;}
+.fullscr.open{display:flex}
+/* Le testate a schermo intero — messaggi, filtri, dettaglio — seguono la
+   barra principale. Erano l'ultimo posto scuro. */
+.fscr-tb{position:sticky;top:0;flex-shrink:0;display:flex;align-items:center;gap:10px;height:58px;padding:0 16px;border-bottom:1px solid var(--line);background:var(--bg-p);color:var(--ink);z-index:5;}
+.fscr-tb h2{font-size:17px;flex:1;letter-spacing:-.3px;color:var(--ink)}
+.fscr-tb .btn-icon{background:var(--bg-p2);border-color:var(--line);color:var(--ink)}
+/* La foto sta dentro una finestra e l'immagine ci sta TUTTA: un arco tagliato
+   a meta' non e' una foto di un arco. */
+.det-photos{position:relative;aspect-ratio:4/3;background:var(--bg-p2);overflow:hidden}
+.det-photos img{width:100%;height:100%;object-fit:contain;display:none}
+.det-photos img.on{display:block}
+.det-ph-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);opacity:.5}
+.det-ph-ph svg{width:72px;height:72px}
+.det-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:5px}
+.det-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 3px rgba(0,0,0,.5)}
+.det-dot.on{background:#FFFFFF;width:16px;border-radius:3px}
+.det-nav{position:absolute;top:50%;transform:translateY(-50%);width:var(--hit);height:var(--hit);border-radius:50%;background:rgba(15,20,18,.7);border:none;display:flex;align-items:center;justify-content:center;color:var(--on-chrome);cursor:pointer;}
+.det-nav-l{left:8px}.det-nav-r{right:8px}
+.det-cp{display:inline-flex;font-size:12px;font-weight:700;padding:5px 12px;border-radius:var(--r-p);margin-bottom:10px;letter-spacing:.03em;}
+.det-title{font-size:22px;font-weight:800;letter-spacing:-.6px;line-height:1.25;margin-bottom:6px}
+.det-price{font-size:30px;font-weight:800;letter-spacing:-.8px;color:var(--bark);margin-bottom:4px}
+.det-loc{font-size:13px;color:var(--muted);margin-bottom:20px}
+.det-sec{margin-bottom:22px}
+.det-sec h4{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;}
+.spec-list{background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
+.spec-row{display:flex;justify-content:space-between;gap:12px;padding:11px 14px;font-size:13.5px;border-bottom:1px solid var(--line-s);}
+.spec-row:last-child{border-bottom:none}
+.spec-row dt{color:var(--muted)}.spec-row dd{font-weight:600;text-align:right}
+.det-desc-box{font-size:14px;line-height:1.7;background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-m);padding:14px;white-space:pre-wrap;}
+.seller-card{display:flex;align-items:center;gap:12px;background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-m);padding:14px;cursor:pointer;min-height:var(--hit);}
+.seller-av{width:44px;height:44px;border-radius:50%;background:var(--verde-bg);color:var(--acceso-fg);border:1px solid var(--verde-bd);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;flex-shrink:0;}
+.seller-name{font-size:14.5px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.seller-meta{font-size:12px;color:var(--muted)}
+.det-bar{position:sticky;bottom:0;display:flex;gap:9px;padding:12px 18px calc(16px + env(safe-area-inset-bottom));background:var(--bg-p);border-top:1px solid var(--line);}
+.btn-fav-det{width:48px;height:48px;flex-shrink:0;border-radius:var(--r-s);background:var(--bg-p2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);}
+.btn-fav-det.on{color:var(--danger)}
+/* SEGNALA ANNUNCIO — rifatto il 18/08/2026.
+   Era un <button> senza vestito: nessun `background`, nessun `border`, quindi
+   il browser gli metteva addosso il grigio di sistema. Sopra ci finiva una
+   sottolineatura, e il risultato era un rettangolo grigio con del testo
+   sottolineato dentro — la cosa piu' brutta della schermata, proprio in fondo
+   a un annuncio.
+   Il difetto vero non era la sottolineatura: era che a un <button> vanno
+   dichiarati `background` e `border`, sempre. Quello che non si dichiara lo
+   decide il sistema operativo, e il sistema operativo non ha visto il resto
+   della pagina.
+   COM'E' ADESSO. Discreto ma non nascosto: una segnalazione non deve gridare
+   — la stragrande maggioranza degli annunci e' onesta e mettere un tasto
+   d'allarme sotto ognuno insinua il contrario — ma deve trovarsi al primo
+   sguardo di chi la sta cercando. Testo piccolo, colore attenuato, una riga
+   sottile sopra che lo stacca dal venditore, e l'area toccabile larga tutta
+   la scheda anche se il testo e' corto. */
+.report-link{
+  display:block; width:100%;
+  /* 14px sopra e 15 sotto, non 4: cosi' l'altezza tocca i 44px che questo
+     file si e' dato come misura minima del dito (`--hit`). Con 4 in basso
+     l'aspetto era identico e il bersaglio era 33px — un difetto che si vede
+     solo misurando, e che si paga solo sul telefono di qualcun altro. */
+  margin-top:18px; padding:14px 0 15px; min-height:var(--hit);
+  background:none; border:none; border-top:1px solid var(--line);
+  font:inherit; font-size:12.5px; font-weight:600; letter-spacing:.01em;
+  color:var(--muted); text-align:center; text-decoration:none;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transition:color var(--dur-2) var(--ease);
+}
+.report-link:hover{ color:var(--cream) }
+.report-link:active{ color:var(--cream) }
+.report-link:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:var(--r-s) }
+.radio-row{display:flex;gap:8px;flex-wrap:wrap}
+.radio-pill{min-height:var(--hit);padding:0 16px;border-radius:var(--r-p);background:var(--bg-p2);border:1px solid var(--line);font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:background var(--dur-1),border-color var(--dur-1),color var(--dur-1);}
+.radio-pill.on{background:var(--acceso-bg);border-color:var(--acceso-bd);color:var(--acceso-fg);font-weight:700}
+/* IL RIQUADRO DELLE FOTO. La crocetta da 20px non c'e' piu': era un bersaglio
+   da un quarto del minimo, su un'azione che cancella. Adesso una foto gia'
+   messa si tocca e si sceglie — sostituisci oppure togli. Un tocco in piu',
+   nessun errore in meno da rimediare. */
+.photo-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.photo-slot{width:80px;height:80px;border-radius:var(--r-s);background:var(--bg-p2);border:1.5px dashed var(--line-strong);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;color:var(--muted);font-size:22px;transition:border-color var(--dur-1);}
+.photo-slot:hover{border-color:var(--accent);color:var(--accent)}
+.photo-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.photo-slot.piena{border-style:solid;border-color:var(--line)}
+.photo-slot.busy{border-style:solid;border-color:var(--accent)}
+.ph-prog{position:absolute;inset:0;background:color-mix(in srgb,var(--bg-p) 88%,transparent);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:3;font-size:11px;font-weight:700;color:var(--accent);}
+.ph-prog .ring{width:20px;height:20px;border:2.5px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+.mkt-note{position:relative;margin:16px 16px 0;padding:16px 48px 16px 16px;background:var(--bg-p);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:var(--r-m);font-size:13px;line-height:1.55;color:var(--cream);box-shadow:var(--elev-1);}
+.mkt-note b{font-size:14px}
+.mkt-note p{margin:8px 0 0;color:var(--ink-2)}
+.mkt-note-x{position:absolute;top:4px;right:4px;width:var(--hit);height:var(--hit);border:0;background:transparent;color:var(--muted);cursor:pointer;border-radius:var(--r-s);display:flex;align-items:center;justify-content:center;}
+.mkt-note-ack{display:flex;align-items:center;gap:10px;margin:12px 0 0;font-size:12.5px;color:var(--ink-2);cursor:pointer;min-height:var(--hit);}
+.mkt-note-ack input{width:20px;height:20px;margin:0;flex-shrink:0;accent-color:var(--accent)}
+.cap-note{margin:16px 0 4px;padding:12px 14px;background:color-mix(in srgb,var(--gold) 14%,transparent);border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:var(--r-m);font-size:12.5px;line-height:1.5;color:var(--ink-2);text-align:center;}
+.load-err{margin:20px 0;padding:14px;background:color-mix(in srgb,var(--danger) 8%,transparent);border:1px solid color-mix(in srgb,var(--danger) 35%,transparent);border-radius:var(--r-m);font-size:13px;line-height:1.6;color:var(--cream);}
+.load-err b{color:var(--danger);display:block;margin-bottom:4px}
+.load-err code{font-size:11.5px;background:var(--bg-p2);padding:2px 6px;border-radius:4px;word-break:break-all;}
+.filter-sec{margin-bottom:18px}
+.filter-sec-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;}
+.range-row{display:flex;gap:8px;align-items:center}
+.range-row input{flex:1;height:var(--hit);padding:0 12px;background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-s);font-size:14px;font-family:inherit;color:var(--cream);outline:none;min-width:0;}
+.range-row input:focus{border-color:var(--accent);box-shadow:var(--focus-ring)}
+.range-row span{font-size:13px;color:var(--muted);flex-shrink:0}
+.fdivider{height:1px;background:var(--line);margin:16px 0}
+.offer-input{width:100%;height:56px;padding:0 14px;background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-s);font-size:24px;font-weight:800;font-family:var(--font-num);color:var(--cream);outline:none;}
+.offer-input:focus{border-color:var(--accent);box-shadow:var(--focus-ring)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom));background:var(--cream);color:var(--bg);font-size:13.5px;font-weight:600;padding:12px 20px;border-radius:var(--r-p);z-index:200;opacity:0;pointer-events:none;transition:opacity var(--dur-3),transform var(--dur-3);white-space:nowrap;box-shadow:var(--elev-3);max-width:88%;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
+.review-card{background:var(--bg-p2);border:1px solid var(--line);border-radius:var(--r-m);padding:14px;margin-bottom:10px;}
+.rev-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.rev-av{width:32px;height:32px;border-radius:50%;background:var(--verde-bg);color:var(--acceso-fg);border:1px solid var(--verde-bd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.rev-name{font-size:13px;font-weight:700}
+.rev-date{font-size:11px;color:var(--muted)}
+.rev-text{font-size:13.5px;line-height:1.6;color:var(--ink-2)}
+.starpick{display:flex;gap:4px;margin-bottom:12px}
+.starpick button{background:none;border:none;cursor:pointer;font-size:30px;color:var(--line-strong);padding:0 4px;line-height:1;min-height:var(--hit);transition:color var(--dur-1);}
+.starpick button.on{color:var(--gold)}
+.profile-hero{display:flex;align-items:center;gap:14px;padding:20px 18px;border-bottom:1px solid var(--line);}
+.profile-av{width:56px;height:56px;border-radius:50%;background:var(--verde-bg);color:var(--acceso-fg);border:1px solid var(--verde-bd);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;flex-shrink:0;}
+.profile-name{font-size:19px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px}
+.profile-meta{font-size:12.5px;color:var(--muted)}
+.stat-row{display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stat-item{flex:1;padding:14px 0;text-align:center;border-right:1px solid var(--line)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:2px}
+.pro-sec-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px}
+.pro-sec-title.dopo{margin-top:24px}
+.conv{display:flex;gap:12px;align-items:center;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:13px;margin-bottom:9px;cursor:pointer;box-shadow:none;}
+.conv:active{border-color:var(--accent)}
+.conv-av{width:44px;height:44px;border-radius:50%;background:var(--verde-bg);color:var(--acceso-fg);border:1px solid var(--verde-bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;}
+.conv-mid{flex:1;min-width:0}
+.conv-name{font-size:14px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.conv-sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.conv-last{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink-2)}
+.conv-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.conv-time{font-size:11px;color:var(--muted)}
+.udot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.chat-vi{display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+.chat-vi.open{display:flex}
+.chat-ctx{display:flex;gap:10px;align-items:center;padding:10px 16px;background:var(--bg-p);border-bottom:1px solid var(--line);flex-shrink:0;}
+.chat-ctx-th{width:42px;height:42px;border-radius:var(--r-s);background:var(--bg-p2);object-fit:cover;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+.chat-ctx-th svg{width:22px;height:22px}
+.chat-ctx .t{font-size:13.5px;font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-ctx .p{font-size:13.5px;font-weight:800;color:var(--bark);white-space:nowrap;margin-left:8px;font-family:var(--font-num);font-variant-numeric:tabular-nums slashed-zero}
+/* LA TERZA CHAT. (23/08/2026.) L'app ne ha due — quella a due e quella
+   dell'allenamento — e il 23/08 sono state ridisegnate insieme. Questa era
+   rimasta indietro: aveva preso il colore giusto e nient'altro.
+   *Tre chat nella stessa applicazione che si comportano in due modi diversi
+   sono peggio di tre chat brutte uguali: la seconda insegna qualcosa che
+   nella terza non vale.*
+   Cosa arriva di la': i turni di parola, l'ora DENTRO la bolla, il giorno
+   come pastiglia. Cosa NON arriva: le spunte — qui il dato di lettura e' un
+   `unreadBy` booleano, che dice «c'e' qualcosa di nuovo», non FINO A QUANDO
+   ha letto. *Un segno che non sa rispondere e' peggio di nessun segno*, e
+   vale la terza volta come la prima. */
+.chat-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:2px;background:var(--bg)}
+.chat-turno{display:flex;flex-direction:column;margin-top:14px}
+.chat-turno:first-child{margin-top:0}
+.chat-turno.mio{align-items:flex-end}
+.chat-turno.suo{align-items:flex-start}
+/* Il giorno, come nell'app: senza, «10:02» di tre settimane fa e «10:02» di
+   stamattina sono la stessa cosa. */
+.chat-giorno{align-self:center;margin:16px 0 8px;padding:4px 12px;border-radius:var(--r-pill);
+background:var(--bg-p);border:1px solid var(--line);font-size:10.5px;font-weight:700;
+letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.bub{position:relative;max-width:80%;padding:10px 13px;border-radius:var(--r-bolla);font-size:14px;line-height:1.5;margin-top:2px;border:1px solid transparent}
+.bub:first-of-type{margin-top:0}
+/* LA CODA, come nell'app: sulla PRIMA bolla del turno, non sull'ultima.
+   Segna DA DOVE parte il turno, come il trattino di un elenco; in fondo
+   sembrerebbe una firma. E' un bordo colorato, quindi prende il fondo per
+   nome — `--bolla-mia` e `--bolla-sua` — perche' un triangolo di sette pixel
+   che resta indietro non lo nota nessuno. */
+.chat-turno .bub:first-of-type::after{content:"";position:absolute;top:0;width:0;height:0;border:7px solid transparent}
+.chat-turno.mio .bub:first-of-type{border-top-right-radius:var(--r-xs,2px)}
+.chat-turno.suo .bub:first-of-type{border-top-left-radius:var(--r-xs,2px)}
+.chat-turno.mio .bub:first-of-type::after{right:-6px;border-top-color:var(--bolla-mia);border-right:0}
+.chat-turno.suo .bub:first-of-type::after{left:-6px;border-top-color:var(--bolla-sua);border-left:0}
+/* L'ora galleggia a destra sulla riga dell'ultima parola: fuori sarebbe una
+   riga in piu' per messaggio. Va inserita PRIMA del testo — un float si
+   aggancia alla riga in cui compare. */
+.bub .ora{float:right;margin:8px 0 0 8px;font-size:10.5px;color:var(--muted);
+line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+/* I TRE LIVELLI, come nell'app: il flusso incassato piu' scuro, e le bolle
+   che ci galleggiano sopra. Prima la bolla dell'altro era `--bg-p` sul
+   flusso — praticamente lo stesso colore, cioe' una bolla che affonda nel
+   suo contenitore invece di starci sopra. */
+.bub.them{background:var(--bolla-sua);border-color:var(--line);align-self:flex-start;box-shadow:var(--elev-1);border-bottom-left-radius:4px}
+/* LA BOLLA PROPRIA, come nella chat dell'app: tinta, non piena. Qui il
+   fondo del flusso e' piu' chiaro che nell'app, quindi vale il 38% del tema
+   chiaro — misurato li', non ricopiato a occhio. */
+.bub.me{background:var(--bolla-mia);color:var(--ink);border-color:color-mix(in srgb, var(--brand) 55%, var(--surface-1));align-self:flex-end;box-shadow:var(--elev-1);border-bottom-right-radius:4px}
+.bub-offer{align-self:center;width:calc(100% - 32px);background:color-mix(in srgb,var(--gold) 10%,transparent);border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:var(--r-m);padding:14px;text-align:center;}
+.bub-offer-amt{font-size:24px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.bub-offer-lbl{font-size:12.5px;color:var(--muted)}
+.bub-offer-btns{display:flex;gap:8px;margin-top:12px}
+.bub-time{font-size:10.5px;color:var(--muted)}
+.bub-time.me{align-self:flex-end}
+.chat-ib{display:flex;gap:9px;align-items:flex-end;padding:10px 16px calc(12px + env(safe-area-inset-bottom));background:var(--bg-p);border-top:1px solid var(--line);flex-shrink:0;}
+.chat-ta{flex:1;min-height:var(--hit);max-height:120px;padding:10px 14px;background:var(--bg-p2);border:1px solid var(--line);border-radius:20px;font-size:14.5px;font-family:inherit;color:var(--cream);outline:none;resize:none;line-height:1.4;}
+.chat-ta:focus{border-color:var(--accent)}
+.btn-send{width:var(--hit);height:var(--hit);border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brand-ink);flex-shrink:0;}
+.btn-send:disabled{opacity:.4;pointer-events:none}
+.saved-card{display:flex;align-items:center;gap:12px;background:var(--bg-p);border:1px solid var(--line);border-radius:var(--r-m);padding:14px;margin-bottom:9px;box-shadow:none;}
+.saved-body{flex:1;min-width:0}
+.saved-q{font-size:14.5px;font-weight:700;margin-bottom:3px}
+.saved-meta{font-size:12px;color:var(--muted)}
+.saved-body{cursor:pointer}
+.saved-new{color:var(--bark);font-weight:800}
+/* Sotto il titolo della schermata, una riga che dice cosa fanno davvero questi
+   interruttori. Non e' una didascalia sotto un controllo — quelle non si
+   leggono: e' la sola frase della schermata, e dice anche cosa NON fa. */
+.sav-nota{margin:0 0 14px;padding:12px 14px;background:var(--bg-p);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:var(--r-m);font-size:12.5px;line-height:1.55;color:var(--ink-2);}
+/* L'interruttore: la pastiglia resta 26px alta perche' e' quello che si vede,
+   ma il bersaglio e' 44. Il disegno non cambia, il dito si'. */
+.tgl{width:52px;height:var(--hit);position:relative;cursor:pointer;border:none;background:transparent;flex-shrink:0;padding:0;}
+.tgl::before{content:"";position:absolute;left:4px;right:4px;top:9px;height:26px;border-radius:var(--r-p);background:var(--line-strong);transition:background var(--dur-2);}
+.tgl.on::before{background:var(--accent)}
+.tgl-k{position:absolute;top:12px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left var(--dur-2);box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.tgl.on .tgl-k{left:25px}.tgl.off .tgl-k{left:7px}
+.a-opt{display:flex;align-items:center;gap:12px;padding:16px 20px;min-height:var(--hit);font-size:15px;color:var(--cream);background:none;border:none;border-bottom:1px solid var(--line-s);cursor:pointer;font-family:inherit;text-align:left;width:100%;transition:background var(--dur-1);}
+.a-opt:last-child{border-bottom:none}
+.a-opt:active{background:var(--bg-p2)}
+.a-opt.red{color:var(--danger)}
+.a-opt.bold{font-weight:700;color:var(--accent)}
+.a-title{font-size:13px;color:var(--muted);font-weight:600;padding:14px 20px 6px;letter-spacing:.03em;}
+.action-sheet{background:var(--bg-p);border-radius:24px 24px 0 0;width:100%;max-width:560px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom);}
+.ash{width:36px;height:4px;background:var(--line);border-radius:2px;margin:12px auto 0}
+/* Gli ultimi agganci che erano stile in linea generato dal JS. Lo stile in
+   linea vince sul foglio, e per riprendersi il controllo servono catene di
+   !important: e' cosi' che nascono i bug verde-su-verde. */
+.a-opt.annulla{color:var(--muted);text-align:center;justify-content:center}
+.f1{flex:1}
+.btn-mod{width:auto;padding:0 20px;flex:1;border-color:var(--bark);color:var(--bark)}
+.sell-go{margin-left:auto;flex-shrink:0}
+.btn-icon.del{margin-left:6px;color:var(--danger)}
+.pro-vuoto{font-size:13.5px;color:var(--muted)}
+.det-price.aperto{color:var(--gold)}
+
+@media (hover:hover) and (pointer:fine){
+  .lcard:hover{border-color:var(--accent);box-shadow:var(--elev-2)}
+  .conv:hover{border-color:var(--accent)}
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+  .chip.on:hover{color:var(--brand-ink)}
+  .radio-pill:hover{border-color:var(--accent)}
+  .radio-pill.on:hover{color:var(--brand-ink)}
+  .btn-crea:hover{background:var(--bark-d)}
+  .bnav-item:hover{color:var(--accent-l)}
+  .btn-icon:hover,.sh-close:hover,.btn-fav-det:hover{border-color:var(--accent);color:var(--accent)}
+  .fscr-tb .btn-icon:hover{background:rgba(255,255,255,.24);color:var(--on-chrome);border-color:rgba(255,255,255,.45)}
+  .tb-back:hover{background:var(--sand-100);border-color:var(--sand-100)}
+  .btn-ghost:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+  .btn-dg:hover{background:color-mix(in srgb,var(--danger) 7%,transparent)}
+  .a-opt:hover{background:var(--bg-p2)}
+  .seller-card:hover{border-color:var(--accent)}
+  .mkt-note-x:hover{background:var(--bg-p2)}
+  .det-nav:hover{background:rgba(15,20,18,.85)}
+  .btn-send:hover{background:var(--accent-d)}
+  .lcard-fav:hover{color:var(--danger)}
+}
+
+/* ══════════════════ RIFINITURA DA COMPUTER ══════════════════════════════
+   Tutto quello che segue vive dentro @media (min-width:760px).
+   Sul telefono non cambia una virgola.
+   REGOLA (dalle note, 16/08): una regola NUOVA non si scrive qui sotto, mai,
+   nemmeno se il vicinato sembra giusto. Qui si sta dentro una media query
+   fino a "FINE RIFINITURA", e una regola scritta qui e' invisibile sull'unico
+   schermo che conta. */
+@keyframes popIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+
+@media (min-width:760px){
+  :root{ --colw:1060px; --band:545px; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:
+      linear-gradient(90deg,
+        transparent            calc(50% - var(--band) - 66px),
+        var(--band-tint)       calc(50% - var(--band)),
+        var(--band-tint)       calc(50% + var(--band)),
+        transparent            calc(50% + var(--band) + 66px)),
+      radial-gradient(ellipse 1100px 620px at 10% -10%, var(--wash-1), transparent 62%),
+      radial-gradient(ellipse 900px 560px at 105% 8%,  var(--wash-2), transparent 58%),
+      radial-gradient(ellipse 1000px 700px at 50% 116%, var(--wash-3), transparent 62%),
+      linear-gradient(180deg,var(--page-a) 0%,var(--page-b) 100%);
+  }
+  #app{ max-width:var(--colw); padding:0 30px 90px; }
+
+  /* Una sola barra scura: indietro, marchio, sezioni, profilo, uscita. */
+  /* Da computer le icone stanno DENTRO questa barra (vedi .bnav qui sotto),
+     quindi e' lei a dover stare sopra le sezioni: stesso livello, stessa
+     ragione. Qui la barra non e' fissa in fondo, percio' non serve lasciarle
+     spazio: le sezioni si riprendono il loro. */
+  .topbar{
+    position:sticky; top:16px; z-index:105;
+    height:64px; margin-top:16px; padding:0 14px; gap:14px;
+    border-radius:var(--r-xl);
+    background:linear-gradient(135deg,var(--chrome-1) 0%,var(--chrome-2) 55%,var(--chrome-3) 100%);
+    border:1px solid color-mix(in srgb,var(--gold-400) 20%,transparent);
+    box-shadow:0 18px 40px -28px rgba(20,35,25,.75), inset 0 1px 0 rgba(255,255,255,.05);
+    isolation:isolate;
+  }
+  .topbar::after{
+    content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+    border-radius:var(--r-xl);
+    background:
+      radial-gradient(520px 150px at 14% -60%, rgba(96,169,102,.20), transparent 70%),
+      radial-gradient(420px 130px at 92% 150%, rgba(232,114,47,.14), transparent 70%);
+  }
+  .tb-left{ flex:1 1 0; min-width:0 }
+  .tb-right{ flex:1 1 0; justify-content:flex-end }
+  .tb-logo{ flex:0 1 auto; min-width:0; gap:9px }
+  .tb-back{ flex-shrink:0 }
+  /* L'iniziale nel cerchio RESTA anche da computer: era l'unica porta per le
+     Ricerche salvate, e spariva. Accanto c'e' l'uscita, che da sola non
+     bastava a farsi capire. */
+/* SU SCHERMO LARGO ERANO RIMASTI I COLORI DEL BUIO. (23/08/2026.)
+   Tre regole dentro la versione da computer riportavano i tasti a un bianco
+   trasparente su un fondo che non c'e' piu': `rgba(255,255,255,.07)` su
+   chiaro e' quasi nulla, e `#E4EBE4` come scritta e' illeggibile.
+   *Una regola dentro una media query e' il posto dove le cose sopravvivono
+   piu' a lungo: nessuno guarda l'app da computer abbastanza spesso da
+   accorgersene.* */
+  body.logged .tb-exit{
+    display:inline-flex; flex-shrink:0; height:38px; padding:0 15px; border-radius:var(--r-md);
+    background:var(--bg-p2); border:1px solid var(--line);
+    color:var(--ink); font-size:13.5px; font-weight:700; letter-spacing:-.1px;
+    transition:background var(--dur-2), border-color var(--dur-2), color var(--dur-2), transform var(--dur-2);
+  }
+  .tb-back{
+    height:36px; border-radius:11px;
+    background:var(--primario-bg); border:1px solid var(--primario-bd);
+    color:var(--primario-fg); box-shadow:none;
+    transition:background var(--dur-2), border-color var(--dur-2), transform var(--dur-2);
+  }
+  .tb-logo-txt{ font-size:19px; letter-spacing:-.2px }
+  .tb-avatar{ width:38px; height:38px; border:2px solid var(--line); transition:border-color var(--dur-2) }
+
+  .bnav{
+    position:static; bottom:auto; left:auto; right:auto; z-index:auto;
+    flex:0 1 auto; min-width:0; width:auto;
+    justify-content:center; gap:2px; padding:0;
+    background:none; border:none; box-shadow:none;
+  }
+  /* Dentro la testata la barra c'e' sempre, anche mentre si legge una chat:
+     qui non e' sopra la tastiera e non copre niente. */
+  body.logged.chat-aperta .bnav{display:flex}
+  body.logged .fullscr{padding-bottom:0}
+  .bnav-item{
+    flex:0 1 auto; min-width:0; flex-direction:row; gap:8px; height:40px; min-height:0; padding:0 14px;
+    font-size:13.5px; font-weight:700; letter-spacing:-.1px; border-radius:var(--r-md);
+    color:var(--chrome-ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    transition:background var(--dur-2), color var(--dur-2);
+  }
+  .bnav-item svg{ width:18px; height:18px; flex-shrink:0; transition:transform var(--dur-2) }
+  .bnav-item.on{ background:rgba(96,169,102,.15); color:var(--green-400) }
+  .nbadge{ top:-4px; right:-7px }
+
+  /* La riga di ricerca diventa un pannello. */
+  .search-area{
+    position:static; margin-top:18px; padding:16px 18px;
+    background:var(--bg-p); border:1px solid var(--line);
+    border-top:2px solid color-mix(in srgb, var(--gold) 34%, transparent);
+    border-radius:18px;
+    box-shadow:var(--elev-2);
+    display:flex; align-items:center; gap:14px;
+  }
+  .search-area>div:first-child{ flex:1; min-width:300px }
+  .search-row2{ margin-top:0; flex-shrink:0 }
+  .search-row2 .btn-crea{ flex:0 0 auto; padding:0 20px }
+  .result-info{ padding:16px 4px 0; font-size:13px }
+  .mkt-note{ margin:16px 0 0 }
+
+  /* Gli annunci: vetrina con l'oggetto intero. */
+  .listings{ padding:16px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:stretch }
+  .listings .empty,.listings .load-err,.listings .cap-note{ grid-column:1/-1 }
+  .lcard{
+    display:flex; flex-direction:column; padding:0; margin-bottom:0; overflow:hidden;
+    border-radius:18px; border:1px solid var(--line);
+    box-shadow:var(--elev-2);
+    transition:transform var(--dur-3) var(--ease), box-shadow var(--dur-2), border-color var(--dur-2);
+  }
+  .lcard:active{ transform:translateY(-1px) }
+  .lthumb{
+    width:100%; height:170px; border-radius:0; overflow:hidden; flex-shrink:0;
+    background:var(--bg-p2); border-bottom:1px solid var(--line-s);
+  }
+  .lthumb img{ object-fit:contain; padding:12px; transition:transform .35s var(--ease) }
+  .lthumb-ph svg{ width:44px; height:44px }
+  .lbody{ padding:14px 16px 16px; flex:1; display:flex; flex-direction:column; padding-right:16px }
+  .lfoot{ margin-top:auto }
+  .ltitle{ font-size:16px; margin-bottom:5px }
+  .lspecs{ font-size:13px }
+  .lmeta{ margin-bottom:10px }
+  .lprice{ font-size:21px }
+  .lcard-fav{
+    top:6px; right:6px;
+    background:color-mix(in srgb,var(--bg-p) 92%,transparent);
+    box-shadow:var(--elev-1);
+  }
+  .wanted-tag{ top:14px; left:14px; background:color-mix(in srgb,var(--bg-p) 92%,transparent); color:var(--gold); box-shadow:var(--elev-1) }
+  .empty{ padding:64px 24px }
+  .det-photos{ aspect-ratio:16/10; max-height:42dvh; background:var(--bg-p2) }
+
+  /* Finestre e pannelli: da foglio dal basso a finestra centrata. */
+  .overlay{ align-items:center; justify-content:center; padding:28px 20px }
+  .sheet{
+    border-radius:var(--r-xl); max-width:640px; max-height:88dvh; padding-bottom:0;
+    animation:popIn var(--dur-2) ease both;
+    border:1px solid var(--line);
+    border-top:2px solid color-mix(in srgb, var(--gold) 34%, transparent);
+    box-shadow:0 30px 70px -34px rgba(20,35,25,.70);
+  }
+  .sh-handle{ display:none }
+  .sh-head{ padding:16px 22px }
+  .sh-body{ padding:22px 22px 26px }
+  .action-sheet{
+    border-radius:var(--r-xl); max-width:420px; overflow:hidden; padding-bottom:0;
+    animation:popIn var(--dur-2) ease both;
+    border:1px solid var(--line); box-shadow:0 30px 70px -34px rgba(20,35,25,.70);
+  }
+  .ash{ display:none }
+  .btn{ border-radius:var(--r-md); transition:background var(--dur-2), transform var(--dur-2) var(--ease), box-shadow var(--dur-2) }
+  .btn-crea{ transition:background var(--dur-2), transform var(--dur-2) var(--ease), box-shadow var(--dur-2) }
+  .conv,.saved-card,.review-card,.seller-card,.spec-list,.det-desc-box{ border-radius:var(--r-lg) }
+  .conv,.saved-card{ margin-bottom:12px; padding:15px; box-shadow:var(--elev-2) }
+  .auth-card{ border-radius:var(--r-xl); max-width:400px; padding:32px 28px; box-shadow:var(--elev-3) }
+  .center-scr{ min-height:calc(100dvh - 60px) }
+  .det-bar{ padding:14px 22px 18px }
+  .toast{ bottom:28px }
+
+  /* Schermate a tutto schermo: stesso foglio, stessa colonna. */
+  .fullscr{
+    background:
+      linear-gradient(90deg,
+        transparent      calc(50% - var(--band) - 66px),
+        var(--band-tint) calc(50% - var(--band)),
+        var(--band-tint) calc(50% + var(--band)),
+        transparent      calc(50% + var(--band) + 66px)),
+      linear-gradient(180deg,var(--page-a) 0%,var(--page-b) 100%);
+  }
+  /* UNA SOLA INSEGNA (notte fra il 17 e il 18/08/2026).
+     Qui la barra della sezione era vestita da insegna — stesso gradiente,
+     stesso bordo oro, stesso raggio della testata — e stava sticky a 16px,
+     cioe' ESATTAMENTE dove sta la testata. Finche' le sezioni coprivano la
+     testata la cosa non si vedeva: sembrava che entrando in Preferiti
+     l'insegna cambiasse, perdesse le icone e mettesse una freccia. Era quello
+     il «le barre sono diverse»: non erano diverse, erano DUE.
+     Adesso che la testata resta sopra, la seconda si toglie il vestito e fa
+     il mestiere che le resta: dire dove sei. Titolo, e la freccia per tornare
+     indietro di un passo. L'insegna e' una sola, come nell'app. */
+  .fscr-tb{
+    position:static; height:auto; min-height:0;
+    width:100%; max-width:var(--colw); margin:0 auto;
+    padding:14px 30px 0; border-radius:0;
+    background:none; border:none; box-shadow:none;
+  }
+  /* `--ink` non esiste in questo file: il testo principale e' `--cream`, che
+     nel tema chiaro e' scuro. Scritto male, il titolo usciva chiaro su fondo
+     chiaro e spariva — visto in uno screenshot, non nel codice. */
+  .fscr-tb h2{ color:var(--cream); font-size:22px }
+  .fscr-tb .btn-icon{ border-radius:11px; background:var(--bg-p); border-color:var(--line); color:var(--cream) }
+  /* La sezione comincia sotto la testata, che le galleggia sopra. */
+  .fullscr{ padding-top:calc(64px + 32px) }
+  #myList,#favList,#savList,#proAds,#proHero,#convList,.chat-vi{ max-width:var(--colw); margin:0 auto; width:100% }
+  #myList,#favList,#proAds{ display:grid; grid-template-columns:1fr 1fr; gap:18px; align-content:start; padding:22px 30px }
+  #myList .empty,#favList .empty,#proAds .empty,#favList .cap-note,#proAds .pro-sec-title,#proAds .review-card{ grid-column:1/-1 }
+  #convList,#savList{ max-width:880px; padding:22px 30px }
+  .chat-vi{ max-width:880px }
+  #proHero{ padding:0 30px }
+  .profile-hero{ padding:24px 0 }
+  .chat-body{ padding:20px 30px }
+  .chat-ctx,.chat-ib{ padding-left:30px; padding-right:30px }
+  .bub{ max-width:62% }
+}
+
+@media (min-width:1300px){
+  :root{ --colw:1240px; --band:635px }
+  .listings,#myList,#favList,#proAds{ grid-template-columns:repeat(3,1fr) }
+}
+
+/* Finestra stretta: sulla barra il nome del sito lascia il posto alle sezioni. */
+@media (min-width:760px) and (max-width:1299px){
+  /* Su finestra media il nome lascia il posto alle sezioni. Il cartellino BETA
+   non c'e' piu': la regola non lo nomina piu'. */
+  .tb-logo-txt{ display:none }
+}
+
+@media (hover:hover) and (pointer:fine) and (min-width:760px){
+  .lcard:hover{
+    transform:translateY(-3px);
+    border-color:color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow:var(--elev-3);
+  }
+  .lcard:hover .lthumb img{ transform:scale(1.045) }
+  .tb-back:hover{ background:rgba(96,169,102,.20); border-color:rgba(96,169,102,.55); color:#fff; transform:translateY(-1px) }
+  .tb-exit:hover{ background:rgba(226,80,64,.20); border-color:rgba(226,80,64,.55); color:#fff }
+  .bnav-item:not(.on):hover{ background:rgba(255,255,255,.07) }
+  .bnav-item:hover svg{ transform:translateY(-1px) }
+  .btn-crea:hover{ transform:translateY(-1px) }
+  .btn-primary:hover{ transform:translateY(-1px) }
+  .conv:hover,.saved-card:hover{ box-shadow:var(--elev-3) }
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto }
+  .lcard,.lthumb img,.btn,.btn-crea,.tb-back,.bnav-item svg{ transition:none !important }
+  .lcard:hover{ transform:none }
+  .lcard:hover .lthumb img{ transform:none }
+  .sheet,.action-sheet{ animation:none !important }
+}
+/* ══════════════════ FINE RIFINITURA ══════════════════ */
+</style>
+<style>body{margin:0;background:#CFCFCF;padding:16px;font-family:var(--font-ui)}
+.fila{display:flex;gap:16px;flex-wrap:wrap;max-width:1240px;margin:auto}</style></head>
+<body class="theme-light"><div class="fila"><div style="flex:1 1 350px;min-width:330px">
+<p style="font:12px monospace;color:#888;margin:0 0 6px">chiaro</p>
+<div class="theme-light" style="background:var(--bg);border-radius:8px;overflow:hidden">
+<header class="topbar"><div class="tb-left">
+<div class="tb-logo"><img class="tb-mark" src="https://arctrail3d.com/logo.webp" alt="">
+<span class="tb-logo-txt">Marketplace</span></div>
+<a class="tb-back"><svg viewBox="0 0 200 200" width="21" height="21" fill="currentColor"><g transform="translate(0 -2)"><path fill-rule="evenodd" d="M100,26 L180,96 L180,174 L20,174 L20,96 Z M100,42 L169,101 L169,163 L31,163 L31,101 Z"/><path d="M89,163 V139 a11,11 0 0 1 22,0 v24 Z" fill="var(--icona-accento)"/></g></svg></a></div>
+<div class="tb-right"><button class="tb-avatar">AZ</button></div></header>
+<div style="padding:12px">
+<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn-crea">+ Nuovo annuncio</button></div>
+<div class="chat-body" style="max-height:320px;border-radius:var(--r-md)"><div class="chat-giorno">Ieri</div><div class="chat-turno suo"><div class="bub them"><span class="ora">18:02</span>ciao, è ancora disponibile?</div><div class="bub them"><span class="ora">18:02</span>sarei interessato</div></div><div class="chat-turno mio"><div class="bub me"><span class="ora">18:14</span>sì, disponibile</div><div class="bub me"><span class="ora">18:14</span>quando passeresti?</div></div><div class="chat-giorno">Oggi</div><div class="chat-turno suo"><div class="bub them"><span class="ora">09:31</span>domani pomeriggio va bene?</div></div><div class="chat-turno mio"><div class="bub me"><span class="ora">09:33</span>perfetto</div></div></div>
+</div></div></div><div style="flex:1 1 350px;min-width:330px">
+<p style="font:12px monospace;color:#888;margin:0 0 6px">scuro</p>
+<div class="theme-dark" style="background:var(--bg);border-radius:8px;overflow:hidden">
+<header class="topbar"><div class="tb-left">
+<div class="tb-logo"><img class="tb-mark" src="https://arctrail3d.com/logo.webp" alt="">
+<span class="tb-logo-txt">Marketplace</span></div>
+<a class="tb-back"><svg viewBox="0 0 200 200" width="21" height="21" fill="currentColor"><g transform="translate(0 -2)"><path fill-rule="evenodd" d="M100,26 L180,96 L180,174 L20,174 L20,96 Z M100,42 L169,101 L169,163 L31,163 L31,101 Z"/><path d="M89,163 V139 a11,11 0 0 1 22,0 v24 Z" fill="var(--icona-accento)"/></g></svg></a></div>
+<div class="tb-right"><button class="tb-avatar">AZ</button></div></header>
+<div style="padding:12px">
+<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn-crea">+ Nuovo annuncio</button></div>
+<div class="chat-body" style="max-height:320px;border-radius:var(--r-md)"><div class="chat-giorno">Ieri</div><div class="chat-turno suo"><div class="bub them"><span class="ora">18:02</span>ciao, è ancora disponibile?</div><div class="bub them"><span class="ora">18:02</span>sarei interessato</div></div><div class="chat-turno mio"><div class="bub me"><span class="ora">18:14</span>sì, disponibile</div><div class="bub me"><span class="ora">18:14</span>quando passeresti?</div></div><div class="chat-giorno">Oggi</div><div class="chat-turno suo"><div class="bub them"><span class="ora">09:31</span>domani pomeriggio va bene?</div></div><div class="chat-turno mio"><div class="bub me"><span class="ora">09:33</span>perfetto</div></div></div>
+</div></div></div><div style="flex:1 1 350px;min-width:330px">
+<p style="font:12px monospace;color:#888;margin:0 0 6px">sole</p>
+<div class="theme-sole" style="background:var(--bg);border-radius:8px;overflow:hidden">
+<header class="topbar"><div class="tb-left">
+<div class="tb-logo"><img class="tb-mark" src="https://arctrail3d.com/logo.webp" alt="">
+<span class="tb-logo-txt">Marketplace</span></div>
+<a class="tb-back"><svg viewBox="0 0 200 200" width="21" height="21" fill="currentColor"><g transform="translate(0 -2)"><path fill-rule="evenodd" d="M100,26 L180,96 L180,174 L20,174 L20,96 Z M100,42 L169,101 L169,163 L31,163 L31,101 Z"/><path d="M89,163 V139 a11,11 0 0 1 22,0 v24 Z" fill="var(--icona-accento)"/></g></svg></a></div>
+<div class="tb-right"><button class="tb-avatar">AZ</button></div></header>
+<div style="padding:12px">
+<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn-crea">+ Nuovo annuncio</button></div>
+<div class="chat-body" style="max-height:320px;border-radius:var(--r-md)"><div class="chat-giorno">Ieri</div><div class="chat-turno suo"><div class="bub them"><span class="ora">18:02</span>ciao, è ancora disponibile?</div><div class="bub them"><span class="ora">18:02</span>sarei interessato</div></div><div class="chat-turno mio"><div class="bub me"><span class="ora">18:14</span>sì, disponibile</div><div class="bub me"><span class="ora">18:14</span>quando passeresti?</div></div><div class="chat-giorno">Oggi</div><div class="chat-turno suo"><div class="bub them"><span class="ora">09:31</span>domani pomeriggio va bene?</div></div><div class="chat-turno mio"><div class="bub me"><span class="ora">09:33</span>perfetto</div></div></div>
+</div></div></div></div></body></html>

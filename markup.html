@@ -1,0 +1,337 @@
+<body data-build="2026-08-16-mercatino-c">
+<div id="app">
+<header class="topbar">
+  <div class="tb-left">
+    <a href="https://arctrail3d.com/index.html" class="tb-back" data-tt="back_title"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><span class="tb-back-txt" data-t="app_back">App</span></a>
+    <div class="tb-logo">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+      <span class="tb-logo-txt">ArcTrail Market</span><span class="beta-badge">BETA</span>
+    </div>
+  </div>
+  <nav class="bnav" id="bnav" style="display:none">
+  <button class="bnav-item on" id="navMkt"><div class="bnav-iw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div><span data-t="nav_market">Marketplace</span></button>
+  <button class="bnav-item" id="navFav"><div class="bnav-iw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><span data-t="nav_fav">Preferiti</span></button>
+  <button class="bnav-item" id="navMy"><div class="bnav-iw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg><span class="nbadge" id="myB"></span></div><span class="bnav-lbl" data-t="nav_my">I miei annunci</span><span class="bnav-lbl-s" data-t="nav_my_short">Miei annunci</span></button>
+  <button class="bnav-item" id="navMsg"><div class="bnav-iw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="nbadge" id="msgB"></span></div><span data-t="nav_msg">Messaggi</span></button>
+  </nav>
+  <div class="tb-right">
+    <button class="tb-avatar" id="uav" type="button" data-tt="avatar_title" data-ta="avatar_title"></button>
+    <button class="tb-exit" id="btnExit" type="button" data-tt="exit_title"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span data-t="exit">Esci</span></button>
+  </div>
+</header>
+<section id="secLoad" class="active"><div class="center-scr"><div class="spin"></div><p style="color:var(--muted);font-size:14px" data-t="loading">Caricamento&hellip;</p></div></section>
+<section id="secAuth">
+  <div class="center-scr">
+    <div class="auth-card">
+      <div class="auth-mark"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></div>
+      <h1>ArcTrail Market</h1><p class="auth-sub" data-t="auth_sub"></p>
+      <div class="fgroup"><label class="flabel" for="aEmail" data-t="email">Email</label><input class="finput" type="email" id="aEmail" placeholder="nome@esempio.it" autocomplete="email"></div>
+      <div class="fgroup"><label class="flabel" for="aPwd" data-t="password">Password</label><input class="finput" type="password" id="aPwd" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password"></div>
+      <p class="err-msg" id="aErr" role="alert"></p>
+      <button class="btn btn-primary mt16" id="btnLogin" data-t="login">Accedi</button>
+    </div>
+  </div>
+</section>
+<section id="secDen">
+  <div class="center-scr">
+    <div style="font-size:52px;margin-bottom:20px">&#128274;</div>
+    <h2 style="font-size:21px;font-weight:700;margin-bottom:8px" data-t="den_title"></h2>
+    <p style="font-size:14px;color:var(--muted);line-height:1.6;max-width:320px"><span data-t="den_body"></span> <a href="mailto:info@arctrail3d.com" style="color:var(--accent)">info@arctrail3d.com</a>.</p>
+    <a href="https://arctrail3d.com/index.html" class="btn btn-ghost mt16" style="width:auto;padding:0 28px" data-t="back_to_app"></a>
+  </div>
+</section>
+<section id="secMkt">
+  <div class="search-area">
+    <div style="display:flex;gap:9px">
+      <div class="searchwrap" style="flex:1">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.3" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="sInput" data-tp="search_ph" data-ta="search_al">
+      </div>
+      <button class="btn-icon" id="btnSaveS" data-tt="sav_title" data-ta="sav_title"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="nbadge" id="savB"></span></button>
+    </div>
+    <div class="search-row2">
+      <div class="chip-wrap">
+        <button class="chip" id="chipFlt"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg><span data-t="filters">Filtri</span></button>
+        <div class="chip-dot" id="fltDot"></div>
+      </div>
+      <button class="chip" id="chipCerco" aria-pressed="false"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span data-t="only_wanted">Solo richieste</span></button>
+      <button class="btn-crea" id="btnCrea"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-t="new_listing">Nuovo annuncio</span></button>
+    </div>
+  </div>
+  <div class="result-info"><span id="rCount"></span><span style="display:flex;gap:14px;align-items:center"><button class="result-clear" id="btnClrFlt" style="display:none" data-t="clear_filters"></button><button class="result-clear" id="btnReload" data-t="refresh"></button></span></div>
+  <div class="mkt-note" id="mktNote" style="display:none">
+    <button class="mkt-note-x" id="mktNoteX" type="button" data-tt="close" data-ta="close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <b data-t="note_title"></b>
+    <p data-th="note_p1"></p>
+    <p data-th="note_p2"></p>
+    <label class="mkt-note-ack"><input type="checkbox" id="mktNoteAck"><span data-t="note_ack"></span></label>
+  </div>
+  <div class="listings" id="lstCont"></div>
+</section>
+</div>
+
+<!-- FILTRI -->
+<div class="overlay" id="ovFlt"><div class="sheet" id="shFlt">
+  <div class="sh-handle"></div>
+  <div class="sh-head"><h3 data-t="filters"></h3><button class="sh-close" id="btnCFlt" data-ta="close"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="sh-body">
+    <div class="filter-sec"><div class="filter-sec-title" data-t="spec_category"></div>
+      <div class="radio-row" id="fltCat">
+        <button class="radio-pill on" data-fc="" data-t="cat_all"></button>
+        <button class="radio-pill" data-fc="arco" data-t="cat_arco"></button>
+        <button class="radio-pill" data-fc="frecce" data-t="cat_frecce"></button>
+        <button class="radio-pill" data-fc="mirino" data-t="cat_mirino"></button>
+        <button class="radio-pill" data-fc="rest" data-t="cat_rest"></button>
+        <button class="radio-pill" data-fc="stabilizzatori" data-t="cat_stabilizzatori"></button>
+        <button class="radio-pill" data-fc="sganci" data-t="cat_sganci"></button>
+        <button class="radio-pill" data-fc="faretra" data-t="cat_faretra"></button>
+        <button class="radio-pill" data-fc="corda" data-t="cat_corda"></button>
+        <button class="radio-pill" data-fc="protezioni" data-t="cat_protezioni"></button>
+        <button class="radio-pill" data-fc="borse" data-t="cat_borse"></button>
+        <button class="radio-pill" data-fc="attrezzatura" data-t="cat_attrezzatura"></button>
+        <button class="radio-pill" data-fc="abbigliamento" data-t="cat_abbigliamento"></button>
+        <button class="radio-pill" data-fc="bersagli" data-t="cat_bersagli"></button>
+        <button class="radio-pill" data-fc="altro" data-t="cat_altro"></button>
+      </div>
+    </div>
+    <div class="fdivider"></div>
+    <div class="filter-sec" id="fltMkSec" style="display:none">
+      <div class="filter-sec-title" data-t="spec_brand"></div>
+      <select class="fselect" id="fltMk" data-ta="spec_brand"><option value=""></option></select>
+      <div class="fdivider"></div>
+    </div>
+    <div class="filter-sec" id="fltSgSec" style="display:none">
+      <div class="filter-sec-title" data-t="spec_release"></div>
+      <div class="radio-row" id="fltSgT"><button class="radio-pill on" data-fsg="" data-t="rel_all"></button><button class="radio-pill" data-fsg="pressione" data-t="rel_pressione"></button><button class="radio-pill" data-fsg="rotazione" data-t="rel_rotazione"></button><button class="radio-pill" data-fsg="incremento" data-t="rel_incremento"></button><button class="radio-pill" data-fsg="accessorio" data-t="rel_accessorio"></button></div>
+      <div class="filter-sec-title mt12" data-t="hand"></div>
+      <div class="radio-row" id="fltSgMano"><button class="radio-pill on" data-fsm="" data-t="hand_both"></button><button class="radio-pill" data-fsm="dx" data-t="hand_dx"></button><button class="radio-pill" data-fsm="sx" data-t="hand_sx"></button></div>
+      <div class="fdivider"></div>
+    </div>
+    <div class="filter-sec" id="fltArcoSec" style="display:none">
+      <div class="filter-sec-title" data-t="spec_bow"></div>
+      <div class="radio-row" id="fltArcoT"><button class="radio-pill on" data-fat="" data-t="bow_all"></button><button class="radio-pill" data-fat="compound" data-t="bow_compound"></button><button class="radio-pill" data-fat="ricurvo" data-t="bow_ricurvo"></button><button class="radio-pill" data-fat="barebow" data-t="bow_barebow"></button><button class="radio-pill" data-fat="longbow" data-t="bow_longbow"></button><button class="radio-pill" data-fat="storico" data-t="bow_storico"></button></div>
+      <div class="filter-sec-title mt12"><span data-t="spec_lb"></span> (lb)</div>
+      <div class="range-row"><input type="number" id="fLbMn" placeholder="min"><span>&mdash;</span><input type="number" id="fLbMx" placeholder="max"></div>
+      <div class="filter-sec-title mt12"><span data-t="spec_draw"></span> (&Prime;)</div>
+      <div class="range-row"><input type="number" id="fDwMn" placeholder="min"><span>&mdash;</span><input type="number" id="fDwMx" placeholder="max"></div>
+      <div class="filter-sec-title mt12" data-t="hand"></div>
+      <div class="radio-row" id="fltMano"><button class="radio-pill on" data-fm="" data-t="hand_both"></button><button class="radio-pill" data-fm="dx" data-t="hand_dx"></button><button class="radio-pill" data-fm="sx" data-t="hand_sx"></button></div>
+      <div class="fdivider"></div>
+    </div>
+    <div class="filter-sec" id="fltFrSec" style="display:none">
+      <div class="filter-sec-title" data-t="spec_material"></div>
+      <div class="radio-row" id="fltFrM"><button class="radio-pill on" data-ffm="" data-t="mat_all"></button><button class="radio-pill" data-ffm="carbonio" data-t="mat_carbonio"></button><button class="radio-pill" data-ffm="alluminio" data-t="mat_alluminio"></button><button class="radio-pill" data-ffm="legno" data-t="mat_legno"></button></div>
+      <div class="filter-sec-title mt12" data-t="spec_spine"></div>
+      <div class="range-row"><input type="number" id="fSpMn" placeholder="min"><span>&mdash;</span><input type="number" id="fSpMx" placeholder="max"></div>
+      <div class="fdivider"></div>
+    </div>
+    <div class="filter-sec"><div class="filter-sec-title"><span data-t="price_word"></span> (&euro;)</div>
+      <div class="range-row"><input type="number" id="fPrMn" placeholder="min"><span>&mdash;</span><input type="number" id="fPrMx" placeholder="max"></div>
+    </div>
+    <div class="fdivider"></div>
+    <div class="filter-sec"><div class="filter-sec-title" data-t="condition"></div>
+      <div class="radio-row" id="fltCond"><button class="radio-pill on" data-fco="" data-t="cat_all"></button><button class="radio-pill" data-fco="nuovo" data-t="cond_nuovo"></button><button class="radio-pill" data-fco="ottimo" data-t="cond_ottimo"></button><button class="radio-pill" data-fco="buono" data-t="cond_buono"></button><button class="radio-pill" data-fco="usato" data-t="cond_usato"></button></div>
+    </div>
+    <div class="fdivider"></div>
+    <div class="filter-sec"><div class="filter-sec-title" data-t="spec_shipping"></div>
+      <div class="radio-row" id="fltShip"><button class="radio-pill on" data-fsh="" data-t="ship_any"></button><button class="radio-pill" data-fsh="si" data-t="ship_only"></button><button class="radio-pill" data-fsh="no" data-t="ship_no"></button></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:24px">
+      <button class="btn btn-dg btn-sm" id="btnRstFlt" style="width:auto;flex:1" data-t="reset"></button>
+      <button class="btn btn-primary" id="btnAppFlt" style="flex:2" data-t="apply_filters"></button>
+    </div>
+  </div>
+</div></div>
+
+<!-- DETTAGLIO -->
+<div class="overlay" id="ovDet"><div class="sheet" id="shDet">
+  <div class="sh-handle"></div>
+  <div class="sh-head">
+    <button class="sh-close" id="btnCDet" data-ta="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <h3 id="detTB" style="font-size:15px;font-weight:600;color:var(--muted)"></h3>
+    <button class="sh-close" id="btnDetMore" data-ta="more_actions"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+  </div>
+  <div class="det-photos" id="detPh"><div class="det-ph-ph" id="detPhPh"></div><div class="det-dots" id="detDts"></div><button class="det-nav det-nav-l" id="detNL" data-ta="photo_prev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><button class="det-nav det-nav-r" id="detNR" data-ta="photo_next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+  <div class="sh-body">
+    <span class="det-cp" id="detCond"></span>
+    <div class="det-title" id="detTit"></div>
+    <div class="det-price" id="detPr"></div>
+    <div class="det-loc" id="detLoc"></div>
+    <div class="det-sec"><h4 data-t="details"></h4><dl class="spec-list" id="detSpec"></dl></div>
+    <div class="det-sec"><h4 data-t="description"></h4><div class="det-desc-box" id="detDesc"></div></div>
+    <div class="det-sec"><h4 data-t="seller"></h4><div class="seller-card" id="detSell"></div><button class="report-link" id="btnRep" type="button" data-t="report_ad"></button></div>
+    <div class="det-sec" id="detRevSec" style="display:none"><h4 data-t="seller_reviews"></h4><div id="detRevList"></div></div>
+  </div>
+  <div class="det-bar" id="detBar"></div>
+</div></div>
+
+<!-- FORM ANNUNCIO -->
+<div class="overlay" id="ovForm"><div class="sheet" id="shForm">
+  <div class="sh-handle"></div>
+  <div class="sh-head"><h3 id="formTB"></h3><button class="sh-close" id="btnCForm" data-ta="close"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="sh-body">
+    <div class="fgroup"><label class="flabel" data-t="ad_type"></label>
+      <div class="radio-row"><button class="radio-pill on" data-adt="vendo" data-t="sell"></button><button class="radio-pill" data-adt="cerco" data-t="want"></button></div>
+    </div>
+    <div class="fgroup mt12"><label class="flabel" for="fTit" data-t="title_req"></label><input class="finput" type="text" id="fTit" data-tp="title_ph" maxlength="80"></div>
+    <div class="fgroup mt12"><label class="flabel" for="fCat" data-t="spec_category"></label>
+      <select class="fselect" id="fCat">
+        <option value="" data-t="choose"></option>
+        <option value="arco" data-t="cat_arco"></option>
+        <option value="frecce" data-t="cat_frecce"></option>
+        <option value="mirino" data-t="cat_mirino"></option>
+        <option value="rest" data-t="cat_rest"></option>
+        <option value="stabilizzatori" data-t="cat_stabilizzatori"></option>
+        <option value="sganci" data-t="cat_sganci"></option>
+        <option value="faretra" data-t="cat_faretra"></option>
+        <option value="corda" data-t="cat_corda"></option>
+        <option value="protezioni" data-t="cat_protezioni_long"></option>
+        <option value="borse" data-t="cat_borse_long"></option>
+        <option value="attrezzatura" data-t="cat_attrezzatura"></option>
+        <option value="abbigliamento" data-t="cat_abb_long"></option>
+        <option value="bersagli" data-t="cat_bers_long"></option>
+        <option value="altro" data-t="cat_altro"></option>
+      </select>
+    </div>
+    <div id="fMkG" class="fgroup mt12" style="display:none"><label class="flabel" for="fMarca" data-t="spec_brand"></label>
+      <select class="fselect" id="fMarca"><option value=""></option></select>
+    </div>
+    <div id="fMkAltroG" class="fgroup mt12" style="display:none"><label class="flabel" for="fMarcaAltro" data-t="brand_other_l"></label>
+      <input class="finput" type="text" id="fMarcaAltro" data-tp="brand_ph" maxlength="40" style="text-transform:uppercase">
+    </div>
+    <div id="fSgSec" style="display:none">
+      <div class="fgroup mt12"><label class="flabel" for="fSgT" data-t="spec_release"></label>
+        <select class="fselect" id="fSgT"><option value="" data-t="choose"></option><option value="pressione" data-t="rel_pressione_l"></option><option value="rotazione" data-t="rel_rotazione_l"></option><option value="incremento" data-t="rel_incremento_l"></option><option value="accessorio" data-t="rel_accessorio_l"></option></select>
+      </div>
+      <div style="display:flex;gap:12px" class="mt12">
+        <div class="fgroup" style="flex:1"><label class="flabel" for="fSgD" data-t="spec_fingers"></label>
+          <select class="fselect" id="fSgD"><option value="">&mdash;</option><option value="3" data-t="fingers_3"></option><option value="4" data-t="fingers_4"></option><option value="pollice" data-t="thumb_rel"></option></select>
+        </div>
+        <div class="fgroup" style="flex:1"><label class="flabel" for="fSgMat" data-t="spec_material"></label>
+          <select class="fselect" id="fSgMat"><option value="">&mdash;</option><option value="alluminio" data-t="mat_alluminio"></option><option value="ottone" data-t="mat_ottone"></option><option value="acciaio" data-t="mat_acciaio"></option></select>
+        </div>
+      </div>
+      <div class="fgroup mt12"><label class="flabel" data-t="hand"></label>
+        <div class="radio-row"><button class="radio-pill on" data-sgm="dx" data-t="hand_dx"></button><button class="radio-pill" data-sgm="sx" data-t="hand_sx"></button></div>
+      </div>
+    </div>
+    <div id="fArcoSec" style="display:none">
+      <div class="fgroup mt12"><label class="flabel" for="fArcoT" data-t="spec_bow"></label>
+        <select class="fselect" id="fArcoT"><option value="" data-t="choose"></option><option value="compound" data-t="bow_compound"></option><option value="ricurvo" data-t="bow_ricurvo_l"></option><option value="barebow" data-t="bow_barebow_l"></option><option value="longbow" data-t="bow_longbow"></option><option value="storico" data-t="bow_storico"></option></select>
+      </div>
+      <div style="display:flex;gap:12px" class="mt12">
+        <div class="fgroup" style="flex:1"><label class="flabel" for="fLb"><span data-t="spec_lb"></span> (lb)</label><input class="finput" type="number" id="fLb" placeholder="40" min="10" max="120"></div>
+        <div class="fgroup" style="flex:1"><label class="flabel" for="fDrw"><span data-t="spec_draw"></span> (&Prime;)</label><input class="finput" type="number" id="fDrw" placeholder="28" min="20" max="35"></div>
+      </div>
+      <div class="fgroup mt12"><label class="flabel" data-t="hand"></label>
+        <div class="radio-row"><button class="radio-pill on" data-mf="dx" data-t="hand_dx"></button><button class="radio-pill" data-mf="sx" data-t="hand_sx"></button></div>
+      </div>
+    </div>
+    <div id="fFrSec" style="display:none">
+      <div style="display:flex;gap:12px" class="mt12">
+        <div class="fgroup" style="flex:1"><label class="flabel" for="fSpi" data-t="spec_spine"></label><input class="finput" type="number" id="fSpi" placeholder="400"></div>
+        <div class="fgroup" style="flex:1"><label class="flabel" for="fQty" data-t="spec_qty"></label><input class="finput" type="number" id="fQty" placeholder="12" min="1"></div>
+      </div>
+      <div class="fgroup mt12"><label class="flabel" data-t="spec_material"></label>
+        <div class="radio-row"><button class="radio-pill on" data-ff="carbonio" data-t="mat_carbonio"></button><button class="radio-pill" data-ff="alluminio" data-t="mat_alluminio"></button><button class="radio-pill" data-ff="carbonio-alluminio" data-t="mat_carballu"></button><button class="radio-pill" data-ff="legno" data-t="mat_legno"></button></div>
+      </div>
+    </div>
+    <div id="fCondG" class="fgroup mt12"><label class="flabel" data-t="condition"></label>
+      <div class="radio-row"><button class="radio-pill" data-cond="nuovo" data-t="cond_nuovo"></button><button class="radio-pill on" data-cond="ottimo" data-t="cond_ottimo"></button><button class="radio-pill" data-cond="buono" data-t="cond_buono"></button><button class="radio-pill" data-cond="usato" data-t="cond_usato"></button></div>
+    </div>
+    <div id="fPrG" class="fgroup mt12"><label class="flabel" for="fPr" data-t="price_req"></label><input class="finput" type="number" id="fPr" data-tp="price_ph" min="0" step="1"></div>
+    <div id="fBuG" class="fgroup mt12" style="display:none"><label class="flabel" for="fBu" data-t="budget_field"></label><input class="finput" type="number" id="fBu" data-tp="optional" min="0" step="1"></div>
+    <div id="fOff" class="fgroup mt12" style="display:flex;align-items:center;gap:12px">
+      <input type="checkbox" id="fAccOff" checked style="width:20px;height:20px;accent-color:var(--accent);flex-shrink:0">
+      <label for="fAccOff" style="font-size:14.5px;font-weight:600;cursor:pointer" data-t="accept_offers"></label>
+    </div>
+    <div id="fShpG" class="fgroup" style="display:flex;align-items:center;gap:12px;margin-top:8px">
+      <input type="checkbox" id="fShp" style="width:20px;height:20px;accent-color:var(--accent);flex-shrink:0">
+      <label for="fShp" style="font-size:14.5px;font-weight:600;cursor:pointer" data-t="can_ship"></label>
+    </div>
+    <div class="fgroup mt12"><label class="flabel" for="fLoc" data-t="city"></label><input class="finput" type="text" id="fLoc" data-tp="city_ph" maxlength="60"></div>
+    <div class="fgroup mt12" id="fPhG">
+      <label class="flabel" data-t="photos_max"></label>
+      <div class="photo-row" id="phSlots"></div>
+      <input type="file" id="phFile" accept="image/*" style="display:none">
+      <p style="font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.5" data-t="photos_hint"></p>
+    </div>
+    <div class="fgroup mt12"><label class="flabel" for="fDesc" data-t="description"></label><textarea class="ftextarea" id="fDesc" data-tp="desc_ph" maxlength="1200"></textarea></div>
+    <p class="err-msg" id="fErr" role="alert"></p>
+    <button class="btn btn-primary mt16" id="btnSave"></button>
+    <button class="btn btn-dg mt8" id="btnDel" style="display:none" data-t="delete_ad"></button>
+  </div>
+</div></div>
+
+<!-- CHIEDI UN NUMERO O UN TESTO — al posto di prompt() del browser. -->
+<div class="overlay" id="ovAsk"><div class="sheet" id="shAsk">
+  <div class="sh-handle"></div>
+  <div class="sh-head"><h3 id="askTit"></h3><button class="sh-close" id="btnCAsk" data-ta="close"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="sh-body">
+    <p style="font-size:13.5px;color:var(--muted);margin-bottom:14px" id="askSub"></p>
+    <label class="flabel" id="askLbl" for="askInp"></label>
+    <input class="offer-input" id="askInp" type="text">
+    <p style="font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:8px" id="askHint"></p>
+    <p class="err-msg" id="askErr" role="alert"></p>
+    <button class="btn btn-primary mt16" id="btnAskOk"></button>
+  </div>
+</div></div>
+
+<!-- RECENSIONE -->
+<div class="overlay" id="ovRev"><div class="sheet" id="shRev">
+  <div class="sh-handle"></div>
+  <div class="sh-head"><h3 data-t="rev_leave"></h3><button class="sh-close" id="btnCRev" data-ta="close"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="sh-body">
+    <p style="font-size:13.5px;color:var(--muted);margin-bottom:16px" id="revSub"></p>
+    <label class="flabel" data-t="rating"></label>
+    <div class="starpick" id="starPick">
+      <button data-s="1">&#9733;</button><button data-s="2">&#9733;</button><button data-s="3">&#9733;</button><button data-s="4">&#9733;</button><button data-s="5">&#9733;</button>
+    </div>
+    <div class="fgroup mt12"><label class="flabel" for="revTxt" data-t="comment_opt"></label><textarea class="ftextarea" id="revTxt" data-tp="comment_ph" maxlength="400"></textarea></div>
+    <p class="err-msg" id="revErr" role="alert"></p>
+    <button class="btn btn-primary mt16" id="btnSRev" disabled data-t="rev_publish"></button>
+  </div>
+</div></div>
+
+<!-- FULLSCREEN: I MIEI -->
+<div class="fullscr" id="fsMyAds">
+  <div class="fscr-tb"><button class="btn-icon" id="btnCMy" data-ta="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><h2 data-t="nav_my"></h2></div>
+  <div style="padding:14px 16px" id="myList"></div>
+</div>
+
+<!-- FULLSCREEN: PREFERITI -->
+<div class="fullscr" id="fsFavs">
+  <div class="fscr-tb"><button class="btn-icon" id="btnCFavs" data-ta="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><h2 data-t="nav_fav"></h2></div>
+  <div style="padding:14px 16px" id="favList"></div>
+</div>
+
+<!-- FULLSCREEN: MESSAGGI -->
+<div class="fullscr" id="fsMsgs" style="overflow:hidden">
+  <div class="fscr-tb" id="msgTB"><button class="btn-icon" id="btnCMsg" data-ta="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><h2 id="msgTBT"></h2></div>
+  <div id="convList" style="flex:1;overflow-y:auto;padding:14px 16px"></div>
+  <div class="chat-vi" id="chatVI">
+    <div class="chat-ctx" id="chatCtx"></div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-ib">
+      <textarea class="chat-ta" id="chatIn" rows="1" data-tp="write_msg" data-ta="write_msg"></textarea>
+      <button class="btn-send" id="btnSnd" data-ta="send"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- FULLSCREEN: PROFILO VENDITORE -->
+<div class="fullscr" id="fsPro" style="overflow-y:auto">
+  <div class="fscr-tb"><button class="btn-icon" id="btnCPro" data-ta="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><h2 id="proName" data-t="profile"></h2></div>
+  <div id="proHero"></div><div id="proAds" style="padding:14px 16px"></div>
+</div>
+
+<!-- FULLSCREEN: RICERCHE SALVATE -->
+<div class="fullscr" id="fsSav" style="overflow-y:auto">
+  <div class="fscr-tb"><button class="btn-icon" id="btnCSav" data-ta="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button><h2 data-t="sav_title"></h2></div>
+  <div style="padding:14px 16px" id="savList"></div>
+</div>
+
+<!-- ACTION SHEET -->
+<div class="overlay" id="ovAct"><div class="action-sheet"><div class="ash"></div><div id="shActC"></div></div></div>
+
+<div class="toast" id="toast" role="status"></div>

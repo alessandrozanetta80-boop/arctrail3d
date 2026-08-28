@@ -1,0 +1,45 @@
+5347,5349c5347,5355
+< // Data di apertura delle registrazioni: da qui in avanti l'email va confermata
+< // prima di entrare. Chi si era registrato PRIMA non viene toccato, altrimenti
+< // l'apertura sbatterebbe fuori tutti quelli che sono gia' dentro.
+---
+> // RITIRATA IL 28/08/2026, e non e' piu' letta da nessuno.
+> // Diceva: da questa data in avanti l'email va confermata prima di entrare, e
+> // chi si era registrato PRIMA non viene toccato. E' caduta quando le regole
+> // di Firestore hanno cominciato a chiedere `email_verified`: quella data nel
+> // token non c'e', quindi il telefono e il database avrebbero risposto due
+> // cose diverse alla stessa domanda. Vedi `needsEmailVerification()`.
+> // La riga resta perche' la data e' un fatto (il giorno in cui si sono aperte
+> // le registrazioni) e serve a leggere `metadata.creationTime` di un iscritto
+> // vecchio dal pannello. Si puo' togliere: non la legge piu' il codice.
+5390a5397,5410
+> /* LA CONFERMA VALE PER TUTTI, ANCHE PER CHI E' ENTRATO PRIMA. (28/08/2026.)
+>    Qui c'era `return created >= EMAIL_VERIFY_SINCE`: chi si era iscritto prima
+>    del 14/08/2026 non vedeva questa schermata. Era una gentilezza giusta
+>    finche' l'unica porta era il telefono.
+>    Dal 28/08 le regole di Firestore chiedono `email_verified` per tutto cio'
+>    che rende una persona visibile agli altri, e **nel token di Firebase quella
+>    data non esiste**: le regole non la possono guardare. Un campo scritto dal
+>    client non servirebbe — sarebbe il client stesso a poterlo falsificare.
+>    Quindi restava una scelta sola, e non e' fra sicuro e comodo: e' fra una
+>    SCHERMATA che dice cosa fare e un `permission-denied` MUTO. Chi non ha mai
+>    confermato l'indirizzo, da qui in avanti, trova la schermata di conferma
+>    col tasto per rimandare l'email. Nessuno resta chiuso fuori senza una
+>    strada per rientrare.
+>    *Questa modifica STRINGE: va pubblicata PRIMA delle regole (regola 18).* */
+5397,5401c5417
+< if(!hasPwd) return false;
+< var created = 0;
+< try{ created = Date.parse(user.metadata && user.metadata.creationTime ? user.metadata.creationTime : ""); }catch(e){}
+< if(!created) return false;
+< return created >= EMAIL_VERIFY_SINCE;
+---
+> return hasPwd;
+20318c20334
+< var BUILD_STAMP = "2026-08-27-turchia";
+---
+> var BUILD_STAMP = "2026-08-28-conferma";
+20327c20343
+< var BUILD_PARENT = "2026-08-27-senza-turchia";
+---
+> var BUILD_PARENT = "2026-08-27-turchia";
