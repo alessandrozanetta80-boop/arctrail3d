@@ -231,11 +231,19 @@ body{margin:0}
 .testata .wrap{display:flex; align-items:center; gap:26px; height:calc(var(--testata) - 1px)}
 .marchio{display:flex; align-items:center; gap:11px; text-decoration:none; flex:0 0 auto}
 .marchio .segno{width:30px; height:30px; border-radius:7px; flex:0 0 auto}
+/* IL WORDMARK, IDENTICO IN APP E VETRINA. (28/08/2026.) Qui la scritta era
+   in maiuscoletto col carattere dei titoli, nell'app era Inter 800 tondo:
+   due marchi diversi nello stesso prodotto. Adesso e' uno solo — stesso
+   carattere, stesso peso, stessa crenatura — e cambia solo la scala. */
 .marchio .nome{
-  font-family:var(--titolo); font-size:20px; font-weight:800;
-  text-transform:uppercase; letter-spacing:.01em; color:var(--osso);
+  font-family:var(--corpo); font-size:24px; font-weight:800;
+  text-transform:none; letter-spacing:-.018em; color:var(--osso);
 }
-.marchio .nome b{color:var(--prato); font-weight:700}
+.marchio .nome b{color:var(--prato); font-weight:800}
+/* Il sentiero segue la scritta: altezza in `em`, cosi' il rapporto fra i due
+   non cambia mai, a nessuna misura e su nessuno schermo. */
+.marchio .sentiero{height:1.25em; width:auto; display:block; flex:0 0 auto; margin-top:.10em}
+.marchio{gap:.06em}
 .menu{display:flex; gap:24px; margin-left:14px}
 .menu a{
   text-decoration:none; font-size:13px; font-weight:600;
@@ -600,8 +608,7 @@ body{margin:0}
   .accedi{display:none}
   .testata .wrap{gap:10px}
   .testata .destra{gap:8px}
-  .marchio .nome{font-size:17px}
-  .marchio .segno{width:26px; height:26px; border-radius:6px}
+  .marchio .nome{font-size:20px}
   .lingua{padding:6px 8px; font-size:11px}
   .tasto-min{font-size:15px; padding:9px 13px}
   .promessa{flex-direction:column; gap:10px}
@@ -612,8 +619,7 @@ body{margin:0}
    nome e la porta d'ingresso restano tutti e due — si stringe. */
 @media (max-width:380px){
   .vetrina{--gutter:16px}
-  .marchio{gap:8px}
-  .marchio .segno{width:24px; height:24px; border-radius:5px}
+  .marchio .nome{font-size:19px}
   .marchio .nome{font-size:14px; letter-spacing:.005em}
   .tasto-min{font-size:13px; padding:8px 10px; letter-spacing:.03em}
   .testata .destra{gap:6px}
@@ -641,22 +647,22 @@ body{margin:0}
 <!-- Il timbro, come marketplace.html: `data-build` dice quale versione e'
      questa, `data-parent` da quale e' nata. La prima anteprima non ne aveva
      nessuno — quindi il genitore e' dichiarato per nome, non inventato. -->
-<body data-build="2026-08-28-marchio" data-parent="2026-08-27-identita">
+<body data-build="2026-08-28-firma" data-parent="2026-08-28-marchio">
 <div class="vetrina">
 
 <!-- ══════════ TESTATA ══════════ -->
 <header class="testata">
   <div class="wrap">
     <a class="marchio" href="#">
-      <!-- IL MARCHIO VERO. In produzione la sorgente torna src="logo.webp",
-           che sta nella stessa cartella su GitHub.
-           Qui dentro c'e' lo stesso marchio ridotto a 96px (4 KB invece di 43):
-           si vede a 30, e portarsi 532px per mostrarne 30 non ha senso.
-           Il fondo crema e' cotto dentro i pixel e non si toglie: su un fondo
-           scuro gli anelli si fondono. Quindi non si finge che sia ritagliato —
-           si arrotondano gli angoli, e dichiara quello che e': l'icona dell'app. -->
-      <img class="segno" src="logo.webp" width="30" height="30" alt="" aria-hidden="true">
+      <!-- IL MARCHIO E' TESTO, NON UN'IMMAGINE. (28/08/2026.) Prima qui c'era
+           `logo.webp`: l'icona dell'app, col fondo cotto nei pixel, messa
+           accanto alla scritta. Adesso il marchio interno e' il wordmark —
+           testo vero, che resta nitido a ogni misura, si ridimensiona con la
+           barra e lo screen reader legge — piu' il sentiero, un tracciato
+           solo. L'icona completa resta dov'e' il suo mestiere: schermata del
+           telefono, store, favicon. -->
       <span class="nome">Arc<b>Trail</b> 3D</span>
+      <svg class="sentiero" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 194 128" aria-hidden="true" focusable="false"><path d="M 163.00 6.00 L 159.00 6.00 L 158.00 7.00 L 153.00 7.00 L 152.00 8.00 L 146.00 8.00 L 145.00 9.00 L 140.00 9.00 L 139.00 10.00 L 135.00 10.00 L 134.00 11.00 L 130.00 11.00 L 129.00 12.00 L 124.00 12.00 L 123.00 13.00 L 119.00 13.00 L 118.00 14.00 L 115.00 14.00 L 114.00 15.00 L 111.00 15.00 L 110.00 16.00 L 107.00 16.00 L 106.00 17.00 L 104.00 17.00 L 103.00 18.00 L 101.00 18.00 L 100.00 19.00 L 98.00 19.00 L 97.00 20.00 L 95.00 20.00 L 94.00 21.00 L 91.00 22.00 L 87.00 26.00 L 87.00 29.00 L 88.00 30.00 L 88.00 31.00 L 90.00 33.00 L 91.00 33.00 L 93.00 35.00 L 94.00 35.00 L 95.00 36.00 L 96.00 36.00 L 97.00 37.00 L 98.00 37.00 L 99.00 38.00 L 100.00 38.00 L 101.00 39.00 L 102.00 39.00 L 107.00 42.00 L 109.00 42.00 L 110.00 43.00 L 111.00 43.00 L 112.00 44.00 L 115.00 45.00 L 117.00 47.00 L 118.00 47.00 L 119.00 48.00 L 120.00 48.00 L 122.00 50.00 L 123.00 50.00 L 130.00 57.00 L 130.00 64.00 L 129.00 65.00 L 129.00 66.00 L 122.00 73.00 L 121.00 73.00 L 119.00 75.00 L 118.00 75.00 L 117.00 76.00 L 116.00 76.00 L 115.00 77.00 L 114.00 77.00 L 113.00 78.00 L 112.00 78.00 L 111.00 79.00 L 110.00 79.00 L 109.00 80.00 L 108.00 80.00 L 107.00 81.00 L 106.00 81.00 L 101.00 84.00 L 99.00 84.00 L 96.00 86.00 L 94.00 86.00 L 93.00 87.00 L 91.00 87.00 L 90.00 88.00 L 88.00 88.00 L 85.00 90.00 L 83.00 90.00 L 82.00 91.00 L 80.00 91.00 L 79.00 92.00 L 77.00 92.00 L 76.00 93.00 L 74.00 93.00 L 73.00 94.00 L 70.00 94.00 L 69.00 95.00 L 67.00 95.00 L 66.00 96.00 L 64.00 96.00 L 63.00 97.00 L 61.00 97.00 L 60.00 98.00 L 57.00 98.00 L 56.00 99.00 L 54.00 99.00 L 53.00 100.00 L 50.00 100.00 L 49.00 101.00 L 46.00 101.00 L 45.00 102.00 L 43.00 102.00 L 42.00 103.00 L 39.00 103.00 L 38.00 104.00 L 36.00 104.00 L 35.00 105.00 L 32.00 105.00 L 31.00 106.00 L 28.00 106.00 L 27.00 107.00 L 25.00 107.00 L 24.00 108.00 L 21.00 108.00 L 20.00 109.00 L 17.00 109.00 L 16.00 110.00 L 13.00 110.00 L 12.00 111.00 L 10.00 111.00 L 9.00 112.00 L 6.00 112.00 L 9.00 112.00 L 10.00 113.00 L 9.00 114.00 L 7.00 114.00 L 8.00 115.00 L 7.00 116.00 L 6.00 116.00 L 7.00 116.00 L 8.00 115.00 L 11.00 116.00 L 12.00 117.00 L 12.00 118.00 L 13.00 118.00 L 14.00 119.00 L 14.00 120.00 L 15.00 120.00 L 16.00 121.00 L 16.00 125.00 L 17.00 125.00 L 18.00 126.00 L 20.00 126.00 L 21.00 127.00 L 24.00 127.00 L 25.00 126.00 L 28.00 126.00 L 29.00 125.00 L 32.00 125.00 L 33.00 124.00 L 35.00 124.00 L 36.00 123.00 L 38.00 123.00 L 39.00 122.00 L 42.00 122.00 L 43.00 121.00 L 45.00 121.00 L 46.00 120.00 L 49.00 120.00 L 50.00 119.00 L 52.00 119.00 L 53.00 118.00 L 55.00 118.00 L 56.00 117.00 L 58.00 117.00 L 59.00 116.00 L 61.00 116.00 L 62.00 115.00 L 64.00 115.00 L 65.00 114.00 L 67.00 114.00 L 68.00 113.00 L 70.00 113.00 L 71.00 112.00 L 73.00 112.00 L 74.00 111.00 L 76.00 111.00 L 77.00 110.00 L 79.00 110.00 L 82.00 108.00 L 84.00 108.00 L 85.00 107.00 L 87.00 107.00 L 90.00 105.00 L 92.00 105.00 L 95.00 103.00 L 97.00 103.00 L 100.00 101.00 L 102.00 101.00 L 103.00 100.00 L 104.00 100.00 L 105.00 99.00 L 106.00 99.00 L 111.00 96.00 L 113.00 96.00 L 114.00 95.00 L 115.00 95.00 L 116.00 94.00 L 117.00 94.00 L 118.00 93.00 L 121.00 92.00 L 123.00 90.00 L 124.00 90.00 L 125.00 89.00 L 128.00 88.00 L 130.00 86.00 L 131.00 86.00 L 134.00 83.00 L 135.00 83.00 L 143.00 75.00 L 143.00 74.00 L 145.00 71.00 L 145.00 68.00 L 146.00 67.00 L 146.00 64.00 L 145.00 63.00 L 145.00 60.00 L 143.00 58.00 L 143.00 57.00 L 137.00 51.00 L 136.00 51.00 L 134.00 49.00 L 133.00 49.00 L 131.00 47.00 L 130.00 47.00 L 129.00 46.00 L 130.00 45.00 L 132.00 45.00 L 135.00 47.00 L 137.00 47.00 L 138.00 48.00 L 141.00 49.00 L 143.00 51.00 L 146.00 52.00 L 148.00 54.00 L 149.00 54.00 L 157.00 62.00 L 157.00 63.00 L 159.00 66.00 L 159.00 74.00 L 158.00 75.00 L 158.00 76.00 L 157.00 77.00 L 156.00 80.00 L 146.00 90.00 L 145.00 90.00 L 142.00 93.00 L 141.00 93.00 L 136.00 97.00 L 133.00 98.00 L 131.00 100.00 L 130.00 100.00 L 129.00 101.00 L 128.00 101.00 L 127.00 102.00 L 126.00 102.00 L 125.00 103.00 L 124.00 103.00 L 123.00 104.00 L 122.00 104.00 L 121.00 105.00 L 120.00 105.00 L 119.00 106.00 L 118.00 106.00 L 113.00 109.00 L 111.00 109.00 L 110.00 110.00 L 109.00 110.00 L 104.00 113.00 L 102.00 113.00 L 97.00 116.00 L 95.00 116.00 L 92.00 118.00 L 90.00 118.00 L 87.00 120.00 L 85.00 120.00 L 84.00 121.00 L 83.00 121.00 L 82.00 122.00 L 80.00 122.00 L 77.00 124.00 L 75.00 124.00 L 74.00 125.00 L 72.00 125.00 L 69.00 127.00 L 67.00 127.00 L 88.00 127.00 L 89.00 126.00 L 91.00 126.00 L 96.00 123.00 L 98.00 123.00 L 101.00 121.00 L 103.00 121.00 L 104.00 120.00 L 106.00 120.00 L 107.00 119.00 L 108.00 119.00 L 111.00 117.00 L 113.00 117.00 L 114.00 116.00 L 115.00 116.00 L 116.00 115.00 L 117.00 115.00 L 122.00 112.00 L 124.00 112.00 L 125.00 111.00 L 126.00 111.00 L 127.00 110.00 L 128.00 110.00 L 129.00 109.00 L 130.00 109.00 L 131.00 108.00 L 134.00 107.00 L 136.00 105.00 L 138.00 105.00 L 140.00 103.00 L 143.00 102.00 L 145.00 100.00 L 146.00 100.00 L 148.00 98.00 L 149.00 98.00 L 151.00 96.00 L 152.00 96.00 L 164.00 84.00 L 164.00 83.00 L 167.00 78.00 L 167.00 76.00 L 168.00 75.00 L 168.00 67.00 L 167.00 66.00 L 167.00 64.00 L 165.00 62.00 L 165.00 61.00 L 159.00 55.00 L 158.00 55.00 L 153.00 51.00 L 152.00 51.00 L 147.00 48.00 L 145.00 48.00 L 140.00 45.00 L 138.00 45.00 L 137.00 44.00 L 135.00 44.00 L 132.00 42.00 L 129.00 42.00 L 128.00 41.00 L 126.00 41.00 L 125.00 40.00 L 123.00 40.00 L 122.00 39.00 L 120.00 39.00 L 119.00 38.00 L 117.00 38.00 L 116.00 37.00 L 114.00 37.00 L 113.00 36.00 L 111.00 36.00 L 110.00 35.00 L 108.00 35.00 L 107.00 34.00 L 105.00 34.00 L 104.00 33.00 L 103.00 33.00 L 102.00 32.00 L 99.00 31.00 L 97.00 28.00 L 97.00 26.00 L 100.00 23.00 L 101.00 23.00 L 106.00 20.00 L 108.00 20.00 L 109.00 19.00 L 111.00 19.00 L 112.00 18.00 L 114.00 18.00 L 115.00 17.00 L 118.00 17.00 L 119.00 16.00 L 122.00 16.00 L 123.00 15.00 L 126.00 15.00 L 127.00 14.00 L 130.00 14.00 L 131.00 13.00 L 134.00 13.00 L 135.00 12.00 L 139.00 12.00 L 140.00 11.00 L 144.00 11.00 L 145.00 10.00 L 148.00 10.00 L 149.00 9.00 L 153.00 9.00 L 154.00 8.00 L 158.00 8.00 L 159.00 7.00 L 163.00 7.00 Z M 124.00 44.00 L 125.00 43.00 L 127.00 43.00 L 130.00 45.00 L 129.00 46.00 L 127.00 46.00 Z M 122.00 43.00 L 123.00 42.00 L 124.00 42.00 L 125.00 43.00 L 124.00 44.00 L 123.00 44.00 Z M 120.00 42.00 L 121.00 41.00 L 122.00 42.00 L 121.00 43.00 Z M 185.00 3.00 L 180.00 3.00 L 179.00 4.00 L 173.00 4.00 L 172.00 5.00 L 166.00 5.00 L 165.00 6.00 L 169.00 6.00 L 170.00 5.00 L 174.00 5.00 L 175.00 4.00 L 180.00 4.00 L 181.00 3.00 Z" fill="#C8A24A" fill-rule="evenodd"/></svg>
     </a>
     <nav class="menu">
       <a href="#cosa" data-k="nav_cosa">Cosa fa</a>
