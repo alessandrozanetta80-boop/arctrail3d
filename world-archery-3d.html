@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Punteggio World Archery 3D: 24 bersagli, 2 frecce e zone 11-10-8-5 | ArcTrail 3D</title>
+<meta name="description" content="Come si conta il punteggio nel 3D World Archery: 24 bersagli, due frecce, zone 11, 10, 8 e 5. Le federazioni che lo applicano e le fonti ufficiali.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://arctrail3d.com/world-archery-3d.html">
+<link rel="icon" href="/favicon.ico">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ArcTrail 3D">
+<meta property="og:title" content="Punteggio World Archery 3D: 24 bersagli, 2 frecce e zone 11-10-8-5">
+<meta property="og:description" content="Il 3D Round World Archery spiegato una volta sola, con le federazioni che lo applicano.">
+<meta property="og:url" content="https://arctrail3d.com/world-archery-3d.html">
+<meta property="og:image" content="https://arctrail3d.com/logo.jpg">
+<style>
+/* Stessa famiglia di `presentazione.html` e `fiarc.html`: gli stessi sei
+   colori, la stessa colonna da 760px, la stessa carta col picchetto a
+   sinistra. Chi passa da una pagina all'altra deve restare nello stesso
+   posto, non trovarsi in due siti che si somigliano. */
+:root{
+  --ink:#201D18; --teal:#455648; --amber:#C8551A;
+  --paper:#F5F2ED; --card:#FFFFFF; --line:#E4E1DB; --muted:#71665E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px; line-height:1.65;
+}
+header{background:var(--ink); color:#fff; padding:18px 20px}
+.hwrap{max-width:760px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+.brand{font-weight:800; letter-spacing:.02em; font-size:17px}
+.brand span{color:#AEBEB1}
+.back{margin-left:auto; color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.35);
+  padding:7px 13px; border-radius:999px; font-size:14px; font-weight:600}
+.back:hover{background:rgba(255,255,255,.12)}
+main{max-width:760px; margin:0 auto; padding:26px 20px 64px}
+h1{font-size:26px; line-height:1.25; margin:0 0 14px; letter-spacing:-.01em}
+h2{font-size:19px; margin:34px 0 10px; padding-top:20px; border-top:1px solid var(--line); letter-spacing:-.01em}
+h3{font-size:16px; margin:22px 0 6px}
+p,li{margin:0 0 12px}
+ul{padding-left:20px}
+a{color:var(--teal)}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid var(--amber); outline-offset:3px }
+.lead{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--teal);
+  border-radius:12px; padding:16px 18px; margin:0 0 22px}
+.lead p:last-child{margin:0}
+.note{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--amber);
+  border-radius:12px; padding:14px 16px; margin:18px 0}
+.note p:last-child{margin:0}
+.cta{display:inline-block; background:var(--teal); color:#fff; text-decoration:none;
+  font-weight:700; padding:13px 22px; border-radius:10px; margin:8px 0 4px}
+.cta:hover{background:#334036}
+/* LA TABELLA SUL TELEFONO. Invece di rimpicciolire il testo — che e' la cosa
+   che si guarda al sole, in piedi — la tabella scorre di lato dentro il suo
+   riquadro, e il resto della pagina resta fermo. */
+.tw{overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 0 14px;
+  border:1px solid var(--line); border-radius:12px; background:var(--card)}
+table{border-collapse:collapse; width:100%; min-width:320px; font-size:15px}
+caption{caption-side:top; text-align:left; padding:12px 14px 0; color:var(--muted); font-size:14px}
+th,td{padding:10px 14px; text-align:right; border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left; font-weight:600}
+thead th{font-size:13px; color:var(--muted); font-weight:600; letter-spacing:.02em}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+.fonte{color:var(--muted); font-size:15px}
+/* LE SEZIONI PER FEDERAZIONE. Sono ancore, non pagine: chi arriva da un link
+   con #fitarco deve capire in un colpo d'occhio di essere atterrato nel punto
+   giusto, e il filo a sinistra glielo dice senza aggiungere una parola. */
+.fed{border-left:3px solid var(--line); padding:2px 0 2px 16px; margin:22px 0}
+.fed h3{margin:0 0 4px; font-size:16px}
+.fed h3:target,.fed:target h3{color:var(--amber)}
+.fed p{margin:0 0 6px}
+.fed p:last-child{margin:0}
+.paese{margin:26px 0 6px; font-size:16px; font-weight:700}
+.elenco-fed{list-style:none; padding:0; margin:0 0 8px}
+.elenco-fed li{margin:0 0 8px}
+footer{border-top:1px solid var(--line); margin-top:44px; padding-top:18px; color:var(--muted); font-size:14px}
+footer a{margin-right:16px}
+@media (min-width:760px){ h1{font-size:32px} main{padding-top:34px} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hwrap">
+    <div class="brand">ArcTrail<span> 3D</span></div>
+    <a class="back" href="/app.html">Apri l'app</a>
+  </div>
+</header>
+
+<main>
+
+  <h1>Punteggio World Archery 3D</h1>
+
+  <div class="lead">
+    <p>Il 3D Round di World Archery è il formato internazionale: 24 sagome a distanza sconosciuta, due frecce per ognuna, quattro zone sul corpo dell'animale.</p>
+    <p>Lo applicano dieci delle federazioni che ArcTrail 3D conosce, in dieci paesi. Il regolamento è lo stesso per tutte: per questo sta scritto una volta sola, qui, e non ripetuto dieci volte con una sigla diversa in cima.</p>
+  </div>
+
+  <p><a class="cta" href="/app.html">Segna un giro World Archery con ArcTrail 3D</a></p>
+
+  <h2>Com'è fatto il giro</h2>
+  <p>Le distanze non sono scritte da nessuna parte, e valutarle fa parte della gara. Il picchetto da cui si tira dipende dalla divisione.</p>
+  <ul>
+    <li>24 bersagli, numerati da 1 a 24</li>
+    <li>2 frecce per bersaglio</li>
+    <li>48 frecce complessive</li>
+    <li>distanze non segnate</li>
+    <li>si sommano i punti di tutte e due le frecce</li>
+  </ul>
+  <div class="tw">
+    <table>
+      <caption>Le distanze, per picchetto e divisione</caption>
+      <thead><tr><th scope="col">Divisione</th><th scope="col">Picchetto</th><th scope="col">Minimo</th><th scope="col">Massimo</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Compound</th><td>rosso</td><td>5 m</td><td>45 m</td></tr>
+        <tr><th scope="row">Arco nudo</th><td>blu</td><td>5 m</td><td>30 m</td></tr>
+        <tr><th scope="row">Longbow</th><td>blu</td><td>5 m</td><td>30 m</td></tr>
+        <tr><th scope="row">Tradizionale</th><td>blu</td><td>5 m</td><td>30 m</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Nel 3D World Archery il ricurvo non ha una divisione: i titoli mondiali sono per compound, arco nudo, longbow e tradizionale.</p>
+
+  <h2>Le quattro zone</h2>
+  <p>La sagoma è divisa in quattro zone di punteggio, e il valore <strong>non cambia fra la prima e la seconda freccia</strong>: due volte 11 fanno 22, che è il massimo su una piazzola.</p>
+  <div class="tw">
+    <table>
+      <caption>Punteggio per zona, uguale per entrambe le frecce</caption>
+      <thead><tr><th scope="col">Zona</th><th scope="col">Punti</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Cerchio interno al 10</th><td>11</td></tr>
+        <tr><th scope="row">Cerchio dentro l'area vitale</th><td>10</td></tr>
+        <tr><th scope="row">Area vitale fuori dal 10</th><td>8</td></tr>
+        <tr><th scope="row">Resto del corpo</th><td>5</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Il massimo teorico di un giro è quindi 24 × 2 × 11 = <strong>528</strong>.</p>
+
+  <h2>La regola della linea, e cosa non conta</h2>
+  <ul>
+    <li>una freccia che tocca la linea fra due zone prende il <strong>valore più alto</strong>;</li>
+    <li>corno, zoccolo e le altre parti dichiarate fuori punteggio non contano, e la freccia è un <em>miss</em>;</li>
+    <li>una freccia che passa attraverso una parte non a punto ma tocca una zona valida prende il valore della zona che tocca;</li>
+    <li>una freccia di rimbalzo su cui il gruppo non trova un accordo vale <strong>5</strong>;</li>
+    <li>una freccia che scivola via dalla sagoma è un <em>miss</em>.</li>
+  </ul>
+
+  <h2>I tempi</h2>
+  <p>Nelle qualificazioni il limite è di <strong>120 secondi</strong>, e viene applicato quando un arciere o un gruppo sta ritardando gli altri: non c'è un cronometro su ogni piazzola. Negli scontri diretti e nelle finali il limite è di 90 secondi per l'individuale, 120 per le squadre e 160 per le squadre miste.</p>
+
+  <h2>Federazioni World Archery supportate da ArcTrail 3D</h2>
+  <p>Il regolamento è quello descritto qui sopra, uno solo per tutte. Quello che cambia da una federazione all'altra è il documento nazionale a cui fare riferimento in gara, e con quale altro regolamento convive nello stesso paese.</p>
+  <div class="fed" id="fitarco">
+    <h3>FITARCO — Italia</h3>
+    <p>Federazione Italiana di Tiro con l'Arco</p>
+    <p>Il Libro 4 all'art. 23.3.1 dice due frecce per sagoma; il Libro 2 fissa le 24 sagome a distanze sconosciute. Gli 11 e i 10 compaiono negli articoli sui pari merito, il 5 in quello sulle frecce di rimbalzo.</p>
+    <p class="fonte">Fonte nazionale verificata: <a href="https://www.fitarco.it/documenti/carte-federali/regolamenti-tecnici-1" rel="nofollow noopener" target="_blank">Regolamento Tecnico di Tiro, Libro 2 e Libro 4, in vigore dal 1° gennaio 2026</a>.</p>
+  </div>
+  <div class="fed" id="ffta">
+    <h3>FFTA — Francia</h3>
+    <p>Fédération Française de Tir à l'Arc</p>
+    <p>La pagina ufficiale dichiara le 24 cibles e le quattro zone da 5, 8, 10 e 11 punti.</p>
+    <p class="fonte">Fonte nazionale verificata: <a href="https://www.ffta.fr/pratiquer/disciplines-officielles-et-nouvelles-pratiques/le-tir-3d" rel="nofollow noopener" target="_blank">FFTA — Le tir 3D</a>.</p>
+  </div>
+  <div class="fed" id="swissarchery">
+    <h3>SwissArchery — Svizzera</h3>
+    <p>SwissArchery</p>
+    <p>Federazione svizzera affiliata a World Archery. In Svizzera convive con la FAAS, che sta sul circuito IFAA: sono due gare diverse.</p>
+    <p class="fonte">Sito ufficiale: <a href="https://www.swissarchery.org" rel="nofollow noopener" target="_blank">www.swissarchery.org</a>. Un regolamento 3D nazionale separato non è stato reperito: vale quello del circuito.</p>
+  </div>
+  <div class="fed" id="oebsv">
+    <h3>ÖBSV — Austria</h3>
+    <p>Österreichischer Bogensportverband</p>
+    <p>La Wettkampfordnung, al §1.1, dichiara l'ÖBSV membro di World Archery <strong>e</strong> di IFAA: in Austria «gara 3D» da solo non basta a dire che gara sia. L'altro regolamento sta in <a href="/ifaa-3d.html#oebsv">IFAA 3D</a>.</p>
+    <p class="fonte">Sito ufficiale: <a href="https://www.archeryaustria.net" rel="nofollow noopener" target="_blank">www.archeryaustria.net</a>. Un regolamento 3D nazionale separato non è stato reperito: vale quello del circuito.</p>
+  </div>
+  <div class="fed" id="dsb">
+    <h3>DSB — Germania</h3>
+    <p>Deutscher Schützenbund</p>
+    <p>La pagina ufficiale dichiara <em>24 Passen à 2 Pfeile</em> e descrive le quattro zone una per una. In Germania il DSB convive col DFBV, che sta sul circuito IFAA.</p>
+    <p class="fonte">Fonte nazionale verificata: <a href="https://www.dsb.de/bogensport/sport/wettkampfformate/modus-3d" rel="nofollow noopener" target="_blank">DSB — Wettkampfmodus WA 3D</a>.</p>
+  </div>
+  <div class="fed" id="archerygb">
+    <h3>Archery GB — Regno Unito</h3>
+    <p>Archery GB</p>
+    <p>Federazione britannica affiliata a World Archery. Nel Regno Unito convivono tre regolamenti: questo, quello <a href="/ifaa-3d.html">IFAA</a> e quello <a href="/nfas-3d.html">NFAS</a>.</p>
+    <p class="fonte">Sito ufficiale: <a href="https://www.archerygb.org" rel="nofollow noopener" target="_blank">www.archerygb.org</a>. Un regolamento 3D nazionale separato non è stato reperito: vale quello del circuito.</p>
+  </div>
+  <div class="fed" id="tof">
+    <h3>TOF — Turchia</h3>
+    <p>Türkiye Okçuluk Federasyonu</p>
+    <p>Federazione turca affiliata a World Archery.</p>
+    <p class="fonte">Sito ufficiale: <a href="https://www.turkarchery.org" rel="nofollow noopener" target="_blank">www.turkarchery.org</a>. Un regolamento 3D nazionale separato non è stato reperito: vale quello del circuito.</p>
+  </div>
+  <div class="fed" id="rfeta">
+    <h3>RFETA — Spagna</h3>
+    <p>Real Federación Española de Tiro con Arco</p>
+    <p>Federazione spagnola affiliata a World Archery.</p>
+    <p class="fonte">Sito ufficiale: <a href="https://www.rfeta.es" rel="nofollow noopener" target="_blank">www.rfeta.es</a>. Un regolamento 3D nazionale separato non è stato reperito: vale quello del circuito.</p>
+  </div>
+  <div class="fed" id="khsn">
+    <h3>KHSN — Paesi Bassi</h3>
+    <p>Koninklijke Handboogsport Nederland</p>
+    <p>La pagina ufficiale dichiara l'adesione a World Archery <strong>e</strong> alla International Field Archery Association. L'altro regolamento sta in <a href="/ifaa-3d.html#khsn">IFAA 3D</a>.</p>
+    <p class="fonte">Fonte nazionale verificata: <a href="https://www.handboogsport.nl/over-khsn/" rel="nofollow noopener" target="_blank">KHSN — Over KHSN</a>.</p>
+  </div>
+  <div class="fed" id="sbf">
+    <h3>SBF — Svezia</h3>
+    <p>Svenska Bågskytteförbundet</p>
+    <p>La pagina ufficiale dichiara le due frecce per bersaglio, le zone 11/10/8/5, il massimo di 22 punti per sagoma e le 24 piazzole. In Svezia l'SBF convive con la <a href="/ifaa-3d.html#sfsf">SFSF</a>, che sta su IFAA.</p>
+    <p class="fonte">Fonte nazionale verificata: <a href="https://www.bagskytte.se/tavlingar--resultat/tavlingsgrenar/3d" rel="nofollow noopener" target="_blank">SBF — 3D</a>.</p>
+  </div>
+
+  <h2>Un segnapunti che sa quale gara stai tirando</h2>
+  <p>Sommare numeri lo fa chiunque. La parte che costa attenzione, sul percorso, è ricordarsi quale tabella vale oggi: quante frecce spettano su questa piazzola, se la seconda conta ancora, quanto vale una zona presa al secondo tentativo.</p>
+  <p>In ArcTrail 3D quella scelta si fa una volta sola, prima di partire. L'app cambia da sé il numero di frecce e il barème previsto dal formato, e durante il giro funziona anche senza connessione — che sul percorso è la condizione normale, non l'eccezione.</p>
+  <p><a class="cta" href="/app.html">Apri il segnapunti World Archery</a></p>
+
+  <h2>Fonte del regolamento</h2>
+  <p class="fonte">I dati numerici di questa pagina sono presi da: <a href="https://extranet.worldarchery.sport/documents/index.php/?doc=7618&inline=1" rel="nofollow noopener" target="_blank">World Archery — Book 2 (Events), versione 2026-03-13</a>. <a href="https://extranet.worldarchery.sport/documents/index.php/?doc=7620&inline=1" rel="nofollow noopener" target="_blank">World Archery — Book 4 (Field and 3D Archery), versione 2026-03-13</a>.</p>
+  <p class="fonte">In particolare: Book 2 art. 4.5.2.1 per i 24 bersagli e le due frecce, art. 4.5.2.3 per le distanze, art. 8.2.2.1 per le quattro zone e la regola della linea; Book 4 art. 20.3.1 per le due frecce in tutte le fasi, art. 21.8 e 21.10 per i tempi, art. 22.2.1 per il rimbalzo.</p>
+
+  <div class="note">
+    <p><strong>ArcTrail 3D è un progetto indipendente e non è un'app ufficiale di World Archery né di alcuna federazione nazionale.</strong></p>
+    <p>Durante una manifestazione ufficiale fanno sempre fede il regolamento vigente, le disposizioni dell'organizzazione e il cartellino ufficiale.</p>
+  </div>
+
+  <footer>
+    <a href="/">ArcTrail 3D</a>
+    <a href="/presentazione.html">Che cos'è ArcTrail 3D</a>
+    <a href="/regolamenti-3d.html">Tutti i regolamenti</a>
+    <a href="/app.html">Apri l'app</a>
+    <p>ArcTrail 3D — progetto indipendente, Italia — info@arctrail3d.com</p>
+  </footer>
+
+</main>
+
+</body>
+</html>

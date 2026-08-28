@@ -95,6 +95,7 @@ banco "controlla-tavolozza.js (app e mercatino, lo stesso colore)" "node control
 banco "banco-ruoli-compagnia.js (chi vede cosa nello spazio compagnia)" "node banco-ruoli-compagnia.js"
 banco "banco-vetrina.js (la vetrina in nove lingue, playwright)" "node banco-vetrina.js index.html"
 banco "banco-porta.js (la porta dell'app, nove lingue, playwright)" "node banco-porta.js app.html"
+banco "banco-ifaa.js (il bareme IFAA e i giri di ieri)" "node banco-ifaa.js"
 banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node controlla-diari.js"
 
 echo ""

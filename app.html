@@ -5870,6 +5870,10 @@ try{
 var loadedState = JSON.parse(localStorage.getItem(STORAGE_KEY));
 if(loadedState){ state = loadedState; }
 }catch(e){}
+// Un giro IFAA aperto prima della correzione del 28/08/2026 deve finire con
+// la tabella con cui e' cominciato. La funzione sta piu' sotto: e' una
+// dichiarazione, quindi qui esiste gia'.
+adattaGiroIfaa(state);
 state.percorsi = state.percorsi || []; // percorsi gara salvati (Prepara Gara)
 // Riaprire l'app = ripartire dalla home, come fanno le altre app.
 // Restano lingua, profilo, storico e il giro in corso (che si riprende dal
@@ -6540,7 +6544,7 @@ mode_archerygb_3d_desc:"3D Round ufficiale Archery GB (standard World Archery): 
 mode_nfas_training_label:"Allenamento", mode_nfas_training_tag:"1 freccia", mode_nfas_training_unit:"Freccia",
 mode_nfas_training_desc:"Allenamento libero secondo le zone NFAS: una sola freccia per piazzola, punteggi fissi.",
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"gara \u00b7 fino a 3 frecce", mode_nfas_biggame_unit:"Freccia",
-mode_nfas_biggame_desc:"Big Game Round ufficiale NFAS: 28 piazzole, fino a 3 frecce (vale solo la prima a segno), l'Inner Kill vale solo sulla prima freccia.",
+mode_nfas_biggame_desc:"Big Game Round NFAS: fino a 3 frecce (vale solo la prima a segno), l'Inner Kill vale solo sulla prima freccia. ArcTrail usa al momento un preset da 28 piazzole; NFAS non fissa un numero unico di bersagli.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"gara \u00b7 1 freccia", mode_ifaa_hunting_unit:"Freccia",
@@ -7233,7 +7237,7 @@ mode_archerygb_training_desc:"Free training following World Archery zones: a sin
 mode_nfas_training_label:"Training", mode_nfas_training_tag:"1 arrow", mode_nfas_training_unit:"Arrow",
 mode_nfas_training_desc:"Free training following NFAS zones: a single arrow per target, fixed scores.",
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"match \u00b7 up to 3 arrows", mode_nfas_biggame_unit:"Arrow",
-mode_nfas_biggame_desc:"Official NFAS Big Game Round: 28 targets, up to 3 arrows (only the first hit counts), the Inner Kill only counts on the first arrow.",
+mode_nfas_biggame_desc:"NFAS Big Game Round: up to 3 arrows (only the first hit counts), with the Inner Kill only on the first arrow. ArcTrail currently uses a 28-target preset; NFAS does not set one fixed target count.",
 profile_arco: "Main bow", profile_edit_email_note: "To change your login email, contact support.",
 theme_section_title: "Appearance", theme_dark_label: "Dark", theme_light_label: "Light", theme_sun_label: "Sun",
 theme_hint: "Sun: vivid colours and black text, for a screen in direct sunlight. No app can sense the light around you, so you pick the theme by hand and it stays until you change it.",
@@ -7904,7 +7908,7 @@ mode_archerygb_training_desc:"Entra\u00eenement libre selon les zones World Arch
 mode_nfas_training_label:"Entra\u00eenement", mode_nfas_training_tag:"1 fl\u00e8che", mode_nfas_training_unit:"Fl\u00e8che",
 mode_nfas_training_desc:"Entra\u00eenement libre selon les zones NFAS\u00a0: une seule fl\u00e8che par cible, points fixes.",
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"comp\u00e9tition \u00b7 jusqu’\u00e0 3 fl\u00e8ches", mode_nfas_biggame_unit:"Fl\u00e8che",
-mode_nfas_biggame_desc:"Big Game Round officiel NFAS\u00a0: 28 cibles, jusqu’\u00e0 3 fl\u00e8ches (seul le premier impact compte), l’Inner Kill ne compte que sur la premi\u00e8re fl\u00e8che.",
+mode_nfas_biggame_desc:"Big Game Round NFAS\u00a0: jusqu’\u00e0 3 fl\u00e8ches (seul le premier impact compte), l’Inner Kill ne compte que sur la premi\u00e8re fl\u00e8che. ArcTrail utilise actuellement un pr\u00e9r\u00e9glage de 28 cibles\u00a0; NFAS ne fixe pas un nombre unique de cibles.",
 profile_arco: "Arc principal", profile_edit_email_note: "Pour changer votre e-mail de connexion, contactez l’assistance.",
 theme_section_title: "Apparence", theme_dark_label: "Sombre", theme_light_label: "Claire", theme_sun_label: "Soleil",
 theme_hint: "Soleil : couleurs vives et texte noir, pour un écran en plein soleil. Aucune application ne peut détecter la lumière autour de vous : le thème se choisit à la main et reste tel quel.",
@@ -8575,7 +8579,7 @@ mode_archerygb_training_desc:"Freies Training nach World-Archery-Zonen: ein einz
 mode_nfas_training_label:"Training", mode_nfas_training_tag:"1 Pfeil", mode_nfas_training_unit:"Pfeil",
 mode_nfas_training_desc:"Freies Training nach NFAS-Zonen: ein einzelner Pfeil pro Ziel, feste Punktwerte.",
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"Wettkampf \u00b7 bis zu 3 Pfeile", mode_nfas_biggame_unit:"Pfeil",
-mode_nfas_biggame_desc:"Offizielle NFAS Big Game Round: 28 Ziele, bis zu 3 Pfeile (nur der erste Treffer z\u00e4hlt), der Inner Kill z\u00e4hlt nur beim ersten Pfeil.",
+mode_nfas_biggame_desc:"NFAS Big Game Round: bis zu 3 Pfeile (nur der erste Treffer z\u00e4hlt), der Inner Kill z\u00e4hlt nur beim ersten Pfeil. ArcTrail verwendet derzeit eine Voreinstellung mit 28 Zielen; NFAS legt keine einheitliche Zielanzahl fest.",
 profile_arco: "Hauptbogen", profile_edit_email_note: "Um deine Anmelde-E-Mail zu \u00e4ndern, wende dich an den Support.",
 theme_section_title: "Erscheinungsbild", theme_dark_label: "Dunkel", theme_light_label: "Hell", theme_sun_label: "Sonne",
 theme_hint: "Sonne: kräftige Farben und schwarze Schrift, für den Bildschirm in direkter Sonne. Keine App kann das Licht um dich herum erkennen: du wählst das Thema selbst, und es bleibt so.",
@@ -9244,7 +9248,7 @@ mode_archerygb_3d_desc:"Resmi Archery GB 3D Round (World Archery standard\u0131)
 mode_nfas_training_label:"Antrenman", mode_nfas_training_tag:"1 ok", mode_nfas_training_unit:"Ok",
 mode_nfas_training_desc:"NFAS b\u00f6lgelerine g\u00f6re serbest antrenman: hedef ba\u015f\u0131na tek ok, sabit puanlar.",
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"yar\u0131\u015fma \u00b7 3 oka kadar", mode_nfas_biggame_unit:"Ok",
-mode_nfas_biggame_desc:"Resmi NFAS Big Game Round: 28 hedef, 3 oka kadar (sadece ilk isabet ge\u00e7erli), Inner Kill sadece ilk okta ge\u00e7erli.",
+mode_nfas_biggame_desc:"NFAS Big Game Round: 3 oka kadar (sadece ilk isabet ge\u00e7erli), Inner Kill sadece ilk okta ge\u00e7erli. ArcTrail şu anda 28 hedeflik bir ön ayar kullanır; NFAS tek bir sabit hedef sayısı belirlemez.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"yar\u0131\u015fma \u00b7 1 ok", mode_ifaa_hunting_unit:"Ok",
@@ -9928,7 +9932,7 @@ mode_archerygb_3d_desc:"Официальный Archery GB 3D Round (станда
 mode_nfas_training_label:"Тренировка", mode_nfas_training_tag:"1 стрела", mode_nfas_training_unit:"Стрела",
 mode_nfas_training_desc:"Свободная тренировка по зонам NFAS: одна стрела на мишень, фиксированные очки.",
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"соревнование · до 3 стрел", mode_nfas_biggame_unit:"Стрела",
-mode_nfas_biggame_desc:"Официальный NFAS Big Game Round: 28 мишеней, до 3 стрел (засчитывается только первое попадание), Inner Kill засчитывается только на первой стреле.",
+mode_nfas_biggame_desc:"NFAS Big Game Round: до 3 стрел (засчитывается только первое попадание), Inner Kill засчитывается только на первой стреле. Сейчас ArcTrail использует предустановку на 28 мишеней; NFAS не устанавливает единое фиксированное число мишеней.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"\u0441\u043e\u0440\u0435\u0432\u043d\u043e\u0432\u0430\u043d\u0438\u0435 \u00b7 1 \u0441\u0442\u0440\u0435\u043b\u0430", mode_ifaa_hunting_unit:"\u0421\u0442\u0440\u0435\u043b\u0430",
@@ -10612,7 +10616,7 @@ mode_archerygb_3d_desc:"3D Round oficial de Archery GB (est\u00e1ndar World Arch
 mode_nfas_training_label:"Entrenamiento", mode_nfas_training_tag:"1 flecha", mode_nfas_training_unit:"Flecha",
 mode_nfas_training_desc:"Entrenamiento libre seg\u00fan las zonas NFAS: una sola flecha por diana, puntuaciones fijas.",
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"competici\u00f3n \u00b7 hasta 3 flechas", mode_nfas_biggame_unit:"Flecha",
-mode_nfas_biggame_desc:"Big Game Round oficial NFAS: 28 dianas, hasta 3 flechas (solo cuenta el primer impacto), el Inner Kill solo cuenta en la primera flecha.",
+mode_nfas_biggame_desc:"Big Game Round NFAS: hasta 3 flechas (solo cuenta el primer impacto), el Inner Kill solo cuenta en la primera flecha. ArcTrail usa actualmente un preajuste de 28 dianas; NFAS no fija un número único de dianas.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"competici\u00f3n \u00b7 1 flecha", mode_ifaa_hunting_unit:"Flecha",
@@ -11296,7 +11300,7 @@ mode_archerygb_3d_desc:"Officiell Archery GB 3D Round (World Archery-standard): 
 mode_nfas_training_label:"Tr\u00e4ning", mode_nfas_training_tag:"1 pil", mode_nfas_training_unit:"Pil",
 mode_nfas_training_desc:"Fri tr\u00e4ning enligt NFAS-zonerna: en pil per m\u00e5l, fasta po\u00e4ng.",
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"t\u00e4vling \u00b7 upp till 3 pilar", mode_nfas_biggame_unit:"Pil",
-mode_nfas_biggame_desc:"Officiell NFAS Big Game Round: 28 m\u00e5l, upp till 3 pilar (endast f\u00f6rsta tr\u00e4ffen r\u00e4knas), Inner Kill r\u00e4knas endast p\u00e5 f\u00f6rsta pilen.",
+mode_nfas_biggame_desc:"NFAS Big Game Round: upp till 3 pilar (endast f\u00f6rsta tr\u00e4ffen r\u00e4knas), Inner Kill r\u00e4knas endast p\u00e5 f\u00f6rsta pilen. ArcTrail anv\u00e4nder just nu en f\u00f6rinst\u00e4llning med 28 m\u00e5l; NFAS fastst\u00e4ller inte ett enda fast antal m\u00e5l.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"t\u00e4vling \u00b7 1 pil", mode_ifaa_hunting_unit:"Pil",
@@ -11980,7 +11984,7 @@ mode_archerygb_3d_desc:"Officiele Archery GB 3D Round (World Archery-standaard):
 mode_nfas_training_label:"Training", mode_nfas_training_tag:"1 pijl", mode_nfas_training_unit:"Pijl",
 mode_nfas_training_desc:"Vrije training volgens de NFAS-zones: \u00e9\u00e9n pijl per doel, vaste scores.",
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"wedstrijd \u00b7 tot 3 pijlen", mode_nfas_biggame_unit:"Pijl",
-mode_nfas_biggame_desc:"Officiele NFAS Big Game Round: 28 doelen, tot 3 pijlen (alleen de eerste treffer telt), de Inner Kill telt alleen op de eerste pijl.",
+mode_nfas_biggame_desc:"NFAS Big Game Round: tot 3 pijlen (alleen de eerste treffer telt), de Inner Kill telt alleen op de eerste pijl. ArcTrail gebruikt momenteel een voorinstelling van 28 doelen; NFAS schrijft geen vast aantal doelen voor.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"wedstrijd \u00b7 1 pijl", mode_ifaa_hunting_unit:"Pijl",
@@ -12151,7 +12155,10 @@ zones:ZONES_3, radii:RADII_3,
 scoring:{ 1: SS_SP_SAG(13,11,7), 2: SS_SP_SAG(13,11,7), 3: SS_SP_SAG(13,11,7) }
 },
 fitarco3d: {
-key:"fitarco3d", circuito:"wa", regolamento:"wa_book4", arrowsPerTarget:2, formats:[24], provisional:true,
+// `provisional` tolto il 28/08/2026: il Regolamento Tecnico di Tiro
+// FITARCO (Libro 2 e Libro 4, in vigore dal 1° gennaio 2026) e' stato
+// letto, e conferma 24 sagome, due frecce e le zone 11/10/8/5.
+key:"fitarco3d", circuito:"wa", regolamento:"wa_book4", arrowsPerTarget:2, formats:[24],
 zones:ZONES_4, radii:RADII_4,
 scoring:{ 1: { perfect:11, superspot:10, spot:8, sagoma:5 }, 2: { perfect:11, superspot:10, spot:8, sagoma:5 } }
 },
@@ -12245,17 +12252,46 @@ key:"ifaa_training", circuito:"ifaa", regolamento:"ifaa_book", arrowsPerTarget:1
 zones:ZONES_2_IFAA, radii:RADII_2,
 scoring:{ 1: { spot:20, lowarea:18 } }
 },
+/* IFAA 3-D STANDARD ROUND — CORRETTO IL 28/08/2026 SUL REGOLAMENTO.
+   Book of Rules 2021 (rev. 04/04/2021), Article V F: 28 bersagli, due
+   posizioni di tiro, una freccia da ciascuna, ENTRAMBE contate. Le zone sono
+   le tre dell'Hunting Round — «Scoring areas are as defined under section 3
+   of the IFAA 3D Hunting Round» — e il bareme e' 10/8/5 PER OGNI freccia.
+
+   PRIMA QUI C'ERANO DUE ZONE E 20/18 + 16/14. Quei numeri sono veri, ma sono
+   dell'ANIMAL ROUND: tre frecce a scendere, due sole aree. Erano stati messi
+   sul 3-D Standard, che e' un'altra gara. Massimo teorico: era 28x36=1008,
+   adesso e' 28x20=560. */
 ifaa_3d: {
 key:"ifaa_3d", circuito:"ifaa", regolamento:"ifaa_book", arrowsPerTarget:2, formats:[28],
+zones:ZONES_3_IFAA_HUNT, radii:RADII_3,
+scoring:{ 1: { kill:10, vital:8, wound:5 }, 2: { kill:10, vital:8, wound:5 } }
+},
+/* IL MODO DI IERI, TENUTO IN VITA APPOSTA E NON SCEGLIBILE.
+   Non compare in nessun `garaModes`: dai menu non ci si arriva. Serve a UNA
+   cosa sola — un giro IFAA lasciato APERTO quando e' arrivato
+   l'aggiornamento. Quel giro ha gia' frecce da 20, 18, 16 o 14 in memoria:
+   se proseguisse con la tabella nuova, le prime piazzole e le ultime
+   seguirebbero due regolamenti diversi dentro lo stesso punteggio.
+   `adattaGiroIfaa()` lo dirotta qui, e il giro finisce con la tabella con cui
+   e' cominciato. Le etichette le prende da `ifaa_3d` (vedi `baseModeKey`):
+   nessuna stringa nuova in nove lingue per un modo che nessuno sceglie. */
+ifaa_3d_v1: {
+key:"ifaa_3d_v1", circuito:"ifaa", regolamento:"ifaa_book", arrowsPerTarget:2, formats:[28],
 zones:ZONES_2_IFAA, radii:RADII_2,
 scoring:{ 1: { spot:20, lowarea:18 }, 2: { spot:16, lowarea:14 } }
 },
 /* IL SECONDO ROUND IFAA, che sette federazioni tirano e l'app non aveva.
    (26/08/2026, Fase 1, dati verificati da Alessandro.)
 
-   Non e' una variante dello Standard: e' un'altra gara. Lo Standard sono due
-   frecce con la seconda che vale meno; qui la freccia e' UNA SOLA, e le zone
-   sono tre invece di due. Massimo teorico 28 x 20 = 560.
+   Non e' una variante dello Standard: e' un'altra gara. *La riga qui sopra
+   diceva che nello Standard la seconda freccia vale meno e che le zone
+   sono due: era falsa, e lo era perche' descriveva l'Animal Round.
+   Corretta il 28/08/2026 sul Book of Rules 2021, Article V E e F.*
+   Lo Standard sono DUE frecce che valgono uguale, 10/8/5 ciascuna, sulle
+   STESSE tre zone di questo round. Qui la freccia e' una sola e ogni zona
+   vale il doppio: 20/16/10. Massimo teorico 28 x 20 = 560 per tutti e due,
+   per strade opposte.
 
    NIENTE TEMPO. Il regolamento potrebbe averne uno e non e' stato verificato:
    *assenza di dato non vuol dire assenza di regola*, e un timer inventato
@@ -12292,7 +12328,7 @@ scoring:{ 1: { innerkill:24, kill:20, wound:16 }, 2: { innerkill:14, kill:14, wo
    PERCHE' ESISTONO. Fino a ieri il regolamento era una proprieta' della
    FEDERAZIONE, e non lo e': e' una proprieta' della GARA. Una gara chiamata
    «3D» non e' la stessa gara in due circuiti diversi — lo Standard IFAA sono
-   28 piazzole e barème 20/18, il 3D World Archery sono 24 e 11/10/8/5 — e
+   28 piazzole e due frecce da 10/8/5, il 3D World Archery sono 24 e 11/10/8/5 — e
    l'app lo sapeva senza poterlo dire: dieci modi diversi con gli stessi
    numeri copiati dentro, e niente che tenesse insieme le copie.
 
@@ -12303,8 +12339,15 @@ scoring:{ 1: { innerkill:24, kill:20, wound:16 }, 2: { innerkill:14, kill:14, wo
 
    `verifica` dice quanto ci si puo' fidare, e non e' decorazione: e' la
    differenza fra «l'abbiamo letto» e «lo diamo per buono perche' assomiglia
-   a un altro». Nessun regolamento qui sotto e' segnato `verified` per intero,
-   perche' di nessuno e' stata verificata la VERSIONE.
+   a un altro».
+
+   AGGIORNATO IL 28/08/2026. Due sono passati a `verificato`, versione
+   compresa: `wa_book4` sul Book 2 e Book 4 versione 2026-03-13 scaricati
+   dall'extranet World Archery, e `ifaa_book` sul Book of Rules 2021
+   (rev. 04/04/2021) scaricato da ifaa-archery.org. E' su quest'ultimo che
+   si e' scoperto che il bareme del 3-D Standard era quello dell'Animal
+   Round. *Gli altri sei restano `parziale` o `serve_regolamento`, e la
+   riga lo dice invece di far finta.*
    ══════════════════════════════════════════════════════════════════════════ */
 var CIRCUITI = {
 wa:          { nome:"World Archery" },
@@ -12317,8 +12360,8 @@ independent: { nome:"Independent" }
    `wa_book4` e' uno solo per FITARCO, SwissArchery, RFETA, TOF, Archery GB,
    RFSL, OeBSV e NHB. Chi ne ha uno nazionale proprio lo dichiara e basta. */
 var REGOLAMENTI = {
-wa_book4:        { circuito:"wa", nome:"World Archery Rulebook Book 4 \u2014 Field and 3D Archery", versione:null, dal:null, al:null, url:null, lingua:"en", verifica:"serve_regolamento" },
-ifaa_book:       { circuito:"ifaa", nome:"IFAA Book of Rules", versione:null, dal:null, al:null, url:null, lingua:"en", verifica:"parziale" },
+wa_book4:        { circuito:"wa", nome:"World Archery Rulebook Book 4 \u2014 Field and 3D Archery", versione:"2026-03-13", dal:"2026-03-13", al:null, url:"https://www.worldarchery.sport/rulebook", lingua:"en", verifica:"verificato" },
+ifaa_book:       { circuito:"ifaa", nome:"IFAA Book of Rules", versione:"18a ed., rev. 04/04/2021", dal:"2021-04-04", al:null, url:"https://www.ifaa-archery.org/documents/rule-book/book-of-rules/", lingua:"en", verifica:"verificato" },
 fiarc_rt:        { circuito:"fiarc", nome:"Regolamento Tecnico FIARC", versione:"delibera 033/2023/D", dal:"2023-12-02", al:null, url:null, lingua:"it", verifica:"parziale" },
 ffta_reglement:  { circuito:"wa", nome:"FFTA \u2014 R\u00e8glement Tir 3D", versione:null, dal:null, al:null, url:null, lingua:"fr", verifica:"parziale" },
 dsb_sportordnung:{ circuito:"wa", nome:"DSB Sportordnung \u2014 3D", versione:null, dal:null, al:null, url:null, lingua:"de", verifica:"parziale" },
@@ -12352,7 +12395,7 @@ return mode.targetArrows[state.target-1];
 }
 return mode.arrowsPerTarget;
 }
-function modeLabel(key){ return t("mode_"+key+"_label"); }
+function modeLabel(key){ return t("mode_"+baseModeKey(key)+"_label"); }
 /* LA DISCIPLINA CONGELATA NELLA LINGUA DI ALLORA. (24/08/2026.)
    I giri salvati prima che lo storico scrivesse `modeKey` conservano solo
    `modeLabel`, cioe' la parola COM'ERA il giorno del giro. Chi ha segnato dei
@@ -12379,7 +12422,11 @@ if(m && typeof d[k] === "string" && d[k]){ _chiaveDaEtichetta[d[k]] = m[1]; }
 }
 return _chiaveDaEtichetta[label] || null;
 }
-function modeTag(key){ return t("mode_"+key+"_tag"); }
+/* Il suffisso `_v1` marca un modo di sola compatibilita'. Le sue parole
+   sono quelle del modo vero: chi ha un giro aperto vede lo stesso nome di
+   prima, e non c'e' un secondo dizionario da tenere allineato. */
+function baseModeKey(key){ return String(key || "").replace(/_v1$/, ""); }
+function modeTag(key){ return t("mode_"+baseModeKey(key)+"_tag"); }
 /* COME SI CONTA, in tre parole. (21/08/2026, PRD §14: ogni regolamento deve
    dire quante frecce e come si conta — «do not show unexplained abbreviations
    only».) La differenza vera fra Percorso e Tracciato non e' il nome: e' che
@@ -12409,8 +12456,8 @@ if(k && fra.indexOf(k) !== -1) return k;
 }
 return null;
 }
-function modeDesc(key){ return t("mode_"+key+"_desc"); }
-function modeUnit(key){ return t("mode_"+key+"_unit"); }
+function modeDesc(key){ return t("mode_"+baseModeKey(key)+"_desc"); }
+function modeUnit(key){ return t("mode_"+baseModeKey(key)+"_unit"); }
 var FEDERATIONS = {
 fiarc: { circuiti:["fiarc","ifaa"], garaModes: ["round3d","percorso","tracciato","battuta"], trainingMode:"training" },
 fitarco: { circuiti:["wa"], garaModes: ["fitarco3d"], trainingMode:"fitarco_training" },
@@ -12631,6 +12678,124 @@ saveHistoryList(hist);
 if(h.date) markRoundDeleted(h.date);
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   IL MARCHIO DELLO SCHEMA DI PUNTEGGIO  (28/08/2026)
+
+   `ifaa_3d` ha cambiato barème. Un giro salvato porta NUMERI, non la tabella
+   che li ha prodotti: senza un marchio, un 900 di ieri e un 500 di oggi
+   finiscono nella stessa media e nello stesso record, e il 900 vince per
+   sempre una gara che non ha mai tirato.
+
+   IL MARCHIO STA SUL GIRO, NON SULLA DATA. Una data si puo' sbagliare, si
+   puo' importare da un backup vecchio, cambia se cambia l'orologio del
+   telefono. Il marchio invece viaggia col giro: locale, cloud, giro aperto.
+
+   REGOLA UNICA, e vale in ogni punto del programma:
+   un giro `ifaa_3d` SENZA marchio e' un giro di ieri, e si legge come
+   `ifaa_3d_v1`. Nessun punteggio viene ricalcolato: cambia solo la casella
+   in cui il giro va a finire.
+   ══════════════════════════════════════════════════════════════════════════ */
+var IFAA_SCHEMA = "ifaa-standard-2021";
+
+/* Il marchio da scrivere su un giro nuovo. `null` per tutti gli altri modi:
+   un campo inventato dove non serve e' rumore che qualcuno dovra' spiegare.
+
+   CONFRONTO ESATTO, NON `baseModeKey`. (Corretto il 28/08/2026.) Qui c'era
+   `baseModeKey(modeKey) === "ifaa_3d"`, che togliendo il suffisso `_v1`
+   restituiva il marchio del barème NUOVO anche per il modo di ieri. Un giro
+   cominciato ieri, dirottato su `ifaa_3d_v1` e poi chiuso, si sarebbe
+   dichiarato corretto: 20/18 e 16/14 dentro, marchio 10/8/5 fuori, e
+   indistinguibile da un giro vero nello storico e sul cloud.
+
+   `baseModeKey` serve alle PAROLE — il modo di compatibilita' deve leggersi
+   «IFAA 3-D Standard Round» come l'altro. Il marchio non e' una parola, e' un
+   fatto sul punteggio, e li' i due modi sono cose diverse. */
+function schemaPunteggio(modeKey){
+return (modeKey === "ifaa_3d") ? IFAA_SCHEMA : null;
+}
+
+/* La chiave con cui un giro entra in media, record e confronti. E' l'unica
+   porta: se un giorno nasce un secondo barème corretto, si aggiunge QUI. */
+function modoDelGiro(modeKey, scoringVersion){
+if(modeKey === "ifaa_3d" && scoringVersion !== IFAA_SCHEMA) return "ifaa_3d_v1";
+return modeKey;
+}
+
+/* ══ LA MIGRAZIONE, UNA VOLTA SOLA E SENZA CANCELLARE NIENTE ══════════════
+
+   Due cose da spostare, e in quest'ordine:
+
+   1. lo STORICO — ai giri `ifaa_3d` senza marchio si riscrive `modeKey` in
+      `ifaa_3d_v1`. I punteggi non si toccano: `arrows`, `perTarget` e
+      `total` restano identici.
+   2. il RIEPILOGO PERMANENTE — le voci `nome|ifaa_3d` passano a
+      `nome|ifaa_3d_v1`. Se la destinazione c'e' gia' le due si FONDONO:
+      i giri e la somma si sommano, il record piu' alto vince e si porta
+      dietro la sua data e il suo formato, la prima data e' la piu' vecchia
+      e l'ultima la piu' recente.
+
+   Deve girare **prima** che un giro nuovo possa registrarsi, altrimenti il
+   nuovo troverebbe la casella gia' occupata dal vecchio e ci si sommerebbe.
+
+   Non e' idempotente da sola — dopo il primo giro corretto la casella
+   `nome|ifaa_3d` torna a esistere, e legittimamente — quindi si segna di
+   averla fatta. *Un travaso ripetuto sposterebbe i record nuovi fra i
+   vecchi, che e' esattamente il difetto al contrario.* */
+var IFAA_MIGRATO_KEY = "arctrail3d_ifaa_schema_v1";
+
+function fondiVoceLifetime(dest, src){
+dest.rounds += src.rounds || 0;
+dest.sum += src.sum || 0;
+if((src.best || 0) > (dest.best || 0)){
+dest.best = src.best; dest.bestDate = src.bestDate || null; dest.bestFormat = src.bestFormat || null;
+}
+if(src.firstDate && (!dest.firstDate || String(src.firstDate) < String(dest.firstDate))) dest.firstDate = src.firstDate;
+if(src.lastDate && (!dest.lastDate || String(src.lastDate) > String(dest.lastDate))) dest.lastDate = src.lastDate;
+if(src.ownerUid && !dest.ownerUid) dest.ownerUid = src.ownerUid;
+if(src.isSelf === true) dest.isSelf = true;
+if(!dest.modeLabel && src.modeLabel) dest.modeLabel = src.modeLabel;
+return dest;
+}
+
+function migraSchemaIfaa(){
+try{
+if(localStorage.getItem(IFAA_MIGRATO_KEY)) return 0;
+var spostati = 0;
+
+// 1. lo storico
+var hist = loadHistory();
+var toccato = false;
+hist.forEach(function(h){
+if(!h || h.modeKey !== "ifaa_3d") return;
+if(h.scoringVersion === IFAA_SCHEMA) return;
+h.modeKey = "ifaa_3d_v1";
+toccato = true; spostati++;
+});
+if(toccato) saveHistoryList(hist);
+
+// 2. il riepilogo permanente
+var lt = loadLifetime();
+var cambiato = false;
+Object.keys(lt).forEach(function(k){
+// "|ifaa_3d" sono OTTO caratteri. Scritto -9 la prima volta, e la voce non
+// si spostava: il banco l'ha preso subito, ed e' il motivo per cui esiste.
+var CODA = "|ifaa_3d";
+if(k.slice(-CODA.length) !== CODA) return;
+var nuovo = k.slice(0, -CODA.length) + "|ifaa_3d_v1";
+var e = lt[k];
+e.modeKey = "ifaa_3d_v1";
+if(lt[nuovo]) fondiVoceLifetime(lt[nuovo], e);
+else lt[nuovo] = e;
+delete lt[k];
+cambiato = true;
+});
+if(cambiato) saveLifetime(lt);
+
+localStorage.setItem(IFAA_MIGRATO_KEY, String(Date.now()));
+return spostati;
+}catch(e){ return 0; }
+}
+
 // ---------- RIEPILOGO PERMANENTE ----------
 // Lo storico viene tagliato a HISTORY_MAX giri: questo riepilogo no, cos\u00ec record e totali
 // restano corretti anche quando i giri pi\u00f9 vecchi spariscono dallo storico.
@@ -12671,10 +12836,10 @@ for(var i = hist.length - 1; i >= 0; i--){
 var h = hist[i];
 (h.results || []).forEach(function(r){
 if(!r || typeof r.total !== "number") return;
-var k = r.name + "|" + (h.modeKey || h.modeLabel || "?");
+var k = r.name + "|" + (modoDelGiro(h.modeKey, h.scoringVersion) || h.modeLabel || "?");
 var e = lt[k];
 if(!e){
-e = { name:r.name, modeKey:h.modeKey||null, modeLabel:h.modeLabel||"", rounds:0, sum:0, best:0, bestDate:null, bestFormat:null, firstDate:h.date, lastDate:h.date, ownerUid:r.ownerUid||null, isSelf:(r.isSelf===true) };
+e = { name:r.name, modeKey:modoDelGiro(h.modeKey, h.scoringVersion)||null, modeLabel:h.modeLabel||"", rounds:0, sum:0, best:0, bestDate:null, bestFormat:null, firstDate:h.date, lastDate:h.date, ownerUid:r.ownerUid||null, isSelf:(r.isSelf===true) };
 lt[k] = e;
 }
 if(r.ownerUid && !e.ownerUid) e.ownerUid = r.ownerUid;
@@ -12688,6 +12853,10 @@ if(r.total > e.best){ e.best = r.total; e.bestDate = h.date; e.bestFormat = h.fo
 saveLifetime(lt);
 }catch(e){}
 }
+// L'ORDINE CONTA: prima si sposta il vecchio nella sua casella, poi si
+// ricostruisce il riepilogo per chi non ce l'ha. Al contrario, il
+// backfill rimetterebbe i giri di ieri sotto `ifaa_3d`.
+migraSchemaIfaa();
 backfillLifetimeOnce();
 
 // ---------- COPIA DELLO STORICO SUL CLOUD ----------
@@ -12756,7 +12925,7 @@ var CAMPI_DEL_GIRO = ["roundActive","archersBase","rotBaseTarget","mode","format
 "archers","scores","target","archerIndex","arrowIndex","pendingArrows",
 "liveBattutaTypes","awaitingStep","savedToHistory","roundEntryDate","firme",
 "consegna","sessionId","campo","doubleConfirm","arrowsPerTargetOverride",
-"startedAt","assetto","assettoNome"];
+"startedAt","assetto","assettoNome","scoringVersion"];
 
 function pezzoDelGiro(){
 var out = {};
@@ -12893,10 +13062,38 @@ render();
 }).catch(function(){});
 }
 
+/* IL GIRO IFAA COMINCIATO CON LA TABELLA VECCHIA. (28/08/2026.)
+
+   Il 28/08 il bareme del 3-D Standard e' stato corretto da 20/18 + 16/14 a
+   10/8/5 su tre zone. Nello storico non cambia niente: li' dentro ci sono
+   NUMERI gia' calcolati, non nomi di zona, e nessun giro chiuso viene
+   ricontato. Il caso scoperto e' uno solo, ed e' il giro rimasto APERTO
+   mentre arrivava la versione nuova.
+
+   Il riconoscimento e' il MARCHIO, non i numeri. Guardare le frecce
+   funzionava — con la tabella nuova nessuna puo' superare 10 — ma solo
+   per un giro che ne aveva gia' tirata una alta: un giro aperto e ancora
+   a zero frecce sarebbe passato per nuovo. `scoringVersion` non ha
+   quel buco, perche' c'e' dalla prima piazzola.
+
+   *Non si converte niente.* Convertire vorrebbe dire riscrivere il punteggio
+   di frecce gia' tirate e gia' viste sullo schermo da chi era in piazzola. */
+function adattaGiroIfaa(st){
+if(!st || st.mode !== "ifaa_3d" || st.roundActive !== true) return false;
+// Il marchio decide. Un giro cominciato dopo la correzione ce l'ha e resta
+// dov'e'; uno cominciato prima non ce l'ha, e non averlo e' la risposta.
+if(st.scoringVersion === IFAA_SCHEMA) return false;
+st.mode = "ifaa_3d_v1";
+return true;
+}
+
 function riprendiGiroRitrovato(){
 if(!giroRitrovato) return;
 var giro = giroRitrovato.dati;
 CAMPI_DEL_GIRO.forEach(function(k){ if(giro[k] !== undefined) state[k] = giro[k]; });
+// Vale anche per il giro che arriva dal cloud: puo' essere stato lasciato
+// aperto su un altro telefono che aveva ancora la versione di ieri.
+adattaGiroIfaa(state);
 // Queste tre non vengono dal cloud di proposito: un pannello e' un modo, non
 // un luogo, e un annulla offerto per una freccia tirata su un altro telefono
 // non e' un aiuto.
@@ -13033,6 +13230,7 @@ deleted: false,
 format: roundEntry.format || null,
 modeKey: roundEntry.modeKey || null,
 modeLabel: roundEntry.modeLabel || "",
+scoringVersion: roundEntry.scoringVersion || null,
 results: packResults(roundEntry.results),
 consegna: roundEntry.consegna || null,
 nota: roundEntry.nota || null,
@@ -13121,7 +13319,8 @@ var batch = db.batch();
 todo.slice(0, 400).forEach(function(h){
 batch.set(ref.doc(roundDocId(h.date)), {
 date: h.date, deleted: false, format: h.format || null, modeKey: h.modeKey || null,
-modeLabel: h.modeLabel || "", results: packResults(h.results),
+modeLabel: h.modeLabel || "", scoringVersion: h.scoringVersion || null,
+results: packResults(h.results),
 savedAt: firebase.firestore.FieldValue.serverTimestamp()
 }, { merge: true });
 });
@@ -13200,7 +13399,14 @@ snap.forEach(function(doc){
 if(haveLocal[doc.id] || gone[doc.id]) return;
 var d = doc.data();
 if(!d || !d.date || d.deleted === true) return;
-local.push({ date:d.date, format:d.format, modeKey:d.modeKey, modeLabel:d.modeLabel, results:unpackResults(d.results) });
+/* IL GIRO CHE SCENDE DAL CLOUD. Un documento scritto prima del
+   28/08/2026 non ha `scoringVersion`, e la sua assenza e'
+   l'informazione: quel giro e' del barème vecchio. Si normalizza qui,
+   alla lettura, invece di riscrivere Firestore in massa. */
+local.push({ date:d.date, format:d.format,
+modeKey:modoDelGiro(d.modeKey, d.scoringVersion),
+scoringVersion:d.scoringVersion || null,
+modeLabel:d.modeLabel, results:unpackResults(d.results) });
 added++;
 });
 if(added){
@@ -14481,7 +14687,7 @@ var COUNTRY_LIST = [
 ];
 // ---------- SELEZIONE FEDERAZIONE ----------
 var COUNTRY_FEDERATIONS = {
-it: [ {code:"fiarc", label:"FIARC", url:"https://www.fiarc.it"}, {code:"fitarco", label:"FITARCO", url:"https://www.fitarco-italia.org", provisional:true}, {code:"fidasc", label:"FIDASC", url:"https://www.fidasc.it"} ],
+it: [ {code:"fiarc", label:"FIARC", url:"https://www.fiarc.it"}, {code:"fitarco", label:"FITARCO", url:"https://www.fitarco-italia.org"}, {code:"fidasc", label:"FIDASC", url:"https://www.fidasc.it"} ],
 fr: [ {code:"ffta", label:"FFTA", url:"https://www.ffta.fr"}, {code:"fftl", label:"FFTL", url:"https://www.fftl.com"} ],
 ch: [ {code:"swissarchery", label:"SwissArchery", url:"https://www.swissarchery.org"}, {code:"faas", label:"FAAS", url:"https://www.archery-faas.ch"} ],
 at: [ {code:"oebsv", label:"\u00d6BSV", url:"https://www.archeryaustria.net"} ],
@@ -14490,7 +14696,12 @@ uk: [ {code:"archerygb", label:"Archery GB", url:"https://www.archerygb.org"}, {
 tr: [ {code:"turkey", label:"TOF", url:"https://www.turkarchery.org"} ],
 es: [ {code:"spain", label:"RFETA", url:"https://www.rfeta.es"} ],
 nl: [ {code:"nhb", label:"KHSN", url:"https://www.handboogsport.nl"} ],
-se: [ {code:"sweden", label:"SBF", url:"https://www.bagskytte.se"}, {code:"sff", label:"SFF"} ]
+/* SFSF, NON SFF. (28/08/2026.) Il membro IFAA svedese e' la Svenska
+   F\u00e4ltb\u00e5gskytte F\u00f6rbundet, che l'IFAA elenca con la sigla SFSF. Qui
+   c'era «SFF», e senza indirizzo: l'unica delle diciassette a non averne uno.
+   **La chiave interna resta `sff`**: sta nei profili e nello storico di chi
+   l'ha gia' scelta, e rinominarla li farebbe cadere altrove in silenzio. */
+se: [ {code:"sweden", label:"SBF", url:"https://www.bagskytte.se"}, {code:"sff", label:"SFSF", url:"https://sfsf-archery.com"} ]
 };
 // ---------- COMPAGNIE: dati ----------
 var COMPAGNIE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longbow", storico:"Storico" };
@@ -14719,7 +14930,7 @@ var PROFILE_FEDERATIONS = [
 {code:"archerygb", label:"Archery GB"}, {code:"nfas", label:"NFAS"}, {code:"efaa", label:"EFAA"},
 {code:"turkey", label:"TOF"},
 {code:"spain", label:"RFETA"}, {code:"sweden", label:"SBF"}, {code:"nhb", label:"KHSN"},
-{code:"sff", label:"SFF"}, {code:"dsb", label:"DSB"},
+{code:"sff", label:"SFSF"}, {code:"dsb", label:"DSB"},
 {code:"fidasc", label:"FIDASC"}
 ];
 var PROFILE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longbow", storico:"Storico" };
@@ -20391,7 +20602,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-28-indirizzo";
+var BUILD_STAMP = "2026-08-28-nfas-fonte";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -20400,7 +20611,7 @@ var BUILD_STAMP = "2026-08-28-indirizzo";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-28-carta";
+var BUILD_PARENT = "2026-08-28-marchio";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -24439,6 +24650,10 @@ archers.sort(function(a,b){ return a.name.localeCompare(b.name, state.lang || "i
 var scores = {};
 archers.forEach(function(a){ scores[a.id] = []; });
 state.roundActive = true;
+// Il marchio si mette QUI, all'inizio: cosi' viaggia col giro aperto anche
+// sul cloud, e un giro ripreso su un altro telefono sa con che tabella e'
+// cominciato senza doverlo dedurre dai punteggi.
+state.scoringVersion = schemaPunteggio(modeKey);
 // L'ORA IN CUI SI COMINCIA. (21/08/2026, PRD 17.1: fra i numeri del finale
 // c'e' la durata.) Non si puo' dedurre da niente — un giro non lascia
 // traccia dell'ora — quindi da oggi si segna. I giri gia' fatti resteranno
@@ -25786,6 +26001,9 @@ date: nowISO,
 format: state.format,
 modeKey: state.mode,
 modeLabel: mLabel,
+// QUALE TABELLA HA CALCOLATO QUESTI NUMERI. Senza questa riga il giro non
+// si distingue da uno del barème vecchio, e i due si sommerebbero.
+scoringVersion: schemaPunteggio(state.mode),
 // DOVE. Puo' essere null, ed e' giusto: chi non l'ha scritto non deve
 // ritrovarsi un campo inventato nel proprio diario.
 campo: state.campo || null,
@@ -25801,7 +26019,7 @@ return { name: a.name, total: totalFor(a.id), isSelf: (a.isSelf === true), owner
 };
 hist.unshift(roundEntry);
 roundEntry.results.forEach(function(r){
-recordLifetime(r.name, state.mode, mLabel, r.total, nowISO, state.format, r.ownerUid, r.isSelf);
+recordLifetime(r.name, modoDelGiro(state.mode, roundEntry.scoringVersion), mLabel, r.total, nowISO, state.format, r.ownerUid, r.isSelf);
 });
 if(hist.length > HISTORY_MAX) hist.length = HISTORY_MAX;
 saveHistoryList(hist);

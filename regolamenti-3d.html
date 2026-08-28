@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Regolamenti e punteggi del tiro con l'arco 3D | ArcTrail 3D</title>
+<meta name="description" content="I quattro regolamenti 3D supportati da ArcTrail 3D — FIARC, World Archery, IFAA e NFAS — e le diciassette federazioni che li applicano, paese per paese.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://arctrail3d.com/regolamenti-3d.html">
+<link rel="icon" href="/favicon.ico">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ArcTrail 3D">
+<meta property="og:title" content="Regolamenti e punteggi del tiro con l'arco 3D">
+<meta property="og:description" content="I quattro regolamenti 3D supportati da ArcTrail 3D, e le federazioni che li applicano.">
+<meta property="og:url" content="https://arctrail3d.com/regolamenti-3d.html">
+<meta property="og:image" content="https://arctrail3d.com/logo.jpg">
+<style>
+/* Stessa famiglia di `presentazione.html` e `fiarc.html`: gli stessi sei
+   colori, la stessa colonna da 760px, la stessa carta col picchetto a
+   sinistra. Chi passa da una pagina all'altra deve restare nello stesso
+   posto, non trovarsi in due siti che si somigliano. */
+:root{
+  --ink:#201D18; --teal:#455648; --amber:#C8551A;
+  --paper:#F5F2ED; --card:#FFFFFF; --line:#E4E1DB; --muted:#71665E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px; line-height:1.65;
+}
+header{background:var(--ink); color:#fff; padding:18px 20px}
+.hwrap{max-width:760px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+.brand{font-weight:800; letter-spacing:.02em; font-size:17px}
+.brand span{color:#AEBEB1}
+.back{margin-left:auto; color:#fff; text-decoration:none; border:1px solid rgba(255,255,255,.35);
+  padding:7px 13px; border-radius:999px; font-size:14px; font-weight:600}
+.back:hover{background:rgba(255,255,255,.12)}
+main{max-width:760px; margin:0 auto; padding:26px 20px 64px}
+h1{font-size:26px; line-height:1.25; margin:0 0 14px; letter-spacing:-.01em}
+h2{font-size:19px; margin:34px 0 10px; padding-top:20px; border-top:1px solid var(--line); letter-spacing:-.01em}
+h3{font-size:16px; margin:22px 0 6px}
+p,li{margin:0 0 12px}
+ul{padding-left:20px}
+a{color:var(--teal)}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid var(--amber); outline-offset:3px }
+.lead{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--teal);
+  border-radius:12px; padding:16px 18px; margin:0 0 22px}
+.lead p:last-child{margin:0}
+.note{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--amber);
+  border-radius:12px; padding:14px 16px; margin:18px 0}
+.note p:last-child{margin:0}
+.cta{display:inline-block; background:var(--teal); color:#fff; text-decoration:none;
+  font-weight:700; padding:13px 22px; border-radius:10px; margin:8px 0 4px}
+.cta:hover{background:#334036}
+/* LA TABELLA SUL TELEFONO. Invece di rimpicciolire il testo — che e' la cosa
+   che si guarda al sole, in piedi — la tabella scorre di lato dentro il suo
+   riquadro, e il resto della pagina resta fermo. */
+.tw{overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 0 14px;
+  border:1px solid var(--line); border-radius:12px; background:var(--card)}
+table{border-collapse:collapse; width:100%; min-width:320px; font-size:15px}
+caption{caption-side:top; text-align:left; padding:12px 14px 0; color:var(--muted); font-size:14px}
+th,td{padding:10px 14px; text-align:right; border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left; font-weight:600}
+thead th{font-size:13px; color:var(--muted); font-weight:600; letter-spacing:.02em}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+.fonte{color:var(--muted); font-size:15px}
+/* LE SEZIONI PER FEDERAZIONE. Sono ancore, non pagine: chi arriva da un link
+   con #fitarco deve capire in un colpo d'occhio di essere atterrato nel punto
+   giusto, e il filo a sinistra glielo dice senza aggiungere una parola. */
+.fed{border-left:3px solid var(--line); padding:2px 0 2px 16px; margin:22px 0}
+.fed h3{margin:0 0 4px; font-size:16px}
+.fed h3:target,.fed:target h3{color:var(--amber)}
+.fed p{margin:0 0 6px}
+.fed p:last-child{margin:0}
+.paese{margin:26px 0 6px; font-size:16px; font-weight:700}
+.elenco-fed{list-style:none; padding:0; margin:0 0 8px}
+.elenco-fed li{margin:0 0 8px}
+footer{border-top:1px solid var(--line); margin-top:44px; padding-top:18px; color:var(--muted); font-size:14px}
+footer a{margin-right:16px}
+@media (min-width:760px){ h1{font-size:32px} main{padding-top:34px} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hwrap">
+    <div class="brand">ArcTrail<span> 3D</span></div>
+    <a class="back" href="/app.html">Apri l'app</a>
+  </div>
+</header>
+
+<main>
+
+  <h1>Regolamenti e punteggi del tiro con l'arco 3D</h1>
+
+  <div class="lead">
+    <p>Nel 3D lo stesso nome non vuol dire la stessa gara. ArcTrail 3D raccoglie i regolamenti di più federazioni e circuiti, e fra l'uno e l'altro cambiano il numero di piazzole, il numero di frecce, le zone della sagoma e il valore di ogni zona.</p>
+    <p>I regolamenti veri però sono <strong>quattro</strong>, non diciassette: la maggior parte delle federazioni ne applica uno già scritto da qualcun altro. Per questo qui si parte dal regolamento, e la federazione dice solo quale dei quattro cercare.</p>
+  </div>
+
+  <p><a class="cta" href="/app.html">Apri ArcTrail 3D</a></p>
+
+  <h2>I quattro regolamenti</h2>
+  <div class="fed">
+    <h3><a href="/fiarc.html">FIARC</a></h3>
+    <p>Quattro formati diversi: Round 3D, Percorso, Tracciato e Battuta. Il Tracciato conta soltanto la prima freccia che va a segno, la Battuta ha 28 piazzole con tipi diversi di bersaglio.</p>
+  </div>
+  <div class="fed">
+    <h3><a href="/world-archery-3d.html">World Archery 3D</a></h3>
+    <p>24 bersagli, due frecce, quattro zone da 11, 10, 8 e 5. Lo applicano dieci federazioni in dieci paesi.</p>
+  </div>
+  <div class="fed">
+    <h3><a href="/ifaa-3d.html">IFAA 3D</a></h3>
+    <p>Due round diversi: lo Standard con 28 bersagli, due frecce e 10/8/5, e l'Hunting con 28 bersagli, una freccia e 20/16/10.</p>
+  </div>
+  <div class="fed">
+    <h3><a href="/nfas-3d.html">NFAS Big Game</a></h3>
+    <p>Fino a tre picchetti, una freccia da ciascuno finché non si va a segno. Inner kill 24 sulla prima freccia soltanto.</p>
+  </div>
+
+  <h2>Le federazioni, paese per paese</h2>
+  <p>Ogni federazione porta al regolamento che le compete. Due di loro stanno su due circuiti insieme, e allora i regolamenti sono due: «gara 3D» da solo non basta a dire che gara sia.</p>
+  <p class="paese">Italia</p>
+  <ul class="elenco-fed">
+    <li><strong>FIARC</strong> — <a href="/fiarc.html">FIARC</a></li>
+    <li><strong>FITARCO</strong> — <a href="/world-archery-3d.html#fitarco">World Archery</a></li>
+  </ul>
+  <p class="paese">Francia</p>
+  <ul class="elenco-fed">
+    <li><strong>FFTA</strong> — <a href="/world-archery-3d.html#ffta">World Archery</a></li>
+    <li><strong>FFTL</strong> — <a href="/ifaa-3d.html#fftl">IFAA</a></li>
+  </ul>
+  <p class="paese">Svizzera</p>
+  <ul class="elenco-fed">
+    <li><strong>SwissArchery</strong> — <a href="/world-archery-3d.html#swissarchery">World Archery</a></li>
+    <li><strong>FAAS</strong> — <a href="/ifaa-3d.html#faas">IFAA</a></li>
+  </ul>
+  <p class="paese">Austria</p>
+  <ul class="elenco-fed">
+    <li><strong>ÖBSV</strong> — <a href="/world-archery-3d.html#oebsv">World Archery</a> · <a href="/ifaa-3d.html#oebsv">IFAA</a></li>
+  </ul>
+  <p class="paese">Germania</p>
+  <ul class="elenco-fed">
+    <li><strong>DSB</strong> — <a href="/world-archery-3d.html#dsb">World Archery</a></li>
+    <li><strong>DFBV</strong> — <a href="/ifaa-3d.html#dfbv">IFAA</a></li>
+  </ul>
+  <p class="paese">Regno Unito</p>
+  <ul class="elenco-fed">
+    <li><strong>Archery GB</strong> — <a href="/world-archery-3d.html#archerygb">World Archery</a></li>
+    <li><strong>NFAS</strong> — <a href="/nfas-3d.html">NFAS</a></li>
+    <li><strong>EFAA</strong> — <a href="/ifaa-3d.html#efaa">IFAA</a></li>
+  </ul>
+  <p class="paese">Turchia</p>
+  <ul class="elenco-fed">
+    <li><strong>TOF</strong> — <a href="/world-archery-3d.html#tof">World Archery</a></li>
+  </ul>
+  <p class="paese">Spagna</p>
+  <ul class="elenco-fed">
+    <li><strong>RFETA</strong> — <a href="/world-archery-3d.html#rfeta">World Archery</a></li>
+  </ul>
+  <p class="paese">Paesi Bassi</p>
+  <ul class="elenco-fed">
+    <li><strong>KHSN</strong> — <a href="/world-archery-3d.html#khsn">World Archery</a> · <a href="/ifaa-3d.html#khsn">IFAA</a></li>
+  </ul>
+  <p class="paese">Svezia</p>
+  <ul class="elenco-fed">
+    <li><strong>SBF</strong> — <a href="/world-archery-3d.html#sbf">World Archery</a></li>
+    <li><strong>SFSF</strong> — <a href="/ifaa-3d.html#sfsf">IFAA</a></li>
+  </ul>
+
+  <h2>Perché il formato conta più della federazione</h2>
+  <p>Il regolamento non è una proprietà della federazione: è una proprietà della gara. Una stessa federazione può stare su due circuiti e proporre due gare che si chiamano tutte e due «3D» e non hanno lo stesso punteggio — succede in Austria e nei Paesi Bassi.</p>
+  <p>Per questo ArcTrail 3D chiede il formato prima del giro e non dopo: è l'unica domanda che permette a tutte le altre di avere una risposta giusta.</p>
+  <p><a class="cta" href="/app.html">Apri il segnapunti</a></p>
+
+  <h2>Fonte dei regolamenti</h2>
+  <p class="fonte">Ogni pagina dichiara da quale regolamento vengono i suoi numeri, con versione e data, e rimanda al testo ufficiale. Dove una federazione non pubblica un regolamento 3D nazionale separato, la pagina lo dice apertamente invece di far finta di niente.</p>
+
+  <div class="note">
+    <p><strong>ArcTrail 3D è un progetto indipendente e non è un'app ufficiale di nessuna federazione.</strong></p>
+    <p>Durante una manifestazione ufficiale fanno sempre fede il regolamento vigente, le disposizioni dell'organizzazione e il cartellino ufficiale.</p>
+  </div>
+
+  <footer>
+    <a href="/">ArcTrail 3D</a>
+    <a href="/presentazione.html">Che cos'è ArcTrail 3D</a>
+    <a href="/regolamenti-3d.html">Tutti i regolamenti</a>
+    <a href="/app.html">Apri l'app</a>
+    <p>ArcTrail 3D — progetto indipendente, Italia — info@arctrail3d.com</p>
+  </footer>
+
+</main>
+
+</body>
+</html>
