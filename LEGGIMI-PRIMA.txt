@@ -1,0 +1,22 @@
+ARCTRAIL 3D — FREEZE 29/08/2026
+
+DA PUBBLICARE SU GITHUB:
+- app.html          build 2026-08-29-freeze
+- sw.js             cache arctrail3d-v156
+- index.html
+- elimina-account.html
+
+NON sono inclusi banchi o file di sviluppo in questa cartella.
+
+DOPO IL DEPLOY — UNICO SMOKE TEST MANUALE RIMASTO:
+1. Apri /app.html online una volta e aspetta che sia caricata.
+2. Chiudi la PWA/scheda.
+3. Attiva modalita' aereo (Wi-Fi e dati spenti).
+4. Riapri ArcTrail 3D.
+5. Tira > Inizia Allenamento > Continua > Inizia percorso.
+6. Arriva a Piazzola 1 e registra un punteggio.
+7. Se funziona, il freeze e' chiuso.
+
+Nota: la logica del service worker e' stata eseguita in test simulato: 21/21.
+L'ambiente di verifica disponibile blocca Chromium su localhost/file:// per policy,
+quindi la registrazione PWA reale resta questo singolo smoke test post-deploy.

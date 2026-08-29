@@ -5446,7 +5446,7 @@ var auth, db, messaging, fns, messagingInitError = "";
 // altrimenti la chiamata parte verso us-central1 e torna "not-found".
 var FUNCTIONS_REGION = "europe-west1";
 var VAPID_KEY = "BAf1VFe0FFTgirK8pyQ3rDhKxRfO9NuGwEKhFNKERRGZf-1B2--YCTzowswIo-qN0kyztUbRVVEYcKwzJmQe64M"; // Firebase Console -> Impostazioni progetto -> Cloud Messaging -> Web Push certificates
-if(DEV_MODE){
+if(DEV_MODE || !fbVivo()){
 firebaseReady = false;
 } else {
 try{
@@ -5459,6 +5459,61 @@ try{ if(firebase.functions){ fns = firebase.app().functions(FUNCTIONS_REGION); }
 } catch(initErr){
 firebaseReady = false;
 }
+}
+
+/* ══ FIREBASE C'E' O NO, E COSA SI PUO' FARE SENZA ════════════════════════
+   (29/08/2026, chiude C29.) Le librerie arrivano da `gstatic.com` con cinque
+   `<script src>`. Il service worker le precarica dal 29 mattina, ma un
+   precarico puo' fallire in silenzio — `cache.add(...).catch()` lascia
+   proseguire l'installazione apposta, perche' meglio l'app senza nuvola che
+   nessuna app. Quindi il caso «Firebase non c'e'» esiste, e va gestito qui e
+   non sperando.
+
+   UNA GUARDIA SOLA, e non `typeof firebase` sparso per il file: quaranta
+   controlli sparsi sono quaranta occasioni di dimenticarsene uno, e il primo
+   dimenticato e' un `ReferenceError` in mezzo al bosco.
+
+   `modalitaLocale()` dice: le librerie non ci sono, MA questo telefono e'
+   gia' configurato, quindi si tira lo stesso. Il segnapunti, lo storico,
+   l'attrezzatura e il profilo vivono in `localStorage` e non hanno mai avuto
+   bisogno della rete. Quello che chiede un server — accesso, sincronia,
+   profili pubblici, chat, allenamenti aperti, compagnia, avvisi — resta
+   spento, e `firebaseReady` era gia' la bandiera che lo diceva.
+
+   COSA CONTA COME «GIA' CONFIGURATO»: un profilo salvato, oppure uno storico.
+   Sono le due cose che dimostrano che qualcuno ha gia' usato l'app almeno una
+   volta con la rete. Su un telefono vergine non si finge un account: si dice
+   che per la prima volta serve una connessione, ed e' la verita'. */
+function fbVivo(){
+try{ return (typeof firebase !== "undefined") && !!firebase && !!firebase.initializeApp; }
+catch(e){ return false; }
+}
+function telefonoConfigurato(){
+try{
+var p = state && state.profile;
+if(p && ((p.nomeCognome && String(p.nomeCognome).trim()) ||
+         (p.username && String(p.username).trim()))) return true;
+var st = localStorage.getItem(HISTORY_KEY);
+if(st){
+var giri = JSON.parse(st);
+if(Array.isArray(giri) && giri.length > 0) return true;
+}
+return false;
+}catch(e){ return false; }
+}
+/* NON BASTA CHIEDERE SE `firebase` ESISTE. (29/08/2026.)
+   Le librerie sono cinque file separati. Puo' arrivare `firebase-app` e non
+   `firebase-auth`; oppure app e auth e non Firestore. In quei casi `fbVivo()`
+   risponde si' — il namespace c'e' — ma `initializeApp` fallisce o `db` resta
+   indefinito, `firebaseReady` va a false, e la modalita' locale non si
+   accendeva: l'app restava a meta', che e' il modo peggiore di stare.
+   *Quello che conta non e' se il namespace esiste: e' se il backend e'
+   davvero pronto dopo l'inizializzazione.* */
+function backendPronto(){
+return !!firebaseReady && !!auth && !!db;
+}
+function modalitaLocale(){
+return !DEV_MODE && !backendPronto() && telefonoConfigurato();
 }
 
 var arrivaDaEmail = false;   // acceso da leggiRitornoEmail(), all'avvio
@@ -5655,12 +5710,19 @@ var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0];
 if(!r) continue;
 var pz = (r.perTarget && r.perTarget.length) ? r.perTarget.length : (h.format || 0);
 if(!pz) continue;
-giri++; piazzole += pz; somma += (r.total / pz);
+giri++; piazzole += pz;
 if(h.campo && String(h.campo).trim()) campi[String(h.campo).trim().toLowerCase()] = true;
 }
 if(!giri) return null;
-return { giri: giri, piazzole: piazzole, campi: Object.keys(campi).length,
-media: Math.round((somma / giri) * 10) / 10 };
+/* NIENTE MEDIA, E NON SOLO A SCHERMO. (29/08/2026.) Il 29 mattina avevo tolto
+   la media dalla carta pubblica e scritto che era chiusa: non lo era. Questa
+   funzione continuava a calcolarla e `publicProfileData` continuava a
+   scriverla dentro `public_profiles.numeri`. *Un dato che non si vede piu' ma
+   continua a essere pubblicato e' peggio di uno visibile: nessuno lo
+   controlla.* Adesso non esce di qui, quindi non entra in Firestore.
+   I documenti scritti prima ce l'hanno ancora e vanno benissimo: non si legge,
+   non si migra, non si cancella. */
+return { giri: giri, piazzole: piazzole, campi: Object.keys(campi).length };
 }
 
 function publicProfileData(d){
@@ -6109,6 +6171,10 @@ diario_cloud_none: "Gi\u00e0 tutto salvato",
 diario_cloud_added: "{n} giri recuperati",
 diario_cloud_error: "Non riuscito, riprova",
 diario_cloud_offline: "Serve l'accesso per usare la copia sul cloud",
+solo_locale: "Stai lavorando solo su questo telefono. I giri si segnano e si salvano; il resto torna quando c\u2019\u00e8 rete.",
+fb_err_tit: "Connessione non riuscita",
+fb_err_sub: "Per la prima volta serve una connessione: senza, non posso preparare l\u2019app su questo telefono. Riprova quando hai rete.",
+fb_err_retry: "Riprova",
 diario_by_mode_title: "Per disciplina",
 diario_by_mode_hint: "Ogni disciplina ha un punteggio massimo diverso: qui i numeri sono confrontabili.",
 nav_menu: "\u2190 Menu",
@@ -6397,7 +6463,8 @@ pp_titolo: "Come ti presenti",
 pp_bio: "Due righe su di te",
 pp_bio_ph: "Es. Tiro da tre anni, longbow, mi trovi quasi sempre al campo il sabato.",
 pp_mostra_numeri: "Mostra i miei numeri agli altri arcieri",
-pp_mostra_numeri_sub: "Giri, piazzole, campi e media. Lo storico dei singoli giri resta tuo e non lo vede nessuno.",
+pp_mostra_numeri_sub: "Giri, piazzole e campi. Lo storico dei singoli giri resta tuo e non lo vede nessuno.",
+ctx_vecchio: "barème precedente",
 pp_non_trovato: "Questo profilo non c’è, o non è pubblico.",
 pp_numeri_privati: "Questo arciere non mostra i suoi numeri.",
 pp_campi: "Campi",
@@ -7054,6 +7121,10 @@ diario_cloud_none: "Everything already saved",
 diario_cloud_added: "{n} rounds restored",
 diario_cloud_error: "Didn't work, try again",
 diario_cloud_offline: "Sign in to use the cloud backup",
+solo_locale: "You\u2019re working on this phone only. You can shoot and save; everything else comes back with the network.",
+fb_err_tit: "Couldn\u2019t connect",
+fb_err_sub: "The first time you need a connection: without one I can\u2019t set the app up on this phone. Try again when you have a network.",
+fb_err_retry: "Try again",
 diario_by_mode_title: "By discipline",
 diario_by_mode_hint: "Each discipline has a different maximum score: here the numbers are comparable.",
 nav_menu: "\u2190 Menu",
@@ -7089,7 +7160,8 @@ pp_titolo: "How you introduce yourself",
 pp_bio: "Two lines about you",
 pp_bio_ph: "E.g. Shooting for three years, longbow, usually at the field on Saturdays.",
 pp_mostra_numeri: "Show my numbers to other archers",
-pp_mostra_numeri_sub: "Rounds, targets, fields and average. Your round-by-round history stays yours and nobody sees it.",
+pp_mostra_numeri_sub: "Rounds, targets and fields. Your round-by-round history stays yours and nobody sees it.",
+ctx_vecchio: "previous scoring",
 pp_non_trovato: "This profile does not exist, or is not public.",
 pp_numeri_privati: "This archer does not show their numbers.",
 pp_campi: "Fields",
@@ -7745,6 +7817,10 @@ diario_cloud_none: "D\u00e9j\u00e0 tout sauvegard\u00e9",
 diario_cloud_added: "{n} parcours r\u00e9cup\u00e9r\u00e9s",
 diario_cloud_error: "\u00c9chec, r\u00e9essayez",
 diario_cloud_offline: "Connectez-vous pour utiliser la sauvegarde",
+solo_locale: "Vous travaillez seulement sur ce t\u00e9l\u00e9phone. Vous pouvez tirer et enregistrer\u00a0; le reste revient avec le r\u00e9seau.",
+fb_err_tit: "Connexion impossible",
+fb_err_sub: "La premi\u00e8re fois, une connexion est n\u00e9cessaire\u00a0: sans elle je ne peux pas pr\u00e9parer l\u2019app sur ce t\u00e9l\u00e9phone. R\u00e9essayez avec du r\u00e9seau.",
+fb_err_retry: "R\u00e9essayer",
 diario_by_mode_title: "Par discipline",
 diario_by_mode_hint: "Chaque discipline a un score maximum diff\u00e9rent : ici les chiffres sont comparables.",
 nav_menu: "\u2190 Menu",
@@ -7780,7 +7856,8 @@ pp_titolo: "Comment vous vous présentez",
 pp_bio: "Deux lignes sur vous",
 pp_bio_ph: "Ex. Je tire depuis trois ans, longbow, souvent au terrain le samedi.",
 pp_mostra_numeri: "Montrer mes chiffres aux autres archers",
-pp_mostra_numeri_sub: "Parcours, cibles, terrains et moyenne. L’historique détaillé reste le vôtre et personne ne le voit.",
+pp_mostra_numeri_sub: "Parcours, cibles et terrains. L’historique détaillé reste le vôtre et personne ne le voit.",
+ctx_vecchio: "ancien barème",
 pp_non_trovato: "Ce profil n’existe pas, ou n’est pas public.",
 pp_numeri_privati: "Cet archer ne montre pas ses chiffres.",
 pp_campi: "Terrains",
@@ -8436,6 +8513,10 @@ diario_cloud_none: "Bereits alles gesichert",
 diario_cloud_added: "{n} Runden wiederhergestellt",
 diario_cloud_error: "Fehlgeschlagen, nochmal versuchen",
 diario_cloud_offline: "Melde dich an, um die Cloud-Sicherung zu nutzen",
+solo_locale: "Du arbeitest nur auf diesem Handy. Schie\u00dfen und Speichern geht; der Rest kommt mit dem Netz zur\u00fcck.",
+fb_err_tit: "Keine Verbindung",
+fb_err_sub: "Beim ersten Mal braucht es eine Verbindung: ohne kann ich die App auf diesem Handy nicht einrichten. Versuch es mit Netz noch einmal.",
+fb_err_retry: "Erneut versuchen",
 diario_by_mode_title: "Nach Disziplin",
 diario_by_mode_hint: "Jede Disziplin hat eine andere H\u00f6chstpunktzahl: hier sind die Zahlen vergleichbar.",
 nav_menu: "\u2190 Men\u00fc",
@@ -8471,7 +8552,8 @@ pp_titolo: "Wie du dich vorstellst",
 pp_bio: "Zwei Zeilen über dich",
 pp_bio_ph: "z.B. Schieße seit drei Jahren, Langbogen, samstags meist am Parcours.",
 pp_mostra_numeri: "Meine Zahlen anderen Schützen zeigen",
-pp_mostra_numeri_sub: "Runden, Ziele, Parcours und Schnitt. Deine Runde-für-Runde-Historie bleibt deine und sieht niemand.",
+pp_mostra_numeri_sub: "Runden, Ziele und Parcours. Deine Runde-für-Runde-Historie bleibt deine und sieht niemand.",
+ctx_vecchio: "frühere Wertung",
 pp_non_trovato: "Dieses Profil gibt es nicht, oder es ist nicht öffentlich.",
 pp_numeri_privati: "Dieser Schütze zeigt seine Zahlen nicht.",
 pp_campi: "Parcours",
@@ -9126,6 +9208,10 @@ diario_cloud_none: "Zaten her \u015fey kay\u0131tl\u0131",
 diario_cloud_added: "{n} tur geri al\u0131nd\u0131",
 diario_cloud_error: "Ba\u015far\u0131s\u0131z, tekrar dene",
 diario_cloud_offline: "Bulut yede\u011fi i\u00e7in giri\u015f yap",
+solo_locale: "Sadece bu telefonda \u00e7al\u0131\u015f\u0131yorsun. At\u0131\u015f yapabilir ve kaydedebilirsin; gerisi a\u011f gelince d\u00f6ner.",
+fb_err_tit: "Ba\u011flant\u0131 kurulamad\u0131",
+fb_err_sub: "\u0130lk seferde ba\u011flant\u0131 gerekir: olmadan uygulamay\u0131 bu telefonda haz\u0131rlayamam. A\u011f varken tekrar dene.",
+fb_err_retry: "Tekrar dene",
 diario_by_mode_title: "Disipline g\u00f6re",
 diario_by_mode_hint: "Her disiplinin azami puan\u0131 farkl\u0131d\u0131r: burada say\u0131lar kar\u015f\u0131la\u015ft\u0131r\u0131labilir.",
 nav_menu: "\u2190 Men\u00fc",
@@ -9181,7 +9267,8 @@ pp_titolo: "Kendini nasıl tanıtıyorsun",
 pp_bio: "Kendin hakkında iki satır",
 pp_bio_ph: "Örn. Üç yıldır atış yapıyorum, longbow, cumartesileri sahadaım.",
 pp_mostra_numeri: "Sayılarımı diğer okculara göster",
-pp_mostra_numeri_sub: "Tur, hedef, saha ve ortalama. Tur tur geçmişin sende kalır, kimse görmez.",
+pp_mostra_numeri_sub: "Tur, hedef ve saha. Tur tur geçmişin sende kalır, kimse görmez.",
+ctx_vecchio: "önceki puanlama",
 pp_non_trovato: "Bu profil yok ya da herkese açık değil.",
 pp_numeri_privati: "Bu okçu sayılarını göstermiyor.",
 pp_campi: "Saha",
@@ -9830,6 +9917,10 @@ diario_cloud_none: "\u0412\u0441\u0451 \u0443\u0436\u0435 \u0441\u043e\u0445\u04
 diario_cloud_added: "\u0412\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u043e \u043a\u0440\u0443\u0433\u043e\u0432: {n}",
 diario_cloud_error: "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c, \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0441\u043d\u043e\u0432\u0430",
 diario_cloud_offline: "\u0412\u043e\u0439\u0434\u0438\u0442\u0435, \u0447\u0442\u043e\u0431\u044b \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u044c \u043a\u043e\u043f\u0438\u044e \u0432 \u043e\u0431\u043b\u0430\u043a\u0435",
+solo_locale: "\u0412\u044b \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442\u0435 \u0442\u043e\u043b\u044c\u043a\u043e \u043d\u0430 \u044d\u0442\u043e\u043c \u0442\u0435\u043b\u0435\u0444\u043e\u043d\u0435. \u0421\u0442\u0440\u0435\u043b\u044f\u0442\u044c \u0438 \u0441\u043e\u0445\u0440\u0430\u043d\u044f\u0442\u044c \u043c\u043e\u0436\u043d\u043e.",
+fb_err_tit: "\u041d\u0435\u0442 \u0441\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u044f",
+fb_err_sub: "\u0412 \u043f\u0435\u0440\u0432\u044b\u0439 \u0440\u0430\u0437 \u043d\u0443\u0436\u043d\u043e \u0441\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u0435: \u0431\u0435\u0437 \u043d\u0435\u0433\u043e \u043d\u0435 \u043f\u043e\u043b\u0443\u0447\u0438\u0442\u0441\u044f \u043d\u0430\u0441\u0442\u0440\u043e\u0438\u0442\u044c \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435. \u041f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0441 \u0441\u0435\u0442\u044c\u044e.",
+fb_err_retry: "\u041f\u043e\u0432\u0442\u043e\u0440\u0438\u0442\u044c",
 diario_by_mode_title: "\u041f\u043e \u0434\u0438\u0441\u0446\u0438\u043f\u043b\u0438\u043d\u0430\u043c",
 diario_by_mode_hint: "\u0423 \u043a\u0430\u0436\u0434\u043e\u0439 \u0434\u0438\u0441\u0446\u0438\u043f\u043b\u0438\u043d\u044b \u0441\u0432\u043e\u0439 \u043c\u0430\u043a\u0441\u0438\u043c\u0443\u043c \u043e\u0447\u043a\u043e\u0432: \u0437\u0434\u0435\u0441\u044c \u0446\u0438\u0444\u0440\u044b \u0441\u043e\u043f\u043e\u0441\u0442\u0430\u0432\u0438\u043c\u044b.",
 nav_menu: "\u2190 \u041c\u0435\u043d\u044e",
@@ -9885,7 +9976,8 @@ pp_titolo: "Как вы себя представляете",
 pp_bio: "Две строки о себе",
 pp_bio_ph: "Напр. Стреляю три года, лонгбоу, по субботам на площадке.",
 pp_mostra_numeri: "Показывать мои цифры другим",
-pp_mostra_numeri_sub: "Раунды, мишени, площадки и среднее. История по раундам остаётся вашей.",
+pp_mostra_numeri_sub: "Раунды, мишени и площадки. История по раундам остаётся вашей.",
+ctx_vecchio: "прежний подсчёт",
 pp_non_trovato: "Такого профиля нет или он не публичный.",
 pp_numeri_privati: "Этот стрелок не показывает свои цифры.",
 pp_campi: "Площадки",
@@ -10534,6 +10626,10 @@ diario_cloud_none: "Ya est\u00e1 todo guardado",
 diario_cloud_added: "{n} rondas recuperadas",
 diario_cloud_error: "No ha funcionado, int\u00e9ntalo de nuevo",
 diario_cloud_offline: "Inicia sesi\u00f3n para usar la copia en la nube",
+solo_locale: "Est\u00e1s trabajando solo en este tel\u00e9fono. Puedes tirar y guardar; lo dem\u00e1s vuelve con la red.",
+fb_err_tit: "No se pudo conectar",
+fb_err_sub: "La primera vez hace falta conexi\u00f3n: sin ella no puedo preparar la app en este tel\u00e9fono. Int\u00e9ntalo con red.",
+fb_err_retry: "Reintentar",
 diario_by_mode_title: "Por disciplina",
 diario_by_mode_hint: "Cada disciplina tiene una puntuaci\u00f3n m\u00e1xima distinta: aqu\u00ed los n\u00fameros son comparables.",
 nav_menu: "\u2190 Men\u00fa",
@@ -10589,7 +10685,8 @@ pp_titolo: "Cómo te presentas",
 pp_bio: "Dos líneas sobre ti",
 pp_bio_ph: "Ej. Tiro desde hace tres años, longbow, los sábados suelo estar en el campo.",
 pp_mostra_numeri: "Mostrar mis números a otros arqueros",
-pp_mostra_numeri_sub: "Rondas, dianas, campos y media. Tu historial ronda a ronda sigue siendo tuyo y no lo ve nadie.",
+pp_mostra_numeri_sub: "Rondas, dianas y campos. Tu historial ronda a ronda sigue siendo tuyo y no lo ve nadie.",
+ctx_vecchio: "baremo anterior",
 pp_non_trovato: "Este perfil no existe, o no es público.",
 pp_numeri_privati: "Este arquero no muestra sus números.",
 pp_campi: "Campos",
@@ -11238,6 +11335,10 @@ diario_cloud_none: "Allt \u00e4r redan sparat",
 diario_cloud_added: "{n} rundor h\u00e4mtade",
 diario_cloud_error: "Misslyckades, f\u00f6rs\u00f6k igen",
 diario_cloud_offline: "Logga in f\u00f6r att anv\u00e4nda molnkopian",
+solo_locale: "Du arbetar bara p\u00e5 den h\u00e4r telefonen. Du kan skjuta och spara; resten kommer tillbaka med n\u00e4tet.",
+fb_err_tit: "Ingen anslutning",
+fb_err_sub: "F\u00f6rsta g\u00e5ngen kr\u00e4vs en anslutning: utan den kan jag inte st\u00e4lla in appen p\u00e5 den h\u00e4r telefonen. F\u00f6rs\u00f6k igen med n\u00e4t.",
+fb_err_retry: "F\u00f6rs\u00f6k igen",
 diario_by_mode_title: "Per disciplin",
 diario_by_mode_hint: "Varje disciplin har olika maxpo\u00e4ng: h\u00e4r \u00e4r siffrorna j\u00e4mf\u00f6rbara.",
 nav_menu: "\u2190 Meny",
@@ -11293,7 +11394,8 @@ pp_titolo: "Hur du presenterar dig",
 pp_bio: "Två rader om dig",
 pp_bio_ph: "T.ex. Skjuter sedan tre år, longbow, oftast på banan på lördagar.",
 pp_mostra_numeri: "Visa mina siffror för andra skyttar",
-pp_mostra_numeri_sub: "Rundor, mål, banor och snitt. Din historik runda för runda förblir din och ingen ser den.",
+pp_mostra_numeri_sub: "Rundor, mål och banor. Din historik runda för runda förblir din och ingen ser den.",
+ctx_vecchio: "tidigare poäng",
 pp_non_trovato: "Den här profilen finns inte, eller är inte offentlig.",
 pp_numeri_privati: "Den här skytten visar inte sina siffror.",
 pp_campi: "Banor",
@@ -11942,6 +12044,10 @@ diario_cloud_none: "Alles is al opgeslagen",
 diario_cloud_added: "{n} rondes hersteld",
 diario_cloud_error: "Mislukt, probeer opnieuw",
 diario_cloud_offline: "Log in om de cloud-back-up te gebruiken",
+solo_locale: "Je werkt alleen op deze telefoon. Schieten en opslaan kan; de rest komt terug met het netwerk.",
+fb_err_tit: "Geen verbinding",
+fb_err_sub: "De eerste keer is een verbinding nodig: zonder kan ik de app niet klaarzetten op deze telefoon. Probeer het met netwerk.",
+fb_err_retry: "Opnieuw",
 diario_by_mode_title: "Per discipline",
 diario_by_mode_hint: "Elke discipline heeft een andere maximumscore: hier zijn de cijfers vergelijkbaar.",
 nav_menu: "\u2190 Menu",
@@ -11997,7 +12103,8 @@ pp_titolo: "Hoe je jezelf voorstelt",
 pp_bio: "Twee regels over jou",
 pp_bio_ph: "Bijv. Schiet al drie jaar, longbow, zaterdags meestal op het veld.",
 pp_mostra_numeri: "Mijn cijfers aan andere schutters tonen",
-pp_mostra_numeri_sub: "Rondes, doelen, velden en gemiddelde. Je ronde-voor-ronde geschiedenis blijft van jou en niemand ziet die.",
+pp_mostra_numeri_sub: "Rondes, doelen en velden. Je ronde-voor-ronde geschiedenis blijft van jou en niemand ziet die.",
+ctx_vecchio: "vorige telling",
 pp_non_trovato: "Dit profiel bestaat niet, of is niet openbaar.",
 pp_numeri_privati: "Deze schutter toont zijn cijfers niet.",
 pp_campi: "Velden",
@@ -12995,6 +13102,31 @@ return (modeKey === "ifaa_3d") ? IFAA_SCHEMA : null;
 
 /* La chiave con cui un giro entra in media, record e confronti. E' l'unica
    porta: se un giorno nasce un secondo barème corretto, si aggiunge QUI. */
+/* ══ CHE COSA E' STATA QUESTA SESSIONE ════════════════════════════════════
+   (29/08/2026.) Oggi ArcTrail registra solo giri 3D, e va bene cosi'. Ma un
+   giorno lo stesso diario potrebbe tenere anche gli allenamenti su bersaglio,
+   e quel giorno la domanda «questa riga cos'era?» deve avere una risposta
+   scritta nel dato, non dedotta.
+
+   IL PRECEDENTE E' `scoringVersion`, ed e' la ragione per cui questa cosa
+   costa tre righe invece di una migrazione: il 28/08 il barème IFAA e'
+   cambiato, e invece di riscrivere lo storico si e' aggiunto un campo e una
+   funzione che lo legge col ripiego (`modoDelGiro`, qui sotto). L'assenza del
+   campo E' l'informazione. Qui si fa la stessa identica cosa.
+
+   *Un record senza `sessionType` e' un giro 3D*, e lo sara' per sempre:
+   quando il campo e' stato introdotto, l'app non sapeva fare altro. Non c'e'
+   niente da migrare e niente da riscrivere — ne' in locale ne' su Firestore.
+
+   In inglese questa funzione si chiamerebbe `getSessionType(session)`. Qui i
+   nomi sono in italiano come tutto il resto del file. */
+var SESSIONE_3D = "3d";
+function tipoSessione(s){
+if(!s || typeof s !== "object") return SESSIONE_3D;
+var t = s.sessionType;
+return (typeof t === "string" && t) ? t : SESSIONE_3D;
+}
+
 function modoDelGiro(modeKey, scoringVersion){
 if(modeKey === "ifaa_3d" && scoringVersion !== IFAA_SCHEMA) return "ifaa_3d_v1";
 return modeKey;
@@ -13496,6 +13628,57 @@ n.className = "finale-stato pista-stato " + s.cl;
 n.textContent = (finaleNube.stato === "errore") ? (s.txt + " \u00b7 " + t("pg_retry")) : s.txt;
 }
 
+/* ══ UNA FORMA SOLA PER IL GIRO CHE VA IN NUVOLA ══════════════════════════
+   (29/08/2026, chiude C26.) I campi del giro erano scritti a mano in TRE
+   posti — due che salgono, uno che scende — e i tre elenchi non combaciavano.
+   Chi saliva portava `campo`, `durata`, `assetto`, `assettoNome`, `consegna`
+   e `nota`; chi scendeva li lasciava per strada. *Un giro ripristinato su un
+   telefono nuovo tornava senza il nome del posto e senza quanto era durato,
+   e nessuno se ne accorgeva perche' nessun banco fa il giro intero.*
+
+   Adesso la forma e' una, e sta qui. Chi aggiunge un campo al giro lo
+   aggiunge in un posto solo e sopravvive al viaggio.
+   `null` dove il dato non c'e': i documenti vecchi non hanno queste chiavi e
+   tornano su `null`, che e' esattamente quello che erano. */
+function giroPerNuvola(h){
+return {
+date: h.date,
+deleted: false,
+sessionType: tipoSessione(h),
+format: (h.format === 0 || h.format) ? h.format : null,
+modeKey: h.modeKey || null,
+modeLabel: h.modeLabel || "",
+scoringVersion: h.scoringVersion || null,
+campo: h.campo || null,
+durata: (typeof h.durata === "number") ? h.durata : null,
+assetto: h.assetto || null,
+assettoNome: h.assettoNome || null,
+consegna: h.consegna || null,
+nota: h.nota || null,
+results: packResults(h.results)
+};
+}
+
+/* E la stessa forma al contrario. `modoDelGiro` normalizza qui, alla lettura,
+   invece di riscrivere Firestore in massa. */
+function giroDaNuvola(d){
+return {
+date: d.date,
+sessionType: tipoSessione(d),
+format: d.format,
+modeKey: modoDelGiro(d.modeKey, d.scoringVersion),
+modeLabel: d.modeLabel,
+scoringVersion: d.scoringVersion || null,
+campo: d.campo || null,
+durata: (typeof d.durata === "number") ? d.durata : null,
+assetto: d.assetto || null,
+assettoNome: d.assettoNome || null,
+consegna: d.consegna || null,
+nota: d.nota || null,
+results: unpackResults(d.results)
+};
+}
+
 function backupRoundToCloud(roundEntry){
 var ref = cloudHistoryRef();
 if(!ref || !roundEntry) return;
@@ -13503,20 +13686,10 @@ finaleNube.stato = (navigator.onLine === false) ? "coda" : "invio";
 finaleNube.errore = "";
 dipingiStatoFinale();
 try{
-ref.doc(roundDocId(roundEntry.date)).set({
-date: roundEntry.date,
-deleted: false,
-format: roundEntry.format || null,
-modeKey: roundEntry.modeKey || null,
-modeLabel: roundEntry.modeLabel || "",
-scoringVersion: roundEntry.scoringVersion || null,
-results: packResults(roundEntry.results),
-consegna: roundEntry.consegna || null,
-nota: roundEntry.nota || null,
-assetto: roundEntry.assetto || null,
-assettoNome: roundEntry.assettoNome || null,
+ref.doc(roundDocId(roundEntry.date)).set(
+Object.assign(giroPerNuvola(roundEntry), {
 savedAt: firebase.firestore.FieldValue.serverTimestamp()
-}, { merge: true }).then(function(){
+}), { merge: true }).then(function(){
 finaleNube.stato = "salvato";
 finaleNube.fatto = roundDocId(roundEntry.date);
 dipingiStatoFinale();
@@ -13596,12 +13769,7 @@ for(k in del){ if(!giaSepolti[k]) tomb.push(k); }
 if(!todo.length && !tomb.length){ if(cb) cb(null, 0); return; }
 var batch = db.batch();
 todo.slice(0, 400).forEach(function(h){
-batch.set(ref.doc(roundDocId(h.date)), {
-date: h.date, deleted: false, format: h.format || null, modeKey: h.modeKey || null,
-modeLabel: h.modeLabel || "", scoringVersion: h.scoringVersion || null,
-results: packResults(h.results),
-savedAt: firebase.firestore.FieldValue.serverTimestamp()
-}, { merge: true });
+batch.set(ref.doc(roundDocId(h.date)), giroPerNuvola(h));
 });
 tomb.slice(0, 200).forEach(function(id){
 batch.set(ref.doc(id), {
@@ -13682,10 +13850,7 @@ if(!d || !d.date || d.deleted === true) return;
    28/08/2026 non ha `scoringVersion`, e la sua assenza e'
    l'informazione: quel giro e' del barème vecchio. Si normalizza qui,
    alla lettura, invece di riscrivere Firestore in massa. */
-local.push({ date:d.date, format:d.format,
-modeKey:modoDelGiro(d.modeKey, d.scoringVersion),
-scoringVersion:d.scoringVersion || null,
-modeLabel:d.modeLabel, results:unpackResults(d.results) });
+local.push(giroDaNuvola(d));
 added++;
 });
 if(added){
@@ -14437,8 +14602,8 @@ restoreContinuity(!lastMoved);
 function paintScreen(){
 var app = document.getElementById("app");
 app.innerHTML = "";
-app.classList.toggle("narrow", !state.lang || authState !== "ready" || !!NARROW_SCREENS[state.screen]);
-app.classList.toggle("modulo", authState === "ready" && !!FORM_SCREENS[state.screen]);
+app.classList.toggle("narrow", !state.lang || (authState !== "ready" && !modalitaLocale()) || !!NARROW_SCREENS[state.screen]);
+app.classList.toggle("modulo", (authState === "ready" || modalitaLocale()) && !!FORM_SCREENS[state.screen]);
 // La pista e' l'unica schermata che non scorre: #app diventa una colonna
 // flessibile perche' la tastiera possa stare in fondo senza posizione fissa.
 // LA REGOLA "NON SCORRE" SEGUE LA SCHERMATA CHE SI VEDE, NON LO STATO.
@@ -14448,15 +14613,26 @@ app.classList.toggle("modulo", authState === "ready" && !!FORM_SCREENS[state.scr
 // pagina non si scorreva piu'. Il bug era li' dal 15/08, prima di tutto il
 // resto: nessuno era mai uscito dal giro per guardare il menu.
 document.body.classList.toggle("schermo-percorso",
-state.screen === "round" && authState === "ready" && !homeOverride);
+state.screen === "round" && (authState === "ready" || modalitaLocale()) && !homeOverride);
 if(typeof syncNavGuard === "function") syncNavGuard();
 if(state.lang){ document.documentElement.lang = state.lang; }
 applyTheme(currentTheme());
+if(!backendPronto() && !telefonoConfigurato()){ app.appendChild(firebaseErrorScreen()); return; }
 if(!state.lang){ app.appendChild(setupScreen()); return; }
 if(authState === "loading"){ app.appendChild(loadingScreen()); return; }
 if(authState === "linkSent"){ app.appendChild(linkSentScreen()); return; }
 if(authState === "authError"){ app.appendChild(authErrorScreen()); return; }
-if(authState === "firebaseError"){ app.appendChild(firebaseErrorScreen()); return; }
+/* CHI HA GIA' USATO L'APP NON VIENE FERMATO. (29/08/2026.) Prima qui si
+   disegnava la schermata «Connessione non riuscita» e si usciva: il
+   segnapunti era irraggiungibile anche a chi aveva tutto sul telefono e
+   voleva solo segnare dodici piazzole in un bosco senza campo. */
+if(authState === "firebaseError" && !telefonoConfigurato()){ app.appendChild(firebaseErrorScreen()); return; }
+/* E SE SI TIRA IN LOCALE, LO SI DICE. Una fascia sola in cima, non una frase
+   in ogni schermata: chi non sa di essere scollegato non capisce perche' la
+   chat e' vuota, e pensa che l'app sia rotta invece che offline. */
+if(modalitaLocale()){
+app.appendChild(el('<div class="cal-avviso" id="fasciaLocale">'+icon("warn",16)+'<span>'+escapeHtml(t("solo_locale"))+'</span></div>'));
+}
 if(authState === "verifyEmail"){ app.appendChild(verifyEmailScreen()); return; }
 if(authState === "pendingApproval"){ app.appendChild(pendingApprovalScreen()); return; }
 // CHI ARRIVA DA UN'EMAIL HA GIA' UN ACCOUNT. (20/08/2026.)
@@ -14514,7 +14690,11 @@ case "round": app.appendChild(roundScreen()); break;
 case "summary": app.appendChild(summaryScreen()); break;
 default: app.appendChild(registrationScreen());
 }
-if(currentUser && authState === "ready"){ appendTabBarTo(app); }
+/* LA BARRA SI DISEGNA ANCHE IN LOCALE. (29/08/2026.) Chiedeva `currentUser`
+   e `authState === "ready"`, e in modalita' locale non c'e' ne' l'uno ne'
+   l'altro: l'app cadeva oltre la schermata bloccante e poi restava senza
+   navigazione, che e' un modo peggiore di essere rotta. */
+if((currentUser && authState === "ready") || modalitaLocale()){ appendTabBarTo(app); }
 if(authState === "ready") maybeShowWelcomeNote();
 }
 
@@ -14656,7 +14836,7 @@ logo.innerHTML = logoSVG(150);
 wrap.appendChild(logo);
 wrap.appendChild(el('<div class="onboard-title display">Qualcosa non ha funzionato</div>'));
 wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;color:var(--danger);">'+escapeHtml(authErrorMsg)+'</div>'));
-var retryBtn = el('<button class="btn btn-primary" style="margin-top:var(--s-2);">Riprova</button>');
+var retryBtn = el('<button class="btn btn-primary" style="margin-top:var(--s-2);">'+escapeHtml(t("fb_err_retry"))+'</button>');
 retryBtn.addEventListener("click", function(){ authState = "needLogin"; authErrorMsg = ""; render(); });
 wrap.appendChild(retryBtn);
 return wrap;
@@ -14667,9 +14847,12 @@ var wrap = el('<div class="splash-wrap"></div>');
 var logo = el('<div class="splash-logo"></div>');
 logo.innerHTML = logoSVG(150);
 wrap.appendChild(logo);
-wrap.appendChild(el('<div class="onboard-title display">Connessione non riuscita</div>'));
-wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">Non sono riuscito a collegarmi al servizio di accesso. Controlla la connessione internet e riprova.</div>'));
-var retryBtn = el('<button class="btn btn-primary" style="margin-top:var(--s-2);">Riprova</button>');
+/* TRADOTTA. (29/08/2026.) E' la schermata che vede un telefono mai usato
+   senza rete: era l'unica scritta in italiano fisso, e la vede proprio chi
+   l'italiano potrebbe non saperlo. */
+wrap.appendChild(el('<div class="onboard-title display">'+escapeHtml(t("fb_err_tit"))+'</div>'));
+wrap.appendChild(el('<div class="onboard-sub" style="max-width:280px;">'+escapeHtml(t("fb_err_sub"))+'</div>'));
+var retryBtn = el('<button class="btn btn-primary" style="margin-top:var(--s-2);">'+escapeHtml(t("fb_err_retry"))+'</button>');
 retryBtn.addEventListener("click", function(){ window.location.reload(); });
 wrap.appendChild(retryBtn);
 return wrap;
@@ -16135,6 +16318,10 @@ frEsito = null; state.screen = "field-report"; save(); render();
 // e' una richiesta. I messaggi aspettano — a differenza della freccia appena
 // tirata, non scadono. (Con homeOverride si sta guardando il menu: li' tornano.)
 var inPercorso = (state.screen === "round" && !mostraMenu);
+/* NOTIFICHE E MESSAGGI VOGLIONO UN SERVER. (29/08/2026.) In modalita' locale
+   comparivano come sempre e aprivano schermate vuote: un comando che c'e' e
+   non fa niente e' peggio di un comando che non c'e'. La barra Home/Campi/
+   Tira resta, perche' serve a tirare. */
 if(currentUser && authState === "ready" && !inPercorso){
 if(state.screen !== "notifiche"){
 azioni.push({ id:"notifiche", glifo:"bell", testo:t("notif_center_title"), conta:notifUnreadCount,
@@ -17295,6 +17482,8 @@ var d = null;
 try{ d = new Date(g.date); }catch(e){}
 if(!d || isNaN(d.getTime())) return;
 miei.push({ data:d, punti: io.total || 0, piazzole: (io.perTarget || []).length || g.format || 0,
+// Il contesto si calcola qui, dove il giro intero e' ancora sotto mano.
+ctx: contestoDi(g, io), eti: contestoDi(g, io) ? etichettaContesto(g, io) : "",
             // il campo se c'e', altrimenti il tipo di giro: mai niente
             dove: g.campo || g.modeLabel || "", formato: g.format || 0 });
 });
@@ -17314,18 +17503,51 @@ return x.data.getFullYear() === ora.getFullYear() && x.data.getMonth() === ora.g
    i formati sono tutti uguali — il caso normale — il numero e' identico a
    ieri. La formula sta scritta per esteso accanto a `gruppoOmogeneo`. */
 var baseTutta = mese.length ? mese : miei;
-var gruppoHome = gruppoOmogeneo(baseTutta.map(function(x){ return { format:x.formato, punti:x.punti, piazzole:x.piazzole }; }));
-var base = gruppoHome.lista.length ? gruppoHome.lista : baseTutta;
+var gruppoHome = gruppoOmogeneo(baseTutta.map(function(x){
+return { format:x.formato, punti:x.punti, piazzole:x.piazzole, ctx:x.ctx, eti:x.eti }; }));
+/* NIENTE RIPIEGO SU `baseTutta`. (29/08/2026.) Qui c'era un `? :` che, se
+   nessun giro aveva un contesto valido, tornava a mediare TUTTO — cioe'
+   annullava la regola proprio nel caso in cui serviva. *Un ripiego che
+   ricompare quando la cura non si applica non e' un ripiego: e' la malattia
+   con un nome piu' gentile.* Se il gruppo e' vuoto non c'e' media, non c'e'
+   meglio, non c'e' record. I conteggi restano. */
+var base = gruppoHome.lista;
 var somma = 0; base.forEach(function(x){ somma += x.punti; });
 var piazz = 0; base.forEach(function(x){ piazz += x.piazzole; });
-var meglio = 0; miei.forEach(function(x){ if(x.punti > meglio) meglio = x.punti; });
+/* IL «MEGLIO» DEL MESE ESCE DAL GRUPPO CONFRONTABILE, non da tutti i giri.
+   (29/08/2026.) Prima guardava `miei` per intero: stesso difetto che aveva
+   `mioRecord`, in una funzione che nessuno aveva guardato. */
+var meglio = 0; gruppoHome.lista.forEach(function(x){ if(x.punti > meglio) meglio = x.punti; });
 var ultimo = miei[0];
-var precedente = miei[1] || null;
+/* IL PRECEDENTE E' IL PRECEDENTE CONFRONTABILE, non quello di ieri.
+   (29/08/2026.) Prima era `miei[1]`, cioe' il giro immediatamente prima in
+   ordine di data: se ieri hai tirato una Battuta da 28 e oggi un round IFAA,
+   il «+55» non misurava niente. Adesso si scorre indietro fino a trovare un
+   giro dello STESSO contesto, e se non c'e' il delta e' `null` — nessun
+   numero e' meglio di un numero sbagliato. */
+var precedente = null;
+if(ultimo && ultimo.ctx){
+for(var pi = 1; pi < miei.length; pi++){
+if(stessoContesto(miei[pi].ctx, ultimo.ctx)){ precedente = miei[pi]; break; }
+}
+}
+/* E IL RECORD SI GIUDICA NEL CONTESTO DELL'ULTIMO GIRO, non contro il gruppo
+   piu' numeroso. Se l'ultimo appartiene a un contesto diverso da quello
+   dominante, il `meglio` di sopra non lo riguarda affatto. */
+var miglioreSuo = 0, quantiSuoi = 0;
+if(ultimo && ultimo.ctx){
+miei.forEach(function(x){
+if(!stessoContesto(x.ctx, ultimo.ctx)) return;
+quantiSuoi++;
+if(x !== ultimo && x.punti > miglioreSuo) miglioreSuo = x.punti;
+});
+}
 return {
-media: Math.round(somma / base.length),
+media: base.length ? Math.round(somma / base.length) : null,
 giri: base.length,
 piazzole: piazz,
-meglio: meglio,
+meglio: base.length ? meglio : null,
+etichetta: gruppoHome.etichetta || "",
 nelMese: mese.length > 0,
 ultimo: ultimo,
 delta: (ultimo && precedente) ? (ultimo.punti - precedente.punti) : null,
@@ -17333,7 +17555,7 @@ delta: (ultimo && precedente) ? (ultimo.punti - precedente.punti) : null,
    sullo STESSO campo e' un paragone; su campi diversi e' un'informazione con
    un asterisco, e la frase lo dice. */
 stessoCampo: !!(ultimo && precedente && ultimo.dove && ultimo.dove === precedente.dove),
-eRecord: !!(ultimo && ultimo.punti >= meglio && miei.length > 1)
+eRecord: !!(ultimo && ultimo.ctx && quantiSuoi > 1 && ultimo.punti > miglioreSuo)
 };
 }
 
@@ -17381,7 +17603,12 @@ if(!io) return;
 var d = null;
 try{ d = new Date(g.date); }catch(e){}
 if(!d || isNaN(d.getTime())) return;
-punti.push({ q: d.getTime(), data: d, v: io.total || 0, dove: g.campo || g.modeLabel || "" });
+/* OGNI PUNTO SI PORTA IL SUO CONTESTO. (29/08/2026.) La linea univa tutti i
+   punteggi del periodo: FIARC, World Archery, IFAA sulla stessa polilinea.
+   Una riga che sale fra due scale diverse non e' un andamento, e' un disegno.
+   *E un grafico e' piu' convincente di un numero, quindi sbaglia piu' forte.* */
+punti.push({ q: d.getTime(), data: d, v: io.total || 0, dove: g.campo || g.modeLabel || "",
+ctx: contestoDi(g, io), eti: contestoDi(g, io) ? etichettaContesto(g, io) : "" });
 });
 punti.sort(function(a,b){ return a.q - b.q; });   // il tempo va da sinistra a destra
 var ora = Date.now();
@@ -17389,7 +17616,13 @@ var da = 0;
 if(homeFinestra === "m") da = ora - 31 * 86400000;
 else if(homeFinestra === "3") da = ora - 92 * 86400000;
 else { var g0 = new Date(); g0.setMonth(0,1); g0.setHours(0,0,0,0); da = g0.getTime(); }
-return punti.filter(function(p){ return p.q >= da; });
+var dentro = punti.filter(function(p){ return p.q >= da && !!p.ctx; });
+var gr = gruppoOmogeneo(dentro.map(function(p){
+return { ctx:p.ctx, eti:p.eti, p:p }; }));
+var uscita = gr.lista.map(function(x){ return x.p; });
+uscita.etichetta = gr.etichetta || "";
+uscita.misto = gr.misto;
+return uscita;
 }
 
 function homeGrafico(){
@@ -17406,6 +17639,9 @@ barra.appendChild(b);
 card.appendChild(barra);
 
 var serie = homeSerie();
+if(serie.length >= 4 && serie.etichetta){
+card.appendChild(el('<div class="nota">'+escapeHtml(serie.etichetta)+'</div>'));
+}
 if(serie.length < 4){
 card.appendChild(el('<div class="nota">'+escapeHtml(t("home_trend_few"))+'</div>'));
 return card;
@@ -17673,12 +17909,24 @@ barra.appendChild(capo);
    delle barre tolte ieri, scritta in cifre invece che disegnata. */
 var dati = el('<span class="home-mese-dati"></span>');
 var conPunti = function(parola){ return parola + " \u00b7 " + t("fin_punti"); };
-dati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(n.media))+'</b><i>'+escapeHtml(conPunti(t("diario_media")))+'</i></span>'));
+/* MEDIA E RECORD SOLO SE ESISTONO. (29/08/2026.) `homeNumeri` da ieri
+   restituisce `null` quando nessun giro e' confrontabile, ma qui c'era
+   `String(n.media)`, che di `null` fa la parola «null». *Un buco lasciato
+   scoperto dal renderer disfa la cura fatta nel calcolo, e per giunta la fa
+   sembrare un guasto.* Stesso principio gia' applicato nella stagione: se non
+   c'e' un gruppo confrontabile la voce non si disegna, e i conteggi restano.
+   La gara di riferimento e' scritta accanto: un numero senza contesto e'
+   proprio quello che si e' passata la settimana a togliere. */
+if(n.media !== null && n.media !== undefined){
+dati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(n.media))+'</b><i>'+escapeHtml(conPunti(t("diario_media"))+(n.etichetta ? (" \u00b7 "+n.etichetta) : ""))+'</i></span>'));
+}
 var riga = el('<span class="hm-riga"></span>');
-[[t("home_rounds_word"), n.giri],
- [t("diario_record"), n.meglio],
- [t("diario_targets_word"), n.piazzole]]
-.forEach(function(p){
+var voci = [[t("home_rounds_word"), n.giri]];
+if(n.meglio !== null && n.meglio !== undefined){
+voci.push([t("diario_record")+(n.etichetta ? (" \u00b7 "+n.etichetta) : ""), n.meglio]);
+}
+voci.push([t("diario_targets_word"), n.piazzole]);
+voci.forEach(function(p){
 riga.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(p[1]))+'</b><i>'+escapeHtml(p[0])+'</i></span>'));
 });
 dati.appendChild(riga);
@@ -18309,6 +18557,8 @@ if(testaCard) wrap.appendChild(testaCard);
    sono comandi, e i comandi stanno sotto a quello che si guarda. */
 var contiCard = profiloContiCard();
 if(contiCard) wrap.appendChild(contiCard);
+var pbCard = profiloPrimatiCard();
+if(pbCard) wrap.appendChild(pbCard);
 var attCard = profiloAttivitaCard();
 if(attCard) wrap.appendChild(attCard);
 var setupCard = profiloSetupCard();
@@ -21366,7 +21616,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-29-regione";
+var BUILD_STAMP = "2026-08-29-freeze";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -21375,7 +21625,7 @@ var BUILD_STAMP = "2026-08-29-regione";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-28-nfas-fonte";
+var BUILD_PARENT = "2026-08-29-locale";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -21595,17 +21845,31 @@ return caricaAttrezzi().filter(function(a){ return a.id === id; })[0] || null;
    assetto non e' un'informazione, e' un caso — e presentarla come un giudizio
    sull'arco sarebbe la bugia piu' facile di tutta l'app. */
 var ASSETTO_MINIMO = 5;
+/* I GIRI SI CONTANO SU TUTTO, LA MEDIA NO. (29/08/2026.)
+   Lo stesso arco puo' tirare una Battuta FIARC e un round World Archery: una
+   media punti/piazzola sui due insieme non dice niente sull'arco. Quanti giri
+   ci hai fatto invece si conta comunque — contare non richiede che i giri
+   siano confrontabili.
+   E `ASSETTO_MINIMO` vale NEL CONTESTO mostrato: cinque giri incompatibili
+   non fanno una soglia, fanno cinque giri. */
 function assettoNumeri(id){
-var hist = loadHistory(), giri = 0, somma = 0;
+var hist = loadHistory(), giri = 0, confrontabili = [];
 for(var i = 0; i < hist.length; i++){
 var h = hist[i]; if(!h || h.assetto !== id) continue;
 var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0];
 if(!r) continue;
 var pz = (r.perTarget && r.perTarget.length) ? r.perTarget.length : (h.format || 0);
 if(!pz) continue;
-giri++; somma += (r.total / pz);
+giri++;
+var cx = contestoDi(h, r);
+if(cx) confrontabili.push({ ctx: cx, eti: etichettaContesto(h, r), media: (r.total / pz) });
 }
-return { giri: giri, media: giri ? (somma / giri) : null };
+var gr = gruppoOmogeneo(confrontabili);
+var sm = 0; gr.lista.forEach(function(x){ sm += x.media; });
+return { giri: giri,
+media: gr.lista.length ? (sm / gr.lista.length) : null,
+giriMedia: gr.lista.length,
+etichetta: gr.etichetta || "" };
 }
 
 /* LA SCELTA PRIMA DI PARTIRE, e solo se c'e' qualcosa da scegliere. Con un
@@ -21665,10 +21929,10 @@ righe.forEach(function(r){ card.appendChild(el('<div class="attr-riga">'+escapeH
 if(a.note) card.appendChild(el('<div class="attr-note">'+escapeHtml(a.note)+'</div>'));
 
 var num = assettoNumeri(a.id);
-if(num.giri >= ASSETTO_MINIMO){
-card.appendChild(el('<div class="attr-numeri">'+escapeHtml(t("attr_media_con", { media: (Math.round(num.media*10)/10).toString().replace(".", decimaleLocale()), n: num.giri }))+'</div>'));
+if(num.giriMedia >= ASSETTO_MINIMO){
+card.appendChild(el('<div class="attr-numeri">'+escapeHtml(t("attr_media_con", { media: (Math.round(num.media*10)/10).toString().replace(".", decimaleLocale()), n: num.giriMedia })+(num.etichetta ? (" \u00b7 " + num.etichetta) : ""))+'</div>'));
 } else if(num.giri > 0){
-card.appendChild(el('<div class="attr-numeri poco">'+escapeHtml(t("attr_pochi_giri", { n: num.giri, min: ASSETTO_MINIMO }))+'</div>'));
+card.appendChild(el('<div class="attr-numeri poco">'+escapeHtml(t("attr_pochi_giri", { n: num.giriMedia, min: ASSETTO_MINIMO }))+'</div>'));
 }
 
 var azioni = el('<div class="attr-azioni"></div>');
@@ -21903,9 +22167,20 @@ out.giri++;
 out.piazzole += (r.perTarget && r.perTarget.length) ? r.perTarget.length : (h.format || 0);
 if(h.campo && String(h.campo).trim()) campi[String(h.campo).trim().toLowerCase()] = true;
 if(h.modeKey && fed && fed.garaModes.indexOf(h.modeKey) !== -1) out.gare++;
-var k = (h.modeKey || h.modeLabel || "?") + "|" + (h.format || 0);
+/* LA CHIAVE ERA `modeKey|format`, cioe' un contesto a meta'. (29/08/2026.)
+   Ignorava `sessionType` e `scoringVersion`: battere il proprio punteggio col
+   bareme nuovo non e' battere quello fatto col vecchio. Un giro senza
+   contesto non puo' generare il traguardo. */
+var k = contestoDi(h, r);
+/* `continue`, NON `return`. (29/08/2026.) Questo e' un `for`, non un
+   `forEach`: `return` usciva dalla FUNZIONE e restituiva `undefined`, quindi
+   al primo giro vecchio senza contesto la scheda Traguardi si rompeva e
+   spariva anche il conteggio della stagione. Un giro senza contesto conta
+   come giro, come piazzole e come campo — non puo' solo battere un record. */
+if(k){
 if(meglio[k] !== undefined && r.total > meglio[k]) out.record = true;
 if(meglio[k] === undefined || r.total > meglio[k]) meglio[k] = r.total;
+}
 try{ if(new Date(h.date).getFullYear() === out.anno) out.stagione++; }catch(e){}
 }
 out.campi = Object.keys(campi).length;
@@ -21983,8 +22258,15 @@ sc.appendChild(el('<h2 class="section-title">'+escapeHtml(t("att_season",{y:st.a
 var q = el('<div class="home-numeri"></div>');
 q.appendChild(el('<div class="home-num"><b>'+st.giri+'</b><span>'+escapeHtml(t("home_rounds_word"))+'</span></div>'));
 q.appendChild(el('<div class="home-num"><b>'+st.piazzole+'</b><span>'+escapeHtml(t("diario_targets_word"))+'</span></div>'));
-q.appendChild(el('<div class="home-num"><b>'+st.media+'</b><span>'+escapeHtml(t("diario_media"))+'</span></div>'));
-q.appendChild(el('<div class="home-num home-num-record"><b>'+st.meglio+'</b><span>'+escapeHtml(t("diario_record"))+'</span></div>'));
+/* MEDIA E MEGLIO SOLO SE C'E' UN GRUPPO CONFRONTABILE, e con la gara scritta
+   sotto. (29/08/2026.) Se l'anno e' fatto di giri tutti diversi fra loro non
+   si scrive niente: *meglio due numeri veri che quattro di cui due falsi.* */
+if(st.media !== null && st.media !== undefined){
+q.appendChild(el('<div class="home-num"><b>'+st.media+'</b><span>'+escapeHtml(t("diario_media")+(st.etichetta ? " \u00b7 "+st.etichetta : ""))+'</span></div>'));
+}
+if(st.meglio !== null && st.meglio !== undefined){
+q.appendChild(el('<div class="home-num home-num-record"><b>'+st.meglio+'</b><span>'+escapeHtml(t("diario_record")+(st.etichetta ? " \u00b7 "+st.etichetta : ""))+'</span></div>'));
+}
 sc.appendChild(q);
 wrap.appendChild(sc);
 var gc = el('<div class="card"></div>');
@@ -22009,18 +22291,33 @@ return wrap;
 function attStagione(){
 var lista = [];
 try{ lista = loadHistory() || []; }catch(e){ lista = []; }
-var anno = new Date().getFullYear(), n = 0, somma = 0, piazz = 0, meglio = 0;
+var anno = new Date().getFullYear(), n = 0, piazz = 0, meglio = 0, confrontabili = [];
 lista.forEach(function(g){
 var io = (g.results || []).filter(function(r){ return r.isSelf === true; })[0];
 if(!io) return;
 var d = null; try{ d = new Date(g.date); }catch(e){}
 if(!d || isNaN(d.getTime()) || d.getFullYear() !== anno) return;
-n++; somma += io.total || 0;
+/* GIRI E PIAZZOLE SONO UNIVERSALI, MEDIA E MEGLIO NO. (29/08/2026.)
+   Contare quante volte sei uscito e quante piazzole hai tirato vale
+   qualunque regolamento. Sommare i punti di una Battuta FIARC e di un round
+   IFAA e dividere per due no: *non esiste una media fra due scale diverse.*
+   Quindi i due contatori restano su tutto l'anno, e media e meglio escono dal
+   gruppo confrontabile — con la sua etichetta accanto, se no sono di nuovo
+   due numeri senza gara. */
+n++;
 piazz += (io.perTarget || []).length || g.format || 0;
-if((io.total || 0) > meglio) meglio = io.total || 0;
+var cx = contestoDi(g, io);
+confrontabili.push({ punti: io.total || 0, ctx: cx,
+eti: cx ? etichettaContesto(g, io) : "", format: g.format || 0 });
 });
 if(!n) return null;
-return { anno: anno, giri: n, piazzole: piazz, media: Math.round(somma / n), meglio: meglio };
+var gr = gruppoOmogeneo(confrontabili);
+var sm = 0; gr.lista.forEach(function(x){ sm += x.punti; });
+gr.lista.forEach(function(x){ if(x.punti > meglio) meglio = x.punti; });
+return { anno: anno, giri: n, piazzole: piazz,
+media: gr.lista.length ? Math.round(sm / gr.lista.length) : null,
+meglio: gr.lista.length ? meglio : null,
+etichetta: gr.etichetta || "", misto: gr.misto };
 }
 
 // `parte` dice quale pezzo serve: «testa» il record e la media, «record» il
@@ -22114,19 +22411,32 @@ return cloudCard;
    la media, perche' quella somma e' gia' un miscuglio e non si puo' piu'
    separare. Il record, che e' un massimo e non una media, continua a
    prenderlo — un massimo non si sporca mescolando. */
+/* ══ IL GRUPPO CONFRONTABILE ═══════════════════════════════════════════════
+   (29/08/2026.) Fino a ieri questa funzione raggruppava PER FORMATO, e il
+   commento diceva «non si mescolano formati». Era mezza verita': due giri con
+   lo stesso numero di piazzole possono avere bareme diversi, e allora
+   dividerli per formato mette insieme cose che non si sommano lo stesso.
+   Adesso la chiave e' `contestoDi`, cioe' l'unico posto che sa rispondere.
+
+   Ogni elemento porta `ctx` (il contesto) e `eti` (come si chiama): li mette
+   chi costruisce la lista, perche' solo lui ha sotto mano il giro intero.
+   Chi non ha contesto NON entra in nessun gruppo — non si media un giro che
+   non si sa con cosa confrontare. */
 function gruppoOmogeneo(giri){
-if(!giri || !giri.length) return { lista:[], formato:null, misto:false };
+if(!giri || !giri.length) return { lista:[], formato:null, contesto:null, etichetta:"", misto:false };
+var buoni = giri.filter(function(g){ return !!g.ctx; });
+if(!buoni.length) return { lista:[], formato:null, contesto:null, etichetta:"", misto:(giri.length>0) };
 var per = {};
-giri.forEach(function(g){
-var f = String(g.format || "?");
-if(!per[f]) per[f] = [];
-per[f].push(g);
+buoni.forEach(function(g){
+if(!per[g.ctx]) per[g.ctx] = [];
+per[g.ctx].push(g);
 });
 var chiavi = Object.keys(per);
-if(chiavi.length === 1) return { lista: giri, formato: giri[0].format || null, misto:false };
 var vinc = chiavi[0];
 chiavi.forEach(function(k){ if(per[k].length > per[vinc].length) vinc = k; });
-return { lista: per[vinc], formato: (vinc === "?" ? null : Number(vinc)), misto:true };
+var lista = per[vinc];
+return { lista: lista, formato: lista[0].format || null, contesto: vinc,
+etichetta: lista[0].eti || "", misto: (chiavi.length > 1 || buoni.length < giri.length) };
 }
 
 function diarioScreen(parte){
@@ -22144,7 +22454,17 @@ res.forEach(function(r){
 // Se in un giro nessun risultato \u00e8 riconoscibile ed \u00e8 un giro da solo,
 // \u00e8 quasi certamente dell'utente: giri vecchi salvati prima di questa modifica.
 if(isMyResult(r) || (!anyMine && res.length === 1)){
-mine.push({ hi: hIdx, date: h.date, modeLabel: h.modeLabel, modeKey: h.modeKey, format: h.format, total: r.total, perTarget: r.perTarget||[], pos: (res.indexOf(r)+1), tot: res.length });
+/* L'OGGETTO TEMPORANEO DEVE PORTARE TUTTO CIO' CHE SERVE AL CONTESTO.
+   (29/08/2026.) Copiava `modeKey` e `format` e basta, poi chiamava
+   `contestoDi(m, m)`: senza `sessionType` nell'oggetto, `tipoSessione`
+   rispondeva "3d" — quindi il giorno che esiste una sessione Target il Diario
+   la conterebbe fra i giri 3D. E senza `scoringVersion` i due bareme IFAA
+   tornavano a mescolarsi proprio qui, dopo essere stati separati altrove.
+   *Un oggetto di comodo che perde un campo e' un contesto inventato.* */
+mine.push({ hi: hIdx, date: h.date, sessionType: h.sessionType,
+modeLabel: h.modeLabel, modeKey: h.modeKey, scoringVersion: h.scoringVersion,
+format: h.format, total: r.total, perTarget: r.perTarget||[],
+pos: (res.indexOf(r)+1), tot: res.length });
 }
 });
 });
@@ -22156,36 +22476,65 @@ if(mine.length === 0){
 head.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.5;">'+t("diario_empty")+'</div>'));
 if(tutto || soloRecord) wrap.appendChild(head);
 } else {
-var best = mine[0], sum = 0;
-mine.forEach(function(m){ if(m.total > best.total) best = m; });
-// Il record guarda TUTTI i giri: un massimo non si sporca mescolando.
-// La media guarda solo il gruppo omogeneo.
+/* «UN MASSIMO NON SI SPORCA MESCOLANDO» ERA FALSO. (29/08/2026.)
+   Stava scritto qui, e sembrava ovvio: prendere il piu' alto non e' come fare
+   una media, quindi mescolare non guasta. Ma un massimo fra sistemi di
+   punteggio diversi non e' un record — e' il numero piu' grande, che quasi
+   sempre vuol dire il giro piu' lungo. Adesso anche il record esce dal gruppo
+   confrontabile, come la media. */
+mine.forEach(function(m){
+m.ctx = contestoDi(m, m);
+m.eti = m.ctx ? etichettaContesto(m, m) : "";
+});
 var gruppo = gruppoOmogeneo(mine);
+var sum = 0;
+var best = gruppo.lista.length ? gruppo.lista[0] : null;
+gruppo.lista.forEach(function(m){ if(!best || m.total > best.total) best = m; });
 gruppo.lista.forEach(function(m){ sum += m.total; });
-var media = Math.round(sum / gruppo.lista.length);
+var media = gruppo.lista.length ? Math.round(sum / gruppo.lista.length) : null;
 var roundsCount = gruppo.lista.length;
+var roundsTutti = mine.length;
 var formatoMedia = gruppo.formato;
+var etichettaGruppo = gruppo.etichetta || "";
 
 // Il riepilogo permanente sopravvive al taglio dello storico: se conosce un record
 // pi\u00f9 alto o pi\u00f9 giri di quelli ancora in memoria, vincono i suoi numeri.
 var ltAll = loadLifetime();
-var ltRounds = 0, ltSum = 0, ltBest = 0, ltBestLabel = "";
+/* SOLO IL CONTEGGIO DEI GIRI. `ltSum`, `ltBest` e `ltBestLabel` restavano
+   calcolati e inutilizzati: variabili morte che implementano ancora il
+   concetto appena dichiarato sbagliato, e che fra sei mesi sembrano un
+   attrezzo pronto all'uso. */
+var ltRounds = 0;
 Object.keys(ltAll).forEach(function(k){
 var e = ltAll[k];
 if(!e || !e.name) return;
 if(!isMyResult({ name: e.name, ownerUid: e.ownerUid || null, isSelf: e.isSelf === true })) return;
 ltRounds += (e.rounds || 0);
-ltSum += (e.sum || 0);
-if((e.best || 0) > ltBest){ ltBest = e.best; ltBestLabel = e.modeLabel || ""; }
 });
 /* Il riepilogo permanente somma senza il formato: se qui i formati sono piu'
    d'uno, quella somma e' gia' un miscuglio e non si puo' separare — quindi
    non la si usa per la media. Il conteggio dei giri invece resta suo, perche'
    contare giri e' giusto in tutti i casi. */
-if(!gruppo.misto && ltRounds > roundsCount){ roundsCount = ltRounds; }
-if(!gruppo.misto && ltRounds > 0 && ltSum > 0 && ltRounds >= mine.length){ media = Math.round(ltSum / ltRounds); }
-var bestTotal = best.total, bestLabel = best.modeLabel || "";
-if(ltBest > bestTotal){ bestTotal = ltBest; bestLabel = ltBestLabel; }
+/* IL RIEPILOGO PERMANENTE NON RISCRIVE PIU' MEDIA E RECORD. (29/08/2026.)
+   `arctrail3d_lifetime_v1` e' nato prima del contesto e tiene per ogni voce
+   `sum`, `rounds` e `best` sotto una chiave `nome|modeKey`. Un `modeKey` NON
+   e' un contesto: dentro quella somma possono esserci ventotto piazzole e
+   dodici, e domani una sessione che 3D non e'. *Sommare quei numeri e
+   chiamarli media rimetteva dentro dalla finestra il confronto universale
+   appena buttato fuori dalla porta.*
+
+   Quindi: `sum` e `best` del v1 non si usano piu' per un numero sportivo.
+   Il CONTEGGIO DEI GIRI invece resta suo, ed e' l'unica cosa che il v1 puo'
+   ancora dimostrare: contare quante volte sei uscito non richiede che i giri
+   siano confrontabili fra loro. Serve a non far sparire la storia di chi ha
+   tagliato lo storico dal telefono.
+
+   Non si migra e non si riscrive: il v1 resta dov'e' e continua a essere
+   aggiornato. Un `lifetime_v2` indicizzato per contesto sarebbe un lavoro a
+   parte, e nessuno puo' ricostruire il contesto dei dati che il v1 ha gia'. */
+if(ltRounds > roundsTutti){ roundsTutti = ltRounds; }
+var bestTotal = best ? best.total : null;
+var bestLabel = best ? (best.eti || best.modeLabel || "") : "";
 
 /* STESSA REGOLA PER LA PERCENTUALE. Confrontare la media di cinque giri con
    quella dei cinque precedenti ha senso solo se sono lo stesso formato: se
@@ -22201,11 +22550,15 @@ var d = Math.round(((a5-b5)/b5)*100);
 if(d !== 0){ trend = t("diario_trend",{d:(d>0?"+":"")+d}); trendUp = (d>0); }
 }
 
+/* SE NON C'E' UN GRUPPO CONFRONTABILE, LA FASCIA NON SI DISEGNA. Il conto dei
+   giri resta altrove: contare non richiede che i giri siano confrontabili. */
 var grid = el('<div style="display:flex;gap:var(--s-2);margin-bottom:var(--s-1);"></div>');
+if(media === null || bestTotal === null){ grid.style.display = "none"; }
 grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);"><div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div><div style="font-size:var(--t-xl);font-weight:800;color:var(--gold);line-height:1.2;">'+bestTotal+'</div><div style="font-size:var(--t-xs);color:var(--muted);">'+escapeHtml(bestLabel||"")+'</div></div>'));
 grid.appendChild(el('<div style="flex:1;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);"><div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div><div style="font-size:var(--t-xl);font-weight:800;color:var(--cream);line-height:1.2;">'+media+'</div><div style="font-size:var(--t-xs);color:var(--muted);">'
   + t("diario_on_rounds",{n:roundsCount})
-  + (formatoMedia ? (" \u00b7 " + formatoMedia + " " + t("diario_targets_word")) : "")
+  + (etichettaGruppo ? (" \u00b7 " + etichettaGruppo)
+     : (formatoMedia ? (" \u00b7 " + formatoMedia + " " + t("diario_targets_word")) : ""))
   + '</div></div>'));
 head.appendChild(grid);
 if(trend){ head.appendChild(el('<div style="font-size:var(--t-sm);color:'+(trendUp?"var(--success)":"var(--muted)")+';margin-top:var(--s-2);font-weight:700;">'+escapeHtml(trend)+'</div>')); }
@@ -22240,57 +22593,20 @@ wrap.appendChild(listCard);
 }
 }
 
-// ---- Per disciplina: record e media separati, altrimenti si confrontano
-// punteggi di gare con massimali diversi ----
-var perModo = {};
-var ltPerModo = loadLifetime() || {}; // ricaricato qui: con diario vuoto il blocco sopra non gira
-Object.keys(ltPerModo).forEach(function(k){
-var e = ltPerModo[k];
-if(!e || !e.name) return;
-if(!isMyResult({ name: e.name, ownerUid: e.ownerUid || null, isSelf: e.isSelf === true })) return;
-var chiave = e.modeKey || modeKeyDaLabel(e.modeLabel);
-var mk = chiave || e.modeLabel || "?";
-var g = perModo[mk];
-if(!g){
-var nome = e.modeLabel || mk;
-if(chiave){
-var tr = modeLabel(chiave);
-/* t() restituisce la chiave quando non trova la parola: in quel caso
-   meglio l'etichetta vecchia di una chiave grezza sotto gli occhi. */
-if(tr && tr.indexOf("mode_") !== 0){ nome = tr; }
-}
-g = perModo[mk] = { label: nome, rounds:0, sum:0, best:0, bestDate:null };
-}
-g.rounds += (e.rounds || 0);
-g.sum += (e.sum || 0);
-if((e.best || 0) > g.best){ g.best = e.best; g.bestDate = e.bestDate || null; }
-});
-var modiList = Object.keys(perModo).map(function(k){ return perModo[k]; })
-.filter(function(g){ return g.rounds > 0; })
-.sort(function(a,b){ return b.rounds - a.rounds; });
-
-if(modiList.length > 1){
-var modiCard = el('<div class="card"></div>');
-modiCard.appendChild(el('<h2 class="section-title">'+t("diario_by_mode_title")+'</h2>'));
-modiCard.appendChild(el('<div style="font-size:var(--t-sm);color:var(--muted);line-height:1.5;margin-bottom:var(--s-3);">'+t("diario_by_mode_hint")+'</div>'));
-modiList.forEach(function(g){
-var avg = g.rounds ? Math.round(g.sum / g.rounds) : 0;
-var row = el('<div style="background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-3);margin-bottom:var(--s-2);"></div>');
-row.innerHTML =
-'<div style="font-weight:600;font-size:var(--t-sm);color:var(--cream);margin-bottom:var(--s-2);">'+escapeHtml(g.label)+'</div>'+
-'<div style="display:flex;gap:var(--s-2);">'+
-'<div style="flex:1;text-align:center;background:var(--bg-panel);border-radius:var(--r-xs);padding:var(--s-2) var(--s-1);">'+
-'<div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:700;">'+t("diario_record")+'</div>'+
-'<div style="font-size:var(--t-lg);font-weight:800;color:var(--gold);">'+g.best+'</div></div>'+
-'<div style="flex:1;text-align:center;background:var(--bg-panel);border-radius:var(--r-xs);padding:var(--s-2) var(--s-1);">'+
-'<div style="font-size:var(--t-xs);text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:700;">'+t("diario_media")+'</div>'+
-'<div style="font-size:var(--t-lg);font-weight:800;color:var(--cream);">'+avg+'</div></div>'+
-'</div>'+
-'<div style="font-size:var(--t-xs);color:var(--muted);margin-top:var(--s-2);text-align:center;">'+t("diario_on_rounds",{n:g.rounds})+'</div>';
-modiCard.appendChild(row);
-});
-if(tutto || soloRecord) wrap.appendChild(modiCard);
-}
+/* IL BLOCCO «PER DISCIPLINA» E' STATO TOLTO. (29/08/2026.)
+   Leggeva `arctrail3d_lifetime_v1` e ne mostrava `best` e `sum / rounds` come
+   Record e Media, raggruppati per `modeKey`. Due cose sbagliate insieme.
+   PRIMA: un `modeKey` non e' un contesto. Dentro quella somma possono esserci
+   ventotto piazzole e dodici, i due bareme IFAA, e domani una sessione che 3D
+   non e'. Il v1 non contiene l'informazione per dimostrare che i suoi numeri
+   siano confrontabili, e nessuno puo' ricostruirla dopo.
+   SECONDA: la scheda Primati del Profilo fa gia' questo mestiere, e lo fa dai
+   giri VERI passando da `contestoDi`. Ricostruirlo qui sarebbe stato lo stesso
+   elenco calcolato in due posti, e due modi di contare la stessa cosa
+   finiscono sempre per non essere piu' d'accordo.
+   `lifetime_v1` resta e resta aggiornato: serve al conteggio dei giri, l'unica
+   cosa che sa dimostrare. *Non si cancella un file che contiene meno di quanto
+   servirebbe: si smette di chiedergli cio' che non sa.* */
 
 
 
@@ -22325,16 +22641,35 @@ var res = h.results || [];
 var anyMine = res.some(isMyResult);
 for(var ri=0; ri<res.length; ri++){
 // come nel diario: un giro da solo senza nessuno riconoscibile \u00e8 dell'utente
-if(isMyResult(res[ri]) || (!anyMine && res.length === 1)){ myTotals.push(res[ri].total); break; }
+if(isMyResult(res[ri]) || (!anyMine && res.length === 1)){
+var rr = res[ri];
+var cx = contestoDi(h, rr);
+myTotals.push({ total: rr.total, ctx: cx, eti: cx ? etichettaContesto(h, rr) : "", format: h.format });
+break;
+}
 }
 });
+/* QUI MEDIA E RECORD ERANO ANCORA UNIVERSALI. (29/08/2026.) `myTotals`
+   teneva soltanto i numeri, e una lista di totali non sa da quale gara viene:
+   `Math.max` su quella lista era esattamente il «record» tolto da tutte le
+   altre schermate. I GIRI restano universali — contare quante volte sei
+   uscito non richiede che i giri siano confrontabili. */
 if(myTotals.length){
-var avg = Math.round(myTotals.reduce(function(a,b){return a+b;},0) / myTotals.length);
-var best = Math.max.apply(null, myTotals);
+var grStorico = gruppoOmogeneo(myTotals);
+var avg = null, best = null, etiStorico = grStorico.etichetta || "";
+if(grStorico.lista.length){
+var smS = 0; grStorico.lista.forEach(function(x){ smS += x.total; });
+avg = Math.round(smS / grStorico.lista.length);
+best = 0; grStorico.lista.forEach(function(x){ if(x.total > best) best = x.total; });
+}
 var statsRow = el('<div class="stats-row"></div>');
 statsRow.appendChild(el('<div class="stat-box"><span class="stat-num">'+myTotals.length+'</span><span class="stat-lbl">'+t("stats_rounds")+'</span></div>'));
-statsRow.appendChild(el('<div class="stat-box"><span class="stat-num">'+avg+'</span><span class="stat-lbl">'+t("stats_avg")+'</span></div>'));
-statsRow.appendChild(el('<div class="stat-box stat-box-record"><span class="stat-num">'+best+'</span><span class="stat-lbl">'+t("stats_best")+'</span></div>'));
+if(avg !== null){
+statsRow.appendChild(el('<div class="stat-box"><span class="stat-num">'+avg+'</span><span class="stat-lbl">'+escapeHtml(t("stats_avg")+(etiStorico ? (" \u00b7 "+etiStorico) : ""))+'</span></div>'));
+}
+if(best !== null){
+statsRow.appendChild(el('<div class="stat-box stat-box-record"><span class="stat-num">'+best+'</span><span class="stat-lbl">'+escapeHtml(t("stats_best")+(etiStorico ? (" \u00b7 "+etiStorico) : ""))+'</span></div>'));
+}
 histCard.appendChild(statsRow);
 }
 var histList = el('<div style="margin-top:var(--s-1);"></div>');
@@ -24262,24 +24597,116 @@ return card;
  * devono restare la stessa: si leggono le stesse due fonti, lo storico e il
  * riepilogo permanente, che sopravvive al taglio dello storico. Se un giorno
  * il diario cambia il modo di contarlo, qui va cambiato con lui. */
-function mioRecord(){
-var meglio = 0;
+/* ══ QUANDO DUE RISULTATI SI POSSONO CONFRONTARE ═══════════════════════════
+   (29/08/2026.) Prima di oggi il Profilo mostrava una MEDIA e un RECORD
+   universali, e nessuno dei due voleva dire niente.
+
+   IL RECORD prendeva il totale piu' alto di tutto lo storico. Ma 467 su una
+   Battuta da 28 piazzole e 412 su un percorso da 24 non sono due risultati di
+   cui uno e' piu' alto: sono due misure diverse. FIARC, World Archery, IFAA e
+   NFAS non hanno la stessa scala, e il numero di piazzole cambia il massimo
+   possibile. *Il «record» finiva quasi sempre per essere semplicemente il
+   giro piu' lungo.*
+
+   LA MEDIA sommava le medie per piazzola e divideva per il numero di giri —
+   quindi un allenamento da dodici pesava quanto una gara da ventotto — ma il
+   difetto piu' grave era prima della formula: una media punti/piazzola non e'
+   confrontabile fra regolamenti. Aggiustare il calcolo e lasciare il numero in
+   fascia avrebbe reso il difetto piu' difficile da vedere, non minore.
+
+   LA CURA NON E' CINQUE CONFRONTI IN CINQUE FUNZIONI. E' un posto solo che
+   risponde alla domanda «questi due risultati appartengono alla stessa gara?».
+   Il contesto e' fatto di tre cose, e tutte e tre esistono gia' nel dato:
+
+     tipo di sessione   `sessionType`, con "3d" per i record vecchi. E' il
+                        campo nato ieri per il tiro su bersaglio: quando
+                        arrivera', entrera' da qui e non da un `if` sparso
+     modo               `modoDelGiro(modeKey, scoringVersion)`, che tiene gia'
+                        separati i due bareme IFAA — un giro col bareme
+                        vecchio non gareggia con uno del nuovo
+     quante piazzole    dai punteggi veri se ci sono, dal `format` altrimenti
+
+   SE UNA DELLE TRE MANCA, IL CONTESTO E' `null` E NON SI DICHIARA NIENTE.
+   Un giro vecchio senza formato e senza punteggi per piazzola non diventa un
+   primato: resta un giro, e basta. *Inventare il formato per far comparire un
+   record sarebbe la stessa bugia dei chilometri del calendario.* */
+function contestoDi(giro, risultato){
+if(!giro) return null;
+var modo = modoDelGiro(giro.modeKey, giro.scoringVersion);
+if(!modo) return null;
+var quante = (risultato && risultato.perTarget && risultato.perTarget.length)
+           ? risultato.perTarget.length
+           : (giro.format || 0);
+if(!quante) return null;
+return tipoSessione(giro) + "|" + modo + "|" + quante;
+}
+
+/* Due risultati si confrontano solo se questa dice di si'. `null` non e'
+   uguale a `null`: due contesti ignoti non sono lo stesso contesto. */
+function stessoContesto(a, b){
+return !!a && !!b && a === b;
+}
+
+/* Come si chiama un contesto quando lo si scrive a schermo. Le parole sono
+   quelle che il giro si porta dietro — `modeLabel` e' scritto dentro il
+   record — quindi non serve una stringa nuova in nove lingue per una cosa
+   che il dato sa gia' dire di se'. */
+function etichettaContesto(giro, risultato){
+var quante = (risultato && risultato.perTarget && risultato.perTarget.length)
+           ? risultato.perTarget.length
+           : (giro.format || 0);
+var nome = giro.modeLabel || giro.modeKey || "";
+/* DUE PRIMATI CON LO STESSO NOME SONO UN ERRORE DI STAMPA, NON UN DETTAGLIO.
+   (29/08/2026.) `contestoDi` separa i due bareme IFAA — giusto — ma l'etichetta
+   li chiamava tutti e due «IFAA 3D Standard · 28»: l'arciere vedeva due righe
+   identiche con due numeri diversi e non poteva capire perche'.
+   `modoDelGiro` restituisce `ifaa_3d_v1` per i giri del bareme vecchio, ed e'
+   l'unico caso oggi. Non si scrive la sigla tecnica: si scrive una parola che
+   dice cos'e'. */
+var modo = modoDelGiro(giro.modeKey, giro.scoringVersion);
+var coda = (modo && /_v1$/.test(String(modo))) ? (" \u00b7 " + t("ctx_vecchio")) : "";
+return (nome ? (nome + " \u00b7 " + quante) : String(quante)) + coda;
+}
+
+/* I PRIMATI, UNO PER CONTESTO. Non un numero solo: tanti quante sono le gare
+   diverse che l'arciere ha davvero tirato. Ordinati dal piu' frequentato,
+   perche' il primo che si legge dev'essere quello che gli interessa. */
+function mieiPrimati(){
 var hist = loadHistory();
+var per = {};
 for(var i = 0; i < hist.length; i++){
 var h = hist[i]; if(!h) continue;
 var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0];
-if(r && r.total > meglio) meglio = r.total;
+if(!r || typeof r.total !== "number") continue;
+var c = contestoDi(h, r);
+if(!c) continue;                    // non confrontabile: non e' un primato
+if(!per[c]) per[c] = { contesto:c, etichetta:etichettaContesto(h, r), best:0, quando:null, giri:0 };
+per[c].giri++;
+if(r.total > per[c].best){ per[c].best = r.total; per[c].quando = h.date; }
 }
-try{
-var lt = loadLifetime() || {};
-Object.keys(lt).forEach(function(k){
-var e = lt[k];
-if(!e || !e.name) return;
-if(!isMyResult({ name: e.name, ownerUid: e.ownerUid || null, isSelf: e.isSelf === true })) return;
-if((e.best || 0) > meglio) meglio = e.best;
-});
-}catch(e){}
-return meglio;
+var out = [];
+Object.keys(per).forEach(function(k){ out.push(per[k]); });
+out.sort(function(a, b){ return (b.giri - a.giri) || (b.best - a.best); });
+return out;
+}
+
+/* E' UN PRIMATO? Solo dentro il suo contesto, e solo se il contesto si sa.
+   Serve alla cartolina e al finale del giro: si passa il giro e il risultato,
+   e la risposta e' si' soltanto se nessun altro giro DELLA STESSA GARA ha
+   fatto meglio. */
+function ePrimato(giro, risultato){
+var c = contestoDi(giro, risultato);
+if(!c || !risultato || typeof risultato.total !== "number") return false;
+var meglio = 0, quando = giro && giro.date;
+var hist = loadHistory();
+for(var i = 0; i < hist.length; i++){
+var h = hist[i]; if(!h || h.date === quando) continue;
+var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0];
+if(!r || typeof r.total !== "number") continue;
+if(!stessoContesto(contestoDi(h, r), c)) continue;
+if(r.total > meglio) meglio = r.total;
+}
+return risultato.total > meglio;
 }
 
 /* I QUATTRO NUMERI DEL PROFILO. Sono gli STESSI che il mondo vede nella carta
@@ -24295,11 +24722,40 @@ var q = el('<div class="home-numeri mp-conti"></div>');
 function numero(cifra, eti){
 q.appendChild(el('<div class="home-num"><b>'+escapeHtml(String(cifra))+'</b><span>'+escapeHtml(eti)+'</span></div>'));
 }
+/* TRE NUMERI, NON QUATTRO. (29/08/2026.) Giri, piazzole e campi vogliono
+   dire la stessa cosa qualunque regolamento si tiri: si contano, e basta.
+   Media e Record no — vedi `contestoDi` — e stavano qui a dare un'aria di
+   precisione a due numeri che non ce l'avevano.
+   *Meglio tre numeri veri che quattro per simmetria.* I primati stanno nella
+   scheda qui sotto, ognuno col suo contesto scritto accanto. */
 numero(n.giri, t("home_rounds_word"));
 numero(n.piazzole, t("diario_targets_word"));
-numero(String(n.media).replace(".", decimaleLocale()), t("diario_media"));
-numero(mioRecord(), t("diario_record"));
+numero(n.campi, t("pp_campi"));
 card.appendChild(q);
+return card;
+}
+
+/* I PRIMATI, OGNUNO CON LA SUA GARA SCRITTA ACCANTO. (29/08/2026.)
+ * Non e' una scheda nuova nel senso di una funzione nuova dell'app: e' il
+ * posto dove va a finire il numero che prima stava in fascia senza dire di
+ * cosa fosse il record. Un primato senza il suo contesto non e' un primato:
+ * e' un numero grande.
+ * Se non c'e' nessun contesto determinabile la scheda NON compare — non si
+ * scrive «nessun record» a chi ha dei giri: non ne ha di confrontabili, che
+ * e' un'altra cosa, e dirla richiederebbe una frase in nove lingue per un
+ * caso che sparisce al secondo giro dello stesso tipo. */
+function profiloPrimatiCard(){
+var lista = mieiPrimati();
+if(!lista.length) return null;
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("diario_record")+'</h2>'));
+lista.slice(0, 6).forEach(function(p){
+var riga = el('<div class="al-blocco"></div>');
+riga.appendChild(el('<div class="al-riga"><span class="al-dove"><b>'
++ escapeHtml(String(p.best)) + '</b><span>' + escapeHtml(p.etichetta)
++ '</span></span></div>'));
+card.appendChild(riga);
+});
 return card;
 }
 
@@ -24430,7 +24886,10 @@ var q = el('<div class="home-numeri pp-numeri"></div>');
 q.appendChild(el('<div class="home-num"><b>'+(p.numeri.giri||0)+'</b><span>'+escapeHtml(t("home_rounds_word"))+'</span></div>'));
 q.appendChild(el('<div class="home-num"><b>'+(p.numeri.piazzole||0)+'</b><span>'+escapeHtml(t("diario_targets_word"))+'</span></div>'));
 q.appendChild(el('<div class="home-num"><b>'+(p.numeri.campi||0)+'</b><span>'+escapeHtml(t("pp_campi"))+'</span></div>'));
-q.appendChild(el('<div class="home-num"><b>'+String(p.numeri.media||0).replace(".", decimaleLocale())+'</b><span>'+escapeHtml(t("diario_media"))+'</span></div>'));
+/* LA MEDIA NON SI PUBBLICA PIU'. (29/08/2026.) I documenti scritti prima di
+   oggi hanno ancora `numeri.media` dentro: non si rompe niente, semplicemente
+   non lo si legge. *Non si cancella e non si migra un documento di qualcun
+   altro per togliergli un campo che nessuno guarda piu'.* */
 card.appendChild(q);
 } else {
 card.appendChild(el('<div class="pp-privato">'+escapeHtml(t("pp_numeri_privati"))+'</div>'));
@@ -26659,11 +27118,19 @@ var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0]
      || (h.results || []).filter(function(x){ return x.name === io.name; })[0];
 return r ? r.total : null;
 }
+/* ERA UNA SECONDA DEFINIZIONE DI «CONFRONTABILE». (29/08/2026.)
+   Guardava `modeKey` e `format` e ignorava `sessionType` e `scoringVersion`:
+   due giri IFAA con bareme diversi risultavano lo stesso tipo, e domani una
+   sessione Target pure. *Due definizioni della stessa cosa finiscono sempre
+   per non essere piu' d'accordo, ed e' esattamente il motivo per cui il
+   contesto e' stato fatto uno solo.* */
+var ctxOra = contestoDi({ sessionType: state.sessionType, modeKey: state.mode,
+scoringVersion: state.scoringVersion, format: state.format }, { perTarget: io.perTarget });
 function stessoTipo(h){
-var hKey = h.modeKey || null;
-if(hKey ? hKey !== state.mode : h.modeLabel !== mLabel) return false;
-if((h.format || 0) !== state.format) return false;
-return h.date !== state.roundEntryDate;
+if(h.date === state.roundEntryDate) return false;
+var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0]
+     || (h.results || []).filter(function(x){ return x.name === io.name; })[0];
+return stessoContesto(contestoDi(h, r), ctxOra);
 }
 var mioCampo = (state.campo || "").trim().toLowerCase();
 var precedente = null, stessoCampo = false;
@@ -26762,6 +27229,11 @@ var hist = loadHistory();
 var nowISO = new Date().toISOString();
 var roundEntry = {
 date: nowISO,
+/* CHE COSA E' STATA QUESTA SESSIONE. Oggi l'app sa fare solo 3D, quindi qui
+   c'e' sempre "3d": si scrive lo stesso, perche' un campo che compare solo
+   quando serve costringe chi legge a indovinare cosa vuol dire la sua
+   assenza in un record nuovo. Chi non ce l'ha e' vecchio, e basta. */
+sessionType: SESSIONE_3D,
 format: state.format,
 modeKey: state.mode,
 modeLabel: mLabel,

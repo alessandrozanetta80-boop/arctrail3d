@@ -153,12 +153,12 @@ self.addEventListener("notificationclick", function(event){
 // Il service worker nuovo il telefono se lo prende da solo, perche' il
 // browser rilegge SEMPRE questo file dalla rete: e' l'unica cosa che non
 // passa dalla cache, ed e' per questo che la cura sta qui e non altrove.
-var CACHE_NAME = "arctrail3d-v150";
+var CACHE_NAME = "arctrail3d-v156";
 // Alzata a v19 il 20/08 per lo stesso motivo di sempre: e' cambiato
 // `index.html`, che sta in APP_SHELL: senza il nome nuovo il telefono
 // continuerebbe a servire la copia di prima e la correzione non si
 // vedrebbe. Stessa regola del BUILD_STAMP, stesso motivo.
-var CACHE_PARENT = "arctrail3d-v149";
+var CACHE_PARENT = "arctrail3d-v150";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
@@ -177,7 +177,14 @@ var APP_SHELL = [
   "icon-512.png",
   "icon-512-maskable.png",
   "icon-192-maskable.png",
-  "apple-touch-icon.png"
+  "apple-touch-icon.png",
+  /* SENZA QUESTO L'APP SI APRE E NON SA DOVE SI TIRA. (29/08/2026.)
+     `app.html` lo chiama con un `<script src>` separato: e' mezzo megabyte di
+     compagnie, e la scheda Campi, il profilo e il calendario lo interrogano.
+     Non stava nell'elenco, quindi la promessa scritta due righe piu' su —
+     «la prima volta si scarica tutto» — era falsa proprio per il file piu'
+     grosso che l'app chiede da fuori. */
+  "compagnie-data.js"
 ];
 
 // Domini esterni di cui teniamo copia: caratteri e librerie. NON i dati.
@@ -186,6 +193,25 @@ var CDN_OK = [
   "https://fonts.gstatic.com/",
   "https://www.gstatic.com/firebasejs/"
 ];
+/* LE CINQUE LIBRERIE, SCARICATE ALL'INSTALLAZIONE E NON QUANDO CAPITA.
+   (29/08/2026.) Qui sotto il CDN e' servito «prima la cache», e finora la
+   cache si riempiva alla prima richiesta che passava dal service worker. Ma
+   alla PRIMISSIMA visita il service worker non controlla ancora la pagina:
+   quelle cinque `<script src>` partono prima che lui esista, non gli passano
+   davanti, e non finiscono in cache. Chi installa la PWA a casa e la riapre
+   sul campo senza rete si trova `firebase` non definito.
+   Adesso si scaricano durante `install`, insieme al resto. Se una non arriva,
+   `catch` la lascia andare: l'installazione non deve fallire per una libreria
+   — meglio l'app senza nuvola che nessuna app. */
+var FB = "https://www.gstatic.com/firebasejs/10.12.2/";
+var CDN_SHELL = [
+  FB + "firebase-app-compat.js",
+  FB + "firebase-auth-compat.js",
+  FB + "firebase-firestore-compat.js",
+  FB + "firebase-messaging-compat.js",
+  FB + "firebase-functions-compat.js"
+];
+
 function isCdn(url){
   for(var i=0;i<CDN_OK.length;i++){ if(url.indexOf(CDN_OK[i]) === 0) return true; }
   return false;
@@ -196,7 +222,7 @@ self.addEventListener("install", function(event){
     caches.open(CACHE_NAME).then(function(cache){
       // addAll() fallisce tutto se un solo file manca: qui ognuno per conto suo,
       // cosi' un'icona rinominata non impedisce l'installazione.
-      return Promise.all(APP_SHELL.map(function(u){
+      return Promise.all(APP_SHELL.concat(CDN_SHELL).map(function(u){
         return cache.add(new Request(u, { cache: "reload" })).catch(function(){});
       }));
     }).then(function(){ return self.skipWaiting(); })
