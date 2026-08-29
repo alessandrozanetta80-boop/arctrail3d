@@ -3158,6 +3158,105 @@ font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
 .al-ferri{ display:flex; gap:var(--s-2); margin-top:var(--s-2); flex-wrap:wrap; }
 .al-ferri .btn{ flex:1 1 auto; }
 
+/* ══════════ IL CALENDARIO (28/08/2026) ══════════
+   La domanda e' «dove posso andare a tirare?», e la risposta e' un ELENCO IN
+   ORDINE DI DATA. Non una griglia mensile: una griglia mostra i giorni vuoti,
+   che sono la stragrande maggioranza, e nasconde le tre righe che contano
+   dentro trenta caselle bianche.
+
+   NON NASCE UN SECONDO SISTEMA. La riga di una gara e' la stessa riga di un
+   allenamento aperto — `.al-blocco`, `.al-quando`, `.al-dove`, `.al-piu` —
+   perche' fa lo stesso mestiere: quando, dove, e il resto un tocco piu' sotto.
+   Qui c'e' SOLO quello che quella famiglia non aveva: il quadrato neutro,
+   l'intestazione del mese, le pastiglie strette dei filtri e le righe del
+   dettaglio.
+
+   IL QUADRATO DELLA DATA E' NEUTRO, E NON E' UN RIPIEGO. Negli allenamenti il
+   colore del quadrato dice DI CHI E' l'allenamento — verde la tua compagnia,
+   argilla aperto a tutti — cioe' distingue due cose. In calendario sono tutte
+   la stessa cosa: gare di federazione. Un quadrato arancione su ogni riga non
+   distinguerebbe niente e sarebbe un muro d'arancio, che e' esattamente
+   l'opposto di «con estrema moderazione». A rendere la data riconoscibile
+   bastano la forma e il numero grosso.
+   *L'arancione in questa schermata sta in due posti soli:* la pastiglia del
+   filtro acceso, e il tasto delle iscrizioni dentro il dettaglio. Uno dice
+   «stai guardando meno di tutto», l'altro e' l'unica cosa da fare qui.
+
+   NIENTE COLORE PER FEDERAZIONE. Diciassette federazioni sono diciassette
+   colori, cioe' un codice che nessuno impara e che al sole non si distingue.
+   La federazione e' scritta, in grigio, dove stanno le altre cose secondarie.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.cal-avviso{ display:flex; gap:var(--s-2); align-items:flex-start;
+  font-size:var(--t-xs); line-height:1.4; color:var(--muted);
+  background:var(--surface-2); border:1px solid var(--line);
+  border-radius:var(--r-sm); padding:var(--s-2) var(--s-3); margin-bottom:var(--s-3); }
+/* LE PASTIGLIE DEI FILTRI. `.chip` non andava bene ed e' giusto che non
+   vada: e' `flex:1 1 0`, cioe' si spartisce la larghezza, ed e' fatta per due
+   o tre scelte grandi. Qui ce ne sono otto di lunghezza diversa, e devono
+   restare larghe quanto la parola che portano.
+   L'ALTEZZA RESTA `--hit`. Una pastiglia da 34px sta piu' comoda nel disegno
+   e si sbaglia col pollice, in piedi, con una mano sola: e' il punto 0. */
+/* La porta al calendario: lo stacco sta qui e non in linea. Uno stile in
+   linea vince sul foglio e si riprende solo a colpi di !important. */
+.cal-porta{ margin-bottom:var(--s-3); }
+/* UNA RIGA SOLA CHE SCORRE, NON CINQUE CHE VANNO A CAPO. (29/08/2026, visto
+   guardando l'anteprima.) A capo, diciotto pastiglie facevano cinque righe:
+   mezza schermata di filtri prima della prima gara, cioe' l'attrezzo che copre
+   il lavoro. E il muro previsto per diciassette federazioni si era gia'
+   presentato con dieci gare finte.
+   Le pastiglie stanno in ordine di quanto servono — quando, vicino,
+   federazione, tipo — quindi quello che si usa sempre non richiede mai di
+   scorrere. Il margine negativo fa arrivare la riga fino al bordo della
+   scheda: una riga che scorre e si ferma prima del bordo sembra tagliata. */
+.cal-filtri{ display:flex; flex-wrap:nowrap; gap:var(--s-2); margin-bottom:var(--s-2);
+  overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch;
+  scrollbar-width:none; padding:2px var(--s-4); margin-left:calc(-1 * var(--s-4));
+  margin-right:calc(-1 * var(--s-4)); scroll-padding-left:var(--s-4); }
+.cal-filtri::-webkit-scrollbar{ display:none; }
+.cal-filtri > *{ flex:0 0 auto; scroll-snap-align:start; }
+.chip-filtro{ min-height:var(--hit); padding:0 var(--s-3); border-radius:var(--r-pill);
+  border:1.5px solid var(--border-strong); background:var(--surface-2); color:var(--text-2);
+  font-family:inherit; font-size:var(--t-xs); font-weight:700; line-height:1.2;
+  cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center;
+  transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
+.chip-filtro.on{ background:var(--acceso-bg); color:var(--acceso-fg); border-color:var(--acceso-bd); }
+.chip-filtro:disabled{ opacity:.5; cursor:default; }
+.cal-azzera{ min-height:var(--hit); padding:0 var(--s-2); background:none; border:none;
+  color:var(--muted); font-family:inherit; font-size:var(--t-xs); font-weight:700;
+  text-decoration:underline; cursor:pointer; }
+/* IL MESE E' UN FILETTO, NON UN TITOLO. Serve a sapere dove si e' scorrendo;
+   se pesasse quanto il nome di una gara ruberebbe la gerarchia a quello. */
+.cal-mese{ font-size:var(--t-2xs); font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--muted); padding:var(--s-4) 0 var(--s-1);
+  border-bottom:1px solid var(--line); }
+.cal-mese:first-child{ padding-top:var(--s-1); }
+.cal-quando{ background:var(--surface-2); color:var(--text-1);
+  border:1px solid var(--border-strong); }
+.cal-quando i{ color:var(--muted); opacity:1; }
+/* Il dettaglio: etichetta a sinistra in grigio, valore a destra. Sono quattro
+   righe, e una tabella per quattro righe e' un attrezzo piu' grande del
+   lavoro. */
+/* La terza riga della riga chiusa. Stesso grigio della seconda: a farla
+   terziaria basta il corpo, e un grigio nuovo sarebbe stato un token nuovo,
+   tre temi e un contrasto da ricontare per una gerarchia che il carattere
+   dava gratis. */
+.al-dove span.cal-luogo{ font-size:var(--t-xs); }
+.cal-det{ display:grid; grid-template-columns:auto 1fr; gap:2px var(--s-3);
+  font-size:var(--t-sm); margin-top:var(--s-1); }
+.cal-det dt{ color:var(--muted); white-space:nowrap; }
+.cal-det dd{ margin:0; overflow-wrap:anywhere; }
+/* LA FONTE NON E' UNA NOTA A PIE' DI PAGINA. E' l'unica riga che risponde
+   alla domanda «chi lo dice?», e ArcTrail non e' la risposta: sta attaccata
+   a ogni gara, non una volta sola in fondo alla pagina. */
+/* I due tasti che portano fuori sono <a>, non <button>: navigano anche se un
+   copione piu' su si rompe, e tenendoli premuti si legge dove portano. Senza
+   questa riga escono sottolineati. Stessa cura di `.btn-posta`. */
+.al-ferri a.btn{ text-decoration:none; }
+.cal-fonte{ display:inline-block; margin-top:var(--s-2); font-size:var(--t-2xs);
+  font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  border-radius:var(--r-pill); padding:2px var(--s-2);
+  background:var(--surface-2); border:1px solid var(--line); color:var(--muted); }
+
 /* ══════════ L'AREA COMPAGNIA (20/08/2026) ══════════
    Chi non e' referente — cioe' quasi tutti — apriva «Compagnie» e trovava:
    una scheda per REGISTRARE una compagnia, un tasto di menu, e tre tendine
@@ -6577,6 +6676,26 @@ home_trend: "Andamento", home_range_3: "3 mesi", home_range_y: "Stagione",
 home_trend_few: "Servono almeno quattro giri per vedere un andamento.",
 home_ready: "Pronto a tirare?", home_start: "Inizia un giro", home_find: "Trova un campo",
 home_resume_title: "Riprendi il tuo giro", home_month: "Questo mese", home_rounds_word: "Giri",
+cal_title: "Calendario",
+cal_sub: "Trova dove tirare.",
+cal_menu_label: "Calendario gare",
+cal_menu_sub: "Chi tira, e quando, nelle prossime settimane",
+cal_prova: "Dati di esempio. Il calendario vero arriverà dalle federazioni.",
+cal_f_weekend: "Questo weekend",
+cal_f_mese: "Prossimi 30 giorni",
+cal_f_regione: "La mia regione",
+cal_f_reset: "Azzera",
+cal_regione_serve: "«La mia regione» usa la regione della tua compagnia: scegline una nel profilo.",
+cal_empty_title: "Nessuna gara con questi filtri",
+cal_empty_body: "Togli un filtro, o allarga le date.",
+cal_det_quando: "Quando",
+cal_det_dove: "Dove",
+cal_det_club: "Organizza",
+cal_det_tipo: "Tipo",
+cal_fonte: "Fonte: {f}",
+cal_official: "Sito della gara",
+cal_signup: "Iscrizioni",
+cal_nota_fonte: "Le date arrivano dalle federazioni. ArcTrail non organizza le gare e non gestisce le iscrizioni.",
 home_target_of: "Piazzola {n} di {tot}", home_saved_here: "Salvato sul telefono", nav_home: "Home",
 home_register_btn: "Registrati", home_login_link: "Hai gi\u00e0 un account?", home_login_link_word: "Accedi",
 home_install_btn: "Installa l'app sul telefono",
@@ -7225,6 +7344,26 @@ home_trend: "Trend", home_range_3: "3 months", home_range_y: "Season",
 home_trend_few: "It takes at least four rounds to show a trend.",
 home_ready: "Ready to shoot?", home_start: "Start a round", home_find: "Find a field",
 home_resume_title: "Resume your round", home_month: "This month", home_rounds_word: "Rounds",
+cal_title: "Calendar",
+cal_sub: "Find where to shoot.",
+cal_menu_label: "Shoot calendar",
+cal_menu_sub: "Who is shooting, and when, in the coming weeks",
+cal_prova: "Sample data. The real calendar will come from the federations.",
+cal_f_weekend: "This weekend",
+cal_f_mese: "Next 30 days",
+cal_f_regione: "My region",
+cal_f_reset: "Clear",
+cal_regione_serve: "“My region” uses your club’s region: pick one in your profile.",
+cal_empty_title: "No shoots match these filters",
+cal_empty_body: "Remove a filter, or widen the dates.",
+cal_det_quando: "When",
+cal_det_dove: "Where",
+cal_det_club: "Host",
+cal_det_tipo: "Type",
+cal_fonte: "Source: {f}",
+cal_official: "Shoot page",
+cal_signup: "Entries",
+cal_nota_fonte: "Dates come from the federations. ArcTrail does not run the shoots and does not handle entries.",
 home_target_of: "Target {n} of {tot}", home_saved_here: "Saved on this phone", nav_home: "Home",
 home_register_btn: "Sign up",
 login_forgot: "Forgot your password?", login_password: "Password",
@@ -7896,6 +8035,26 @@ home_trend: "Évolution", home_range_3: "3 mois", home_range_y: "Saison",
 home_trend_few: "Il faut au moins quatre parcours pour voir une évolution.",
 home_ready: "Prêt à tirer ?", home_start: "Commencer un parcours", home_find: "Trouver un terrain",
 home_resume_title: "Reprendre ton parcours", home_month: "Ce mois-ci", home_rounds_word: "Parcours",
+cal_title: "Calendrier",
+cal_sub: "Trouvez où tirer.",
+cal_menu_label: "Calendrier des concours",
+cal_menu_sub: "Qui tire, et quand, dans les prochaines semaines",
+cal_prova: "Données d’exemple. Le vrai calendrier viendra des fédérations.",
+cal_f_weekend: "Ce week-end",
+cal_f_mese: "30 prochains jours",
+cal_f_regione: "Ma région",
+cal_f_reset: "Effacer",
+cal_regione_serve: "« Ma région » utilise la région de votre club : choisissez-en un dans votre profil.",
+cal_empty_title: "Aucun concours avec ces filtres",
+cal_empty_body: "Retirez un filtre, ou élargissez les dates.",
+cal_det_quando: "Quand",
+cal_det_dove: "Où",
+cal_det_club: "Organisateur",
+cal_det_tipo: "Type",
+cal_fonte: "Source : {f}",
+cal_official: "Page du concours",
+cal_signup: "Inscriptions",
+cal_nota_fonte: "Les dates viennent des fédérations. ArcTrail n’organise pas les concours et ne gère pas les inscriptions.",
 home_target_of: "Cible {n} sur {tot}", home_saved_here: "Enregistré sur ce téléphone", nav_home: "Accueil",
 home_register_btn: "S’inscrire",
 login_forgot: "Mot de passe oubli\u00e9\u00a0?", login_password: "Mot de passe",
@@ -8567,6 +8726,26 @@ home_trend: "Verlauf", home_range_3: "3 Monate", home_range_y: "Saison",
 home_trend_few: "Für einen Verlauf braucht es mindestens vier Runden.",
 home_ready: "Bereit zu schießen?", home_start: "Runde starten", home_find: "Parcours finden",
 home_resume_title: "Runde fortsetzen", home_month: "Diesen Monat", home_rounds_word: "Runden",
+cal_title: "Kalender",
+cal_sub: "Finde, wo geschossen wird.",
+cal_menu_label: "Turnierkalender",
+cal_menu_sub: "Wer schießt, und wann, in den nächsten Wochen",
+cal_prova: "Beispieldaten. Der echte Kalender kommt von den Verbänden.",
+cal_f_weekend: "Dieses Wochenende",
+cal_f_mese: "Nächste 30 Tage",
+cal_f_regione: "Meine Region",
+cal_f_reset: "Zurücksetzen",
+cal_regione_serve: "„Meine Region“ nutzt die Region deines Vereins: wähle einen im Profil.",
+cal_empty_title: "Keine Turniere mit diesen Filtern",
+cal_empty_body: "Nimm einen Filter weg oder erweitere den Zeitraum.",
+cal_det_quando: "Wann",
+cal_det_dove: "Wo",
+cal_det_club: "Veranstalter",
+cal_det_tipo: "Art",
+cal_fonte: "Quelle: {f}",
+cal_official: "Turnierseite",
+cal_signup: "Anmeldung",
+cal_nota_fonte: "Die Termine kommen von den Verbänden. ArcTrail veranstaltet keine Turniere und wickelt keine Anmeldungen ab.",
 home_target_of: "Ziel {n} von {tot}", home_saved_here: "Auf diesem Handy gespeichert", nav_home: "Start",
 home_register_btn: "Registrieren",
 login_forgot: "Passwort vergessen?", login_password: "Passwort",
@@ -9274,6 +9453,26 @@ home_trend: "Gidişat", home_range_3: "3 ay", home_range_y: "Sezon",
 home_trend_few: "Bir gidişat görmek için en az dört tur gerekir.",
 home_ready: "Atışa hazır mısın?", home_start: "Tura başla", home_find: "Parkur bul",
 home_resume_title: "Turuna devam et", home_month: "Bu ay", home_rounds_word: "Tur",
+cal_title: "Takvim",
+cal_sub: "Nerede atış yapılacağını bul.",
+cal_menu_label: "Yarışma takvimi",
+cal_menu_sub: "Önümüzdeki haftalarda kim, ne zaman atıyor",
+cal_prova: "Örnek veriler. Gerçek takvim federasyonlardan gelecek.",
+cal_f_weekend: "Bu hafta sonu",
+cal_f_mese: "Önümüzdeki 30 gün",
+cal_f_regione: "Bölgem",
+cal_f_reset: "Temizle",
+cal_regione_serve: "“Bölgem” kulübünün bölgesini kullanır: profilinden bir kulüp seç.",
+cal_empty_title: "Bu filtrelerle yarışma yok",
+cal_empty_body: "Bir filtreyi kaldır ya da tarih aralığını genişlet.",
+cal_det_quando: "Ne zaman",
+cal_det_dove: "Nerede",
+cal_det_club: "Düzenleyen",
+cal_det_tipo: "Tür",
+cal_fonte: "Kaynak: {f}",
+cal_official: "Yarışma sayfası",
+cal_signup: "Kayıt",
+cal_nota_fonte: "Tarihler federasyonlardan gelir. ArcTrail yarışmaları düzenlemez ve kayıtları yürütmez.",
 home_target_of: "Hedef {n} / {tot}", home_saved_here: "Bu telefonda kayıtlı", nav_home: "Ana sayfa",
 home_register_btn: "Kay\u0131t ol", home_login_link: "Zaten hesab\u0131n var m\u0131?", home_login_link_word: "Giri\u015f yap",
 home_install_btn: "Uygulamay\u0131 telefona kur",
@@ -9958,6 +10157,26 @@ home_trend: "Динамика", home_range_3: "3 месяца", home_range_y: "�
 home_trend_few: "Чтобы увидеть динамику, нужно хотя бы четыре круга.",
 home_ready: "Готов стрелять?", home_start: "Начать круг", home_find: "Найти площадку",
 home_resume_title: "Продолжить круг", home_month: "В этом месяце", home_rounds_word: "Круги",
+cal_title: "Календарь",
+cal_sub: "Найдите, где стрелять.",
+cal_menu_label: "Календарь соревнований",
+cal_menu_sub: "Кто и когда стреляет в ближайшие недели",
+cal_prova: "Пример данных. Настоящий календарь придёт от федераций.",
+cal_f_weekend: "Эти выходные",
+cal_f_mese: "Ближайшие 30 дней",
+cal_f_regione: "Мой регион",
+cal_f_reset: "Сбросить",
+cal_regione_serve: "«Мой регион» использует регион вашего клуба: выберите его в профиле.",
+cal_empty_title: "С этими фильтрами ничего нет",
+cal_empty_body: "Уберите фильтр или расширьте даты.",
+cal_det_quando: "Когда",
+cal_det_dove: "Где",
+cal_det_club: "Организатор",
+cal_det_tipo: "Тип",
+cal_fonte: "Источник: {f}",
+cal_official: "Страница соревнования",
+cal_signup: "Запись",
+cal_nota_fonte: "Даты поступают от федераций. ArcTrail не проводит соревнования и не занимается записью.",
 home_target_of: "Мишень {n} из {tot}", home_saved_here: "Сохранено на телефоне", nav_home: "Главная",
 home_register_btn: "Зарегистрироваться", home_login_link: "Уже есть аккаунт?", home_login_link_word: "Войти",
 home_install_btn: "Установить приложение на телефон",
@@ -10642,6 +10861,26 @@ home_trend: "Evolución", home_range_3: "3 meses", home_range_y: "Temporada",
 home_trend_few: "Hacen falta al menos cuatro recorridos para ver una evolución.",
 home_ready: "¿Listo para tirar?", home_start: "Empezar un recorrido", home_find: "Buscar un campo",
 home_resume_title: "Reanudar tu recorrido", home_month: "Este mes", home_rounds_word: "Recorridos",
+cal_title: "Calendario",
+cal_sub: "Encuentra dónde tirar.",
+cal_menu_label: "Calendario de tiradas",
+cal_menu_sub: "Quién tira, y cuándo, en las próximas semanas",
+cal_prova: "Datos de ejemplo. El calendario real vendrá de las federaciones.",
+cal_f_weekend: "Este fin de semana",
+cal_f_mese: "Próximos 30 días",
+cal_f_regione: "Mi región",
+cal_f_reset: "Borrar",
+cal_regione_serve: "«Mi región» usa la región de tu club: elige uno en tu perfil.",
+cal_empty_title: "Ninguna tirada con estos filtros",
+cal_empty_body: "Quita un filtro, o amplia las fechas.",
+cal_det_quando: "Cuándo",
+cal_det_dove: "Dónde",
+cal_det_club: "Organiza",
+cal_det_tipo: "Tipo",
+cal_fonte: "Fuente: {f}",
+cal_official: "Página de la tirada",
+cal_signup: "Inscripciones",
+cal_nota_fonte: "Las fechas vienen de las federaciones. ArcTrail no organiza las tiradas ni gestiona las inscripciones.",
 home_target_of: "Diana {n} de {tot}", home_saved_here: "Guardado en este teléfono", nav_home: "Inicio",
 home_register_btn: "Registrarse", home_login_link: "\u00bfYa tienes una cuenta?", home_login_link_word: "Iniciar sesi\u00f3n",
 home_install_btn: "Instalar la app en el tel\u00e9fono",
@@ -11326,6 +11565,26 @@ home_trend: "Utveckling", home_range_3: "3 månader", home_range_y: "Säsong",
 home_trend_few: "Det krävs minst fyra rundor för att visa en utveckling.",
 home_ready: "Redo att skjuta?", home_start: "Starta en runda", home_find: "Hitta en bana",
 home_resume_title: "Återuppta din runda", home_month: "Den här månaden", home_rounds_word: "Rundor",
+cal_title: "Kalender",
+cal_sub: "Hitta var du kan skjuta.",
+cal_menu_label: "Tävlingskalender",
+cal_menu_sub: "Vem som skjuter, och när, de närmaste veckorna",
+cal_prova: "Exempeldata. Den riktiga kalendern kommer från förbunden.",
+cal_f_weekend: "I helgen",
+cal_f_mese: "Närmaste 30 dagarna",
+cal_f_regione: "Min region",
+cal_f_reset: "Rensa",
+cal_regione_serve: "”Min region” använder din klubbs region: välj en i profilen.",
+cal_empty_title: "Inga tävlingar med dessa filter",
+cal_empty_body: "Ta bort ett filter, eller vidga datumen.",
+cal_det_quando: "När",
+cal_det_dove: "Var",
+cal_det_club: "Arrangör",
+cal_det_tipo: "Typ",
+cal_fonte: "Källa: {f}",
+cal_official: "Tävlingssida",
+cal_signup: "Anmälan",
+cal_nota_fonte: "Datumen kommer från förbunden. ArcTrail arrangerar inte tävlingarna och sköter inte anmälningar.",
 home_target_of: "Mål {n} av {tot}", home_saved_here: "Sparat på den här telefonen", nav_home: "Hem",
 home_register_btn: "Registrera dig", home_login_link: "Har du redan ett konto?", home_login_link_word: "Logga in",
 home_install_btn: "Installera appen p\u00e5 telefonen",
@@ -12010,6 +12269,26 @@ home_trend: "Verloop", home_range_3: "3 maanden", home_range_y: "Seizoen",
 home_trend_few: "Er zijn minstens vier rondes nodig om een verloop te tonen.",
 home_ready: "Klaar om te schieten?", home_start: "Start een ronde", home_find: "Zoek een parcours",
 home_resume_title: "Hervat je ronde", home_month: "Deze maand", home_rounds_word: "Rondes",
+cal_title: "Kalender",
+cal_sub: "Vind waar je kunt schieten.",
+cal_menu_label: "Wedstrijdkalender",
+cal_menu_sub: "Wie er schiet, en wanneer, de komende weken",
+cal_prova: "Voorbeeldgegevens. De echte kalender komt van de bonden.",
+cal_f_weekend: "Dit weekend",
+cal_f_mese: "Komende 30 dagen",
+cal_f_regione: "Mijn regio",
+cal_f_reset: "Wissen",
+cal_regione_serve: "„Mijn regio” gebruikt de regio van je club: kies er een in je profiel.",
+cal_empty_title: "Geen wedstrijden met deze filters",
+cal_empty_body: "Haal een filter weg, of verruim de datums.",
+cal_det_quando: "Wanneer",
+cal_det_dove: "Waar",
+cal_det_club: "Organisator",
+cal_det_tipo: "Type",
+cal_fonte: "Bron: {f}",
+cal_official: "Wedstrijdpagina",
+cal_signup: "Inschrijven",
+cal_nota_fonte: "De datums komen van de bonden. ArcTrail organiseert de wedstrijden niet en regelt geen inschrijvingen.",
 home_target_of: "Doel {n} van {tot}", home_saved_here: "Opgeslagen op deze telefoon", nav_home: "Home",
 home_register_btn: "Registreren", home_login_link: "Heb je al een account?", home_login_link_word: "Inloggen",
 home_install_btn: "Installeer de app op je telefoon",
@@ -14211,6 +14490,7 @@ if(pgAccessAllowed() === false){ state.screen = "menu"; save(); app.appendChild(
 else { app.appendChild(preparaGaraScreen()); }
 break;
 case "campi": app.appendChild(campiScreen()); break;
+case "calendario": app.appendChild(calendarioScreen()); break;
 case "compagnie": app.appendChild(compagnieScreen()); break;
 case "club-space": app.appendChild(clubSpaceScreen()); break;
 case "attrezzatura": app.appendChild(attrezzaturaScreen()); break;
@@ -17908,6 +18188,19 @@ wrap.appendChild(mktCard);
 }
 // ══════════════════════ SEZIONE: CAMPI ══════════════════════
 else if(state.tab === "campi"){
+/* IL CALENDARIO STA QUI, NON NELLA BARRA IN FONDO. (28/08/2026.)
+   La barra e' fatta di destinazioni che si usano TUTTE LE SETTIMANE — e' la
+   regola con cui il 21/08 e' uscita Attivita' e il 22/08 sono uscite le
+   Compagnie. Una gara si cerca due volte al mese: una voce su cinque della
+   navigazione permanente costerebbe piu' di quanto rende.
+   E il posto giusto non e' la Home: e' questa scheda. «Dove si tira» e
+   «quando si tira» sono la stessa domanda tagliata in due, e chi apre
+   questa sezione la sta gia' facendo. */
+var calBtn = el('<button class="btn btn-ghost btn-block menu-btn cal-porta"><span class="menu-icon">'+navIcon("azgara",24,"due")+'</span><span class="menu-txt">'+t("cal_menu_label")+'<span class="menu-sub">'+t("cal_menu_sub")+'</span></span></button>');
+calBtn.addEventListener("click", function(){
+calAperto = null; state.screen = "calendario"; save(); forgetScroll(); render();
+});
+wrap.appendChild(calBtn);
 wrap.appendChild(campiScreen());
 }
 
@@ -19279,6 +19572,477 @@ return card;
 // L'elenco completo dei campi nel database e' stato tolto: era una lista lunghissima
 // e senza ordine geografico, quindi inutile. Restano due ricerche su Google Maps
 // (link esterno, gratuito) e le scorciatoie utili.
+/* ══════════════════════════════════════════════════════════════════════════
+   IL CALENDARIO — 28/08/2026
+
+   «DOVE POSSO ANDARE A TIRARE?» e' la domanda, e non e' la stessa a cui
+   risponde `campiScreen`. Quella dice DOVE c'e' un campo; questa dice QUANDO
+   c'e' qualcosa, che e' l'altra meta' e quella che fa decidere il weekend.
+   Per questo la porta sta dentro la stessa scheda: sono due tagli della
+   stessa domanda, non due sezioni diverse.
+
+   ARCTRAIL NON ORGANIZZA NIENTE, E LO DEVE DIRE. Ogni riga porta la sua
+   fonte attaccata addosso — `Fonte: FIARC` — e non una nota in fondo alla
+   pagina che nessuno legge. E' la differenza fra aggregare e intestarsi:
+   chi arriva su una gara sbagliata deve sapere in tre secondi a chi chiedere,
+   e la risposta non siamo noi.
+
+   ── LA FORMA DEL DATO, che e' la parte che dovra' sopravvivere ────────────
+   Un evento e' un oggetto piatto, e nessun campo e' obbligatorio tranne
+   `id`, `title` e `date`. Tutto il resto puo' mancare, e quando manca NON SI
+   SCRIVE: e' la stessa regola del finale del giro — quello che non si sa non
+   si scrive, e non si scrive nemmeno uno zero al suo posto.
+
+     id            stringa unica, e deve restare stabile fra un giro e l'altro
+     kind          "gara" oggi. Domani "percorso" per i percorsi permanenti e
+                   "evento" per raduni e corsi: e' il campo che tiene fuori
+                   dal calendario delle gare le cose che gare non sono
+     title         il nome, ed e' la gerarchia visiva principale
+     date          "AAAA-MM-GG", il giorno d'inizio
+     endDate       null o "AAAA-MM-GG": le gare su due giorni esistono
+     federation    la CHIAVE di FEDERATIONS, minuscola. Non la sigla: la sigla
+                   e' l'etichetta e la prende `PROFILE_FEDERATIONS`, che e'
+                   gia' l'unico posto dove sta scritta. Cosi' il giorno che
+                   SFF diventa SFSF si corregge in un punto solo — ed e'
+                   successo il 28/08, in questa stessa app
+     roundType     nome proprio del regolamento, NON tradotto. Battuta,
+                   Tracciato, IFAA 3D Standard e Big Game sono nomi che in
+                   gara si dicono cosi' in tutte e nove le lingue: tradurli
+                   vorrebbe dire inventare un vocabolario che nessuno usa.
+                   Stessa decisione gia' presa per le zone IFAA e NFAS
+     club          chi organizza, per esteso
+     clubCode      il codice in `compagnie-data.js` se c'e', o null. E' il
+                   filo per attaccare un giorno la gara alla scheda del campo
+     country       "it", "de", "se"... serve alle gare estere e non costa
+                   niente scriverlo adesso
+     region        la regione, ed e' quello su cui filtra «vicino a me»
+     location      "Vignone (VB)" — come si dice a voce, non come sta a
+                   database
+     latitude
+     longitude     null OGGI, e il campo esiste apposta. Vedi qui sotto
+     officialUrl   il bando, o la pagina della federazione
+     registrationUrl  le iscrizioni, se sono online
+     source        chi lo dice, scritto come lo direbbe lui
+
+   ── I CHILOMETRI NON CI SONO, ED E' UNA DECISIONE ─────────────────────────
+   Le 4912 compagnie di `compagnie-data.js` hanno luogo, provincia e regione:
+   NESSUNA ha le coordinate. La stessa cosa era gia' stata decisa dentro
+   `campiScreen`, con la stessa frase — una distanza qui sarebbe un numero
+   inventato, ed e' esattamente la cosa che un elenco non deve fare. Un
+   arciere che parte per 32 km e ne guida 80 non ha ricevuto un'imprecisione:
+   ha ricevuto una bugia.
+   Quindi «Vicino a me» filtra per REGIONE, e la riga dice il posto e la
+   provincia. `latitude` e `longitude` stanno nella forma del dato e valgono
+   null: il giorno che arrivano dal feed, il chilometro compare da solo e
+   questa nota si cancella.
+
+   ── I DATI DI OGGI SONO FINTI, E LA PAGINA LO DICE ────────────────────────
+   `CAL_MOCK` sono gare inventate. Restano finte finche' non arriva un feed
+   vero, e per tutto quel tempo in cima alla pagina c'e' scritto. *Un
+   calendario che sembra vero e non lo e' manda qualcuno in macchina.*
+   Le date sono contate a partire da OGGI e non scritte a mano: un calendario
+   di prova con dentro solo date passate si presenta vuoto, e da fuori vuoto
+   e rotto si somigliano.
+
+   ── DOVE SI ATTACCA IL VERO ───────────────────────────────────────────────
+   `calEventi()` e' l'unica giuntura. Oggi restituisce `CAL_MOCK`; domani fa
+   una `onSnapshot` su una raccolta, o legge una cache riempita da una
+   funzione che macina i feed federali. Nessun'altra riga di questa schermata
+   sa da dove arrivano i dati.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Giorni da oggi -> "AAAA-MM-GG". Sta qui e non fra le utilita' generali
+   perche' serve solo ai dati di prova, e sparisce con loro. */
+function calFraGiorni(n){
+var d = new Date();
+d.setHours(12,0,0,0);
+d.setDate(d.getDate() + n);
+var m = String(d.getMonth()+1); if(m.length < 2) m = "0"+m;
+var g = String(d.getDate());    if(g.length < 2) g = "0"+g;
+return d.getFullYear() + "-" + m + "-" + g;
+}
+
+var CAL_MOCK = [
+{ id:"mock-1", kind:"gara", title:"Campionato Regionale 3D", date:calFraGiorni(3), endDate:null,
+  federation:"fiarc", roundType:"Battuta", club:"Arcieri del VCO & Valgrande", clubCode:"01VERB",
+  country:"it", region:"Piemonte", location:"Vignone (VB)", latitude:null, longitude:null,
+  officialUrl:"https://www.fiarc.it/", registrationUrl:null, source:"FIARC" },
+{ id:"mock-2", kind:"gara", title:"Gara 3D di primavera", date:calFraGiorni(4), endDate:null,
+  federation:"fitarco", roundType:"Tiro 3D", club:"Arcieri del Ticino", clubCode:null,
+  country:"it", region:"Piemonte", location:"Novara (NO)", latitude:null, longitude:null,
+  officialUrl:"https://www.fitarco-italia.org/", registrationUrl:null, source:"FITARCO" },
+{ id:"mock-3", kind:"gara", title:"Trofeo del Cacciatore", date:calFraGiorni(10), endDate:null,
+  federation:"fiarc", roundType:"Percorso", club:"Compagnia Arcieri Lariani", clubCode:null,
+  country:"it", region:"Lombardia", location:"Erba (CO)", latitude:null, longitude:null,
+  officialUrl:"https://www.fiarc.it/", registrationUrl:"https://www.fiarc.it/", source:"FIARC" },
+{ id:"mock-4", kind:"gara", title:"3D Herbstturnier", date:calFraGiorni(11), endDate:calFraGiorni(12),
+  federation:"dsb", roundType:"3D", club:"BSC Schwarzwald", clubCode:null,
+  country:"de", region:"Baden-Württemberg", location:"Freiburg", latitude:null, longitude:null,
+  officialUrl:"https://www.dsb.de/", registrationUrl:null, source:"DSB" },
+{ id:"mock-5", kind:"gara", title:"Tracciato di fine estate", date:calFraGiorni(17), endDate:null,
+  federation:"fiarc", roundType:"Tracciato", club:"Arcieri della Serra", clubCode:null,
+  country:"it", region:"Piemonte", location:"Cerrione (BI)", latitude:null, longitude:null,
+  officialUrl:null, registrationUrl:null, source:"FIARC" },
+{ id:"mock-6", kind:"gara", title:"IFAA 3D Standard Round", date:calFraGiorni(18), endDate:null,
+  federation:"faas", roundType:"IFAA 3D Standard", club:"Arcieri Alpini", clubCode:null,
+  country:"it", region:"Veneto", location:"Feltre (BL)", latitude:null, longitude:null,
+  officialUrl:null, registrationUrl:null, source:"FAAS" },
+{ id:"mock-7", kind:"gara", title:"Höstjakten 3D", date:calFraGiorni(24), endDate:null,
+  federation:"sff", roundType:"IFAA Hunting", club:"Vasa Bågskyttar", clubCode:null,
+  country:"se", region:"Uppsala", location:"Uppsala", latitude:null, longitude:null,
+  officialUrl:"https://sfsf-archery.com", registrationUrl:null, source:"SFSF" },
+{ id:"mock-8", kind:"gara", title:"Round 3D del Verbano", date:calFraGiorni(25), endDate:null,
+  federation:"fiarc", roundType:"Round 3D", club:"Arcieri del VCO & Valgrande", clubCode:"01VERB",
+  country:"it", region:"Piemonte", location:"Vignone (VB)", latitude:null, longitude:null,
+  officialUrl:null, registrationUrl:null, source:"FIARC" },
+{ id:"mock-9", kind:"gara", title:"Big Game Shoot", date:calFraGiorni(31), endDate:null,
+  federation:"nfas", roundType:"Big Game", club:"Wharfe Valley Bowmen", clubCode:null,
+  country:"gb", region:"Yorkshire", location:"Otley", latitude:null, longitude:null,
+  officialUrl:"https://www.nfas.net/", registrationUrl:null, source:"NFAS" },
+{ id:"mock-10", kind:"gara", title:"Campionato Italiano 3D", date:calFraGiorni(38), endDate:calFraGiorni(39),
+  federation:"fitarco", roundType:"Tiro 3D", club:"Arcieri Monte Grappa", clubCode:null,
+  country:"it", region:"Veneto", location:"Bassano del Grappa (VI)", latitude:null, longitude:null,
+  officialUrl:"https://www.fitarco-italia.org/", registrationUrl:"https://www.fitarco-italia.org/", source:"FITARCO" }
+];
+
+/* L'UNICA GIUNTURA COL MONDO. Da qui passa tutto: chi cambia sorgente cambia
+   questa funzione e nient'altro. Ordina per data e butta via il passato — un
+   calendario che mostra ieri fa scorrere per arrivare a oggi. */
+function calEventi(){
+var oggi = calFraGiorni(0);
+return CAL_MOCK.filter(function(e){
+return String(e.endDate || e.date) >= oggi;
+}).sort(function(a,b){
+return String(a.date).localeCompare(String(b.date));
+});
+}
+
+/* CHE COSA PUO' DIVENTARE UN LINK. (29/08/2026.)
+   Oggi gli indirizzi vengono da `CAL_MOCK`, cioe' da questo file. Domani
+   verranno da un feed federale, cioe' da fuori — e un `href` costruito con
+   una stringa che arriva da fuori e' il posto classico da cui entra un
+   `javascript:`. Il vaglio si mette PRIMA che arrivino i dati veri, non dopo:
+   dopo vuol dire che c'e' stato un intervallo in cui non c'era.
+
+   PASSA SOLO HTTP E HTTPS. Non e' una lista di cose vietate — quelle si
+   dimenticano sempre di qualcosa — ma una lista di cose ammesse, che e'
+   l'unico verso in cui questo controllo funziona. `javascript:`, `data:`,
+   `file:`, `blob:` e qualunque altro schema cadono perche' non sono nei due,
+   non perche' qualcuno si e' ricordato di nominarli.
+
+   `new URL()` fa il lavoro vero: normalizza, e rifiuta da sola le stringhe
+   che URL non sono. Il secondo argomento manca apposta — senza base, un
+   indirizzo relativo non e' un indirizzo, e qui non deve esserlo.
+
+   Chi non passa NON diventa un tasto spento: sparisce. Un tasto che non porta
+   da nessuna parte e' una promessa che non si mantiene. */
+function calUrlSicuro(u){
+if(typeof u !== "string") return null;
+var t = u.trim();
+if(!t) return null;
+try{
+var url = new URL(t);
+if(url.protocol !== "https:" && url.protocol !== "http:") return null;
+return url.href;
+}catch(e){ return null; }
+}
+
+/* La sigla della federazione sta gia' scritta in un posto solo. */
+function calSigla(code){
+var out = null;
+PROFILE_FEDERATIONS.forEach(function(f){ if(f.code === code) out = f.label; });
+return out || String(code || "").toUpperCase();
+}
+
+/* La regione di chi guarda, se si puo' sapere: viene dalla compagnia del
+   profilo, che e' l'unico posto dove l'app conosce davvero un luogo. */
+function calMiaRegione(){
+try{
+var cod = myClubCode();
+if(!cod) return null;
+initCompagnieData();
+var c = (typeof COMPAGNIE === "object" && COMPAGNIE) ? COMPAGNIE[cod] : null;
+return (c && c.regione) ? c.regione : null;
+}catch(e){ return null; }
+}
+
+/* I filtri vivono FUORI dalla funzione, come `alAperto`: premere una
+   pastiglia ridisegna la schermata, e ritrovarsi i filtri azzerati a ogni
+   tocco sarebbe peggio di non averli. */
+var calFiltri = { quando:null, regione:false, fed:{}, tipo:{} };
+var calAperto = null;
+
+function calFiltriAccesi(){
+if(calFiltri.quando || calFiltri.regione) return true;
+var acceso = false;
+Object.keys(calFiltri.fed).forEach(function(k){ if(calFiltri.fed[k]) acceso = true; });
+Object.keys(calFiltri.tipo).forEach(function(k){ if(calFiltri.tipo[k]) acceso = true; });
+return acceso;
+}
+
+/* IL WEEKEND E' IL PROSSIMO SABATO E DOMENICA, e se oggi e' gia' sabato o
+   domenica e' QUESTO. Chi apre l'app di sabato mattina non sta chiedendo del
+   weekend fra sei giorni. */
+function calFinestraWeekend(){
+var d = new Date(); d.setHours(12,0,0,0);
+var g = d.getDay();                 // 0 domenica ... 6 sabato
+var aSabato = (g === 0) ? -1 : (6 - g);
+var sab = new Date(d); sab.setDate(d.getDate() + aSabato);
+var dom = new Date(sab); dom.setDate(sab.getDate() + 1);
+var f = function(x){
+var m = String(x.getMonth()+1); if(m.length < 2) m = "0"+m;
+var gg = String(x.getDate());    if(gg.length < 2) gg = "0"+gg;
+return x.getFullYear()+"-"+m+"-"+gg;
+};
+return { da:f(sab), a:f(dom) };
+}
+
+function calPassa(e){
+if(calFiltri.quando === "weekend"){
+var w = calFinestraWeekend();
+var da = String(e.date), a = String(e.endDate || e.date);
+if(a < w.da || da > w.a) return false;
+}
+if(calFiltri.quando === "mese"){
+if(String(e.date) > calFraGiorni(30)) return false;
+}
+/* IL FILTRO E' PER REGIONE, E LA PASTIGLIA LO DICE DAL 29/08. Prima si
+   chiamava «Vicino a me» e non ha mai calcolato una distanza: prometteva una
+   cosa che il codice non fa, ed e' la stessa specie di difetto dei chilometri
+   inventati, solo scritta sulla pastiglia invece che nella riga.
+   La logica qui sotto non e' cambiata di una riga. */
+if(calFiltri.regione){
+var mia = calMiaRegione();
+if(mia && e.region !== mia) return false;
+}
+var fedScelte = Object.keys(calFiltri.fed).filter(function(k){ return calFiltri.fed[k]; });
+if(fedScelte.length && fedScelte.indexOf(e.federation) === -1) return false;
+var tipiScelti = Object.keys(calFiltri.tipo).filter(function(k){ return calFiltri.tipo[k]; });
+if(tipiScelti.length && tipiScelti.indexOf(String(e.roundType||"")) === -1) return false;
+return true;
+}
+
+/* Il mese scritto per esteso, nella lingua di chi guarda. */
+function calMeseDi(iso){
+try{
+var d = new Date(String(iso)+"T12:00");
+if(isNaN(d.getTime())) return "";
+return d.toLocaleDateString(state.lang || "it", { month:"long", year:"numeric" });
+}catch(e){ return ""; }
+}
+function calGiornoLungo(iso){
+try{
+var d = new Date(String(iso)+"T12:00");
+if(isNaN(d.getTime())) return String(iso);
+return d.toLocaleDateString(state.lang || "it", { weekday:"long", day:"numeric", month:"long" });
+}catch(e){ return String(iso); }
+}
+
+/* La riga di una gara. Stessa ossatura di `otRowEl`, e non per pigrizia: chi
+   ha imparato a leggere l'elenco degli allenamenti sa gia' leggere questo. */
+function calRigaEl(e){
+var aperta = (calAperto === e.id);
+var q = alQuando({ date:e.date });
+var blocco = el('<div class="al-blocco'+(aperta ? ' aperta' : '')+'"></div>');
+var riga = el('<div class="al-riga"></div>');
+
+/* SOTTO IL NOME: federazione e tipo, in grigio, separati dal punto medio che
+   l'app usa gia' dappertutto. Sono le due cose che fanno capire SE la gara ti
+   riguarda, e devono pesare meno del nome ma leggersi senza sforzo. */
+var sotto = [];
+if(e.federation) sotto.push(escapeHtml(calSigla(e.federation)));
+if(e.roundType) sotto.push(escapeHtml(e.roundType));
+
+/* LA TERZA RIGA: DOVE. (29/08/2026.) Delle tre domande che questa schermata
+   deve chiudere — quando, cosa, dove — le prime due stavano nella riga chiusa
+   e la terza costava un tocco. Un elenco si legge per confrontare, e per
+   confrontare bisogna vedere: aprire dieci righe per sapere quale gara e' a
+   mezz'ora non e' confrontare, e' cercare.
+
+   E' TERZIARIA PER MISURA, NON PER COLORE. Il grigio e' gia' quello della
+   riga di sopra — `--muted`, che nel sistema e' il secondario — e per stare
+   sotto basta il corpo piu' piccolo. Inventare un grigio piu' spento avrebbe
+   voluto dire un token nuovo, tre temi da rifare e un contrasto da ricontare
+   per guadagnare una gerarchia che il carattere dava gratis.
+
+   Provincia quando c'e' (sta gia' dentro `location`: «Vignone (VB)»), altrimenti
+   la regione, che e' l'unica cosa piu' precisa che l'app sappia. Se non si sa
+   niente la riga non c'e': quello che non si sa non si scrive. */
+var luogo = "";
+if(e.location){
+luogo = (/\(/.test(e.location) || !e.region || e.region === e.location)
+      ? e.location
+      : e.location + " \u00b7 " + e.region;
+} else if(e.region){ luogo = e.region; }
+
+var tocca = el('<button class="al-tocca" aria-expanded="'+(aperta ? 'true' : 'false')+'">'
++ '<span class="al-quando cal-quando"><b>'+q.giorno+'</b><i>'+escapeHtml(q.mese)+'</i></span>'
++ '<span class="al-dove"><b>'+escapeHtml(e.title || "?")+'</b>'
++ '<span>'+sotto.join(" \u00b7 ")+'</span>'
++ (luogo ? '<span class="cal-luogo">'+escapeHtml(luogo)+'</span>' : '')
++ '</span>'
++ '<span class="al-chev" aria-hidden="true">\u203a</span></button>');
+(function(id){ tocca.addEventListener("click", function(){
+calAperto = (calAperto === id) ? null : id;
+render();
+}); })(e.id);
+riga.appendChild(tocca);
+blocco.appendChild(riga);
+
+// ── Il resto, un tocco piu' sotto ────────────────────────────────────────
+var piu = el('<div class="al-piu"></div>');
+var dl = el('<dl class="cal-det"></dl>');
+function voce(etichetta, valore){
+if(!valore) return;                       // quello che non si sa non si scrive
+dl.appendChild(el('<dt>'+escapeHtml(etichetta)+'</dt>'));
+dl.appendChild(el('<dd>'+escapeHtml(valore)+'</dd>'));
+}
+var quando = calGiornoLungo(e.date);
+if(e.endDate && e.endDate !== e.date){ quando += " \u2013 " + calGiornoLungo(e.endDate); }
+voce(t("cal_det_quando"), quando);
+var dove = [];
+if(e.location) dove.push(e.location);
+if(e.region && e.region !== e.location) dove.push(e.region);
+voce(t("cal_det_dove"), dove.join(" \u00b7 "));
+voce(t("cal_det_club"), e.club);
+voce(t("cal_det_tipo"), e.roundType);
+piu.appendChild(dl);
+
+var ferri = el('<div class="al-ferri"></div>');
+if(e.location){
+var mapBtn = el('<button class="btn btn-ghost btn-sm">'+icon("pin",16)+' '+t("campi_portami")+'</button>');
+(function(dovunque){ mapBtn.addEventListener("click", function(){
+var a = document.createElement("a");
+a.href = "https://www.google.com/maps/search/"+encodeURIComponent(dovunque);
+a.target = "_blank"; a.rel = "noopener";
+document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}); })((e.club ? e.club+" " : "")+e.location);
+ferri.appendChild(mapBtn);
+}
+var urlSito = calUrlSicuro(e.officialUrl);
+if(urlSito){
+ferri.appendChild(el('<a class="btn btn-ghost btn-sm" href="'+escapeHtml(urlSito)+'" target="_blank" rel="noopener">'+t("cal_official")+'</a>'));
+}
+/* LE ISCRIZIONI SONO L'UNICA COSA DA FARE QUI, e prendono l'unico tasto
+   pieno della schermata. Se il link non c'e' il tasto non c'e': un tasto
+   spento e' una promessa che non si mantiene. */
+var urlIscr = calUrlSicuro(e.registrationUrl);
+if(urlIscr){
+ferri.appendChild(el('<a class="btn btn-arancio btn-sm" href="'+escapeHtml(urlIscr)+'" target="_blank" rel="noopener">'+t("cal_signup")+'</a>'));
+}
+if(ferri.childNodes.length) piu.appendChild(ferri);
+
+if(e.source){
+piu.appendChild(el('<div><span class="cal-fonte">'+escapeHtml(t("cal_fonte", { f:e.source }))+'</span></div>'));
+}
+blocco.appendChild(piu);
+return blocco;
+}
+
+function calendarioScreen(){
+initCompagnieData();
+var wrap = el('<div></div>');
+var card = el('<div class="card"></div>');
+card.appendChild(el('<h2 class="section-title">'+t("cal_title")+'</h2>'));
+card.appendChild(el('<div class="nota">'+t("cal_sub")+'</div>'));
+
+/* FINCHE' I DATI SONO FINTI, LA PAGINA LO DICE E BASTA. Questa riga si
+   cancella nella stessa mossa in cui arriva il primo feed vero. */
+card.appendChild(el('<div class="cal-avviso">'+icon("info",16)+'<span>'+escapeHtml(t("cal_prova"))+'</span></div>'));
+
+var tutti = calEventi();
+
+// ── I FILTRI ────────────────────────────────────────────────────────────
+// Le pastiglie della federazione e del tipo NON sono un elenco scritto a
+// mano: nascono dagli eventi che ci sono. Cosi' non compare mai un filtro
+// che non filtra niente, e il giorno che entra una federazione nuova la sua
+// pastiglia c'e' senza che nessuno tocchi questa funzione.
+var barra = el('<div class="cal-filtri"></div>');
+/* SPENTA VUOL DIRE SPENTA. (29/08/2026.) Prima c'era `aria-disabled="true"`,
+   che DICE che il tasto non si usa e non lo impedisce: col dito non succedeva
+   niente perche' l'ascoltatore non veniva attaccato, ma col Tab il fuoco ci
+   entrava lo stesso e l'Invio premeva un tasto che non fa nulla. Due
+   comportamenti diversi per due modi di usare la stessa pastiglia.
+   `disabled` vero fa tutte e tre le cose insieme — niente fuoco, niente
+   pressione, e lo stato letto ad alta voce e' giusto — e la spiegazione
+   scritta sotto resta dov'era, perche' l'attributo dice CHE non si puo', non
+   PERCHE'. */
+function pastiglia(testo, acceso, spenta, click){
+var b = el('<button class="chip-filtro'+(acceso ? " on" : "")+'"'
++ (spenta ? ' disabled' : '')
++ ' aria-pressed="'+(acceso ? "true" : "false")+'">'+escapeHtml(testo)+'</button>');
+if(!spenta) b.addEventListener("click", click);
+barra.appendChild(b);
+return b;
+}
+
+pastiglia(t("cal_f_weekend"), calFiltri.quando === "weekend", false, function(){
+calFiltri.quando = (calFiltri.quando === "weekend") ? null : "weekend"; render();
+});
+pastiglia(t("cal_f_mese"), calFiltri.quando === "mese", false, function(){
+calFiltri.quando = (calFiltri.quando === "mese") ? null : "mese"; render();
+});
+
+var mia = calMiaRegione();
+pastiglia(t("cal_f_regione"), calFiltri.regione, !mia, function(){
+calFiltri.regione = !calFiltri.regione; render();
+});
+
+var fedViste = [], tipiVisti = [];
+tutti.forEach(function(e){
+if(e.federation && fedViste.indexOf(e.federation) === -1) fedViste.push(e.federation);
+var rt = String(e.roundType || "");
+if(rt && tipiVisti.indexOf(rt) === -1) tipiVisti.push(rt);
+});
+fedViste.sort(function(a,b){ return calSigla(a).localeCompare(calSigla(b)); });
+tipiVisti.sort(function(a,b){ return a.localeCompare(b); });
+
+fedViste.forEach(function(code){
+pastiglia(calSigla(code), !!calFiltri.fed[code], false, function(){
+calFiltri.fed[code] = !calFiltri.fed[code]; render();
+});
+});
+tipiVisti.forEach(function(rt){
+pastiglia(rt, !!calFiltri.tipo[rt], false, function(){
+calFiltri.tipo[rt] = !calFiltri.tipo[rt]; render();
+});
+});
+
+if(calFiltriAccesi()){
+var azz = el('<button class="cal-azzera">'+escapeHtml(t("cal_f_reset"))+'</button>');
+azz.addEventListener("click", function(){
+calFiltri = { quando:null, regione:false, fed:{}, tipo:{} };
+render();
+});
+barra.appendChild(azz);
+}
+card.appendChild(barra);
+
+// La pastiglia spenta si spiega, invece di restare li' grigia e muta.
+if(!mia){ card.appendChild(el('<div class="nota">'+escapeHtml(t("cal_regione_serve"))+'</div>')); }
+
+// ── L'ELENCO ────────────────────────────────────────────────────────────
+var visti = tutti.filter(calPassa);
+if(!visti.length){
+card.appendChild(el('<div class="riga-chiusa"><b>'+escapeHtml(t("cal_empty_title"))+'</b>'
++ escapeHtml(t("cal_empty_body"))+'</div>'));
+} else {
+var meseCorrente = null;
+visti.forEach(function(e){
+var m = calMeseDi(e.date);
+if(m !== meseCorrente){
+meseCorrente = m;
+card.appendChild(el('<div class="cal-mese">'+escapeHtml(m)+'</div>'));
+}
+card.appendChild(calRigaEl(e));
+});
+}
+
+card.appendChild(el('<div class="nota stacco">'+escapeHtml(t("cal_nota_fonte"))+'</div>'));
+wrap.appendChild(card);
+return wrap;
+}
+
 function campiScreen(){
 initCompagnieData();
 var wrap = el('<div></div>');
@@ -20602,7 +21366,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-28-nfas-fonte";
+var BUILD_STAMP = "2026-08-29-regione";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -20611,7 +21375,7 @@ var BUILD_STAMP = "2026-08-28-nfas-fonte";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-28-marchio";
+var BUILD_PARENT = "2026-08-28-nfas-fonte";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

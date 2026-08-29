@@ -10,10 +10,12 @@ Perché l'app è fatta così. Ogni sezione è una versione: cosa è cambiato, e 
 *Indice rigenerato il 23/08/2026 dal file stesso: se una sezione
 cambia titolo, l'indice cambia con lei e non possono divergere.*
 
-## Indice — 124 sezioni
+## Indice — 126 sezioni
 
 | data | sezione | versione |
 |---|---|---|
+| 29/08/2026 | Il calendario, quattro correzioni: un nome che mentiva, una riga che taceva | `2026-08-29-regione` |
+| 28/08/2026 | Il calendario: dove posso andare a tirare | `2026-08-28-calendario` |
 | 28/08/2026 | Il profilo smette di essere un corridoio | `2026-08-28-carta` |
 | 27/08/2026 | Il marchio vecchio nei risultati di Google: l'identita' era rimasta nell'app | `2026-08-27-identita` |
 | 27/08/2026 | Il tema Sole, quattro registri di societa', e un banco che gridava su una decisione | `2026-08-27-senza-turchia` |
@@ -138,6 +140,296 @@ cambia titolo, l'indice cambia con lei e non possono divergere.*
 | 22/08/2026 | Un giro aperto non aveva una via d'uscita | `2026-08-22-scarta` |
 | 22/08/2026 | I banchi erano rossi per il motivo giusto, ed è comunque un guasto |  |
 | — | Cosa manca, in ordine di valore |  |
+
+---
+
+## Il calendario, quattro correzioni: un nome che mentiva, una riga che taceva *(29/08/2026, versione `2026-08-29-regione`, nata da `2026-08-28-nfas-fonte`; `sw.js` a `arctrail3d-v150`)*
+
+**Un timbro solo, e il guardiano ha fatto bene a fermarmi.** Avevo scritto
+`2026-08-29-regione` nata da `2026-08-28-calendario`, ma `-calendario` non e'
+mai stato pubblicato: online c'era ancora `-nfas-fonte`. Un file nato da una
+versione che non e' l'ultima pubblicata **non e' un aggiornamento, e' una
+cancellazione**, e `controlla-base.js` si e' rifiutato di lanciare gli altri
+ventisette — su un file con la base sbagliata direbbero di si' e non
+servirebbe a niente. Quindi il calendario e queste quattro correzioni sono
+**una mossa sola** che parte da cio' che e' online. *La catena si accorcia, non
+si finge.*
+
+Quattro cose, nessuna delle quali cambia il disegno. Tre erano già scritte fra
+le righe della sezione di ieri e non le avevo viste; la quarta è arrivata
+guardando il calendario con l'idea che un giorno i dati verranno da fuori.
+
+### «Vicino a me» prometteva un calcolo che non c'è
+
+La pastiglia si chiamava *Vicino a me* e filtrava per **regione**. Non è una
+sfumatura: è **la stessa specie di difetto dei chilometri inventati**, solo
+scritta sulla pastiglia invece che dentro la riga. Ieri avevo scritto due
+paragrafi sul perché una distanza qui sarebbe una bugia, e poi avevo messo in
+cima un tasto che ne prometteva una.
+
+Adesso si chiama **«La mia regione»** in tutte e nove le lingue. *La logica non
+è cambiata di una riga* — filtra per regione come faceva prima, e continuerà a
+farlo finché non esisteranno coordinate vere. È cambiato solo il nome, che è
+esattamente il punto: il nome era la parte sbagliata.
+
+Sono cambiate anche le chiavi (`cal_f_regione`, `cal_regione_serve`) e il campo
+in `calFiltri`, che si chiamava `vicino`. *Un campo chiamato `vicino` che filtra
+per regione mente al prossimo che legge il codice*, e il prossimo che legge il
+codice sono io fra tre settimane.
+
+### La riga chiusa taceva su una delle tre domande
+
+Delle tre domande che questa schermata deve chiudere — **quando, cosa, dove** —
+le prime due stavano nella riga e la terza costava un tocco. Ma un elenco si
+legge per confrontare, e per confrontare bisogna **vedere**: aprire dieci righe
+per capire quale gara è a mezz'ora non è confrontare, è cercare.
+
+Adesso c'è una terza riga: la località con la provincia quando c'è, altrimenti
+con la regione, e niente se non si sa niente.
+
+**È terziaria per misura, non per colore.** Il grigio è lo stesso della riga di
+sopra — `--muted`, il secondario del sistema — e a farla stare sotto basta il
+corpo più piccolo. Inventare un grigio più spento avrebbe voluto dire un token
+nuovo, tre temi da rifare e un contrasto da ricontare, per comprare una
+gerarchia che il carattere dava gratis.
+
+*E una ripetizione presa guardando, non da un banco:* dove citta' e regione si
+chiamano uguale usciva «Uppsala · Uppsala», che sembra un errore di stampa.
+Succede spesso fuori d'Italia, e il feed vero ne portera' molte. Adesso la
+regione si aggiunge solo se dice qualcosa in piu'.
+
+*Costo pagato:* il primo tentativo aveva `margin-top:1px`, fuori dalla scala
+4/8/12/16/24/32/48, e `controlla-token.js` l'ha preso subito. La cura non era
+allargare la scala: era accorgersi che la spaziatura giusta esisteva già —
+`.al-dove span` porta i suoi 2px, gli stessi che separano la prima riga dalla
+seconda. Due righe grigie una sotto l'altra sono **lo stesso gruppo**, e
+distanziarle in modo diverso avrebbe detto che sono due.
+
+### Che cosa può diventare un link
+
+Oggi gli indirizzi delle gare vengono da questo file. Domani verranno da un
+feed federale, cioè **da fuori** — e un `href` costruito con una stringa che
+arriva da fuori è il posto classico da cui entra un `javascript:`.
+
+`calUrlSicuro()` fa passare **solo `https:` e `http:`**. Non è una lista di
+cose vietate: quelle si dimenticano sempre di qualcosa. È una lista di cose
+ammesse, che è l'unico verso in cui questo controllo funziona — `data:`,
+`file:`, `blob:` e qualunque schema che nessuno ha ancora inventato cadono
+perché **non sono nei due**, non perché qualcuno si è ricordato di nominarli.
+`new URL()` fa il lavoro vero, e rifiuta da sola le stringhe che URL non sono.
+
+Chi non passa **non diventa un tasto spento: sparisce.** Un tasto che non porta
+da nessuna parte è una promessa che non si mantiene.
+
+*Il vaglio si mette prima che arrivino i dati veri, non dopo:* dopo vuol dire
+che c'è stato un intervallo in cui non c'era.
+
+### Spenta vuol dire spenta
+
+La pastiglia della regione, quando manca la compagnia, portava
+`aria-disabled="true"`. Quell'attributo **dice** che il tasto non si usa e non
+lo impedisce. Col dito non succedeva niente — l'ascoltatore non veniva
+attaccato — ma **col Tab il fuoco ci entrava lo stesso**, e l'Invio premeva un
+tasto che non fa nulla. Due comportamenti diversi per due modi di usare la
+stessa pastiglia, che è il modo esatto in cui l'accessibilità si rompe senza
+che nessuno se ne accorga.
+
+Adesso c'è `disabled` vero, che fa le tre cose insieme: niente fuoco, niente
+pressione, stato letto giusto ad alta voce. La spiegazione scritta sotto resta
+dov'era, perché l'attributo dice **che** non si può, non **perché**.
+
+### Il banco: da 46 a 61 prove, e ancora un errore mio
+
+`banco-calendario.js` copre le quattro invarianti nuove. Sabotate una per una,
+dice no ogni volta: vaglio degli indirizzi disattivato, località tolta dalla
+riga, `disabled` riportato ad `aria-disabled`, pastiglia rinominata *Vicino a
+me*.
+
+**La prova dei link non chiama la funzione: apre una copia dell'app.** Tutta
+l'app vive dentro `DOMContentLoaded`, quindi `calUrlSicuro` e `CAL_MOCK` non
+sono raggiungibili da fuori — ed è giusto così. Il banco prepara una copia del
+file con tre gare in più (indirizzi velenosi, un `https:` buono, un `http:`
+buono) e la apre davvero: si prova **la strada intera, dal dato al DOM**,
+invece della funzione in isolamento. I dati consegnati non vengono toccati.
+
+**E ho ripetuto l'errore di ieri.** Due prove nuove dicevano
+`!(spenta && fuoco)`: appena `spenta` è falso, l'espressione dice sì da sola —
+esattamente come `every` su un elenco vuoto. Il sabotaggio le ha smascherate
+(passavano con `aria-disabled` rimesso), e adesso la prova **nomina la
+pastiglia** e le chiede il fuoco davvero, invece di dedurlo da un'altra
+bandierina. *La stessa specie di errore due giorni di fila: la prossima volta,
+scrivere prima il sabotaggio e poi la prova.*
+
+---
+
+## Il calendario: dove posso andare a tirare *(28/08/2026, lavorato come `2026-08-28-calendario` — **timbro mai pubblicato**: e' uscito il 29/08 dentro `2026-08-29-regione`)*
+
+**La domanda non era «che giorno è»: era «dove posso andare a tirare».** Sono
+due domande diverse e chiedono due oggetti diversi. Un calendario mensile
+risponde alla prima: trenta caselle, di cui ventisette vuote, e le tre righe
+che contano nascoste dentro. Questa pagina risponde alla seconda, e quindi è
+un **elenco in ordine di data** — la stessa forma che ha già l'elenco degli
+allenamenti aperti, per la stessa ragione: si legge per confrontare, e per
+confrontare le cose devono stare una sotto l'altra.
+
+### Non è nato un secondo sistema, ed è la parte di cui vado più contento
+
+La riga di una gara **è** la riga di un allenamento aperto: `.al-blocco`,
+`.al-quando`, `.al-dove`, `.al-chev`, `.al-piu`. Non per risparmio: perché fa
+lo stesso mestiere — *quando, dove, e il resto un tocco più sotto* — e chi ha
+imparato a leggere un elenco nell'app sa già leggere l'altro.
+
+L'unica cosa che è stata disegnata nuova è `.chip-filtro`, e c'era un motivo
+tecnico prima che estetico: `.chip` è `flex:1 1 0`, cioè si spartisce la
+larghezza, ed è fatta per due o tre scelte grandi. Qui le pastiglie sono otto
+di lunghezza diversa e devono restare larghe **quanto la parola che portano**.
+L'altezza però è rimasta `--hit`: una pastiglia da 34px sta meglio nel disegno
+e si sbaglia col pollice, in piedi, con una mano sola.
+
+### Il quadrato della data è neutro, e non è un ripiego
+
+Negli allenamenti il colore del quadrato **distingue due cose**: verde se
+l'allenamento è della tua compagnia, argilla se è aperto a tutti. In calendario
+sono tutte la stessa cosa — gare di federazione — quindi un quadrato arancione
+su ogni riga non distinguerebbe niente e sarebbe un muro d'arancio, che è
+l'opposto esatto di quello che era stato chiesto. A rendere la data
+riconoscibile bastano la forma e il numero grosso.
+
+*L'arancione in questa schermata sta in due posti soli:* la pastiglia del
+filtro acceso, e il tasto delle iscrizioni. Uno dice «stai guardando meno di
+tutto», l'altro è l'unica cosa che qui si può fare.
+
+**E nessun colore per federazione.** Diciassette federazioni sono diciassette
+colori, cioè un codice che nessuno impara e che al sole non si distingue. La
+sigla è scritta, in grigio, dove stanno le altre cose secondarie.
+
+### I chilometri non ci sono, ed è una decisione già presa una volta
+
+Le compagnie di `compagnie-data.js` hanno luogo, provincia e regione:
+**nessuna ha le coordinate.** La stessa cosa era già stata decisa dentro
+`campiScreen`, con la stessa frase — *una distanza qui sarebbe un numero
+inventato, ed è esattamente la cosa che questo elenco non deve fare*. Prendere
+una decisione diversa qui avrebbe voluto dire che l'app dice due cose sulla
+stessa domanda.
+
+E il costo di sbagliarla non è un'imprecisione: un arciere che parte per 32 km
+e ne guida 80 non ha ricevuto un numero storto, ha ricevuto una bugia.
+
+Quindi «Vicino a me» filtra per **regione**, e la riga dice il posto con la sua
+provincia. `latitude` e `longitude` **esistono nella forma del dato e valgono
+`null`**: il giorno che arrivano da un feed, il chilometro compare da solo e
+questa nota si cancella. E se la regione non si può sapere — nessuna compagnia
+nel profilo — la pastiglia è spenta **e sotto c'è scritto perché**: una
+pastiglia grigia e muta sembra un guasto.
+
+### La fonte sta attaccata a ogni gara, non in fondo alla pagina
+
+È l'invariante di questa schermata, e vale più del disegno. ArcTrail
+**aggrega** gare di qualcun altro, e non deve mai sembrare che le organizzi.
+Quindi ogni riga aperta porta la sua `Fonte: FIARC`, e sotto l'elenco c'è
+scritto per esteso che le date arrivano dalle federazioni e che le iscrizioni
+non passano da qui.
+
+*Una nota unica in fondo alla pagina non sarebbe bastata:* chi arriva su una
+gara sbagliata deve sapere in tre secondi a chi chiedere, e deve saperlo
+guardando **quella riga**, non scorrendo fino in fondo.
+
+### I dati sono finti, e la pagina lo dice in cima
+
+`CAL_MOCK` sono dieci gare inventate. Finché non arriva un feed vero, in cima
+c'è un cartello che lo dichiara — perché *un calendario che sembra vero e non
+lo è manda qualcuno in macchina*. Il cartello si toglie nella stessa mossa in
+cui entra il primo dato vero, non prima.
+
+**Le date sono contate a partire da oggi**, non scritte a mano. Un calendario
+di prova con dentro solo date passate si presenta vuoto, e da fuori vuoto e
+rotto si somigliano molto.
+
+### Cosa dovrà reggere quando i dati saranno veri
+
+`calEventi()` è **l'unica giuntura col mondo**. Oggi restituisce l'elenco
+finto, ordina per data e butta via il passato; domani fa una `onSnapshot`, o
+legge una cache riempita da una funzione che macina i feed federali. Nessuna
+altra riga della schermata sa da dove arrivano i dati.
+
+Il record è piatto, e i campi che oggi non servono ci sono già perché non
+costano niente adesso e costerebbero una migrazione dopo: `country` per le gare
+estere, `endDate` per le gare su due giorni, `kind` per tenere fuori dal
+calendario delle gare i percorsi permanenti e i raduni, `clubCode` come filo
+per attaccare un giorno la gara alla scheda del campo.
+
+**Due cose non sono scritte a mano, e sono quelle che di solito invecchiano.**
+La sigla della federazione la prende `PROFILE_FEDERATIONS`, che è già l'unico
+posto dove sta scritta — così il giorno che `SFF` diventa `SFSF` si corregge in
+un punto solo, ed è successo in questa stessa app il 28/08. E le pastiglie di
+federazione e tipo **nascono dagli eventi presenti**: non compare mai un filtro
+che non filtra niente, e una federazione nuova porta la sua pastiglia senza che
+nessuno tocchi la funzione.
+
+*Quello che invece scalerà male, e va detto adesso:* con diciassette
+federazioni in elenco le pastiglie diventano una parete. Oggi non succede
+perché i dati sono dieci; il giorno che i feed sono veri quella riga va
+ripensata, e sarà un problema con dei dati veri davanti, non un'ipotesi.
+
+### La porta non sta nella barra in fondo
+
+La barra è fatta di destinazioni che si usano **tutte le settimane** — è la
+regola con cui il 21/08 è uscita Attività e il 22/08 sono uscite le Compagnie.
+Una gara si cerca due volte al mese: una voce su cinque della navigazione
+permanente costerebbe più di quanto rende.
+
+E il posto giusto non era nemmeno la Home: è la scheda **«Dove si tira»**.
+*Dove* si tira e *quando* si tira sono la stessa domanda tagliata in due, e chi
+apre quella sezione la sta già facendo. Se al pollice risulterà sbagliato si
+sposta, ed è un tocco.
+
+### Il banco, e i cinque no
+
+`banco-calendario.js` (28° nel giro) non prova il disegno: prova le quattro
+cose che possono rompersi **in silenzio**. Che ogni gara dichiari la sua fonte.
+Che nessuno «migliori» la riga aggiungendo un chilometraggio inventato. Che le
+pastiglie non tornino a un elenco scritto a mano legato a FIARC e FITARCO. Che
+il cartello dei dati finti resti finché i dati sono finti.
+
+Sabotato cinque volte, ha detto no cinque volte: fonte tolta, «32 km»
+aggiunto, pastiglie riportate alle due italiane, cartello rimosso, porta
+sparita. Quest'ultimo fa cadere 41 prove su 46, ed è giusto così — una
+schermata irraggiungibile non è una schermata.
+
+### La coda: una sigla sbagliata sulla vetrina, e chi l'ha trovata
+
+`banco-vetrina.js` gridava 80 righe a ogni giro. Non erano rumore: erano **una
+cosa sola**, ripetuta per nove lingue e per due larghezze di schermo. La
+vetrina scriveva `SFF` dove l'app, corretta il 28/08, scrive `SFSF` — il membro
+IFAA svedese è la *Svenska Fältbågskytte Förbundet*, e l'IFAA la elenca così.
+
+*Vale la pena notare chi l'ha trovata.* Finché il banco aveva in pancia una
+copia a mano delle sedici federazioni, sbraitava 248 lamentele a ogni passata e
+nessuno le leggeva più — un controllo che grida sempre non è un controllo, è
+un rumore di fondo. Da quando legge l'elenco **dall'app**, quando grida ha
+ragione. È la stessa lezione della riga sul timbro: *un controllo che non può
+dire di no è spento, e uno che dice sempre di no è spento allo stesso modo.*
+
+`index.html` passa a `2026-08-29-sfsf`, nata da `2026-08-28-sito`. Una stringa.
+
+---
+
+### Due errori miei, e li ha presi il banco
+
+**Sei prove passavano su un elenco vuoto.** `every` su zero elementi dice sì:
+erano timbri, non controlli. Adesso ogni prova sulle righe pretende prima che
+ci siano delle righe. *Un banco che dice sì per assenza di prove è spento, e
+da lontano non si distingue da uno che funziona.*
+
+**E una prova era sbagliata, non il codice.** Cliccavo tutte le righe in fila
+per aprirle e poi cercavo il luogo della prima: ma `calAperto` tiene **un id
+solo**, quindi resta aperta l'ultima, e il luogo della prima non era visibile.
+La diagnosi giusta è scritta dentro il banco, accanto alla prova, perché non
+venga rifatta.
+
+**E uno stile in linea di troppo**, preso da `controlla-token.js`: PEGGIO 360
+contro 359. Il tetto non si alza mai per far passare un file — la regola è
+passata nel foglio, e la riga è tornata a 359.
 
 ---
 

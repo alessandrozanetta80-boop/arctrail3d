@@ -96,6 +96,7 @@ banco "banco-ruoli-compagnia.js (chi vede cosa nello spazio compagnia)" "node ba
 banco "banco-vetrina.js (la vetrina in nove lingue, playwright)" "node banco-vetrina.js index.html"
 banco "banco-porta.js (la porta dell'app, nove lingue, playwright)" "node banco-porta.js app.html"
 banco "banco-ifaa.js (il bareme IFAA e i giri di ieri)" "node banco-ifaa.js"
+banco "banco-calendario.js (il calendario dice da chi viene il dato)" "node banco-calendario.js app.html"
 banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node controlla-diari.js"
 
 echo ""

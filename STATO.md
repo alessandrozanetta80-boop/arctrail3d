@@ -11,7 +11,7 @@ mai per intero: si cercano.
 | **NOTE-DESIGN.md** | perché l'app è così — archivio | si cerca |
 | **NOTE-MERCATINO.md** | perché il mercatino è così — archivio | si cerca |
 
-Aggiornato il **28/08/2026**.
+Aggiornato il **29/08/2026**.
 
 ---
 
@@ -23,11 +23,11 @@ più vecchio di oggi chiama `index.html` l'app.
 
 | file | cos'è | timbro | copia buona |
 |---|---|---|---|
-| `index.html` | la vetrina, porta di casa | `2026-08-28-firma` | **GitHub** |
-| `app.html` | l'app | `2026-08-28-carta` | **GitHub** |
+| `index.html` | la vetrina, porta di casa | `2026-08-29-sfsf` | **GitHub** |
+| `app.html` | l'app | `2026-08-29-regione` | **GitHub** |
 | `compagnie-data.js` | le societa', 4912 in sette paesi | — | **GitHub** |
 | `marketplace.html` | il mercatino | `2026-08-25-radice` | **GitHub** |
-| `sw.js` | | `arctrail3d-v142` | **GitHub** |
+| `sw.js` | | `arctrail3d-v150` | **GitHub** |
 | `favicon.ico` | l'icona per chi guarda da fuori | — | GitHub, caricata a mano |
 | cinque `vetrina-*.webp` | le foto della vetrina | — | GitHub, caricate a mano |
 | `index.js` | | — | GitHub *(si pubblica dal Cloud Shell)* |
@@ -84,45 +84,40 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
 - **A1. Un giro vero, intero.** Restano non provate **le due ore**
   (ventiquattro piazzole camminando) e **la seconda firma**: da solo la regola
   *una firma vale se qualcuno ha visto* non è mai stata esercitata.
-- **A2. I colori al sole.** Il tema Sole (27/08) porta gli accenti del tema
-  scuro su bianco. **Costo dichiarato e mai provato in piena luce:** verde
-  scritto 2,66, oro 2,55, numerone arancione 3,33 — sul numerone non conta,
-  sulle scritte piccole sì. *Se al sole il verde spinge, si scende di luce, non
-  si cambia tinta.* Restano il **tema scuro** col verde prato e le **fasce
-  velate**, che è poca luminanza e in piena luce sparisce.
+- **A2. I colori al sole.** **Costo dichiarato e mai provato in piena luce:**
+  verde scritto 2,66, oro 2,55, numerone arancione 3,33 — sul numerone non
+  conta, sulle scritte piccole sì. *Se al sole il verde spinge, si scende di
+  luce, non si cambia tinta.* Restano il tema scuro e le fasce velate.
 - **A3. La pista, in piedi.** È la schermata che si giudica camminando, ed è
   ferma apposta: cambiarla da questa parte dello schermo è quello che il
   punto 0 vieta.
 - **A5. Il ritorno dal link di verifica.** L'indirizzo lo prova il banco; che il
   dominio sia autorizzato in Firebase lo dice solo una registrazione vera.
 - **A6. Il pollice.** Filtri allenamenti, dito sul grafico (largo dieci punti),
-  striscia schede admin, barra in fondo: a scrivania sembrano ovvie.
+  striscia schede admin, barra in fondo: a scrivania sembrano ovvie. **Dal
+  29/08 anche le pastiglie del calendario:** sono alte 44px misurati, e otto
+  di fila che vanno a capo si giudicano con una mano sola, non qui.
 
 ### B — Aspettano una decisione di Alessandro, non una correzione
 
-- **B1. Il giro aperto si comanda da tre punti** — «Riprendi» in cima, «Azzera»
-  in fondo, `resume-banner` nella scheda Tira, che è un doppione e dice la
-  stessa cosa peggio. Unirli è giusto su carta, ma la distanza fra Riprendi e
-  Azzera è una protezione: un comando distruttivo accanto a quello che si preme
-  sempre si tocca per sbaglio.
+- **B1. Il giro aperto si comanda da tre punti** — «Riprendi», «Azzera», e il
+  `resume-banner` nella scheda Tira, che è un doppione. Unirli è giusto su
+  carta, ma la distanza fra Riprendi e Azzera è una protezione: un comando
+  distruttivo accanto a uno che si preme sempre si tocca per sbaglio.
 - **B3. La richiesta di gestione compagnia non chiede nessuna prova.**
   *Scritta tre volte negli archivi, mai decisa.*
 - **B4. Il verde della testata e del marchio.** Tutto è passato al tinto il
   23/08; testata e marchio no, perché sono identità e non fondo.
 - **B6. `.btn-arancio` è a 2,79:1**, sotto soglia. Regge perché è grande e
-  grassetto. *Il 25/08 si è imparata la strada:* l'arancione perde forza
-  **abbassando la luce e girando l'inchiostro sul crema**, non togliendo
-  colore — abbassare e basta lo porta sotto soglia prima di smorzarlo. Vale
-  anche qui, e resta una decisione.
-- **B8. I dati che il referente scrive non li vede nessuno.** L'etichetta dice
-  «Compaiono agli arcieri nella scheda della compagnia»; la scheda invece
-  prende tutto da `compagnie-data.js`. Referente, `tel`, `indirizzo` e `note`
-  non compaiono da nessuna parte — l'unico usato è `emailComp`, per il tasto
-  mail della segnalazione. *L'app promette una cosa che non fa.* Alessandro
-  (25/08): i dati restano come sono, si sistema **come si vedono**.
+  grassetto. *La strada, imparata il 25/08:* l'arancione perde forza abbassando
+  la luce e girando l'inchiostro sul crema, non togliendo colore. Resta una
+  decisione.
+- **B8. I dati che il referente scrive non li vede nessuno.** La scheda prende
+  tutto da `compagnie-data.js`: referente, `tel`, `indirizzo` e `note` non
+  compaiono da nessuna parte (l'unico usato è `emailComp`). *L'app promette una
+  cosa che non fa.* Alessandro (25/08): si sistema **come si vedono**.
 - **B9. Le note della compagnia sono un riquadro senza forma**, leggibile da
-  chiunque: giusto per accesso e orari, non per un cellulare privato o un dato
-  su un minore. Si cura con un avviso sopra il campo, non con una regola.
+  chiunque: si cura con un avviso sopra il campo, non con una regola.
 - **B10. Il guscio è passato da 1060 a 1200px** (25/08): ogni schermata da
   computer è 140px più larga. Misurato, ma **mai visto su un monitor vero**.
 - **B12. Le date degli assetti si registrano e non si vedono.** `creato` e
@@ -130,30 +125,26 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
   lingue.
 - **B13. La cartolina del risultato.** Chiesta il 25/08, **non iniziata**:
   funzione nuova, ~60 stringhe. Il «Condividi» di oggi manda la scheda del
-  GRUPPO, ed è giusto per la chat del gruppo: la cartolina personale è un altro
-  oggetto, non una correzione di quello.
+  GRUPPO: la cartolina personale è un altro oggetto, non una sua correzione.
 - **B7. Il tinto dice ancora abbastanza?** Tre tasti tinti e nessuno pieno
   lasciano l'occhio senza un punto di partenza. Si vede col pollice, non a
   scrivania.
-- **C17. Due code del ridisegno chat.** *(a)* Segnala e Blocca stanno in cima e
-  spostarli tocca un obbligo per gli store. *(b)* La riga di scrittura tocca
+- **C17. Due code del ridisegno chat.** *(a)* Segnala e Blocca in cima: spostarli
+  tocca un obbligo per gli store. *(b)* La riga di scrittura tocca
   `.input-field`, che vive in tutta l'app.
 - **C16. Nessun banco misura un'altezza sullo schermo.** `banco-bordi.js` misura
-  i margini, ma nessuno guarda se le tre porte di Tira sono alte uguale — cosa
-  che il 23/08 ha scoperto Alessandro guardando l'app.
+  i margini; che le tre porte di Tira siano alte uguale l'ha scoperto Alessandro
+  guardando l'app.
 
 ### C — Lavoro tecnico
 
 - **C1. La classifica per divisione e la gara staccata dal formato** sono **un
-  lavoro solo**: aspettano *il giro che sa da quale gara viene*. Gli arcieri
-  sono `{id, name}` e la classifica non ha da dove prendere le sigle. **Il
-  lavoro è quel collegamento, non la tabella.**
+  lavoro solo**: aspettano *il giro che sa da quale gara viene*. Gli arcieri sono
+  `{id, name}`. **Il lavoro è quel collegamento, non la tabella.**
 - **C2. Il token FCM si rinnova solo aprendo l'app**, e a app chiusa le notifiche
   smettono. **La cura ovvia non esiste:** nel service worker non c'è `getToken`
   né `currentUser`. O si *misura* quanto spesso scade, o si *esce da FCM*.
-- **C3. La chat dell'allenamento attacca un ascoltatore a ogni ridisegno e non lo stacca mai** (`loadOtMsgs`).
-- **C4. La chat dell'allenamento si ferma a 50 messaggi** e non ha un conto dei
-  non letti: l'unico segnale è entrare a guardare.
+- **C3. La chat dell'allenamento attacca un ascoltatore a ogni ridisegno e non lo stacca mai** (`loadOtMsgs`). **C4.** Si ferma a 50 messaggi e non ha un conto dei non letti: l'unico segnale è entrare a guardare.
 - **C6. Chi entra con Google passa la porta al primo giro:** `approved:false` ma `authState = "ready"`. **C7.** Gli avvisi scritti dal server sono in italiano, tutte e sette le funzioni.
 - **C8. Paese e federazione vivono solo in `localStorage`**: ogni browser nuovo
   li richiede. Vanno fatti scendere dal profilo dopo l'accesso.
@@ -165,10 +156,15 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
   esisteva già nella schermata di modifica: la carta d'identità si è disegnata
   tutta su una riga. `controlla-token.js` sa dire il contrario — classe
   nominata dal JS e mai definita — non questo. Visto fotografando.
-- **C14. `banco-vetrina.js` ha in pancia un elenco di 16 federazioni copiato a
-  mano.** L'app ne ha 17, la vetrina 17: da lì le 248 lamentele a ogni giro,
-  che sono rumore. Dentro il rumore c'è però una cosa vera: **FIDASC è nell'app
-  e non nella vetrina.** Il banco va fatto leggere dall'app, non dalla copia.
+- **C23. `-sito` e `-nfas-fonte` sono online e non hanno una voce di diario:**
+  l'indice si ferma a `-carta`, e le cinque pagine SEO dei regolamenti stanno
+  nel `sitemap.xml` e in nessun archivio.
+- **C24. In parallelo qualche banco dice no, e ogni giro e' un banco diverso.**
+  Primo giro: `banco-finale`. Secondo: `banco-giro-sicuro` e `banco-regolamenti`.
+  Lanciati da soli passano tutti e tre, 94 prove su 94. *Un insieme che cambia
+  a ogni giro non e' un difetto del prodotto: e' il parallelo.* `PAR=1` e' la
+  cura, ma un giro che dice no a caso insegna a ignorarlo, ed e' il modo in cui
+  un banco vero passa inosservato.
 - **C10. Container query per le schede.** Metà fatto: sulla pagina, non sulle
   schede dentro le schermate.
 - **C11. Un solo alfabeto di icone.** Restano emoji sparse: si disegnano diverse
@@ -179,9 +175,15 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
   altro bersaglio ad anelli.
 - **C13. Il bianco durante la lettura del file.** `app.html` è oltre un
   megabyte: fra la prima riga e `DOMContentLoaded` `#app` è vuoto — le cure
-  fatte coprono l'attesa della *rete*, non della *lettura*. *(Due voci portano
-  il numero C13: questa e quella del guardiano che legge un solo blocco.)*
+  fatte coprono l'attesa della *rete*, non della *lettura*.
 - **C15. L'elenco «Scopri» non ha una ricerca**, e `compagnie-data.js` ha qualche provincia sbagliata. Non è codice: è l'elenco.
+- **C25. Il calendario mostra dieci gare inventate, e lo dichiara in cima.**
+  `calEventi()` è l'unica giuntura, `calUrlSicuro()` vaglia già gli indirizzi.
+  Il cartello si toglie **nella stessa mossa** in cui entra il primo feed.
+  *Con diciassette federazioni le pastiglie diventano una parete: si ripensa
+  coi dati veri davanti.* **«La mia regione» resterà un filtro per regione
+  finché non ci saranno coordinate: il nome vero di «vicino» costa i dati, non
+  il codice.**
 
 ### D — Mercatino
 
@@ -195,14 +197,13 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
 - **D3. Il mercatino è chiuso a chi non ha `betaTester: true`**, ed è voluto: si
   accende dal pannello. *Da fuori chiusura e guasto si somigliano molto.*
 - **D4. Due limiti che arrivano lo stesso giorno**: oltre 200 annunci i più
-  vecchi spariscono in silenzio, e le ricerche salvate non si potano mai. Spie:
-  `adsCapped`, `RICERCHE_TANTE`. *Una ricerca scritta male non trova niente e
-  non lo dice: la strada probabile non è potare, è dirlo.*
+  vecchi spariscono in silenzio, e le ricerche salvate non si potano mai (spie:
+  `adsCapped`, `RICERCHE_TANTE`). *La strada probabile non è potare, è dirlo.*
 - **D6/D7. Il mercatino non l'ha toccato nessuno con un dito** (vale A1), e non
-  è stato guardato in nessun tema dopo il 23/08 — il 25/08 gli è cambiata anche
-  la barra. **La cosa più urgente da guardare col telefono.**
-- **D8. Quarantacinque stringhe nuove senza revisione** (25/08): i titoli degli
-  stati vuoti in nove lingue. Stesso debito di D1, più piccolo.
+  è stato guardato in nessun tema dopo il 23/08, quando gli è cambiata anche la
+  barra. **La cosa più urgente da guardare col telefono.**
+- **D8. Quarantacinque stringhe nuove senza revisione** (25/08): stesso debito
+  di D1, più piccolo. *Dal 29/08 ci sono anche le venti del calendario.*
 
 ### F — Nate con lo scambio della radice (25/08)
 
@@ -212,18 +213,19 @@ Il **punto 0**: sole in faccia, in piedi, una mano sola. Un banco prova lo
 - **F2. La vetrina non è indicizzata.** I nove `hreflang` puntano alla radice,
   ma è una pagina sola: le otto lingue non italiane restano invisibili finché
   non si generano nove pagine vere.
-- **F5. Google mostra ancora il marchio vecchio: si aspetta e basta.** Il 27/08 la vetrina ha ripreso icona, manifest, anteprima social e dati strutturati, online e visti funzionare, e la riscansione della radice è stata chiesta dalla Search Console (`sc-domain:arctrail3d.com`). **Nessuno può fare altro:** si richiude quando «ultima scansione» supera il 14/08.
+- **F5. Google mostra ancora il marchio vecchio: si aspetta e basta.**
+  Riscansione chiesta il 27/08. Si chiude quando «ultima scansione» supera il
+  14/08 — nessuno può fare altro. Il racconto è in `NOTE-DESIGN.md`.
 - **F3. Le 702 stringhe della vetrina non le ha lette nessuno che le parli.**
   Stesso debito di D1, sulla pagina che si vede una volta sola nella vita.
 - **F4. Chi ha un segnalibro sulla radice trova la vetrina.** Voluta: un
-  segnalibro vecchio non si distingue da una prima visita, e fra i due chi
-  arriva per la prima volta non ha una seconda occasione.
+  segnalibro vecchio non si distingue da una prima visita, e chi arriva per la
+  prima volta non ha una seconda occasione.
 
 ### E — Fuori dal codice
 
-- **E1. Outreach ai club.** 663 club FIARC in `compagnie-data.js`. Prima i club
-  conosciuti, poi 20–25 email a mano al giorno. **Mai BCC di massa.** FIARC dopo
-  aver avuto numeri d'uso veri.
+- **E1. Outreach ai club.** Prima i conosciuti, poi 20–25 email a mano al
+  giorno. **Mai BCC di massa.** FIARC dopo aver avuto numeri d'uso veri.
 
 ## 4. Perché questo file esiste
 
