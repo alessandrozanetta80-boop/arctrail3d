@@ -2290,6 +2290,28 @@ color:var(--success-role); }
   margin-bottom:var(--s-1); }
 .porta .nota a{ color:var(--accent-soft); font-weight:700; }
 .splash-wrap .btn{ min-width:200px; padding:var(--s-4) var(--s-5); font-size:var(--t-lg); animation:splashUp .6s ease .45s both; }
+/* LA SCHERMATA «CONTROLLA LA TUA EMAIL». (29/08/2026.)
+   Il testo qui non e' contorno: e' l'unica istruzione che l'utente ha in
+   mano, e sta fra lui e l'ingresso nell'app. Percio' ha una spaziatura sua
+   e non eredita quella di `.onboard-sub`, che porta 24px di margine sotto
+   ed e' tarata su UNA riga sola. Tre `.onboard-sub` di fila diventavano
+   tre isole staccate, e su un telefono stretto la schermata smetteva di
+   sembrare una frase: sembrava un elenco di avvisi.
+   Qui le righe stanno dentro un contenitore con un passo deciso (8px), e
+   il respiro grande resta uno solo — quello fra il testo e i pulsanti. */
+.verify-testo{ display:flex; flex-direction:column; align-items:center; gap:var(--s-2); max-width:300px; margin-bottom:var(--s-3); }
+.verify-riga{ color:var(--muted); font-size:var(--t-sm); line-height:1.5; }
+/* L'INDIRIZZO E' L'UNICA COSA DA CONTROLLARE. Se l'utente ha sbagliato a
+   scriverlo, questa schermata e' il solo posto in cui puo' accorgersene, e
+   dentro una frase lo si legge senza vederlo. Sta su una riga sua, con
+   l'inchiostro del titolo. `overflow-wrap:anywhere` perche' un indirizzo
+   lungo non ha spazi dove andare a capo e sfonderebbe i 300px. */
+.verify-mail{ color:var(--accent-soft); font-size:var(--t-md); font-weight:600; line-height:1.35; overflow-wrap:anywhere; }
+.verify-nota{ color:var(--muted); font-size:var(--t-xs); line-height:1.5; margin-top:var(--s-1); }
+/* Lo spazio dell'avviso e' riservato anche quando e' vuoto: se comparisse
+   dal nulla farebbe saltare in giu' i pulsanti proprio mentre il dito sta
+   scendendo su uno di loro. */
+.verify-avviso{ min-height:18px; max-width:300px; font-size:var(--t-sm); color:var(--accent-soft); text-align:center; }
 /* NEL PIEDE I TASTI NON SONO TASTI. Alla prima foto la gerarchia era
    rovesciata: «Registrati» e' tinto — chiaro, con la scritta verde — mentre
    «Installa» e «Indietro» sono `btn-ghost`, cioe' riquadro pieno con bordo
@@ -6107,10 +6129,11 @@ comp_w_prossimi: "in programma",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Conferma email",
 profile_error_email_mismatch: "Le due email non coincidono.",
-verify_title: "Conferma la tua email",
-verify_body: "Ti ho scritto a {email}. Apri il link che trovi nel messaggio, poi torna qui e tocca “Ho confermato”.",
-verify_spam: "Se non lo trovi, controlla anche la posta indesiderata.",
-verify_done_btn: "Ho confermato",
+verify_title: "Controlla la tua email",
+verify_body: "Abbiamo inviato un link di conferma a",
+verify_body2: "Apri l’email e tocca il link per completare la registrazione.",
+verify_spam: "Se non la trovi, controlla anche la cartella Spam.",
+verify_done_btn: "Ho verificato l’email",
 verify_resend_btn: "Invia di nuovo",
 verify_resent: "Ti ho mandato di nuovo l’email.",
 verify_wait: "Aspetta {sec} secondi prima di richiederla.",
@@ -6854,10 +6877,11 @@ comp_w_prossimi: "coming up",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Confirm email",
 profile_error_email_mismatch: "The two email addresses don’t match.",
-verify_title: "Confirm your email",
-verify_body: "I sent a message to {email}. Open the link inside it, then come back here and tap “I have confirmed”.",
-verify_spam: "If you can’t find it, check your spam folder too.",
-verify_done_btn: "I have confirmed",
+verify_title: "Check your email",
+verify_body: "We have sent a confirmation link to",
+verify_body2: "Open the email and tap the link to complete your registration.",
+verify_spam: "If you can’t find it, check your Spam folder too.",
+verify_done_btn: "I have verified my email",
 verify_resend_btn: "Send again",
 verify_resent: "The email has been sent again.",
 verify_wait: "Wait {sec} seconds before asking for it again.",
@@ -7550,10 +7574,11 @@ comp_w_prossimi: "à venir",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Confirmez l’e-mail",
 profile_error_email_mismatch: "Les deux adresses e-mail ne correspondent pas.",
-verify_title: "Confirmez votre e-mail",
-verify_body: "Je vous ai écrit à {email}. Ouvrez le lien contenu dans le message, puis revenez ici et touchez « J’ai confirmé ».",
-verify_spam: "Si vous ne le trouvez pas, vérifiez aussi les courriers indésirables.",
-verify_done_btn: "J’ai confirmé",
+verify_title: "Consultez votre e-mail",
+verify_body: "Nous avons envoyé un lien de confirmation à",
+verify_body2: "Ouvrez l’e-mail et touchez le lien pour terminer l’inscription.",
+verify_spam: "Si vous ne le trouvez pas, vérifiez aussi le dossier Spam.",
+verify_done_btn: "J’ai vérifié mon e-mail",
 verify_resend_btn: "Renvoyer",
 verify_resent: "L’e-mail a été renvoyé.",
 verify_wait: "Attendez {sec} secondes avant de le redemander.",
@@ -8246,10 +8271,11 @@ comp_w_prossimi: "geplant",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "E-Mail bestätigen",
 profile_error_email_mismatch: "Die beiden E-Mail-Adressen stimmen nicht überein.",
-verify_title: "Bestätige deine E-Mail",
-verify_body: "Ich habe dir an {email} geschrieben. Öffne den Link in der Nachricht, komm dann hierher zurück und tippe auf „Ich habe bestätigt“.",
+verify_title: "Prüfe deine E-Mails",
+verify_body: "Wir haben einen Bestätigungslink an diese Adresse geschickt:",
+verify_body2: "Öffne die E-Mail und tippe auf den Link, um die Registrierung abzuschließen.",
 verify_spam: "Wenn du sie nicht findest, schau auch im Spam-Ordner nach.",
-verify_done_btn: "Ich habe bestätigt",
+verify_done_btn: "Ich habe die E-Mail bestätigt",
 verify_resend_btn: "Erneut senden",
 verify_resent: "Die E-Mail wurde erneut gesendet.",
 verify_wait: "Warte {sec} Sekunden, bevor du sie erneut anforderst.",
@@ -8942,10 +8968,11 @@ comp_w_prossimi: "planlanan",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "E-postayı doğrula",
 profile_error_email_mismatch: "İki e-posta adresi eşleşmiyor.",
-verify_title: "E-postanı onayla",
-verify_body: "{email} adresine bir ileti gönderdim. İçindeki bağlantıyı aç, sonra buraya dön ve “Onayladım”’a dokun.",
-verify_spam: "Bulamazsan gereksiz (spam) klasörüne de bak.",
-verify_done_btn: "Onayladım",
+verify_title: "E-postanı kontrol et",
+verify_body: "Şu adrese bir onay bağlantısı gönderdik:",
+verify_body2: "E-postayı aç ve kaydı tamamlamak için bağlantıya dokun.",
+verify_spam: "Bulamazsan Spam klasörüne de bak.",
+verify_done_btn: "E-postamı doğruladım",
 verify_resend_btn: "Yeniden gönder",
 verify_resent: "E-posta yeniden gönderildi.",
 verify_wait: "Yeniden istemeden önce {sec} saniye bekle.",
@@ -9651,10 +9678,11 @@ comp_w_prossimi: "запланировано",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Подтвердите email",
 profile_error_email_mismatch: "Адреса email не совпадают.",
-verify_title: "Подтвердите свою почту",
-verify_body: "Я отправил письмо на {email}. Откройте ссылку из письма, вернитесь сюда и нажмите «Я подтвердил».",
+verify_title: "Проверьте свою почту",
+verify_body: "Мы отправили ссылку для подтверждения на адрес:",
+verify_body2: "Откройте письмо и нажмите на ссылку, чтобы завершить регистрацию.",
 verify_spam: "Если письма нет, посмотрите также папку «Спам».",
-verify_done_btn: "Я подтвердил",
+verify_done_btn: "Я подтвердил почту",
 verify_resend_btn: "Отправить снова",
 verify_resent: "Письмо отправлено снова.",
 verify_wait: "Подождите {sec} секунд, прежде чем запросить снова.",
@@ -10360,10 +10388,11 @@ comp_w_prossimi: "próximos",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Confirma el correo",
 profile_error_email_mismatch: "Los dos correos no coinciden.",
-verify_title: "Confirma tu correo",
-verify_body: "Te he escrito a {email}. Abre el enlace del mensaje, vuelve aquí y toca «Ya lo he confirmado».",
-verify_spam: "Si no lo encuentras, mira también en la carpeta de spam.",
-verify_done_btn: "Ya lo he confirmado",
+verify_title: "Revisa tu correo",
+verify_body: "Hemos enviado un enlace de confirmación a",
+verify_body2: "Abre el correo y toca el enlace para completar el registro.",
+verify_spam: "Si no lo encuentras, mira también en la carpeta de Spam.",
+verify_done_btn: "He verificado mi correo",
 verify_resend_btn: "Enviar de nuevo",
 verify_resent: "Te he enviado el correo otra vez.",
 verify_wait: "Espera {sec} segundos antes de volver a pedirlo.",
@@ -11069,10 +11098,11 @@ comp_w_prossimi: "planerat",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Bekräfta e-post",
 profile_error_email_mismatch: "De två e-postadresserna stämmer inte överens.",
-verify_title: "Bekräfta din e-post",
-verify_body: "Jag har skickat ett meddelande till {email}. Öppna länken i det, kom sedan tillbaka hit och tryck på ”Jag har bekräftat”.",
+verify_title: "Kolla din e-post",
+verify_body: "Vi har skickat en bekräftelselänk till",
+verify_body2: "Öppna mejlet och tryck på länken för att slutföra registreringen.",
 verify_spam: "Hittar du det inte, titta även i skräpposten.",
-verify_done_btn: "Jag har bekräftat",
+verify_done_btn: "Jag har verifierat min e-post",
 verify_resend_btn: "Skicka igen",
 verify_resent: "E-postmeddelandet har skickats igen.",
 verify_wait: "Vänta {sec} sekunder innan du begär det igen.",
@@ -11778,10 +11808,11 @@ comp_w_prossimi: "gepland",
 // --- APERTURA REGISTRAZIONI 14/08 ---
 profile_email_confirm: "Bevestig e-mail",
 profile_error_email_mismatch: "De twee e-mailadressen komen niet overeen.",
-verify_title: "Bevestig je e-mail",
-verify_body: "Ik heb je een bericht gestuurd op {email}. Open de link erin, kom dan hier terug en tik op ‘Ik heb bevestigd’.",
+verify_title: "Controleer je e-mail",
+verify_body: "We hebben een bevestigingslink gestuurd naar",
+verify_body2: "Open de e-mail en tik op de link om je registratie af te ronden.",
 verify_spam: "Kun je het niet vinden, kijk dan ook in de map ongewenste e-mail.",
-verify_done_btn: "Ik heb bevestigd",
+verify_done_btn: "Ik heb mijn e-mail geverifieerd",
 verify_resend_btn: "Opnieuw versturen",
 verify_resent: "De e-mail is opnieuw verstuurd.",
 verify_wait: "Wacht {sec} seconden voordat je hem opnieuw aanvraagt.",
@@ -14868,10 +14899,22 @@ var logo = el('<div class="splash-logo"></div>');
 logo.innerHTML = logoSVG(150);
 wrap.appendChild(logo);
 wrap.appendChild(el('<div class="onboard-title display">'+escapeHtml(t("verify_title"))+'</div>'));
+// IL TESTO E' UN BLOCCO SOLO, NON TRE PARAGRAFI SPARSI. (29/08/2026.)
+// La frase e' spezzata in tre pezzi perche' l'indirizzo deve stare su una
+// riga sua — non per stile, ma perche' e' l'unica cosa che l'utente puo'
+// ancora correggere: se ha scritto male l'email, qui se ne accorge, e in
+// mezzo a una frase no. Le tre righe stanno dentro `.verify-testo`, che
+// tiene il passo fra loro; lo spazio grande e' uno solo, sotto il blocco.
 var mail = currentUser ? currentUser.email : "";
-wrap.appendChild(el('<div class="onboard-sub" style="max-width:300px;">'+escapeHtml(t("verify_body",{email:mail}))+'</div>'));
-wrap.appendChild(el('<div class="onboard-sub" style="max-width:300px;font-size:var(--t-sm);color:var(--muted);">'+escapeHtml(t("verify_spam"))+'</div>'));
-var msg = el('<div style="min-height:18px;font-size:var(--t-sm);color:var(--accent-soft);text-align:center;margin-top:var(--s-1);max-width:300px;"></div>');
+var blocco = el('<div class="verify-testo"></div>');
+blocco.appendChild(el('<div class="verify-riga">'+escapeHtml(t("verify_body"))+'</div>'));
+// Se l'indirizzo non c'e' non si lascia la riga vuota: un buco in mezzo a
+// una frase e' un guasto che si vede, e non aggiungerebbe niente.
+if(mail){ blocco.appendChild(el('<div class="verify-mail">'+escapeHtml(mail)+'</div>')); }
+blocco.appendChild(el('<div class="verify-riga">'+escapeHtml(t("verify_body2"))+'</div>'));
+blocco.appendChild(el('<div class="verify-nota">'+escapeHtml(t("verify_spam"))+'</div>'));
+wrap.appendChild(blocco);
+var msg = el('<div class="verify-avviso"></div>');
 wrap.appendChild(msg);
 var doneBtn = el('<button class="btn btn-primary" style="margin-top:var(--s-2);">'+escapeHtml(t("verify_done_btn"))+'</button>');
 doneBtn.addEventListener("click", function(){
@@ -21616,7 +21659,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-29-freeze";
+var BUILD_STAMP = "2026-08-29-verifica";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -21625,7 +21668,7 @@ var BUILD_STAMP = "2026-08-29-freeze";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-29-locale";
+var BUILD_PARENT = "2026-08-29-freeze";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

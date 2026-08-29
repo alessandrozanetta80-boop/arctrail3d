@@ -33,7 +33,7 @@ var app = fs.readFileSync(process.argv[2] || "app.html", "utf8");
 var DA_CONTROLLARE = [
   "pend_title","pend_body","pend_note","pend_recheck",
   "login_bad_email","login_need_email_first","login_bad_credentials","login_reset_error",
-  "verify_title","verify_body","verify_done_btn","verify_resend_btn","logout_word"
+  "verify_title","verify_body","verify_body2","verify_done_btn","verify_resend_btn","logout_word"
 ];
 console.log("\n  CHIAVI IN NOVE LINGUE");
 DA_CONTROLLARE.forEach(function(k){
