@@ -1,6 +1,16 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-20-percorso-proposto
-// Nata da: 2026-08-20-richiesta-che-suona
+// Versione 2026-08-28-notifica-verificata
+// Nata da: 2026-08-20-percorso-proposto
+//
+// NOVITA' 2026-08-28 — `sendNotification` CHIEDE L'EMAIL CONFERMATA.
+//  Dopo la revisione indipendente: il chiamante deve avere `email_verified`
+//  nel token (stessa porta del `verified()` delle regole). Auth, firma
+//  server-side (`fromUid`), rispetto di `blockedUsers` e freno `rate_limits`
+//  restano invariati. Regressione dichiarata accanto al controllo.
+//  ATTENZIONE: questo file mi e' arrivato timbrato 2026-08-20; NON ho la
+//  console e non posso dire quale versione e' DEPLOYATA. Se online c'e' un
+//  `index.js` piu' recente del 20/08, questa modifica va riportata LI', non
+//  su questa base. Prova: `firebase functions:list`.
 //
 // Sette funzioni, con sette compiti diversi:
 //
@@ -106,6 +116,19 @@ exports.sendNotification = onCall({ cors: true }, async (req) => {
   // server, non da quello che dichiara il client: e' il punto chiave di tutto.
   const uid = req.auth && req.auth.uid;
   if (!uid) throw new HttpsError("unauthenticated", "Serve un accesso valido.");
+
+  // EMAIL CONFERMATA. (28/08/2026, seconda passata.) Stessa porta del
+  // `verified()` delle regole: chi non ha confermato l'email non manda avvisi
+  // a sconosciuti. `email_verified` sta nel token verificato dal server, non
+  // nel payload — un client modificato non se lo puo' regalare; Google e Apple
+  // ce l'hanno gia' vero. NON tocca auth, firma server-side (`fromUid: uid`),
+  // rispetto di `blockedUsers`, ne' il freno di `rate_limits`: quelli restano
+  // com'erano. Nota di regressione dichiarata: un utente NON verificato non
+  // riesce piu' a mandare nemmeno la notifica di prova a se stesso, ne'
+  // l'avviso all'admin quando elimina il proprio account (destinatario admin).
+  if (!(req.auth.token && req.auth.token.email_verified === true)) {
+    throw new HttpsError("permission-denied", "Conferma l'email per inviare notifiche.");
+  }
 
   const d = req.data || {};
   const toUid = typeof d.toUid === "string" ? d.toUid.trim() : "";

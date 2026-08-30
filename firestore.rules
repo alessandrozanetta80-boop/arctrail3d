@@ -1,7 +1,34 @@
 rules_version = '2';
 // ArcTrail 3D — regole Firestore
-// Versione 2026-08-28-offerta
-// Nata da: 2026-08-28-verificata
+// Versione 2026-08-28-porte-verified
+// Nata da: 2026-08-28-offerta
+//
+// ATTENZIONE AL GENITORE (2). Il genitore qui e' `2026-08-28-offerta`, cioe'
+//  la versione che mi e' stata consegnata come ultima. NON ho la console, non
+//  posso vedere quale versione e' ATTIVA: se online c'e' gia' qualcosa di piu'
+//  recente, va corretto questo genitore PRIMA di incollare. Caricato non e'
+//  pubblicato.
+//
+// NOVITA' 2026-08-28 (3) — DUE PORTE IN PIU' CHIEDONO L'EMAIL CONFERMATA
+//  Seconda passata di `verified()`, dopo la revisione indipendente.
+//  1) `sessions` create: da `signedIn()` a `verified()`. Aprire una sessione
+//     condivisa nomina altri arcieri e fa comparire loro un banner: e' una
+//     porta «diventi visibile agli altri». La STRUTTURA dei partecipanti NON
+//     cambia — il client reale nasce con owner + tutti gli invitati, quindi
+//     niente `hasOnly([auth.uid])`, che romperebbe il giro condiviso. Resta
+//     noto e accettato (MEDIO) che un verificato possa invitare altri alla
+//     creazione: non e' un takeover, i tiri e il regolamento restano protetti
+//     dall'update.
+//  2) `percorsi_campo` create, ramo 'proposto': da `signedIn()` a `verified()`.
+//     Un percorso proposto fa scattare push + email a un referente che non
+//     conosce chi scrive. Il ramo admin/clubAdmin che crea 'confermato' NON
+//     e' toccato.
+//  Fuori da queste regole, nella stessa passata: `sendNotification` (Cloud
+//  Function) ora rifiuta i chiamanti senza `email_verified`.
+//  Queste regole STRINGONO: se un'app vecchia lascia a un non-verificato
+//  aprire una sessione o proporre un percorso, i file del sito vanno PRIMA
+//  (regola 18). Col client 2026-08-28-conferma il non-verificato vede gia' la
+//  schermata di conferma, quindi il rischio e' basso.
 //
 // ATTENZIONE AL GENITORE. `2026-08-28-verificata` e' stata caricata su GitHub
 //  ma NON e' mai stata incollata in console: non e' mai stata attiva. Quindi
@@ -434,7 +461,17 @@ service cloud.firestore {
       // qualsiasi altro filtro (per esempio ownerUid) fa rifiutare tutta la
       // query, non solo i documenti non tuoi.
       allow read: if signedIn() && (request.auth.uid in resource.data.participantUids || isAdmin());
-      allow create: if signedIn()
+      // 28/08/2026 (seconda passata): `signedIn()` -> `verified()`. Aprire una
+      // sessione condivisa nomina altri arcieri in `participantUids`, e a
+      // quelli fa comparire un banner «X vuole condividere un giro»: e' una
+      // delle porte «diventi visibile agli altri», come `open_trainings`.
+      // NON si tocca la struttura dei partecipanti: il client reale
+      // (`createSharedSession`) nasce con owner + tutti gli invitati dentro
+      // `participantUids`, quindi qui NON va un `hasOnly([auth.uid])`. Resta
+      // noto e accettato che un verificato possa invitare altri alla
+      // creazione (invito arbitrario/banner): e' MEDIO, non un takeover — i
+      // tiri, il regolamento e gli arcieri restano protetti dall'update.
+      allow create: if verified()
                     && request.auth.uid == request.resource.data.ownerUid
                     && request.auth.uid in request.resource.data.participantUids;
       // CHI SEGNA E CHI CONTROFIRMA NON FANNO LO STESSO MESTIERE. (28/08/2026.)
@@ -861,12 +898,18 @@ service cloud.firestore {
     // compagnia o chi tiene l'app.
     match /percorsi_campo/{id} {
       allow read: if signedIn();
+      // 28/08/2026 (seconda passata): un percorso 'proposto' fa scattare
+      // `avvisaPercorso` — push al referente e all'admin, e una email in coda
+      // alla compagnia. E' una cosa che arriva addosso a chi non conosce chi
+      // scrive, come `field_reports`: quindi il ramo 'proposto' ora chiede
+      // `verified()`. Il ramo admin/clubAdmin che crea direttamente
+      // 'confermato' NON e' toccato: resta com'era.
       allow create: if signedIn()
                     && request.resource.data.createdBy == request.auth.uid
                     && request.resource.data.clubCode is string
                     && request.resource.data.clubCode != ''
                     && (
-                         request.resource.data.stato == 'proposto'
+                         (verified() && request.resource.data.stato == 'proposto')
                          || ((isAdmin() || isClubAdmin(request.resource.data.clubCode))
                              && request.resource.data.stato == 'confermato')
                        );
