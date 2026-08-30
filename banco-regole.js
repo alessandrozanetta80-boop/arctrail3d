@@ -410,6 +410,64 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
   await prova('C NON puo\' confermare un percorso che non e\' suo', () =>
     assertFails(db(C).doc('percorsi_campo/p1').update({ stato:'confermato' })));
 
+  console.log('\n  PORTE CHE ORA CHIEDONO L\'EMAIL CONFERMATA (28/08, seconda passata)\n');
+
+  /* sessions create: da signedIn() a verified().
+     Il client reale (createSharedSession) nasce con owner + TUTTI gli invitati
+     dentro participantUids: la prova positiva ha percio' piu' di un
+     partecipante, altrimenti proverebbe una sessione che l'app non crea. */
+  await prova('A verificato apre una sessione condivisa (owner + invitati)', () =>
+    assertSucceeds(db(A).doc('sessions/s3').set(
+      { ownerUid:A.uid, ownerName:'Anna', v:2, shots:{}, confirms:{}, status:'active',
+        participantUids:[A.uid, B.uid],
+        participants:[{uid:A.uid,name:'Anna'},{uid:B.uid,name:'Bruno'}],
+        createdAt:new Date() })));
+
+  await prova('NV non verificato NON apre una sessione condivisa', () =>
+    assertFails(db(NV).doc('sessions/sNV').set(
+      { ownerUid:NV.uid, v:2, shots:{}, confirms:{}, status:'active',
+        participantUids:[NV.uid], participants:[{uid:NV.uid,name:'NV'}],
+        createdAt:new Date() })));
+
+  /* LIMITE NOTO, riclassificato HIGH->MEDIO: un verificato PUO' nominare altri
+     alla creazione (invito arbitrario/banner). Non e' un takeover — i tiri e
+     il regolamento restano protetti dall'update. Se un giorno l'invito
+     richiedera' consenso, questo caso si gira in assertFails. */
+  await prova('LIMITE NOTO: A verificato iscrive altri alla creazione (invito arbitrario)', () =>
+    assertSucceeds(db(A).doc('sessions/s3b').set(
+      { ownerUid:A.uid, ownerName:'Anna', v:2, shots:{}, confirms:{}, status:'active',
+        participantUids:[A.uid, B.uid, C.uid],
+        participants:[{uid:A.uid,name:'Anna'},{uid:B.uid,name:'Bruno'},{uid:C.uid,name:'Carla'}],
+        createdAt:new Date() })));
+
+  /* percorsi_campo create: il ramo 'proposto' ora chiede verified().
+     Il ramo admin/clubAdmin che crea 'confermato' NON e' toccato: le due prove
+     in fondo lo confermano. compagnie_admin/01VERB.adminUid == A e' gia' in
+     scena qui sopra, quindi A e' referente di 01VERB. */
+  await prova('A verificato propone un percorso (proposto)', () =>
+    assertSucceeds(db(A).doc('percorsi_campo/p2').set(
+      { createdBy:A.uid, clubCode:'01VERB', stato:'proposto', nome:'Percorso basso' })));
+
+  await prova('NV non verificato NON propone un percorso', () =>
+    assertFails(db(NV).doc('percorsi_campo/pNV').set(
+      { createdBy:NV.uid, clubCode:'01VERB', stato:'proposto', nome:'Percorso NV' })));
+
+  await prova('il referente (clubAdmin) crea ancora un percorso confermato', () =>
+    assertSucceeds(db(A).doc('percorsi_campo/p3').set(
+      { createdBy:A.uid, clubCode:'01VERB', stato:'confermato', nome:'Percorso ufficiale' })));
+
+  await prova('B verificato ma non referente NON crea un confermato', () =>
+    assertFails(db(B).doc('percorsi_campo/pB').set(
+      { createdBy:B.uid, clubCode:'01VERB', stato:'confermato', nome:'Furbata' })));
+
+  /* sendNotification e' una CALLABLE, non una regola: il gate email_verified
+     aggiunto in index.js NON e' provabile da qui — questo banco esercita solo
+     le regole Firestore, e firebase.json non ha l'emulatore delle funzioni.
+     Lo si prova con l'emulatore functions piu' un chiamante non verificato,
+     che questo progetto non ha ancora. Dichiarato per non farlo credere
+     coperto. */
+  console.log('    (nota: il gate email_verified di sendNotification e\' una Cloud Function, non provabile in questo banco)');
+
   console.log('\n  LE PORTE CHE DEVONO RESTARE APERTE\n');
 
   await prova('chi non ha confermato l\'email si cancella dall\'elenco', () =>
