@@ -5,8 +5,8 @@ Come si lavora qui. Valgono per **ogni** sessione senza che vengano ripetute.
 Si legge insieme a **STATO.md**, che dice cos'è vero oggi. Gli archivi dicono
 *perché*, e non si leggono per intero: si cercano.
 
-*Riscritto il 23/08/2026, rivisto il 26/08 con i tre livelli. Il contenuto è
-tutto qui: quello che è stato ritirato sta in fondo, col motivo.*
+*Riscritto il 23/08/2026, rivisto il 26/08 coi tre livelli, corretto il 29 e il
+30/08. Il contenuto è tutto qui: il ritirato sta in fondo, col motivo.*
 
 ---
 
@@ -14,11 +14,12 @@ tutto qui: quello che è stato ritirato sta in fondo, col motivo.*
 
 **1. Dire se il progetto si può scrivere, prima di lavorare.**
 
-`/mnt/project/` è una **copia montata dentro il contenitore della singola
-chat**: a volte dichiarata in sola lettura, a volte no, e non dipende da
-Alessandro. `touch` non risponde alla domanda giusta — scriverci riesce quasi
-sempre, ma quella copia muore con la sessione. La domanda non è *«posso
-scrivere qui?»*, è *«questo file lo rivedrà qualcun altro?»*
+`/mnt/project/` è una **copia montata dentro la singola chat**. `touch` non
+risponde alla domanda giusta: scriverci riesce quasi sempre, ma quella copia
+muore con la sessione. La domanda è *«questo file lo rivedrà qualcun altro?»*
+**Non si fanno esperimenti per provarlo:** se l'ambiente non garantisce
+esplicitamente che la scrittura torna nel Progetto, si tratta come sola lettura
+e si consegnano i file.
 
 - Se il progetto è **scrivibile**: leggere → modificare → riscrivere lì → dire
   in una riga cosa è cambiato.
@@ -26,74 +27,117 @@ scrivere qui?»*, è *«questo file lo rivedrà qualcun altro?»*
   sola lettura: i file te li consegno e li carichi tu.»* Poi lavorare
   normalmente.
 
-❌ **Mai lasciare che lo scopra alla fine.** Il 17/08 è costato mezz'ora di
-strada un'informazione che costava una riga.
+❌ **Mai lasciare che lo scopra alla fine:** costa mezz'ora un'informazione che
+costava una riga.
 
 **2. Chiedere se questa è la base giusta.**
+
+> ⛔ **Se il lavoro tocca esclusivamente documenti interni, questa regola si
+> SALTA: si applica direttamente la 3-bis.** La classificazione documentale
+> viene **prima** dell'esecuzione di `controlla-base.js`.
 
 ```
 node controlla-base.js
 ```
 
-Il progetto **può essere indietro rispetto a GitHub**, e una volta lo era di
-due versioni: i banchi hanno girato sui file vecchi e hanno detto di sì a
-tutto. Erano contenti, e guardavano il file sbagliato.
-
-Tre risposte, e sono diverse fra loro:
+Il progetto **può essere indietro rispetto a GitHub**: su file vecchi i banchi
+dicono di sì a tutto, e guardano il file sbagliato. **Quattro risposte, non tre.**
 
 - **IN PARI** → si lavora.
 - **AVANTI** → c'è lavoro fatto e non caricato. Dirlo ad Alessandro.
-- **INDIETRO O DIVERGENTE** → **fermarsi**, e *non* sovrascrivere niente.
+- **INDIETRO e basta** — il locale è un antenato puro: ogni riga che ha solo
+  lui è la versione *vecchia* di una riga cambiata online → **si riallinea da
+  soli e si tira dritto.** *Essere indietro non è un motivo per fermarsi.*
+- **DIVERGENTE** — nel locale c'è lavoro che online non c'è → **fermarsi**, e
+  *non* sovrascrivere niente.
 
-**Il recupero si fa in due mosse, e la prima è guardare.** *(Corretto il
-26/08: qui c'era un `curl -o app.html` che scriveva diritto sul file di lavoro,
-proprio nel ramo in cui è più probabile che ci sia dentro roba non caricata.)*
+**Quale delle due sia lo dice il `diff`, non il timbro**, e guardare resta
+sempre la prima mossa.
+
+**Il recupero si fa in due mosse, e la prima è guardare.**
 
 ```
 curl -sL -o /tmp/on-app.html https://raw.githubusercontent.com/alessandrozanetta80-boop/arctrail3d/main/app.html
 diff /tmp/on-app.html app.html
 ```
 
-Poi si decide **guardando il diff**, e si copia a mano solo se il locale non
-contiene lavoro da salvare. *Un file che funziona non si sovrascrive mai in
-automatico.*
+**`app.html` qui è solo un esempio.** Si confrontano **i file del prodotto
+davvero toccati**: si modifica `index.html` → si confronta `index.html`; si
+modifica `marketplace.html` → si confronta quello. *`app.html` non si confronta
+per abitudine quando `app.html` non c'entra.*
 
-**E il timbro non è il contenuto.** `controlla-base.js` confronta i timbri:
-il 25/08 tre volte i file erano diversi con lo stesso timbro, e diceva IN
-PARI. La parità vera si dichiara solo dopo un `diff` contro `/tmp`, ed è
-obbligatoria **prima di ogni consegna**, non a inizio sessione.
+Si decide **guardando il diff**, e si copia a mano solo se il locale non ha
+lavoro da salvare: *un file che funziona non si sovrascrive in automatico.*
+
+**E il timbro non è il contenuto.** File diversi possono avere lo stesso timbro
+e il banco dice IN PARI. La parità vera si dichiara solo dopo un `diff` contro
+`/tmp`, **prima di ogni consegna di FILE DEL PRODOTTO** — non a inizio sessione,
+e **mai in un MICRO DOCUMENTALE** (3-bis).
 
 Se GitHub non risponde, il banco non passa: *un controllo che non può dire di
 no è spento.*
 
 **3. Scegliere il livello PRIMA di lavorare, e attenersi a quello.**
 
-*(Riscritta il 26/08/2026. Prima questa regola diceva «lancia tutti i banchi
-prima di scegliere il lavoro» e la regola 25 diceva «il giro completo si fa
-una volta sola alla fine». Chi leggeva in ordine faceva il giro completo per
-cambiare una parola: cinque minuti di Chromium per una riga di CSS.)*
-
 Il numero dei banchi **non si scrive qui**: lo dice `controlla-tutto.sh`, che
 è l'unica fonte. *Un conto ricopiato in prosa invecchia il giorno che si
 aggiunge un banco, e poi mente per settimane.*
 
-| | **VELOCE** | **NORMALE** | **CRITICO** |
+*`STATO.md` e `REGOLE-LAVORO.md` si leggono per intero una volta, all'apertura
+della sessione. La riga «da leggere prima» dice cosa **rileggere per quel
+pezzo**, non di rileggerli da capo.*
+
+| | **MICRO** | **STANDARD** | **CRITICO** |
 |---|---|---|---|
-| **cosa** | parole, colori, misure, spaziature — cose che si giudicano a occhio | un comportamento isolato: una schermata, una tendina, un elenco | punteggio, accesso, memoria offline, Firestore, service worker, pubblicazione |
+| **cosa** | HTML, CSS, testo, metadata, SEO, JSON-LD, icone, immagini — uno o due file, e **nessuna logica**: né accesso, né dati, né punteggio | un comportamento isolato: una schermata, una tendina, un elenco | punteggio, accesso, memoria offline, Firestore, service worker, pubblicazione |
 | **da leggere prima** | `STATO.md` §1 (i timbri) | `STATO.md` intero | `STATO.md` intero + le voci d'archivio della zona |
 | **prima di toccare** | `node controlla-base.js` | `controlla-base.js` + misurare il difetto | `controlla-base.js` + misurare + rileggere le voci che spiegano *perché* è così |
-| **dopo ogni passaggio** | `controlla-sintassi` + `controlla-token` + il banco della zona | come veloce, più i banchi che toccano quel comportamento | come normale, più il banco che protegge l'invariante toccata |
-| **giro completo** | **una volta sola**, prima di consegnare la versione accettata | prima di consegnare | prima di consegnare, **e** non si consegna se un banco è spento |
-| **sabotaggio** | solo se nasce o cambia sostanza un banco | idem | **sempre** sul banco che protegge l'invariante toccata |
-| **diario** | **una volta sola**, dopo che Alessandro ha accettato | a pezzo finito | a pezzo finito, con la diagnosi anche se è incerta |
+| **dopo ogni passaggio** | i controlli pertinenti al file toccato (regola 21) | come MICRO, più i banchi che toccano quel comportamento | come STANDARD, più il banco che protegge l'invariante toccata |
+| **giro completo** | **no.** Solo i controlli che c'entrano con quello che è cambiato | prima di consegnare | prima di consegnare, **e** non si consegna se un banco è spento |
+| **sabotaggio** | no, se nessun banco è cambiato | solo se nasce o cambia sostanza un banco | **sempre** sul banco che protegge l'invariante toccata |
+| **diario** | solo se Alessandro lo chiede | a pezzo finito | a pezzo finito, con la diagnosi anche se è incerta |
 | **parità con l'online** | `diff` contro `/tmp` prima di consegnare | idem | idem, **più** «visto funzionare» (regola 9) |
 
-**Quello che nessun livello salta mai:** `controlla-sintassi.js`,
-`controlla-token.js`, il banco della zona toccata, e il giro completo prima di
-consegnare. *Il livello decide quante volte, non se.*
+**Quello che nessun livello salta mai, sui file del PRODOTTO:** i controlli
+pertinenti al file toccato (regola 21), il banco della zona e il `diff` contro
+l'online prima di consegnare. *Il giro completo non sta in questa riga: è dello
+STANDARD in su. Sui documenti non vale niente di tutto questo: vedi 3-bis.*
 
-**Nel dubbio si sale, non si scende.** Un ritocco di colore dentro la
-schermata del punteggio è critico: conta dove atterra, non quanto è corto.
+**3-bis. MICRO DOCUMENTALE — quando si toccano solo i documenti.**
+
+`STATO.md`, `REGOLE-LAVORO.md`, `NOTE-DESIGN.md`, `NOTE-MERCATINO.md` e gli
+altri documenti interni non pubblicati **non sono il prodotto**. *I copioni
+(`.js`, `.sh`) non sono documenti: per loro valgono i controlli pertinenti
+della regola 21.* Qui non servono
+`controlla-base.js`, la sintassi e i token dell'app, il banco della zona del
+sito, né il `diff` con l'online.
+
+Il percorso è: **leggere `STATO.md` e il documento che c'entra → modificare →
+`node controlla-diari.js` → consegnare**, se il progetto è in sola lettura.
+
+Se il documento deve registrare un dato online **non già verificato**, si
+verifica *solo quel dato*. Un controllo dell'intero sito per una correzione
+documentale è tempo buttato.
+
+**Un MICRO va dall'inizio alla consegna senza fermarsi:** base riallineata da
+soli, modifica, controlli della zona, consegna. **Nessuna domanda intermedia**,
+salvo un conflitto vero. *Né audit né analisi lunghe prima di lavorare.*
+**Un MICRO già localizzato non chiede diagnosi né studio del sistema:** si cerca
+il punto indicato, si modifica, si prova.
+
+**SI SALE PER L'INVARIANTE CHE LA MODIFICA PUÒ ROMPERE, non per il file o la
+schermata che la contiene.** Codice critico lì accanto non promuove niente.
+
+- colore o testo nella schermata del punteggio, **senza toccare geometria né
+  comportamento** → MICRO;
+- dimensione, posizione o area sensibile dei comandi di punteggio → può essere
+  CRITICO;
+- calcolo, salvataggio o validazione del punteggio → CRITICO.
+
+*Non si promuove un MICRO per stare tranquilli:* un giro di banchi speso dove
+non serve è un giro tolto a dove serviva. E `sw.js` sale **solo se il file
+cambiato sta dentro `APP_SHELL`** — lì è tecnica, non prudenza: senza nome nuovo
+il telefono serve la copia vecchia.
 
 ---
 
@@ -117,10 +161,6 @@ mani.**
 Cioè: i file del **sito** cambiati, e `index.js` se è cambiato. Diari, banchi,
 file non toccati: **no**, se il progetto è scrivibile — sono già lì.
 
-*Quattordici file in fondo a una risposta, di cui quattro da caricare, non
-sono una consegna generosa: sono una domanda a cui Alessandro deve rispondere
-da solo ogni volta, e sbagliarla costa.*
-
 **Ma se il progetto è in sola lettura vale il contrario:** si consegna **nella
 stessa mossa in cui si modifica**, non a fine sessione. Se la chat si
 interrompe, quello che non è in mano ad Alessandro è perso.
@@ -128,11 +168,10 @@ interrompe, quello che non è in mano ad Alessandro è perso.
 **E si dice sempre dove va** — *«questi tre su GitHub»*, *«questo e poi il
 deploy»*. Un file consegnato senza destinazione è un compito senza istruzioni.
 
-**6. Un nome solo per file.** Due copie dello stesso file con nomi diversi
-vogliono dire che **una chat nuova non sa quale delle due vale**. Coi dizionari
-è peggio: una traduzione corretta nella copia sbagliata sparisce alla prima
-passata di `genera.py`, **senza nessun errore**. Si consegna con lo stesso
-nome, e la copia vecchia si cancella nella stessa mossa.
+**6. Un nome solo per file.** Due copie con nomi diversi vogliono dire che **una
+chat nuova non sa quale vale**. Coi dizionari è peggio: una traduzione nella copia
+sbagliata sparisce alla prima passata di `genera.py`, **senza nessun errore**. Si
+consegna con lo stesso nome, e la copia vecchia si cancella nella stessa mossa.
 
 **7. Gli upload binari non si modificano da qui.** Le immagini si producono,
 si consegnano e si ricaricano a mano, dicendolo.
@@ -143,13 +182,12 @@ si consegnano e si ricaricano a mano, dicendolo.
 
 **8. Il timbro sale nella stessa mossa in cui cambia il file.**
 
-`BUILD_STAMP` in `app.html`, `data-build` in `index.html` e in
-`marketplace.html`, `CACHE_NAME` in `sw.js`. Ogni file dichiara **da quale versione è nato**:
-`BUILD_PARENT`, `data-parent`, `CACHE_PARENT`.
-
-**Il genitore è l'ultima versione confermata online, non l'ultimo build
-locale.** Un file nato da una versione non pubblicata non è un aggiornamento:
-**è una cancellazione**, e `controlla-base.js` fa fallire la sessione.
+`BUILD_STAMP` in `app.html`, `data-build` in `index.html` e `marketplace.html`,
+`CACHE_NAME` in `sw.js`. Ogni file dichiara **da quale versione è nato**:
+`BUILD_PARENT`, `data-parent`, `CACHE_PARENT`. **Il genitore è l'ultima versione
+confermata online, non l'ultimo build locale:** un file nato da una versione non
+pubblicata non è un aggiornamento, **è una cancellazione**, e `controlla-base.js`
+fa fallire la sessione.
 
 Ogni volta che cambia un file dentro `APP_SHELL`, `CACHE_NAME` sale.
 
@@ -170,10 +208,8 @@ Ogni volta che cambia un file dentro `APP_SHELL`, `CACHE_NAME` sale.
 **10. Un passo alla volta, e chi tiene il conto.**
 
 Quando un lavoro ha più passi che deve fare **lui con le sue mani** — comandi,
-console, prove sul telefono — **non si consegna l'elenco intero.** Si dà un
-passo, si aspetta la conferma, poi il successivo.
-
-Non è pazienza: un elenco di sei punti dato tutto insieme si perde per strada.
+console, prove sul telefono — **non si consegna l'elenco intero:** un passo, la
+conferma, poi il successivo. Un elenco di sei punti si perde per strada.
 
 - **Una cosa sola per messaggio.** Tre comandi che non possono fallire in mezzo
   valgono come un passo; se uno può rispondere male, si spezza.
@@ -186,18 +222,12 @@ pezzo per pezzo (regola 12).*
 
 **10-bis. Quando Alessandro dice «non funziona», la prima domanda è QUALE.**
 
-*(26/08/2026, e costa una giornata.)* Quattro correzioni giuste, tutte su
-tasti diversi da quello che lui premeva. Ogni giro si chiedeva *«da browser o
-dall'icona?»*, che non poteva distinguere fra quattro tasti. Uno screenshot ha
-chiuso la diagnosi in dieci secondi.
-
 - **Prima si chiede dove sei e cosa tocchi**, con uno screenshot: Alessandro
   giudica guardando il telefono, quindi ce l'ha già in mano.
 - **Alla seconda segnalazione della stessa cosa, è sbagliata la diagnosi, non
   la cura.** Si smette di correggere e si torna a guardare.
-- **Un banco che passa non dice che funziona.** Una prova scritta quando la
-  Home del sito e l'app erano la stessa pagina ha continuato a chiedere la
-  vecchia destinazione. *Un banco che invecchia col prodotto conferma.*
+- **Un banco che passa non dice che funziona:** un banco che invecchia col
+  prodotto conferma e basta.
 
 **11. Il resoconto di fine lavoro ha tre domande, in quest'ordine.**
 
@@ -208,20 +238,17 @@ chiuso la diagnosi in dieci secondi.
    rimasto aperto fa sembrare grave una cosa risolta.*
 3. **Cosa resta da fare**, in ordine.
 
-E si dice **con parole** se il giro è andato bene o male: *«nessun
-peggioramento, tutte le prove passate»*, poi le cifre per chi le vuole.
-
-**Il gergo dei diari non esce dai diari.** *Firma muta*, *il banco*, *il
-guardiano*: lì sono nomi utili, in un resoconto sono un muro.
+E si dice **con parole** se il giro è andato bene o male, poi le cifre per chi
+le vuole. **Il gergo dei diari non esce dai diari:** *firma muta*, *il banco*,
+*il guardiano* lì sono nomi utili, in un resoconto sono un muro.
 
 **12. Quando fermarsi e chiedere.** Solo per: cancellare un documento,
 riscrivere da zero più file, cambiamenti architetturali che buttano via lavoro.
 **Per tutto il resto: procedere.**
 
 **13. Le note sono decisioni prese, non punti di discussione.** Rimetterle in
-discussione da una chat nuova fa perdere tempo e fa dubitare del lavoro fatto.
-Se il codice *non fa quello che le note dicono*, quello va segnalato: è lavoro
-rimasto indietro, non un errore di ragionamento.
+discussione fa perdere tempo e fa dubitare del lavoro fatto. Se il codice *non fa
+quello che le note dicono*, quello sì va segnalato: è lavoro rimasto indietro.
 
 ---
 
@@ -229,16 +256,16 @@ rimasto indietro, non un errore di ragionamento.
 
 **14. Lo stato sta in STATO.md, il racconto negli archivi.**
 
-*(23/08/2026, da un conto: 463 KB di diari, di cui nessuna chat leggeva più
-dell'inizio.)* Un diario fa due mestieri, e mescolarli li rompe entrambi:
+Un diario fa due mestieri, e mescolarli li rompe entrambi:
 
 - **cos'è vero oggi** → `STATO.md`. Corto, un posto solo, si legge per intero.
 - **perché è così** → `NOTE-DESIGN.md`, `NOTE-MERCATINO.md`. Cronologici, si
   cercano, non si leggono mai per intero.
 
 **Quando una voce si chiude, si CANCELLA da STATO.md**, e il racconto resta
-nell'archivio. *Una cosa fatta che continua a chiedere attenzione costa quanto
-una da fare.*
+nell'archivio. **La sezione A non la chiude un banco: la chiude una frase di
+Alessandro, e si cancella nella sessione in cui la dice.** *Una cosa fatta che
+continua a chiedere attenzione costa quanto una da fare.*
 
 `node controlla-diari.js` tiene il tetto: `STATO.md` sotto le 250 righe. Come
 il tetto dei token, **non sale mai per far passare il file**.
@@ -246,11 +273,9 @@ il tetto dei token, **non sale mai per far passare il file**.
 **15. Il diario si scrive quando il pezzo è finito, non a fine sessione.** Se
 la chat si interrompe a metà, quello che è già scritto è salvo.
 
-*Con una sola eccezione, ed è il livello veloce (regola 3):* lì il «pezzo» non
-è il singolo ritocco, è **la versione che Alessandro ha accettato**. Scrivere
-una voce per ogni colore provato riempie l'archivio di tentativi e ne
-seppellisce le decisioni. Se la chat si interrompe prima dell'accettazione,
-non c'è niente da salvare: quel colore era una proposta, non un fatto.
+*Eccezione, nel MICRO:* il «pezzo» è **la versione che Alessandro ha
+accettato**, non il singolo ritocco. Un colore provato e scartato era una
+proposta, non un fatto.
 
 **16. Una diagnosi sbagliata si corregge nel diario**, lasciando visibile che
 era sbagliata. Cancellarla e basta toglie l'unica cosa che insegna qualcosa.
@@ -275,16 +300,12 @@ bash ~/pubblica.sh
 **Righe corte, una alla volta**: un comando lungo incollato porta caratteri
 invisibili e muore. In Git Bash il ripiego è il Prompt dei comandi.
 
-Lo script si ferma se manca una delle sette funzioni attese — è il caso in cui
-GitHub non ha ancora servito il file nuovo, e senza quel controllo il deploy
-**cancellerebbe** le mancanti. Non risponde da solo a firebase, e `--force` non
-si usa mai. **Alla domanda `create` si risponde `y`; se compare `delete` si
-risponde `N` e ci si ferma:** sta guardando un `index.js` sbagliato.
-
-I comandi a mano stanno **in testa a `pubblica.sh`**, in un commento —
-*uno script che non si può ricostruire a mano è una scatola nera*, e il posto
-giusto per ricostruirlo è accanto allo script, non qui. Senza `npm install` il
-deploy si ferma su *«Couldn't find firebase-functions package»*.
+Lo script si ferma se manca una delle funzioni attese: GitHub non ha ancora
+servito il file nuovo, e senza quel controllo il deploy **cancellerebbe** le
+mancanti. `--force` non si usa mai. **Alla domanda `create` si risponde `y`; se
+compare `delete` si risponde `N` e ci si ferma:** sta guardando un `index.js`
+sbagliato. I comandi a mano stanno in testa a `pubblica.sh`, in un commento;
+senza `npm install` il deploy muore su *«Couldn't find firebase-functions»*.
 
 **18. Quando si toccano più strati, l'ordine è obbligatorio:** funzioni →
 `firestore.rules` → `marketplace.html` + `app.html`. *Eccezione già vista:*
@@ -298,30 +319,23 @@ posto di una spiegazione.
 
 **19. Stanno su GitHub, ma GitHub non le applica.**
 
-Il file nel repo è la **copia di sicurezza**. Ma da GitHub parte solo GitHub
-Pages, e il Cloud Shell pubblica le funzioni, non le regole.
-
-Le regole **attive** vivono solo nella console Firebase → Firestore Database →
-Regole. Ogni volta **due mosse**: il file su GitHub per non perderlo, il testo
-incollato in console per farlo valere. Saltare la seconda è il modo tipico di
-credere di aver applicato una regola mai partita.
-
-**E nessuna chat le può dedurre dal codice:** raccontano decisioni — perché
-`market_favs` è chiuso anche all'admin, perché il create delle notifiche è
-`false` — che nel codice non ci sono.
-
-La versione in cima al file (`// Versione AAAA-MM-GG-nome`) è l'unico modo per
-sapere, mesi dopo, se quelle scritte sono quelle attive.
+Il file nel repo è la **copia di sicurezza**: da GitHub parte solo GitHub Pages,
+e il Cloud Shell pubblica le funzioni, non le regole. Le regole **attive** vivono
+solo nella console Firebase → Firestore Database → Regole. Ogni volta **due
+mosse**: il file su GitHub per non perderlo, il testo incollato in console per
+farlo valere. **Nessuna chat le può dedurre dal codice:** raccontano decisioni
+che nel codice non ci sono. La versione in cima al file
+(`// Versione AAAA-MM-GG-nome`) è l'unico modo per sapere, mesi dopo, se quelle
+scritte sono quelle attive.
 
 ---
 
 ## La posta
 
 **20. Non la manda l'app.** `avvisaPercorso` scrive un documento in `mail`; a
-spedirlo è l'estensione **Trigger Email from Firestore**. Separati apposta: se
-l'estensione si ferma, i documenti restano in coda invece di sparire.
-
-Provata il 20/08, mail arrivata davvero. La configurazione che ha funzionato:
+spedirlo è l'estensione **Trigger Email from Firestore** — separati apposta, così
+se l'estensione si ferma i documenti restano in coda invece di sparire. La
+configurazione provata il 20/08, con la mail arrivata davvero:
 
 | | |
 |---|---|
@@ -336,21 +350,17 @@ Provata il 20/08, mail arrivata davvero. La configurazione che ha funzionato:
 smtps://info%40arctrail3d.com@smtps.aruba.it:465
 ```
 
-**Trappola 1 — la chiocciola va scritta `%40`.** Il nome utente è un indirizzo
-e l'SMTP è un URI: la `@` spacca il campo. *L'errore parla di autenticazione,
-non di sintassi*, e si perde tempo sulla password, che è giusta.
+**Trappola 1 — la chiocciola va scritta `%40`:** il nome utente è un indirizzo e
+l'SMTP è un URI, la `@` spacca il campo. *L'errore parla di autenticazione, non
+di sintassi.*
 
-**Trappola 2 — non si usa `smtp.arctrail3d.com`.** Il DNS ha un record che
-sembra giusto; il certificato di quel server è `*.aruba.it`, non combacia, e
-l'estensione si ferma. *L'errore parla di TLS e sembra la rete.*
+**Trappola 2 — non si usa `smtp.arctrail3d.com`:** il certificato di quel server
+è `*.aruba.it`, non combacia, e l'estensione si ferma. *L'errore parla di TLS.*
 
 **Come si prova.** Un documento scritto a mano in `mail` dalla console: `to`
 array, `message` map con `subject` e `text`. **La prova vera è che la mail sia
-arrivata**, non che il documento dica SUCCESS.
-
-**Quando smette, si vede** dal pannello → Percorsi: se la coda sale e le
-lavorate restano zero, l'estensione è ferma. *Una posta che non parte non fa
-rumore, e un numero che sale sì.*
+arrivata**, non che il documento dica SUCCESS. **Quando smette si vede** dal
+pannello → Percorsi: coda che sale e lavorate a zero = estensione ferma.
 
 ---
 
@@ -361,47 +371,41 @@ Se l'ancora è ambigua o mancante, **il file non viene toccato**. Ha già preso
 bug veri: un'ancora in due posti, una classe CSS inesistente, un `BUILD_PARENT`
 non pubblicato. Mai `sed` per sostituzioni multi-linea.
 
-L'ordine è: scrivere lo script → eseguirlo → **subito**
-`node controlla-sintassi.js app.html` → `node controlla-token.js app.html`
-→ i banchi della zona. **Questi tre non si saltano a nessun livello**: sono
-secondi, non minuti. Il giro completo è un'altra cosa e sta nella regola 3.
+L'ordine è: scrivere lo script → eseguirlo → **subito i controlli pertinenti al
+FILE TOCCATO.** Sono secondi, non minuti:
 
-*Dal 25/08 il file dell'app è `app.html`: `index.html` è la vetrina.* Un
-`assert` su un'ancora presa dal file sbagliato non scrive: è il modo giusto di
-sbagliare, ma fa perdere un giro.
+- `app.html` → `controlla-sintassi.js` + `controlla-token.js` + il banco della
+  zona;
+- gli altri HTML → i controlli che li reggono davvero;
+- i `.js` → `node --check` e il banco che li riguarda;
+- i documenti → `controlla-diari.js`, e basta (3-bis).
 
-**Non indovinare i confini di una funzione con una regex** (25/08: metà
-funzione sostituita, l'altra metà orfana — il racconto è in `NOTE-DESIGN.md`).
-I confini si leggono dal file, e si controlla che il blocco finisca dove ci si
-aspetta.
+**Se `app.html` non è stato toccato e il lavoro non dipende da lui, su
+`app.html` non si controlla niente.** Il giro completo è un'altra cosa e sta
+nella regola 3. *Dal 25/08 il file dell'app è `app.html`: `index.html` è la
+vetrina, e un'ancora presa dal file sbagliato non scrive.*
 
-**25. VENTI MINUTI A MODIFICA.** *(25/08/2026, detto da Alessandro: «non ci
-possiamo mettere più di 20 minuti per ogni modifica».)* È il tetto del livello
-veloce, e la regola 3 dice come si rispetta.
-
-*Il conto va fatto sulla misura, non sulla scrittura:* la modifica è un minuto,
-il resto è misurare prima e raccontare dopo. Misurare prima resta obbligatorio
-quando il difetto non si vede — la barra sembrava sbilanciata e le celle erano
-uguali al pixel — ma sei larghezze si misurano **in una chiamata sola**.
-
-Il giro completo prima di consegnare non salta mai: **quello è sicurezza, non
-tempo.** Quello che è saltato è il giro completo *dentro* l'iterazione.
+**Non indovinare i confini di una funzione con una regex:** si leggono dal file,
+e si controlla che il blocco finisca dove ci si aspetta.
 
 **22. Sabotare serve a battezzare un banco, non a ricontrollarlo ogni volta.**
 
-Un banco che non è mai stato visto dire di no non si sa se funziona. Quindi si
-sabota **quando nasce, e quando cambia sostanza** — cioè quando cambia *cosa
-chiede*, non quando cambia un'attesa o un selettore.
+Un banco mai visto dire di no non si sa se funziona. Si sabota **quando nasce e
+quando cambia sostanza** — cioè quando cambia *cosa chiede*, non un'attesa o un
+selettore. E si sabota **sempre** su un banco che protegge un'invariante critica
+(punteggio, accesso, memoria offline, regole, service worker), a ogni giro in cui
+quella zona viene toccata: *lì un banco cieco non costa un giro, costa un
+punteggio sbagliato in gara.* Nel MICRO non si sabota niente se nessun banco è
+cambiato.
 
-E si sabota **sempre** su un banco che protegge un'invariante critica
-(punteggio, accesso, memoria offline, regole, service worker), a ogni giro in
-cui quella zona viene toccata. *Lì il costo di un banco cieco non è un giro
-perso: è un punteggio sbagliato in gara.*
+**23. Un rosso del parallelo non vale tre giri.** *(È C24 in `STATO.md`.)* Se il
+giro in parallelo fallisce su un banco senza una regressione evidente: **1)** si
+rilancia **solo quel banco**; **2)** se da solo passa e il comportamento è
+quello di C24, **il giro completo non si rilancia**; **3)** `PAR=1` si usa solo
+quando serve una suite intera affidabile prima di una consegna STANDARD o
+CRITICA.
 
-Nel livello veloce non si sabota niente se nessun banco è cambiato: si
-starebbe ricontrollando una risposta già data.
-
-**23. I banchi girano su un solo utente.** Tutti i difetti che servono due
+**23-bis. I banchi girano su un solo utente.** Tutti i difetti che servono due
 persone non li copre nessun banco: il flickering della chat si è visto solo con
 una seconda persona in linea.
 
@@ -409,14 +413,22 @@ una seconda persona in linea.
 dizionario in `marketplace.html` e il blocco `PAROLE` in `index.js`, fra marker
 fissi. **Non si scrive a mano dentro i marker.**
 
+**25. VENTI MINUTI A MODIFICA.** *(25/08/2026, detto da Alessandro: «non ci
+possiamo mettere più di 20 minuti per ogni modifica».)* È il tetto del livello
+MICRO, e la regola 3 dice come si rispetta.
+
+*Il conto va fatto sulla misura, non sulla scrittura.* Misurare prima resta
+obbligatorio quando il difetto non si vede, ma sei larghezze si misurano **in
+una chiamata sola**.
+
+Il giro completo prima di consegnare **non si fa nel MICRO** — lì valgono solo i
+controlli della regola 3. È obbligatorio dallo STANDARD in su.
+
 ---
 
 # Regole ritirate
 
-*Il racconto — quale regola, quando, e perché è stata tolta — sta in
-`NOTE-DESIGN.md`, sezione **«Le regole ritirate, e perché»**. Sta lì e non qui
-per la stessa ragione per cui ci sta tutto il resto della storia: questo file
-si legge per intero ogni sessione, e una regola morta letta insieme a quelle
-vive costa quanto una viva.*
-
-*Ma non si cancellano: **una regola cancellata senza motivo torna da sola**.*
+*Quale regola, quando, e perché è stata tolta: `NOTE-DESIGN.md`, sezione
+**«Le regole ritirate, e perché»**. Non qui, perché questo file si legge per
+intero ogni sessione. E non si cancellano: **una regola cancellata senza motivo
+torna da sola**.*

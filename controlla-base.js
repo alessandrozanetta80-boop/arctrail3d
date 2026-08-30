@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-/* controlla-base.js — il primo dei cinque, e l'unico che guarda FUORI.
+/* controlla-base.js — il primo cancello, e l'unico che guarda FUORI.
  *
  *   node controlla-base.js              legge i file qui e li confronta con GitHub
  *   node controlla-base.js --locale     solo i timbri locali, senza rete
  *
- * PERCHE' ESISTE. Gli altri quattro banchi chiedono «questo file e' fatto
+ * PERCHE' ESISTE. Gli altri controlli chiedono «questo file e' fatto
  * bene?». Nessuno di loro chiede «questo file e' quello giusto?», e la
  * seconda domanda viene prima. Il 17/08/2026 una sessione e' ripartita da una
  * copia vecchia di due ore e ha cancellato mezza mattinata: il file consegnato
@@ -18,11 +18,17 @@
  * pubblicato, quel file **non e' un aggiornamento: e' una cancellazione**, e
  * porta via tutto quello che e' successo in mezzo.
  *
- * Tre risposte possibili, e sono diverse:
+ * Quattro risposte possibili, e sono diverse (regola 2):
  *   IN PARI       il genitore e' l'ultimo online. Si lavora.
- *   INDIETRO      online c'e' roba piu' nuova. FERMARSI e prendere quella.
- *   AVANTI        il file locale e' gia' oltre l'online: e' un lavoro fatto e
- *                 non ancora caricato. Non e' un errore, ma va detto.
+ *   AVANTI        il locale e' oltre l'online: lavoro fatto e non ancora
+ *                 caricato. Non e' un errore, ma va detto.
+ *   INDIETRO      il locale e' un antenato puro dell'online: si riallinea da
+ *                 soli e si tira dritto. Essere indietro NON e' un motivo per
+ *                 fermarsi.
+ *   DIVERGENTE    nel locale c'e' lavoro che online non c'e': STOP, non si
+ *                 sovrascrive niente.
+ * Questo banco confronta i TIMBRI e non sa distinguere INDIETRO da DIVERGENTE:
+ * a dirlo e' il diff contro la copia scaricata in /tmp, mai il timbro.
  *
  * La rete puo' mancare: se GitHub non risponde il banco lo dice e NON passa in
  * silenzio. Un controllo che non puo' dire di no e' spento.
@@ -83,6 +89,7 @@ function riga(a, b){ return "  " + String(a) + String(b === undefined ? "" : b);
 (async function(){
   var problemi = [];
   var avvisi = [];
+  var disallineati = [];   // solo per stampare il recupero col nome giusto
   console.log("");
 
   for(var i = 0; i < FILE.length; i++){
@@ -168,8 +175,10 @@ function riga(a, b){ return "  " + String(a) + String(b === undefined ? "" : b);
       console.log(riga("", "→ AVANTI: lavoro fatto qui e non ancora caricato. Va su GitHub."));
     } else if(online && padre && padre !== online){
       console.log(riga("", "→ INDIETRO O DIVERGENTE. Nato da «" + padre + "», ma online c'e' «" + online + "»."));
-      console.log(riga("", "   Questo file NON e' un aggiornamento: e' una cancellazione."));
+      console.log(riga("", "   Caricato cosi' NON sarebbe un aggiornamento: sarebbe una cancellazione."));
+      console.log(riga("", "   Quale dei due lo dice il diff, non il timbro."));
       problemi.push(f.nome + ": nato da " + padre + ", online c'e' " + online);
+      disallineati.push(f.nome);
     } else if(online && !padre){
       /* Qui il banco e' stato scritto mite la prima volta — passava con una
          nota — e provandolo sul file vecchio del progetto e' venuto fuori che
@@ -180,6 +189,7 @@ function riga(a, b){ return "  " + String(a) + String(b === undefined ? "" : b);
       console.log(riga("", "→ NON DICIBILE: timbro diverso dall'online e nessun «nato da»."));
       console.log(riga("", "   Non si puo' escludere che sia una copia vecchia."));
       problemi.push(f.nome + ": timbro «" + mio + "» diverso dall'online «" + online + "», e non dice da dove nasce");
+      disallineati.push(f.nome);
     }
     console.log("");
   }
@@ -189,8 +199,14 @@ function riga(a, b){ return "  " + String(a) + String(b === undefined ? "" : b);
     problemi.forEach(function(p){ console.log("    · " + p); });
     if(avvisi.length){ avvisi.forEach(function(a){ console.log("    (nota) " + a); }); }
     console.log("");
-    console.log("  Prima di toccare qualunque file, prendere la copia online:");
-    console.log("    curl -sL -o index.html " + RAW + "index.html");
+    console.log("  Prima di toccare qualunque file, GUARDARE. Mai scaricare sopra il");
+    console.log("  file di lavoro: la copia online va in /tmp, poi decide il diff.");
+    disallineati.forEach(function(nome){
+      console.log("    curl -sL -o /tmp/on-" + nome + " " + RAW + nome);
+      console.log("    diff /tmp/on-" + nome + " " + nome);
+    });
+    console.log("  INDIETRO puro (niente lavoro locale da salvare) -> riallineare e proseguire.");
+    console.log("  DIVERGENTE (lavoro locale che online non c'e')  -> STOP, non sovrascrivere.");
     console.log("");
     process.exit(1);
   }

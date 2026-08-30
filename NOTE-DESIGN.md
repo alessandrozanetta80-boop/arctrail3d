@@ -1,8 +1,13 @@
-# NOTE DI DESIGN — archivio dell'app (`index.html`)
+# NOTE DI DESIGN — archivio dell'app (`app.html`)
 
 Perché l'app è fatta così. Ogni sezione è una versione: cosa è cambiato, e la ragione.
+*Prima del 25/08 l'app era `index.html`: le sezioni storiche la chiamano così a
+ragione, e non vanno corrette.*
 
 > **Questo file è un ARCHIVIO. Non si legge per intero: si cerca.**
+> **Qualunque «aperto», «resta» o «manca» qui dentro descrive la data della
+> sezione, non lo stato di oggi. Gli archivi NON si usano per scegliere il
+> prossimo lavoro: per quello vale solo `STATO.md`.**
 > Cos'è vero *oggi* lo dice `STATO.md`, che è corto apposta.
 > Come si lavora lo dice `REGOLE-LAVORO.md`.
 > Qui c'è solo il **perché**, in ordine di quando è successo.
@@ -10,10 +15,11 @@ Perché l'app è fatta così. Ogni sezione è una versione: cosa è cambiato, e 
 *Indice rigenerato il 23/08/2026 dal file stesso: se una sezione
 cambia titolo, l'indice cambia con lei e non possono divergere.*
 
-## Indice — 126 sezioni
+## Indice — 127 sezioni
 
 | data | sezione | versione |
 |---|---|---|
+| 29/08/2026 | «Controlla la tua email» diventa un blocco solo | `2026-08-29-verifica` |
 | 29/08/2026 | Il calendario, quattro correzioni: un nome che mentiva, una riga che taceva | `2026-08-29-regione` |
 | 28/08/2026 | Il calendario: dove posso andare a tirare | `2026-08-28-calendario` |
 | 28/08/2026 | Il profilo smette di essere un corridoio | `2026-08-28-carta` |
@@ -63,7 +69,7 @@ cambia titolo, l'indice cambia con lei e non possono divergere.*
 | 23/08/2026 | Il verde tinto, e un difetto vecchio saltato fuori misurando | `2026-08-23-verde-tinto` |
 | 23/08/2026 | Il verde non aveva la sua velatura | `2026-08-23-verde-velato` |
 | 23/08/2026 | Il refresh all'apertura era un'altra riga | `2026-08-23-rientro` |
-| — | Come si lavora qui — leggere per primo |  |
+| — | Come si lavorava qui — archivio storico; oggi vale REGOLE-LAVORO.md |  |
 | — | Il sistema di stile: tre strati, e nient'altro sopra |  |
 | — | La pista: la schermata del percorso |  |
 | — | Continuità: cosa sopravvive a un ridisegno |  |
@@ -139,7 +145,43 @@ cambia titolo, l'indice cambia con lei e non possono divergere.*
 | 22/08/2026 | «In avvio c'è ancora il refresh»: la guardia impediva la seconda, non la prima |  |
 | 22/08/2026 | Un giro aperto non aveva una via d'uscita | `2026-08-22-scarta` |
 | 22/08/2026 | I banchi erano rossi per il motivo giusto, ed è comunque un guasto |  |
-| — | Cosa manca, in ordine di valore |  |
+| — | Cosa mancava al 15/08 — archivio storico; per gli aperti vale STATO.md |  |
+
+---
+
+## «Controlla la tua email» diventa un blocco solo *(29/08/2026, versione `2026-08-29-verifica`, nata da `2026-08-29-freeze`)*
+
+*Scritta il 30/08/2026, dopo il fatto: questa versione era online senza voce di
+diario, ed e' uscita dal confronto fra la copia locale e quella pubblicata
+(voce **C23**). Qui c'e' solo cio' che quel confronto dimostra.*
+
+**La schermata di verifica era tre paragrafi sciolti, adesso e' un blocco.**
+Prima la frase era una sola stringa con l'indirizzo dentro — `verify_body` con
+`{email}` — appoggiata su tre `.onboard-sub` di fila, ognuno col suo margine da
+24px tarato su una riga sola.
+
+**Cosa e' cambiato, punto per punto:**
+
+- **L'indirizzo sta su una riga sua** (`.verify-mail`), fuori dalla frase. E'
+  l'unica cosa che chi ha sbagliato a scrivere l'email puo' ancora correggere,
+  e dentro una frase la si legge senza vederla.
+- **Nasce `verify_body2` in nove lingue**: la frase spezzata vuole un secondo
+  pezzo dopo l'indirizzo. `verify_title` passa da «Conferma la tua email» a
+  «Controlla la tua email», e il pulsante da «Ho confermato» a **«Ho verificato
+  l'email»**.
+- **Nuovo raggruppamento `.verify-testo`** con passo di 8px, piu' `.verify-riga`,
+  `.verify-nota` e `.verify-avviso` — quest'ultimo con altezza riservata anche
+  da vuoto, perche' comparendo dal nulla farebbe saltare i pulsanti sotto il
+  dito che sta scendendo.
+- **La logica Firebase non e' stata toccata.** Cambiano CSS, stringhe e il
+  blocco che costruisce il DOM: nessuna chiamata di autenticazione e' diversa.
+
+**`verify_body2` e' nell'elenco di `banco-lingue.js`**, insieme a
+`verify_title`, `verify_body`, `verify_done_btn` e `verify_resend_btn`: le nove
+traduzioni nuove hanno un banco che le conta.
+
+*Nessuno ha ancora attraversato questa schermata con una registrazione vera:
+e' la voce **A5** di `STATO.md`, e resta aperta.*
 
 ---
 
@@ -647,6 +689,22 @@ stata allineata alle copie online e il cancello e' tornato verde. *Se il primo
 controllo fosse stato saltato, `sw.js` sarebbe stato consegnato a `v137`
 partendo da `v136`: una cache pubblicata cancellata da una piu' vecchia.*
 
+### Google ha riscansionato *(30/08/2026)*
+
+**Chiuso.** Search Console, scheda «Indicizzazione delle pagine» per
+`https://arctrail3d.com/`: **ultima scansione 30 ago 2026, 00:54:06**, eseguita
+da Googlebot per smartphone. Recupero pagina positivo, scansione consentita,
+indicizzazione consentita, e la pagina risulta indicizzata. La canonica
+dichiarata e quella scelta da Google coincidono: `https://arctrail3d.com/`.
+
+Il criterio che `STATO.md` teneva per la voce **F5** era «ultima scansione oltre
+il 14/08», ed e' superato: **F5 e' chiusa e cancellata.**
+
+*Se il marchio vecchio continua a comparire per un po' nei risultati, non e' piu'
+un problema di scansione:* Google ha gia' letto la pagina nuova, e quello che
+resta e' il tempo con cui aggiorna il risultato mostrato. Quanto sia, non lo dice
+nessuno qui.
+
 ## Il tema Sole, quattro registri di societa', e un banco che gridava su una decisione *(27/08/2026, versione `2026-08-27-senza-turchia`, nata da `2026-08-27-svezia-uk`; `sw.js` a `arctrail3d-v136`)*
 
 Giornata lunga, e la parte che vale la pena ricordare non e' quello che ho
@@ -780,6 +838,19 @@ sta in `DOPPIE-TESSERE-ITALIA.md`, rigenerabile con `node trova-doppie.js
 --scrivi`, per il giorno in cui «la mia compagnia» smettera' di dipendere dalla
 tessera.
 
+
+### Quattro correzioni alle regole *(30/08/2026)*
+
+- **Nasce il caso MICRO DOCUMENTALE** (regola 3-bis): sui quattro documenti non
+  si esegue `controlla-base.js`, né sintassi/token dell'app, né il `diff` con
+  l'online. Solo `controlla-diari.js`.
+- **Il rischio lo decide l'invariante che la modifica può rompere**, non la
+  schermata che la contiene: prima le regole dicevano che un colore dentro la
+  schermata del punteggio era critico per il solo fatto di stare lì.
+- **I controlli sono pertinenti al file toccato** (regola 21): se `app.html` non
+  è stato toccato, su `app.html` non si controlla niente.
+- **Un rosso del parallelo non vale tre giri** (regola 23, ed è C24): si
+  rilancia solo il banco fallito.
 
 ## Le regole ritirate, e perché *(spostate qui il 26/08/2026 da `REGOLE-LAVORO.md`, che si legge per intero ogni sessione)*
 
@@ -1300,6 +1371,7 @@ avevano la stessa larghezza e quasi lo stesso peso. Peggio: la gerarchia era
 erano `btn-ghost`, cioè riquadro pieno con bordo marcato e scritta nera. *Il
 più importante era il più debole.* Non si è irrobustito il pieno — quello è la
 voce **B7** e vale per tutta l'app: si sono **alleggeriti gli altri**.
+*(B7 chiusa il 30/08: guardata col pollice, il tinto dice abbastanza.)*
 
 **3. «Indietro» non andava indietro.** Azzerava la lingua e riportava alla
 scelta della lingua: un'impostazione travestita da navigazione. Adesso torna
@@ -1503,9 +1575,10 @@ toccava lo schermo.
 ### Cosa resta da guardare col telefono
 
 Il tinto di «Registrati» adesso è **arancione pieno**, non più verde chiaro: è
-il colore più forte che la porta abbia mai avuto, e **al sole non l'ha visto
-nessuno** (voce **A2**). Se spinge troppo, si scende di luce, non si cambia
-tinta.
+il colore più forte che la porta abbia mai avuto. ~~Al sole non l'ha visto
+nessuno (voce **A2**).~~ *(30/08/2026: A2 è chiusa, i tre temi sono in mano e
+il Sole è stato guardato al sole.)* Se spinge troppo, si scende di luce, non si
+cambia tinta.
 
 
 ## La vetrina diventa la porta di casa, l'app diventa `app.html` *(25/08/2026, versione `2026-08-25-radice`, nata da `2026-08-25-libera`; vetrina `2026-08-25-vetrina-radice`, mercatino `2026-08-25-radice`, `sw.js` a `arctrail3d-v121`)*
@@ -3925,7 +3998,7 @@ lo prende.
 
 ---
 
-## Come si lavora qui — leggere per primo
+## Come si lavorava qui — archivio storico; oggi vale REGOLE-LAVORO.md
 
 *Scritto il 15/08/2026, perché era già stato detto a voce e si era già dovuto
 ripetere.*
@@ -10226,7 +10299,7 @@ finché qualcuno non decide che ci sta.
 
 ---
 
-## Cosa manca, in ordine di valore
+## Cosa mancava al 15/08 — archivio storico; per gli aperti vale STATO.md
 
 *Rifatta il 15/08/2026, quarto giro. Sono uscite quattro voci: il controllo dei
 token, il pannello sagoma, il ridisegno per regioni e i quattro numeri.
@@ -10258,6 +10331,19 @@ sono proprio le tre che il banco non poteva provare:**
 
 *Scritto qui perché la prossima chat non legga «il giro è stato fatto» e
 consideri chiuso il punto 0. Non lo è: è stato fatto un terzo.*
+
+**~~Non lo è~~ — lo è, e questa riga ha fatto danno.** *(30/08/2026,
+Alessandro: «il giro al sole è fatto da tempo».)* Giro intero, seconda firma e
+due ore sono stati fatti dopo il 16/08, e nessuna chat ha cancellato la voce da
+`STATO.md`. Risultato: ogni sessione ha riletto la riga sopra come se fosse di
+oggi e gliel'ha richiesto di nuovo. **Resta a vista perché era giusta il 16/08
+e falsa da un pezzo:** una data su una voce aperta non dice quando è stata
+scritta, dice quanto è vecchia. *~~Aperto resta solo il tema Sole guardato al
+sole.~~ Nemmeno quello: chiesto e chiuso lo stesso giorno, con uno screenshot
+del pannello Aspetto.* **Il 30/08 sono cadute anche le ultime: pista in piedi,
+pollice, tinto, schermo grande. IL PUNTO 0 È CHIUSO** — dal 16/08 era in cima a
+questa sezione come «l'unica cosa che ha senso fare adesso», e le righe qui
+sopra vanno lette con quella data addosso, non con quella di oggi.
 
 0. **Un giro vero, su un telefono vero, al sole.** Non è il punto dieci: è il
    punto zero, e può riordinare tutti gli altri. Il banco Node prova lo

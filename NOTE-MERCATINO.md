@@ -3,31 +3,33 @@
 Perché il mercatino è fatto così. Ogni sezione è una versione.
 
 > **Questo file è un ARCHIVIO. Non si legge per intero: si cerca.**
+> **Qualunque «aperto», «resta» o «manca» qui dentro descrive la data della
+> sezione, non lo stato di oggi. Gli archivi NON si usano per scegliere il
+> prossimo lavoro: per quello vale solo `STATO.md`.**
 > Cos'è vero *oggi* lo dice `STATO.md`, sezione D.
 > Come si lavora lo dice `REGOLE-LAVORO.md`.
 > Qui c'è solo il **perché**, in ordine di quando è successo.
 
 **Questo e' il diario di `marketplace.html`. `NOTE-DESIGN.md` e' il diario
 dell'app.** Sono due file perche' sono due programmi: il mercatino ha un suo
-foglio di stile, un suo JavaScript e non passa da `index.html` — esattamente
-come il guardiano e i banchi hanno il loro file e non una sezione.
+foglio di stile, un suo JavaScript e **non passa dall'app** — che dal 25/08 è
+`app.html`, non `index.html`.
 
-*Quello che vale per tutti e due sta in `NOTE-DESIGN.md` e non si ricopia qui:
-i tre strati del foglio di stile, la scala 4/8/12/16/24/32/48, i 44 pixel, i
-due caratteri, come si risponde, come si racconta il mercatino. Qui c'e' solo
-quello che riguarda questa pagina.* **Se una regola generale cambia, cambia
-li'** — e questo file va riletto per vedere se e' rimasto indietro.
+**Come sono divisi i quattro documenti:** `REGOLE-LAVORO.md` dice *come si
+lavora* (le patch seguono quello, non questo file); `STATO.md` dice *cos'è vero
+oggi*, timbri compresi; `NOTE-DESIGN.md` dice *perché l'app è così*;
+`NOTE-MERCATINO.md` — questo — dice *perché il mercatino è così*. Le scelte
+condivise (i tre strati del foglio di stile, la scala, i 44 pixel, i due
+caratteri) stanno in `NOTE-DESIGN.md` e non si ricopiano qui.
 
-*Perche' non e' una sezione di `NOTE-DESIGN.md`, detto una volta: quel file
-non si puo' modificare a pezzi, si riscrive intero. Riscrivere settanta pagine
-per aggiungerne cinque e' il modo piu' probabile di perderne una senza che se
-ne accorga nessuno — ed e' il difetto peggiore che quel documento possa avere,
-peggio di non trovarlo. I due nomi stanno uno accanto all'altro nell'elenco
-dei documenti del progetto: chi apre una chat nuova li vede tutti e due.*
+**Il timbro corrente del mercatino sta solo in `STATO.md`**, che al 30/08 dice
+`2026-08-25-radice`: qui non se ne tiene una seconda copia. Il passaggio a
+`-radice` è avvenuto con lo scambio della radice, e il racconto condiviso è in
+`NOTE-DESIGN.md`, sezione *«La vetrina diventa la porta di casa, l'app diventa
+`app.html`»*.
 
-Timbro attuale: **`2026-08-19-mercatino-beta`** (`<body data-build>`), nato da
-`2026-08-19-mercatino-cerchio`. **Fra `-e` e `mercatino-cerchio` questo diario
-non è stato aggiornato**: i giri del 18 e del 19/08 — le segnalazioni, il
+**Questo diario ha dei buchi storici. Fra `-e` e `mercatino-cerchio` non è stato
+aggiornato**: i giri del 18 e del 19/08 — le segnalazioni, il
 cerchio — sono nel file e non qui. Chi riprende non li trova scritti da nessuna
 parte, ed è esattamente il difetto che questo documento esiste per evitare.
 *Non sono stati ricostruiti a posteriori: inventarli sarebbe peggio che
@@ -46,7 +48,9 @@ toccato affatto — si e' chiusa la regola Firestore dei preferiti, che stava
 fuori: vedi **Il pezzo che stava fuori dal file**. La seconda ha chiuso la
 voce 2, e quella il file lo tocca: vedi **Quinto giro**, in fondo.*
 
-**I file di questo pezzo sono sette**, e si riconsegnano tutti insieme:
+**MAPPA STORICA del pezzo, non una checklist di consegna.** Per cosa si consegna
+vale **solo la regola 5 di `REGOLE-LAVORO.md`**. La mappa aveva **sette voci,
+per nove file complessivi** — la riga dei dizionari ne conta tre:
 
 | file | cos'e' |
 |---|---|
@@ -58,7 +62,7 @@ voce 2, e quella il file lo tocca: vedi **Quinto giro**, in fondo.*
 | `genera.py` | controlla il dizionario, lo scrive dentro la pagina **e dentro `index.js`** |
 | `markup.html` | il testo statico con gli agganci `data-t` |
 
-*Il settimo e' nato il 17/08 insieme agli avvisi, e non e' un banco della
+*`banco-avvisi.js` e' nato il 17/08 insieme agli avvisi, e non e' un banco della
 pagina: e' il banco di `index.js`, le Cloud Functions. Sta qui perche' guarda
 una decisione del mercatino — chi viene avvisato e chi no — e chi lavora sul
 mercatino deve lanciarlo.*
@@ -123,7 +127,7 @@ titolo, l'indice cambia con lei e non possono divergere.*
 | — | Come è stata provata |  |
 | 19/08/2026 | Il generatore era fermo, e non per il motivo scritto |  |
 | 19/08/2026 | Il ripiego delle notifiche non ripiega piu' |  |
-| — | Cosa resta aperto, in ordine |  |
+| — | Cosa risultava aperto il 17/08 — fotografia storica |  |
 | 19/08/2026 | Il mercatino torna ai collaudatori |  |
 
 ---
@@ -1572,7 +1576,9 @@ Non toccato oggi: e' una decisione, non una correzione.
 
 ---
 
-## Cosa resta aperto, in ordine
+## Cosa risultava aperto il 17/08 — fotografia storica; oggi vale STATO.md §D
+
+*Questa lista NON si usa per decidere le priorità di oggi.*
 
 1. **Far leggere le traduzioni a chi le parla.** — **FERMA: oggi non c'e'
    nessun madrelingua a cui chiedere.** *(17/08.)* Non e' un lavoro di codice
@@ -1585,7 +1591,11 @@ Non toccato oggi: e' una decisione, non una correzione.
    qualcuno che non sta guardando lo schermo, e una notifica scritta male in
    svedese non si corregge chiudendo la pagina. Chi riprende il lavoro parta
    dalla voce 2.
-2. **Nessuno ha ancora visto arrivare un avviso su un telefono vero.**
+2. ~~**Nessuno ha ancora visto arrivare un avviso su un telefono vero.**~~
+   **CHIUSA il 30/08/2026: gli avvisi arrivano.** Aperta il 17/08 e rimasta
+   scritta molto dopo essere diventata falsa — nessun banco poteva chiuderla e
+   nessuna chat ha chiesto se lo fosse ancora. *Il testo qui sotto resta perché
+   racconta cosa mancava, non cosa manca.*
    *(Nuova, 17/08 — e' la seconda meta' della vecchia voce 2.)* La funzione
    decide bene, e questo lo dice `banco-avvisi.js`. Ma il deploy, la regola
    `market_searches` che deve lasciar salire l'elenco, e la push che esce da
@@ -1617,8 +1627,12 @@ Non toccato oggi: e' una decisione, non una correzione.
    qualcun altro** quando e' sbagliato. La strada probabile non e' potare, e'
    dirlo: *«questa ricerca non ha mai trovato niente»*.
 
-7. **Il progetto e i file possono raccontare due storie diverse.** *(Nuova,
-   17/08 — sesto giro.)* Oggi il diario diceva fatto e metà dei file diceva no.
+7. ~~**Il progetto e i file possono raccontare due storie diverse.**~~
+   **SUPERATA:** l'istruzione «lanciare i banchi come prima cosa in una
+   sessione nuova» non vale più. Oggi decide la **regola 3** di
+   `REGOLE-LAVORO.md`, e un MICRO documentale non lancia nessun banco del sito.
+   *Testo storico del 17/08, sesto giro:* oggi il diario diceva fatto e metà dei
+   file diceva no.
    Si è visto solo perché i banchi girano; senza, sarebbe stato scoperto
    pubblicando. Non c'è una regola di codice che lo eviti: c'è
    **l'abitudine di lanciare i banchi come prima cosa in una sessione nuova**,

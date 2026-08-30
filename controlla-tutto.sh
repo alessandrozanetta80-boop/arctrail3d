@@ -33,8 +33,8 @@
 # diverse, porte diverse — quindi l'ordine fra loro non conta. **Conta
 # l'ordine in cui si LEGGONO**, e quello resta identico: l'uscita di ognuno si
 # tiene da parte e si stampa in fila alla fine, come prima.
-# `PAR=1` rimette tutto in fila, ed e' la prima cosa da provare se un banco
-# comincia a fallire in modo strano.
+# Se un banco fallisce in parallelo, rilancia prima solo quel banco; PAR=1
+# solo quando serve l'intera suite affidabile (REGOLE-LAVORO regola 23).
 
 PAR=${PAR:-6}
 fallito=0
