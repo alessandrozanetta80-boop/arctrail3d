@@ -1854,6 +1854,16 @@ background:none; width:auto; height:auto; }
    e vale per "persone bloccate", il cui segno e' un divieto: un divieto
    verde dice il contrario di quello che disegna. */
 .menu-btn.btn-ghost.riga-attenzione .menu-icon{ color:var(--danger-role); }
+/* LE PORTE DEL PROFILO SONO PIU' ALTE. (30/08/2026, dal brief: «piu' alte,
+   piu' leggibili, immediatamente visibili».) Da telefono la riga di menu
+   sta al minimo del bersaglio, 44px: giusto per un elenco lungo, stretto
+   per sei porte che sono TUTTO quello che questa pagina fa. Qui l'altezza
+   sale al gradino successivo della scala e il titolo prende la misura
+   grande, senza nessun colore, nessun bordo e nessuna forma nuova. */
+.porte-profilo .menu-btn{ min-height:var(--s-7); padding:var(--s-4); }
+.porte-profilo .menu-btn .menu-txt{ font-size:var(--t-lg); }
+.porte-profilo .menu-btn .menu-sub{ font-size:var(--t-sm); }
+.porte-profilo .menu-btn .menu-icon{ width:var(--s-6); height:var(--s-6); }
 /* OGNI PORTA HA IL SUO TONO. (22/08/2026, chiesto da Alessandro: «il mio
    diario dovrebbe avere un po' di colore, che stacchi».)
    Il fondo dell'icona era gia' `currentColor` al 16%: bastava dare a ogni
@@ -4093,6 +4103,7 @@ table.score-table th{ letter-spacing:.09em; }
 table.score-table tbody tr{ transition:background .15s ease; }
 table.score-table tbody tr:hover{ background:color-mix(in srgb, var(--brand) 6%, transparent); }
 
+
 }
 /* ══════════════════ FINE RIFINITURA ══════════════════ */
 /* Le 5 sezioni prendono una riga tutta loro dentro l'insegna. Prima
@@ -4652,8 +4663,78 @@ border-color:color-mix(in srgb, var(--danger-role) 40%, var(--line)); margin-lef
 .attr-lbl{ display:block; font-size:var(--t-sm); color:var(--muted);
   margin:var(--s-3) 0 var(--s-1); }
 .attr-archi{ flex-wrap:wrap; margin-bottom:var(--s-1); }
+/* «Compound» non si spezza in «Compou / nd», e nemmeno si taglia.
+   (30/08/2026, MISURATO due volte.) Da quando le sezioni stanno in colonna la
+   riga delle pastiglie e' larga 346px invece di 660: quattro pastiglie a
+   `flex:1 1 0` diventano 81px l'una, e «Compound» ne vuole 95. Col solo
+   `nowrap` la parola restava intera e usciva dal bordo — un difetto peggiore
+   di quello di partenza. `min-width:max-content` dice che una pastiglia non
+   si stringe sotto la sua parola: cosi' vanno a capo FRA LORO, che e' quello
+   che `flex-wrap` sa gia' fare. Le righe da due pastiglie — destro/mancino —
+   non cambiano: li' lo spazio avanza e si dividono come prima. */
+.attr-archi .chip{ white-space:nowrap; min-width:max-content; }
 .attr-err{ font-size:var(--t-sm); color:var(--danger); min-height:18px;
   margin:var(--s-2) 0; }
+/* ══════════ LE TRE SEZIONI DI UN ASSETTO (30/08/2026) ══════════
+   Sul telefono non c'e' nessuna griglia: una sezione sotto l'altra, che e'
+   il comportamento naturale dei blocchi. La griglia vive solo da 900px in
+   su, dentro la rifinitura da computer. Qui c'e' soltanto il respiro fra
+   una sezione e l'altra, perche' tre titoli attaccati sembrano un elenco
+   solo. */
+/* LE DUE GRIGLIE ESISTONO ANCHE SUL TELEFONO, A UNA COLONNA SOLA, e non e'
+   una riga per far tacere il guardiano: e' lui ad avere ragione. Una classe
+   definita soltanto dentro un `@media` sul telefono non esiste, e chi legge
+   il foglio di stile non ha modo di sapere se l'impilamento e' voluto o e'
+   quello che capita. Scritto, e' una decisione. Da 900px in su le colonne
+   diventano due e tre. */
+.attr-griglia{ display:grid; grid-template-columns:1fr; column-gap:var(--s-4); row-gap:0; }
+.attr-form-griglia{ display:grid; grid-template-columns:1fr; gap:0; }
+/* ══ UNA RIGA DI «ALTRO DETTAGLIO» ═══════════════════════════════════════
+   SUL TELEFONO SI IMPILA. (30/08/2026, corretto da Alessandro dopo averlo
+   visto: due campi e un tasto su 390px si stringono a un terzo l'uno, e
+   «Sgancio di riserva» diventa illeggibile.) `flex-wrap:wrap` piu' una base
+   del 100% e' tutto quello che serve: ogni pezzo prende la riga intera, in
+   ordine — cosa, quale, e il tasto che la toglie. Il tasto a larghezza piena
+   non e' una scelta di gusto: e' l'unico modo perche' «Togli» resti un
+   bersaglio comodo — `--hit` e' 44px — invece di un francobollo in fondo a
+   una colonna di campi larghi.
+   Il margine sotto e' piu' largo che da computer perche' due righe impilate
+   sono sei blocchi in fila, e senza uno stacco non si capisce dove finisce
+   un dettaglio e comincia il successivo. */
+.attr-extra-riga{ display:flex; flex-wrap:wrap; gap:var(--s-2);
+  align-items:flex-end; margin-bottom:var(--s-4); }
+.attr-extra-riga > .cp-select-row{ flex:1 1 100%; min-width:0; margin-bottom:0; }
+.attr-extra-riga > .btn{ flex:1 1 100%; }
+/* ══ E DA COMPUTER SI APRONO ══════════════════════════════════════════════
+   Questo `@media` sta QUI e non nella «rifinitura da computer» piu' su, e la
+   ragione e' misurata: quel blocco viene PRIMA di queste righe nel foglio,
+   quindi a parita' di specificita' perdeva — la griglia restava a una colonna
+   anche a 1280px. Vinceva la regola scritta dopo, che e' come funziona il
+   CSS. *La cura non e' rendere il selettore piu' forte — quella e' una
+   vittoria per specificita', ed e' proprio quello che il guardiano conta.*
+   Due colonne per l'elenco, tre per il modulo. `minmax(0,1fr)` e non `1fr`:
+   senza il minimo a zero una colonna con dentro un campo largo non si stringe
+   e la griglia sborda. `align-items:start` perche' due assetti con un numero
+   diverso di righe non devono stirarsi fino alla stessa altezza — una scheda
+   alta il doppio del suo contenuto e' un buco, non un allineamento. */
+@media (min-width:900px){
+  .attr-griglia{ grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; }
+  .attr-form-griglia{ grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:var(--s-5); align-items:start; }
+  .attr-form-griglia .attr-sezione{ margin-bottom:0; }
+  /* DA 900px IN SU LA RIGA TORNA ESATTAMENTE QUELLA DI PRIMA: cosa, quale e
+     il tasto in fila, il tasto largo quanto la sua parola. Non e' un disegno
+     nuovo da computer — e' quello approvato, riscritto qui perche' la
+     versione da telefono e' diventata la base. */
+  .attr-extra-riga{ flex-wrap:nowrap; margin-bottom:var(--s-2); }
+  .attr-extra-riga > .cp-select-row{ flex:1 1 0; }
+  .attr-extra-riga > .btn{ flex:0 0 auto; }
+}
+.attr-sezione{ margin-bottom:var(--s-5); }
+.attr-sezione:last-child{ margin-bottom:0; }
+.attr-sezione > .section-title{ margin-top:0; }
+.attr-vuoto-acc{ font-size:var(--t-sm); color:var(--text-3); line-height:1.5; }
+.attr-extra-blocco{ margin-top:var(--s-4); }
 .diario-assetto{ font-size:var(--t-sm); color:var(--text-3); margin:var(--s-1) 0; }
 .stacco-card{ margin-bottom:var(--s-3); }
 .club-nome{ font-weight:800; font-size:var(--t-md); color:var(--text-1); }
@@ -4691,7 +4772,6 @@ border-color:color-mix(in srgb, var(--danger-role) 40%, var(--line)); margin-lef
 .mp-bandiera{ font-size:1.15em; margin-right:var(--s-1); }
 /* Il tasto sta in fondo a destra e resta un fantasma: modificare il profilo si
    fa due volte l'anno, e un tasto pieno qui chiamerebbe piu' forte del nome. */
-.mp-azioni{ display:flex; justify-content:flex-end; margin-top:var(--s-3); }
 /* LA FASCIA DEI QUATTRO NUMERI. Non quattro schede: una sola, divisa. Quattro
    riquadri separati per quattro cifre corte fanno sembrare importante il
    bordo invece del numero. `.home-numeri` sta a due colonne perche' in Home i
@@ -6210,7 +6290,7 @@ setup_fed_label: "Federazione",
 setup_pick_fed: "Scegli la federazione per confermare.",
 setup_country_placeholder: "Scegli la nazione\u2026",
 setup_done_btn: "Conferma",
-menu_profile: "Il mio profilo", profile_edit_title: "Il tuo profilo", profile_edit_email_note: "Per cambiare l'email di accesso, contatta l'assistenza.",
+menu_profile: "Il mio profilo", profile_edit_title: "Impostazioni", profile_edit_email_note: "Per cambiare l'email di accesso, contatta l'assistenza.",
 profile_edit_save: "Salva modifiche", profile_edit_saved_msg: "Modifiche salvate.",
 resume_banner: "Hai un percorso in corso ({mode} \u00b7 {n} piazzole).",
 resume_btn: "Riprendi percorso",
@@ -6509,6 +6589,31 @@ attr_frecce: "Frecce",
 attr_spine: "Spine",
 attr_lunghezza: "Lunghezza (pollici)",
 attr_punta: "Punta (grani)",
+attr_tipo_arco: "Tipo di arco",
+attr_alette: "Alette",
+attr_inserto: "Inserto",
+attr_dloop: "D-loop",
+attr_sez_arco: "Arco",
+attr_sez_accessori: "Accessori",
+attr_allungo: "Allungo (pollici)",
+attr_peso_freccia: "Peso freccia (grani)",
+attr_sgancio: "Sgancio",
+attr_rest: "Rest",
+attr_mirino: "Mirino",
+attr_scope: "Scope / diottra",
+attr_lente: "Lente (ingrandimento)",
+attr_peep: "Peep",
+attr_stab_centrale: "Stabilizzatore centrale",
+attr_stab_laterali: "Stabilizzatori laterali",
+attr_vbar: "V-bar",
+attr_clicker: "Clicker",
+attr_plunger: "Bottone (plunger)",
+attr_extra: "Altri dettagli",
+attr_extra_nome: "Cosa",
+attr_extra_valore: "Quale",
+attr_extra_aggiungi: "+ Aggiungi dettaglio",
+attr_extra_togli: "Togli",
+attr_niente_accessori: "Su questo arco non c’è niente da montare.",
 attr_note: "Note",
 attr_salva: "Salva assetto",
 attr_serve_nome: "Dagli un nome, così lo riconosci.",
@@ -7207,6 +7312,31 @@ attr_frecce: "Arrows",
 attr_spine: "Spine",
 attr_lunghezza: "Length (inches)",
 attr_punta: "Point (grains)",
+attr_tipo_arco: "Bow type",
+attr_alette: "Vanes",
+attr_inserto: "Insert",
+attr_dloop: "D-loop",
+attr_sez_arco: "Bow",
+attr_sez_accessori: "Accessories",
+attr_allungo: "Draw length (inches)",
+attr_peso_freccia: "Arrow weight (grains)",
+attr_sgancio: "Release",
+attr_rest: "Rest",
+attr_mirino: "Sight",
+attr_scope: "Scope",
+attr_lente: "Lens (magnification)",
+attr_peep: "Peep",
+attr_stab_centrale: "Long rod",
+attr_stab_laterali: "Side rods",
+attr_vbar: "V-bar",
+attr_clicker: "Clicker",
+attr_plunger: "Plunger",
+attr_extra: "Other details",
+attr_extra_nome: "What",
+attr_extra_valore: "Which",
+attr_extra_aggiungi: "+ Add detail",
+attr_extra_togli: "Remove",
+attr_niente_accessori: "There is nothing to mount on this bow.",
 attr_note: "Notes",
 attr_salva: "Save setup",
 attr_serve_nome: "Give it a name, so you recognise it.",
@@ -7476,7 +7606,7 @@ mode_nfas_biggame_desc:"NFAS Big Game Round: up to 3 arrows (only the first hit 
 profile_arco: "Main bow", profile_edit_email_note: "To change your login email, contact support.",
 theme_section_title: "Appearance", theme_dark_label: "Dark", theme_light_label: "Light", theme_sun_label: "Sun",
 theme_hint: "Sun: vivid colours and black text, for a screen in direct sunlight. No app can sense the light around you, so you pick the theme by hand and it stays until you change it.",
-profile_edit_save: "Save changes", profile_edit_saved_msg: "Changes saved.", profile_edit_title: "Your profile",
+profile_edit_save: "Save changes", profile_edit_saved_msg: "Changes saved.", profile_edit_title: "Settings",
 profile_email: "Email", profile_error: "Fill in name, username, email, at least one federation, your main bow, and accept the privacy policy.",
 profile_error_email_in_use: "This email is already registered. Use \u201cLog in\u201d with your password.",
 profile_error_password_mismatch: "The two passwords don't match.", profile_error_password_short: "The password must be at least 6 characters.",
@@ -7904,6 +8034,31 @@ attr_frecce: "Flèches",
 attr_spine: "Spine",
 attr_lunghezza: "Longueur (pouces)",
 attr_punta: "Pointe (grains)",
+attr_tipo_arco: "Type d’arc",
+attr_alette: "Plumes",
+attr_inserto: "Insert",
+attr_dloop: "D-loop",
+attr_sez_arco: "Arc",
+attr_sez_accessori: "Accessoires",
+attr_allungo: "Allonge (pouces)",
+attr_peso_freccia: "Poids de la flèche (grains)",
+attr_sgancio: "Décocheur",
+attr_rest: "Repose-flèche",
+attr_mirino: "Viseur",
+attr_scope: "Scope",
+attr_lente: "Lentille (grossissement)",
+attr_peep: "Peep",
+attr_stab_centrale: "Stabilisateur central",
+attr_stab_laterali: "Stabilisateurs latéraux",
+attr_vbar: "V-bar",
+attr_clicker: "Clicker",
+attr_plunger: "Berger (plunger)",
+attr_extra: "Autres détails",
+attr_extra_nome: "Quoi",
+attr_extra_valore: "Lequel",
+attr_extra_aggiungi: "+ Ajouter un détail",
+attr_extra_togli: "Retirer",
+attr_niente_accessori: "Sur cet arc il n’y a rien à monter.",
 attr_note: "Notes",
 attr_salva: "Enregistrer",
 attr_serve_nome: "Donnez-lui un nom pour la reconnaître.",
@@ -8173,7 +8328,7 @@ mode_nfas_biggame_desc:"Big Game Round NFAS\u00a0: jusqu’\u00e0 3 fl\u00e8ches
 profile_arco: "Arc principal", profile_edit_email_note: "Pour changer votre e-mail de connexion, contactez l’assistance.",
 theme_section_title: "Apparence", theme_dark_label: "Sombre", theme_light_label: "Claire", theme_sun_label: "Soleil",
 theme_hint: "Soleil : couleurs vives et texte noir, pour un écran en plein soleil. Aucune application ne peut détecter la lumière autour de vous : le thème se choisit à la main et reste tel quel.",
-profile_edit_save: "Enregistrer les modifications", profile_edit_saved_msg: "Modifications enregistr\u00e9es.", profile_edit_title: "Votre profil",
+profile_edit_save: "Enregistrer les modifications", profile_edit_saved_msg: "Modifications enregistr\u00e9es.", profile_edit_title: "R\u00e9glages",
 profile_email: "E-mail", profile_error: "Remplissez le nom, le pseudo, l’e-mail, au moins une f\u00e9d\u00e9ration, votre arc principal, et acceptez la politique de confidentialit\u00e9.",
 profile_error_email_in_use: "Cet e-mail est d\u00e9j\u00e0 enregistr\u00e9. Utilisez \u00ab Se connecter \u00bb avec votre mot de passe.",
 profile_error_password_mismatch: "Les deux mots de passe ne correspondent pas.", profile_error_password_short: "Le mot de passe doit contenir au moins 6 caract\u00e8res.",
@@ -8601,6 +8756,31 @@ attr_frecce: "Pfeile",
 attr_spine: "Spine",
 attr_lunghezza: "Länge (Zoll)",
 attr_punta: "Spitze (grain)",
+attr_tipo_arco: "Bogentyp",
+attr_alette: "Federn",
+attr_inserto: "Insert",
+attr_dloop: "D-Loop",
+attr_sez_arco: "Bogen",
+attr_sez_accessori: "Zubehör",
+attr_allungo: "Auszugslänge (Zoll)",
+attr_peso_freccia: "Pfeilgewicht (Grain)",
+attr_sgancio: "Release",
+attr_rest: "Pfeilauflage",
+attr_mirino: "Visier",
+attr_scope: "Scope",
+attr_lente: "Linse (Vergrößerung)",
+attr_peep: "Peep",
+attr_stab_centrale: "Mittelstabilisator",
+attr_stab_laterali: "Seitenstabilisatoren",
+attr_vbar: "V-Bar",
+attr_clicker: "Klicker",
+attr_plunger: "Button (Plunger)",
+attr_extra: "Weitere Details",
+attr_extra_nome: "Was",
+attr_extra_valore: "Welches",
+attr_extra_aggiungi: "+ Detail hinzufügen",
+attr_extra_togli: "Entfernen",
+attr_niente_accessori: "An diesem Bogen gibt es nichts zu montieren.",
 attr_note: "Notizen",
 attr_salva: "Setup speichern",
 attr_serve_nome: "Gib ihm einen Namen, damit du es wiedererkennst.",
@@ -8870,7 +9050,7 @@ mode_nfas_biggame_desc:"NFAS Big Game Round: bis zu 3 Pfeile (nur der erste Tref
 profile_arco: "Hauptbogen", profile_edit_email_note: "Um deine Anmelde-E-Mail zu \u00e4ndern, wende dich an den Support.",
 theme_section_title: "Erscheinungsbild", theme_dark_label: "Dunkel", theme_light_label: "Hell", theme_sun_label: "Sonne",
 theme_hint: "Sonne: kräftige Farben und schwarze Schrift, für den Bildschirm in direkter Sonne. Keine App kann das Licht um dich herum erkennen: du wählst das Thema selbst, und es bleibt so.",
-profile_edit_save: "\u00c4nderungen speichern", profile_edit_saved_msg: "\u00c4nderungen gespeichert.", profile_edit_title: "Dein Profil",
+profile_edit_save: "\u00c4nderungen speichern", profile_edit_saved_msg: "\u00c4nderungen gespeichert.", profile_edit_title: "Einstellungen",
 profile_email: "E-Mail", profile_error: "F\u00fclle Name, Benutzername, E-Mail, mindestens einen Verband und deinen Hauptbogen aus und akzeptiere die Datenschutzerkl\u00e4rung.",
 profile_error_email_in_use: "Diese E-Mail ist bereits registriert. Nutze \u201eAnmelden\u201c mit deinem Passwort.",
 profile_error_password_mismatch: "Die beiden Passw\u00f6rter stimmen nicht \u00fcberein.", profile_error_password_short: "Das Passwort muss mindestens 6 Zeichen haben.",
@@ -9251,7 +9431,7 @@ setup_fed_label: "Federasyon",
 setup_pick_fed: "Onaylamak i\u00e7in federasyonunu se\u00e7.",
 setup_country_placeholder: "\u00dclke se\u00e7\u2026",
 setup_done_btn: "Onayla",
-menu_profile: "Profilim", profile_edit_title: "Profilin", profile_edit_email_note: "Giri\u015f e-postan\u0131 de\u011fi\u015ftirmek i\u00e7in destekle ileti\u015fime ge\u00e7.",
+menu_profile: "Profilim", profile_edit_title: "Ayarlar", profile_edit_email_note: "Giri\u015f e-postan\u0131 de\u011fi\u015ftirmek i\u00e7in destekle ileti\u015fime ge\u00e7.",
 profile_edit_save: "De\u011fi\u015fiklikleri kaydet", profile_edit_saved_msg: "De\u011fi\u015fiklikler kaydedildi.",
 resume_banner: "Devam eden bir parkurun var ({mode} \u00b7 {n} hedef).",
 resume_btn: "Parkura devam et",
@@ -9317,6 +9497,31 @@ attr_frecce: "Oklar",
 attr_spine: "Spine",
 attr_lunghezza: "Uzunluk (inç)",
 attr_punta: "Uç (grain)",
+attr_tipo_arco: "Yay tipi",
+attr_alette: "Ok t\u00fcy\u00fc",
+attr_inserto: "İnsert",
+attr_dloop: "D-loop",
+attr_sez_arco: "Yay",
+attr_sez_accessori: "Aksesuarlar",
+attr_allungo: "Çekiş boyu (inç)",
+attr_peso_freccia: "Ok ağırlığı (grain)",
+attr_sgancio: "Bırakıcı",
+attr_rest: "Ok yatağı",
+attr_mirino: "Nişangâh",
+attr_scope: "Skop",
+attr_lente: "Lens (büyütme)",
+attr_peep: "Peep",
+attr_stab_centrale: "Merkez denge çubuğu",
+attr_stab_laterali: "Yan denge çubukları",
+attr_vbar: "V-bar",
+attr_clicker: "Klikır",
+attr_plunger: "Plancır",
+attr_extra: "Diğer ayrıntılar",
+attr_extra_nome: "Ne",
+attr_extra_valore: "Hangisi",
+attr_extra_aggiungi: "+ Ayrıntı ekle",
+attr_extra_togli: "Kaldır",
+attr_niente_accessori: "Bu yayda takılacak bir şey yok.",
 attr_note: "Notlar",
 attr_salva: "Seti kaydet",
 attr_serve_nome: "Tanıyabilmen için bir ad ver.",
@@ -9961,7 +10166,7 @@ setup_fed_label: "\u0424\u0435\u0434\u0435\u0440\u0430\u0446\u0438\u044f",
 setup_pick_fed: "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0444\u0435\u0434\u0435\u0440\u0430\u0446\u0438\u044e, \u0447\u0442\u043e\u0431\u044b \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c.",
 setup_country_placeholder: "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0441\u0442\u0440\u0430\u043d\u0443\u2026",
 setup_done_btn: "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c",
-menu_profile: "Мой профиль", profile_edit_title: "Твой профиль", profile_edit_email_note: "Чтобы изменить email для входа, обратитесь в поддержку.",
+menu_profile: "Мой профиль", profile_edit_title: "Настройки", profile_edit_email_note: "Чтобы изменить email для входа, обратитесь в поддержку.",
 profile_edit_save: "Сохранить изменения", profile_edit_saved_msg: "Изменения сохранены.",
 resume_banner: "У вас есть незавершённый маршрут ({mode} · {n} мишеней).",
 resume_btn: "Продолжить маршрут",
@@ -10027,6 +10232,31 @@ attr_frecce: "Стрелы",
 attr_spine: "Жёсткость",
 attr_lunghezza: "Длина (дюймы)",
 attr_punta: "Наконечник (грены)",
+attr_tipo_arco: "Тип лука",
+attr_alette: "Оперение",
+attr_inserto: "Инсерт",
+attr_dloop: "D-петля",
+attr_sez_arco: "Лук",
+attr_sez_accessori: "Аксессуары",
+attr_allungo: "Растяжка (дюймы)",
+attr_peso_freccia: "Вес стрелы (грены)",
+attr_sgancio: "Релиз",
+attr_rest: "Полочка",
+attr_mirino: "Прицел",
+attr_scope: "Скоп",
+attr_lente: "Линза (увеличение)",
+attr_peep: "Пип",
+attr_stab_centrale: "Центральный стабилизатор",
+attr_stab_laterali: "Боковые стабилизаторы",
+attr_vbar: "V-бар",
+attr_clicker: "Кликер",
+attr_plunger: "Плунжер",
+attr_extra: "Другие детали",
+attr_extra_nome: "Что",
+attr_extra_valore: "Какой",
+attr_extra_aggiungi: "+ Добавить деталь",
+attr_extra_togli: "Убрать",
+attr_niente_accessori: "На этом луке нечего устанавливать.",
 attr_note: "Заметки",
 attr_salva: "Сохранить",
 attr_serve_nome: "Дайте название, чтобы узнавать.",
@@ -10671,7 +10901,7 @@ setup_fed_label: "Federaci\u00f3n",
 setup_pick_fed: "Elige tu federaci\u00f3n para confirmar.",
 setup_country_placeholder: "Elige el pa\u00eds\u2026",
 setup_done_btn: "Confirmar",
-menu_profile: "Mi perfil", profile_edit_title: "Tu perfil", profile_edit_email_note: "Para cambiar el email de acceso, contacta con soporte.",
+menu_profile: "Mi perfil", profile_edit_title: "Ajustes", profile_edit_email_note: "Para cambiar el email de acceso, contacta con soporte.",
 profile_edit_save: "Guardar cambios", profile_edit_saved_msg: "Cambios guardados.",
 resume_banner: "Tienes un recorrido en curso ({mode} \u00b7 {n} dianas).",
 resume_btn: "Reanudar recorrido",
@@ -10737,6 +10967,31 @@ attr_frecce: "Flechas",
 attr_spine: "Spine",
 attr_lunghezza: "Longitud (pulgadas)",
 attr_punta: "Punta (granos)",
+attr_tipo_arco: "Tipo de arco",
+attr_alette: "Plumas",
+attr_inserto: "Inserto",
+attr_dloop: "D-loop",
+attr_sez_arco: "Arco",
+attr_sez_accessori: "Accesorios",
+attr_allungo: "Apertura (pulgadas)",
+attr_peso_freccia: "Peso de la flecha (granos)",
+attr_sgancio: "Disparador",
+attr_rest: "Reposaflechas",
+attr_mirino: "Visor",
+attr_scope: "Scope",
+attr_lente: "Lente (aumento)",
+attr_peep: "Peep",
+attr_stab_centrale: "Estabilizador central",
+attr_stab_laterali: "Estabilizadores laterales",
+attr_vbar: "V-bar",
+attr_clicker: "Clicker",
+attr_plunger: "Botón (plunger)",
+attr_extra: "Otros detalles",
+attr_extra_nome: "Qué",
+attr_extra_valore: "Cuál",
+attr_extra_aggiungi: "+ Añadir detalle",
+attr_extra_togli: "Quitar",
+attr_niente_accessori: "En este arco no hay nada que montar.",
 attr_note: "Notas",
 attr_salva: "Guardar",
 attr_serve_nome: "Dale un nombre para reconocerla.",
@@ -11381,7 +11636,7 @@ setup_fed_label: "F\u00f6rbund",
 setup_pick_fed: "V\u00e4lj ditt f\u00f6rbund f\u00f6r att bekr\u00e4fta.",
 setup_country_placeholder: "V\u00e4lj land\u2026",
 setup_done_btn: "Bekr\u00e4fta",
-menu_profile: "Min profil", profile_edit_title: "Din profil", profile_edit_email_note: "F\u00f6r att \u00e4ndra inloggnings-e-posten, kontakta supporten.",
+menu_profile: "Min profil", profile_edit_title: "Inst\u00e4llningar", profile_edit_email_note: "F\u00f6r att \u00e4ndra inloggnings-e-posten, kontakta supporten.",
 profile_edit_save: "Spara \u00e4ndringar", profile_edit_saved_msg: "\u00c4ndringarna sparades.",
 resume_banner: "Du har en runda p\u00e5g\u00e5ende ({mode} \u00b7 {n} m\u00e5l).",
 resume_btn: "Forts\u00e4tt rundan",
@@ -11447,6 +11702,31 @@ attr_frecce: "Pilar",
 attr_spine: "Spine",
 attr_lunghezza: "Längd (tum)",
 attr_punta: "Spets (grain)",
+attr_tipo_arco: "Bågtyp",
+attr_alette: "Styrfj\u00e4drar",
+attr_inserto: "Insert",
+attr_dloop: "D-loop",
+attr_sez_arco: "Båge",
+attr_sez_accessori: "Tillbehör",
+attr_allungo: "Draglängd (tum)",
+attr_peso_freccia: "Pilvikt (grain)",
+attr_sgancio: "Release",
+attr_rest: "Pilhylla",
+attr_mirino: "Sikte",
+attr_scope: "Scope",
+attr_lente: "Lins (förstoring)",
+attr_peep: "Peep",
+attr_stab_centrale: "Centrumstabilisator",
+attr_stab_laterali: "Sidostabilisatorer",
+attr_vbar: "V-bar",
+attr_clicker: "Klicker",
+attr_plunger: "Plunger",
+attr_extra: "Övriga detaljer",
+attr_extra_nome: "Vad",
+attr_extra_valore: "Vilken",
+attr_extra_aggiungi: "+ Lägg till detalj",
+attr_extra_togli: "Ta bort",
+attr_niente_accessori: "På den här bågen finns inget att montera.",
 attr_note: "Anteckningar",
 attr_salva: "Spara",
 attr_serve_nome: "Ge den ett namn så du känner igen den.",
@@ -12091,7 +12371,7 @@ setup_fed_label: "Federatie",
 setup_pick_fed: "Kies je bond om te bevestigen.",
 setup_country_placeholder: "Kies het land\u2026",
 setup_done_btn: "Bevestigen",
-menu_profile: "Mijn profiel", profile_edit_title: "Jouw profiel", profile_edit_email_note: "Om je inlog-e-mail te wijzigen, neem contact op met support.",
+menu_profile: "Mijn profiel", profile_edit_title: "Instellingen", profile_edit_email_note: "Om je inlog-e-mail te wijzigen, neem contact op met support.",
 profile_edit_save: "Wijzigingen opslaan", profile_edit_saved_msg: "Wijzigingen opgeslagen.",
 resume_banner: "Je hebt een lopende ronde ({mode} \u00b7 {n} doelen).",
 resume_btn: "Ronde hervatten",
@@ -12157,6 +12437,31 @@ attr_frecce: "Pijlen",
 attr_spine: "Spine",
 attr_lunghezza: "Lengte (inch)",
 attr_punta: "Punt (grein)",
+attr_tipo_arco: "Boogtype",
+attr_alette: "Veren",
+attr_inserto: "Insert",
+attr_dloop: "D-loop",
+attr_sez_arco: "Boog",
+attr_sez_accessori: "Accessoires",
+attr_allungo: "Trekengte (inch)",
+attr_peso_freccia: "Pijlgewicht (grein)",
+attr_sgancio: "Release",
+attr_rest: "Pijlsteun",
+attr_mirino: "Vizier",
+attr_scope: "Scope",
+attr_lente: "Lens (vergroting)",
+attr_peep: "Peep",
+attr_stab_centrale: "Middenstabilisator",
+attr_stab_laterali: "Zijstabilisatoren",
+attr_vbar: "V-bar",
+attr_clicker: "Klikker",
+attr_plunger: "Plunger",
+attr_extra: "Overige details",
+attr_extra_nome: "Wat",
+attr_extra_valore: "Welke",
+attr_extra_aggiungi: "+ Detail toevoegen",
+attr_extra_togli: "Verwijderen",
+attr_niente_accessori: "Op deze boog is niets te monteren.",
 attr_note: "Notities",
 attr_salva: "Opslaan",
 attr_serve_nome: "Geef het een naam zodat je het herkent.",
@@ -14269,9 +14574,19 @@ app.style.paddingBottom = "92px";
    guardata, non per simmetria. */
 var FORM_SCREENS = { "profile-edit":1 };
 
+/* ATTREZZATURA E' USCITA DA QUI. (30/08/2026, dal brief: «su desktop occupa
+   una colonna stretta al centro mentre ci sono centinaia di pixel
+   inutilizzati ai lati».) Era in questa lista dal giorno che e' nata, e la
+   ragione era buona per quello che era allora: sei campi in fila, cioe' un
+   modulo. Adesso un assetto ha tre sezioni — arco, frecce, accessori — e un
+   elenco di assetti che sul computer stanno affiancati: dentro
+   `--col-lettura` diventavano un tubo verticale lungo una pagina e mezza.
+   Uscendo dalla lista prende `--shell`, che e' la larghezza di casa: non una
+   misura nuova inventata per una schermata. NESSUN'ALTRA SCHERMATA CAMBIA —
+   e' una riga tolta da un elenco, non una regola cambiata. */
 var NARROW_SCREENS = {
 "round":1, "summary":1, "registration":1, "setup":1, "profile-registration":1,
-"profile-edit":1, "attrezzatura":1, "profilo-pubblico":1, "training-setup":1, "gara-setup":1, "open-training-create":1,
+"profile-edit":1, "profilo-pubblico":1, "training-setup":1, "gara-setup":1, "open-training-create":1,
 "field-report":1, "dm-chat":1, "ot-chat":1, "session-follow":1, "info":1,
 "account-delete":1, "blocked-users":1
 };
@@ -16024,13 +16339,16 @@ card.appendChild(el('<div class="cp-select-row"><label>'+t("pp_bio")+'</label><t
 card.appendChild(el('<label class="checkbox-row sotto-campo"><input type="checkbox" id="peNumeri"'+(profile.mostraNumeri?' checked':'')+'><span><b>'+escapeHtml(t("pp_mostra_numeri"))+'</b><br><span class="nota">'+escapeHtml(t("pp_mostra_numeri_sub"))+'</span></span></label>'));
 setTimeout(function(){ var b = document.getElementById("peBio"); if(b) b.value = profile.bio || ""; }, 0);
 
-// L'ARCO PRINCIPALE RESTA UNA COSA SOLA — e' quello che compare accanto al
-// tuo nome agli altri arcieri. L'attrezzatura vera, con libbre, frecce e
-// spine, sta dietro questa porta: nel profilo sarebbero venti campi in mezzo
-// a chi vuole solo cambiare il nome utente.
-var attrBtn = el('<button class="btn btn-ghost btn-block menu-btn"><span class="menu-icon">'+navIcon("azarco",24,"due")+'</span><span class="menu-txt">'+t("attr_titolo")+'<span class="menu-sub">'+escapeHtml(t("attr_hint"))+'</span></span></button>');
-attrBtn.addEventListener("click", function(){ state.assettoAperto = null; state.screen = "attrezzatura"; save(); render(); });
-card.appendChild(attrBtn);
+/* L'ARCO PRINCIPALE RESTA UNA COSA SOLA — e' quello che compare accanto al
+   tuo nome agli altri arcieri, ed e' un campo del PROFILO: sta qui sopra,
+   fra il nome e la compagnia.
+   E QUI NON C'E' PIU' NESSUNA PORTA ALL'ATTREZZATURA. (30/08/2026, dal
+   brief: «una funzione = una porta».) Fino a oggi c'era una riga di menu che
+   apriva la pagina vera — non un secondo editor, ma comunque un secondo
+   ingresso alla stessa stanza. L'ingresso e' uno solo, ed e' la porta
+   «Attrezzatura» nell'atrio del Profilo, due tocchi piu' su. Un secondo
+   ingresso «per comodita'» costa una decisione ogni volta che si guarda
+   questa schermata, e insegna che le porte non sono affidabili. */
 
 card.appendChild(el('<h2 class="section-title" style="margin-top:var(--s-1);">'+t("theme_section_title")+'</h2>'));
 var themeSel = currentTheme();
@@ -16339,7 +16657,21 @@ var CASA_DI = {
   attivita: ["navhome",   "nav_home"]
 };
 var doveTorna = CASA_DI[state.tab] || CASA_DI.home;
-if(showHome){
+/* LE SOTTOPAGINE DEL PROFILO NON HANNO UN TASTO DI RITORNO. (30/08/2026,
+   dal brief: «non voglio due controlli che portano allo stesso punto — la
+   pastiglia con l'iniziale dev'essere l'UNICA PORTA AL PROFILO».)
+   Il 30/08 mattina il ritorno era stato ripulito del suo omino e si leggeva
+   «\u2190 Profilo»: pulito, ma ancora un secondo comando in fila con la
+   pastiglia «A», che porta esattamente li'.
+   LA GUARDIA CHIEDE ANCHE LA SCHEDA, non solo la schermata: allo Spazio
+   compagnia si arriva anche dalla scheda Compagnie e dagli avvisi, e li' il
+   ritorno deve restare — toglierlo lascerebbe chi arriva da fuori dentro una
+   stanza senza porta. Fuori da questa lista non si tocca nessun altro
+   ritorno gerarchico dell'app. */
+var SOTTOPAGINE_PROFILO = { "attrezzatura":1, "profile-edit":1, "club-space":1,
+                            "admin":1, "blocked-users":1 };
+var bastaLaPastiglia = (state.tab === "profilo") && (SOTTOPAGINE_PROFILO[state.screen] === 1);
+if(showHome && !bastaLaPastiglia){
 /* IL RITORNO NON PORTA PIU' IL SEGNO DELLA SCHEDA. (30/08/2026, dal brief
    di rifinitura: «omino Profilo + freccetta, graficamente incoerente».)
    La regola del 23/08 — «l'icona segue la scheda» — e' RITIRATA da Alessandro:
@@ -16421,9 +16753,22 @@ vai:function(){ state.screen = "messaggi"; save(); render(); }});
 {
 var chiSono = (state.profile && (state.profile.username || state.profile.nomeCognome)) || "";
 var iniz = chiSono.trim().charAt(0).toUpperCase();
+/* LA PASTIGLIA NON CAMBIAVA SCHERMATA. (30/08/2026, misurato: da
+   Attrezzatura, Impostazioni, Spazio compagnia e Amministrazione premerla
+   spostava soltanto `state.tab`, mentre `state.screen` restava dov'era —
+   quindi a schermo non succedeva niente. Da porta unica al Profilo non
+   funzionava affatto: il ritorno lo faceva il tasto accanto.)
+   Adesso riporta al menu, con le stesse due cautele del ritorno canonico:
+   durante un giro NON si azzera la schermata — si passa da `homeOverride`,
+   che mostra il menu e lascia vivo il percorso — e chi stava seguendo una
+   sessione la smette di seguire, o l'ascoltatore resterebbe attaccato. */
 azioni.push({ id:"profilo", glifo:"users", pieno:"navprofile",
   lettera: iniz || null, testo:t("nav_profile"), vai:function(){
-state.tab = "profilo"; save(); render();
+if(state.screen === "session-follow"){ stopFollowingSession(); state.followSessionId = null; }
+state.tab = "profilo";
+if(duranteGiro){ homeOverride = true; }
+else { state.screen = "menu"; }
+save(); render();
 }});
 }
 
@@ -18609,21 +18954,25 @@ else {
 var testaCard = profiloTestaCard();
 if(testaCard) wrap.appendChild(testaCard);
 
-/* L'ORDINE E' DAL GRANDE AL PICCOLO: chi sei, quanto hai fatto, cosa hai
-   fatto di recente, con cosa tiri, dove sei stato. Le porte vengono dopo:
-   sono comandi, e i comandi stanno sotto a quello che si guarda. */
-var contiCard = profiloContiCard();
-if(contiCard) wrap.appendChild(contiCard);
-var pbCard = profiloPrimatiCard();
-if(pbCard) wrap.appendChild(pbCard);
-var attCard = profiloAttivitaCard();
-if(attCard) wrap.appendChild(attCard);
-var setupCard = profiloSetupCard();
-if(setupCard) wrap.appendChild(setupCard);
-var doveCard = profiloDoveCard();
-if(doveCard) wrap.appendChild(doveCard);
+/* IL PROFILO E' UN ATRIO, NON UN CRUSCOTTO. (30/08/2026, dal brief di
+   Alessandro: «il Profilo deve essere un HUB, non una dashboard
+   statistica».)
+   Qui sopra c'erano cinque schede — i tre numeri, i primati, gli ultimi tre
+   giri, l'assetto predefinito, dove ho tirato — e spingevano le porte sotto
+   la piega: si apriva la propria pagina e la prima cosa da fare era
+   scorrere per trovare l'unica riga che serviva.
+   *Punteggi, storico, statistiche e giri appartengono al DIARIO*, che e' la
+   prima porta qui sotto. Nessun dato viene cancellato e nessuna funzione e'
+   stata rimossa: `profiloContiCard`, `profiloPrimatiCard`,
+   `profiloAttivitaCard`, `profiloSetupCard` e `profiloDoveCard` restano
+   definite e pronte per la schermata a cui appartengono. Qui semplicemente
+   non si chiamano piu'. */
 
-var profCard = el('<div class="card"></div>');
+/* LE PORTE HANNO UNA CLASSE LORO. (30/08/2026.) Non un componente nuovo:
+   `porte-profilo` e' un aggettivo su una scheda di porte che esiste gia',
+   e serve solo ad alzarle e a ingrandirne il testo da telefono. Da computer
+   la griglia a tessere di `.menu-cols` le prende gia' cosi' come sono. */
+var profCard = el('<div class="card porte-profilo"></div>');
 
 /* L'ORDINE E' QUELLO IN CUI SI ENTRA. (22/08/2026, dato da Alessandro:
    «diario, attrezzatura, spazio compagnia, poi impostazioni e persone
@@ -18638,8 +18987,15 @@ var profCard = el('<div class="card"></div>');
    porta e ritrovarsi davanti la stessa porta e' il segno che la stanza non ha
    un nome suo. Quella riga apre il modulo dei dati personali: si chiama
    Impostazioni, che e' cosa fa. */
+/* IL SEGNO PIENO SE C'E', IL GLIFO DI LINEA SE NON C'E'. (30/08/2026.)
+   `ICONE_PIENE` non ha un segno per l'amministrazione, e inventarne uno
+   sarebbe un disegno nuovo per una porta che ne ha gia' uno: `users`, le due
+   sagome, che e' esattamente quello che quel tasto porta oggi. `navIcon`
+   restituisce stringa vuota quando non conosce il nome, quindi il ripiego e'
+   una riga sola e non tocca nessuna delle porte esistenti. */
 function porta(segno, tinta, titolo, sotto, extra, click){
-var b = el('<button class="btn btn-ghost btn-block menu-btn'+(extra ? " "+extra : "")+'"><span class="menu-icon">'+navIcon(segno,24,tinta)+'</span><span class="menu-txt">'+titolo+'<span class="menu-sub">'+sotto+'</span></span></button>');
+var segnoHtml = navIcon(segno,24,tinta) || icon(segno,24);
+var b = el('<button class="btn btn-ghost btn-block menu-btn'+(extra ? " "+extra : "")+'"><span class="menu-icon">'+segnoHtml+'</span><span class="menu-txt">'+titolo+'<span class="menu-sub">'+sotto+'</span></span></button>');
 b.addEventListener("click", click);
 profCard.appendChild(b);
 return b;
@@ -18689,6 +19045,19 @@ porta("azbloccati", "unica", t("blk_list_title"), t("blk_list_sub"), "riga-atten
 state.screen = "blocked-users"; save(); render();
 });
 }
+
+/* AMMINISTRAZIONE E' UNA PORTA, NON UNA RIGA IN FONDO ALLE IMPOSTAZIONI.
+   (30/08/2026, dal brief.) Stava sotto lingua, federazione e Info come un
+   tasto piccolo fra i tasti piccoli: il pannello con sei schede — Accessi,
+   Richieste, Percorsi, Sessioni, Profili, Errori — e' una stanza, e le
+   stanze si aprono dalle porte. La serratura non cambia: e' la stessa
+   `currentUser.email === ADMIN_EMAIL` di prima, e per tutti gli altri qui
+   non c'e' niente da vedere. */
+if(currentUser && currentUser.email === ADMIN_EMAIL){
+porta("users", "unica", t("menu_admin"), t("admin_title"), null, function(){
+adminTab = "accessi"; state.screen = "admin"; save(); render();
+});
+}
 wrap.appendChild(profCard);
 
 /* SUBITO DOPO LE PORTE, PRIMA DELLE IMPOSTAZIONI. Non e' una preferenza da
@@ -18714,11 +19083,6 @@ var infoBtn = el('<button class="btn btn-ghost btn-block btn-sm">'+icon("info",1
 infoBtn.addEventListener("click", function(){ state.screen = "info"; save(); render(); });
 setCard.appendChild(infoBtn);
 
-if(currentUser && currentUser.email === ADMIN_EMAIL){
-var adminBtn = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);">'+icon("users",16)+' '+t("menu_admin")+'</button>');
-adminBtn.addEventListener("click", function(){ adminTab = "accessi"; state.screen = "admin"; save(); render(); });
-setCard.appendChild(adminBtn);
-}
 // Privacy e termini: devono essere raggiungibili dall'app, non solo dallo store
 var legalRow = el('<div style="display:flex;gap:var(--s-2);margin-top:var(--s-2);"></div>');
 legalRow.appendChild(el('<a class="btn btn-ghost btn-sm" href="/privacy.html?lang='+(state.lang||"it")+'" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">'+t("legal_privacy")+'</a>'));
@@ -21673,7 +22037,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-08-30-ritorno";
+var BUILD_STAMP = "2026-08-30-profilo-assetti";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -21682,7 +22046,7 @@ var BUILD_STAMP = "2026-08-30-ritorno";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-29-verifica";
+var BUILD_PARENT = "2026-08-30-ritorno";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -21887,6 +22251,53 @@ if(caricaAttrezzi().length) return;
 try{ localStorage.setItem(ATTREZZI_KEY, JSON.stringify(dati.attrezzatura)); }catch(e){}
 }
 function attrezziVivi(){ return caricaAttrezzi().filter(function(a){ return !a.archiviato; }); }
+
+/* ══ COSA SI MONTA SU QUALE ARCO ══════════════════════════════════════════
+   (30/08/2026, dal brief: «non mostrare campi compound inutili a chi usa
+   longbow/storico/tradizionale».)
+   La tabella sta in un posto solo perche' la domanda e' una sola, e viene
+   fatta da tre parti diverse: il modulo che disegna i campi, il salvataggio
+   che decide cosa scrivere, e il banco che chiede se un longbow ha un peep.
+   Tre `if` sparsi si sarebbero disallineati alla prima aggiunta.
+
+   LONGBOW E STORICO HANNO LA LISTA VUOTA, E NON E' UNA DIMENTICANZA: su un
+   arco di legno non si monta niente di tutto questo, e una casella vuota che
+   non si potra' mai riempire non e' un campo facoltativo — e' una domanda a
+   cui l'app sa gia' che non c'e' risposta. Per quello che si monta davvero e
+   qui non e' previsto c'e' «Altri dettagli», che e' la ragione per cui
+   esiste. */
+var ACCESSORI_DI = {
+  compound: ["sgancio","dloop","rest","mirino","scope","lente","peep","stabCentrale","stabLaterali","vbar"],
+  ricurvo:  ["rest","mirino","clicker","plunger","stabCentrale","stabLaterali","vbar"],
+  longbow:  [],
+  storico:  []
+};
+var ACCESSORIO_ETICHETTA = {
+  sgancio:"attr_sgancio", dloop:"attr_dloop", rest:"attr_rest", mirino:"attr_mirino", scope:"attr_scope",
+  lente:"attr_lente", peep:"attr_peep", stabCentrale:"attr_stab_centrale",
+  stabLaterali:"attr_stab_laterali", vbar:"attr_vbar",
+  clicker:"attr_clicker", plunger:"attr_plunger"
+};
+var ACCESSORI_TUTTI = Object.keys(ACCESSORIO_ETICHETTA);
+function accessoriDi(arco){ return ACCESSORI_DI[arco] || []; }
+
+/* ══ LE FRECCE, LETTE DA UN CAMPO SOLO O DA DUE ═══════════════════════════
+   (30/08/2026.) Fino a ieri le frecce erano UN campo di testo libero —
+   `frecce`, con dentro «Easton X10», cioe' marca e modello attaccati. Il
+   brief ne chiede due. I due campi nuovi sono `frecceMarca` e
+   `frecceModello`, e **il vecchio campo non viene ne' cancellato ne'
+   reinterpretato**: resta scritto, e continua a contenere quello che ha
+   sempre contenuto — marca e modello insieme. Chi lo legge senza sapere
+   niente dei campi nuovi (la scheda del setup nel Profilo, i giri gia'
+   tirati) non si accorge di niente.
+   Un assetto vecchio si apre col suo «Easton X10» dentro Marca, che e' il
+   posto meno sbagliato: nessuno puo' sapere dove finisce la marca e comincia
+   il modello, e indovinarlo con uno spazio spezzerebbe «Black Eagle Carbon
+   Impact» nel punto sbagliato. */
+function frecceDi(a){
+  if(!a) return "";
+  return [a.frecceMarca || a.frecce || "", a.frecceModello || ""].filter(Boolean).join(" ");
+}
 function assettoPredefinito(){
 var vivi = attrezziVivi();
 if(!vivi.length) return null;
@@ -21980,7 +22391,7 @@ card.appendChild(testaRiga);
 var righe = [];
 var primo = [PROFILE_BOW_LABEL[a.arco] || "", a.marca, a.modello].filter(Boolean).join(" \u00b7 ");
 var secondo = [a.libbre ? a.libbre + " lb" : "", a.mano ? t(a.mano === "sx" ? "attr_mancino" : "attr_destro") : ""].filter(Boolean).join(" \u00b7 ");
-var terzo = [a.frecce, a.spine ? "spine " + a.spine : "", a.lunghezza ? a.lunghezza + '"' : "", a.punta ? a.punta + " gr" : ""].filter(Boolean).join(" \u00b7 ");
+var terzo = [frecceDi(a), a.spine ? "spine " + a.spine : "", a.lunghezza ? a.lunghezza + '"' : "", a.punta ? a.punta + " gr" : ""].filter(Boolean).join(" \u00b7 ");
 [primo, secondo, terzo].forEach(function(r){ if(r) righe.push(r); });
 righe.forEach(function(r){ card.appendChild(el('<div class="attr-riga">'+escapeHtml(r)+'</div>')); });
 if(a.note) card.appendChild(el('<div class="attr-note">'+escapeHtml(a.note)+'</div>'));
@@ -22084,11 +22495,20 @@ azioni.appendChild(del);
 card.appendChild(azioni);
 return card;
 }
-vivi.forEach(function(a){ wrap.appendChild(scheda(a)); });
+/* GLI ASSETTI SI AFFIANCANO. (30/08/2026.) Erano uno sotto l'altro anche
+   sul computer, e con tre archi la pagina diventava un tubo lungo due
+   schermate. `.attr-griglia` non fa niente sul telefono — la griglia vive
+   dentro la rifinitura da 900px in su — quindi l'impilamento su telefono non
+   e' una regola in piu': e' quello che i blocchi fanno da soli. */
+var grigliaVivi = el('<div class="attr-griglia"></div>');
+vivi.forEach(function(a){ grigliaVivi.appendChild(scheda(a)); });
+wrap.appendChild(grigliaVivi);
 if(vecchi.length){
 wrap.appendChild(el('<h2 class="section-title stacco">'+t("attr_archiviati")+'</h2>'));
 wrap.appendChild(el('<div class="nota stacco-3">'+escapeHtml(t("attr_archiviati_hint"))+'</div>'));
-vecchi.forEach(function(a){ wrap.appendChild(scheda(a)); });
+var grigliaVecchi = el('<div class="attr-griglia"></div>');
+vecchi.forEach(function(a){ grigliaVecchi.appendChild(scheda(a)); });
+wrap.appendChild(grigliaVecchi);
 }
 return wrap;
 }
@@ -22096,86 +22516,199 @@ return wrap;
 function assettoForm(quale){
 var nuovo = (quale === "nuovo");
 var a = nuovo ? { id:"as"+Date.now(), nome:"", arco:(state.profile&&state.profile.arco)||null, mano:"dx" } : (assettoPerId(quale) || { id:quale });
+
+/* ══ TRE SEZIONI, E I VALORI CHE VIVONO FUORI DAI CAMPI ═══════════════════
+   (30/08/2026, dal brief.) Il modulo era una fila unica di undici campi con
+   quattro chiusi dentro un «Dettagli tecnici». Adesso sono tre sezioni con un
+   nome — Arco, Frecce, Accessori — e sul computer stanno affiancate.
+
+   E GLI ACCESSORI SI RIDISEGNANO QUANDO CAMBIA L'ARCO: e' l'unico modo
+   perche' un longbow non abbia un peep. Ma se i valori stessero SOLO dentro
+   gli `<input>`, ridisegnare li butterebbe via — chi passa da Compound a
+   Ricurvo e ci ripensa perderebbe tutto quello che ha scritto. Quindi i
+   valori stanno in `vals`, si LEGGE prima di ogni ridisegno, e si ridisegna
+   da li'.
+   *E i campi di un arco che non e' piu' quello scelto restano in `vals` e
+   vengono risalvati:* cambiare arco per sbaglio non cancella niente. */
+var CAMPI_TESTO = ["nome","marca","modello","libbre","allungo","note",
+                   "frecceMarca","frecceModello","spine","lunghezza","punta",
+                   "pesoFreccia","alette","inserto","frecceNote"];
+var TUTTI_I_CAMPI = CAMPI_TESTO.concat(ACCESSORI_TUTTI);
+var vals = {};
+TUTTI_I_CAMPI.forEach(function(k){ vals[k] = (a[k] == null ? "" : String(a[k])); });
+/* Un assetto scritto prima di oggi ha le frecce in un campo solo: si apre
+   dentro Marca, che e' il posto meno sbagliato. Spezzarlo a uno spazio
+   romperebbe «Black Eagle Carbon Impact» nel punto sbagliato. */
+if(!vals.frecceMarca && a.frecce) vals.frecceMarca = String(a.frecce);
+var extra = [];
+if(a.extra && a.extra.length) a.extra.forEach(function(x){ extra.push({ n:String(x.n||""), v:String(x.v||"") }); });
+var arcoSel = a.arco || null;
+var manoSel = a.mano || "dx";
+
 var card = el('<div class="card"></div>');
 card.appendChild(el('<h2 class="section-title">'+t(nuovo ? "attr_nuovo" : "attr_modifica")+'</h2>'));
-function campo(chiave, etichetta, valore, tipo, ph){
-card.appendChild(el('<div class="cp-select-row"><label>'+escapeHtml(etichetta)+'</label><input type="'+(tipo||"text")+'" id="as_'+chiave+'" value="'+escapeHtml(valore==null?"":String(valore))+'" placeholder="'+escapeHtml(ph||"")+'"></div>'));
+
+function leggi(){
+TUTTI_I_CAMPI.forEach(function(k){
+var nodo = document.getElementById("as_" + k);
+if(nodo) vals[k] = String(nodo.value || "").trim();
+});
+var righe = card.querySelectorAll(".attr-extra-riga");
+if(righe.length){
+extra = [];
+Array.prototype.forEach.call(righe, function(r){
+var cn = r.querySelector('[data-ex="n"]'), cv = r.querySelector('[data-ex="v"]');
+extra.push({ n:String((cn && cn.value) || "").trim(), v:String((cv && cv.value) || "").trim() });
+});
 }
-campo("nome", t("attr_nome"), a.nome, "text", t("attr_nome_ph"));
+}
 
-card.appendChild(el('<label class="attr-lbl">'+t("profile_arco")+'</label>'));
-var bowRow = el('<div class="chip-group attr-archi"></div>');
-var arcoSel = a.arco || null;
-Object.keys(PROFILE_BOW_LABEL).forEach(function(k){
-var chip = el('<div class="chip">'+PROFILE_BOW_LABEL[k]+'</div>');
-if(k === arcoSel) chip.classList.add("active");
-chip.addEventListener("click", function(){
-Array.prototype.forEach.call(bowRow.querySelectorAll(".chip"), function(x){ x.classList.remove("active"); });
-chip.classList.add("active"); arcoSel = k;
-});
-bowRow.appendChild(chip);
-});
-card.appendChild(bowRow);
-
-campo("marca", t("attr_marca"), a.marca, "text", "Bearpaw");
-campo("modello", t("attr_modello"), a.modello, "text", "Black Kiowa");
-campo("libbre", t("attr_libbre"), a.libbre, "number", "45");
-
-card.appendChild(el('<label class="attr-lbl">'+t("attr_mano")+'</label>'));
-var manoRow = el('<div class="chip-group attr-archi"></div>');
-var manoSel = a.mano || "dx";
-[["dx", t("attr_destro")], ["sx", t("attr_mancino")]].forEach(function(p){
+function campo(dove, chiave, etichetta, tipo, ph){
+dove.appendChild(el('<div class="cp-select-row"><label for="as_'+chiave+'">'+escapeHtml(etichetta)+'</label><input type="'+(tipo||"text")+'" id="as_'+chiave+'" value="'+escapeHtml(vals[chiave]||"")+'" placeholder="'+escapeHtml(ph||"")+'"></div>'));
+}
+/* Il valore di un `<textarea>` non sta in un attributo: si scrive sul nodo
+   appena creato. Prima si faceva con un `setTimeout`, che funzionava e
+   dipendeva dal fatto che nessuno ridisegnasse nel frattempo. */
+function area(dove, chiave, etichetta){
+var r = el('<div class="cp-select-row"><label for="as_'+chiave+'">'+escapeHtml(etichetta)+'</label><textarea class="input-field" id="as_'+chiave+'" rows="2"></textarea></div>');
+r.querySelector("textarea").value = vals[chiave] || "";
+dove.appendChild(r);
+}
+function pastiglie(dove, coppie, scelto, quando){
+var riga = el('<div class="chip-group attr-archi"></div>');
+coppie.forEach(function(p){
 var chip = el('<div class="chip">'+escapeHtml(p[1])+'</div>');
-if(p[0] === manoSel) chip.classList.add("active");
+if(p[0] === scelto) chip.classList.add("active");
 chip.addEventListener("click", function(){
-Array.prototype.forEach.call(manoRow.querySelectorAll(".chip"), function(x){ x.classList.remove("active"); });
-chip.classList.add("active"); manoSel = p[0];
+Array.prototype.forEach.call(riga.querySelectorAll(".chip"), function(x){ x.classList.remove("active"); });
+chip.classList.add("active"); quando(p[0]);
 });
-manoRow.appendChild(chip);
+riga.appendChild(chip);
 });
-card.appendChild(manoRow);
+dove.appendChild(riga);
+}
 
-/* ══ LE MISURE DELLE FRECCE SI APRONO, NON SI SUBISCONO ═══════════════════
-   (25/08/2026.) Il modulo chiedeva tutto di seguito: nome, arco, marca,
-   modello, libbre, mano, frecce, spine, lunghezza, punta, note. Undici campi
-   in fila. Chi ha comprato l'arco il mese scorso lo spine non lo sa, e undici
-   caselle vuote non insegnano niente: insegnano che l'app e' per gli altri.
+var griglia = el('<div class="attr-form-griglia"></div>');
+card.appendChild(griglia);
+function sezione(titolo){
+var sez = el('<section class="attr-sezione"></section>');
+sez.appendChild(el('<h2 class="section-title">'+escapeHtml(titolo)+'</h2>'));
+griglia.appendChild(sez);
+return sez;
+}
 
-   Le prime sei restano fuori — sono quelle a cui chiunque sa rispondere e
-   sono quelle che compaiono nell'elenco. Le quattro delle frecce stanno
-   dentro un `<details>`, chiuse se sono vuote e **gia' aperte se qualcosa e'
-   scritto**: chi le ha compilate non deve ritrovarle nascoste.
+// ── A. L'ARCO ─────────────────────────────────────────────────────────────
+var sArco = sezione(t("attr_sez_arco"));
+campo(sArco, "nome", t("attr_nome"), "text", t("attr_nome_ph"));
+/* «TIPO DI ARCO», NON «ARCO PRINCIPALE». (30/08/2026, dal brief.) La riga
+   riusava `profile_arco`, che e' l'etichetta di un campo del PROFILO — quello
+   che compare accanto al tuo nome agli altri arcieri, e ce n'e' uno solo.
+   Qui invece si sta dicendo di che tipo e' QUESTO assetto, e di assetti se ne
+   hanno tre. *Due domande diverse non possono avere la stessa etichetta:
+   chi ha un compound da gara e un longbow da caccia leggeva «Arco principale»
+   due volte e non poteva capire quale delle due contasse.* La chiave del
+   profilo resta dov'era e non cambia di un carattere. */
+sArco.appendChild(el('<label class="attr-lbl">'+t("attr_tipo_arco")+'</label>'));
+pastiglie(sArco, Object.keys(PROFILE_BOW_LABEL).map(function(k){ return [k, PROFILE_BOW_LABEL[k]]; }),
+arcoSel, function(k){ leggi(); arcoSel = k; disegnaPerArco(); });
+campo(sArco, "marca", t("attr_marca"), "text", "Bearpaw");
+campo(sArco, "modello", t("attr_modello"), "text", "Black Kiowa");
+campo(sArco, "libbre", t("attr_libbre"), "number", "45");
+sArco.appendChild(el('<label class="attr-lbl">'+t("attr_mano")+'</label>'));
+pastiglie(sArco, [["dx", t("attr_destro")], ["sx", t("attr_mancino")]], manoSel, function(k){ manoSel = k; });
+var slotAllungo = el('<div></div>');
+sArco.appendChild(slotAllungo);
+area(sArco, "note", t("attr_note"));
 
-   Non e' un campo in meno: e' lo stesso modulo che smette di chiedere tutto
-   insieme. I nomi degli `input` non cambiano, quindi il salvataggio e ogni
-   assetto gia' registrato restano quelli di prima. */
-var haFrecce = !!(a.frecce || a.spine || a.lunghezza || a.punta);
-var avanzate = el('<details class="attr-avanzate"'+(haFrecce ? " open" : "")+'></details>');
-avanzate.appendChild(el('<summary>'+escapeHtml(t("attr_dettagli"))+'</summary>'));
-var dentroAv = el('<div></div>');
-avanzate.appendChild(dentroAv);
-card.appendChild(avanzate);
-var campoIn = function(dove, chiave, etichetta, valore, tipo, ph){
-dove.appendChild(el('<div class="cp-select-row"><label>'+escapeHtml(etichetta)+'</label><input type="'+(tipo||"text")+'" id="as_'+chiave+'" value="'+escapeHtml(valore==null?"":String(valore))+'" placeholder="'+escapeHtml(ph||"")+'"></div>'));
-};
-campoIn(dentroAv, "frecce", t("attr_frecce"), a.frecce, "text", "Easton X10");
-campoIn(dentroAv, "spine", t("attr_spine"), a.spine, "text", "500");
-campoIn(dentroAv, "lunghezza", t("attr_lunghezza"), a.lunghezza, "text", "28");
-campoIn(dentroAv, "punta", t("attr_punta"), a.punta, "number", "100");
-card.appendChild(el('<div class="cp-select-row"><label>'+t("attr_note")+'</label><textarea class="input-field" id="as_note" rows="2"></textarea></div>'));
+// ── B. LE FRECCE ──────────────────────────────────────────────────────────
+var sFrecce = sezione(t("attr_frecce"));
+campo(sFrecce, "frecceMarca", t("attr_marca"), "text", "Easton");
+campo(sFrecce, "frecceModello", t("attr_modello"), "text", "X10");
+campo(sFrecce, "spine", t("attr_spine"), "text", "500");
+campo(sFrecce, "lunghezza", t("attr_lunghezza"), "text", "28");
+campo(sFrecce, "punta", t("attr_punta"), "number", "100");
+campo(sFrecce, "pesoFreccia", t("attr_peso_freccia"), "number", "420");
+campo(sFrecce, "alette", t("attr_alette"), "text", "Bohning Blazer 2\"");
+campo(sFrecce, "inserto", t("attr_inserto"), "text", "HIT 8-32");
+area(sFrecce, "frecceNote", t("attr_note"));
+
+// ── C. GLI ACCESSORI, che dipendono dall'arco ─────────────────────────────
+var sAcc = sezione(t("attr_sez_accessori"));
+var slotAcc = el('<div></div>');
+sAcc.appendChild(slotAcc);
+/* ALTRI DETTAGLI, E NON E' UN INVENTARIO. Due caselle per riga, quante se ne
+   vogliono: serve a non aver bisogno di quaranta campi fissi per l'accessorio
+   che uscira' l'anno prossimo. Le righe vuote non vengono salvate.
+   STA SOTTO LE TRE COLONNE, NON DENTRO UNA. (30/08/2026, visto fotografando:
+   due caselle e un tasto dentro un terzo di pagina diventano tre francobolli,
+   e «Sgancio di riserva» si legge «Sgancio di rise».) Riguarda tutto
+   l'assetto, non i soli accessori: il posto giusto e' sotto, per intero. */
+var sottoGriglia = el('<div class="attr-extra-blocco"></div>');
+card.appendChild(sottoGriglia);
+sottoGriglia.appendChild(el('<label class="attr-lbl">'+t("attr_extra")+'</label>'));
+var boxExtra = el('<div></div>');
+sottoGriglia.appendChild(boxExtra);
+var piu = el('<button type="button" class="btn btn-ghost btn-block btn-sm">'+escapeHtml(t("attr_extra_aggiungi"))+'</button>');
+piu.addEventListener("click", function(){ leggi(); extra.push({ n:"", v:"" }); disegnaExtra(); });
+sottoGriglia.appendChild(piu);
+
+function disegnaPerArco(){
+/* L'ALLUNGO VALE PER TUTTI GLI ARCHI. (30/08/2026, corretto da Alessandro.)
+   Stamattina era stato riservato a compound e ricurvo, col ragionamento che
+   su un longbow non c'e' un punto di trazione fisso. *Il ragionamento era
+   giusto e la conclusione no:* chi tira di istintivo il proprio allungo lo
+   conosce eccome, ed e' il numero con cui compra le frecce. Un campo
+   facoltativo che qualcuno lascia vuoto costa una riga bianca; un campo che
+   non c'e' costa un dato che non si puo' scrivere da nessuna parte.
+   Sta qui dentro e non fra i campi fissi perche' la sua posizione — dopo la
+   mano, prima delle note — e' quella, e ridisegnare la sezione lo rimette
+   al suo posto senza doverlo spostare. */
+slotAllungo.innerHTML = "";
+campo(slotAllungo, "allungo", t("attr_allungo"), "text", "28");
+slotAcc.innerHTML = "";
+var lista = accessoriDi(arcoSel);
+if(!lista.length){
+slotAcc.appendChild(el('<div class="attr-vuoto-acc">'+escapeHtml(t("attr_niente_accessori"))+'</div>'));
+return;
+}
+lista.forEach(function(k){ campo(slotAcc, k, t(ACCESSORIO_ETICHETTA[k]), "text", ""); });
+}
+function disegnaExtra(){
+boxExtra.innerHTML = "";
+extra.forEach(function(x, i){
+var riga = el('<div class="attr-extra-riga"></div>');
+riga.appendChild(el('<div class="cp-select-row"><label>'+escapeHtml(t("attr_extra_nome"))+'</label><input type="text" data-ex="n" value="'+escapeHtml(x.n)+'"></div>'));
+riga.appendChild(el('<div class="cp-select-row"><label>'+escapeHtml(t("attr_extra_valore"))+'</label><input type="text" data-ex="v" value="'+escapeHtml(x.v)+'"></div>'));
+var via = el('<button type="button" class="btn btn-ghost btn-sm">'+escapeHtml(t("attr_extra_togli"))+'</button>');
+via.addEventListener("click", function(){ leggi(); extra.splice(i, 1); disegnaExtra(); });
+riga.appendChild(via);
+boxExtra.appendChild(riga);
+});
+}
+disegnaPerArco();
+disegnaExtra();
 
 var err = el('<div class="attr-err"></div>');
 card.appendChild(err);
 var salva = el('<button class="btn btn-primary btn-block">'+t("attr_salva")+'</button>');
 salva.addEventListener("click", function(){
-function v(k){ var n = document.getElementById("as_"+k); return n ? String(n.value||"").trim() : ""; }
-var nome = v("nome");
-if(!nome){ err.textContent = t("attr_serve_nome"); return; }
+leggi();
+if(!vals.nome){ err.textContent = t("attr_serve_nome"); return; }
 var l = caricaAttrezzi();
 var dentro = l.filter(function(x){ return x.id === a.id; })[0];
+/* L'ID NON SI TOCCA MAI: e' scritto dentro i giri gia' tirati, ed e' l'unico
+   filo che li lega a questo assetto. */
 if(!dentro){ dentro = { id: a.id, archiviato:false, creato: Date.now() }; l.push(dentro); }
-dentro.nome = nome; dentro.arco = arcoSel; dentro.mano = manoSel;
-["marca","modello","libbre","frecce","spine","lunghezza","punta","note"].forEach(function(k){ dentro[k] = v(k) || null; });
+dentro.nome = vals.nome; dentro.arco = arcoSel; dentro.mano = manoSel;
+TUTTI_I_CAMPI.forEach(function(k){ if(k !== "nome") dentro[k] = vals[k] || null; });
+/* IL CAMPO VECCHIO RESTA SCRITTO, COL SIGNIFICATO DI SEMPRE. `frecce` ha
+   sempre contenuto marca e modello insieme, e continua a contenerli: lo
+   leggono la scheda del setup e chiunque non sappia niente dei due campi
+   nuovi. Non e' un doppione da tenere in vita per sempre — e' la ragione per
+   cui questo cambio non ha bisogno di nessuna migrazione. */
+dentro.frecce = [vals.frecceMarca, vals.frecceModello].filter(Boolean).join(" ") || null;
+var puliti = extra.filter(function(x){ return x.n || x.v; });
+if(puliti.length) dentro.extra = puliti; else delete dentro.extra;
 // il primo assetto e' anche il predefinito: senza, ci sarebbe un elenco di
 // uno in cui nessuno e' quello buono.
 if(!l.filter(function(x){ return x.predefinito && !x.archiviato; }).length) dentro.predefinito = true;
@@ -22186,9 +22719,6 @@ card.appendChild(salva);
 var indietro = el('<button class="btn btn-ghost btn-block fin-azione">'+t("back_step")+'</button>');
 indietro.addEventListener("click", function(){ state.assettoAperto = null; save(); render(); });
 card.appendChild(indietro);
-setTimeout(function(){
-var nt = document.getElementById("as_note"); if(nt) nt.value = a.note || "";
-}, 0);
 return card;
 }
 
@@ -24642,11 +25172,12 @@ card.appendChild(el('<div class="pp-riga">'+riga+'</div>'));
 }
 if(p.compagniaNome) card.appendChild(el('<div class="pp-riga">'+escapeHtml(p.compagniaNome)+'</div>'));
 
-var azioni = el('<div class="mp-azioni"></div>');
-var mod = el('<button class="btn btn-ghost btn-sm">'+t("prof_edit_btn")+'</button>');
-mod.addEventListener("click", function(){ state.screen = "profile-edit"; save(); render(); });
-azioni.appendChild(mod);
-card.appendChild(azioni);
+/* NIENTE «MODIFICA PROFILO» QUI. (30/08/2026, dal brief: «una funzione =
+   una porta».) Il tasto apriva `profile-edit`, cioe' esattamente dove porta
+   la porta «Impostazioni» due dita piu' sotto. Due comandi per lo stesso
+   posto non sono una comodita': sono una scelta in piu' da fare ogni volta,
+   e la seconda volta si prova quello sbagliato. La testa adesso e' una
+   carta d'identita' e basta: si legge, non si tocca. */
 return card;
 }
 
