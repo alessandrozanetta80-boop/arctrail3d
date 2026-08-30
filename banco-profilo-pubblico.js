@@ -109,7 +109,7 @@ async function apri(browser, storico) {
         spento.nomeCognome === "Alessandro Zanetta" && spento.compagnia === "01VERB" && spento.arco === "longbow",
         JSON.stringify(spento));
 
-  console.log("\n  CON L'INTERRUTTORE, I QUATTRO NUMERI SONO QUELLI VERI");
+  console.log("\n  CON L'INTERRUTTORE, I TRE NUMERI SONO QUELLI VERI");
   var acceso = await a.page.evaluate(function () {
     return window.__pp.dati({ username: "alez", nomeCognome: "Alessandro Zanetta",
       compagnia: "01VERB", compagniaNome: "Verbano", mostraNumeri: true });
@@ -118,8 +118,18 @@ async function apri(browser, storico) {
   prova("tre giri", acceso.numeri && acceso.numeri.giri === 3, JSON.stringify(acceso.numeri));
   prova("quarantotto piazzole", acceso.numeri && acceso.numeri.piazzole === 48, JSON.stringify(acceso.numeri));
   prova("due campi diversi, non tre giri", acceso.numeri && acceso.numeri.campi === 2, JSON.stringify(acceso.numeri));
-  prova("e la media e' per piazzola, non per giro",
-        acceso.numeri && acceso.numeri.media > 12 && acceso.numeri.media < 15, JSON.stringify(acceso.numeri));
+  /* LA MEDIA NON SI PUBBLICA PIU', ED È VOLUTO. (Corretto il 30/08/2026.)
+     Fino a qui questa riga chiedeva che `numeri.media` ci fosse e stesse fra
+     12 e 15. Il 29/08 la media e' uscita dalla carta pubblica — sta scritto
+     accanto a `mieiNumeriPubblici` — perche' senza il contesto della gara non
+     dice niente; e continuava a finire in Firestore anche dopo essere sparita
+     dallo schermo. *Un dato che nessuno vede piu' ma che si continua a
+     pubblicare e' peggio di uno visibile: nessuno lo controlla.*
+     Adesso la prova e' rovesciata: la media NON deve uscire di qui. Se un
+     giorno qualcuno la rimette, questa riga diventa rossa, che e'
+     esattamente il suo mestiere. */
+  prova("la media non esce piu': non si pubblica un numero senza contesto",
+        acceso.numeri && acceso.numeri.media === undefined, JSON.stringify(acceso.numeri));
 
   console.log("\n  E QUELLO CHE NON C'E' NON SI INVENTA");
   var b = await apri(browser, []);

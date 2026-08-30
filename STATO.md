@@ -23,10 +23,10 @@ più vecchio chiama `index.html` l'app.
 | file | cos'è | timbro | copia buona |
 |---|---|---|---|
 | `index.html` | la vetrina, porta di casa | `2026-08-29-sfsf` | **GitHub** |
-| `app.html` | l'app | `2026-08-29-verifica` | **GitHub** |
+| `app.html` | l'app | `2026-08-30-ritorno` | **GitHub** |
 | `compagnie-data.js` | le societa', 4912 in sette paesi | — | **GitHub** |
 | `marketplace.html` | il mercatino | `2026-08-25-radice` | **GitHub** |
-| `sw.js` | | `arctrail3d-v156` | **GitHub** |
+| `sw.js` | | `arctrail3d-v157` | **GitHub** |
 | `favicon.ico` | l'icona per chi guarda da fuori | — | GitHub, caricata a mano |
 | cinque `vetrina-*.webp` | le foto della vetrina | — | GitHub, caricate a mano |
 | `index.js` | | — | GitHub *(si pubblica dal Cloud Shell)* |
@@ -72,6 +72,10 @@ In una chat nuova può mancare `jsdom`:
 `npm install jsdom`. Se poi playwright dice che il browser non esiste, la copia
 locale è senza browser: si allinea la versione di `playwright` a quella del
 browser presente in `/opt/pw-browsers` invece di scaricarne uno nuovo.
+E se la rete del contenitore blocca `gstatic.com`, **`banco-porta` non può
+passare**: senza Firebase l'app su stato vergine disegna — giustamente —
+«Connessione non riuscita». Non è un rosso dell'app: si prova da una macchina
+con la rete vera. *(Verificato il 30/08.)*
 
 **Il guardiano dello stile non è a zero, ed è normale.** Il tetto in
 `tetto-token.json` non sale mai. I numeri li stampa lui: **qui non si ricopiano.**
@@ -175,6 +179,12 @@ propongono come lavoro finché non è Alessandro a riaprirle.
   coi dati veri davanti.* **«La mia regione» resterà un filtro per regione
   finché non ci saranno coordinate: il nome vero di «vicino» costa i dati, non
   il codice.**
+- **C30. Il guardiano dello stile è rosso sull'online, non solo qui.**
+  Verificato il 30/08 sul file `2026-08-29-verifica` intatto: 35 `!important`
+  (tetto 3), 4 `clamp()` su un carattere (tetto 0), tutti dal blocco
+  «Controlla la tua email» del 29/08 (righe ~5196–5374). *Il tetto non sale
+  mai: è il blocco che va rifatto coi token.* Finché resta, nessun giro
+  completo può dire «tutti passati».
 
 ### D — Mercatino
 

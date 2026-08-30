@@ -357,12 +357,33 @@ ok("il giro chiuso scrive il marchio nello storico",
    /scoringVersion: schemaPunteggio\(state\.mode\)/.test(src));
 ok("il riepilogo permanente passa dalla porta di normalizzazione",
    /recordLifetime\(r\.name, modoDelGiro\(state\.mode, roundEntry\.scoringVersion\)/.test(src));
+/* LE DUE SALITE PASSANO DA UNA FORMA SOLA. (Corretto il 30/08/2026.)
+   Queste tre righe cercavano i campi scritti a mano nei tre punti dove il
+   giro veniva impacchettato — due che salgono, uno che scende. Il 29/08 quei
+   tre elenchi sono stati accorpati in `giroPerNuvola()` e `giroDaNuvola()`
+   (chiusura di C26), proprio perche' non combaciavano. Il comportamento c'e'
+   ancora ed e' migliore di prima: il banco cercava la vecchia forma e diceva
+   di no a una correzione.
+   *Una delle due falliva per uno SPAZIO dopo i due punti.* Adesso si chiede
+   che le due salite passino dalla porta unica, e che la porta porti il
+   marchio; e lo spazio non conta piu'.
+   LIMITE TROVATO SABOTANDO, e dichiarato: un chiamante che SPOGLIA il giro
+   prima di passarlo alla porta queste righe non lo vedono — leggono il
+   sorgente, non il viaggio. Il viaggio intero non lo prova nessun banco
+   (e' il buco gia' scritto accanto a `giroPerNuvola` in app.html). */
 ok("il marchio sale sul cloud col giro appena chiuso",
-   /scoringVersion: roundEntry\.scoringVersion \|\| null/.test(src));
-ok("il marchio sale anche coi giri arretrati",
-   /scoringVersion: h\.scoringVersion \|\| null/.test(src));
+   /giroPerNuvola\(roundEntry\)/.test(src));
+/* ANCORATA ALLA CHIAMATA, NON AL NOME. (30/08/2026, trovato sabotando.)
+   Scritta `/giroPerNuvola\(h\)/` questa riga trovava LA DEFINIZIONE della
+   funzione — `function giroPerNuvola(h){` — e diceva di si' anche dopo che il
+   backfill era stato staccato dalla porta unica. *Un banco cieco costa piu' di
+   un banco assente: quello assente non rassicura nessuno.* */
+ok("e ci sale anche coi giri arretrati, dalla stessa porta",
+   /roundDocId\(h\.date\)\), giroPerNuvola\(h\)\)/.test(src));
+ok("e la porta unica il marchio se lo porta dietro",
+   /scoringVersion:\s*h\.scoringVersion \|\| null/.test(src));
 ok("il giro che scende dal cloud viene normalizzato alla lettura",
-   /modeKey:modoDelGiro\(d\.modeKey, d\.scoringVersion\)/.test(src));
+   /modeKey:\s*modoDelGiro\(d\.modeKey,\s*d\.scoringVersion\)/.test(src));
 ok("il marchio viaggia col giro aperto",
    /"startedAt","assetto","assettoNome","scoringVersion"\]/.test(src));
 ok("il giro nuovo nasce marchiato",

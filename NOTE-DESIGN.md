@@ -15,10 +15,12 @@ ragione, e non vanno corrette.*
 *Indice rigenerato il 23/08/2026 dal file stesso: se una sezione
 cambia titolo, l'indice cambia con lei e non possono divergere.*
 
-## Indice — 127 sezioni
+## Indice — 129 sezioni
 
 | data | sezione | versione |
 |---|---|---|
+| 30/08/2026 | Il ritorno perde l'omino, e «Approvazioni» raggiunge il suo contenuto | `2026-08-30-ritorno` |
+| 30/08/2026 | Quattro prove rosse su decisioni giuste: i banchi erano rimasti al 28 | — |
 | 29/08/2026 | «Controlla la tua email» diventa un blocco solo | `2026-08-29-verifica` |
 | 29/08/2026 | Il calendario, quattro correzioni: un nome che mentiva, una riga che taceva | `2026-08-29-regione` |
 | 28/08/2026 | Il calendario: dove posso andare a tirare | `2026-08-28-calendario` |
@@ -148,6 +150,149 @@ cambia titolo, l'indice cambia con lei e non possono divergere.*
 | — | Cosa mancava al 15/08 — archivio storico; per gli aperti vale STATO.md |  |
 
 ---
+
+## Il ritorno perde l'omino, e «Approvazioni» raggiunge il suo contenuto *(30/08/2026, versione `2026-08-30-ritorno`, nata da `2026-08-29-verifica`; `sw.js` a `arctrail3d-v157`)*
+
+Dal brief di rifinitura da computer, tre obiettivi (2, 4, 5). Il lavoro vero è
+stato **scoprire quanto poco ci fosse da fare**, e inchiodarlo.
+
+### Il controllo di ritorno era già uno solo: il difetto era il segno
+
+Il brief chiedeva di trovare il controllo canonico e di eliminare il vecchio
+pattern «omino Profilo + freccetta» da Attrezzatura, Spazio compagnia e
+Impostazioni. Letto il codice: il ritorno nasce in **un punto solo** —
+`header()`, la mappa `CASA_DI`, il disegno in `tastoBarra` — quindi markup,
+misura, posizione e comportamento erano già identici ovunque. Quello che non
+andava era il **glifo**: l'omino (`navprofile`) sul tasto che torna indietro,
+in fila con la pastiglia «A» — *due persone per due mestieri diversi*, e da
+telefono l'omino restava da solo, senza freccia né parola.
+
+La cura è nella lingua che le pagine recenti parlano già — «← Indietro»,
+«← Torna allo storico»: **la freccia e la parola** da computer («← Profilo»,
+nessun disegno), **la sola freccia** da telefono. Un attributo nuovo
+(`freccia:true`) al posto di `pieno:doveTorna[0]`, un ramo in `tastoBarra` che
+riusa `.bar-flag` — nessuna classe nuova, nessun componente nuovo.
+
+**La regola del 23/08 «l'icona segue la scheda» è RITIRATA**, da Alessandro
+col brief. Aveva una ragione buona — il tasto dice dove porta — e la parola la
+mantiene; era il pittogramma della destinazione su un comando di ritorno a
+confondersi con tutto il resto. Il cambio vale per tutte le schede, non solo
+per il profilo: un controllo canonico che cambia faccia per scheda non è
+canonico.
+
+### Il doppione Attrezzatura/Impostazioni non esisteva più
+
+L'obiettivo 4 chiedeva di eliminare il secondo editor dell'attrezzatura dentro
+Impostazioni, lasciando al più una voce di scoperta. **Il codice online era
+già così**: in `profileEditScreen` c'è esattamente quella voce («Attrezzatura
+→ apre la pagina»), col commento che spiega il perché, e l'«arco principale»
+lì dentro è un campo del *profilo* (quello che gli altri vedono accanto al
+nome), non attrezzatura. Non è stato toccato niente: è stato **inchiodato** —
+il banco nuovo pretende zero campi `as_*` in Impostazioni, una sola porta, e
+che la porta apra la pagina vera.
+
+### «Amministrazione», nove lingue, nessuna chiave toccata
+
+`menu_admin` era rimasta «Approvazioni» mentre il pannello diventava sei
+schede — Accessi, Richieste, Percorsi, Sessioni, Profili, Errori. L'etichetta
+ha raggiunto il contenuto: Amministrazione / Administration (en, fr, sv) /
+Verwaltung / Yönetim / Администрирование / Administración / Beheer. `adminTab`,
+la schermata `admin` e la serratura `ADMIN_EMAIL` sono intatti, come chiedeva
+il brief: il cambio è di parola, non di percorso.
+
+### Il banco nuovo, e la prova che era cieca
+
+`banco-ritorno.js` (29° in `controlla-tutto.sh`): 27 prove — sorgente e
+schermo, computer e telefono, col viaggio premuto davvero. Sabotato in quattro
+modi prima di registrarlo. **Il quarto sabotaggio non è stato preso al primo
+giro**: la prova sulla serratura dell'admin cercava
+`currentUser.email === ADMIN_EMAIL` *ovunque nel file*, e la stringa esiste in
+sette punti — con la porta del pannello spalancata trovava una delle altre sei
+e diceva di sì. Riancorata alla sua porta (`...ADMIN_EMAIL){` seguito da
+`var adminBtn`). *Una serratura va letta sulla sua porta, non nel mazzo.*
+
+### Come è stato provato
+
+`controlla-sintassi` a ogni patch; `banco-ritorno` verde (27), poi la zona:
+lingue (49), barra (33), schede del pannello (19), firme, compagnia (70),
+attrezzatura (12), contrasto (29) — tutti verdi. Fotografato a 390 e 1200,
+tema chiaro. `diff` contro l'online: 38 righe in `app.html`, tutte di queste
+patch; due timbri in `sw.js`. `controlla-token` stampa **riga per riga le
+stesse cifre del file online intatto** — il suo rosso è un'eredità della
+versione `2026-08-29-verifica` (è **C30** in `STATO.md`), non di questa.
+
+### Cosa resta aperto qui accanto
+
+- **Il ritorno dalle sottopagine del Diario dice «← Home» ma porta al
+  Diario.** `CASA_DI.attivita` presta parola e destinazione della scheda Home:
+  preesistente, si vede solo entrando nel dettaglio di un giro. La cura è una
+  coppia in `CASA_DI` (etichetta del diario in nove lingue): piccola, ma non
+  di questa versione.
+- **Lo Spazio compagnia non è coperto dal banco**: vuole i codici del
+  referente da Firestore. Il suo ritorno è lo stesso componente provato
+  altrove, ed è il motivo per cui il limite è dichiarato e non curato.
+
+## Quattro prove rosse su decisioni giuste: i banchi erano rimasti al 28 *(30/08/2026, nessun file del sito toccato)*
+
+Aprendo la sessione col giro completo, quattro prove dicevano di no in tre
+banchi — `banco-home`, `banco-profilo-pubblico`, `banco-ifaa` — e tutte e
+quattro erano **banchi non aggiornati insieme a decisioni del 29/08**, non
+regressioni. È la stessa storia del 22/08 (*«I banchi erano rossi per il
+motivo giusto, ed è comunque un guasto»*), ripetuta alla lettera: un banco
+rosso per un motivo giusto smette di essere letto entro due giorni.
+
+Le decisioni del 29/08 vivevano **solo nei commenti di `app.html`** — nessuna
+voce di diario le raccontava (è il modo in cui C23 si allarga). Eccole, lette
+dal codice della versione `2026-08-29-verifica`:
+
+- **Il «meglio» esce dal gruppo confrontabile, non da tutti i giri.**
+  `homeNumeri` prendeva il massimo su tutto lo storico; adesso lo prende dallo
+  stesso gruppo della media (`gruppoOmogeneo`), e il record ha l'etichetta
+  della sua gara. `banco-home` chiedeva ancora 240 su un seme misto: adesso
+  chiede 220, con la regola scritta accanto.
+- **La media non si pubblica più.** Era uscita dalla carta pubblica ma
+  `mieiNumeriPubblici` continuava a scriverla in `public_profiles.numeri`:
+  *un dato che nessuno vede più ma si continua a pubblicare è peggio di uno
+  visibile*. Adesso non esce dalla funzione. `banco-profilo-pubblico` la
+  pretendeva fra 12 e 15: la prova è **rovesciata** — la media NON deve
+  uscire, e se un giorno rientra la riga torna rossa, che è il suo mestiere.
+- **Il giro che viaggia ha una forma sola** (chiusura di C26):
+  `giroPerNuvola()` per le due salite — giro appena chiuso e giri arretrati —
+  e `giroDaNuvola()` per la discesa, che normalizza `modeKey` con
+  `modoDelGiro`. Due prove di `banco-ifaa` cercavano i campi scritti a mano
+  nei tre punti vecchi; una delle due falliva **per uno spazio dopo i due
+  punti**. Adesso le prove chiedono che le salite passino dalla porta unica e
+  che la porta porti `scoringVersion`.
+
+### Sabotati tutti e quattro, e uno ha insegnato qualcosa
+
+Ogni prova riscritta è stata rotta apposta e ha detto di no: il record
+rimesso su tutti i giri, la media reinfilata nei numeri pubblici, la porta
+unica che dimentica il marchio, la discesa che smette di normalizzare, la
+salita che impacchetta a mano.
+
+Il primo tentativo di sabotaggio della salita però **non è stato preso**:
+rompeva il *chiamante* — `backupRoundToCloud` ricevuto un giro già spogliato —
+e una prova che legge il sorgente il viaggio non lo vede. Prima di questo giro
+la stessa prova, ancorata a `/giroPerNuvola\(h\)/`, trovava **la definizione
+della funzione** e diceva di sì a qualunque cosa. Il limite è dichiarato nel
+commento del banco: il viaggio intero del giro non lo prova nessun banco, ed
+è il buco già scritto accanto a `giroPerNuvola` in `app.html`.
+
+### Cosa NON è successo
+
+Nessuna riga di `app.html` è cambiata: alla fine del lavoro la copia locale è
+identica byte per byte a quella online (`2026-08-29-verifica`). I timbri non
+si muovono: sono cambiati tre banchi e due documenti.
+
+### Il contorno, misurato in questa sessione
+
+- **`banco-porta` in questo contenitore non può girare**: la rete blocca
+  `gstatic.com`, Firebase non arriva, e su uno stato vergine l'app disegna —
+  giustamente — «Connessione non riuscita». Non è un difetto del banco né
+  dell'app: va confermato verde da una macchina con la rete vera.
+- I rossi ballerini del parallelo (`banco-giro-sicuro`, `banco-finale`,
+  `banco-regolamenti`) sono C24: da soli passano tutti, 48+28+18 prove.
 
 ## «Controlla la tua email» diventa un blocco solo *(29/08/2026, versione `2026-08-29-verifica`, nata da `2026-08-29-freeze`)*
 

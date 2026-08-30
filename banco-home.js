@@ -7,7 +7,8 @@
  * plausibili: media, record, conteggi. Se il calcolo sbaglia non si rompe
  * niente e non protesta nessuno — si legge un numero, e si crede.
  * Qui lo storico e seminato a mano, quindi le risposte giuste si sanno
- * prima: media 220, tre giri, record 240, 48 piazzole, ultimo +20.
+ * prima: media 210 (i due giri da 12), record 220 (lo stesso gruppo),
+ * 24 piazzole, due giri contati. I perche' stanno accanto alle prove.
  *
  * E la prova che conta di piu e l ultima: SENZA storico la Home non deve
  * mostrare nessuna fascia. *Un cruscotto pieno di zeri non informa:
@@ -88,15 +89,23 @@ function prova(n, c, extra) { if (c) { ok++; console.log("  ✓ " + n); } else {
 
      Il seme resta identico apposta — adesso e' il caso di prova del vincolo,
      non del difetto. Con la regola nuova vince il formato piu' numeroso (12,
-     due giri): media (200+220)/2 = 210, due giri, 24 piazzole. Il RECORD
-     resta 240 anche se e' del formato perdente, perche' un massimo non si
-     sporca mescolando: e' il punteggio piu' alto che hai fatto, punto. */
+     due giri): media (200+220)/2 = 210, due giri, 24 piazzole.
+
+     E IL RECORD È 220, NON 240. (Corretto il 30/08/2026.) Fino a qui questa
+     riga chiedeva 240 — «un massimo non si sporca mescolando: e' il
+     punteggio piu' alto che hai fatto, punto». Il 29/08 l'app ha deciso il
+     contrario, e lo ha scritto accanto a `homeNumeri`: *«il "meglio" del mese
+     esce dal gruppo confrontabile, non da tutti i giri»*. Il record adesso
+     esce dallo stesso gruppo della media, e la sua etichetta dice di quale
+     gara e': «record · <contesto>». Un massimo etichettato non mescola.
+     *Questa riga e' rimasta rossa dal 29 al 30 agosto senza che nessuno la
+     leggesse: e' il difetto raccontato il 22/08, ripetuto.* */
   console.log("\n  I QUATTRO NUMERI VENGONO DALLO STORICO, E NON MESCOLANO FORMATI");
   var v = r.numeri.map(function (x) { return x.v; });
   prova("ce ne sono quattro", r.numeri.length === 4, "trovati " + r.numeri.length);
   prova("media 210: i due giri da 12, non i tre di formati diversi", v[0] === "210", "e' " + v[0]);
   prova("due giri, quelli del formato che vince", v[1] === "2", "e' " + v[1]);
-  prova("record 240, anche se e' un giro da 24", v[2] === "240", "e' " + v[2]);
+  prova("record 220: il massimo del gruppo confrontabile, non dei tre giri", v[2] === "220", "e' " + v[2]);
   prova("24 piazzole (12+12)", v[3] === "24", "e' " + v[3]);
 
   /* L'ULTIMO GIRO NON STA PIU' SULLA HOME. (21/08/2026.) La prima schermata
