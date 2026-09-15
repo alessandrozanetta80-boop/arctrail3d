@@ -8,3 +8,6 @@ node_modules/
 # Uscite dei generatori, da guardare prima di copiarle a mano
 /nuove/
 /dizionario.js
+
+# Cache di Python (genera.py carica i dizionari con importlib)
+__pycache__/

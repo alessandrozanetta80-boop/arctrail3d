@@ -6,7 +6,7 @@ alzato, `controlla-tutto.sh` non è stato lanciato.
 
 L'elenco è ancora **aperto**: Alessandro continuerà ad aggiungere voci.
 Prima di lavorare su una qualunque di queste voci vale la procedura di sempre
-(REGOLE-LAVORO.md → `controlla-tutto.sh` → diari).
+(REGOLE-LAVORO.md → `tests/controlla-tutto.sh` → diari).
 
 ---
 

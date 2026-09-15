@@ -11,7 +11,7 @@ intero**. Gli archivi non si leggono mai tutti: si cercano.
 | **NOTE-DESIGN.md** | perché l'app è così — archivio | si cerca |
 | **NOTE-MERCATINO.md** | perché il mercatino è così — archivio | si cerca |
 
-Aggiornato il **30/08/2026**.
+Aggiornato il **15/09/2026**.
 
 ---
 
@@ -23,18 +23,18 @@ più vecchio chiama `index.html` l'app.
 | file | cos'è | timbro | copia buona |
 |---|---|---|---|
 | `index.html` | la vetrina, porta di casa | `2026-08-29-sfsf` | **GitHub** |
-| `app.html` | l'app | `2026-08-30-ritorno` | **GitHub** |
+| `app.html` | l'app | `2026-08-30-profilo-assetti` | **GitHub** |
 | `compagnie-data.js` | le societa', 4912 in sette paesi | — | **GitHub** |
 | `marketplace.html` | il mercatino | `2026-08-25-radice` | **GitHub** |
-| `sw.js` | | `arctrail3d-v157` | **GitHub** |
+| `sw.js` | | `arctrail3d-v158` | **GitHub** |
 | `favicon.ico` | l'icona per chi guarda da fuori | — | GitHub, caricata a mano |
 | cinque `vetrina-*.webp` | le foto della vetrina | — | GitHub, caricate a mano |
 | `index.js` | | — | GitHub *(si pubblica dal Cloud Shell)* |
 | `firestore.rules` | | — | GitHub **e** console Firebase |
-| diari, banchi, script | | — | il progetto, e nient'altro |
-| `DOPPIE-TESSERE-ITALIA.md` | le 40 società italiane con due tessere | — | il progetto |
+| diari, banchi, script | `docs/`, `tests/`, `tools/` | — | il progetto, **e dal 15/09 anche GitHub**: `docs/STRUTTURA-REPOSITORY.md` |
+| `DOPPIE-TESSERE-ITALIA.md` | le 40 società italiane con due tessere | — | il progetto; su GitHub in `docs/` |
 
-`vetrina.html` e `vetrina-anteprima.html` **non esistono più** (25/08).
+`vetrina.html` e `vetrina-anteprima.html` **non sono più pagine del sito** (25/08); l'anteprima è conservata in `archive/` (15/09).
 
 **30/08/2026 — Alessandro conferma che le Cloud Functions e le regole Firestore
 attive sono aggiornate rispetto al lavoro corrente.** Quindi **non si richiede
@@ -42,7 +42,7 @@ conferma di deploy o pubblicazione** nelle sessioni che non toccano `index.js` o
 `firestore.rules`. Se uno dei due cambia, torna a valere la regola 9 e il nuovo
 stato va verificato.
 
-**`controlla-base.js` confronta i TIMBRI, non il contenuto:** file diversi con
+**`tests/controlla-base.js` confronta i TIMBRI, non il contenuto:** file diversi con
 lo stesso timbro e il banco dice IN PARI. **Prima di ogni consegna di un FILE DEL
 PRODOTTO si confronta col `diff` la copia online del file toccato.** Il **MICRO
 DOCUMENTALE è escluso** (regola 3-bis). Il file di lavoro **non si sovrascrive
@@ -64,9 +64,10 @@ completo non si fa; prima di consegnare è obbligatorio **dallo STANDARD in su**
 *(Allineato alla regola 3 il 29/08: qui c'era scritto «a ogni livello».)*
 
 **«Tutti passati» al 26/08/2026 è una fotografia di quel giorno, non il
-risultato di oggi:** il risultato corrente lo dà l'ultima esecuzione, e C24
-rende il giro in parallelo inaffidabile come fotografia singola. I banchi
-citati in C24 passano quando sono lanciati da soli.
+risultato di oggi:** lo dà l'ultima esecuzione, e C24 rende il parallelo inaffidabile
+come fotografia singola. Il 15/09/2026, in fila (`PAR=1`) su `2026-08-30-profilo-assetti`:
+21 verdi e **8 rossi** — `controlla-token`, `banco-schede`, `banco-avvio`, `banco-giro-sicuro`,
+`banco-porta`, `banco-ifaa`, `banco-calendario`, `banco-ritorno` — rossi anche prima del riordino; si affrontano a parte.
 
 In una chat nuova può mancare `jsdom`:
 `npm install jsdom`. Se poi playwright dice che il browser non esiste, la copia
@@ -78,7 +79,7 @@ passare**: senza Firebase l'app su stato vergine disegna — giustamente —
 con la rete vera. *(Verificato il 30/08.)*
 
 **Il guardiano dello stile non è a zero, ed è normale.** Il tetto in
-`tetto-token.json` non sale mai. I numeri li stampa lui: **qui non si ricopiano.**
+`tests/tetto-token.json` non sale mai. I numeri li stampa lui: **qui non si ricopiano.**
 
 ## 3. Cosa è aperto
 
@@ -149,7 +150,7 @@ propongono come lavoro finché non è Alessandro a riaprirle.
   megabyte: fra la prima riga e `DOMContentLoaded` `#app` è vuoto — le cure
   fatte coprono l'attesa della *rete*, non della *lettura*.
 - **C15. L'elenco «Scopri» non ha una ricerca**, e `compagnie-data.js` ha qualche provincia sbagliata. Non è codice: è l'elenco.
-- **C16. Nessun banco misura un'altezza sullo schermo.** `banco-bordi.js` misura
+- **C16. Nessun banco misura un'altezza sullo schermo.** `tests/banco-bordi.js` misura
   i margini; che le tre porte di Tira siano alte uguale l'ha scoperto Alessandro
   guardando l'app.
 - **C17. Due code del ridisegno chat.** *(a)* Segnala e Blocca in cima: spostarli
@@ -158,18 +159,18 @@ propongono come lavoro finché non è Alessandro a riaprirle.
 - **C21. Nessun controllo dice «questo nome di classe è già di qualcun
   altro».** Il 28/08 `.prof-testa` è stata riusata per la testa del profilo ed
   esisteva già nella schermata di modifica: la carta d'identità si è disegnata
-  tutta su una riga. `controlla-token.js` sa dire il contrario — classe
+  tutta su una riga. `tests/controlla-token.js` sa dire il contrario — classe
   nominata dal JS e mai definita — non questo. Visto fotografando.
-- **C23. Quattro versioni senza una voce propria**, verificate il 30/08:
+- **C23. Cinque versioni senza una voce propria** (verificate il 30/08, l'ultima il 15/09):
   `2026-08-28-sito` e `2026-08-28-nfas-fonte` citate solo come genitori,
-  `2026-08-29-freeze` citata solo come genitore di `2026-08-29-verifica`,
-  `2026-08-29-locale` che negli archivi non compare. **Nessuna è ricostruibile
-  dai file:** restano dichiarate, non raccontate. E le cinque pagine SEO dei
-  regolamenti stanno nel `sitemap.xml` e in nessun archivio.
+  `2026-08-29-freeze` solo come genitore di `2026-08-29-verifica`, `2026-08-29-locale`
+  che negli archivi non compare: **nessuna è ricostruibile dai file**. E
+  `2026-08-30-profilo-assetti`, l'app online: il codice c'è, il racconto no. Le
+  cinque pagine SEO dei regolamenti stanno nel `sitemap.xml` e in nessun archivio.
 - **C24. In parallelo qualche banco dice no, e ogni giro e' un banco diverso.**
   Primo giro: `banco-finale`. Secondo: `banco-giro-sicuro` e `banco-regolamenti`.
-  Lanciati da soli passano tutti e tre, 94 prove su 94. *Un insieme che cambia
-  a ogni giro non e' un difetto del prodotto: e' il parallelo.* Un giro che dice
+  Da soli passavano tutti e tre il 30/08 (94 su 94); dal 15/09 `banco-giro-sicuro`
+  è rosso anche da solo (§2). *Un insieme che cambia a ogni giro non e' un difetto del prodotto: e' il parallelo.* Un giro che dice
   no a caso insegna a ignorarlo, ed è il modo in cui un banco vero passa
   inosservato. **La procedura è la regola 23 di `REGOLE-LAVORO.md`.**
 - **C25. Il calendario mostra dieci gare inventate, e lo dichiara in cima.**

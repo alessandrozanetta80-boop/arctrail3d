@@ -167,6 +167,6 @@ for c in candidati:
     scritto = True
     break
 if not scritto:
-    print("ATTENZIONE: index.js delle Cloud Functions non trovato qui accanto.")
+    print("ATTENZIONE: index.js delle Cloud Functions non trovato nella cartella di lancio.")
     print("            Le parole del server NON sono state aggiornate. Rilancia")
-    print("            genera.py dalla cartella che contiene anche le funzioni.")
+    print("            python tools/genera.py dalla radice del repository, dove sta index.js.")

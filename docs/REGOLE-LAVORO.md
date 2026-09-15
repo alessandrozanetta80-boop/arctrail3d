@@ -6,7 +6,7 @@ Si legge insieme a **STATO.md**, che dice cos'è vero oggi. Gli archivi dicono
 *perché*, e non si leggono per intero: si cercano.
 
 *Riscritto il 23/08/2026, rivisto il 26/08 coi tre livelli, corretto il 29 e il
-30/08. Il contenuto è tutto qui: il ritirato sta in fondo, col motivo.*
+30/08, percorsi allineati al riordino del 15/09. Il contenuto è tutto qui: il ritirato sta in fondo, col motivo.*
 
 ---
 
@@ -34,7 +34,7 @@ costava una riga.
 
 > ⛔ **Se il lavoro tocca esclusivamente documenti interni, questa regola si
 > SALTA: si applica direttamente la 3-bis.** La classificazione documentale
-> viene **prima** dell'esecuzione di `controlla-base.js`.
+> viene **prima** dell'esecuzione di `tests/controlla-base.js`.
 
 ```
 node tests/controlla-base.js
@@ -79,7 +79,7 @@ no è spento.*
 
 **3. Scegliere il livello PRIMA di lavorare, e attenersi a quello.**
 
-Il numero dei banchi **non si scrive qui**: lo dice `controlla-tutto.sh`, che
+Il numero dei banchi **non si scrive qui**: lo dice `tests/controlla-tutto.sh`, che
 è l'unica fonte. *Un conto ricopiato in prosa invecchia il giorno che si
 aggiunge un banco, e poi mente per settimane.*
 
@@ -91,7 +91,7 @@ pezzo**, non di rileggerli da capo.*
 |---|---|---|---|
 | **cosa** | HTML, CSS, testo, metadata, SEO, JSON-LD, icone, immagini — uno o due file, e **nessuna logica**: né accesso, né dati, né punteggio | un comportamento isolato: una schermata, una tendina, un elenco | punteggio, accesso, memoria offline, Firestore, service worker, pubblicazione |
 | **da leggere prima** | `STATO.md` §1 (i timbri) | `STATO.md` intero | `STATO.md` intero + le voci d'archivio della zona |
-| **prima di toccare** | `node tests/controlla-base.js` | `controlla-base.js` + misurare il difetto | `controlla-base.js` + misurare + rileggere le voci che spiegano *perché* è così |
+| **prima di toccare** | `node tests/controlla-base.js` | `tests/controlla-base.js` + misurare il difetto | `tests/controlla-base.js` + misurare + rileggere le voci che spiegano *perché* è così |
 | **dopo ogni passaggio** | i controlli pertinenti al file toccato (regola 21) | come MICRO, più i banchi che toccano quel comportamento | come STANDARD, più il banco che protegge l'invariante toccata |
 | **giro completo** | **no.** Solo i controlli che c'entrano con quello che è cambiato | prima di consegnare | prima di consegnare, **e** non si consegna se un banco è spento |
 | **sabotaggio** | no, se nessun banco è cambiato | solo se nasce o cambia sostanza un banco | **sempre** sul banco che protegge l'invariante toccata |
@@ -109,7 +109,7 @@ STANDARD in su. Sui documenti non vale niente di tutto questo: vedi 3-bis.*
 altri documenti interni non pubblicati **non sono il prodotto**. *I copioni
 (`.js`, `.sh`) non sono documenti: per loro valgono i controlli pertinenti
 della regola 21.* Qui non servono
-`controlla-base.js`, la sintassi e i token dell'app, il banco della zona del
+`tests/controlla-base.js`, la sintassi e i token dell'app, il banco della zona del
 sito, né il `diff` con l'online.
 
 Il percorso è: **leggere `STATO.md` e il documento che c'entra → modificare →
@@ -152,7 +152,8 @@ il telefono serve la copia vecchia.
   `sw.js`, `firebase-messaging-sw.js`, le icone, le cinque `vetrina-*.webp`,
   `firestore.rules`, `pubblica.sh`, `index.js`. Quello che si carica qui
   va online. **Per i file del sito la copia buona è quella online**, non quella
-  nel progetto.
+  nel progetto. Dal 15/09/2026 su GitHub ci sono anche `docs/`, `tests/`, `tools/`
+  e `archive/` (mappa: `docs/STRUTTURA-REPOSITORY.md`); i comandi si lanciano dalla radice.
 - **Firebase** — le funzioni e le regole. Non partono da GitHub.
 
 **5. Si consegnano SOLO i file che Alessandro deve portare fuori con le sue
@@ -170,7 +171,7 @@ deploy»*. Un file consegnato senza destinazione è un compito senza istruzioni.
 
 **6. Un nome solo per file.** Due copie con nomi diversi vogliono dire che **una
 chat nuova non sa quale vale**. Coi dizionari è peggio: una traduzione nella copia
-sbagliata sparisce alla prima passata di `genera.py`, **senza nessun errore**. Si
+sbagliata sparisce alla prima passata di `tools/genera.py`, **senza nessun errore**. Si
 consegna con lo stesso nome, e la copia vecchia si cancella nella stessa mossa.
 
 **7. Gli upload binari non si modificano da qui.** Le immagini si producono,
@@ -186,7 +187,7 @@ si consegnano e si ricaricano a mano, dicendolo.
 `CACHE_NAME` in `sw.js`. Ogni file dichiara **da quale versione è nato**:
 `BUILD_PARENT`, `data-parent`, `CACHE_PARENT`. **Il genitore è l'ultima versione
 confermata online, non l'ultimo build locale:** un file nato da una versione non
-pubblicata non è un aggiornamento, **è una cancellazione**, e `controlla-base.js`
+pubblicata non è un aggiornamento, **è una cancellazione**, e `tests/controlla-base.js`
 fa fallire la sessione.
 
 Ogni volta che cambia un file dentro `APP_SHELL`, `CACHE_NAME` sale.
@@ -374,11 +375,11 @@ non pubblicato. Mai `sed` per sostituzioni multi-linea.
 L'ordine è: scrivere lo script → eseguirlo → **subito i controlli pertinenti al
 FILE TOCCATO.** Sono secondi, non minuti:
 
-- `app.html` → `controlla-sintassi.js` + `controlla-token.js` + il banco della
+- `app.html` → `tests/controlla-sintassi.js` + `tests/controlla-token.js` + il banco della
   zona;
 - gli altri HTML → i controlli che li reggono davvero;
 - i `.js` → `node --check` e il banco che li riguarda;
-- i documenti → `controlla-diari.js`, e basta (3-bis).
+- i documenti → `tests/controlla-diari.js`, e basta (3-bis).
 
 **Se `app.html` non è stato toccato e il lavoro non dipende da lui, su
 `app.html` non si controlla niente.** Il giro completo è un'altra cosa e sta
@@ -409,7 +410,7 @@ CRITICA.
 persone non li copre nessun banco: il flickering della chat si è visto solo con
 una seconda persona in linea.
 
-**24. Il dizionario del mercatino si genera.** `genera.py` inietta il
+**24. Il dizionario del mercatino si genera.** `tools/genera.py` (dalla radice) inietta il
 dizionario in `marketplace.html` e il blocco `PAROLE` in `index.js`, fra marker
 fissi. **Non si scrive a mano dentro i marker.**
 
