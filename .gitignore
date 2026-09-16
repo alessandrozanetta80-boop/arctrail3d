@@ -1,0 +1,13 @@
+# Dipendenze dei banchi (npm install)
+node_modules/
+
+# Fotografie che i banchi scrivono nella radice a ogni giro
+/barra-*.png
+/schermo-*.png
+
+# Uscite dei generatori, da guardare prima di copiarle a mano
+/nuove/
+/dizionario.js
+
+# Cache di Python (genera.py carica i dizionari con importlib)
+__pycache__/
