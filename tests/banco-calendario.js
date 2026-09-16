@@ -106,7 +106,7 @@ async function apriCalendario(browser, lang, compagnia) {
 var D2 = path.join(os.tmpdir(), "arctrail-banco-calendario-storta");
 async function apriStorta(browser) {
   if (!fs.existsSync(D2)) fs.mkdirSync(D2, { recursive: true });
-  var src = fs.readFileSync(FILE, "utf8");
+  var src = fs.readFileSync(FILE, "utf8").replace(/\r\n/g, "\n");
   var ancora = "var CAL_MOCK = [\n";
   if (src.split(ancora).length - 1 !== 1) throw new Error("banco-calendario: CAL_MOCK non e' piu' dove pensavo");
   var extra =

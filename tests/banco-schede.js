@@ -67,7 +67,7 @@ visti = cinque.filter(function(k){ return !s2.panels.querySelector("#adm-pan-" +
 prova("dopo render() si e' ancora su Sessioni", visti.length === 1 && visti[0] === "sessioni");
 
 console.log("\n  L'AVVISO PORTA SULLA SCHEDA GIUSTA");
-var m = src.match(/function admTabDaAvviso\(id\)\{\n([\s\S]*?)\n\}/);
+var m = src.match(/function admTabDaAvviso\(id\)\{\r?\n([\s\S]*?)\r?\n\}/);
 prova("admTabDaAvviso c'e' nel file", !!m);
 var quale = new Function("id", m[1]);
 prova("club-BG01_abc \u2192 richieste", quale("club-BG01_abc") === "richieste");

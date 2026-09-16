@@ -28,7 +28,7 @@ function ok(nome, cond, extra) {
 // ── si estrae il pezzo di app.html che definisce i modi, e lo si esegue ────
 // Niente regex sui numeri: si valuta il codice vero, cosi' il banco vede
 // quello che vedra' il telefono.
-let src = fs.readFileSync("app.html", "utf8");
+let src = fs.readFileSync("app.html", "utf8").replace(/\r\n/g, "\n");
 
 if (SABOTA) {
   src = src.replace(

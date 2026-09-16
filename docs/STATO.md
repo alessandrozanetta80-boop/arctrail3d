@@ -63,11 +63,11 @@ i tre livelli della regola 3 — **MICRO, STANDARD, CRITICO**. Nel MICRO il giro
 completo non si fa; prima di consegnare è obbligatorio **dallo STANDARD in su**.
 *(Allineato alla regola 3 il 29/08: qui c'era scritto «a ogni livello».)*
 
-**«Tutti passati» al 26/08/2026 è una fotografia di quel giorno, non il
-risultato di oggi:** lo dà l'ultima esecuzione, e C24 rende il parallelo inaffidabile
-come fotografia singola. Il 15/09/2026, in fila (`PAR=1`) su `2026-08-30-profilo-assetti`:
-21 verdi e **8 rossi** — `controlla-token`, `banco-schede`, `banco-avvio`, `banco-giro-sicuro`,
-`banco-porta`, `banco-ifaa`, `banco-calendario`, `banco-ritorno` — rossi anche prima del riordino; si affrontano a parte.
+**«Tutti passati» non è mai la fotografia di ieri:** lo dà l'ultima esecuzione, e C24
+rende il parallelo inaffidabile come fotografia singola. Il 16/09/2026 TRE giri in fila
+(`PAR=1`) su `2026-08-30-profilo-assetti` hanno dato lo stesso esito: **26 verdi, 3 rossi**, nessun ballerino.
+Cinque degli otto rossi erano banchi fragili — `\n` contro i fine riga CRLF di questa copia, più due attese
+superate dal brief del 30/08 — e sono corretti; nessun bug dell'app. Restano rossi `controlla-token` (C30), `banco-porta` (serve la rete vera, vedi sotto) e `banco-ritorno` (difende la scelta cancellata quel pomeriggio; il banco riscritto sta in `archive/`, mai integrato).
 
 In una chat nuova può mancare `jsdom`:
 `npm install jsdom`. Se poi playwright dice che il browser non esiste, la copia

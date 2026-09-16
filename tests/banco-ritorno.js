@@ -29,7 +29,7 @@ var os = require("os");
 var { chromium } = require("playwright");
 
 var FILE = process.argv[2] || "app.html";
-var src = fs.readFileSync(FILE, "utf8");
+var src = fs.readFileSync(FILE, "utf8").replace(/\r\n/g, "\n");
 
 var ok = 0, ko = 0;
 function prova(n, c, extra){ if(c){ ok++; console.log("  \u2713 " + n); } else { ko++; console.log("  \u2717 " + n + (extra ? "  \u2014 " + extra : "")); } }
@@ -58,7 +58,7 @@ prova("nessuna dice piu' Approvazioni/Approvals/Freigaben/Onaylar/\u2026",
    che ne cercava una qualunque diceva di si' anche con la porta del
    pannello spalancata.) */
 prova("il pannello resta solo dell'admin (la serratura sta SULLA porta)",
-      /currentUser\.email === ADMIN_EMAIL\)\{\nvar adminBtn/.test(src));
+      /currentUser\.email === ADMIN_EMAIL\)\{\nporta\("users"/.test(src));
 prova("le chiavi interne non sono state toccate: adminTab e la schermata admin esistono",
       /adminTab = "accessi"/.test(src) && /case "admin": app\.appendChild\(adminScreen\(\)\)/.test(src));
 

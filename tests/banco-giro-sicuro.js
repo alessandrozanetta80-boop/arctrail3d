@@ -32,7 +32,7 @@ var FILE = process.argv[2] || "app.html";
 var D = path.join(os.tmpdir(), "arctrail-banco-giro");
 if (!fs.existsSync(D)) fs.mkdirSync(D, { recursive: true });
 
-var html = require("./copia-dev.js").accendiDev(fs.readFileSync(FILE, "utf8"));
+var html = require("./copia-dev.js").accendiDev(fs.readFileSync(FILE, "utf8").replace(/\r\n/g, "\n"));
 
 // La sola riga sostituita: da dove arriva il documento. Tutto il resto —
 // quando si scrive, cosa si scrive, cosa dice la riga di stato — e il codice
