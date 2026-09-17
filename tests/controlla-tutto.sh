@@ -105,6 +105,7 @@ banco "banco-traguardi.js (i traguardi contano cose vere, playwright)" "node tes
 banco "banco-attrezzatura.js (l'assetto resta attaccato al giro)" "node tests/banco-attrezzatura.js"
 banco "banco-profilo-pubblico.js (cosa si pubblica di se, e cosa no)" "node tests/banco-profilo-pubblico.js"
 banco "banco-bordi.js (niente tocca il vetro, playwright)" "node tests/banco-bordi.js"
+banco "banco-safe-area.js (la tacca del telefono si conta una volta sola)" "node tests/banco-safe-area.js app.html"
 banco "banco-chat.js (la chat dice quello che deve, e nient'altro)" "node tests/banco-chat.js app.html"
 banco "controlla-tavolozza.js (app e mercatino, lo stesso colore)" "node tests/controlla-tavolozza.js"
 banco "banco-ruoli-compagnia.js (chi vede cosa nello spazio compagnia)" "node tests/banco-ruoli-compagnia.js"
