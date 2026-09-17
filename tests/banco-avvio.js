@@ -16,7 +16,7 @@
 var fs = require("fs");
 var { JSDOM } = require("jsdom");
 
-var src = fs.readFileSync("app.html", "utf8");
+var src = fs.readFileSync("app.html", "utf8").replace(/\r\n/g, "\n");
 var ok = 0, ko = 0;
 function prova(nome, cond){ if(cond){ ok++; console.log("  \u2713 " + nome); } else { ko++; console.log("  \u2717 " + nome); } }
 
@@ -164,8 +164,8 @@ prova("la mappa delle schede c'e'", mappa.length > 20);
 /* Il segno pieno, non il glifo di linea: e' quello che la barra in fondo usa
    per la stessa porta, e due segni per la stessa porta insegnano che il segno
    non conta. */
-prova("usa il segno pieno della barra, non un glifo di ripiego",
-      /id:"menu", pieno:doveTorna\[0\]/.test(src));
+prova("il ritorno e' la freccia con la parola (30/08), non un glifo di ripiego",
+      /id:"menu", freccia:true,[^\n]*conParola:true/.test(src));
 /* La parola viene dal dizionario: scritta a mano resterebbe italiana per
    otto lingue su nove. */
 prova("la parola viene dal dizionario, non e' scritta a mano",

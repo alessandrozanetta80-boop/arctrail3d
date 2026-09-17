@@ -4,6 +4,7 @@
 #   sh tests/controlla-tutto.sh          # in parallelo, sei alla volta
 #   PAR=1 sh tests/controlla-tutto.sh    # in fila, come prima (per capire un guasto)
 #   PAR=5 sh tests/controlla-tutto.sh    # piu' larghi, su una macchina piu' grossa
+#   ESTERNI=1 sh tests/controlla-tutto.sh  # anche le prove che vogliono la rete vera
 #
 # QUANTI SONO NON STA SCRITTO IN NESSUNA PROSA. Lo dice questo file, e basta:
 #     grep -c '^banco ' tests/controlla-tutto.sh
@@ -73,6 +74,15 @@ banco() {
   printf '%s\n' "$1" > "$D/$n.tit"
   printf '%s\n' "$2" > "$D/$n.cmd"
 }
+# `esterno` e' un banco che NON puo' girare qui: vuole la rete vera e Firebase
+# vivo. Non e' un rosso di questa suite — e' una prova d'integrazione, e si
+# lancia da una macchina con la rete: ESTERNI=1 sh tests/controlla-tutto.sh
+# Resta scritto qui, e nominato a ogni giro, perche' un banco che non si
+# nomina piu' e' un banco che nessuno rilancia.
+esterno() {
+  if [ "${ESTERNI:-0}" = "1" ]; then banco "$1" "$2"
+  else echo "  ESTERNO, non eseguito (vuole rete vera): $1"; fi
+}
 
 banco "controlla-token.js (il guardiano dello stile)" "node tests/controlla-token.js app.html"
 banco "controlla-contrasto.js (il testo si legge sopra il suo fondo)" "node tests/controlla-contrasto.js app.html"
@@ -98,7 +108,7 @@ banco "banco-chat.js (la chat dice quello che deve, e nient'altro)" "node tests/
 banco "controlla-tavolozza.js (app e mercatino, lo stesso colore)" "node tests/controlla-tavolozza.js"
 banco "banco-ruoli-compagnia.js (chi vede cosa nello spazio compagnia)" "node tests/banco-ruoli-compagnia.js"
 banco "banco-vetrina.js (la vetrina in nove lingue, playwright)" "node tests/banco-vetrina.js index.html"
-banco "banco-porta.js (la porta dell'app, nove lingue, playwright)" "node tests/banco-porta.js app.html"
+esterno "banco-porta.js (la porta dell'app, nove lingue, playwright)" "node tests/banco-porta.js app.html"
 banco "banco-ifaa.js (il bareme IFAA e i giri di ieri)" "node tests/banco-ifaa.js"
 banco "banco-calendario.js (il calendario dice da chi viene il dato)" "node tests/banco-calendario.js app.html"
 banco "banco-ritorno.js (il ritorno canonico e le cose che non tornano)" "node tests/banco-ritorno.js app.html"

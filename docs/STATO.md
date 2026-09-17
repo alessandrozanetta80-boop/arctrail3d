@@ -63,20 +63,20 @@ i tre livelli della regola 3 — **MICRO, STANDARD, CRITICO**. Nel MICRO il giro
 completo non si fa; prima di consegnare è obbligatorio **dallo STANDARD in su**.
 *(Allineato alla regola 3 il 29/08: qui c'era scritto «a ogni livello».)*
 
-**«Tutti passati» al 26/08/2026 è una fotografia di quel giorno, non il
-risultato di oggi:** lo dà l'ultima esecuzione, e C24 rende il parallelo inaffidabile
-come fotografia singola. Il 15/09/2026, in fila (`PAR=1`) su `2026-08-30-profilo-assetti`:
-21 verdi e **8 rossi** — `controlla-token`, `banco-schede`, `banco-avvio`, `banco-giro-sicuro`,
-`banco-porta`, `banco-ifaa`, `banco-calendario`, `banco-ritorno` — rossi anche prima del riordino; si affrontano a parte.
+**«Tutti passati» non è mai la fotografia di ieri:** lo dà l'ultima esecuzione, e C24
+rende il parallelo inaffidabile come fotografia singola. Il 16/09/2026, in fila (`PAR=1`) su
+`2026-08-30-profilo-assetti`: **28 banchi locali, 27 verdi, 1 rosso** — `controlla-token` (C30). Prima erano 21/8:
+cinque rossi erano banchi fragili (`\n` contro i fine riga CRLF di questa copia), due attese erano superate dal
+brief del 30/08. Nessun bug dell'app. In `banco-ritorno` due prove restano **in attesa**: la scorciatoia Impostazioni → Attrezzatura del brief del 30/08 (punto 6) non è mai stata pubblicata — `attrBtn` esiste solo nell'`app.html` dello zip in `archive/` — quindi non falliscono, si leggono a ogni giro e diventeranno verdi da sole il giorno che la porta si farà. È una decisione futura, non una regressione.
 
 In una chat nuova può mancare `jsdom`:
 `npm install jsdom`. Se poi playwright dice che il browser non esiste, la copia
 locale è senza browser: si allinea la versione di `playwright` a quella del
 browser presente in `/opt/pw-browsers` invece di scaricarne uno nuovo.
-E se la rete del contenitore blocca `gstatic.com`, **`banco-porta` non può
-passare**: senza Firebase l'app su stato vergine disegna — giustamente —
-«Connessione non riuscita». Non è un rosso dell'app: si prova da una macchina
-con la rete vera. *(Verificato il 30/08.)*
+**`banco-porta` è una prova d'INTEGRAZIONE, non della suite locale** *(16/09)*: vuole
+`gstatic.com` e Firebase vivi, e dove non arrivano l'app su stato vergine disegna — giustamente —
+«Connessione non riuscita». Il runner la nomina a ogni giro e la salta; si lancia con
+`ESTERNI=1 sh tests/controlla-tutto.sh` da una macchina con la rete vera. *(Verificato il 30/08 e il 16/09.)*
 
 **Il guardiano dello stile non è a zero, ed è normale.** Il tetto in
 `tests/tetto-token.json` non sale mai. I numeri li stampa lui: **qui non si ricopiano.**
