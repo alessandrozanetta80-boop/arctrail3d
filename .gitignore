@@ -9,5 +9,12 @@ node_modules/
 /nuove/
 /dizionario.js
 
+# I diari che l'emulatore Firebase scrive nella radice quando gira
+# `firebase emulators:exec` (vedi docs/AUDIT-TECNICO-2026-09-17.md).
+/firestore-debug.log
+/ui-debug.log
+/database-debug.log
+/pubsub-debug.log
+
 # Cache di Python (genera.py carica i dizionari con importlib)
 __pycache__/
