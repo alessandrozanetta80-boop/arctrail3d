@@ -11,7 +11,7 @@ intero**. Gli archivi non si leggono mai tutti: si cercano.
 | **NOTE-DESIGN.md** | perché l'app è così — archivio | si cerca |
 | **NOTE-MERCATINO.md** | perché il mercatino è così — archivio | si cerca |
 
-Aggiornato il **15/09/2026**.
+Aggiornato il **17/09/2026**.
 
 ---
 
@@ -23,10 +23,10 @@ più vecchio chiama `index.html` l'app.
 | file | cos'è | timbro | copia buona |
 |---|---|---|---|
 | `index.html` | la vetrina, porta di casa | `2026-08-29-sfsf` | **GitHub** |
-| `app.html` | l'app | `2026-08-30-profilo-assetti` | **GitHub** |
+| `app.html` | l'app | `2026-09-17-safe-area` | **GitHub** |
 | `compagnie-data.js` | le societa', 4912 in sette paesi | — | **GitHub** |
 | `marketplace.html` | il mercatino | `2026-08-25-radice` | **GitHub** |
-| `sw.js` | | `arctrail3d-v158` | **GitHub** |
+| `sw.js` | | `arctrail3d-v159` | **GitHub** |
 | `favicon.ico` | l'icona per chi guarda da fuori | — | GitHub, caricata a mano |
 | cinque `vetrina-*.webp` | le foto della vetrina | — | GitHub, caricate a mano |
 | `functions/index.js` | le 7 Cloud Functions *(dal 17/09 non più in radice)* | — | GitHub *(dal Cloud Shell: `firebase deploy --only functions:pushNotifica`)* |
@@ -65,7 +65,7 @@ completo non si fa; prima di consegnare è obbligatorio **dallo STANDARD in su**
 
 **«Tutti passati» non è mai la fotografia di ieri:** lo dà l'ultima esecuzione, e C24
 rende il parallelo inaffidabile come fotografia singola. Il 17/09/2026, in fila (`PAR=1`) su
-`2026-08-30-profilo-assetti`: **30 banchi locali e 1 esterno**, l'unico rosso `controlla-token` (C30). Due sono nati il 17/09. `banco-push` prova il percorso server → FCM → service worker → clic, che nessuno guardava: ad app chiusa l'avviso arrivava muto («ArcTrail 3D», corpo vuoto) perché in `data` c'era solo il tag, e adesso ci vanno anche titolo, corpo e l'instradamento già scritto sull'avviso, mentre la deduplica guarda l'etichetta e non le parole. `banco-safe-area` misura la tacca del telefono, che ora si conta **una volta sola**: `header.top` la chiedeva nel margine **e** nel riempimento, quindi in PWA la prima riga stava due tacche sotto il bordo e saltava di una tacca intera appena la barra si attaccava; adesso la tiene solo il `padding-top`, e il banco vieta anche staticamente il doppio uso. Prima erano 21/8:
+`2026-09-17-safe-area`: **31 banchi locali e 1 esterno**, l'unico rosso `controlla-token` (C30). Tre sono nati il 17/09: `banco-functions-layout` tiene ferma la struttura del backend. `banco-push` prova il percorso server → FCM → service worker → clic, che nessuno guardava: ad app chiusa l'avviso arrivava muto («ArcTrail 3D», corpo vuoto) perché in `data` c'era solo il tag, e adesso ci vanno anche titolo, corpo e l'instradamento già scritto sull'avviso, mentre la deduplica guarda l'etichetta e non le parole. `banco-safe-area` misura la tacca del telefono, che ora si conta **una volta sola**: `header.top` la chiedeva nel margine **e** nel riempimento, quindi in PWA la prima riga stava due tacche sotto il bordo e saltava di una tacca intera appena la barra si attaccava; adesso la tiene solo il `padding-top`, e il banco vieta anche staticamente il doppio uso. Prima erano 21/8:
 cinque rossi erano banchi fragili (`\n` contro i fine riga CRLF di questa copia), due attese erano superate dal
 brief del 30/08. Nessun bug dell'app. In `banco-ritorno` due prove restano **in attesa**: la scorciatoia Impostazioni → Attrezzatura del brief del 30/08 (punto 6) non è mai stata pubblicata — `attrBtn` esiste solo nell'`app.html` dello zip in `archive/` — quindi non falliscono, si leggono a ogni giro e diventeranno verdi da sole il giorno che la porta si farà. È una decisione futura, non una regressione.
 
