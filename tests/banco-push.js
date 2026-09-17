@@ -100,7 +100,7 @@ Module._load = function(richiesto){
   if(Object.prototype.hasOwnProperty.call(finto, richiesto)) return finto[richiesto];
   return caricaVero.apply(this, arguments);
 };
-require(path.join(RADICE, "index.js"));
+require(path.join(RADICE, "functions", "index.js"));
 Module._load = caricaVero;
 
 var mandaPush = trigger["notifications/{uid}/items/{itemId}"];
