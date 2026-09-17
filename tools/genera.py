@@ -167,6 +167,7 @@ for c in candidati:
     scritto = True
     break
 if not scritto:
-    print("ATTENZIONE: index.js delle Cloud Functions non trovato nella cartella di lancio.")
+    print("ATTENZIONE: functions/index.js delle Cloud Functions non trovato.")
     print("            Le parole del server NON sono state aggiornate. Rilancia")
-    print("            python tools/genera.py dalla radice del repository, dove sta index.js.")
+    print("            python tools/genera.py dalla radice del repository: dal")
+    print("            17/09/2026 il backend sta in functions/, non piu' in radice.")

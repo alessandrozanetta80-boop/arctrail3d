@@ -29,7 +29,7 @@ più vecchio chiama `index.html` l'app.
 | `sw.js` | | `arctrail3d-v158` | **GitHub** |
 | `favicon.ico` | l'icona per chi guarda da fuori | — | GitHub, caricata a mano |
 | cinque `vetrina-*.webp` | le foto della vetrina | — | GitHub, caricate a mano |
-| `index.js` | | — | GitHub *(si pubblica dal Cloud Shell)* |
+| `functions/index.js` | le 7 Cloud Functions *(dal 17/09 non più in radice)* | — | GitHub *(dal Cloud Shell: `firebase deploy --only functions:pushNotifica`)* |
 | `firestore.rules` | | — | GitHub **e** console Firebase |
 | diari, banchi, script | `docs/`, `tests/`, `tools/` | — | il progetto, **e dal 15/09 anche GitHub**: `docs/STRUTTURA-REPOSITORY.md` |
 | `DOPPIE-TESSERE-ITALIA.md` | le 40 società italiane con due tessere | — | il progetto; su GitHub in `docs/` |

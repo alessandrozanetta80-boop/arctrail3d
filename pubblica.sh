@@ -1,50 +1,45 @@
 #!/bin/bash
 #
-# I COMANDI A MANO, perche' uno script che non si puo' ricostruire a mano e'
-# una scatola nera. (Spostati qui da REGOLE-LAVORO.md il 26/08/2026: stanno
-# accanto allo script che sostituiscono, non in un file di regole.)
-#
-#   mkdir -p ~/at3d/functions && cd ~/at3d
-#   echo '{"functions":{"source":"functions"}}' > firebase.json
-#   curl -sL -o functions/index.js https://raw.githubusercontent.com/alessandrozanetta80-boop/arctrail3d/main/index.js
-#   head -2 functions/index.js
-#   cd ~/at3d/functions && npm install
-#   cd ~/at3d && firebase deploy --only functions --project arctrail3d
-#
-# Senza `npm install` il deploy si ferma su
-# «Couldn't find firebase-functions package».
-#
 # pubblica.sh — pubblica le Cloud Functions di ArcTrail 3D dal Cloud Shell.
 #
-#   bash ~/pubblica.sh
+#   bash ~/pubblica.sh                 # tutte e sette
+#   bash ~/pubblica.sh pushNotifica    # una sola
 #
-# PERCHE' ESISTE. La procedura era otto comandi da incollare uno alla volta, e
-# ogni volta andava riscritta a mano in chat. Otto occasioni di saltare un
-# passo: quello dimenticato piu' spesso e' `npm install`, e il deploy muore su
-# «Couldn't find firebase-functions package» dopo aver fatto aspettare due
-# minuti.
+# COSA E' CAMBIATO IL 17/09/2026, E PERCHE' CONTA.
 #
-# COSA FA, in ordine:
-#   1. prepara la cartella se non c'e' (la prima volta)
-#   2. scarica index.js da GitHub
-#   3. CONTROLLA che sia il file giusto, e si ferma se non lo e'
-#   4. dice cosa e' cambiato dall'ultimo deploy
-#   5. installa le dipendenze solo se servono
-#   6. lancia il deploy
+# Fino a oggi questo script si costruiva una cartella Functions al volo:
+# scaricava il solo `index.js` da raw.githubusercontent e scriveva lui il
+# `package.json`. Funzionava, ma voleva dire che **la struttura vera del
+# deploy non stava nel repository**: stava qui dentro, in venti righe di
+# script. Due logiche di pubblicazione che possono divergere sono una di
+# troppo, e quella che diverge in silenzio e' sempre quella che non si
+# guarda.
+#
+# Dal 17/09 il repository E' un progetto Firebase canonico: `firebase.json`
+# dichiara `functions/`, che contiene `index.js`, `package.json` e il suo
+# lockfile. Quindi qui non si costruisce piu' niente: si prende il
+# repository e si pubblica quello. **Il codice che si vede su GitHub e' il
+# codice che Firebase pubblica.**
+#
+# E si puo' pubblicare UNA funzione sola. Prima no: era tutto o niente, e
+# per correggere una riga in `pushNotifica` si ridistribuivano anche le
+# altre sei, identiche.
 #
 # COSA NON FA. Non risponde da solo alle domande di firebase. Il prompt che
 # chiede conferma prima di CANCELLARE una funzione e' l'ultima rete: se un
-# giorno il file scaricato fosse sbagliato, quella domanda e' l'unica cosa fra
-# un errore e la perdita delle funzioni che oggi funzionano. Percio' niente
+# giorno il codice fosse sbagliato, quella domanda e' l'unica cosa fra un
+# errore e la perdita delle funzioni che oggi funzionano. Percio' niente
 # `--force`, mai.
 
 set -u
-REPO="https://raw.githubusercontent.com/alessandrozanetta80-boop/arctrail3d/main"
-CASA="$HOME/at3d"
-FUNZ="$CASA/functions"
 
-# Le funzioni che devono esserci. Se il file scaricato non le contiene tutte,
-# non e' il file giusto e il deploy cancellerebbe quelle mancanti.
+RAMO="main"
+REPO_GIT="https://github.com/alessandrozanetta80-boop/arctrail3d.git"
+CASA="$HOME/at3d-repo"
+SOLO="${1:-}"          # nome di una funzione, oppure vuoto per tutte
+
+# Le funzioni che devono esserci. Se il file non le contiene tutte, non e' il
+# file giusto e il deploy cancellerebbe quelle mancanti.
 ATTESE="sendNotification pushNotifica avvisaRicerche avvisaSegnalazione avvisaIscrizione avvisaRichiestaClub avvisaPercorso"
 
 rosso()  { printf '\033[31m%s\033[0m\n' "$*"; }
@@ -55,103 +50,91 @@ echo ""
 echo "══ ArcTrail 3D — pubblicazione funzioni ══"
 echo ""
 
-# ── 1. La cartella ──────────────────────────────────────────────────────────
-mkdir -p "$FUNZ" || { rosso "Non riesco a creare $FUNZ"; exit 1; }
+# ── 1. Il repository, alla revisione che sta su GitHub ──────────────────────
+# Si clona o si aggiorna: in tutti e due i casi si finisce sulla stessa
+# revisione che chiunque puo' leggere online. `reset --hard` sul ramo remoto
+# perche' qui non si lavora: si pubblica soltanto.
+if [ -d "$CASA/.git" ]; then
+  echo "  aggiorno $CASA…"
+  git -C "$CASA" fetch --depth 1 origin "$RAMO" || { rosso "  GitHub non risponde. Niente e' stato toccato."; exit 1; }
+  git -C "$CASA" reset --hard "origin/$RAMO" >/dev/null || exit 1
+else
+  echo "  clono il repository in $CASA…"
+  git clone --depth 1 --branch "$RAMO" "$REPO_GIT" "$CASA" || { rosso "  clone non riuscito."; exit 1; }
+fi
+
 cd "$CASA" || exit 1
+REVISIONE=$(git rev-parse --short HEAD)
+echo "  revisione: $REVISIONE"
 
-if [ ! -f firebase.json ]; then
-  echo '{"functions":{"source":"functions"}}' > firebase.json
-  echo "  creato firebase.json"
+# ── 2. E' davvero un progetto Functions? ────────────────────────────────────
+if [ ! -f firebase.json ] || ! grep -q '"functions"' firebase.json; then
+  rosso "  firebase.json non dichiara nessuna sorgente functions. FERMO."
+  exit 1
 fi
-
-if [ ! -f "$FUNZ/package.json" ]; then
-  cat > "$FUNZ/package.json" <<'FINE'
-{
-  "name": "arctrail3d-functions",
-  "main": "index.js",
-  "engines": { "node": "20" },
-  "dependencies": {
-    "firebase-admin": "^12.6.0",
-    "firebase-functions": "^6.1.0"
-  },
-  "private": true
-}
-FINE
-  echo "  creato functions/package.json"
-fi
-
-# ── 2. Il codice ────────────────────────────────────────────────────────────
-# Il file di ieri si tiene da parte: serve a dire cosa e' cambiato, e a
-# rimettere le cose com'erano se il controllo va male.
-[ -f "$FUNZ/index.js" ] && cp "$FUNZ/index.js" "$FUNZ/index.js.ieri"
-
-echo "  scarico index.js da GitHub…"
-if ! curl -fsSL -o "$FUNZ/index.js.nuovo" "$REPO/index.js"; then
-  rosso "  GitHub non risponde. Niente e' stato toccato."
+if [ ! -f functions/index.js ] || [ ! -f functions/package.json ]; then
+  rosso "  manca functions/index.js o functions/package.json. FERMO."
   exit 1
 fi
 
 # ── 3. E' il file giusto? ───────────────────────────────────────────────────
-VERSIONE=$(grep -m1 -o 'Versione [0-9A-Za-z.-]*' "$FUNZ/index.js.nuovo" | sed 's/Versione //')
-QUANTE=$(grep -c '^exports' "$FUNZ/index.js.nuovo")
+VERSIONE=$(grep -m1 -o 'Versione [0-9A-Za-z.-]*' functions/index.js | sed 's/Versione //')
+QUANTE=$(grep -c '^exports' functions/index.js)
 
 echo ""
-echo "  versione scaricata: ${VERSIONE:-NESSUNA}"
-echo "  funzioni nel file:  $QUANTE"
+echo "  versione dichiarata: ${VERSIONE:-NESSUNA}"
+echo "  funzioni nel file:   $QUANTE"
 
 MANCANTI=""
 for f in $ATTESE; do
-  grep -q "^exports\.$f" "$FUNZ/index.js.nuovo" || MANCANTI="$MANCANTI $f"
+  grep -q "^exports\.$f" functions/index.js || MANCANTI="$MANCANTI $f"
 done
 
 if [ -n "$MANCANTI" ]; then
   rosso ""
-  rosso "  FERMO. Nel file scaricato mancano:$MANCANTI"
-  rosso "  Non e' il file giusto — GitHub potrebbe non aver ancora servito"
+  rosso "  FERMO. Nel repository mancano:$MANCANTI"
+  rosso "  Non e' il codice giusto — GitHub potrebbe non aver ancora servito"
   rosso "  l'ultima versione. Aspetta un minuto e rilancia."
-  rosso "  Niente e' stato pubblicato e la cartella e' rimasta com'era."
-  rm -f "$FUNZ/index.js.nuovo"
+  rosso "  Niente e' stato pubblicato."
   exit 1
 fi
 
-# ── 4. Cosa cambia ──────────────────────────────────────────────────────────
-if [ -f "$FUNZ/index.js.ieri" ] && cmp -s "$FUNZ/index.js.ieri" "$FUNZ/index.js.nuovo"; then
-  giallo ""
-  giallo "  Questo file e' IDENTICO all'ultimo pubblicato."
-  giallo "  Se hai appena caricato su GitHub, potrebbe non essere ancora"
-  giallo "  arrivato: aspetta un minuto e rilancia."
-  printf "  Pubblicare lo stesso? [s/N] "
-  read -r RISP
-  case "$RISP" in
-    s|S|si|Si|y|Y) ;;
-    *) echo "  Va bene, non faccio niente."; rm -f "$FUNZ/index.js.nuovo"; exit 0 ;;
-  esac
+if [ -n "$SOLO" ]; then
+  if ! grep -q "^exports\.$SOLO" functions/index.js; then
+    rosso "  FERMO: «$SOLO» non e' una funzione di questo file."
+    exit 1
+  fi
 fi
 
-mv "$FUNZ/index.js.nuovo" "$FUNZ/index.js"
-
-# ── 5. Le dipendenze, solo se servono ───────────────────────────────────────
-if [ ! -d "$FUNZ/node_modules/firebase-functions" ]; then
+# ── 4. Le dipendenze, solo se servono ───────────────────────────────────────
+if [ ! -d functions/node_modules/firebase-functions ]; then
   echo ""
   echo "  installo le dipendenze (la prima volta ci mette un minuto)…"
-  (cd "$FUNZ" && npm install --silent) || { rosso "  npm install non e' riuscito."; exit 1; }
+  (cd functions && npm install --silent) || { rosso "  npm install non e' riuscito."; exit 1; }
   verde "  dipendenze pronte"
 else
   echo "  dipendenze gia' a posto"
 fi
 
-# ── 6. Il deploy ────────────────────────────────────────────────────────────
-echo ""
-echo "══ deploy ══"
+# ── 5. Il deploy ────────────────────────────────────────────────────────────
+if [ -n "$SOLO" ]; then
+  BERSAGLIO="functions:$SOLO"
+  echo ""
+  echo "══ deploy della sola «$SOLO» ══"
+else
+  BERSAGLIO="functions"
+  echo ""
+  echo "══ deploy di tutte e sette ══"
+fi
+
 giallo "  Alla domanda «create» rispondi  y"
 rosso  "  Se compare «delete» rispondi  N  e fermati: vorrebbe dire che sta"
-rosso  "  guardando un file sbagliato e cancellerebbe funzioni che servono."
+rosso  "  guardando un codice sbagliato e cancellerebbe funzioni che servono."
 echo ""
 
-cd "$CASA" || exit 1
-if firebase deploy --only functions --project arctrail3d; then
+if firebase deploy --only "$BERSAGLIO" --project arctrail3d; then
   verde ""
-  verde "══ pubblicato: ${VERSIONE:-?} ══"
+  verde "══ pubblicato: ${VERSIONE:-?} · revisione $REVISIONE ══"
   echo ""
   echo "  Un deploy e' fatto quando la funzione COMPARE NELL'ELENCO."
   echo "  Console Firebase → Functions: devono esserci $QUANTE funzioni,"
@@ -160,8 +143,7 @@ else
   rosso ""
   rosso "══ il deploy NON e' riuscito ══"
   echo ""
-  echo "  Il codice scaricato e' comunque in $FUNZ/index.js."
-  echo "  La versione di prima e' in $FUNZ/index.js.ieri."
+  echo "  Il codice sta in $CASA/functions/index.js, alla revisione $REVISIONE."
   echo "  Copia l'errore per intero: la riga che conta di solito e' l'ultima."
   exit 1
 fi

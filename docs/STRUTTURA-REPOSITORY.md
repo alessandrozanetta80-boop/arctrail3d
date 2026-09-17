@@ -27,16 +27,38 @@ o Firebase cercano per indirizzo. Tutto il resto sta in quattro cartelle.
 | app installabile | `sw.js`, `firebase-messaging-sw.js`, `manifest.json`, `icon-192.png`, `icon-192-maskable.png`, `icon-512.png`, `icon-512-maskable.png`, `apple-touch-icon.png`, `favicon.ico`, `logo.jpg`, `logo.webp` |
 | dati e foto | `compagnie-data.js`, le cinque `vetrina-*.webp` |
 | dominio e motori di ricerca | `CNAME`, `robots.txt`, `sitemap.xml` |
-| Firebase | `index.js` *(Cloud Functions)*, `pubblica.sh`, `firestore.rules`, `storage.rules`, `firebase.json` |
+| Firebase | `pubblica.sh`, `firestore.rules`, `storage.rules`, `firebase.json`, `.firebaserc` — il backend sta in `functions/` |
 | progetto | `package.json` e `package-lock.json` *(le dipendenze dei banchi)*, `README.md`, `.gitignore` |
 
-**Tre file restano nella radice anche se non sono pagine, e non vanno spostati:**
+**Cosa resta nella radice anche se non sono pagine:**
 
-- `index.js` e `pubblica.sh` — `pubblica.sh` scarica `index.js` da
-  `raw.githubusercontent.com/.../main/index.js`, e la regola 17 scarica
-  `pubblica.sh` dallo stesso indirizzo. Spostarli rompe il deploy delle funzioni.
-- `firebase.json` — dice all'emulatore dove sta `firestore.rules`; si usa
-  lanciando `tests/banco-regole.js` dalla radice.
+- `pubblica.sh` — la regola 17 lo scarica da
+  `raw.githubusercontent.com/.../main/pubblica.sh`. Dal 17/09/2026 **non
+  costruisce piu' una cartella Functions al volo**: clona il repository e
+  pubblica `functions/`, cosi' il codice che si vede su GitHub e' il codice
+  che Firebase pubblica.
+- `firebase.json` — dice all'emulatore dove sta `firestore.rules` (si usa
+  lanciando `tests/banco-regole.js` dalla radice) **e** dice a Firebase che la
+  sorgente delle funzioni e' `functions/`. `.firebaserc` dice a quale progetto.
+
+## `functions/` — il backend Firebase, deployabile
+
+| file | cosa |
+|---|---|
+| `index.js` | le sette Cloud Functions. **La sorgente canonica**: non esistono altre copie |
+| `package.json` | entrypoint, runtime Node e le due sole dipendenze (`firebase-admin`, `firebase-functions`) |
+| `package-lock.json` | le versioni risolte, perche' il deploy non peschi qualcosa di diverso |
+
+Stava in radice fino al 17/09/2026, e li' `firebase deploy --only functions`
+non poteva funzionare: la CLI non sapeva dove guardare. Da qui si pubblica
+anche **una funzione sola**:
+
+```
+firebase deploy --only functions:pushNotifica --project arctrail3d
+```
+
+`tests/banco-functions-layout.js` tiene ferma questa struttura: se il backend
+torna in radice, o gli export non sono piu' esattamente sette, dice di no.
 
 ## `tests/` — i banchi e i controlli
 
@@ -53,7 +75,7 @@ o Firebase cercano per indirizzo. Tutto il resto sta in quattro cartelle.
 
 | file | cosa |
 |---|---|
-| `genera.py` + `dizionario-a.py`, `dizionario-b.py`, `dizionario-c.py` + `markup.html` | il dizionario del mercatino: scrive in `marketplace.html` e nel blocco `PAROLE` di `index.js`, nella radice (regola 24) |
+| `genera.py` + `dizionario-a.py`, `dizionario-b.py`, `dizionario-c.py` + `markup.html` | il dizionario del mercatino: scrive in `marketplace.html` nella radice e nel blocco `PAROLE` di `functions/index.js` (regola 24) |
 | `genera-presentazione.py` | l'elenco delle federazioni in `presentazione.html`, nella radice |
 | `genera-federazioni.py` | le pagine dei regolamenti, scritte in `nuove/` nella radice per essere guardate prima di copiarle |
 | `trova-doppie.js` | con `--scrivi` rigenera `docs/DOPPIE-TESSERE-ITALIA.md` |

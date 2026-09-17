@@ -149,7 +149,7 @@ Module._load = function (richiesto, padre, isMain) {
   if (Object.prototype.hasOwnProperty.call(finto, richiesto)) return finto[richiesto];
   return caricaVero.apply(this, arguments);
 };
-require(path.resolve(__dirname, '..', 'index.js'));
+require(path.resolve(__dirname, '..', 'functions', 'index.js'));
 Module._load = caricaVero;
 
 const avvisa = trigger['market_listings/{adId}'];
@@ -259,10 +259,10 @@ async function prova(nome, dati, annuncio) {
     }
     return new Function('return (' + testo.slice(i, j + 1) + ')')();
   }
-  const combacia = estrai('index.js', 'combacia');
+  const combacia = estrai('functions/index.js', 'combacia');
   const matchQ = estrai('marketplace.html', 'matchQ');
   if (!combacia || !matchQ) {
-    errori.push('non trovo piu\' combacia() in index.js o matchQ() in marketplace.html');
+    errori.push('non trovo piu\' combacia() in functions/index.js o matchQ() in marketplace.html');
   } else {
     const casi = [
       [ARCO, 'hoyt'], [ARCO, 'HOYT'], [ARCO, ' hoyt '], [ARCO, 'satori 40'],
