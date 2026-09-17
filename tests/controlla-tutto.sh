@@ -113,6 +113,7 @@ banco "banco-ruoli-compagnia.js (chi vede cosa nello spazio compagnia)" "node te
 banco "banco-vetrina.js (la vetrina in nove lingue, playwright)" "node tests/banco-vetrina.js index.html"
 esterno "banco-porta.js (la porta dell'app, nove lingue, playwright)" "node tests/banco-porta.js app.html"
 banco "banco-ifaa.js (il bareme IFAA e i giri di ieri)" "node tests/banco-ifaa.js"
+banco "banco-asa.js (il bareme ASA Pro/Am, sulle regole 2026)" "node tests/banco-asa.js"
 banco "banco-calendario.js (il calendario dice da chi viene il dato)" "node tests/banco-calendario.js app.html"
 banco "banco-ritorno.js (il ritorno canonico e le cose che non tornano)" "node tests/banco-ritorno.js app.html"
 banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node tests/controlla-diari.js"
