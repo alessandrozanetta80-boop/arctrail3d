@@ -14974,7 +14974,21 @@ state.screen === "round" && (authState === "ready" || modalitaLocale()) && !home
 if(typeof syncNavGuard === "function") syncNavGuard();
 if(state.lang){ document.documentElement.lang = state.lang; }
 applyTheme(currentTheme());
-if(!backendPronto() && !telefonoConfigurato()){ app.appendChild(firebaseErrorScreen()); return; }
+/* E LA MODALITA' SVILUPPO SALTA ANCHE QUESTO CANCELLO. (17/09/2026.)
+   Questa riga e' nata il 29/08 insieme a `modalitaLocale()`, e si e' dimenticata
+   la guardia che hanno le sue due sorelle: `modalitaLocale()` comincia con
+   `!DEV_MODE`, e il controllo su `firebaseError` qui sotto sta dietro un
+   `authState` che in DEV_MODE vale gia' "ready". Qui no.
+   In DEV_MODE `firebaseReady` e' false APPOSTA — e' il senso della modalita':
+   aprire il file senza Firebase — quindi `backendPronto()` risponde no, e su un
+   telefono ancora vergine (niente profilo, niente storico) `telefonoConfigurato()`
+   risponde no anche lui. Risultato: chi apre l'app in locale senza aver mai
+   giocato vede «Connessione non riuscita» e non va oltre: la porta, la scelta
+   della lingua e il segnapunti restano irraggiungibili.
+   Misurato da tests/banco-porta.js, che parte proprio da uno stato vergine: 20
+   rossi, uno per lingua per schermo, tutti «la porta non c'e' proprio».
+   Il sito online non era toccato: li' DEV_MODE e' false e Firebase risponde. */
+if(!DEV_MODE && !backendPronto() && !telefonoConfigurato()){ app.appendChild(firebaseErrorScreen()); return; }
 if(!state.lang){ app.appendChild(setupScreen()); return; }
 if(authState === "loading"){ app.appendChild(loadingScreen()); return; }
 if(authState === "linkSent"){ app.appendChild(linkSentScreen()); return; }
