@@ -221,13 +221,35 @@ exports.pushNotifica = onDocumentCreated(
       // in `onBackgroundMessage` i campi di `notification` arrivano scremati
       // mentre `data` arriva sempre intero.
       const tag = event.params.itemId;
+      // LE PAROLE VANNO ANCHE IN `data`, E NON E' UN DOPPIONE. (17/09/2026.)
+      // `sw.js` legge `d.title || n.title` e `d.body || n.body` proprio perche'
+      // in `onBackgroundMessage` il blocco `notification` puo' arrivare
+      // scremato, mentre `data` arriva intero. Ma qui in `data` c'era SOLO il
+      // tag: dove l'SDK non disegna da se', il telefono riceveva un avviso che
+      // diceva «ArcTrail 3D» con il corpo vuoto. Misurato in tests/banco-push.js.
+      //
+      // E CI VANNO I CAMPI DI INSTRADAMENTO CHE IL DOCUMENTO HA GIA'. Non un
+      // indirizzo nuovo deciso qui: `destinazioneNotifica()` nell'app sa gia'
+      // leggere `apri`, `adId` e `clubCode`, e due di quelle destinazioni
+      // dipendono da chi e' collegato (il pannello vuole l'admin). Un link
+      // assoluto scritto dal server sarebbe una seconda verita' da tenere
+      // allineata, e una porta aperta prima di sapere chi bussa.
+      //
+      // Tutto stringa: `data` accetta solo stringhe, e un campo assente non si
+      // scrive affatto invece di diventare "undefined".
+      const dati = { tag: tag };
+      if (d.title) dati.title = String(d.title);
+      if (d.body) dati.body = String(d.body);
+      if (d.apri) dati.apri = String(d.apri);
+      if (d.adId) dati.adId = String(d.adId);
+      if (d.clubCode) dati.clubCode = String(d.clubCode);
       await admin.messaging().send({
         token: token,
         notification: {
           title: d.title || "ArcTrail 3D",
           body: d.body || "",
         },
-        data: { tag: tag },
+        data: dati,
         webpush: {
           notification: {
             icon: "/icon-192.png",

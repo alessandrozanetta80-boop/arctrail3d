@@ -64,8 +64,8 @@ completo non si fa; prima di consegnare è obbligatorio **dallo STANDARD in su**
 *(Allineato alla regola 3 il 29/08: qui c'era scritto «a ogni livello».)*
 
 **«Tutti passati» non è mai la fotografia di ieri:** lo dà l'ultima esecuzione, e C24
-rende il parallelo inaffidabile come fotografia singola. Il 16/09/2026, in fila (`PAR=1`) su
-`2026-08-30-profilo-assetti`: **28 banchi locali, 27 verdi, 1 rosso** — `controlla-token` (C30). Prima erano 21/8:
+rende il parallelo inaffidabile come fotografia singola. Il 17/09/2026, in fila (`PAR=1`) su
+`2026-08-30-profilo-assetti`: **29 banchi locali, 28 verdi, 1 rosso** — `controlla-token` (C30). Il 29° è `banco-push` (17/09), che prova il percorso server → FCM → service worker → clic: nessuno lo guardava, e ad app chiusa l'avviso arrivava muto («ArcTrail 3D», corpo vuoto) perché in `data` c'era solo il tag. Adesso ci vanno anche titolo, corpo e l'instradamento già scritto sull'avviso, e la deduplica guarda l'etichetta e non le parole. Prima erano 21/8:
 cinque rossi erano banchi fragili (`\n` contro i fine riga CRLF di questa copia), due attese erano superate dal
 brief del 30/08. Nessun bug dell'app. In `banco-ritorno` due prove restano **in attesa**: la scorciatoia Impostazioni → Attrezzatura del brief del 30/08 (punto 6) non è mai stata pubblicata — `attrBtn` esiste solo nell'`app.html` dello zip in `archive/` — quindi non falliscono, si leggono a ogni giro e diventeranno verdi da sole il giorno che la porta si farà. È una decisione futura, non una regressione.
 

@@ -112,9 +112,15 @@ try {
     if (!self.registration.getNotifications) return disegna();
 
     return self.registration.getNotifications().then(function(gia){
+      // SI GUARDA L'ETICHETTA, NON LE PAROLE. (17/09/2026.)
+      // Qui c'era anche `title === title && body === body`, e sopprimeva due
+      // avvisi DIVERSI che per caso si somigliano: due «Nuovo messaggio» di due
+      // persone diverse diventavano uno solo, e il secondo non arrivava mai.
+      // Il tag e' gia' l'identificativo dell'evento — l'id del documento che
+      // ha fatto nascere l'avviso — quindi distingue quello che va distinto e
+      // unisce quello che va unito. Misurato in tests/banco-push.js.
       for (var i = 0; i < gia.length; i++){
         if (gia[i].tag === tag) return;
-        if (gia[i].title === title && (gia[i].body || "") === body) return;
       }
       return disegna();
     }).catch(function(){ return disegna(); });
