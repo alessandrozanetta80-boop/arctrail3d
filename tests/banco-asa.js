@@ -134,7 +134,17 @@ console.log("\n  ASA NON E' NESSUN ALTRO\n");
 
 const std = GAME_MODES.ifaa_3d;
 const wa = GAME_MODES.wa_3d;
+const ibo = GAME_MODES.ibo_3d;
 ok("IFAA 3-D Standard esiste ancora", !!std);
+ok("IBO esiste come modo separato", !!ibo);
+ok("chiavi di zona diverse da IBO",
+   asa && ibo && asa.zones.map(z => z.key).join(",") !== ibo.zones.map(z => z.key).join(","));
+ok("la zona alta ASA vale 12, e in IBO quel nome non esiste proprio",
+   asa && ibo && asa.scoring[1].dodici === 12 && ibo.scoring[1].dodici === undefined);
+ok("il regolamento ASA non e' quello IBO",
+   asa && ibo && asa.regolamento !== ibo.regolamento);
+ok("il bareme ASA non e' lo stesso oggetto di quello IBO",
+   asa && ibo && asa.scoring[1] !== ibo.scoring[1]);
 ok("chiavi di zona diverse da IFAA",
    asa && std && asa.zones.map(z => z.key).join(",") !== std.zones.map(z => z.key).join(","));
 ok("chiavi di zona diverse da World Archery (perfect/superspot/spot/sagoma)",
