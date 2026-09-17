@@ -11,3 +11,12 @@ node_modules/
 
 # Cache di Python (genera.py carica i dizionari con importlib)
 __pycache__/
+
+# I diari che gli emulatori Firebase scrivono nella radice quando gira
+# `firebase emulators:exec` (tests/banco-regole.js). Non sono del progetto:
+# li riscrive ogni giro, e finiscono in mezzo al `git status` di chi lavora.
+/firebase-debug.log
+/firestore-debug.log
+/ui-debug.log
+/database-debug.log
+/pubsub-debug.log

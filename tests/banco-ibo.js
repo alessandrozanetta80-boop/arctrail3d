@@ -288,6 +288,32 @@ if (schema) {
      String(schema.modoDelGiro("asa_proam", null)));
   ok("e il dirottamento IFAA funziona ancora",
      schema.modoDelGiro("ifaa_3d", null) === "ifaa_3d_v1");
+
+  /* ══ RECORD E STORICO NON SI MESCOLANO ═══════════════════════════════
+     La casella in cui un giro finisce — media, record, riepilogo permanente
+     — e' `nome | modoDelGiro(modeKey, scoringVersion)`: sta scritta cosi' in
+     `backfillLifetimeOnce()`, ed e' l'unica porta. Qui si costruisce quella
+     chiave con la funzione VERA, per cinque giri dello stesso arciere, e si
+     pretende che le caselle siano cinque.
+     *Se un giorno qualcuno appoggiasse IBO su `wa_3d` per non ripetere il
+     bareme, questa riga diventerebbe rossa prima che un record sbagliato
+     arrivi nel diario di qualcuno.* */
+  const casella = (modeKey, sv) => "Prova|" + schema.modoDelGiro(modeKey, sv);
+  const caselle = [
+    casella("asa_proam", schema.ASA_SCHEMA),
+    casella("ibo_3d", schema.IBO_SCHEMA),
+    casella("ifaa_3d", schema.IFAA_SCHEMA),
+    casella("ifaa_3d", null),
+    casella("wa_3d", null)
+  ];
+  ok("cinque giri, cinque caselle diverse",
+     new Set(caselle).size === 5, caselle.join("  /  "));
+  ok("ASA e IBO non finiscono nella stessa casella",
+     caselle[0] !== caselle[1], caselle[0] + " vs " + caselle[1]);
+  ok("IBO non finisce nella casella World Archery",
+     caselle[1] !== caselle[4], caselle[1] + " vs " + caselle[4]);
+  ok("e i due IFAA restano separati fra loro, come il 28/08",
+     caselle[2] !== caselle[3], caselle[2] + " vs " + caselle[3]);
 }
 
 console.log("\n  " + passate + " passate, " + fallite + " fallite.\n");
