@@ -1103,7 +1103,7 @@ header.top{ display:flex; align-items:center; gap:var(--s-3); min-height:52px;
 padding:var(--s-2) var(--s-4); margin-left:-16px; margin-right:-16px;
 border-bottom:1px solid var(--line); margin-bottom:var(--s-4);
 flex-wrap:wrap; row-gap:8px;
-position:sticky; top:0; z-index:50; margin-top:env(safe-area-inset-top);
+position:sticky; top:0; z-index:50;
 background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
 /* ══ LA TESTATA E' IL PANNELLO, IN TUTTE LE SCHERMATE ═════════════════════
    (23/08/2026, terza passata. Alessandro: «molte pagine sembrano come prima,
@@ -1139,7 +1139,18 @@ header.top{ background:var(--eroe-bg); color:var(--eroe-ink);
    annulla, quindi se quello cambia questa lo segue. La barra di stato del
    telefono resta rispettata — `env(safe-area-inset-top)` era gia' li' e
    viene dopo. */
-header.top{ margin-top:calc(var(--s-4) * -1 + env(safe-area-inset-top));
+/* LA TACCA SI CHIEDE UNA VOLTA SOLA. (17/09/2026.) Qui `env(safe-area-inset-top)`
+   stava nel margine E nel riempimento — e piu' su, nella regola base, c'era un
+   terzo `margin-top:env(...)`. Sommati, spingevano la prima riga DUE tacche
+   sotto il bordo invece di una; e siccome la testata e' `sticky`, appena si
+   attaccava il margine smetteva di contare e il contenuto SALTAVA su di una
+   tacca intera. Da browser l'inset vale 0 e non si vedeva niente: si vedeva
+   installata come app, su un telefono con la tacca. Misurato in
+   tests/banco-safe-area.js: prima riga a 113px invece di ~55, e 47px di salto.
+   Adesso il margine negativo resta — serve a far toccare il bordo al pannello,
+   ed e' lo stesso --s-4 del riempimento di #app, non un numero a mano — e la
+   tacca la tiene solo il riempimento, che vale uguale ferma e attaccata. */
+header.top{ margin-top:calc(var(--s-4) * -1);
   padding-top:calc(var(--s-2) + env(safe-area-inset-top)); }
 header.top .brandblock .brand-title{ color:var(--eroe-ink); }
 header.top .sub{ color:var(--eroe-eti); }

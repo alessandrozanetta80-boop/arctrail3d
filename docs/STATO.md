@@ -65,7 +65,7 @@ completo non si fa; prima di consegnare è obbligatorio **dallo STANDARD in su**
 
 **«Tutti passati» non è mai la fotografia di ieri:** lo dà l'ultima esecuzione, e C24
 rende il parallelo inaffidabile come fotografia singola. Il 16/09/2026, in fila (`PAR=1`) su
-`2026-08-30-profilo-assetti`: **28 banchi locali, 27 verdi, 1 rosso** — `controlla-token` (C30). Prima erano 21/8:
+`2026-08-30-profilo-assetti`: **28 banchi locali, 27 verdi, 1 rosso** — `controlla-token` (C30). Dal 17/09 c'è anche `banco-safe-area`, e la tacca del telefono si conta **una volta sola**: `header.top` chiedeva `env(safe-area-inset-top)` nel margine **e** nel riempimento, quindi in PWA su un telefono con la tacca la prima riga stava due tacche sotto il bordo e saltava di una tacca intera appena la barra si attaccava; adesso l'inset lo tiene solo il `padding-top`, e il banco vieta anche staticamente il doppio uso. **Il timbro non si alza qui:** `app.html` sta in `APP_SHELL`, quindi `BUILD_STAMP` e `CACHE_NAME` salgono nella mossa che PUBBLICA, non su un ramo non pubblicato — se no `controlla-base` vedrebbe un genitore mai stato online. Prima erano 21/8:
 cinque rossi erano banchi fragili (`\n` contro i fine riga CRLF di questa copia), due attese erano superate dal
 brief del 30/08. Nessun bug dell'app. In `banco-ritorno` due prove restano **in attesa**: la scorciatoia Impostazioni → Attrezzatura del brief del 30/08 (punto 6) non è mai stata pubblicata — `attrBtn` esiste solo nell'`app.html` dello zip in `archive/` — quindi non falliscono, si leggono a ogni giro e diventeranno verdi da sole il giorno che la porta si farà. È una decisione futura, non una regressione.
 
