@@ -34,6 +34,7 @@ PAESI = [
     ("it", "Italia"), ("fr", "Francia"), ("ch", "Svizzera"), ("at", "Austria"),
     ("de", "Germania"), ("uk", "Regno Unito"), ("tr", "Turchia"),
     ("es", "Spagna"), ("nl", "Paesi Bassi"), ("se", "Svezia"),
+    ("us", "Stati Uniti"),
 ]
 
 

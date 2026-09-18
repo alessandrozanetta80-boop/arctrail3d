@@ -112,6 +112,7 @@ banco "banco-chat.js (la chat dice quello che deve, e nient'altro)" "node tests/
 banco "controlla-tavolozza.js (app e mercatino, lo stesso colore)" "node tests/controlla-tavolozza.js"
 banco "banco-ruoli-compagnia.js (chi vede cosa nello spazio compagnia)" "node tests/banco-ruoli-compagnia.js"
 banco "banco-vetrina.js (la vetrina in nove lingue, playwright)" "node tests/banco-vetrina.js index.html"
+banco "banco-seo.js (le pagine pubbliche dicono a Google cose vere)" "node tests/banco-seo.js"
 esterno "banco-porta.js (la porta dell'app, nove lingue, playwright)" "node tests/banco-porta.js app.html"
 banco "banco-ifaa.js (il bareme IFAA e i giri di ieri)" "node tests/banco-ifaa.js"
 banco "banco-asa.js (il bareme ASA Pro/Am, sulle regole 2026)" "node tests/banco-asa.js"
