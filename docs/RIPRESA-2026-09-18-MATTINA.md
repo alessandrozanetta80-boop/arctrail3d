@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **main** | `eaa5d00`, identico a `origin/main`; GitHub Pages «built» |
+| **main** | identico a `origin/main`. Ultimo codice pubblicato: `413ea4e` (PR #6); dopo, solo test e documenti (`d94c6de` guardiano CSS). GitHub Pages «built» |
 | **Build online** | `BUILD_STAMP 2026-09-18-italia-2`, `CACHE_NAME arctrail3d-v164`. `/`, `app.html`, `sw.js`, `sitemap.xml`, `fitarco-3d.html`, `fiarc.html` identici byte per byte a `main`; service worker attivo con la cache v164; zero errori JS |
 | **PR #3** (SEO) | unita (`3bfc18c`): `asa-3d.html`, `ibo-3d.html`, `3d-archery-scoring-app.html`, hub a 6 regolamenti, link home → hub |
 | **PR #4** (inglese) | unita (`d93670a`): vetrina `en` neutro, «English (US)» → ASA/IBO, «English (UK)» → Archery GB/EFAA/NFAS; solo scelti, mai dedotti |
