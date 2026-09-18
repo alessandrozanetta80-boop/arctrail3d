@@ -4275,7 +4275,13 @@ border-top:2px solid var(--navbar-on); background:var(--navbar-bg);
 box-shadow:0 -10px 26px var(--navbar-shadow);
 padding-left:var(--s-2); padding-right:var(--s-2);
 padding-bottom:env(safe-area-inset-bottom);
-transform:translateZ(0); -webkit-backface-visibility:hidden; backface-visibility:hidden; }
+transform:translateZ(0); -webkit-backface-visibility:hidden; backface-visibility:hidden;
+/* A CAPO SOLO QUANDO LE PAROLE NON CI STANNO. (18/09/2026.) Sotto i 341px
+   le celle hanno `min-width:auto` (vedi piu' sotto): se la somma delle
+   parole supera la barra — caratteri grandi su un telefono piccolo — la
+   riga va a capo invece di spingere l'ultima voce fuori dallo schermo. Con
+   `flex-basis:0` succede esattamente quando non ci stanno, e mai prima. */
+flex-wrap:wrap; }
 .tabbar button{ background:none; border:1px solid transparent; cursor:pointer;
 font-family:inherit; color:var(--navbar-fg);
 transition:color var(--dur-2) var(--ease), background var(--dur-2) var(--ease); }
@@ -4335,6 +4341,18 @@ width:48px; height:32px; border-radius:var(--r-lg); border:1px solid transparent
    spazio e' quello che e'. */
 .tabn .tab-lbl{ font-size:var(--t-2xs); font-weight:700; text-align:center;
   text-transform:uppercase; letter-spacing:0.04em; }
+/* LA PAROLA VA A CAPO DENTRO LA SUA CELLA, NON NELLA CELLA ACCANTO.
+   (18/09/2026, caratteri di Android piu' grandi.) Le misure qui sopra —
+   spaziatura, soglie a 400, 374 e 340px — sono tarate sulla LARGHEZZA dello
+   schermo, e danno per scontato che il carattere sia quello di sempre. Chi
+   ingrandisce il testo del telefono non cambia larghezza: a 390px e 130%
+   «MARKETPLACE» misurava 105px in una cella di 94, e con `min-width:0` la
+   cella non si allarga — giusto, e' la regola delle celle uguali — quindi la
+   parola, che non ha dove andare a capo, sconfinava nella voce accanto.
+   Adesso l'etichetta non e' mai piu' larga della sua cella e, se la parola
+   non ci sta, va a capo li' dentro (in sillabe dove il browser le conosce).
+   Quando ci sta — cioe' sempre, al 100% — non cambia un pixel. */
+.tabn .tab-lbl{ max-width:100%; overflow-wrap:break-word; hyphens:auto; -webkit-hyphens:auto; }
 /* ATTENZIONE ALL'ORDINE: questi due blocchi devono stare DOPO la regola qui
    sopra, non prima. Fino a oggi stavano prima, e siccome hanno la stessa
    forza vinceva l'ultima scritta — cioe' la regola base. **La spaziatura
@@ -4370,6 +4388,8 @@ width:48px; height:32px; border-radius:var(--r-lg); border:1px solid transparent
    telefono che nel 2026 e' l'eccezione, non la regola. */
 @media (max-width:340px){
 .tabn{ min-width:auto; }
+/* e qui la parola resta intera: e' la cella a farle posto (18/09/2026) */
+.tabn .tab-lbl{ max-width:none; hyphens:manual; -webkit-hyphens:manual; }
 }
 /* ══ E LA BARRA PARLA LA STESSA LINGUA DELLE ETICHETTE ════════════════════
    (23/08/2026, chiesto da Alessandro nella stessa riga: «anche la barra deve
@@ -6851,6 +6871,19 @@ mode_nfas_training_desc:"Allenamento libero secondo le zone NFAS: una sola frecc
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"gara \u00b7 fino a 3 frecce", mode_nfas_biggame_unit:"Freccia",
 mode_nfas_biggame_desc:"Big Game Round NFAS: fino a 3 frecce (vale solo la prima a segno), l'Inner Kill vale solo sulla prima freccia. ArcTrail usa al momento un preset da 28 piazzole; NFAS non fissa un numero unico di bersagli.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
+country_usa: "Stati Uniti",
+/* ASA e IBO: gli anelli si chiamano col numero in tutte e nove le lingue.
+   Non e' una traduzione mancante: e' il nome che il regolamento gli da'. */
+zone_asa_dodici: "12", zone_asa_dieci: "10", zone_asa_otto: "8", zone_asa_cinque: "5",
+zone_ibo_undici: "11", zone_ibo_dieci: "10", zone_ibo_otto: "8", zone_ibo_cinque: "5",
+mode_asa_training_label:"Allenamento", mode_asa_training_tag:"1 freccia", mode_asa_training_unit:"Freccia",
+mode_asa_training_desc:"Allenamento libero secondo le zone ASA: una sola freccia per piazzola, punteggi fissi 12/10/8/5.",
+mode_asa_proam_label:"Pro/Am", mode_asa_proam_tag:"gara \u00b7 1 freccia", mode_asa_proam_unit:"Freccia",
+mode_asa_proam_desc:"Pro/Am ASA: 20 piazzole per round, UNA freccia per piazzola, zone 12/10/8/5. Distanze note o ignote secondo la classe. Un torneo completo sono due round da 20, cio\u00e8 due giri qui.",
+mode_ibo_training_label:"Allenamento", mode_ibo_training_tag:"1 freccia", mode_ibo_training_unit:"Freccia",
+mode_ibo_training_desc:"Allenamento libero secondo le zone IBO: una sola freccia per piazzola, punteggi fissi 11/10/8/5.",
+mode_ibo_3d_label:"3-D", mode_ibo_3d_tag:"gara \u00b7 1 freccia", mode_ibo_3d_unit:"Freccia",
+mode_ibo_3d_desc:"3-D IBO: UNA freccia per piazzola, distanze sempre ignote, zone 11/10/8/5. Freccia nel corno che non tocca il corpo: zero. ArcTrail usa un preset da 40 piazzole; il regolamento IBO non fissa un numero di bersagli.",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"gara \u00b7 1 freccia", mode_ifaa_hunting_unit:"Freccia",
 mode_ifaa_hunting_desc:"Hunting Round IFAA: 28 piazzole, UNA sola freccia per piazzola, distanze sconosciute. Kill 20, Vital 16, Wound 10.",
@@ -7677,6 +7710,19 @@ admin_sessions_participants: "Participants", admin_sessions_double_confirm: "Dou
 profile_title: "Create your profile", profile_username: "Username", profile_username_hint: "(what others see on the leaderboard)",
 profile_hide_name: "Hide my first and last name from other archers", profile_hide_name_note: "Only your username will appear in the lists and in the chats. Your first and last name stay visible to whoever organises a competition you sign up for, because official rankings are compiled with them.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
+country_usa: "United States",
+/* ASA e IBO: gli anelli si chiamano col numero in tutte e nove le lingue.
+   Non e' una traduzione mancante: e' il nome che il regolamento gli da'. */
+zone_asa_dodici: "12", zone_asa_dieci: "10", zone_asa_otto: "8", zone_asa_cinque: "5",
+zone_ibo_undici: "11", zone_ibo_dieci: "10", zone_ibo_otto: "8", zone_ibo_cinque: "5",
+mode_asa_training_label:"Training", mode_asa_training_tag:"1 arrow", mode_asa_training_unit:"Arrow",
+mode_asa_training_desc:"Free training following ASA zones: a single arrow per target, fixed scores 12/10/8/5.",
+mode_asa_proam_label:"Pro/Am", mode_asa_proam_tag:"match \u00b7 1 arrow", mode_asa_proam_unit:"Arrow",
+mode_asa_proam_desc:"ASA Pro/Am: 20 targets per round, ONE arrow per target, zones 12/10/8/5. Known or unknown distances depending on the class. A full tournament is two rounds of 20, that is two rounds here.",
+mode_ibo_training_label:"Training", mode_ibo_training_tag:"1 arrow", mode_ibo_training_unit:"Arrow",
+mode_ibo_training_desc:"Free training following IBO zones: a single arrow per target, fixed scores 11/10/8/5.",
+mode_ibo_3d_label:"3-D", mode_ibo_3d_tag:"match \u00b7 1 arrow", mode_ibo_3d_unit:"Arrow",
+mode_ibo_3d_desc:"IBO 3-D: ONE arrow per target, distances always unmarked, zones 11/10/8/5. An arrow in the horn not touching body colour scores zero. ArcTrail uses a 40-target preset; the IBO rules do not set a target count.",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"match \u00b7 1 arrow", mode_ifaa_hunting_unit:"Arrow",
 mode_ifaa_hunting_desc:"IFAA Hunting Round: 28 targets, a SINGLE arrow per target, unmarked distances. Kill 20, Vital 16, Wound 10.",
@@ -8399,6 +8445,19 @@ admin_sessions_participants: "Participants", admin_sessions_double_confirm: "Dou
 profile_title: "Cr\u00e9ez votre profil", profile_username: "Pseudo", profile_username_hint: "(ce que les autres voient dans le classement)",
 profile_hide_name: "Masquer mes nom et pr\u00e9nom aux autres archers", profile_hide_name_note: "Dans les listes et les discussions, seul votre nom d\u2019utilisateur appara\u00eetra. Vos nom et pr\u00e9nom restent visibles pour qui organise une comp\u00e9tition \u00e0 laquelle vous vous inscrivez, car les classements officiels sont \u00e9tablis avec eux.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
+country_usa: "\u00c9tats-Unis",
+/* ASA e IBO: gli anelli si chiamano col numero in tutte e nove le lingue.
+   Non e' una traduzione mancante: e' il nome che il regolamento gli da'. */
+zone_asa_dodici: "12", zone_asa_dieci: "10", zone_asa_otto: "8", zone_asa_cinque: "5",
+zone_ibo_undici: "11", zone_ibo_dieci: "10", zone_ibo_otto: "8", zone_ibo_cinque: "5",
+mode_asa_training_label:"Entra\u00eenement", mode_asa_training_tag:"1 fl\u00e8che", mode_asa_training_unit:"Fl\u00e8che",
+mode_asa_training_desc:"Entra\u00eenement libre selon les zones ASA\u00a0: une seule fl\u00e8che par cible, points fixes 12/10/8/5.",
+mode_asa_proam_label:"Pro/Am", mode_asa_proam_tag:"comp\u00e9tition \u00b7 1 fl\u00e8che", mode_asa_proam_unit:"Fl\u00e8che",
+mode_asa_proam_desc:"Pro/Am ASA\u00a0: 20 cibles par manche, UNE fl\u00e8che par cible, zones 12/10/8/5. Distances connues ou inconnues selon la classe. Un tournoi complet compte deux manches de 20, donc deux parcours ici.",
+mode_ibo_training_label:"Entra\u00eenement", mode_ibo_training_tag:"1 fl\u00e8che", mode_ibo_training_unit:"Fl\u00e8che",
+mode_ibo_training_desc:"Entra\u00eenement libre selon les zones IBO\u00a0: une seule fl\u00e8che par cible, points fixes 11/10/8/5.",
+mode_ibo_3d_label:"3-D", mode_ibo_3d_tag:"comp\u00e9tition \u00b7 1 fl\u00e8che", mode_ibo_3d_unit:"Fl\u00e8che",
+mode_ibo_3d_desc:"3-D IBO\u00a0: UNE fl\u00e8che par cible, distances toujours inconnues, zones 11/10/8/5. Une fl\u00e8che dans la corne ne touchant pas le corps vaut z\u00e9ro. ArcTrail utilise un pr\u00e9r\u00e9glage de 40 cibles\u00a0; le r\u00e8glement IBO ne fixe pas un nombre de cibles.",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"comp\u00e9tition \u00b7 1 fl\u00e8che", mode_ifaa_hunting_unit:"Fl\u00e8che",
 mode_ifaa_hunting_desc:"Hunting Round IFAA : 28 cibles, UNE seule fl\u00e8che par cible, distances inconnues. Kill 20, Vital 16, Wound 10.",
@@ -9121,6 +9180,19 @@ admin_sessions_participants: "Teilnehmer", admin_sessions_double_confirm: "Doppe
 profile_title: "Erstelle dein Profil", profile_username: "Benutzername", profile_username_hint: "(was andere in der Rangliste sehen)",
 profile_hide_name: "Vor- und Nachnamen vor anderen Sch\u00fctzen verbergen", profile_hide_name_note: "In den Listen und Chats erscheint nur dein Benutzername. Vor- und Nachname bleiben f\u00fcr die Veranstalter eines Wettkampfs sichtbar, zu dem du dich anmeldest, denn die offiziellen Ranglisten werden damit erstellt.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
+country_usa: "Vereinigte Staaten",
+/* ASA e IBO: gli anelli si chiamano col numero in tutte e nove le lingue.
+   Non e' una traduzione mancante: e' il nome che il regolamento gli da'. */
+zone_asa_dodici: "12", zone_asa_dieci: "10", zone_asa_otto: "8", zone_asa_cinque: "5",
+zone_ibo_undici: "11", zone_ibo_dieci: "10", zone_ibo_otto: "8", zone_ibo_cinque: "5",
+mode_asa_training_label:"Training", mode_asa_training_tag:"1 Pfeil", mode_asa_training_unit:"Pfeil",
+mode_asa_training_desc:"Freies Training nach ASA-Zonen: ein einzelner Pfeil pro Ziel, feste Punktwerte 12/10/8/5.",
+mode_asa_proam_label:"Pro/Am", mode_asa_proam_tag:"Wettkampf \u00b7 1 Pfeil", mode_asa_proam_unit:"Pfeil",
+mode_asa_proam_desc:"ASA Pro/Am: 20 Ziele pro Runde, EIN Pfeil pro Ziel, Zonen 12/10/8/5. Bekannte oder unbekannte Entfernungen je nach Klasse. Ein ganzes Turnier sind zwei Runden zu 20, hier also zwei Durchg\u00e4nge.",
+mode_ibo_training_label:"Training", mode_ibo_training_tag:"1 Pfeil", mode_ibo_training_unit:"Pfeil",
+mode_ibo_training_desc:"Freies Training nach IBO-Zonen: ein einzelner Pfeil pro Ziel, feste Punktwerte 11/10/8/5.",
+mode_ibo_3d_label:"3-D", mode_ibo_3d_tag:"Wettkampf \u00b7 1 Pfeil", mode_ibo_3d_unit:"Pfeil",
+mode_ibo_3d_desc:"IBO 3-D: EIN Pfeil pro Ziel, Entfernungen immer unbekannt, Zonen 11/10/8/5. Ein Pfeil im Horn ohne K\u00f6rperfarbe z\u00e4hlt null. ArcTrail verwendet eine Voreinstellung mit 40 Zielen; die IBO-Regeln legen keine Zielanzahl fest.",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"Wettkampf \u00b7 1 Pfeil", mode_ifaa_hunting_unit:"Pfeil",
 mode_ifaa_hunting_desc:"IFAA Hunting Round: 28 Ziele, EIN einziger Pfeil pro Ziel, unbekannte Entfernungen. Kill 20, Vital 16, Wound 10.",
@@ -9759,6 +9831,19 @@ mode_nfas_training_desc:"NFAS b\u00f6lgelerine g\u00f6re serbest antrenman: hede
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"yar\u0131\u015fma \u00b7 3 oka kadar", mode_nfas_biggame_unit:"Ok",
 mode_nfas_biggame_desc:"NFAS Big Game Round: 3 oka kadar (sadece ilk isabet ge\u00e7erli), Inner Kill sadece ilk okta ge\u00e7erli. ArcTrail şu anda 28 hedeflik bir ön ayar kullanır; NFAS tek bir sabit hedef sayısı belirlemez.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
+country_usa: "Amerika Birle\u015fik Devletleri",
+/* ASA e IBO: gli anelli si chiamano col numero in tutte e nove le lingue.
+   Non e' una traduzione mancante: e' il nome che il regolamento gli da'. */
+zone_asa_dodici: "12", zone_asa_dieci: "10", zone_asa_otto: "8", zone_asa_cinque: "5",
+zone_ibo_undici: "11", zone_ibo_dieci: "10", zone_ibo_otto: "8", zone_ibo_cinque: "5",
+mode_asa_training_label:"Antrenman", mode_asa_training_tag:"1 ok", mode_asa_training_unit:"Ok",
+mode_asa_training_desc:"ASA b\u00f6lgelerine g\u00f6re serbest antrenman: hedef ba\u015f\u0131na tek ok, sabit puanlar 12/10/8/5.",
+mode_asa_proam_label:"Pro/Am", mode_asa_proam_tag:"yar\u0131\u015fma \u00b7 1 ok", mode_asa_proam_unit:"Ok",
+mode_asa_proam_desc:"ASA Pro/Am: tur ba\u015f\u0131na 20 hedef, hedef ba\u015f\u0131na TEK ok, b\u00f6lgeler 12/10/8/5. S\u0131n\u0131fa g\u00f6re bilinen veya bilinmeyen mesafeler. Tam bir turnuva 20'lik iki turdur, yani burada iki par\u00e7a.",
+mode_ibo_training_label:"Antrenman", mode_ibo_training_tag:"1 ok", mode_ibo_training_unit:"Ok",
+mode_ibo_training_desc:"IBO b\u00f6lgelerine g\u00f6re serbest antrenman: hedef ba\u015f\u0131na tek ok, sabit puanlar 11/10/8/5.",
+mode_ibo_3d_label:"3-D", mode_ibo_3d_tag:"yar\u0131\u015fma \u00b7 1 ok", mode_ibo_3d_unit:"Ok",
+mode_ibo_3d_desc:"IBO 3-D: hedef ba\u015f\u0131na TEK ok, mesafeler daima bilinmiyor, b\u00f6lgeler 11/10/8/5. G\u00f6vde rengine de\u011fmeyen boynuzdaki ok s\u0131f\u0131r say\u0131l\u0131r. ArcTrail 40 hedeflik bir \u00f6n ayar kullan\u0131r; IBO kurallar\u0131 hedef say\u0131s\u0131 belirlemez.",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"yar\u0131\u015fma \u00b7 1 ok", mode_ifaa_hunting_unit:"Ok",
 mode_ifaa_hunting_desc:"IFAA Hunting Round: 28 hedef, hedef ba\u015f\u0131na TEK ok, bilinmeyen mesafeler. Kill 20, Vital 16, Wound 10.",
@@ -10494,6 +10579,19 @@ mode_nfas_training_desc:"Свободная тренировка по зонам
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"соревнование · до 3 стрел", mode_nfas_biggame_unit:"Стрела",
 mode_nfas_biggame_desc:"NFAS Big Game Round: до 3 стрел (засчитывается только первое попадание), Inner Kill засчитывается только на первой стреле. Сейчас ArcTrail использует предустановку на 28 мишеней; NFAS не устанавливает единое фиксированное число мишеней.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
+country_usa: "США",
+/* ASA e IBO: gli anelli si chiamano col numero in tutte e nove le lingue.
+   Non e' una traduzione mancante: e' il nome che il regolamento gli da'. */
+zone_asa_dodici: "12", zone_asa_dieci: "10", zone_asa_otto: "8", zone_asa_cinque: "5",
+zone_ibo_undici: "11", zone_ibo_dieci: "10", zone_ibo_otto: "8", zone_ibo_cinque: "5",
+mode_asa_training_label:"Тренировка", mode_asa_training_tag:"1 стрела", mode_asa_training_unit:"Стрела",
+mode_asa_training_desc:"Свободная тренировка по зонам ASA: одна стрела на мишень, фиксированные очки 12/10/8/5.",
+mode_asa_proam_label:"Pro/Am", mode_asa_proam_tag:"соревнование \u00b7 1 стрела", mode_asa_proam_unit:"Стрела",
+mode_asa_proam_desc:"ASA Pro/Am: 20 мишеней за круг, ОДНА стрела на мишень, зоны 12/10/8/5. Известные или неизвестные дистанции в зависимости от класса. Полный турнир — два круга по 20, то есть два захода здесь.",
+mode_ibo_training_label:"Тренировка", mode_ibo_training_tag:"1 стрела", mode_ibo_training_unit:"Стрела",
+mode_ibo_training_desc:"Свободная тренировка по зонам IBO: одна стрела на мишень, фиксированные очки 11/10/8/5.",
+mode_ibo_3d_label:"3-D", mode_ibo_3d_tag:"соревнование \u00b7 1 стрела", mode_ibo_3d_unit:"Стрела",
+mode_ibo_3d_desc:"IBO 3-D: ОДНА стрела на мишень, дистанции всегда неизвестны, зоны 11/10/8/5. Стрела в роге, не касающаяся тела, — ноль. ArcTrail использует пресет из 40 мишеней; правила IBO не задают число мишеней.",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"\u0441\u043e\u0440\u0435\u0432\u043d\u043e\u0432\u0430\u043d\u0438\u0435 \u00b7 1 \u0441\u0442\u0440\u0435\u043b\u0430", mode_ifaa_hunting_unit:"\u0421\u0442\u0440\u0435\u043b\u0430",
 mode_ifaa_hunting_desc:"IFAA Hunting Round: 28 \u043c\u0438\u0448\u0435\u043d\u0435\u0439, \u041e\u0414\u041d\u0410 \u0441\u0442\u0440\u0435\u043b\u0430 \u043d\u0430 \u043c\u0438\u0448\u0435\u043d\u044c, \u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043d\u044b\u0435 \u0434\u0438\u0441\u0442\u0430\u043d\u0446\u0438\u0438. Kill 20, Vital 16, Wound 10.",
@@ -11229,6 +11327,19 @@ mode_nfas_training_desc:"Entrenamiento libre seg\u00fan las zonas NFAS: una sola
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"competici\u00f3n \u00b7 hasta 3 flechas", mode_nfas_biggame_unit:"Flecha",
 mode_nfas_biggame_desc:"Big Game Round NFAS: hasta 3 flechas (solo cuenta el primer impacto), el Inner Kill solo cuenta en la primera flecha. ArcTrail usa actualmente un preajuste de 28 dianas; NFAS no fija un número único de dianas.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
+country_usa: "Estados Unidos",
+/* ASA e IBO: gli anelli si chiamano col numero in tutte e nove le lingue.
+   Non e' una traduzione mancante: e' il nome che il regolamento gli da'. */
+zone_asa_dodici: "12", zone_asa_dieci: "10", zone_asa_otto: "8", zone_asa_cinque: "5",
+zone_ibo_undici: "11", zone_ibo_dieci: "10", zone_ibo_otto: "8", zone_ibo_cinque: "5",
+mode_asa_training_label:"Entrenamiento", mode_asa_training_tag:"1 flecha", mode_asa_training_unit:"Flecha",
+mode_asa_training_desc:"Entrenamiento libre seg\u00fan las zonas ASA: una sola flecha por diana, puntuaciones fijas 12/10/8/5.",
+mode_asa_proam_label:"Pro/Am", mode_asa_proam_tag:"competici\u00f3n \u00b7 1 flecha", mode_asa_proam_unit:"Flecha",
+mode_asa_proam_desc:"Pro/Am ASA: 20 dianas por ronda, UNA flecha por diana, zonas 12/10/8/5. Distancias conocidas o desconocidas seg\u00fan la clase. Un torneo completo son dos rondas de 20, es decir dos recorridos aqu\u00ed.",
+mode_ibo_training_label:"Entrenamiento", mode_ibo_training_tag:"1 flecha", mode_ibo_training_unit:"Flecha",
+mode_ibo_training_desc:"Entrenamiento libre seg\u00fan las zonas IBO: una sola flecha por diana, puntuaciones fijas 11/10/8/5.",
+mode_ibo_3d_label:"3-D", mode_ibo_3d_tag:"competici\u00f3n \u00b7 1 flecha", mode_ibo_3d_unit:"Flecha",
+mode_ibo_3d_desc:"3-D IBO: UNA flecha por diana, distancias siempre desconocidas, zonas 11/10/8/5. Una flecha en el cuerno que no toca el cuerpo vale cero. ArcTrail usa un preajuste de 40 dianas; el reglamento IBO no fija un n\u00famero de dianas.",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"competici\u00f3n \u00b7 1 flecha", mode_ifaa_hunting_unit:"Flecha",
 mode_ifaa_hunting_desc:"Hunting Round IFAA: 28 diana, UNA sola flecha por diana, distancias desconocidas. Kill 20, Vital 16, Wound 10.",
@@ -11964,6 +12075,19 @@ mode_nfas_training_desc:"Fri tr\u00e4ning enligt NFAS-zonerna: en pil per m\u00e
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"t\u00e4vling \u00b7 upp till 3 pilar", mode_nfas_biggame_unit:"Pil",
 mode_nfas_biggame_desc:"NFAS Big Game Round: upp till 3 pilar (endast f\u00f6rsta tr\u00e4ffen r\u00e4knas), Inner Kill r\u00e4knas endast p\u00e5 f\u00f6rsta pilen. ArcTrail anv\u00e4nder just nu en f\u00f6rinst\u00e4llning med 28 m\u00e5l; NFAS fastst\u00e4ller inte ett enda fast antal m\u00e5l.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
+country_usa: "USA",
+/* ASA e IBO: gli anelli si chiamano col numero in tutte e nove le lingue.
+   Non e' una traduzione mancante: e' il nome che il regolamento gli da'. */
+zone_asa_dodici: "12", zone_asa_dieci: "10", zone_asa_otto: "8", zone_asa_cinque: "5",
+zone_ibo_undici: "11", zone_ibo_dieci: "10", zone_ibo_otto: "8", zone_ibo_cinque: "5",
+mode_asa_training_label:"Tr\u00e4ning", mode_asa_training_tag:"1 pil", mode_asa_training_unit:"Pil",
+mode_asa_training_desc:"Fri tr\u00e4ning enligt ASA-zoner: en enda pil per m\u00e5l, fasta po\u00e4ng 12/10/8/5.",
+mode_asa_proam_label:"Pro/Am", mode_asa_proam_tag:"t\u00e4vling \u00b7 1 pil", mode_asa_proam_unit:"Pil",
+mode_asa_proam_desc:"ASA Pro/Am: 20 m\u00e5l per rond, EN pil per m\u00e5l, zoner 12/10/8/5. K\u00e4nda eller ok\u00e4nda avst\u00e5nd beroende p\u00e5 klass. En hel t\u00e4vling \u00e4r tv\u00e5 ronder om 20, allts\u00e5 tv\u00e5 rundor h\u00e4r.",
+mode_ibo_training_label:"Tr\u00e4ning", mode_ibo_training_tag:"1 pil", mode_ibo_training_unit:"Pil",
+mode_ibo_training_desc:"Fri tr\u00e4ning enligt IBO-zoner: en enda pil per m\u00e5l, fasta po\u00e4ng 11/10/8/5.",
+mode_ibo_3d_label:"3-D", mode_ibo_3d_tag:"t\u00e4vling \u00b7 1 pil", mode_ibo_3d_unit:"Pil",
+mode_ibo_3d_desc:"IBO 3-D: EN pil per m\u00e5l, avst\u00e5nden alltid ok\u00e4nda, zoner 11/10/8/5. En pil i hornet som inte r\u00f6r kroppen ger noll. ArcTrail anv\u00e4nder en f\u00f6rinst\u00e4llning p\u00e5 40 m\u00e5l; IBO:s regler fastst\u00e4ller inget antal m\u00e5l.",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"t\u00e4vling \u00b7 1 pil", mode_ifaa_hunting_unit:"Pil",
 mode_ifaa_hunting_desc:"IFAA Hunting Round: 28 m\u00e5l, EN enda pil per m\u00e5l, ok\u00e4nda avst\u00e5nd. Kill 20, Vital 16, Wound 10.",
@@ -12699,6 +12823,19 @@ mode_nfas_training_desc:"Vrije training volgens de NFAS-zones: \u00e9\u00e9n pij
 mode_nfas_biggame_label:"Big Game Round", mode_nfas_biggame_tag:"wedstrijd \u00b7 tot 3 pijlen", mode_nfas_biggame_unit:"Pijl",
 mode_nfas_biggame_desc:"NFAS Big Game Round: tot 3 pijlen (alleen de eerste treffer telt), de Inner Kill telt alleen op de eerste pijl. ArcTrail gebruikt momenteel een voorinstelling van 28 doelen; NFAS schrijft geen vast aantal doelen voor.",
 zone_nfas_innerkill: "Inner Kill", zone_nfas_kill: "Kill", zone_nfas_wound: "Wound",
+country_usa: "Verenigde Staten",
+/* ASA e IBO: gli anelli si chiamano col numero in tutte e nove le lingue.
+   Non e' una traduzione mancante: e' il nome che il regolamento gli da'. */
+zone_asa_dodici: "12", zone_asa_dieci: "10", zone_asa_otto: "8", zone_asa_cinque: "5",
+zone_ibo_undici: "11", zone_ibo_dieci: "10", zone_ibo_otto: "8", zone_ibo_cinque: "5",
+mode_asa_training_label:"Training", mode_asa_training_tag:"1 pijl", mode_asa_training_unit:"Pijl",
+mode_asa_training_desc:"Vrije training volgens ASA-zones: \u00e9\u00e9n pijl per doel, vaste scores 12/10/8/5.",
+mode_asa_proam_label:"Pro/Am", mode_asa_proam_tag:"wedstrijd \u00b7 1 pijl", mode_asa_proam_unit:"Pijl",
+mode_asa_proam_desc:"ASA Pro/Am: 20 doelen per ronde, \u00c9\u00c9N pijl per doel, zones 12/10/8/5. Bekende of onbekende afstanden afhankelijk van de klasse. Een volledig toernooi is twee ronden van 20, hier dus twee rondes.",
+mode_ibo_training_label:"Training", mode_ibo_training_tag:"1 pijl", mode_ibo_training_unit:"Pijl",
+mode_ibo_training_desc:"Vrije training volgens IBO-zones: \u00e9\u00e9n pijl per doel, vaste scores 11/10/8/5.",
+mode_ibo_3d_label:"3-D", mode_ibo_3d_tag:"wedstrijd \u00b7 1 pijl", mode_ibo_3d_unit:"Pijl",
+mode_ibo_3d_desc:"IBO 3-D: \u00c9\u00c9N pijl per doel, afstanden altijd onbekend, zones 11/10/8/5. Een pijl in de hoorn die het lichaam niet raakt telt nul. ArcTrail gebruikt een voorinstelling van 40 doelen; het IBO-reglement legt geen aantal doelen vast.",
 zone_ifaahunt_kill: "Kill", zone_ifaahunt_vital: "Vital", zone_ifaahunt_wound: "Wound",
 mode_ifaa_hunting_label:"3D Hunting", mode_ifaa_hunting_tag:"wedstrijd \u00b7 1 pijl", mode_ifaa_hunting_unit:"Pijl",
 mode_ifaa_hunting_desc:"IFAA Hunting Round: 28 doelen, \u00c9\u00c9N pijl per doel, onbekende afstanden. Kill 20, Vital 16, Wound 10.",
@@ -12852,6 +12989,23 @@ var RADII_2 = [55,140];
 var ZONES_3_IFAA_HUNT = [ {key:"kill",labelKey:"zone_ifaahunt_kill",cls:"superspot"}, {key:"vital",labelKey:"zone_ifaahunt_vital",cls:"spot"}, {key:"wound",labelKey:"zone_ifaahunt_wound",cls:"sagoma"} ];
 var ZONES_3_NFAS = [ {key:"innerkill",labelKey:"zone_nfas_innerkill",cls:"perfect"}, {key:"kill",labelKey:"zone_nfas_kill",cls:"superspot"}, {key:"wound",labelKey:"zone_nfas_wound",cls:"sagoma"} ];
 var RADII_3_NFAS = [24,70,140];
+/* GLI ANELLI AMERICANI SI CHIAMANO COL NUMERO. (17/09/2026.)
+   ASA e IBO non danno un nome alle zone: le chiamano 12, 10, 8, 5 e
+   11, 10, 8, 5. Tradurre «dodici» sarebbe inventare un vocabolario che
+   in gara nessuno usa — la stessa ragione per cui Kill e Vital restano
+   in inglese qui sopra. Le chiavi interne sono parole perche' una chiave
+   che comincia per cifra e' scomoda da leggere in un `switch`; le
+   ETICHETTE restano le cifre, in tutte e nove le lingue, e il banco lo
+   pretende.
+   DUE ELENCHI SEPARATI, e non uno riferito due volte: l'11 di IBO e l'11
+   di World Archery valgono lo stesso numero e vengono da due libri che
+   nessuno tiene allineati. Il giorno che uno cambia, l'altro non deve
+   muoversi.
+   I RAGGI sono quelli del bersaglio a quattro anelli che l'app disegna
+   gia': servono al DISEGNO, non al punteggio. Nessun regolamento e'
+   stato dedotto da questa riga. */
+var ZONES_4_ASA = [ {key:"dodici",labelKey:"zone_asa_dodici",cls:"perfect"}, {key:"dieci",labelKey:"zone_asa_dieci",cls:"superspot"}, {key:"otto",labelKey:"zone_asa_otto",cls:"spot"}, {key:"cinque",labelKey:"zone_asa_cinque",cls:"sagoma"} ];
+var ZONES_4_IBO = [ {key:"undici",labelKey:"zone_ibo_undici",cls:"perfect"}, {key:"dieci",labelKey:"zone_ibo_dieci",cls:"superspot"}, {key:"otto",labelKey:"zone_ibo_otto",cls:"spot"}, {key:"cinque",labelKey:"zone_ibo_cinque",cls:"sagoma"} ];
 var GAME_MODES = {
 training: {
 key:"training", circuito:"fiarc", regolamento:"fiarc_rt", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
@@ -13053,6 +13207,77 @@ nfas_biggame: {
 key:"nfas_biggame", circuito:"independent", regolamento:"nfas_rules", arrowsPerTarget:3, formats:[28], stopAtFirstHit:true,
 zones:ZONES_3_NFAS, radii:RADII_3_NFAS,
 scoring:{ 1: { innerkill:24, kill:20, wound:16 }, 2: { innerkill:14, kill:14, wound:10 }, 3: { innerkill:8, kill:8, wound:4 } }
+},
+/* ══ STATI UNITI: ASA E IBO ══════════════════════════════════
+   (17/09/2026.) Due organizzazioni americane, due regolamenti diversi, e
+   nessuna delle due e' una federazione nazionale nel senso delle altre
+   diciassette: sono circuiti di gare, e in ArcTrail entrano come tali —
+   circuito proprio, regolamento proprio, marchio di barème proprio.
+   NON SI APPOGGIANO A NIENTE DI ESISTENTE, e non e' il contrario della
+   pigrizia: e' che due numeri uguali non sono lo stesso numero se li
+   scrivono due libri diversi. Vedi il commento sulle zone, sopra.
+   ═════════════════════════════════════════════════════════════════════ */
+asa_training: {
+key:"asa_training", circuito:"asa", regolamento:"asa_proam", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
+zones:ZONES_4_ASA, radii:RADII_4,
+scoring:{ 1: { dodici:12, dieci:10, otto:8, cinque:5 } }
+},
+/* IL PRO/AM — ASA Pro/Am Rules 2026, lette il 17/09/2026.
+   https://asaarchery.com/rules/asa-pro-am-rules/
+
+   VENTI PIAZZOLE, NON QUARANTA. «Each ASA Pro/Am tournament will consist
+   of two (2) rounds of twenty (20) individual 3-D targets»: il torneo sono
+   due round, ma il CARTELLINO e' uno per round — il regolamento lo dice
+   riga per riga, «the properly completed official-colored scorecards must
+   be turned in by the group to the range official before leaving the
+   range». Un giro di ArcTrail e' un cartellino. Chi tira il torneo intero
+   segna due giri, come fa gia' oggi chi tira due giorni.
+
+   UNA FRECCIA: «Only one arrow, per shooter, per target will be shot from
+   their designated stake».
+   12/10/8/5: «Arrows in the corresponding area of the target will be
+   scored with point values of 5, 8, 10, or 12».
+
+   IL 14 NON C'E'. Nella pagina ufficiale 2026 «14» non compare mai come
+   anello. Fonti di terze parti lo raccontano negli spareggi: *finche' non
+   sta nel regolamento non sta qui*, e il banco lo pretende.
+
+   I DUE 12-RING non sono due punteggi: sono due bersagli per lo stesso
+   valore. «Each target has two (2) 12-rings... a shooter may elect to have
+   the upper 12-ring scored by announcing their intention to shoot for it».
+   Chi chiama l'alto rinuncia al basso, ma se colpisce prende 12 come
+   l'altro: il barème non cambia, cambia la scommessa. ArcTrail oggi non ha
+   un posto dove chiedere quella scelta bersaglio per bersaglio, e
+   inventarne uno qui sarebbe progettare una schermata dentro una tabella.
+   Resta scritto in docs/REGOLAMENTI-USA-2026.md come decisione aperta. */
+asa_proam: {
+key:"asa_proam", circuito:"asa", regolamento:"asa_proam", arrowsPerTarget:1, formats:[20],
+zones:ZONES_4_ASA, radii:RADII_4,
+scoring:{ 1: { dodici:12, dieci:10, otto:8, cinque:5 } }
+},
+ibo_training: {
+key:"ibo_training", circuito:"ibo", regolamento:"ibo_rules", arrowsPerTarget:1, freeFormat:true, minFormat:1, maxFormat:99, formats:[14],
+zones:ZONES_4_IBO, radii:RADII_4,
+scoring:{ 1: { undici:11, dieci:10, otto:8, cinque:5 } }
+},
+/* IL 3-D IBO — IBO Rules and Class Definitions 2026, lette il 17/09/2026.
+   https://iboarchery.com/rules-and-regulations  (il PDF: IBO-Rules.pdf)
+
+   11/10/8/5 (IV.B.2.a), una freccia, distanze SEMPRE non marcate
+   (II.A.3: «Targets shall be set at unmarked distances»). La freccia nel
+   corno che non tocca il colore del corpo e' zero (II.B.5): e' l'unica
+   regola di punteggio IBO che non ha un equivalente altrove, e vive nella
+   descrizione perche' l'app non sa dove sia il corno di un bersaglio.
+
+   `bersagliNonImposti` NON E' DECORAZIONE. Il regolamento IBO non dice da
+   nessuna parte quante piazzole sono: cercato, e non c'e'. Il 40 e' il
+   preset delle gare, e 40 x 11 = 440 e' il massimo che tutti pubblicano —
+   ma un preset scritto senza dirlo diventa una regola inventata nel giro
+   di sei mesi. La stessa onesta' che l'NFAS ha gia' nella sua descrizione. */
+ibo_3d: {
+key:"ibo_3d", circuito:"ibo", regolamento:"ibo_rules", arrowsPerTarget:1, formats:[40], bersagliNonImposti:true,
+zones:ZONES_4_IBO, radii:RADII_4,
+scoring:{ 1: { undici:11, dieci:10, otto:8, cinque:5 } }
 }
 };
 /* ══════════════════════════════════════════════════════════════════════════
@@ -13087,7 +13312,9 @@ wa:          { nome:"World Archery" },
 ifaa:        { nome:"International Field Archery Association" },
 hdh_iaa:     { nome:"HDH-IAA" },
 fiarc:       { nome:"FIARC" },
-independent: { nome:"Independent" }
+independent: { nome:"Independent" },
+asa:         { nome:"Archery Shooters Association" },
+ibo:         { nome:"International Bowhunting Organization" }
 };
 /* Piu' federazioni possono riferirsi allo STESSO regolamento, ed e' il punto:
    `wa_book4` e' uno solo per FITARCO, SwissArchery, RFETA, TOF, Archery GB,
@@ -13100,7 +13327,15 @@ ffta_reglement:  { circuito:"wa", nome:"FFTA \u2014 R\u00e8glement Tir 3D", vers
 dsb_sportordnung:{ circuito:"wa", nome:"DSB Sportordnung \u2014 3D", versione:null, dal:null, al:null, url:null, lingua:"de", verifica:"parziale" },
 sbf_regler:      { circuito:"wa", nome:"SBF t\u00e4vlingsregler 3D", versione:null, dal:null, al:null, url:null, lingua:"sv", verifica:"parziale" },
 nfas_rules:      { circuito:"independent", nome:"NFAS Rules of Shooting", versione:null, dal:null, al:null, url:null, lingua:"en", verifica:"parziale" },
-fidasc_reg:      { circuito:"hdh_iaa", nome:"FIDASC \u2014 Regolamento Tiro con l'Arco", versione:null, dal:null, al:null, url:null, lingua:"it", verifica:"serve_regolamento" }
+fidasc_reg:      { circuito:"hdh_iaa", nome:"FIDASC \u2014 Regolamento Tiro con l'Arco", versione:null, dal:null, al:null, url:null, lingua:"it", verifica:"serve_regolamento" },
+/* I DUE AMERICANI ENTRANO GIA' `verificato`, e non per cortesia: le due
+   fonti sono state scaricate e lette il 17/09/2026, articolo per articolo,
+   e i numeri stanno scritti a mano nei banchi. `dal` resta null in
+   entrambi: nessuna delle due pagine dichiara da che giorno la versione
+   2026 sia in vigore, e una data inventata qui sarebbe peggio di una
+   mancante. */
+asa_proam:       { circuito:"asa", nome:"ASA Pro/Am Rules", versione:"2026", dal:null, al:null, url:"https://asaarchery.com/rules/asa-pro-am-rules/", lingua:"en", verifica:"verificato" },
+ibo_rules:       { circuito:"ibo", nome:"IBO Rules and Class Definitions", versione:"2026", dal:null, al:null, url:"https://iboarchery.com/rules-and-regulations", lingua:"en", verifica:"verificato" }
 };
 /* Il circuito di una gara, per chi lo vuole senza sapere dove sta scritto. */
 function circuitoDi(modeKey){ var m = GAME_MODES[modeKey]; return (m && m.circuito) || null; }
@@ -13236,7 +13471,14 @@ dsb: { circuiti:["wa"], garaModes: ["dsb_3d"], trainingMode:"dsb_training" },
    Chi la sceglie non trova un menu vuoto: trova scritto che il regolamento
    non c'e' ancora. *Un menu vuoto sembra un guasto; una frase sembra quello
    che e'.* */
-fidasc: { circuiti:["hdh_iaa"], garaModes: [], trainingMode:null, senzaRegolamento:true }
+fidasc: { circuiti:["hdh_iaa"], garaModes: [], trainingMode:null, senzaRegolamento:true },
+/* ASA E IBO NON SONO FEDERAZIONI NAZIONALI, e non fanno finta di esserlo:
+   sono due circuiti di gare, e un arciere americano puo' tirarli
+   entrambi. Stanno qui perche' questa tabella risponde a «cosa posso
+   tirare», non a «di chi ho la tessera» — la stessa ragione per cui
+   l'NFAS ci sta accanto ad Archery GB. */
+asa: { circuiti:["asa"], garaModes: ["asa_proam"], trainingMode:"asa_training" },
+ibo: { circuiti:["ibo"], garaModes: ["ibo_3d"], trainingMode:"ibo_training" }
 };
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -13443,8 +13685,21 @@ var IFAA_SCHEMA = "ifaa-standard-2021";
    `baseModeKey` serve alle PAROLE — il modo di compatibilita' deve leggersi
    «IFAA 3-D Standard Round» come l'altro. Il marchio non e' una parola, e' un
    fatto sul punteggio, e li' i due modi sono cose diverse. */
+/* I DUE AMERICANI NASCONO MARCHIATI, DAL PRIMO GIRO. (17/09/2026.)
+   L'IFAA il marchio l'ha avuto DOPO, il 28/08, quando il barème era gia'
+   cambiato sotto i giri di qualcuno: e' costato una migrazione dello
+   storico e del riepilogo permanente, piu' un modo di compatibilita' che
+   nessuno puo' scegliere e che vive li' per sempre. Qui il campo costa una
+   riga e non costera' mai piu' niente.
+   ANCHE L'ALLENAMENTO E' MARCHIATO, perche' porta lo stesso barème della
+   gara: se ASA cambia un numero, cambia per tutti e due. */
+var ASA_SCHEMA = "asa-proam-2026";
+var IBO_SCHEMA = "ibo-rules-2026";
 function schemaPunteggio(modeKey){
-return (modeKey === "ifaa_3d") ? IFAA_SCHEMA : null;
+if(modeKey === "ifaa_3d") return IFAA_SCHEMA;
+if(modeKey === "asa_proam" || modeKey === "asa_training") return ASA_SCHEMA;
+if(modeKey === "ibo_3d" || modeKey === "ibo_training") return IBO_SCHEMA;
+return null;
 }
 
 /* La chiave con cui un giro entra in media, record e confronti. E' l'unica
@@ -14974,7 +15229,21 @@ state.screen === "round" && (authState === "ready" || modalitaLocale()) && !home
 if(typeof syncNavGuard === "function") syncNavGuard();
 if(state.lang){ document.documentElement.lang = state.lang; }
 applyTheme(currentTheme());
-if(!backendPronto() && !telefonoConfigurato()){ app.appendChild(firebaseErrorScreen()); return; }
+/* E LA MODALITA' SVILUPPO SALTA ANCHE QUESTO CANCELLO. (17/09/2026.)
+   Questa riga e' nata il 29/08 insieme a `modalitaLocale()`, e si e' dimenticata
+   la guardia che hanno le sue due sorelle: `modalitaLocale()` comincia con
+   `!DEV_MODE`, e il controllo su `firebaseError` qui sotto sta dietro un
+   `authState` che in DEV_MODE vale gia' "ready". Qui no.
+   In DEV_MODE `firebaseReady` e' false APPOSTA — e' il senso della modalita':
+   aprire il file senza Firebase — quindi `backendPronto()` risponde no, e su un
+   telefono ancora vergine (niente profilo, niente storico) `telefonoConfigurato()`
+   risponde no anche lui. Risultato: chi apre l'app in locale senza aver mai
+   giocato vede «Connessione non riuscita» e non va oltre: la porta, la scelta
+   della lingua e il segnapunti restano irraggiungibili.
+   Misurato da tests/banco-porta.js, che parte proprio da uno stato vergine: 20
+   rossi, uno per lingua per schermo, tutti «la porta non c'e' proprio».
+   Il sito online non era toccato: li' DEV_MODE e' false e Firebase risponde. */
+if(!DEV_MODE && !backendPronto() && !telefonoConfigurato()){ app.appendChild(firebaseErrorScreen()); return; }
 if(!state.lang){ app.appendChild(setupScreen()); return; }
 if(authState === "loading"){ app.appendChild(loadingScreen()); return; }
 if(authState === "linkSent"){ app.appendChild(linkSentScreen()); return; }
@@ -15515,7 +15784,8 @@ var COUNTRY_LIST = [
 { code:"tr", flag:"\uD83C\uDDF9\uD83C\uDDF7", key:"country_turkey" },
 { code:"es", flag:"\uD83C\uDDEA\uD83C\uDDF8", key:"country_spain" },
 { code:"nl", flag:"\uD83C\uDDF3\uD83C\uDDF1", key:"country_netherlands" },
-{ code:"se", flag:"\uD83C\uDDF8\uD83C\uDDEA", key:"country_sweden" }
+{ code:"se", flag:"\uD83C\uDDF8\uD83C\uDDEA", key:"country_sweden" },
+{ code:"us", flag:"\uD83C\uDDFA\uD83C\uDDF8", key:"country_usa" }
 ];
 // ---------- SELEZIONE FEDERAZIONE ----------
 var COUNTRY_FEDERATIONS = {
@@ -15533,7 +15803,8 @@ nl: [ {code:"nhb", label:"KHSN", url:"https://www.handboogsport.nl"} ],
    c'era «SFF», e senza indirizzo: l'unica delle diciassette a non averne uno.
    **La chiave interna resta `sff`**: sta nei profili e nello storico di chi
    l'ha gia' scelta, e rinominarla li farebbe cadere altrove in silenzio. */
-se: [ {code:"sweden", label:"SBF", url:"https://www.bagskytte.se"}, {code:"sff", label:"SFSF", url:"https://sfsf-archery.com"} ]
+se: [ {code:"sweden", label:"SBF", url:"https://www.bagskytte.se"}, {code:"sff", label:"SFSF", url:"https://sfsf-archery.com"} ],
+us: [ {code:"asa", label:"ASA", url:"https://asaarchery.com"}, {code:"ibo", label:"IBO", url:"https://iboarchery.com"} ]
 };
 // ---------- COMPAGNIE: dati ----------
 var COMPAGNIE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longbow", storico:"Storico" };
@@ -15763,7 +16034,8 @@ var PROFILE_FEDERATIONS = [
 {code:"turkey", label:"TOF"},
 {code:"spain", label:"RFETA"}, {code:"sweden", label:"SBF"}, {code:"nhb", label:"KHSN"},
 {code:"sff", label:"SFSF"}, {code:"dsb", label:"DSB"},
-{code:"fidasc", label:"FIDASC"}
+{code:"fidasc", label:"FIDASC"},
+{code:"asa", label:"ASA"}, {code:"ibo", label:"IBO"}
 ];
 var PROFILE_BOW_LABEL = { compound:"Compound", ricurvo:"Ricurvo", longbow:"Longbow", storico:"Storico" };
 
@@ -22048,7 +22320,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-09-17-safe-area";
+var BUILD_STAMP = "2026-09-18-usa";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -22057,7 +22329,7 @@ var BUILD_STAMP = "2026-09-17-safe-area";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-08-30-profilo-assetti";
+var BUILD_PARENT = "2026-09-17-safe-area";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
