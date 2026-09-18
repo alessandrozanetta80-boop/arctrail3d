@@ -174,9 +174,12 @@ redirect in HTML/JS, che trasmette i segnali peggio. Quindi:
 - `asa-3d.html` e `ibo-3d.html` sono contenuto americano **senza alternative**:
   per la regola 4 non dichiarano hreflang. Col tempo si può portare
   `<html lang>` a `en-US` — è un cambio di una riga, non una migrazione;
-- `3d-archery-scoring-app.html` è contenuto generico: è la pagina `en`. Se un
-  giorno nascerà una versione americana diversa, la radice farà da `en` e la
-  nuova `/en-us/…` da `en-US`, con hreflang reciproco — senza spostare niente.
+- `3d-archery-scoring-app.html` oggi confronta **tutti** i regolamenti: è
+  contenuto generico, cioè la pagina `en`. La query `3d archery scoring app`
+  dagli Stati Uniti la serve lei **finché** non esiste una versione americana
+  diversa davvero (ASA e IBO in testa, iarde, niente FIARC in evidenza). Quando
+  nascerà, la radice resterà `en` e la nuova `/en-us/…` sarà `en-US`, con
+  hreflang reciproco fra le due — senza spostare niente.
 
 ### Cosa NON fare
 
