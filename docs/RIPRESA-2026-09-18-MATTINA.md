@@ -30,11 +30,33 @@ Rapporto completo: **`docs/ITALIA-READY-2026-09-18.md`**, che conclude
 - **Test Italia**: `banco-italia` 72/72, `banco-italia-mobile` 513/513
   (audit 1921/1921), `banco-italia-offline` 9/9, ciascuno con sabotaggio visto rosso.
 
-## Suite completa — baseline di adesso
+## Suite completa — tutta verde
 
-`PAR=1 sh tests/controlla-tutto.sh`: **39 banchi, 38 verdi, 1 rosso storico:
-`controlla-token`** (debito di stile CSS, numeri identici almeno da `9a6060c`).
-Il prossimo passo lo trasforma in guardiano anti-regressione.
+`PAR=1 sh tests/controlla-tutto.sh`, due giri identici: **39 banchi, 39 verdi, zero rossi**.
+
+### `controlla-token` — da rosso storico a guardiano anti-regressione (`d94c6de`)
+
+**Il debito CSS storico NON è stato eliminato. È stato trasformato in baseline
+anti-regressione. Da ora in poi il debito non può aumentare senza rendere rosso
+il test.**
+
+- Era già un controllo a tetto, ma il tetto era fermo al 27/08/2026: il commit
+  `03fabb6` (foglio `home-compatta-v2` della Home) ha portato `!important` 3→35,
+  misure fuori scala 11→22, `clamp()` 0→4; `e264634` il raggio a mano 9→10.
+  Nessuno ha deciso se accettarli: rosso per tre settimane.
+- **Baseline registrato** in `tests/tetto-token.json`, con data, origine e motivo:
+  stile in linea 344 · esadecimali 22 · `!important` 35 · regole per tema 3 ·
+  fuori scala 22 · `clamp()` 0 · carattere a mano 2 · raggio a mano 10 ·
+  spaziatura a mano 19.
+- **`clamp()`**: i 4 di `home-compatta-v2` sono `clamp(Nrem,Nvw,Nrem)` sui due
+  numeri grandi della Home — tipografia fluida legittima — ed esclusi; un
+  `clamp()` con px resta vietato.
+- **Sabotaggio verificato**: +1 `!important` → rosso; `clamp()` in px → rosso;
+  −1 `!important` → verde, e il tetto scende da solo; file ripristinati → verde.
+- **Debiti CSS ancora esistenti, ma congelati**: i 35 `!important` e le 22
+  misure fuori scala di `home-compatta-v2` restano, perché toglierli cambierebbe
+  la resa della Home: è una decisione di design, non un aggiustamento.
+- Nessun file runtime toccato (`app.html`, CSS, service worker).
 
 ## Richiede ancora un telefono vero
 
