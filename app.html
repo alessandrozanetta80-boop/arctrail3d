@@ -13353,6 +13353,14 @@ return { circuiti:f.circuiti||[], garaModes:f.garaModes||[], trainingMode:f.trai
          senzaRegolamento: f.senzaRegolamento === true };
 }
 function fedSenzaRegolamento(){ return fedCorrente().senzaRegolamento; }
+/* SI PUO' PROPORRE COME SCELTA NUOVA? Una federazione `fuoriElenco` no — a
+   meno che sia gia' tua: quella la vedi sempre, se no la tua scelta di ieri
+   sparirebbe da sotto il dito e la schermata mostrerebbe un'altra
+   federazione come se fosse la tua. */
+function fedProponibile(code, giaMia){
+var f = FEDERATIONS[code];
+return !!giaMia || !(f && f.fuoriElenco === true);
+}
 
 function targetArrowCount(mode){
 if(mode.key === "battuta" && state.liveBattutaTypes && state.liveBattutaTypes[state.target]){
@@ -13471,7 +13479,18 @@ dsb: { circuiti:["wa"], garaModes: ["dsb_3d"], trainingMode:"dsb_training" },
    Chi la sceglie non trova un menu vuoto: trova scritto che il regolamento
    non c'e' ancora. *Un menu vuoto sembra un guasto; una frase sembra quello
    che e'.* */
-fidasc: { circuiti:["hdh_iaa"], garaModes: [], trainingMode:null, senzaRegolamento:true },
+/* NON SI PROPONE PIU' A CHI ARRIVA ADESSO. (18/09/2026, Alessandro: FIARC e
+   FITARCO sono le due federazioni italiane da mettere davanti; FIDASC resta
+   ma non si propone.) Una scelta che porta a «il regolamento non c'e'
+   ancora» e' una promessa vuota per chi apre l'app la prima volta.
+   **Non e' tolta da niente.** Resta in COUNTRY_FEDERATIONS e in
+   PROFILE_FEDERATIONS — da li' vengono l'etichetta, la bandiera, la riga
+   delle Impostazioni e quella dell'admin — e chi ce l'ha gia' la ritrova
+   selezionata nelle Impostazioni e scritta nel profilo, con la sua tessera.
+   Sparisce solo dalle due tendine dove si SCEGLIE qualcosa di nuovo: vedi
+   `fedProponibile()`. Nessun dato cambia. Torna proponibile togliendo
+   `fuoriElenco` da questa riga. */
+fidasc: { circuiti:["hdh_iaa"], garaModes: [], trainingMode:null, senzaRegolamento:true, fuoriElenco:true },
 /* ASA E IBO NON SONO FEDERAZIONI NAZIONALI, e non fanno finta di esserlo:
    sono due circuiti di gare, e un arciere americano puo' tirarli
    entrambi. Stanno qui perche' questa tabella risponde a «cosa posso
@@ -15651,7 +15670,9 @@ wrap.appendChild(c2);
 
 // ---- 3. federazioni della nazione scelta ----
 if(setupCountry){
-var feds = COUNTRY_FEDERATIONS[setupCountry] || [];
+var feds = (COUNTRY_FEDERATIONS[setupCountry] || []).filter(function(f){
+return fedProponibile(f.code, state.country === setupCountry && state.federation === f.code);
+});
 var c3 = el('<div class="passo"></div>');
 c3.appendChild(el('<label>3 &middot; '+t("setup_fed_label")+'</label>'));
 
@@ -16129,7 +16150,7 @@ sel.innerHTML = "";
 sel.appendChild(el('<option value="" disabled selected>'+escapeHtml(t("profile_fed_add"))+'</option>'));
 var rimaste = 0;
 gruppi.forEach(function(g){
-var liberi = g.feds.filter(function(f){ return !Object.prototype.hasOwnProperty.call(scelte, f.code); });
+var liberi = g.feds.filter(function(f){ return !Object.prototype.hasOwnProperty.call(scelte, f.code) && fedProponibile(f.code, false); });
 if(!liberi.length) return;
 rimaste += liberi.length;
 var og = el('<optgroup label="'+escapeHtml((g.meta.flag ? g.meta.flag+"  " : "")+g.meta.nome)+'"></optgroup>');
