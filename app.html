@@ -16116,7 +16116,15 @@ if(!per[p]) per[p] = [];
 per[p].push(f);
 });
 var lingua = state.lang || "it";
+/* IL TUO PAESE PER PRIMO, POI GLI ALTRI IN ORDINE. (18/09/2026.) In ordine
+   alfabetico e basta, un italiano che si registrava trovava prima ÖBSV,
+   FFTA, FFTL, DFBV e DSB, e FIARC e FITARCO a meta' tendina. Il paese e'
+   quello scelto; prima di sceglierlo, quello della lingua — tranne
+   l'inglese, che non dice dove sei (la stessa regola della vetrina). */
+var mio = state.country || (lingua !== "en" ? (LANG_TO_COUNTRY[lingua] || "") : "");
 return Object.keys(per).sort(function(a,b){
+if(a === mio && b !== mio) return -1;
+if(b === mio && a !== mio) return 1;
 return paeseMeta(a).nome.localeCompare(paeseMeta(b).nome, lingua);
 }).map(function(p){ return { paese:p, meta:paeseMeta(p), feds:per[p] }; });
 }
