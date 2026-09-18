@@ -10,7 +10,7 @@
 | **IBO** | online; `banco-ibo` 92/92 |
 | **SEO** | fatto sul branch, **non online** finché la PR non viene unita |
 | **Branch SEO** | `seo/international-indexing-2026-09-18` |
-| **PR** | PR_PLACEHOLDER — **da non unire in automatico** |
+| **PR** | #3 — https://github.com/alessandrozanetta80-boop/arctrail3d/pull/3 — **da non unire in automatico** |
 | **Test** | suite PAR=1 prima: 34 banchi, 33 verdi, rosso solo `controlla-token`. Sul branch SEO: **35 banchi, 34 verdi**, rosso solo `controlla-token` con numeri identici; `banco-seo` 204/204, sabotaggio visto rosso |
 
 ## Problemi rimasti
