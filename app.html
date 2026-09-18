@@ -4793,6 +4793,17 @@ border-color:color-mix(in srgb, var(--danger-role) 40%, var(--line)); margin-lef
 .pp-chi b{ display:block; font-size:var(--t-lg); font-weight:800; line-height:1.2; }
 .pp-chi span{ display:block; font-size:var(--t-sm); color:var(--text-3); }
 .pp-riga{ font-size:var(--t-sm); color:var(--text-2); line-height:1.5; }
+/* IL CODICE FIARC STA SOPRA IL NOME. (18/09/2026, da un responsabile FIARC:
+   per chi tira FIARC il codice e' l'identita' della compagnia.) Il nome sotto
+   resta com'era; il codice pesa di piu'. Solo per i codici FIARC dell'elenco:
+   se il codice non c'e', resta il nome da solo, come prima. */
+.cod-fiarc{ display:block; font-weight:800; color:var(--text-1); letter-spacing:.02em;
+  text-transform:none; }
+.pp-riga .cod-fiarc{ font-size:var(--t-md); }
+.club-scelto .cod-fiarc{ font-size:var(--t-lg); }
+.section-title .cod-fiarc{ font-size:var(--t-md); }
+.comp-nome-blocco .cod-fiarc{ font-family:var(--font-display); font-size:var(--t-2xl);
+  line-height:1.1; margin-bottom:2px; }
 .pp-bio{ margin-top:var(--s-3); font-size:var(--t-sm); line-height:1.55;
   color:var(--text-1); }
 .pp-numeri{ margin-top:var(--s-4); }
@@ -13615,6 +13626,19 @@ return c ? c.nome : null;
 // togliere una riga: e un elenco PARZIALE non conta come elenco, perche'
 // direbbe "sconosciuto" a tutti i club che non ci sono dentro.
 function haElencoCompagnie(fed){ return fed === "fiarc"; }
+// Il codice FIARC di una compagnia, se lo e': sta nell'elenco, e' italiana e
+// non e' una tessera FITARCO (`FT...`). Altrimenti null, e si mostra il nome.
+function codiceFiarcDi(cod){
+if(!cod || typeof COMPAGNIE === "undefined") return null;
+var k = String(cod).trim().toUpperCase();
+var c = COMPAGNIE[k];
+if(!c || c.paese || k.indexOf("FT") === 0) return null;
+return k;
+}
+function codiceFiarcHtml(cod){
+var k = codiceFiarcDi(cod);
+return k ? '<span class="cod-fiarc">'+escapeHtml(k)+'</span>' : "";
+}
 
 function load(){ try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
 function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
@@ -16616,7 +16640,8 @@ card.appendChild(clubSelDiv); card.appendChild(clubSearch); card.appendChild(clu
 function refreshClub(){
 if(clubCod){
 clubSelDiv.style.display = "flex";
-clubSelName.textContent = clubNome || clubCod;
+var clubCodF = codiceFiarcDi(clubCod);
+clubSelName.innerHTML = codiceFiarcHtml(clubCod) + ((clubNome || !clubCodF) ? escapeHtml(clubNome || clubCod) : "");
 clubSearch.style.display = "none";
 } else {
 clubSelDiv.style.display = "none";
@@ -20138,7 +20163,7 @@ fascia.appendChild(stemma);
 testa.appendChild(fascia);
 
 var dentro = el('<div class="comp-dentro"></div>');
-dentro.appendChild(el('<h2 class="comp-nome">'+escapeHtml(nome)+'</h2>'));
+dentro.appendChild(el('<div class="comp-nome-blocco">'+codiceFiarcHtml(cod)+'<h2 class="comp-nome">'+escapeHtml(nome)+'</h2></div>'));
 
 var sotto = el('<div class="comp-sotto"></div>');
 // CHI E', su una riga sola. Prima qui c'era anche `luogo`, e `luogo` non e'
@@ -20370,7 +20395,9 @@ var compagnia = state.compagniaAttiva ? COMPAGNIE[state.compagniaAttiva] : null;
 
 if(compagnia){
 var infoCard = el('<div class="card" id="cp-scheda"></div>');
-infoCard.appendChild(el('<h2 class="section-title">'+escapeHtml(compagnia.nome)+' <span style="color:var(--muted);font-weight:600;font-size:var(--t-sm);">('+escapeHtml(state.compagniaAttiva)+')</span></h2>'));
+infoCard.appendChild(el(codiceFiarcDi(state.compagniaAttiva)
+? '<h2 class="section-title"><span>'+codiceFiarcHtml(state.compagniaAttiva)+escapeHtml(compagnia.nome)+'</span></h2>'
+: '<h2 class="section-title">'+escapeHtml(compagnia.nome)+' <span style="color:var(--muted);font-weight:600;font-size:var(--t-sm);">('+escapeHtml(state.compagniaAttiva)+')</span></h2>'));
 if(compagnia.completa){
 infoCard.appendChild(el('<div class="cp-info-row">'+icon("pin",16)+' '+escapeHtml(compagnia.luogo)+'</div>'));
 if(compagnia.telefono){
@@ -22387,7 +22414,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-09-18-italia-2";
+var BUILD_STAMP = "2026-09-18-codice-fiarc";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -22396,7 +22423,7 @@ var BUILD_STAMP = "2026-09-18-italia-2";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-09-18-italia";
+var BUILD_PARENT = "2026-09-18-italia-2";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -25520,7 +25547,7 @@ var arco = (p.arco && typeof PROFILE_BOW_LABEL !== "undefined") ? PROFILE_BOW_LA
 if(arco) riga += ' &middot; '+escapeHtml(arco);
 card.appendChild(el('<div class="pp-riga">'+riga+'</div>'));
 }
-if(p.compagniaNome) card.appendChild(el('<div class="pp-riga">'+escapeHtml(p.compagniaNome)+'</div>'));
+if(p.compagniaNome) card.appendChild(el('<div class="pp-riga">'+codiceFiarcHtml(p.compagnia)+escapeHtml(p.compagniaNome)+'</div>'));
 
 /* NIENTE «MODIFICA PROFILO» QUI. (30/08/2026, dal brief: «una funzione =
    una porta».) Il tasto apriva `profile-edit`, cioe' esattamente dove porta
@@ -25812,11 +25839,11 @@ card.appendChild(testa);
 
 // La zona viene dalla compagnia, non dal telefono di nessuno.
 var righe = [];
-if(p.compagniaNome) righe.push(p.compagniaNome);
+if(p.compagniaNome) righe.push(codiceFiarcHtml(p.compagnia) + escapeHtml(p.compagniaNome));
 var comp = (p.compagnia && typeof COMPAGNIE !== "undefined") ? COMPAGNIE[p.compagnia] : null;
-if(comp && comp.regione) righe.push(comp.regione + (comp.provincia && comp.provincia !== "\u2014" ? " (" + comp.provincia + ")" : ""));
-if(p.arco && typeof PROFILE_BOW_LABEL !== "undefined" && PROFILE_BOW_LABEL[p.arco]) righe.push(PROFILE_BOW_LABEL[p.arco]);
-righe.forEach(function(r){ card.appendChild(el('<div class="pp-riga">'+escapeHtml(r)+'</div>')); });
+if(comp && comp.regione) righe.push(escapeHtml(comp.regione + (comp.provincia && comp.provincia !== "\u2014" ? " (" + comp.provincia + ")" : "")));
+if(p.arco && typeof PROFILE_BOW_LABEL !== "undefined" && PROFILE_BOW_LABEL[p.arco]) righe.push(escapeHtml(PROFILE_BOW_LABEL[p.arco]));
+righe.forEach(function(r){ card.appendChild(el('<div class="pp-riga">'+r+'</div>')); });
 if(p.bio) card.appendChild(el('<div class="pp-bio">'+escapeHtml(p.bio)+'</div>'));
 
 if(p.numeri){
