@@ -1,13 +1,14 @@
-# Ripresa — 18/09/2026 (aggiornata a fine giornata)
+# Ripresa — 18/09/2026 (sessione chiusa)
 
 | | |
 |---|---|
-| **main** | identico a `origin/main`. Ultimo codice pubblicato: `413ea4e` (PR #6); dopo, solo test e documenti (`d94c6de` guardiano CSS). GitHub Pages «built» |
+| **main** | pulito, identico a `origin/main`, nessuna PR aperta. Ultimo codice del sito: `413ea4e` (PR #6); ultimo codice backend: `00a05b2` (PR #7, Functions Node 22); dopo, solo documenti. GitHub Pages «built» |
 | **Build online** | `BUILD_STAMP 2026-09-18-italia-2`, `CACHE_NAME arctrail3d-v164`. `/`, `app.html`, `sw.js`, `sitemap.xml`, `fitarco-3d.html`, `fiarc.html` identici byte per byte a `main`; service worker attivo con la cache v164; zero errori JS |
 | **PR #3** (SEO) | unita (`3bfc18c`): `asa-3d.html`, `ibo-3d.html`, `3d-archery-scoring-app.html`, hub a 6 regolamenti, link home → hub |
 | **PR #4** (inglese) | unita (`d93670a`): vetrina `en` neutro, «English (US)» → ASA/IBO, «English (UK)» → Archery GB/EFAA/NFAS; solo scelti, mai dedotti |
 | **PR #5** (Italia Ready) | unita (`3f44e20`): vedi sotto |
 | **PR #6** (porta) | unita (`413ea4e`): Invio nel campo password di «Accedi» non inviava e dava `passInput is not defined` a ogni apertura |
+| **PR #7** (Node 22) | unita (`00a05b2`) e pubblicata: `engines.node` 22, nessuna dipendenza cambiata; `banco-functions-layout` pretende Node 22 |
 | **ASA / IBO** | online; `banco-asa` 79/79, `banco-ibo` 92/92 |
 | **S26 / font-scale** | online; `banco-font-scale` 61/61. Il 18/09 corretta anche la tacca contata due volte nella schermata del giro (`banco-safe-area` 14/14) |
 | **app.html** | `noindex,follow`, fuori dalla sitemap; PWA e service worker verificati |
@@ -33,6 +34,7 @@ Rapporto completo: **`docs/ITALIA-READY-2026-09-18.md`**, che conclude
 ## Suite completa — tutta verde
 
 `PAR=1 sh tests/controlla-tutto.sh`, due giri identici: **39 banchi, 39 verdi, zero rossi**.
+Rilanciata dopo il passaggio a Node 22: ancora **39/39**.
 
 ### `controlla-token` — da rosso storico a guardiano anti-regressione (`d94c6de`)
 
@@ -64,6 +66,7 @@ il test.**
 2. Push con app in background.
 3. Push con app completamente chiusa.
 4. Tap sulla notifica → schermata giusta.
+   (Da fare sulle Functions Node 22, pubblicate il 18/09.)
 5. Sincronizzazione con Firebase vero dopo un giro offline.
 
 ## Problemi e decisioni aperte
@@ -74,3 +77,14 @@ il test.**
 4. Ranking: A / B / C (`docs/RANKING-UFFICIALI-FONTI.md`).
 5. ASA: i due 12-ring, Known/Unknown, spareggi.
 6. Search Console: `docs/SEARCH-CONSOLE-NEXT.md` (sitemap https://arctrail3d.com/sitemap.xml).
+
+## Da dove ripartire
+
+Nessun lavoro a metà: niente branch da unire, niente deploy in sospeso.
+
+1. **Prove su telefono vero** (sopra): sono le uniche cose che la macchina non
+   può dimostrare, e la push ora gira su Node 22.
+2. **Search Console**: ripresentare https://arctrail3d.com/sitemap.xml (13 URL) e
+   seguire `docs/SEARCH-CONSOLE-NEXT.md`.
+3. Poi, a scelta: multilingua con URL veri, ranking, decisioni ASA,
+   aggiornamento di `firebase-functions`.
