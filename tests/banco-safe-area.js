@@ -183,6 +183,62 @@ function stato(){
                   "distanza " + sotto.basso + "px");
 
   await ctx.close();
+
+  /* ══ 3. LA SCHERMATA DEL GIRO (18/09/2026) ═══════════════════════════════
+     La pista non scorre ed e' alta 100dvh, quindi ha un blocco suo:
+     `body.schermo-percorso #app` e `body.schermo-percorso header.top`. Le due
+     prove qui sopra non la vedevano — la prima legge solo le regole di
+     header.top, la seconda misura la Home — e li' l'inset stava nel
+     riempimento di #app E in quello della testata: due tacche, con in piu'
+     12px di fondo scoperto sopra la barra anche senza tacca.
+     Qui la tacca finta non riscrive due proprieta' scelte a mano: nella copia
+     OGNI `env(safe-area-inset-top)` del foglio diventa TACCA px, cosi' conta
+     qualunque regola la chieda, anche una che nessuno ha ancora scritto. */
+  console.log("\n  LA SCHERMATA DEL GIRO: UNA TACCA, E LA BARRA TOCCA IL BORDO");
+  var D2 = path.join(os.tmpdir(), "arctrail-banco-safe-area-pista");
+  if(!fs.existsSync(D2)) fs.mkdirSync(D2, { recursive:true });
+  ["compagnie-data.js", "logo.webp", "logo.jpg"].forEach(function(x){
+    if(fs.existsSync(x)) fs.copyFileSync(x, path.join(D2, x));
+  });
+  async function pista(tacca){
+    fs.writeFileSync(path.join(D2, "index.html"), require("./copia-dev.js").accendiDev(
+      src.replace(/env\(\s*safe-area-inset-top\s*\)/g, tacca + "px")));
+    var c2 = await browser.newContext({ viewport:{ width:390, height:844 } });
+    var p2 = await c2.newPage();
+    var giro = stato();
+    giro.screen = "round"; giro.tab = "tira"; giro.roundActive = true; giro.mode = "round3d"; giro.format = 24;
+    giro.archers = [{ id:"a1", name:"alez", isSelf:true }]; giro.archersBase = giro.archers;
+    giro.scores = { a1:[] }; giro.target = 1; giro.archerIndex = 0; giro.arrowIndex = 0;
+    giro.pendingArrows = []; giro.liveBattutaTypes = {}; giro.startedAt = Date.now();
+    await p2.addInitScript(function(st){
+      localStorage.setItem("arctrail3d_state_v3", JSON.stringify(st));
+      localStorage.setItem("arctrail3d_welcome_v2", "1");
+    }, giro);
+    await p2.goto("file:///" + path.join(D2, "index.html").split(path.sep).join("/"));
+    await p2.waitForTimeout(900);
+    await p2.evaluate(function(){ var x = document.querySelector(".home-riprendi"); if(x) x.click(); });
+    await p2.waitForTimeout(600);
+    var r = await p2.evaluate(function(){
+      var h = document.querySelector("header.top");
+      if(!h || !document.body.classList.contains("schermo-percorso")) return null;
+      var primo = h.firstElementChild ? h.firstElementChild.getBoundingClientRect() : null;
+      var tasti = document.querySelectorAll(".quick-btn");
+      var ultimo = tasti.length ? tasti[tasti.length - 1].getBoundingClientRect() : null;
+      return { cima: Math.round(h.getBoundingClientRect().top), contenuto: primo ? Math.round(primo.top) : null,
+               tastiDentro: !!ultimo && ultimo.bottom <= window.innerHeight + 1 };
+    });
+    await c2.close();
+    return r;
+  }
+  var senza = await pista(0), con = await pista(TACCA);
+  prova("la schermata del giro si apre", !!senza && !!con);
+  prova("senza tacca la barra tocca il bordo, come nelle altre schermate",
+        !!senza && senza.cima === 0, senza ? "cima " + senza.cima + "px" : "");
+  prova("con la tacca il contenuto comincia UNA tacca sotto il bordo, non due",
+        !!con && con.contenuto !== null && con.contenuto < CONFINE,
+        con ? "prima riga a " + con.contenuto + "px (una tacca: ~" + (TACCA + 8) + ", due: ~" + (2 * TACCA + 8) + ")" : "");
+  prova("con la tacca i tasti del punteggio restano dentro lo schermo",
+        !!con && con.tastiDentro);
   await browser.close();
   console.log("\n  " + ok + " passate, " + ko + " fallite.\n");
   process.exit(ko ? 1 : 0);

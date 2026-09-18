@@ -4523,11 +4523,20 @@ html{ scrollbar-gutter:stable; }
 body.schermo-percorso{ height:100dvh; overflow:hidden; }
 body.schermo-percorso #app{
 display:flex; flex-direction:column; height:100%;
-/* solo in alto: quella in basso ce l'ha gia' il body, e contarla due volte
-   e' esattamente il bug che questo blocco serve a chiudere. */
-padding-top:calc(var(--s-3) + env(safe-area-inset-top));
+/* LA TACCA STA NELLA TESTATA, UNA VOLTA SOLA. (18/09/2026.) Qui c'era
+   `padding-top:calc(var(--s-3) + env(safe-area-inset-top))` e la testata a
+   margine 0: scritto il 15/08, quando la tacca era nel MARGINE di header.top.
+   Il 17/09 la tacca e' passata nel suo RIEMPIMENTO, e da quel giorno questa
+   schermata la contava due volte — in #app e nella testata: prima riga a
+   125px invece di ~55 con una tacca da 47 — e anche senza tacca lasciava
+   12px di fondo scoperto sopra la barra, l'unica schermata a farlo.
+   Il riempimento della testata sta DENTRO #app, quindi dentro i 100dvh: il
+   contratto del 15/08 resta. Il margine negativo e' lo stesso --s-3 del
+   riempimento qui sotto, come fanno le altre schermate col loro --s-4.
+   Misurato in tests/banco-safe-area.js, parte 3. */
+padding-top:var(--s-3);
 padding-bottom:var(--s-3); }
-body.schermo-percorso header.top{ margin-top:0; }
+body.schermo-percorso header.top{ margin-top:calc(var(--s-3) * -1); }
 .pista{ flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
 /* Lo spazio che avanza adesso ospita l'andamento. Ancorato in basso e
    ritagliato: quando lo spazio si stringe sparisce dall'alto, cioe' prima le
