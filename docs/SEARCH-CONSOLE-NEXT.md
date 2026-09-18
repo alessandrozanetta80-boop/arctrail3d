@@ -11,7 +11,7 @@ Ripresentarla in *Sitemap* con questo indirizzo, esatto:
 **https://arctrail3d.com/sitemap.xml**
 
 Controllare che *Stato* sia «Operazione riuscita» e che gli URL rilevati siano
-**12** (erano 10: +3 pagine nuove, −`app.html`).
+**13** (erano 10: +3 pagine della PR #3, −`app.html`, +`fitarco-3d.html` del 18/09 pomeriggio).
 
 ## 1. Gli URL, in ordine di priorità
 
@@ -54,6 +54,12 @@ Controllare che *Stato* sia «Operazione riuscita» e che gli URL rilevati siano
   è da qui che Google trova ASA e IBO. Ora è linkato anche dalla home.
 - **URL Inspection:** *Richiedi indicizzazione*; nel test live controllare che
   i link a `asa-3d.html` e `ibo-3d.html` compaiano nell'HTML.
+
+### 5-bis. https://arctrail3d.com/fitarco-3d.html
+
+- **Query target:** `segnapunti FITARCO 3D`, `punteggio FITARCO 3D`, `picchetti FITARCO 3D`
+- **Motivo:** pagina nuova sul regolamento nazionale (Libro 2 e 4, 2026); prima la query cadeva su `world-archery-3d.html#fitarco`.
+- **URL Inspection:** *Richiedi indicizzazione*; canonical dichiarato = scelto; controllare nel tempo che Google non la raggruppi con `world-archery-3d.html`.
 
 ### 6. https://arctrail3d.com/
 
