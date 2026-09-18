@@ -4275,7 +4275,13 @@ border-top:2px solid var(--navbar-on); background:var(--navbar-bg);
 box-shadow:0 -10px 26px var(--navbar-shadow);
 padding-left:var(--s-2); padding-right:var(--s-2);
 padding-bottom:env(safe-area-inset-bottom);
-transform:translateZ(0); -webkit-backface-visibility:hidden; backface-visibility:hidden; }
+transform:translateZ(0); -webkit-backface-visibility:hidden; backface-visibility:hidden;
+/* A CAPO SOLO QUANDO LE PAROLE NON CI STANNO. (18/09/2026.) Sotto i 341px
+   le celle hanno `min-width:auto` (vedi piu' sotto): se la somma delle
+   parole supera la barra — caratteri grandi su un telefono piccolo — la
+   riga va a capo invece di spingere l'ultima voce fuori dallo schermo. Con
+   `flex-basis:0` succede esattamente quando non ci stanno, e mai prima. */
+flex-wrap:wrap; }
 .tabbar button{ background:none; border:1px solid transparent; cursor:pointer;
 font-family:inherit; color:var(--navbar-fg);
 transition:color var(--dur-2) var(--ease), background var(--dur-2) var(--ease); }
@@ -4335,6 +4341,18 @@ width:48px; height:32px; border-radius:var(--r-lg); border:1px solid transparent
    spazio e' quello che e'. */
 .tabn .tab-lbl{ font-size:var(--t-2xs); font-weight:700; text-align:center;
   text-transform:uppercase; letter-spacing:0.04em; }
+/* LA PAROLA VA A CAPO DENTRO LA SUA CELLA, NON NELLA CELLA ACCANTO.
+   (18/09/2026, caratteri di Android piu' grandi.) Le misure qui sopra —
+   spaziatura, soglie a 400, 374 e 340px — sono tarate sulla LARGHEZZA dello
+   schermo, e danno per scontato che il carattere sia quello di sempre. Chi
+   ingrandisce il testo del telefono non cambia larghezza: a 390px e 130%
+   «MARKETPLACE» misurava 105px in una cella di 94, e con `min-width:0` la
+   cella non si allarga — giusto, e' la regola delle celle uguali — quindi la
+   parola, che non ha dove andare a capo, sconfinava nella voce accanto.
+   Adesso l'etichetta non e' mai piu' larga della sua cella e, se la parola
+   non ci sta, va a capo li' dentro (in sillabe dove il browser le conosce).
+   Quando ci sta — cioe' sempre, al 100% — non cambia un pixel. */
+.tabn .tab-lbl{ max-width:100%; overflow-wrap:break-word; hyphens:auto; -webkit-hyphens:auto; }
 /* ATTENZIONE ALL'ORDINE: questi due blocchi devono stare DOPO la regola qui
    sopra, non prima. Fino a oggi stavano prima, e siccome hanno la stessa
    forza vinceva l'ultima scritta — cioe' la regola base. **La spaziatura
@@ -4370,6 +4388,8 @@ width:48px; height:32px; border-radius:var(--r-lg); border:1px solid transparent
    telefono che nel 2026 e' l'eccezione, non la regola. */
 @media (max-width:340px){
 .tabn{ min-width:auto; }
+/* e qui la parola resta intera: e' la cella a farle posto (18/09/2026) */
+.tabn .tab-lbl{ max-width:none; hyphens:manual; -webkit-hyphens:manual; }
 }
 /* ══ E LA BARRA PARLA LA STESSA LINGUA DELLE ETICHETTE ════════════════════
    (23/08/2026, chiesto da Alessandro nella stessa riga: «anche la barra deve
