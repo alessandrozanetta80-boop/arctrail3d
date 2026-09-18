@@ -15490,7 +15490,10 @@ errorMsg.textContent = t("login_reset_error");
 });
 setTimeout(function(){
 input.focus();
-passInput.addEventListener("keydown", function(e){ if(e.key === "Enter") trySend(); });
+/* `passInput` non esisteva piu' da quando il campo lo costruisce campoPassword():
+   a ogni schermata di accesso un errore, e Invio nella password non inviava.
+   Trovato sul sito vero il 18/09/2026; lo prova tests/banco-italia.js, parte 9. */
+passBox.querySelector("input").addEventListener("keydown", function(e){ if(e.key === "Enter") trySend(); });
 },0);
 
 return wrap;
@@ -22384,7 +22387,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-09-18-italia";
+var BUILD_STAMP = "2026-09-18-italia-2";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -22393,7 +22396,7 @@ var BUILD_STAMP = "2026-09-18-italia";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-09-18-inglese";
+var BUILD_PARENT = "2026-09-18-italia";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
