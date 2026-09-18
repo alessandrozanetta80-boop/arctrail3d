@@ -91,3 +91,21 @@ nasconderebbe il debito. **Non forzato.**
 | `banco-safe-area.js` | 14/14 (parte 3 nuova: rossa prima del fix) |
 | `banco-seo.js` | 217/217 |
 | Suite `PAR=1`, due volte | 39 banchi, 38 verdi, unico rosso `controlla-token`; i due giri danno esiti identici riga per riga |
+
+## Dopo il merge — verifica sul sito vero
+
+PR #5 unita (`3f44e20`), pubblicata. Il controllo in Chromium a 390 px sul sito
+vero ha trovato **un errore JavaScript** a ogni schermata «Accedi»:
+`passInput is not defined`, e Invio nel campo password non inviava (difetto
+vecchio, rimasto da quando il campo lo costruisce `campoPassword()`).
+Corretto con PR #6 (`413ea4e`): test prima rosso (stesso errore del sito) poi
+verde, `banco-italia.js` **72/72**, suite 39 banchi / 38 verdi / unico rosso
+`controlla-token`.
+
+Stato finale online: `BUILD_STAMP 2026-09-18-italia-2`, `CACHE_NAME
+arctrail3d-v164`, `/`, `app.html`, `sw.js`, `sitemap.xml`, `fitarco-3d.html`,
+`fiarc.html` identici a `main`; service worker attivo con la cache v164;
+**zero errori JS**; nessuno scorrimento orizzontale sulle pagine italiane.
+Da utente non loggato l'app si ferma alla porta «Accedi», come deve: Home,
+Tira, Diario e Attrezzatura sul sito vero richiedono un account e sono
+provati sulla copia di prova (stesso codice).
