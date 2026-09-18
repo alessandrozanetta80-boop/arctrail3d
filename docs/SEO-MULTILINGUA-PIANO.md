@@ -2,8 +2,9 @@
 
 **Scritto il 18/09/2026** sul branch `seo/international-indexing-2026-09-18`.
 Il problema è strutturale: toccarlo vuol dire cambiare come nasce la vetrina.
-Per questo qui c'è il piano e nel codice **non è cambiato niente** su questo
-punto. `tests/banco-seo.js` lo stampa a ogni giro come «NOTO, NON ROSSO».
+Per questo qui c'è il piano: gli URL per lingua **non esistono ancora**, e
+`tests/banco-seo.js` lo stampa a ogni giro come «NOTO, NON ROSSO». Nel codice è
+stata fatta solo la fase 1 dell'inglese, sulla vetrina (§2-bis, *Stato*).
 
 ---
 
@@ -148,9 +149,10 @@ basta**: quella è una pagina duplicata, e resta in `/en/`.
 
 ### La vetrina è già il caso da regionalizzare
 
-In `index.html` oggi `LINGUA_PAESE` fa **`en: "uk"`**: chi legge la vetrina in
-inglese vede le federazioni britanniche in cima e nell'elenco, **anche se è
-americano** e cerca un segnapunti ASA. Con le varianti:
+Fino al 18/09/2026 `LINGUA_PAESE` in `index.html` faceva **`en: "uk"`**: chi
+leggeva la vetrina in inglese vedeva le federazioni britanniche in cima e
+nell'elenco, **anche se americano** e in cerca di un segnapunti ASA. Corretto
+nella fase 1 (sotto, *Stato*). Con gli URL veri, le varianti diventeranno:
 
 - `/en/` — nessun paese: federazioni per circuito, senza privilegiarne uno;
 - `/en-us/` — ASA e IBO in evidenza, iarde, i due link a `asa-3d.html` e
@@ -180,6 +182,36 @@ redirect in HTML/JS, che trasmette i segnali peggio. Quindi:
   diversa davvero (ASA e IBO in testa, iarde, niente FIARC in evidenza). Quando
   nascerà, la radice resterà `en` e la nuova `/en-us/…` sarà `en-US`, con
   hreflang reciproco fra le due — senza spostare niente.
+
+### Stato — fase 1 fatta il 18/09/2026, SOLO modello e rendering
+
+Branch `seo/vetrina-inglese-2026-09-18`. **Nessun URL nuovo**, nessun hreflang
+nuovo, nessun redirect, `index.html` al suo posto.
+
+- `LINGUA_PAESE` della vetrina non ha più `en`: l'inglese è neutro.
+- `VARIANTI` (`en-US` → `us`, `en-GB` → `uk`) e `REGIONALI` (solo le frasi che
+  cambiano: 13 chiavi USA — *range*, ortografia americana, esempio ASA/IBO in
+  iarde —, 1 chiave UK — esempio NFAS).
+- Si sceglie **in modo visibile**: «English (US)», «English (UK)» nella
+  tendina, o `?lang=en-US` / `?lang=en-GB`. La lingua del browser non sceglie
+  mai la regione; Googlebot vede `en` neutro.
+- Prova: `tests/banco-vetrina-inglese.js` (169 controlli, sabotaggio en→uk
+  visto rosso).
+
+**Perché niente URL fisici adesso.** `/` è adattiva e Googlebot la rende in
+inglese: una `/en/` statica sarebbe quasi identica a `/`, cioè un doppione; e
+il gruppo hreflang mescolerebbe URL veri (`/en/…`) con `?lang=` non canonici
+per le altre otto lingue. Il passo giusto è farlo per tutte le lingue insieme,
+col generatore di §2 — che ora ha già il modello: `/en-us/` e `/en-gb/` si
+generano da `VARIANTI` e `REGIONALI` senza riscrivere una frase.
+
+**Fuori dalla fase 1:** l'app. `LANG_TO_COUNTRY` in `app.html` dice ancora
+`en: "uk"` per la federazione proposta al primo avvio; e i link della vetrina
+passano all'app `lang=en`, perché l'app `en-US` lo scarterebbe. Cambiarla è una
+decisione di prodotto (quale federazione proporre a un inglese senza paese?).
+
+**Timbri:** la PR #3 è online come `2026-09-18-seo` / `arctrail3d-v161`;
+questo lavoro è la build successiva, `2026-09-18-inglese` / `arctrail3d-v162`.
 
 ### Cosa NON fare
 

@@ -677,7 +677,7 @@ body{margin:0}
 <!-- Il timbro, come marketplace.html: `data-build` dice quale versione e'
      questa, `data-parent` da quale e' nata. La prima anteprima non ne aveva
      nessuno — quindi il genitore e' dichiarato per nome, non inventato. -->
-<body data-build="2026-09-18-seo" data-parent="2026-09-18-usa">
+<body data-build="2026-09-18-inglese" data-parent="2026-09-18-seo">
 <div class="vetrina">
 
 <!-- ══════════ TESTATA ══════════ -->
@@ -702,7 +702,7 @@ body{margin:0}
       <a href="#compagnie" data-k="nav_club">Compagnie</a>
     </nav>
     <div class="destra">
-      <div class="lingua"><span class="lingua-nome" id="linguaNome">Italiano</span><span class="lingua-sigla" id="linguaSigla">IT</span><svg class="lingua-punta" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><select id="sceltaLingua" aria-label="Lingua / Language"><option value="it">Italiano</option><option value="en">English</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="es">Español</option><option value="sv">Svenska</option><option value="nl">Nederlands</option></select></div>
+      <div class="lingua"><span class="lingua-nome" id="linguaNome">Italiano</span><span class="lingua-sigla" id="linguaSigla">IT</span><svg class="lingua-punta" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><select id="sceltaLingua" aria-label="Lingua / Language"><option value="it">Italiano</option><option value="en">English</option><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="es">Español</option><option value="sv">Svenska</option><option value="nl">Nederlands</option></select></div>
       <a class="accedi" data-app href="app.html" data-k="nav_accedi">Accedi</a>
       <a class="tasto tasto-1 tasto-min" data-app href="app.html"><span class="apri-lungo" data-k="nav_apri">Apri l'app</span><span class="apri-corto" data-k="nav_apri_breve">Apri</span></a>
     </div>
@@ -1112,9 +1112,8 @@ body{margin:0}
     { paese:"se", sigle:["SBF","SFSF"] },
     { paese:"us", sigle:["ASA","IBO"] }
   ];
-  /* Stessa mappa di LANG_TO_COUNTRY nell'app. L'inglese porta al Regno Unito:
-     e' un'ipotesi, ma e' la stessa che fa gia' l'app, e due ipotesi diverse
-     sulla stessa domanda sono peggio di una sbagliata. */
+  /* Quasi la stessa mappa di LANG_TO_COUNTRY nell'app — tranne l'inglese:
+     vedi «L'INGLESE NON E' UN PAESE» qui sotto. */
 /* ══ CLUB D'ESEMPIO — GENERATO DA compagnie-data.js, NON SCRIVERE A MANO ══ */
   /* Rigenerato con `python3 genera-esempi.py`. I conti e i paesi vengono
      da `compagnie-data.js`: il giorno che entra un paese nuovo, la sezione
@@ -1123,13 +1122,90 @@ body{margin:0}
   var CLUB_CONTI = {"de": 1490, "fr": 1671, "it": 663, "nl": 205};
   var CLUB_ESEMPI = {"de": [{"codice": "DEB7ABE266", "luogo": "Straubing-Ittling (94315)", "nome": "Aitrachschützen Ittling", "regione": "Bayern"}, {"codice": "DEE616788C", "luogo": "Baden-Württemberg", "nome": "BS Baden-Baden", "regione": "Baden-Württemberg"}, {"codice": "DEB97DB97C", "luogo": "Göttingen (37083)", "nome": "ASC Abt. Bogensport", "regione": "Niedersachsen"}], "fr": [{"codice": "0895276", "luogo": "Éragny (95)", "nome": "A.s. Des Archers D'Eragny Sur Oise", "regione": "Île-de-France"}, {"codice": "0762293", "luogo": "Sallaumines (62)", "nome": "A.o.s. Tir A L'Arc", "regione": "Hauts-de-France"}, {"codice": "0101003", "luogo": "Montreal La Cluse (01)", "nome": "A.s.m.l.c. Tir A L'Arc", "regione": "Auvergne-Rhône-Alpes"}], "it": [{"codice": "01VERB", "luogo": "Via A. Alberti, Vignone (VB)", "nome": "A.S.D. Arcieri del VCO & Valgrande", "regione": "Piemonte"}, {"codice": "FT04133", "luogo": "Loc. Ca' Fracce 5, Montesegale (PV)", "nome": "A.S.D. Arcieri Ardivestra", "regione": "Lombardia"}, {"codice": "08BIZA", "luogo": "Ravenna (RA)", "nome": "A.S.D. Arcieri Bizantini Ravenna", "regione": "Emilia-Romagna"}], "nl": [{"codice": "NL5F1613C6", "luogo": "Beek en Donk (5741)", "nome": "Bowhuntingteam Unicorn", "regione": "De Peel"}, {"codice": "NL55F9CAFC", "luogo": "Zaandam (1505)", "nome": "Czaar Peter", "regione": "Noord Holland"}, {"codice": "NL837CB9F4", "luogo": "Hoensbroek (6431)", "nome": "ABC Boogsport", "regione": "Zuid Limburg"}]};
   /* ══ FINE DEL BLOCCO GENERATO ═══════════════════════════════════════════ */
-  var LINGUA_PAESE = { it:"it", fr:"fr", de:"de", tr:"tr", es:"es", sv:"se", nl:"nl", en:"uk" };
+  /* ── L'INGLESE NON E' UN PAESE (18/09/2026) ───────────────────────────
+     Fino a oggi qui c'era `en:"uk"`, copiata dall'app: chiunque leggesse in
+     inglese era trattato da britannico — Archery GB ed EFAA nella fascia, le
+     federazioni UK in testa all'elenco — anche un americano che cercava un
+     segnapunti ASA. L'inglese e' la lingua di ripiego di mezzo mondo: non
+     dice dove sei.
+     Adesso `en` e' NEUTRO: nessun paese davanti, tutte le federazioni in
+     ordine alfabetico, e nella fascia i due circuiti internazionali. Il
+     contesto regionale esiste, ma solo SCELTO: «English (US)» e «English
+     (UK)» nel selettore, oppure ?lang=en-US / ?lang=en-GB nell'indirizzo.
+     Mai dedotto: niente posizione, niente redirect, e la lingua del browser
+     conta solo per le due lettere — un «en-US» di sistema resta `en`, ed e'
+     anche quello che vede Googlebot.
+     L'APP NON E' STATA TOCCATA: la sua LANG_TO_COUNTRY dice ancora en→uk per
+     la federazione proposta al primo avvio. E' un'altra decisione, scritta in
+     docs/SEO-MULTILINGUA-PIANO.md. */
+  var LINGUA_PAESE = { it:"it", fr:"fr", de:"de", tr:"tr", es:"es", sv:"se", nl:"nl" };
+  /* Le varianti regionali. `lingua` e' quella delle PAROLE, ed e' anche
+     quella che si passa all'app: l'app le varianti non le conosce, e un
+     ?lang=en-US lo scarterebbe. */
+  var VARIANTI = {
+    "en-US": { lingua:"en", paese:"us", sigla:"EN-US" },
+    "en-GB": { lingua:"en", paese:"uk", sigla:"EN-GB" }
+  };
+  /* Nella fascia, l'inglese senza paese nomina i due circuiti internazionali.
+     Con la regola di sempre — le prime due federazioni in ordine alfabetico —
+     sarebbe uscito «Archery GB, ASA»: di nuovo il Regno Unito, per caso.
+     Solo l'inglese: le altre lingue senza paese restano com'erano. */
+  var FASCIA_NEUTRA = { en: ["World Archery", "IFAA"] };
+  /* SOLO QUELLO CHE CAMBIA DAVVERO. Una variante che ripete l'inglese con due
+     lettere diverse e' una copia, e le copie divergono. Tutto quello che non
+     e' qui viene da PAROLE[k].en.
+     · USA: «range» e non «field» — un campo 3D, in America, e' un range —,
+       l'ortografia americana, e l'esempio dei regolamenti con ASA e IBO, in
+       iarde (IBO: distanze mai segnate). Le frasi USA sono le inglesi con i
+       termini sostituiti, non riscritte: la punteggiatura resta quella.
+     · UK: l'inglese generico e' gia' scritto all'inglese (recognises,
+       synchronises), quindi cambia solo l'esempio dei regolamenti, con
+       l'NFAS. Il resto — la fascia e l'ordine delle federazioni — viene dal
+       paese, non da una frase. */
+  var REGIONALI = {
+    "en-US": {
+      "cta_campo": "Find a range",
+      "eroe_guida": "ArcTrail 3D recognizes the rules of your round format, figures out the right score, and keeps going without a signal.",
+      "nav_campi": "Ranges",
+      "p1_p": "3D ranges and clubs, searched by area.",
+      "s2_guida": "Score your round even when reception disappears. ArcTrail keeps your activity safe and synchronizes when you reconnect.",
+      "s3_cta": "Explore ranges",
+      "s3_eti": "Ranges",
+      "s3_h2": "Find your next range.",
+      "s3_manca_p": "The app already scores your round under your federation’s rules. The list of ranges doesn’t cover you yet: we build it one country at a time, and for yours we need someone who knows the clubs.",
+      "s4_guida": "Average, best round, targets shot, how you do on each range. Your own numbers, from your own rounds — no predictions, no invented coaching.",
+      "s5_guida": "See who is training nearby, announce your own session and join someone else's. Then you meet at the range.",
+      "s6_guida": "If you run a range you can describe it, announce trainings, get reports when someone finds a broken target and message your members. The events side is being trialed with the first clubs.",
+      "s7_guida": "3D doesn’t mean one single competition. An ASA Pro/Am round is 20 targets, one arrow each, scored 12, 10, 8 and 5. IBO scores 11, 10, 8 and 5 at unmarked yardage. World Archery shoots 24 targets with two arrows. ArcTrail 3D knows the difference and applies the right rulebook."
+    },
+    "en-GB": {
+      "s7_guida": "3D doesn’t mean one single competition. In the NFAS Big Game Round you get up to three pegs and one arrow from each, and the first hit ends the target. World Archery shoots 24 targets with two arrows, the IFAA Standard 28. ArcTrail 3D knows the difference and applies the right rulebook."
+    }
+  };
+  function linguaDi(c){ return VARIANTI[c] ? VARIANTI[c].lingua : c; }
+  function paeseDi(c){ return VARIANTI[c] ? VARIANTI[c].paese : (LINGUA_PAESE[c] || ""); }
+  function parola(k, c){
+    var r = REGIONALI[c];
+    if (r && r[k] !== undefined) return r[k];
+    var v = PAROLE[k];
+    return v ? v[linguaDi(c)] : undefined;
+  }
+  /* La lingua o la variante, scritta come va scritta: «en-us» in un
+     indirizzo e' «en-US». Se non e' nessuna delle due, stringa vuota. */
+  function contestoValido(x){
+    x = String(x || "");
+    if (LINGUE.indexOf(x) >= 0) return x;
+    for (var k in VARIANTI)
+      if (Object.prototype.hasOwnProperty.call(VARIANTI, k) && k.toLowerCase() === x.toLowerCase()) return k;
+    return "";
+  }
 
   /* Le federazioni del paese di chi legge, in ordine alfabetico, al massimo
      due. Serve in due posti — la fascia in cima e l'elenco piu' sotto — e
      un elenco calcolato in due modi diverge al primo che ne cambia uno. */
-  function sigleMie(l){
-    var mio = LINGUA_PAESE[l] || "", fuori = [], i, j;
+  function sigleMie(c){
+    var mio = paeseDi(c), fuori = [], i, j;
+    if (!mio && FASCIA_NEUTRA[c]) return FASCIA_NEUTRA[c].slice();
     for (i = 0; i < FEDERAZIONI.length; i++)
       if (FEDERAZIONI[i].paese === mio)
         for (j = 0; j < FEDERAZIONI[i].sigle.length; j++) fuori.push(FEDERAZIONI[i].sigle[j]);
@@ -1140,10 +1216,10 @@ body{margin:0}
     return fuori.slice(0, 2);
   }
 
-  function disponiFederazioni(l){
+  function disponiFederazioni(c){
     var cassetto = document.getElementById("fed");
     if (!cassetto) return;
-    var mio = LINGUA_PAESE[l] || "";
+    var mio = paeseDi(c);
     var prima = [], poi = [], i, j;
     for (i = 0; i < FEDERAZIONI.length; i++){
       var riga = FEDERAZIONI[i];
@@ -1184,10 +1260,11 @@ body{margin:0}
      Il conto dei paesi non e' scritto qui: viene da `CLUB_CONTI`, generato dal
      file vero. *Il giorno che entra un paese nuovo questa sezione lo dice da
      sola, senza che nessuno si ricordi di riscrivere una frase.* */
-  function disponiCampi(l){
+  function disponiCampi(c){
     var cassetto = document.getElementById("campiEsempi");
     if (!cassetto) return;
-    var paese = LINGUA_PAESE[l] || "";
+    var l = linguaDi(c);
+    var paese = paeseDi(c);
     var tre = (typeof CLUB_ESEMPI !== "undefined") ? CLUB_ESEMPI[paese] : null;
     cassetto.textContent = "";
 
@@ -1219,7 +1296,7 @@ body{margin:0}
       t.textContent = PAROLE.s3_manca_t[l] || PAROLE.s3_manca_t.it;
       var d = document.createElement("p");
       d.className = "righe";
-      d.textContent = PAROLE.s3_manca_p[l] || PAROLE.s3_manca_p.it;
+      d.textContent = parola("s3_manca_p", c) || PAROLE.s3_manca_p.it;
       var a = document.createElement("a");
       a.className = "tasto tasto-2";
       a.href = "mailto:info@arctrail3d.com?subject=" +
@@ -1257,18 +1334,19 @@ body{margin:0}
   function linguaProbabile(){
     var q = "";
     try{ q = (new URLSearchParams(window.location.search)).get("lang") || ""; }catch(e){}
-    if (LINGUE.indexOf(q) >= 0) return q;
+    if (contestoValido(q)) return contestoValido(q);
     var scelta = "";
     try{ scelta = localStorage.getItem(CHIAVE) || ""; }catch(e){}
-    if (LINGUE.indexOf(scelta) >= 0) return scelta;
+    if (contestoValido(scelta)) return contestoValido(scelta);
     var b = "";
     try{ b = String(navigator.language || navigator.userLanguage || "").toLowerCase().slice(0,2); }catch(e){}
     return (LINGUE.indexOf(b) >= 0) ? b : "en";
   }
 
-  function parla(l){
-    if (LINGUE.indexOf(l) < 0) l = "en";
-    var n, i, v;
+  function parla(c){
+    c = contestoValido(c) || "en";
+    var l = linguaDi(c);
+    var n, i, v, t;
     n = document.querySelectorAll("[data-k]");
     for (i = 0; i < n.length; i++){
       v = PAROLE[n[i].getAttribute("data-k")];
@@ -1276,28 +1354,29 @@ body{margin:0}
         /* «{fed}» diventa le federazioni di chi legge. Prima la frase diceva
            «FIARC, FITARCO e altri» in tutte e nove le lingue: un tedesco
            leggeva in tedesco che l'app conosce due federazioni italiane. */
-        n[i].textContent = (v[l].indexOf("{fed}") < 0) ? v[l]
-                           : v[l].replace("{fed}", sigleMie(l).join(", "));
+        t = parola(n[i].getAttribute("data-k"), c);
+        n[i].textContent = (t.indexOf("{fed}") < 0) ? t
+                           : t.replace("{fed}", sigleMie(c).join(", "));
       }
     }
     n = document.querySelectorAll("[data-k-alt]");
     for (i = 0; i < n.length; i++){
       v = PAROLE[n[i].getAttribute("data-k-alt")];
-      if (v && v[l] !== undefined) n[i].setAttribute("alt", v[l]);
+      if (v && v[l] !== undefined) n[i].setAttribute("alt", parola(n[i].getAttribute("data-k-alt"), c));
     }
-    document.documentElement.lang = l;
-    document.title = PAROLE.doc_title[l];
+    document.documentElement.lang = c;
+    document.title = parola("doc_title", c);
     var d = document.getElementById("descPagina");
-    if (d) d.setAttribute("content", PAROLE.doc_desc[l]);
+    if (d) d.setAttribute("content", parola("doc_desc", c));
     n = document.querySelectorAll("a[data-app]");
     for (i = 0; i < n.length; i++) n[i].setAttribute("href", "app.html?lang=" + l);
     var nome = document.getElementById("linguaNome");
     var sigla = document.getElementById("linguaSigla");
     var sel = document.getElementById("sceltaLingua");
-    if (sel){ sel.value = l; if (nome) nome.textContent = sel.options[sel.selectedIndex].textContent; }
-    if (sigla) sigla.textContent = l.toUpperCase();
-    disponiFederazioni(l);
-    disponiCampi(l);
+    if (sel){ sel.value = c; if (nome) nome.textContent = sel.options[sel.selectedIndex].textContent; }
+    if (sigla) sigla.textContent = VARIANTI[c] ? VARIANTI[c].sigla : c.toUpperCase();
+    disponiFederazioni(c);
+    disponiCampi(c);
   }
 
   var sel = document.getElementById("sceltaLingua");
