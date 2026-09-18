@@ -373,6 +373,35 @@ function sporge(page) { return page.evaluate(function () { return document.docum
   prova("nessuno scorrimento di lato nel Diario", (await sporge(f.page)) <= 0);
   await f.ctx.close();
 
+  // ── 9. La porta dell'accesso ──────────────────────────────────────────
+  /* Trovato sul sito vero il 18/09/2026: a ogni schermata «Accedi»
+     «passInput is not defined», e Invio nel campo password non faceva
+     niente. Si prova da una copia SENZA l'utente finto, cioe' da fuori. */
+  titolo("9. Accedi: nessun errore, e Invio nella password invia");
+  var fuori = path.join(os.tmpdir(), "arctrail-banco-italia-porta");
+  fs.mkdirSync(fuori, { recursive: true });
+  // In DEV_MODE «Accedi» entra e basta: nella copia si parte da «needLogin»,
+  // lo stato in cui il sito vero disegna la schermata di accesso.
+  var PARTENZA = 'var authState = DEV_MODE ? "ready"';
+  var copiaPorta = require("./copia-dev.js").accendiDev(fs.readFileSync(FILE, "utf8"), { utente: false });
+  prova("la riga dello stato di accesso si trova", copiaPorta.indexOf(PARTENZA) >= 0);
+  fs.writeFileSync(path.join(fuori, "index.html"), copiaPorta.replace(PARTENZA, 'var authState = DEV_MODE ? "needLogin"'));
+  ["compagnie-data.js", "logo.webp", "logo.jpg"].forEach(function (x) { if (fs.existsSync(x)) fs.copyFileSync(x, path.join(fuori, x)); });
+  var cp = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: "it-IT" });
+  await cp.addInitScript(function () { localStorage.setItem("arctrail3d_state_v3", JSON.stringify({ screen: "menu", lang: "it", country: "it", federation: "fiarc", profile: { nomeCognome: "Mario Rossi", username: "mariorossi", federazioni: [{ code: "fiarc", tessera: "FI111" }] }, profileSkipped: false })); localStorage.setItem("arctrail3d_welcome_v2", "1"); });
+  var pp = await cp.newPage();
+  var errP = [];
+  pp.on("pageerror", function (e) { errP.push(String(e.message)); });
+  await pp.goto(url.pathToFileURL(path.join(fuori, "index.html")).href); await pp.waitForTimeout(1200);
+  var campi = await pp.evaluate(function () { return !!document.getElementById("loginEmailInput") && !!document.getElementById("loginPasswordInput"); });
+  prova("la schermata Accedi si apre, con email e password", campi);
+  await pp.fill("#loginEmailInput", "non-una-email");
+  await pp.fill("#loginPasswordInput", "segreta1");
+  await pp.press("#loginPasswordInput", "Enter"); await pp.waitForTimeout(400);
+  prova("Invio nella password invia: risponde «email non valida»", /email valida/i.test(await testo(pp)));
+  prova("nessun errore in pagina sulla porta", errP.length === 0, errP[0]);
+  await cp.close();
+
   await browser.close();
   console.log("\n  " + ok + " passate, " + ko + " fallite.\n");
   process.exit(ko ? 1 : 0);
