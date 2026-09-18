@@ -1,5 +1,7 @@
 # Piano SEO Stati Uniti — tre pagine, nessuna pubblicata
 
+> **Aggiornamento 18/09/2026:** le tre pagine sono state scritte sul branch `seo/international-indexing-2026-09-18` (`asa-3d.html`, `ibo-3d.html`, `3d-archery-scoring-app.html`), in inglese e senza hreflang — strade (a) di §0.1 e §0.2. Si pubblicano col merge della PR, non prima. Stato e audit: `docs/SEO-AUDIT-2026-09-18.md`.
+
 **Scritto il 17/09/2026.** Le pagine **non esistono ancora**: qui c'è il piano,
 non il codice. Si pubblica quando ASA e IBO sono nell'app pubblicata, non prima:
 una pagina che promette un segnapunti ASA e manda su un'app che non ce l'ha è una
