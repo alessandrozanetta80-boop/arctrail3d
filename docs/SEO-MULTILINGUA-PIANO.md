@@ -2,8 +2,9 @@
 
 **Scritto il 18/09/2026** sul branch `seo/international-indexing-2026-09-18`.
 Il problema è strutturale: toccarlo vuol dire cambiare come nasce la vetrina.
-Per questo qui c'è il piano e nel codice **non è cambiato niente** su questo
-punto. `tests/banco-seo.js` lo stampa a ogni giro come «NOTO, NON ROSSO».
+Per questo qui c'è il piano: gli URL per lingua **non esistono ancora**, e
+`tests/banco-seo.js` lo stampa a ogni giro come «NOTO, NON ROSSO». Nel codice è
+stata fatta solo la fase 1 dell'inglese, sulla vetrina (§2-bis, *Stato*).
 
 ---
 
@@ -148,9 +149,10 @@ basta**: quella è una pagina duplicata, e resta in `/en/`.
 
 ### La vetrina è già il caso da regionalizzare
 
-In `index.html` oggi `LINGUA_PAESE` fa **`en: "uk"`**: chi legge la vetrina in
-inglese vede le federazioni britanniche in cima e nell'elenco, **anche se è
-americano** e cerca un segnapunti ASA. Con le varianti:
+Fino al 18/09/2026 `LINGUA_PAESE` in `index.html` faceva **`en: "uk"`**: chi
+leggeva la vetrina in inglese vedeva le federazioni britanniche in cima e
+nell'elenco, **anche se americano** e in cerca di un segnapunti ASA. Corretto
+nella fase 1 (sotto, *Stato*). Con gli URL veri, le varianti diventeranno:
 
 - `/en/` — nessun paese: federazioni per circuito, senza privilegiarne uno;
 - `/en-us/` — ASA e IBO in evidenza, iarde, i due link a `asa-3d.html` e
@@ -208,9 +210,8 @@ generano da `VARIANTI` e `REGIONALI` senza riscrivere una frase.
 passano all'app `lang=en`, perché l'app `en-US` lo scarterebbe. Cambiarla è una
 decisione di prodotto (quale federazione proporre a un inglese senza paese?).
 
-**Timbri:** questo branch parte dalla PR #3 e tiene `data-build 2026-09-18-seo`
-e `CACHE_NAME v161`. Se la PR #3 viene pubblicata **da sola** prima di questa,
-qui vanno alzati (`index.html` cambia di nuovo) prima di pubblicare.
+**Timbri:** la PR #3 è online come `2026-09-18-seo` / `arctrail3d-v161`;
+questo lavoro è la build successiva, `2026-09-18-inglese` / `arctrail3d-v162`.
 
 ### Cosa NON fare
 
