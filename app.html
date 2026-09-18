@@ -2650,6 +2650,11 @@ width:100%; padding:var(--s-3); border-radius:var(--r-sm); border:1px solid var(
    cui questa riga non si leggeva. Adesso 5,95 / 6,13 / 5,55. */
 .campo-scheda .allena{ color:var(--gold-testo); font-weight:700; }
 .campo-scheda .btn + .btn{ margin-top:var(--s-2); }
+/* CAMPI: IL CODICE FIARC AL POSTO DEL NOME. (18/09/2026.) Nell'elenco la
+   seconda riga e' solo il codice; nella scheda aperta il codice sta da solo
+   e il nome completo sotto. Grassetto, colore del testo: nessun colore nuovo. */
+.al-dove span.campo-cod{ font-weight:800; color:var(--text-1); letter-spacing:.02em; }
+.campo-scheda .campo-cod{ font-weight:800; color:var(--text-1); letter-spacing:.02em; }
 .campi-nota{ font-size:var(--t-xs); color:var(--muted); margin-bottom:var(--s-2); }
 .campi-seguito{ margin-top:var(--s-3); }
 /* ══════════ I PERCORSI PROPOSTI (20/08/2026) ══════════ */
@@ -21306,7 +21311,13 @@ function schedaCampo(cod){
 var c = COMPAGNIE[cod];
 var box = el('<div class="campo-scheda"></div>');
 box.appendChild(el('<div class="cp-info-row">'+icon("pin",16)+' '+escapeHtml(c.luogo)+'</div>'));
+var codF = codiceFiarcDi(cod);
+if(codF){
+box.appendChild(el('<div class="cp-info-row campo-cod">'+escapeHtml(codF)+'</div>'));
+box.appendChild(el('<div class="cp-info-row chi">'+escapeHtml(c.nome)+'</div>'));
+} else {
 box.appendChild(el('<div class="cp-info-row chi">'+escapeHtml(c.nome)+' · '+escapeHtml(cod)+'</div>'));
+}
 if(c.telefono){ box.appendChild(el('<div class="cp-info-row"><a href="tel:'+c.telefono.replace(/\s/g,"")+'">📞 '+escapeHtml(c.telefono)+'</a></div>')); }
 if(c.email){ box.appendChild(el('<div class="cp-info-row"><a href="mailto:'+escapeHtml(c.email)+'">✉️ '+escapeHtml(c.email)+'</a></div>')); }
 if(c.sito){ box.appendChild(el('<div class="cp-info-row"><a href="https://'+escapeHtml(c.sito)+'" target="_blank" rel="noopener">🌐 '+escapeHtml(c.sito)+'</a></div>')); }
@@ -21365,7 +21376,8 @@ var c = COMPAGNIE[cod];
 var scelto = (campoAttivo === cod);
 var riga = el('<button class="comp-riga'+(scelto?" on":"")+'"><span class="mini">'+navIcon("navfield",20,"due")+'</span>'
 + '<span class="al-dove"><b>'+escapeHtml(c.luogo)+'</b>'
-+ '<span>'+escapeHtml(c.nome)+'</span></span></button>');
++ (codiceFiarcDi(cod) ? '<span class="campo-cod">'+escapeHtml(codiceFiarcDi(cod))+'</span>' : '<span>'+escapeHtml(c.nome)+'</span>')
++ '</span></button>');
 riga.addEventListener("click", function(){
 campoAttivo = scelto ? null : cod;
 disegna();
@@ -22414,7 +22426,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-09-18-codice-fiarc";
+var BUILD_STAMP = "2026-09-18-campi-fiarc";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -22423,7 +22435,7 @@ var BUILD_STAMP = "2026-09-18-codice-fiarc";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-09-18-italia-2";
+var BUILD_PARENT = "2026-09-18-codice-fiarc";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
