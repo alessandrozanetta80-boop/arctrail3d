@@ -100,8 +100,14 @@ if (!DALL_APP) {
    e un secondo ordine calcolato qui diverge al primo paese con tre. */
 const FED_ATTESE = Object.keys(DALL_APP.perPaese)
   .reduce((a, p) => a.concat(DALL_APP.perPaese[p]), []);
+/* L'INGLESE DELLA VETRINA NON HA UN PAESE. (18/09/2026.) L'app dice ancora
+   en→uk, ma in vetrina «English» e' la pagina internazionale: nessuna
+   federazione davanti, e nella fascia i due circuiti internazionali. Il
+   contesto USA e UK si sceglie a parte, e lo prova `banco-vetrina-inglese.js`.
+   Per le altre otto lingue la mappa resta quella dell'app. */
+const NEUTRE = { en: ["World Archery", "IFAA"] };
 const FED_MIE = LINGUE.reduce(function(a, l){
-  const paese = DALL_APP.daLingua[l];
+  const paese = NEUTRE[l] ? "" : DALL_APP.daLingua[l];
   a[l] = ((paese && DALL_APP.perPaese[paese]) || []).slice()
          .sort((x, y) => x.localeCompare(y, "en"));
   return a;
@@ -298,6 +304,9 @@ const SCHERMI = [ {nome:"telefono", width:390,  height:844},
       for (const f of MIE[l].slice(0, 2))
         if (!m.fascia.includes(f))
           guai.push(`[${schermo.nome}/${l}] la fascia in cima non nomina «${f}»: «${m.fascia}»`);
+      for (const f of (NEUTRE[l] || []))
+        if (!m.fascia.includes(f))
+          guai.push(`[${schermo.nome}/${l}] la fascia neutra non nomina «${f}»: «${m.fascia}»`);
       if (l !== 'it' && (m.fascia.includes('FIARC') || m.fascia.includes('FITARCO')))
         guai.push(`[${schermo.nome}/${l}] la fascia in cima nomina ancora le federazioni italiane: «${m.fascia}»`);
 
