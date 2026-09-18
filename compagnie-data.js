@@ -1,6 +1,6 @@
   var COMPAGNIE = {
     "01ARTU": { nome:"A.P.D. Pietro Micca", regione:"Piemonte", provincia:"BI", luogo:"Fornasona/Cascina Ronco, Cerrione (BI)", completa:true, telefono:"347 9533670", email:"01artu@libero.it", sito:"pietromicca.it" },
-    "01BICO": { nome:"A.S.D. Compagnia Arcieri Bicocca", regione:"Piemonte", provincia:"NO", luogo:"Madonna del Sasso (NO)", completa:true, telefono:"0321 74558", email:"info@arcieribicocca.com", sito:"arcieribicocca.com" },
+    "01BICO": { nome:"A.S.D. Compagnia Arcieri Bicocca", regione:"Piemonte", provincia:"VB", luogo:"Madonna del Sasso (VB)", completa:true, telefono:"0321 74558", email:"info@arcieribicocca.com", sito:"arcieribicocca.com" },
     "01BULE": { nome:"A.S.D. Arcieri della Tana dei Cinghiali", regione:"Piemonte", provincia:"AL", luogo:"Castelletto Merli (AL)", completa:true, email:"asdtanadeicinghiali@gmail.com" },
     "01CICO": { nome:"Arcieri Occitani", regione:"Piemonte", provincia:"TO", luogo:"Bricherasio (TO)", completa:true, telefono:"393 9522872", email:"fiarc01cico@gmail.com" },
     "01DAHU": { nome:"A.S.D. Compagnia Arcieri del Dahu", regione:"Piemonte", provincia:"BI", luogo:"Valdilana Trivero (BI)", completa:true, telefono:"339 4182925", email:"arcierideldahu@gmail.com", sito:"arcierideldahu.it" },
