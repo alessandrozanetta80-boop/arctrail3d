@@ -12,7 +12,7 @@
 | **S26 / font-scale** | online; `banco-font-scale` 61/61. Il 18/09 corretta anche la tacca contata due volte nella schermata del giro (`banco-safe-area` 14/14) |
 | **app.html** | `noindex,follow`, fuori dalla sitemap; PWA e service worker verificati |
 | **Sitemap** | 13 URL: `/`, presentazione, privacy, termini, fiarc, fitarco-3d, regolamenti-3d, world-archery-3d, ifaa-3d, nfas-3d, 3d-archery-scoring-app, asa-3d, ibo-3d |
-| **pushNotifica** | presente (v2, europe-west1, nodejs20), codice fermo dal 17/09: nessun deploy il 18/09 |
+| **Functions** | **Node 22** dal 18/09 pomeriggio (PR #7, `00a05b2`): tutte e 7 — sendNotification, pushNotifica, avvisaRicerche, avvisaSegnalazione, avvisaRichiestaClub, avvisaIscrizione, avvisaPercorso — v2, europe-west1, 256 MB, `nodejs22`, ACTIVE. Deploy `firebase deploy --only functions` (dry-run prima): 7 aggiornamenti, nessuna creazione né cancellazione, nessuna altra risorsa. pushNotifica alla revisione `pushnotifica-00012-zij`, trigger invariato. Log: zero errori, avvio sano |
 
 ## Italia Ready — conclusa
 
@@ -68,7 +68,7 @@ il test.**
 
 ## Problemi e decisioni aperte
 
-1. Functions su Node 20: da alzare **prima del 30/10/2026**.
+1. ~~Functions su Node 20~~ **fatto il 18/09**: Node 22. Resta l'avviso della CLI che `firebase-functions` 6.x è vecchio: aggiornarlo porta modifiche incompatibili, è un lavoro a sé con i banchi accanto.
 2. Multilingua: URL fisici per lingua (`docs/SEO-MULTILINGUA-PIANO.md`).
 3. L'app propone ancora una federazione UK a chi la usa in inglese (`LANG_TO_COUNTRY` en→uk).
 4. Ranking: A / B / C (`docs/RANKING-UFFICIALI-FONTI.md`).
