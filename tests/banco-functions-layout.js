@@ -97,6 +97,20 @@ prova("l'entrypoint punta a index.js", !!(pkg && pkg.main === "index.js"),
       pkg ? String(pkg.main) : "");
 prova("il runtime Node e' dichiarato", !!(pkg && pkg.engines && pkg.engines.node),
       pkg && pkg.engines ? JSON.stringify(pkg.engines) : "nessun engines");
+/* NODE 22, E NON SI TORNA INDIETRO. (18/09/2026.) Node 20 su Cloud Functions
+   e' deprecato dal 30/04/2026 e dal 30/10/2026 non si pubblica piu'. Il
+   runtime lo decide `engines.node`: basta che torni «20» per distrazione — un
+   package.json copiato da un backup, un merge vecchio — e il deploy dopo
+   quella data si ferma. Il lockfile porta lo stesso campo, e i due devono
+   dire la stessa cosa. */
+var lock = null;
+try{ lock = JSON.parse(leggi("functions/package-lock.json")); }catch(e){}
+prova("il runtime e' Node 22", !!(pkg && pkg.engines && pkg.engines.node === "22"),
+      pkg && pkg.engines ? "engines.node = " + JSON.stringify(pkg.engines.node) : "");
+prova("il lockfile dice lo stesso runtime",
+      !!(lock && lock.packages && lock.packages[""] && lock.packages[""].engines &&
+         lock.packages[""].engines.node === "22"),
+      lock && lock.packages && lock.packages[""] ? JSON.stringify(lock.packages[""].engines) : "");
 prova("firebase-functions e' dichiarato",
       !!(pkg && pkg.dependencies && pkg.dependencies["firebase-functions"]),
       pkg && pkg.dependencies ? String(pkg.dependencies["firebase-functions"]) : "");
