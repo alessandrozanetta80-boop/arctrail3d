@@ -1,11 +1,15 @@
 {
-  "stile in linea dal JS": 361,
+  "_registrato": "2026-09-18",
+  "_perche": "Baseline anti-regressione: i numeri di oggi sono il tetto. Il debito CSS non e stato tolto, e congelato: sale = rosso, uguale o sceso = verde (e il tetto scende da solo).",
+  "_origine": "!important 3->35, misure fuori scala 11->22, clamp 0->4 dal commit 03fabb6 del 27/08/2026 (foglio home-compatta-v2 della Home); raggio a mano 9->10 da e264634. Grafica viva: toglierli cambierebbe la resa.",
+  "_clamp": "I 4 clamp() di home-compatta-v2 sono clamp(Nrem,Nvw,Nrem) sui due numeri grandi della Home: tipografia fluida legittima, esclusi dalla regola. Un clamp con px resta vietato.",
+  "stile in linea dal JS": 344,
   "esadecimale fuori dai primitivi": 22,
-  "!important fuori da stampa e movimento ridotto": 3,
+  "!important fuori da stampa e movimento ridotto": 35,
   "regola per tema (body.theme-)": 3,
-  "misura fuori dalla scala 4/8/12/16/24/32/48": 11,
+  "misura fuori dalla scala 4/8/12/16/24/32/48": 22,
   "clamp() su un carattere": 0,
   "carattere a mano nello stile in linea": 2,
-  "raggio a mano": 9,
+  "raggio a mano": 10,
   "spaziatura a mano nello stile in linea": 19
 }

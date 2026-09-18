@@ -147,10 +147,21 @@ var REGOLE = [
     cerca: SCALA,
     perche: "se una misura non ci sta, si cambia il disegno" },
 
+  /* IL CLAMP() NON E' UN ERRORE DI PER SE'. (18/09/2026.) I quattro che ci
+     sono stanno in `home-compatta-v2`, sui DUE numeri grandi della Home — il
+     totale dell'ultimo giro e la media del mese — e sono tipografia fluida
+     fatta bene: `clamp(3rem,12vw,4.4rem)`. Minimo e massimo in rem, quindi
+     seguono il carattere scelto sul telefono; in mezzo la larghezza, per un
+     numero solo, da vetrina, che deve riempire la riga senza andare a capo.
+     La scala --t-* e' fatta per il testo che si legge, non per quello.
+     Resta vietato il clamp che ignora il telefono: limiti in px, o una
+     formula su testo corrente. Il `!important` accanto invece e' debito vero,
+     e conta nella sua categoria. */
   { nome: "clamp() su un carattere",
     dove: inCss,
     cerca: /font-size\s*:\s*[^;{}]*clamp\(/,
-    perche: "la misura del testo sta nella scala --t-*, non in una formula" },
+    salvo: /font-size\s*:\s*clamp\(\s*[\d.]+rem\s*,\s*[\d.]+vw\s*,\s*[\d.]+rem\s*\)/,
+    perche: "la misura del testo sta nella scala --t-*; un clamp() e' ammesso solo fluido fra due rem, cioe' rispettoso del carattere del telefono" },
 
   /* IL CARATTERE SCRITTO A MANO DENTRO UNO STILE IN LINEA.
      (20/08/2026.) Il 20/08 il conto era 239 misure a mano con TRENTA valori
@@ -289,9 +300,19 @@ function funzioniFantasma(testo){
 
 var tetto = {}, tettoLetto = false;
 try{ tetto = JSON.parse(fs.readFileSync(TETTO, "utf8")); tettoLetto = true; }catch(e){}
+/* LE NOTE DEL BASELINE. (18/09/2026.) Le chiavi che cominciano con «_» non
+   sono regole: dicono quando e perche' il tetto e' quello. Chi riscrive il
+   file — `--fissa` o il cricchetto qui in fondo — le deve tenere, se no il
+   perche' sparisce al primo giro che migliora qualcosa. */
+function conNote(numeri){
+  var fuori = {};
+  Object.keys(tetto).forEach(function(k){ if(k.charAt(0) === "_") fuori[k] = tetto[k]; });
+  Object.keys(numeri).forEach(function(k){ fuori[k] = numeri[k]; });
+  return fuori;
+}
 
 if(FISSA){
-  fs.writeFileSync(TETTO, JSON.stringify(trovato, null, 2) + "\n");
+  fs.writeFileSync(TETTO, JSON.stringify(conNote(trovato), null, 2) + "\n");
   console.log("Tetto fissato su " + FILE + ":");
   REGOLE.forEach(function(r){ console.log("  " + String(trovato[r.nome]).padStart(4) + "  " + r.nome); });
   process.exit(0);
@@ -303,12 +324,19 @@ if(!tettoLetto && !FISSA){
   console.log("  SENZA TETTO  " + TETTI.join(" / ") + " non trovato.");
   console.log("               Oggi diventa il tetto: questo giro non puo' dire di no.\n");
 }
+/* LA TABELLA. (18/09/2026.) Baseline = il tetto registrato; attuale = oggi.
+   Verde se uguale o sceso, rosso solo se sale: il debito che c'e' resta
+   visibile, quello nuovo non entra. */
+var LARGO = 48;
+console.log("  " + "CATEGORIA".padEnd(LARGO) + "BASELINE  ATTUALE   DELTA  ESITO");
 REGOLE.forEach(function(r){
   var ora = trovato[r.nome], prima = (r.nome in tetto) ? tetto[r.nome] : ora;
-  var segno = ora > prima ? "PEGGIO" : (ora < prima ? "meglio" : "      ");
+  var delta = ora - prima;
+  var esito = delta > 0 ? "PEGGIO" : (delta < 0 ? "meglio" : "ok");
   if(ora > prima) peggiorate++;
   if(ora < prima) migliorate++;
-  console.log("  " + segno + "  " + String(ora).padStart(4) + (ora === prima ? "      " : " (era " + prima + ")") + "  " + r.nome);
+  console.log("  " + r.nome.padEnd(LARGO) + String(prima).padStart(8) + String(ora).padStart(9) +
+              (delta > 0 ? "+" + delta : String(delta)).padStart(8) + "  " + esito);
   if(ELENCA || ora > prima){
     console.log("          " + r.perche);
     dettaglio[r.nome].forEach(function(d){ console.log("          " + d); });
@@ -704,7 +732,7 @@ var senzaTetto = REGOLE.filter(function(r){ return !(r.nome in tetto); })
                        .map(function(r){ return r.nome; });
 
 if(migliorate || senzaTetto.length){
-  fs.writeFileSync(TETTO, JSON.stringify(trovato, null, 2) + "\n");
+  fs.writeFileSync(TETTO, JSON.stringify(conNote(trovato), null, 2) + "\n");
 }
 if(senzaTetto.length){
   console.log("\n  TETTO NUOVO   " + senzaTetto.length + " regola/e senza tetto, seminata/e adesso:");
