@@ -1,0 +1,43 @@
+# I banchi di ArcTrail 3D a ogni push e a ogni pull request.
+# (19/09/2026, risanamento post-audit: «nessuna CI» era una voce dell'audit.)
+#
+# Fa quello che si fa a mano: `sh tests/controlla-tutto.sh`, con le dipendenze
+# DICHIARATE (package.json + lockfile, niente di presente «per caso»):
+#   - Node 22 (quello delle Cloud Functions);
+#   - Java 17 per l'emulatore Firestore di banco-regole (firebase-tools 13.35.1
+#     e' in devDependencies: e' l'ultimo che accetta Java 17);
+#   - il Chromium di playwright, della stessa versione del lockfile.
+# `controlla-base.js` confronta i timbri con raw.githubusercontent.com: su un
+# push a main i file sono quelli online (IN PARI), su un ramo sono AVANTI.
+name: banchi
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  banchi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Dipendenze dei banchi
+        run: npm ci --no-audit --no-fund
+      - name: Dipendenze delle Cloud Functions
+        run: npm ci --no-audit --no-fund
+        working-directory: functions
+      - name: Chromium di playwright
+        run: npx playwright install --with-deps chromium
+      - name: Tutti i banchi
+        run: sh tests/controlla-tutto.sh

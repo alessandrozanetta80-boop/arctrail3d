@@ -196,6 +196,28 @@ async function iniziaRound3D(page) {
     await e.ctx.close();
   }
 
+  // ── 6. avvio a freddo senza rete ───────────────────────────────────────
+  console.log("\n  AVVIO A FREDDO SENZA RETE, CON UN GIRO APERTO\n");
+  // Il documento utente non si legge (niente rete, niente cache): prima l'app
+  // si fermava su «Qualcosa non ha funzionato» e il giro non si raggiungeva.
+  var statoFreddo = statoBase({ roundActive: true, mode: "round3d", format: 24, target: 7,
+    archers: [{ id: "a0", name: "mariorossi", isSelf: true }], archersBase: [{ id: "a0", name: "mariorossi", isSelf: true }],
+    scores: { a0: [1, 2, 3, 4, 5, 6].map(function () { return { arrows: [16, 7], total: 23 }; }) },
+    archerIndex: 0, arrowIndex: 0, pendingArrows: [], liveBattutaTypes: {}, startedAt: Date.now() });
+  var ctxF = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: "it-IT" });
+  await ctxF.route(/^https?:\/\//, function (r) { return r.abort(); });
+  await ctxF.addInitScript(F.scriptIniziale({ utente: U, dati: cloudBase() }));
+  await ctxF.addInitScript("window.__getRotti = ['users/" + U.uid + "'];");
+  await ctxF.addInitScript("try{ localStorage.setItem('arctrail3d_state_v3'," + JSON.stringify(JSON.stringify(statoFreddo)) +
+    "); localStorage.setItem('arctrail3d_proprietario_v1','" + U.uid + "'); localStorage.setItem('arctrail3d_welcome_v2','1'); }catch(e){}");
+  var pf = await ctxF.newPage();
+  await pf.goto("file://" + path.join(DOVE, "app.html").replace(/\\/g, "/"));
+  await pf.waitForTimeout(1800);
+  var tf = await testo(pf);
+  prova("non si ferma su «Qualcosa non ha funzionato»", !/Qualcosa non ha funzionato/.test(tf), tf.slice(0, 80));
+  prova("e il giro si riprende", /Riprendi/.test(tf));
+  await ctxF.close();
+
   await browser.close();
   try { fs.rmSync(DOVE, { recursive: true, force: true }); } catch (x) {}
   console.log("\n  " + ok + " passate, " + ko + " fallite.\n");

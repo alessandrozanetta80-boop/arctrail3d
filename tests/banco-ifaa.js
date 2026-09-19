@@ -384,8 +384,11 @@ ok("e la porta unica il marchio se lo porta dietro",
    /scoringVersion:\s*h\.scoringVersion \|\| null/.test(src));
 ok("il giro che scende dal cloud viene normalizzato alla lettura",
    /modeKey:\s*modoDelGiro\(d\.modeKey,\s*d\.scoringVersion\)/.test(src));
+/* Si chiede che `scoringVersion` sia DENTRO l'elenco dei campi del giro, non
+   che l'elenco finisca con lui: il 19/09/2026 ci e' entrato `roundId` in coda e
+   la prova, che guardava la forma, e' diventata rossa col marchio ancora li'. */
 ok("il marchio viaggia col giro aperto",
-   /"startedAt","assetto","assettoNome","scoringVersion"\]/.test(src));
+   /var CAMPI_DEL_GIRO = \[[^\]]*"scoringVersion"[^\]]*\]/.test(src));
 ok("il giro nuovo nasce marchiato",
    /state\.scoringVersion = schemaPunteggio\(modeKey\)/.test(src));
 ok("la migrazione gira PRIMA del backfill",

@@ -191,6 +191,13 @@ function contiene(scritture, testo) {
   prova("e si dice di rientrare", /rientrare/i.test(s5esito.testo || ""));
   await s5.ctx.close();
 
+  console.log("\n  LA SCHERMATA D'ACCESSO PARLA LA LINGUA SCELTA (audit I2)\n");
+  var s6 = await apri(browser, null, { "arctrail3d_state_v3": JSON.stringify({ screen: "menu", tab: "home", lang: "de", country: "de",
+    federation: "dsb", theme: "light", profile: { nomeCognome: "Hans", username: "hans" }, profileSkipped: false, pendingArchers: [] }) }, { users: {} });
+  var t6 = await s6.page.evaluate(function () { return (document.querySelector("#app") || {}).innerText || ""; });
+  prova("in tedesco la schermata d'accesso e' in tedesco", /Melde dich/.test(t6) && !/Accedi con la tua email/.test(t6), t6.slice(0, 120));
+  await s6.ctx.close();
+
   await browser.close();
   try { fs.rmSync(DOVE, { recursive: true, force: true }); } catch (x) {}
   console.log("\n  " + ok + " passate, " + ko + " fallite.");

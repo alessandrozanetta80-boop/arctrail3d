@@ -136,6 +136,7 @@ banco "banco-push-app.js (le push viste dall'app: token per dispositivo, primo p
 banco "banco-pista-schermi.js (i tasti del punteggio stanno nello schermo: orizzontale, zoom, S26 Ultra)" "node tests/banco-pista-schermi.js"
 banco "banco-recapiti.js (telefono, email e sito delle compagnie diventano link solo se lo sono)" "node tests/banco-recapiti.js"
 banco "controlla-pwa.js (zoom, scuro forzato, icona iOS, manifest, foto pigre)" "node tests/controlla-pwa.js"
+banco "controlla-pubblicazione.js (sul sito va il sito: diari, banchi, regole e archivio restano fuori)" "node tests/controlla-pubblicazione.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"

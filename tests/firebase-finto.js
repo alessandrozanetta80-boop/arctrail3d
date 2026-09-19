@@ -99,7 +99,14 @@ function installa(opzioni) {
     var percorso = racc + "/" + id;
     return {
       id: id, path: percorso,
-      get: function () { return Promise.resolve(istantaneaDoc(racc, id)); },
+      get: function () {
+        // `window.__getRotti = ["users/uid"]`: quel documento non si legge, come
+        // offline senza copia in cache. (Per l'avvio a freddo senza rete.)
+        if ((window.__getRotti || []).indexOf(percorso) >= 0) {
+          return Promise.reject(Object.assign(new Error("unavailable"), { code: "unavailable" }));
+        }
+        return Promise.resolve(istantaneaDoc(racc, id));
+      },
       set: function (data, opz) {
         var c = raccolta(racc);
         c[id] = applica(c[id], data, !!(opz && opz.merge));
