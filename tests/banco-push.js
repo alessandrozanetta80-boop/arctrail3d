@@ -94,11 +94,13 @@ var finto = {
     },
     firestore: Object.assign(function(){
       return {
-        collection: function(){
+        collection: function(nomeRaccolta){
           return {
             doc: function(){
               return {
                 get: function(){
+                  // `sospesi` e' vuota: nessuno e' sospeso in questo banco.
+                  if(nomeRaccolta === "sospesi") return Promise.resolve({ exists:false, data:function(){ return {}; }, get:function(){} });
                   return Promise.resolve({
                     exists: !!UTENTE,
                     data: function(){ return UTENTE || {}; },

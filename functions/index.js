@@ -172,6 +172,13 @@ exports.sendNotification = onCall({ cors: true }, async (req) => {
 
   const db = admin.firestore();
 
+  // SOSPESO = NON AVVISA NESSUNO. (19/09/2026, audit SEC-08.) Lo stesso segno
+  // che le regole guardano (`sospesi/{uid}`, scritto dall'admin revocando).
+  const sospeso = await db.collection("sospesi").doc(uid).get();
+  if (sospeso.exists) {
+    throw new HttpsError("permission-denied", "Account sospeso.");
+  }
+
   // Freno anti-abuso: massimo LIMITE_AL_MINUTO invii per utente al minuto.
   // In transazione, altrimenti due invii simultanei leggono lo stesso valore.
   const rlRef = db.collection("rate_limits").doc(uid);

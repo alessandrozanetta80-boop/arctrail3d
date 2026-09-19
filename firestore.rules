@@ -1,7 +1,22 @@
 rules_version = '2';
 // ArcTrail 3D — regole Firestore
-// Versione 2026-09-19-tipi-sicuri
-// Nata da: 2026-08-28-porte-verified
+// Versione 2026-09-19-porte-chiuse
+// Nata da: 2026-08-28-porte-verified (l'ultima incollata in console)
+//
+// NOVITA' 2026-09-19 (2) — QUATTRO PORTE DELL'AUDIT
+//  1) CHAT PRIVATE: l'id `uidA__uidB` deve essere quello dei due membri, in
+//     ordine. Prima un terzo creava `A__B` con dentro se stesso e leggeva i
+//     messaggi che A credeva di mandare a B (SEC-07).
+//  2) SOSPENSIONE: `sospesi/{uid}` lo scrive l'admin revocando. Chi e' sospeso
+//     non apre allenamenti, chat, sessioni, segnalazioni o percorsi, e non
+//     puo' ricrearsi `users/{uid}` con approved:true (SEC-08).
+//  3) `percorsi` (le bozze di Prepara gara, con tessere di atleti terzi) si
+//     leggono solo da chi le ha fatte e dall'admin (SEC-09).
+//  4) Chi chiede di gestire una compagnia non sceglie il proprio nome ed email:
+//     l'email e' quella del token (SEC-13).
+//  Stringono: `app.html` 2026-09-19 prima, poi queste (regola 18).
+//
+// Versione intermedia mai incollata: 2026-09-19-tipi-sicuri (campi con un tipo).
 //
 // NOVITA' 2026-09-19 — I CAMPI CHE FINISCONO SULLO SCHERMO DI UN ALTRO HANNO UN TIPO
 //  L'audit del 19/09 ha trovato cinque XSS salvati (P0-1): `open_trainings.spots`,
@@ -325,6 +340,13 @@ service cloud.firestore {
       return d.get(k, null) == null
         || (d.get(k, null) is string && d.get(k, '').size() <= max);
     }
+    // ACCOUNT ATTIVO: email confermata e NON sospeso. (19/09/2026, SEC-08.)
+    // Il segno sta in `sospesi/{uid}`, scritto solo dall'admin: a differenza di
+    // `users.approved` non si cancella cancellando il proprio documento.
+    function attivo() {
+      return verified()
+        && !exists(/databases/$(database)/documents/sospesi/$(request.auth.uid));
+    }
     function isBeta() {
       return signedIn()
         && exists(/databases/$(database)/documents/users/$(request.auth.uid))
@@ -404,7 +426,9 @@ service cloud.firestore {
       // che nessuno nasca gia' collaudatore o premium.
       allow create: if signedIn() && request.auth.uid == userId
                     && request.resource.data.get('betaTester', false) == false
-                    && request.resource.data.get('premium', false) == false;
+                    && request.resource.data.get('premium', false) == false
+                    && (request.resource.data.get('approved', false) != true
+                        || !exists(/databases/$(database)/documents/sospesi/$(userId)));
       // update: l'interessato modifica il proprio profilo ma NON i tre campi
       // che decidono cosa puo' fare (approved, betaTester, premium): quelli li
       // muove solo l'admin dal pannello Approvazioni.
@@ -499,6 +523,13 @@ service cloud.firestore {
       allow delete: if isAdmin() || (signedIn() && request.auth.uid == userId);
     }
 
+    // CHI E' SOSPESO. Lo scrive e lo toglie solo l'admin; l'interessato puo'
+    // leggerlo (l'app gli dice perche' certe porte sono chiuse).
+    match /sospesi/{uid} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+      allow write: if isAdmin();
+    }
+
     match /sessions/{sessionId} {
       // La query deve essere where('participantUids','array-contains',uid):
       // qualsiasi altro filtro (per esempio ownerUid) fa rifiutare tutta la
@@ -514,7 +545,7 @@ service cloud.firestore {
       // noto e accettato che un verificato possa invitare altri alla
       // creazione (invito arbitrario/banner): e' MEDIO, non un takeover — i
       // tiri, il regolamento e gli arcieri restano protetti dall'update.
-      allow create: if verified()
+      allow create: if attivo()   // 19/09/2026 (SEC-08): non sospeso
                     && request.auth.uid == request.resource.data.ownerUid
                     && request.auth.uid in request.resource.data.participantUids;
       // CHI SEGNA E CHI CONTROFIRMA NON FANNO LO STESSO MESTIERE. (28/08/2026.)
@@ -577,7 +608,9 @@ service cloud.firestore {
     }
 
     match /percorsi/{percorsoId} {
-      allow read: if signedIn();
+      // 19/09/2026 (SEC-09): dentro ci sono gli iscritti di una gara, con tessera
+      // e categoria di atleti terzi. Li legge chi li ha scritti, e l'admin.
+      allow read: if signedIn() && (resource.data.get('createdBy', '') == request.auth.uid || isAdmin());
       allow create: if signedIn() && request.auth.uid == request.resource.data.createdBy;
       allow update, delete: if signedIn()
                             && (request.auth.uid == resource.data.createdBy || isAdmin());
@@ -824,9 +857,14 @@ service cloud.firestore {
       // l'ha chiesto: e' il caso di scuola per cui la conferma esiste.
       // Leggere, elencare e cancellare restano su `signedIn()`: chi e' gia'
       // dentro una conversazione non ne resta prigioniero.
-      allow create: if verified()
+      // 19/09/2026 (SEC-07): l'id e' `membroMinore__membroMaggiore`, come lo
+      // costruisce l'app ([a,b].sort().join("__")). Senza questo un terzo creava
+      // `A__B` mettendoci dentro se stesso e leggeva la conversazione di A.
+      allow create: if attivo()
                     && request.resource.data.members.size() == 2
-                    && request.auth.uid in request.resource.data.members;
+                    && request.auth.uid in request.resource.data.members
+                    && request.resource.data.members[0] < request.resource.data.members[1]
+                    && chatId == request.resource.data.members[0] + '__' + request.resource.data.members[1];
       // I membri non possono cambiare dopo la creazione.
       allow update: if signedIn()
                     && request.auth.uid in resource.data.members
@@ -840,7 +878,7 @@ service cloud.firestore {
         // firmaValida(): in una chat a due, senza questo controllo si poteva
         // scrivere un messaggio che sembrava dell'altro.
         // 28/08/2026: `signedIn()` -> `verified()`.
-        allow create: if verified()
+        allow create: if attivo()   // 19/09/2026 (SEC-08): non sospeso
                       && firmaValida()
                       && dmExists(chatId)
                       && request.auth.uid in dmMembers(chatId);
@@ -858,7 +896,7 @@ service cloud.firestore {
       // 28/08/2026: `signedIn()` -> `verified()`. Un allenamento aperto lo
       // vede tutta l'app, col nome e il posto di chi lo organizza.
       // 19/09/2026 (P0-1): `spots` numero. Finiva in «taken/total» nell'elenco di tutti.
-      allow create: if verified() && request.resource.data.ownerUid == request.auth.uid
+      allow create: if attivo() && request.resource.data.ownerUid == request.auth.uid
                     && numeroOpz(request.resource.data, 'spots');
       // CI SI ISCRIVE DA SOLI, E SOLO SE STESSI. (28/08/2026.)
       //
@@ -914,7 +952,7 @@ service cloud.firestore {
         // request.auth.uid in get(.../open_trainings/$(otId)).data.participantUids
         // 28/08/2026: `signedIn()` -> `verified()`. E' una chat che leggono
         // tutti, anche chi non partecipa: e' il posto piu' pubblico dell'app.
-        allow create: if verified()
+        allow create: if attivo()   // 19/09/2026 (SEC-08): non sospeso
                       && firmaValida()
                       && otExists(otId);
         // senderUid e admin PRIMA del get(), e get() protetto da exists(): se
@@ -960,7 +998,7 @@ service cloud.firestore {
                     && testoOpz(request.resource.data, 'nome', 120)
                     && testoOpz(request.resource.data, 'note', 500)
                     && (
-                         (verified() && request.resource.data.stato == 'proposto')
+                         (attivo() && request.resource.data.stato == 'proposto')
                          || ((isAdmin() || isClubAdmin(request.resource.data.clubCode))
                              && request.resource.data.stato == 'confermato')
                        );
@@ -999,7 +1037,7 @@ service cloud.firestore {
       // telefono di un referente di compagnia che non conosce chi scrive.
       // 19/09/2026 (P0-1): `piazzola` numero (il client scrive parseInt o null);
       // `type` testo corto: si mostra solo tramite la tabella TIPI.
-      allow create: if verified() && request.resource.data.reporterUid == request.auth.uid
+      allow create: if attivo() && request.resource.data.reporterUid == request.auth.uid
                     && numeroOpz(request.resource.data, 'piazzola')
                     && testoOpz(request.resource.data, 'type', 30)
                     && testoOpz(request.resource.data, 'description', 5000);
@@ -1044,7 +1082,12 @@ service cloud.firestore {
       // 28/08/2026: `signedIn()` -> `verified()`. Chiedere di gestire una
       // compagnia e' una richiesta che una persona vera legge e valuta.
       // (Resta aperto il punto B3: non si chiede nessuna prova.)
-      allow create: if verified() && isRequester(request.resource.data);
+      // 19/09/2026 (SEC-13): nome ed email non li sceglie chi chiede. L'uid e'
+      // il suo, l'email e' quella del token, il nome e' un testo corto.
+      allow create: if attivo() && isRequester(request.resource.data)
+                    && request.resource.data.get('richiedenteUid', '') == request.auth.uid
+                    && request.resource.data.get('richiedenteEmail', '') == request.auth.token.get('email', '')
+                    && testoOpz(request.resource.data, 'richiedenteName', 120);
       allow read: if isAdmin() || (signedIn() && isRequester(resource.data));
       allow update: if isAdmin();
       // Chi ha fatto la richiesta puo' ritirarla (e l'eliminazione account

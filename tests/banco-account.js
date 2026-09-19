@@ -36,6 +36,7 @@ function prova(nome, cond, extra) {
 
 var GANCIO = "window.__prova = {\n" +
   "  stato: function(){ return JSON.parse(JSON.stringify(state)); },\n" +
+  "  vai: function(scr){ state.screen = scr; render(); },\n" +
   "  esciConTasto: (typeof esciDallAccount === 'function') ? function(b){ window.__esciSenzaRicarica = true; esciDallAccount(b); } : null,\n" +
   "  esci: function(){ window.__esciSenzaRicarica = true; if(typeof esciDallAccount === 'function'){ esciDallAccount(null); } else { auth.signOut().then(function(){ authState = 'needLogin'; currentUser = null; render(); }); } }\n" +
   "};";
@@ -162,6 +163,33 @@ function contiene(scritture, testo) {
   var secondo = await s4.page.evaluate(function () { return window.__uscito || 0; });
   prova("secondo tocco: esce davvero", secondo >= 1);
   await s4.ctx.close();
+
+  console.log("\n  ELIMINARE L'ACCOUNT: PRIMA SI PROVA DI ESSERE CHI SI DICE (SEC-11)\n");
+  // Nessuna password e un accesso di ieri: non deve partire NESSUNA cancellazione.
+  var s5 = await apri(browser, A, semeAconProprietario, datiCloud);
+  await s5.page.evaluate(function () { window.__utente.metadata = { lastSignInTime: new Date(Date.now() - 86400000).toUTCString() }; });
+  var s5esito = await s5.page.evaluate(function () {
+    if (!window.__prova.vai) return { manca: true };
+    window.__prova.vai("account-delete");
+    return new Promise(function (r) { setTimeout(function () {
+      var campi = document.querySelectorAll("#app input");
+      var parola = campi[campi.length - 1];
+      if (!parola) return r({ manca: true });
+      parola.value = "ELIMINA";
+      var go = Array.prototype.filter.call(document.querySelectorAll("#app button"), function (b) { return /btn-danger/.test(b.className); })[0];
+      if (!go) return r({ manca: true });
+      window.__scritture = [];
+      go.click();
+      setTimeout(function () {
+        r({ cancellati: window.__scritture.filter(function (w) { return w.op === "delete"; }).length,
+            testo: (document.querySelector("#app") || {}).innerText || "" });
+      }, 1500);
+    }, 600); });
+  });
+  prova("senza password e con un accesso vecchio NON si cancella niente",
+        !s5esito.manca && s5esito.cancellati === 0, JSON.stringify({ manca: s5esito.manca, cancellati: s5esito.cancellati }));
+  prova("e si dice di rientrare", /rientrare/i.test(s5esito.testo || ""));
+  await s5.ctx.close();
 
   await browser.close();
   try { fs.rmSync(DOVE, { recursive: true, force: true }); } catch (x) {}

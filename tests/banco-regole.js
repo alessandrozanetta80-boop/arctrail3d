@@ -521,6 +521,62 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
     assertFails(db(A).doc('public_profiles/'+A.uid).set(
       { username:'anna', nomeCognome:'x'.repeat(500) })));
 
+  /* QUATTRO PORTE DELL'AUDIT (19/09/2026, seconda passata delle regole). */
+  console.log('\n  CHAT PRIVATE: L\'ID E\' DEI DUE MEMBRI (SEC-07)\n');
+  // Una coppia MAI usata prima: se il documento esistesse gia', il tentativo
+  // diventerebbe un update e fallirebbe per un altro motivo (la prima versione
+  // di questa prova passava cosi' anche sulle regole vecchie: era cieca).
+  await prova('C NON crea la chat «utenteA__utenteZ» (di A con Z) mettendoci dentro se stesso', () =>
+    assertFails(db(C).doc('direct_chats/utenteA__utenteZ').set(
+      { members:[A.uid, C.uid], memberNames:{} })));
+  await prova('C NON crea una chat con un id che non e\' la coppia dei membri', () =>
+    assertFails(db(C).doc('direct_chats/qualsiasi').set(
+      { members:[C.uid, A.uid].sort() })));
+  await prova('A crea la chat con B come fa l\'app ([a,b].sort().join("__"))', () =>
+    assertSucceeds(db(A).doc('direct_chats/' + [A.uid, B.uid].sort().join('__')).set(
+      { members:[A.uid, B.uid].sort() })));
+
+  console.log('\n  PREPARA GARA: LE BOZZE SONO DI CHI LE FA (SEC-09)\n');
+  await scena(async d => d.doc('percorsi/bozzaA').set(
+    { createdBy:A.uid, nome:'Gara di A', iscritti:[{ cognome:'Rossi', tessera:'FI-123' }] }));
+  await prova('B NON legge la bozza di A (tessere di atleti terzi)', () =>
+    assertFails(db(B).doc('percorsi/bozzaA').get()));
+  await prova('A legge la propria bozza', () =>
+    assertSucceeds(db(A).doc('percorsi/bozzaA').get()));
+  await prova('A elenca le proprie bozze (la query dell\'app)', () =>
+    assertSucceeds(db(A).collection('percorsi').where('createdBy', '==', A.uid).get()));
+
+  console.log('\n  GESTIRE UNA COMPAGNIA: IL NOME NON SI SCEGLIE (SEC-13)\n');
+  await prova('A NON chiede la gestione con l\'email di un altro', () =>
+    assertFails(db(A).doc('compagnie_admin_requests/02XXXX_' + A.uid).set(
+      { codice:'02XXXX', richiedenteUid:A.uid, richiedenteEmail:'presidente@compagnia.it', richiedenteName:'Il Presidente', stato:'pending' })));
+  await prova('A chiede la gestione con la sua email', () =>
+    assertSucceeds(db(A).doc('compagnie_admin_requests/02XXXX_' + A.uid).set(
+      { codice:'02XXXX', richiedenteUid:A.uid, richiedenteEmail:A.email, richiedenteName:'Anna', stato:'pending' })));
+
+  console.log('\n  SOSPENSIONE (SEC-08)\n');
+  const S = { uid:'utenteS', email:'s@esempio.it', email_verified:true };
+  await scena(async d => {
+    await d.doc('users/' + S.uid).set({ approved:false });
+    await d.doc('sospesi/' + S.uid).set({ da:'admin' });
+  });
+  await prova('il sospeso NON apre un allenamento', () =>
+    assertFails(db(S).doc('open_trainings/otS').set({ ownerUid:S.uid, field:'X', spots:2, participantUids:[S.uid], participants:[] })));
+  await prova('il sospeso NON apre una chat', () =>
+    assertFails(db(S).doc('direct_chats/' + [S.uid, A.uid].sort().join('__')).set({ members:[S.uid, A.uid].sort() })));
+  await prova('il sospeso NON si ricrea approvato (cancella e ricrea users/{uid})', async () => {
+    await assertSucceeds(db(S).doc('users/' + S.uid).delete());
+    await assertFails(db(S).doc('users/' + S.uid).set({ email:S.email, approved:true }));
+  });
+  await prova('il sospeso NON si toglie il segno da solo', () =>
+    assertFails(db(S).doc('sospesi/' + S.uid).delete()));
+  await prova('l\'admin sospende e riammette', async () => {
+    await assertSucceeds(db(AD).doc('sospesi/utenteX').set({ da:AD.uid }));
+    await assertSucceeds(db(AD).doc('sospesi/utenteX').delete());
+  });
+  await prova('chi NON e\' sospeso apre ancora un allenamento', () =>
+    assertSucceeds(db(B).doc('open_trainings/otB').set({ ownerUid:B.uid, field:'Y', spots:2, participantUids:[B.uid], participants:[] })));
+
   console.log('\n  LE PORTE CHE DEVONO RESTARE APERTE\n');
 
   await prova('chi non ha confermato l\'email si cancella dall\'elenco', () =>

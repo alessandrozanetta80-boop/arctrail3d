@@ -18272,7 +18272,8 @@ if(!DEV_MODE && db && currentUser){
 saveBtn.disabled = true;
 saveStatus.textContent = t("pg_saving");
 completo.createdBy = currentUser.uid;
-completo.createdByEmail = currentUser.email || "";
+// `createdByEmail` non si scrive piu': `percorsi` lo leggeva qualunque account.
+// (19/09/2026, audit SEC-09.) Chi l'ha fatto e' gia' in `createdBy`.
 completo.createdAt = firebase.firestore.FieldValue.serverTimestamp();
 db.collection("percorsi").add(completo).then(function(){
 state.pgDraft = null; state.pgImport = null; state.pgScreen = "pick"; state.screen = "menu";
@@ -20357,7 +20358,7 @@ note: String(dati.note || "").slice(0,300),
 stato: subito ? "confermato" : "proposto",
 createdBy: currentUser.uid,
 createdByName: myDisplayName(),
-createdByEmail: currentUser.email || "",
+// niente createdByEmail: questi documenti li legge chiunque abbia un account (SEC-09)
 createdAt: Date.now()
 };
 if(subito){ doc.confermatoDa = currentUser.uid; doc.confermatoIl = Date.now(); }
@@ -22196,7 +22197,11 @@ var revBtn = el('<button class="btn btn-ghost btn-outline-danger btn-sm">'+t("ad
 revBtn.addEventListener("click", function(){
 if(!window.confirm("Revocare l\u0027accesso a " + (nome || user || row.email) + "?")) return;
 revBtn.disabled = true;
-db.collection("users").doc(row.id).update({approved:false}).then(function(){
+// Il segno in `sospesi` e' quello che le regole guardano: `approved:false`
+// da solo si aggirava cancellando e ricreando il proprio documento. (SEC-08)
+db.collection("sospesi").doc(row.id).set({ da: currentUser.uid, il: firebase.firestore.FieldValue.serverTimestamp() }).then(function(){
+return db.collection("users").doc(row.id).update({approved:false});
+}).then(function(){
 // Revoca: fuori anche dall'elenco pubblico, altrimenti resterebbe
 // invitabile e contattabile.
 return deletePublicProfile(row.id);
@@ -22380,6 +22385,8 @@ var btn = el('<button class="btn btn-primary btn-sm">'+t("admin_approve_btn")+'<
 btn.addEventListener("click", function(){
 btn.disabled = true;
 db.collection("users").doc(row.id).update({approved:true}).then(function(){
+return db.collection("sospesi").doc(row.id).delete().catch(function(){});
+}).then(function(){
 // L'approvazione e' il momento in cui l'arciere entra nell'elenco pubblico.
 return writePublicProfile(row.id, row.data);
 }).then(function(){ publicProfilesCache = null; archersDirectory = null; loadList(); })
@@ -25512,10 +25519,23 @@ var uid = currentUser.uid;
 var mail = currentUser.email || "";
 var nome = myDisplayName();
 
-var reauth = Promise.resolve();
+/* PRIMA SI PROVA DI ESSERE CHI SI DICE, POI SI CANCELLA. (19/09/2026, audit SEC-11.)
+   Prima, senza password, `wipeAccountData` partiva lo stesso e solo DOPO
+   `currentUser.delete()` falliva con «requires-recent-login»: con un telefono
+   sbloccato bastavano la parola ELIMINA e un tocco per distruggere tutto lo
+   storico, e l'account restava in piedi, vuoto. Adesso: con la password si
+   riautentica; senza (chi entra col link via email) l'accesso deve essere
+   recente, cinque minuti come chiede Firebase, altrimenti si dice di rientrare
+   e NON si tocca niente. */
+var reauth;
 if(pwdInp.value){
 var cred = firebase.auth.EmailAuthProvider.credential(mail, pwdInp.value);
 reauth = currentUser.reauthenticateWithCredential(cred);
+} else {
+var ultimo = currentUser.metadata && currentUser.metadata.lastSignInTime ? Date.parse(currentUser.metadata.lastSignInTime) : 0;
+reauth = (ultimo && (Date.now() - ultimo) < 5 * 60 * 1000)
+? Promise.resolve()
+: Promise.reject({ code: "auth/requires-recent-login" });
 }
 
 reauth.then(function(){
