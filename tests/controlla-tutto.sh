@@ -143,6 +143,7 @@ banco "banco-esterni.js (Google Fonts o gstatic appesi: l'app parte lo stesso)" 
 banco "banco-accessibile.js (finestre dichiarate, fuoco che non scappa, bersagli da 44)" "node tests/banco-accessibile.js"
 banco "banco-tastiera.js (con la tastiera aperta si arriva a scrivere e a mandare)" "node tests/banco-tastiera.js"
 banco "banco-salto-versione.js (telefono fermo da settimane: si aggiorna e non perde i dati)" "node tests/banco-salto-versione.js"
+banco "controlla-versioni.js (i sei timbri di versione dicono la verita' e si muovono insieme)" "node tests/controlla-versioni.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"
