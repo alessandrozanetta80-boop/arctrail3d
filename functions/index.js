@@ -1,10 +1,18 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-09-19-push-dispositivi
+// Versione 2026-09-20-dispositivi
 // Nata da: 2026-08-28-notifica-verificata (col layout functions/ del 17/09)
 //
+// NOVITA' 2026-09-20 — I DISPOSITIVI SONO DOCUMENTI: users/{uid}/devices/{deviceId}
+//  { token, platform, language, enabled, createdAt, updatedAt, lastSeen }. deviceId e'
+//  casuale e nasce sul telefono; niente impronte del dispositivo. `pushNotifica` legge
+//  i dispositivi `enabled` e, per la migrazione, anche il vecchio `users/{uid}.fcmToken`
+//  (le app non ancora aggiornate scrivono solo quello). La mappa `fcmTokens` del
+//  19/09 non e' mai andata online: non si legge. Ogni notifica porta `type`,
+//  `senderUid`, `dest` ed `entityId`, decisi QUI (il client suggerisce, il server vaglia).
+//
 // NOVITA' 2026-09-19 — LE PUSH ARRIVANO A TUTTI I DISPOSITIVI E PORTANO DOVE DEVONO
-//  (audit del 19/09, N1-N8.) `pushNotifica` legge `users/{uid}.fcmTokens` (una voce per
-//  dispositivo) oltre al vecchio `fcmToken`, manda con sendEachForMulticast un messaggio
+//  (audit del 19/09, N1-N8.) `pushNotifica` leggeva una mappa di token (sostituita il 20/09
+//  dai documenti in devices/) oltre al vecchio `fcmToken`, manda con sendEachForMulticast un messaggio
 //  SOLO `data` con `link` all'app (`/app.html?n=<id>`), Urgency high e TTL di un giorno,
 //  e toglie i token morti uno per uno in transazione, solo se sono ancora quelli.
 //  `sendNotification` torna a salvare `dest` (destPulito, perso il 18/08).
@@ -125,6 +133,24 @@ const LIMITE_AL_MINUTO = 40; // un invito ad allenamento ne manda uno per invita
 // Le forme sono quelle che `destinazioneNotifica()` in app.html sa leggere.
 // Per `dm` l'uid NON viene dal client: e' il mittente vero, dal token.
 // ─────────────────────────────────────────────────────────────────────────────
+/* IL TIPO DELL'AVVISO. (20/09/2026, fase 17.) Deciso qui, da `dest`: il client
+   puo' suggerirlo, ma vale solo se e' uno dei tipi noti E coincide con la
+   destinazione. Serve al telefono per decidere l'icona e il testo, e a chi legge
+   i log per contare cosa parte. */
+const TIPI_AVVISO = ["dm", "allenamento", "annuncio", "compagnia", "avviso"];
+function tipoDa(dest) {
+  if (!dest) return "avviso";
+  if (dest.k === "dm") return "dm";
+  if (dest.k === "ot") return "allenamento";
+  if (dest.k === "annuncio") return "annuncio";
+  if (dest.k === "club-space") return "compagnia";
+  return "avviso";
+}
+function entitaDi(dest) {
+  if (!dest) return null;
+  return dest.id || dest.code || dest.uid || null;
+}
+
 function destPulito(d, mittente) {
   const MAX_ID = 128;
   if (!d || typeof d !== "object") return null;
@@ -219,6 +245,12 @@ exports.sendNotification = onCall({ cors: true }, async (req) => {
   };
   const dest = destPulito(d.dest, uid);
   if (dest) doc.dest = dest;
+  // Chi manda, di che tipo e' e a cosa si riferisce: deciso dal server.
+  doc.senderUid = uid;
+  doc.type = tipoDa(dest);
+  const ent = entitaDi(dest);
+  if (ent) doc.entityId = ent;
+  if (TIPI_AVVISO.indexOf(doc.type) < 0) doc.type = "avviso";
   await db.collection("notifications").doc(toUid).collection("items").add(doc);
 
   return { ok: true };
@@ -240,23 +272,25 @@ exports.pushNotifica = onDocumentCreated(
     const itemId = event.params.itemId;
     const utenteRef = admin.firestore().collection("users").doc(uid);
 
-    /* UN TOKEN PER DISPOSITIVO. (19/09/2026, audit N1.) Prima c'era un solo
-       `fcmToken` per utente, e l'ultimo dispositivo aperto sovrascriveva gli
-       altri: chi usa telefono e computer riceveva le push solo sull'ultimo, e
-       sugli altri smettevano in silenzio — «tornano quando riapro l'app» era
-       questo. Adesso ogni dispositivo scrive la sua voce in `fcmTokens`
-       ({ chiave: { token, aggiornato } }). `fcmToken` si legge ancora: e' quello
-       che scrivono le app di prima, finche' non si aggiornano. */
+    /* UN DOCUMENTO PER DISPOSITIVO. (19-20/09/2026, audit N1, fase 16.)
+       Prima c'era un solo `fcmToken` per utente, e l'ultimo dispositivo aperto
+       sovrascriveva gli altri: chi usa telefono e computer riceveva le push solo
+       sull'ultimo. Adesso ogni dispositivo ha users/{uid}/devices/{deviceId}.
+       `fcmToken` si legge ancora: e' quello che scrivono le app di prima. */
     const userSnap = await utenteRef.get();
     const u = userSnap.exists ? (userSnap.data() || {}) : {};
     const voci = [];
-    Object.keys(u.fcmTokens || {}).forEach(function (k) {
-      const v = u.fcmTokens[k];
-      if (v && typeof v.token === "string" && v.token) voci.push({ chiave: k, token: v.token });
+    const dispositivi = await utenteRef.collection("devices").where("enabled", "==", true).get();
+    dispositivi.forEach(function (doc) {
+      const v = doc.data() || {};
+      if (typeof v.token === "string" && v.token &&
+          !voci.some(function (x) { return x.token === v.token; })) {
+        voci.push({ device: doc.id, token: v.token });
+      }
     });
     if (typeof u.fcmToken === "string" && u.fcmToken &&
         !voci.some(function (v) { return v.token === u.fcmToken; })) {
-      voci.push({ chiave: null, token: u.fcmToken });
+      voci.push({ device: null, token: u.fcmToken });
     }
     if (!voci.length) {
       console.log("push per " + uid + ": nessun token, avviso «" + (d.title || "?") + "» non consegnato");
@@ -282,6 +316,9 @@ exports.pushNotifica = onDocumentCreated(
     if (d.adId) dati.adId = String(d.adId);
     if (d.clubCode) dati.clubCode = String(d.clubCode);
     if (d.dest) dati.dest = JSON.stringify(d.dest);
+    if (d.type) dati.type = String(d.type);
+    if (d.senderUid) dati.senderUid = String(d.senderUid);
+    if (d.entityId) dati.entityId = String(d.entityId);
 
     const tokens = voci.map(function (v) { return v.token; });
     let esito;
@@ -318,19 +355,25 @@ exports.pushNotifica = onDocumentCreated(
     });
     if (!morti.length) return;
     console.warn("push per " + uid + ": " + morti.length + " token scaduti o revocati, li tolgo.");
-    await admin.firestore().runTransaction(async function (tx) {
-      const ora = await tx.get(utenteRef);
-      if (!ora.exists) return;
-      const x = ora.data() || {};
-      const cambi = {};
-      morti.forEach(function (m) {
-        if (m.chiave && x.fcmTokens && x.fcmTokens[m.chiave] && x.fcmTokens[m.chiave].token === m.token) {
-          cambi["fcmTokens." + m.chiave] = admin.firestore.FieldValue.delete();
+    // Il dispositivo morto si spegne (enabled:false, token tolto) solo se il suo
+    // token e' ancora quello che ha fallito; il vecchio fcmToken idem.
+    for (const m of morti) {
+      await admin.firestore().runTransaction(async function (tx) {
+        if (m.device) {
+          const ref = utenteRef.collection("devices").doc(m.device);
+          const ora = await tx.get(ref);
+          if (ora.exists && (ora.data() || {}).token === m.token) {
+            tx.update(ref, { enabled: false, token: admin.firestore.FieldValue.delete(),
+                             updatedAt: admin.firestore.FieldValue.serverTimestamp() });
+          }
+        } else {
+          const ora = await tx.get(utenteRef);
+          if (ora.exists && (ora.data() || {}).fcmToken === m.token) {
+            tx.update(utenteRef, { fcmToken: admin.firestore.FieldValue.delete() });
+          }
         }
-        if (x.fcmToken === m.token) cambi.fcmToken = admin.firestore.FieldValue.delete();
-      });
-      if (Object.keys(cambi).length) tx.update(utenteRef, cambi);
-    }).catch(function () {});
+      }).catch(function () {});
+    }
   }
 );
 

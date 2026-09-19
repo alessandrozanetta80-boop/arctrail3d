@@ -124,7 +124,13 @@ async function iniziaRound3D(page) {
   await tocca(b.page, "←");
   var avviato = await tocca(b.page, "Gara libera");
   await tocca(b.page, "Continua"); await tocca(b.page, "Round 3D"); await tocca(b.page, "Inizia gara");
-  prova("con un giro aperto si puo' avviarne un altro (il caso da proteggere)", avviato);
+  prova("con un giro aperto si arriva al tasto di avvio (il caso da proteggere)", avviato);
+  // Fase 8E: il PRIMO tocco non parte, chiede. Il giro aperto e' ancora li'.
+  var dopoUno = await locale(b.page);
+  prova("il primo tocco NON avvia un giro nuovo: chiede", dopoUno.stato.roundActive === true && dopoUno.stato.target === 4,
+        "target=" + dopoUno.stato.target);
+  prova("e dice che c'e' un giro aperto", /giro aperto/i.test(await testo(b.page)));
+  await tocca(b.page, "giro aperto");
   var lb = await locale(b.page);
   prova("il giro nuovo parte dalla piazzola 1", lb.stato.roundActive === true && lb.stato.target === 1, "target=" + lb.stato.target);
   prova("il giro di prima (3 piazzole) e' nello storico, non sparito",
@@ -195,6 +201,70 @@ async function iniziaRound3D(page) {
           "target=" + le.stato.target);
     await e.ctx.close();
   }
+
+  // ── 5b. revisioni: si prosegue, oppure si dichiara il conflitto ──────────
+  console.log("\n  DUE DISPOSITIVI SULLO STESSO GIRO: REVISIONI E CONFLITTO\n");
+  function giroR(target, extra) {
+    return statoBase(Object.assign({ roundActive: true, mode: "round3d", format: 24, target: target, roundId: "gRIDPROVA",
+      archers: [{ id: "a0", name: "mariorossi", isSelf: true }], archersBase: [{ id: "a0", name: "mariorossi", isSelf: true }],
+      scores: { a0: new Array(target - 1).fill(0).map(function () { return { arrows: [16, 7], total: 23 }; }) },
+      archerIndex: 0, arrowIndex: 0, pendingArrows: [], liveBattutaTypes: {}, startedAt: Date.now() }, extra || {}));
+  }
+  function copiaCloud(target, rev) {
+    var g = giroR(target); var dentro = {};
+    ["roundActive","archersBase","mode","format","archers","scores","target","archerIndex","arrowIndex","pendingArrows","liveBattutaTypes","startedAt","roundId"].forEach(function (k) { dentro[k] = g[k]; });
+    var x = {}; x["users/" + U.uid + "/giro_aperto"] = { corrente: { giro: JSON.stringify(dentro), roundId: "gRIDPROVA", rev: rev, deviceId: "dAltroTelefono", stato: "aperto", piazzola: target, piazzole: 24 } };
+    return x;
+  }
+  // (a) qui niente di nuovo (non «sporco"), sul cloud l'altro e' piu' avanti: si prosegue da li'.
+  var g1 = await apri(Object.assign(giroR(6), { roundBaseRev: 3, roundRev: 3, roundDirty: false, screen: "menu" }), cloudBase(copiaCloud(9, 5)));
+  await g1.page.waitForTimeout(800);
+  var l1 = await locale(g1.page);
+  prova("copia piu' recente dell'altro, qui niente di nuovo: si prosegue dalla piazzola 9", l1.stato.target === 9, "target=" + l1.stato.target);
+  prova("nessun conflitto dichiarato", !/anche su un altro dispositivo/.test(await testo(g1.page)));
+  await g1.ctx.close();
+  // (b) modifiche da tutte e due le parti: conflitto, niente scelto in silenzio.
+  var g2 = await apri(Object.assign(giroR(6), { roundBaseRev: 3, roundRev: 4, roundDirty: true, screen: "menu" }), cloudBase(copiaCloud(9, 5)));
+  await g2.page.waitForTimeout(800);
+  await g2.page.evaluate(function () { var x = document.querySelector(".home-riprendi"); if (x) x.click(); });
+  await g2.page.waitForTimeout(600);
+  var tx2 = await testo(g2.page);
+  prova("modifiche di qua e di la': si dichiara il conflitto", /anche su un altro dispositivo/.test(tx2), tx2.slice(0, 160));
+  var l2 = await locale(g2.page);
+  prova("e il giro di qui NON e' stato sovrascritto (piazzola 6)", l2.stato.target === 6, "target=" + l2.stato.target);
+  await premi(g2.page, ".quick-btn.superspot");
+  var l2b = await locale(g2.page);
+  prova("durante il conflitto la tastiera non segna", (l2b.stato.pendingArrows || []).length === 0);
+  var w2 = await scritture(g2.page);
+  prova("e non si scrive sul cloud", !w2.some(function (w) { return w.op === "set" && /giro_aperto\/corrente$/.test(w.path); }));
+  await tocca(g2.page, "Tieni quello dell");
+  var l2c = await locale(g2.page);
+  prova("scelto «quello dell'altro»: si prosegue dalla piazzola 9", l2c.stato.target === 9 && !/anche su un altro dispositivo/.test(await testo(g2.page)), "target=" + l2c.stato.target);
+  await g2.ctx.close();
+  // (c) in tempo reale: mentre si segna, l'altro scrive il giro.
+  var g3 = await apri(Object.assign(giroR(6), { roundBaseRev: 3, roundRev: 3, roundDirty: false, screen: "menu" }), cloudBase());
+  await g3.page.evaluate(function () { var x = document.querySelector(".home-riprendi"); if (x) x.click(); });
+  await g3.page.waitForTimeout(700);
+  await premi(g3.page, ".quick-btn.superspot");   // qui c'e' un cambiamento non ancora salito
+  await g3.page.evaluate(function (uid) {
+    var g = JSON.parse(localStorage.getItem("arctrail3d_state_v3"));
+    g.target = 11; g.pendingArrows = [];
+    return window.__fakeDb.collection("users").doc(uid).collection("giro_aperto").doc("corrente").set({
+      giro: JSON.stringify(g), roundId: g.roundId, rev: 99, deviceId: "dAltroTelefono", stato: "aperto", piazzola: 11, piazzole: 24 });
+  }, U.uid);
+  await g3.page.waitForTimeout(800);
+  prova("in tempo reale: l'altro scrive mentre qui si segna → conflitto dichiarato", /anche su un altro dispositivo/.test(await testo(g3.page)));
+  await g3.ctx.close();
+  // (d) l'identita' del giro
+  var g4 = await apri(statoBase(), cloudBase());
+  await iniziaRound3D(g4.page);
+  var id4 = (await locale(g4.page)).stato.roundId || "";
+  prova("il giro nuovo ha un roundId robusto (128 bit casuali)", /^g[0-9a-z]+[0-9a-f]{32}$/.test(id4), id4);
+  var w4 = await scritture(g4.page);
+  var copia4 = w4.filter(function (w) { return w.op === "set" && /giro_aperto\/corrente$/.test(w.path); }).pop();
+  prova("la copia cloud porta roundId, rev e deviceId", !!(copia4 && copia4.data.roundId === id4 && copia4.data.rev >= 1 && copia4.data.deviceId),
+        copia4 ? JSON.stringify({ r: copia4.data.roundId, v: copia4.data.rev, d: copia4.data.deviceId }) : "nessuna copia");
+  await g4.ctx.close();
 
   // ── 6. avvio a freddo senza rete ───────────────────────────────────────
   console.log("\n  AVVIO A FREDDO SENZA RETE, CON UN GIRO APERTO\n");

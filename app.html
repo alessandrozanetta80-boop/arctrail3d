@@ -53,7 +53,13 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet">
+<!-- Il carattere non blocca l'avvio (20/09/2026, fase 15): con la rete che «c'e' e
+     non risponde» il foglio bloccante fermava anche lo script dell'app (schermo
+     bianco, giro irraggiungibile). Si carica come «print» e diventa «all» quando
+     arriva; intanto il testo usa i caratteri di sistema di --font-ui.
+     tests/banco-esterni.js lo prova con Google Fonts appeso. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet"></noscript>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
@@ -5623,7 +5629,26 @@ app.innerHTML = '<div style="padding:40px 20px;text-align:center;font-family:san
 </script>
 <script src="compagnie-data.js" defer></script>
 <script>
-document.addEventListener("DOMContentLoaded", function(){
+/* L'AVVIO NON ASPETTA PER SEMPRE LE LIBRERIE ESTERNE. (20/09/2026, fase 15.)
+   L'app partiva a `DOMContentLoaded`, che aspetta le cinque librerie Firebase
+   (`defer`, da gstatic). Con gstatic appeso — la rete che «c'e' e non
+   risponde», nel bosco — DOMContentLoaded non arrivava MAI: schermo bianco, e
+   il giro aperto irraggiungibile. Adesso, se la pagina e' gia' letta
+   (`readyState` non piu' «loading») e DOMContentLoaded non e' arrivato entro
+   4 secondi, si parte lo stesso: senza librerie, `modalitaLocale()` apre il
+   telefono gia' configurato e si segna. Parte UNA volta sola. */
+(function(){
+var partita = false;
+window.__avviaArcTrail = function(fn){
+function una(){ if(partita) return; partita = true; fn(); }
+document.addEventListener("DOMContentLoaded", una);
+var guarda = setInterval(function(){
+if(partita){ clearInterval(guarda); return; }
+if(document.readyState !== "loading"){ clearInterval(guarda); setTimeout(una, 4000); }
+}, 100);
+};
+})();
+window.__avviaArcTrail(function(){
 "use strict";
 // ---------- MODALITA' SVILUPPO ----------
 // Metti true per aprire il file offline/in locale saltando del tutto l'accesso Firebase (per testare le modifiche).
@@ -6044,7 +6069,20 @@ currentUser = user;
 // PRIMA DI TUTTO: di chi sono i dati di questo telefono? (P0-2) Se sono di un
 // altro si svuotano adesso, prima che una qualunque sincronia li porti nel
 // cloud di chi e' appena entrato.
-if(datiLocaliDiUnAltro(user)){ svuotaDatiUtenteLocali(); }
+(function(){
+var prima = leggiProprietario();
+if(prima && prima !== user.uid){
+// Di un altro account, che si conosce: da parte a suo nome.
+mettiDaParte({ uid: prima, email: state.profile && state.profile.email });
+} else if(!prima && ciSonoDatiUtente()){
+// Di prima di questa versione: sono di chi entra SOLO se il profilo lo prova.
+var em = state && state.profile && state.profile.email;
+var suoi = !!(em && user.email && String(em).toLowerCase() === String(user.email).toLowerCase());
+if(!suoi) mettiDaParte({ uid: null, email: em || null });
+}
+// E se su questo telefono aspettavano dati SUOI, tornano.
+riprendiDaParte(user);
+})();
 segnaProprietario(user.uid);
 flushErrorQueue();
 // Se su questo telefono non c'e' nessun giro aperto, ma sul cloud si',
@@ -6138,10 +6176,11 @@ blockedUsers = data.blockedUsers || {};
 if(data.nomeCognome){
 state.profile = {
 nomeCognome: data.nomeCognome, nomeNascosto: (data.nomeNascosto === true), username: data.username || "",
-email: data.email || user.email, federazioni: data.federazioni || [], arco: data.arco || null, privacy: true,
+email: data.email || user.email, federazioni: federazioniDalCloud(data), arco: data.arco || null, privacy: true,
 bio: data.bio || null, mostraNumeri: data.mostraNumeri === true,
 compagnia: data.compagnia || null, compagniaNome: data.compagniaNome || ""
 };
+profiloBase = JSON.parse(JSON.stringify(state.profile));
 }
 authState = data.approved ? "ready" : "pendingApproval";
 // Il profilo pubblico si riallinea a ogni apertura: cosi' un cambio di nome
@@ -6286,15 +6325,89 @@ var HISTORY_MAX = 150;
 var PROPRIETARIO_KEY = "arctrail3d_proprietario_v1";
 function leggiProprietario(){ try{ return localStorage.getItem(PROPRIETARIO_KEY) || ""; }catch(e){ return ""; } }
 function segnaProprietario(uid){ try{ if(uid) localStorage.setItem(PROPRIETARIO_KEY, uid); }catch(e){} }
-function datiLocaliDiUnAltro(user){
-if(!user) return false;
-var prima = leggiProprietario();
-if(prima) return prima !== user.uid;
-var em = state && state.profile && state.profile.email;
-return !!(em && user.email && String(em).toLowerCase() !== String(user.email).toLowerCase());
+/* MEGLIO DA PARTE CHE NEL CLOUD SBAGLIATO. (20/09/2026, fase P0-2 del brief.)
+   Il 19/09 i dati di un altro si SVUOTAVANO: niente contaminazione, ma un giro
+   di A fatto senza rete e mai salito spariva quando entrava B. E i dati di prima
+   di questa versione, senza proprietario scritto, venivano ADOTTATI da chi
+   entrava se il profilo non portava un'altra email — cioe' anche quando non si
+   poteva sapere di chi fossero.
+   Adesso i dati che non sono di chi entra si mettono DA PARTE, in
+   `ORFANI_KEY`, con quello che si sa del proprietario (uid, o solo l'email del
+   profilo, o niente). Non salgono nel cloud di nessuno. Tornano:
+   - da soli, al loro proprietario, quando rientra su questo telefono;
+   - con un tocco esplicito, «Aggiungili al mio account», quando non si sa di
+     chi siano (LEGACY_ORPHANED: dati di prima, profilo senza email). */
+var ORFANI_KEY = "arctrail3d_orfani_v1";
+var CHIAVI_DA_PARTE = [HISTORY_KEY, LIFETIME_KEY, DELETED_KEY, "arctrail3d_attrezzi_v1", "arctrail3d_ifaa_schema_v1"];
+function leggiOrfani(){ try{ var o = JSON.parse(localStorage.getItem(ORFANI_KEY) || "[]"); return Array.isArray(o) ? o : []; }catch(e){ return []; } }
+function scriviOrfani(o){ try{ if(o.length) localStorage.setItem(ORFANI_KEY, JSON.stringify(o)); else localStorage.removeItem(ORFANI_KEY); }catch(e){} }
+function ciSonoDatiUtente(){
+try{
+if(localStorage.getItem(HISTORY_KEY) && JSON.parse(localStorage.getItem(HISTORY_KEY)).length) return true;
+if(localStorage.getItem("arctrail3d_attrezzi_v1") && JSON.parse(localStorage.getItem("arctrail3d_attrezzi_v1")).length) return true;
+}catch(e){}
+return !!(state && (state.roundActive === true || (state.profile && (state.profile.nomeCognome || state.profile.username))));
+}
+/* Mette da parte i dati dell'utente del telefono e li toglie dalla vista.
+   `chi` = { uid, email }: quello che si sa del proprietario (anche niente). */
+function mettiDaParte(chi){
+if(!ciSonoDatiUtente()){ svuotaDatiUtenteLocali(); return; }
+var dati = {};
+CHIAVI_DA_PARTE.forEach(function(k){ try{ var v = localStorage.getItem(k); if(v !== null) dati[k] = v; }catch(e){} });
+var giro = {};
+CAMPI_DEL_GIRO.forEach(function(k){ if(state[k] !== undefined) giro[k] = state[k]; });
+var o = leggiOrfani().filter(function(x){ return !(chi.uid && x.uid === chi.uid); });
+o.push({ uid: chi.uid || null, email: chi.email ? String(chi.email).toLowerCase() : null, il: Date.now(),
+         dati: dati, giro: (state.roundActive === true) ? giro : null, profilo: state.profile || null });
+scriviOrfani(o.slice(-4));   // al massimo quattro persone: e' un telefono, non un archivio
+svuotaDatiUtenteLocali();
+}
+/* Rimette al loro posto i dati messi da parte di QUESTO utente (per uid o per
+   email). Sono suoi: da qui in poi la sincronia normale li porta nel suo cloud. */
+function riprendiDaParte(user){
+var o = leggiOrfani(), resto = [], mio = null;
+var em = user.email ? String(user.email).toLowerCase() : null;
+o.forEach(function(x){
+if(!mio && ((x.uid && x.uid === user.uid) || (!x.uid && x.email && em && x.email === em))) mio = x;
+else resto.push(x);
+});
+if(!mio) return false;
+scriviOrfani(resto);
+Object.keys(mio.dati || {}).forEach(function(k){ try{ localStorage.setItem(k, mio.dati[k]); }catch(e){} });
+if(mio.giro && state.roundActive !== true){ Object.keys(mio.giro).forEach(function(k){ state[k] = mio.giro[k]; }); }
+if(mio.profilo && !state.profile) state.profile = mio.profilo;
+save();
+return true;
+}
+/* I dati di nessuno che si sappia: si offrono a chi c'e', non si prendono. */
+function orfaniSenzaProprietario(){ return leggiOrfani().filter(function(x){ return !x.uid && !x.email; })[0] || null; }
+function giriOrfani(x){ try{ return JSON.parse((x.dati || {})[HISTORY_KEY] || "[]").length; }catch(e){ return 0; } }
+function aggiungiOrfaniAlMioAccount(){
+var x = orfaniSenzaProprietario();
+if(!x) return;
+scriviOrfani(leggiOrfani().filter(function(y){ return y !== x && !(y.il === x.il && !y.uid && !y.email); }));
+var miei = loadHistory(), suoi = [];
+try{ suoi = JSON.parse((x.dati || {})[HISTORY_KEY] || "[]"); }catch(e){}
+var viste = {};
+miei.forEach(function(h){ if(h && h.date) viste[h.date] = true; });
+suoi.forEach(function(h){ if(h && h.date && !viste[h.date]){ miei.push(h); viste[h.date] = true; } });
+miei.sort(function(a, b){ return (b.date || "").localeCompare(a.date || ""); });
+saveHistoryList(miei.slice(0, HISTORY_MAX));
+try{ localStorage.removeItem(LIFETIME_KEY); }catch(e){}
+backfillLifetimeOnce();
+if(x.giro && state.roundActive !== true){ Object.keys(x.giro).forEach(function(k){ state[k] = x.giro[k]; }); }
+save();
+giaRiallineato = false;
+riallineaStorico();
+}
+function lasciaOrfani(){
+var x = orfaniSenzaProprietario();
+if(!x) return;
+scriviOrfani(leggiOrfani().filter(function(y){ return !(y.il === x.il && !y.uid && !y.email); }));
 }
 function svuotaDatiUtenteLocali(){
 var tieni = { lang: state.lang, theme: state.theme, country: state.country, federation: state.federation };
+// ORFANI_KEY NON sta qui: i dati messi da parte restano finche' non tornano al loro proprietario.
 var chiavi = [STORAGE_KEY, HISTORY_KEY, LIFETIME_KEY, DELETED_KEY, PROPRIETARIO_KEY,
   "arctrail3d_ifaa_schema_v1", "arctrail3d_misure_v1", "arctrail3d_attrezzi_v1",
   "arctrail3d_push_spenta", "arctrail3d_pending_profile", "arctrail3d_pending_email"];
@@ -6321,6 +6434,8 @@ if(loadedState){ state = loadedState; }
 // la tabella con cui e' cominciato. La funzione sta piu' sotto: e' una
 // dichiarazione, quindi qui esiste gia'.
 adattaGiroIfaa(state);
+// Un giro aperto nato prima del 19/09 non ha identita': la prende qui, una volta.
+if(state.roundActive === true && !state.roundId){ state.roundIdDaCaricare = true; }
 state.percorsi = state.percorsi || []; // percorsi gara salvati (Prepara Gara)
 // Riaprire l'app = ripartire dalla home, come fanno le altre app.
 // Restano lingua, profilo, storico e il giro in corso (che si riprende dal
@@ -6342,6 +6457,9 @@ var timerRemaining = null;
 var timerRunning = false;
 var timerTargetKey = null;
 var timerIntervalId = null;
+// L'ora in cui il conto arriva a zero (ms). Il tempo che resta si CALCOLA da qui,
+// non si scala di un secondo a ogni battito: vedi avviaConto. (20/09/2026)
+var timerFineAt = 0;
 var timerDuration = 120;
 var timerAperto = false;  // la pastiglia del timer e' aperta sui comandi +/-
 
@@ -6877,6 +6995,13 @@ login_need_email_first: "Inserisci prima la tua email qui sopra.",
 login_bad_credentials: "Email o password non corretti.",
 login_reset_error: "Non sono riuscito a inviare l\u2019email, riprova.",
 logout_word: "Esci",
+nuovo_giro_conferma: "C'\u00e8 un giro aperto: tocca ancora per chiuderlo e iniziarne un altro",
+giro_conflitto_testo: "Questo giro \u00e8 stato segnato anche su un altro dispositivo (piazzola {n}); qui sei alla piazzola {m}. Quale tieni?",
+giro_conflitto_altro: "Tieni quello dell'altro dispositivo (piazzola {n})",
+giro_conflitto_questo: "Tieni questo (piazzola {m})",
+orfani_lascia: "No, toglili da questo telefono",
+orfani_aggiungi: "S\u00ec, aggiungili al mio account",
+orfani_testo: "Su questo telefono ci sono {n} giri di prima dell'accesso. Sono tuoi?",
 login_sub: "Accedi con la tua email per continuare",
 login_email_ph: "La tua email",
 login_btn: "Accedi",
@@ -7622,6 +7747,13 @@ login_need_email_first: "Enter your email address above first.",
 login_bad_credentials: "Email or password is not correct.",
 login_reset_error: "I couldn\u2019t send the email, please try again.",
 logout_word: "Log out",
+nuovo_giro_conferma: "A round is open: tap again to close it and start a new one",
+giro_conflitto_testo: "This round was also scored on another device (target {n}); here you are at target {m}. Which one do you keep?",
+giro_conflitto_altro: "Keep the other device's (target {n})",
+giro_conflitto_questo: "Keep this one (target {m})",
+orfani_lascia: "No, remove them from this phone",
+orfani_aggiungi: "Yes, add them to my account",
+orfani_testo: "This phone holds {n} rounds from before you signed in. Are they yours?",
 login_sub: "Sign in with your email to continue",
 login_email_ph: "Your email",
 login_btn: "Sign in",
@@ -8366,6 +8498,13 @@ login_need_email_first: "Saisissez d\u2019abord votre e-mail ci-dessus.",
 login_bad_credentials: "E-mail ou mot de passe incorrect.",
 login_reset_error: "Je n\u2019ai pas pu envoyer l\u2019e-mail, r\u00e9essayez.",
 logout_word: "D\u00e9connexion",
+nuovo_giro_conferma: "Un parcours est ouvert : touchez \u00e0 nouveau pour le fermer et en commencer un autre",
+giro_conflitto_testo: "Ce parcours a aussi \u00e9t\u00e9 not\u00e9 sur un autre appareil (cible {n}) ; ici vous \u00eates \u00e0 la cible {m}. Lequel gardez-vous ?",
+giro_conflitto_altro: "Garder celui de l'autre appareil (cible {n})",
+giro_conflitto_questo: "Garder celui-ci (cible {m})",
+orfani_lascia: "Non, retirez-les de ce t\u00e9l\u00e9phone",
+orfani_aggiungi: "Oui, ajoutez-les \u00e0 mon compte",
+orfani_testo: "Ce t\u00e9l\u00e9phone contient {n} parcours d'avant votre connexion. Sont-ils \u00e0 vous ?",
 login_sub: "Connectez-vous avec votre e-mail pour continuer",
 login_email_ph: "Votre e-mail",
 login_btn: "Se connecter",
@@ -9110,6 +9249,13 @@ login_need_email_first: "Gib zuerst oben deine E-Mail-Adresse ein.",
 login_bad_credentials: "E-Mail oder Passwort ist falsch.",
 login_reset_error: "Die E-Mail konnte nicht gesendet werden, versuch es noch einmal.",
 logout_word: "Abmelden",
+nuovo_giro_conferma: "Eine Runde ist offen: erneut tippen, um sie zu beenden und eine neue zu beginnen",
+giro_conflitto_testo: "Diese Runde wurde auch auf einem anderen Ger\u00e4t gewertet (Ziel {n}); hier bist du bei Ziel {m}. Welche beh\u00e4ltst du?",
+giro_conflitto_altro: "Das des anderen Ger\u00e4ts behalten (Ziel {n})",
+giro_conflitto_questo: "Dieses behalten (Ziel {m})",
+orfani_lascia: "Nein, von diesem Handy entfernen",
+orfani_aggiungi: "Ja, zu meinem Konto hinzuf\u00fcgen",
+orfani_testo: "Auf diesem Handy sind {n} Runden von vor deiner Anmeldung. Sind es deine?",
 login_sub: "Melde dich mit deiner E-Mail an, um fortzufahren",
 login_email_ph: "Deine E-Mail",
 login_btn: "Anmelden",
@@ -9873,6 +10019,13 @@ login_need_email_first: "\u00d6nce yukar\u0131ya e-posta adresini gir.",
 login_bad_credentials: "E-posta veya \u015fifre do\u011fru de\u011fil.",
 login_reset_error: "E-postay\u0131 g\u00f6nderemedim, tekrar dene.",
 logout_word: "\u00c7\u0131k\u0131\u015f",
+nuovo_giro_conferma: "A\u00e7\u0131k bir tur var: kapat\u0131p yenisine ba\u015flamak i\u00e7in tekrar dokun",
+giro_conflitto_testo: "Bu tur ba\u015fka bir cihazda da i\u015faretlendi (hedef {n}); burada hedef {m}'desin. Hangisini tutuyorsun?",
+giro_conflitto_altro: "Di\u011fer cihaz\u0131nkini tut (hedef {n})",
+giro_conflitto_questo: "Bunu tut (hedef {m})",
+orfani_lascia: "Hay\u0131r, bu telefondan kald\u0131r",
+orfani_aggiungi: "Evet, hesab\u0131ma ekle",
+orfani_testo: "Bu telefonda giri\u015ften \u00f6nceki {n} tur var. Senin mi?",
 login_sub: "Devam etmek i\u00e7in e-postanla giri\u015f yap",
 login_email_ph: "E-postan",
 login_btn: "Giri\u015f yap",
@@ -10630,6 +10783,13 @@ login_need_email_first: "Сначала введите свою почту вы�
 login_bad_credentials: "Неверная почта или пароль.",
 login_reset_error: "Не удалось отправить письмо, попробуйте ещё раз.",
 logout_word: "Выйти",
+nuovo_giro_conferma: "\u0415\u0441\u0442\u044c \u043e\u0442\u043a\u0440\u044b\u0442\u044b\u0439 \u0440\u0430\u0443\u043d\u0434: \u043d\u0430\u0436\u043c\u0438\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437, \u0447\u0442\u043e\u0431\u044b \u0437\u0430\u043a\u0440\u044b\u0442\u044c \u0435\u0433\u043e \u0438 \u043d\u0430\u0447\u0430\u0442\u044c \u043d\u043e\u0432\u044b\u0439",
+giro_conflitto_testo: "\u042d\u0442\u043e\u0442 \u0440\u0430\u0443\u043d\u0434 \u0442\u0430\u043a\u0436\u0435 \u043e\u0442\u043c\u0435\u0447\u0430\u043b\u0438 \u043d\u0430 \u0434\u0440\u0443\u0433\u043e\u043c \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u0435 (\u043c\u0438\u0448\u0435\u043d\u044c {n}); \u0437\u0434\u0435\u0441\u044c \u0432\u044b \u043d\u0430 \u043c\u0438\u0448\u0435\u043d\u0438 {m}. \u041a\u0430\u043a\u043e\u0439 \u043e\u0441\u0442\u0430\u0432\u0438\u0442\u044c?",
+giro_conflitto_altro: "\u041e\u0441\u0442\u0430\u0432\u0438\u0442\u044c \u0441 \u0434\u0440\u0443\u0433\u043e\u0433\u043e \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u0430 (\u043c\u0438\u0448\u0435\u043d\u044c {n})",
+giro_conflitto_questo: "\u041e\u0441\u0442\u0430\u0432\u0438\u0442\u044c \u044d\u0442\u043e\u0442 (\u043c\u0438\u0448\u0435\u043d\u044c {m})",
+orfani_lascia: "\u041d\u0435\u0442, \u0443\u0434\u0430\u043b\u0438\u0442\u044c \u0441 \u044d\u0442\u043e\u0433\u043e \u0442\u0435\u043b\u0435\u0444\u043e\u043d\u0430",
+orfani_aggiungi: "\u0414\u0430, \u0434\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0432 \u043c\u043e\u0439 \u0430\u043a\u043a\u0430\u0443\u043d\u0442",
+orfani_testo: "\u041d\u0430 \u044d\u0442\u043e\u043c \u0442\u0435\u043b\u0435\u0444\u043e\u043d\u0435 {n} \u0440\u0430\u0443\u043d\u0434\u043e\u0432 \u0441\u043e \u0432\u0440\u0435\u043c\u0435\u043d\u0438 \u0434\u043e \u0432\u0445\u043e\u0434\u0430. \u042d\u0442\u043e \u0432\u0430\u0448\u0438?",
 login_sub: "\u0412\u043e\u0439\u0434\u0438\u0442\u0435 \u043f\u043e \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u043d\u043d\u043e\u0439 \u043f\u043e\u0447\u0442\u0435, \u0447\u0442\u043e\u0431\u044b \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c",
 login_email_ph: "\u0412\u0430\u0448 e-mail",
 login_btn: "\u0412\u043e\u0439\u0442\u0438",
@@ -11387,6 +11547,13 @@ login_need_email_first: "Introduce antes tu email aqu\u00ed arriba.",
 login_bad_credentials: "Email o contrase\u00f1a incorrectos.",
 login_reset_error: "No he podido enviar el email, int\u00e9ntalo de nuevo.",
 logout_word: "Salir",
+nuovo_giro_conferma: "Hay un recorrido abierto: toca de nuevo para cerrarlo y empezar otro",
+giro_conflitto_testo: "Este recorrido tambi\u00e9n se anot\u00f3 en otro dispositivo (diana {n}); aqu\u00ed est\u00e1s en la diana {m}. \u00bfCu\u00e1l conservas?",
+giro_conflitto_altro: "Conservar el del otro dispositivo (diana {n})",
+giro_conflitto_questo: "Conservar este (diana {m})",
+orfani_lascia: "No, qu\u00edtalos de este tel\u00e9fono",
+orfani_aggiungi: "S\u00ed, a\u00f1\u00e1delos a mi cuenta",
+orfani_testo: "En este tel\u00e9fono hay {n} recorridos de antes de iniciar sesi\u00f3n. \u00bfSon tuyos?",
 login_sub: "Inicia sesi\u00f3n con tu correo para continuar",
 login_email_ph: "Tu correo",
 login_btn: "Entrar",
@@ -12144,6 +12311,13 @@ login_need_email_first: "Ange f\u00f6rst din e-postadress h\u00e4r ovanf\u00f6r.
 login_bad_credentials: "Fel e-postadress eller l\u00f6senord.",
 login_reset_error: "Jag kunde inte skicka e-postmeddelandet, f\u00f6rs\u00f6k igen.",
 logout_word: "Logga ut",
+nuovo_giro_conferma: "En runda \u00e4r \u00f6ppen: tryck igen f\u00f6r att avsluta den och b\u00f6rja en ny",
+giro_conflitto_testo: "Den h\u00e4r rundan har ocks\u00e5 f\u00f6rts p\u00e5 en annan enhet (m\u00e5l {n}); h\u00e4r \u00e4r du p\u00e5 m\u00e5l {m}. Vilken beh\u00e5ller du?",
+giro_conflitto_altro: "Beh\u00e5ll den andra enhetens (m\u00e5l {n})",
+giro_conflitto_questo: "Beh\u00e5ll den h\u00e4r (m\u00e5l {m})",
+orfani_lascia: "Nej, ta bort dem fr\u00e5n den h\u00e4r telefonen",
+orfani_aggiungi: "Ja, l\u00e4gg till dem i mitt konto",
+orfani_testo: "P\u00e5 den h\u00e4r telefonen finns {n} rundor fr\u00e5n innan du loggade in. \u00c4r de dina?",
 login_sub: "Logga in med din e-post f\u00f6r att forts\u00e4tta",
 login_email_ph: "Din e-post",
 login_btn: "Logga in",
@@ -12901,6 +13075,13 @@ login_need_email_first: "Voer eerst hierboven je e-mailadres in.",
 login_bad_credentials: "E-mailadres of wachtwoord klopt niet.",
 login_reset_error: "Het is niet gelukt de e-mail te versturen, probeer het opnieuw.",
 logout_word: "Uitloggen",
+nuovo_giro_conferma: "Er is een ronde open: tik nogmaals om hem af te sluiten en een nieuwe te beginnen",
+giro_conflitto_testo: "Deze ronde is ook op een ander apparaat bijgehouden (doel {n}); hier ben je bij doel {m}. Welke houd je?",
+giro_conflitto_altro: "Die van het andere apparaat houden (doel {n})",
+giro_conflitto_questo: "Deze houden (doel {m})",
+orfani_lascia: "Nee, verwijder ze van deze telefoon",
+orfani_aggiungi: "Ja, voeg ze toe aan mijn account",
+orfani_testo: "Op deze telefoon staan {n} rondes van v\u00f3\u00f3r het inloggen. Zijn ze van jou?",
 login_sub: "Log in met je e-mail om verder te gaan",
 login_email_ph: "Je e-mail",
 login_btn: "Inloggen",
@@ -14270,8 +14451,12 @@ if(!state.roundActive){ return; }
 var ref = cloudGiroRef();
 if(!ref){ giroNube.stato = "locale"; dipingiStatoGiro(); return; }
 
+assicuraRoundId();
+// Durante un conflitto non si scrive niente: prima si sceglie. (fase 8)
+if(giroConflitto) return;
 var corpo = JSON.stringify(pezzoDelGiro());
 if(corpo === giroNube.inviato && giroNube.stato === "salvato") return;
+if(corpo !== giroNube.inviato){ state.roundDirty = true; }
 
 if(giroTimer){ clearTimeout(giroTimer); giroTimer = null; }
 var manda = function(){
@@ -14279,7 +14464,14 @@ giroTimer = null;
 giroNube.stato = (navigator.onLine === false) ? "coda" : "invio";
 dipingiStatoGiro();
 try{
+var rev = (state.roundRev || 0) + 1;
+state.roundRev = rev;
 ref.set({
+/* CHI HA SCRITTO, E QUANTE VOLTE. (20/09/2026, fase 8.) `rev` sale a ogni
+   scrittura, `deviceId` dice da quale telefono: e' cosi' che un altro
+   dispositivo capisce se il giro e' stato segnato anche altrove mentre lui
+   aveva cambiamenti suoi (conflitto) o no (si prosegue dalla copia). */
+roundId: state.roundId, rev: rev, deviceId: idDispositivo(), stato: "aperto",
 // Il giro sta tutto dentro una stringa: Firestore non accetta un array
 // dentro un array, e i punteggi sono esattamente quella forma. Qui non
 // si interroga niente, quindi la stringa non costa niente.
@@ -14294,6 +14486,7 @@ timbro: (typeof BUILD_STAMP === "string") ? BUILD_STAMP : "?",
 aggiornato: firebase.firestore.FieldValue.serverTimestamp()
 }).then(function(){
 giroNube.inviato = corpo;
+if(state.roundRev === rev){ state.roundBaseRev = rev; state.roundDirty = false; save(); }
 /* NON SI DICE «AL SICURO» MENTRE LA RETE NON C'E'. (25/08/2026.)
    Con la memoria offline accesa una scrittura puo' risolversi in locale: la
    promessa dice di si' e il documento non ha ancora lasciato il telefono.
@@ -14394,6 +14587,62 @@ return true;
    - la copia cloud e' lo STESSO giro ma piu' avanti? Allora si prosegue da
      quella, invece di riportarla indietro.
    Senza roundId (giri cominciati prima di oggi) si fa come prima. */
+/* DUE DISPOSITIVI SULLO STESSO GIRO. (20/09/2026, fase 8, «nessuna corruzione
+   silenziosa».) Se la copia cloud dello STESSO giro e' stata scritta da un altro
+   dispositivo dopo l'ultima volta che eravamo allineati:
+   - qui non c'e' niente di nuovo → si prosegue dalla sua copia;
+   - qui ci sono cambiamenti non ancora saliti → CONFLITTO: la tastiera si
+     ferma e si sceglie quale tenere. Nessun vincitore deciso in silenzio. */
+var giroConflitto = null;
+var giroAscoltoStop = null;
+function confrontaCopiaGiro(d){
+if(!d || !d.giro || state.roundActive !== true || !state.roundId) return;
+if(d.roundId !== state.roundId || d.deviceId === idDispositivo()) return;
+if(!((d.rev || 0) > (state.roundBaseRev || 0))) return;
+var giro = null;
+try{ giro = JSON.parse(d.giro); }catch(e){ return; }
+if(!giro || giro.roundId !== state.roundId) return;
+if(state.roundDirty === true){
+giroConflitto = { giro: giro, rev: d.rev || 0, piazzola: d.piazzola || giro.target || 1 };
+render();
+return;
+}
+adottaCopiaGiro(giro, d.rev || 0);
+}
+function adottaCopiaGiro(giro, rev){
+CAMPI_DEL_GIRO.forEach(function(k){ if(giro[k] !== undefined) state[k] = giro[k]; });
+state.roundRev = rev; state.roundBaseRev = rev; state.roundDirty = false;
+state.panel = null; state.lastShotInfo = null; state.awaitingStep = null;
+giroNube.inviato = JSON.stringify(pezzoDelGiro());
+giroConflitto = null;
+save(); render();
+}
+function scegliGiroConflitto(tengoQuesto){
+var c = giroConflitto;
+if(!c) return;
+if(tengoQuesto){
+// Si tiene QUESTO: si parte dalla revisione dell'altro e si riscrive.
+giroConflitto = null;
+state.roundBaseRev = c.rev; state.roundRev = c.rev;
+giroNube.inviato = "";
+save(); salvaGiroSulCloud(true); render();
+} else {
+adottaCopiaGiro(c.giro, c.rev);
+}
+}
+function ascoltaGiroCloud(){
+if(giroAscoltoStop || state.roundActive !== true) return;
+var ref = cloudGiroRef();
+if(!ref || !ref.onSnapshot) return;
+try{
+giroAscoltoStop = ref.onSnapshot(function(doc){
+if(state.roundActive !== true){ smettiAscoltoGiro(); return; }
+if(doc && doc.exists) confrontaCopiaGiro(doc.data() || {});
+}, function(){});
+}catch(e){ giroAscoltoStop = null; }
+}
+function smettiAscoltoGiro(){ if(giroAscoltoStop){ try{ giroAscoltoStop(); }catch(e){} giroAscoltoStop = null; } }
+
 function verificaGiroAltrove(){
 var ref = cloudGiroRef(), hist = cloudHistoryRef();
 if(!state.roundId || !ref || !hist){ salvaGiroSulCloud(true); return; }
@@ -14414,13 +14663,15 @@ if(state.roundId !== id || state.roundActive !== true) return;
 var d = doc && doc.exists ? (doc.data() || {}) : null;
 var giro = null;
 if(d && d.giro){ try{ giro = JSON.parse(d.giro); }catch(e){ giro = null; } }
-if(giro && giro.roundId === id && giro.roundActive === true && (giro.target || 1) > (state.target || 1)){
-CAMPI_DEL_GIRO.forEach(function(k){ if(giro[k] !== undefined) state[k] = giro[k]; });
-state.panel = null; state.lastShotInfo = null; state.awaitingStep = null;
-giroNube.inviato = "";
-save(); render();
+if(d && d.rev !== undefined){
+// Copia con revisione (dal 20/09): decide confrontaCopiaGiro.
+confrontaCopiaGiro(d);
+} else if(giro && giro.roundId === id && giro.roundActive === true && (giro.target || 1) > (state.target || 1)){
+// Copia di prima, senza revisione: vale ancora «piu' avanti vince».
+adottaCopiaGiro(giro, 0);
 }
-salvaGiroSulCloud(true);
+if(!giroConflitto) salvaGiroSulCloud(true);
+ascoltaGiroCloud();
 });
 }).catch(function(){ salvaGiroSulCloud(true); });
 }
@@ -14441,6 +14692,7 @@ giroRitrovato = null;
 homeOverride = false;
 giroNube.inviato = "";
 save(); render();
+ascoltaGiroCloud();
 }
 
 function buttaGiroRitrovato(){
@@ -14730,9 +14982,12 @@ if(cb) cb(err, 0);
    `localStorage`, o si riaprirebbe l'app domani con la sincronizzazione
    gia' «fatta». Azzerandosi a ogni ricarico, la frequenza e' quella giusta
    — una volta per apertura, non una per `render()`. */
-var giaRiallineato = false;
+var giaRiallineato = false, giaRiallineatoPer = null;
 function riallineaStorico(){
-if(giaRiallineato) return;
+// Il «gia' fatto» vale per UNA persona: se nella stessa pagina entra un altro
+// account (senza ricarica), si riallinea per lui. (20/09/2026)
+if(giaRiallineato && giaRiallineatoPer === (currentUser && currentUser.uid)) return;
+giaRiallineatoPer = currentUser && currentUser.uid;
 if(DEV_MODE || !db || !currentUser) return;
 giaRiallineato = true;
 /* Prima si SCENDE: e' quello che mancava. Poi si sale, ed e' solo la rete
@@ -14872,9 +15127,11 @@ return;
 }
 if(btn) btn.disabled = true;
 var uid = currentUser && currentUser.uid;
+var nonSalvatoAllUscita = datiNonSalvatiOnline();
 var passi = [];
 if(uid && db && !DEV_MODE){
-if(tokenScrittoQui){ passi.push(togliTokenPush(uid, tokenScrittoQui)); }
+// Il dispositivo si spegne sempre (anche se il token non e' passato di qui). (fase 16)
+passi.push(togliTokenPush(uid, tokenScrittoQui));
 if(messaging && messaging.deleteToken){ passi.push(Promise.resolve().then(function(){ return messaging.deleteToken(); }).catch(function(){})); }
 if(state.sessionId && !state.roundActive){ try{ closeSharedSession(); }catch(e){} }
 }
@@ -14883,7 +15140,10 @@ Promise.race([Promise.all(passi), tempo]).then(function(){
 return (auth && !DEV_MODE) ? auth.signOut().catch(function(){}) : null;
 }).then(function(){
 try{ stopOpenTrainings(); }catch(e){}
-svuotaDatiUtenteLocali();
+// Salvato online → si svuota. Non salvato (lo si e' confermato col secondo
+// tocco) → da parte a nome di chi esce: rientrando lo ritrova. (fase P0-2)
+if(nonSalvatoAllUscita && uid) mettiDaParte({ uid: uid, email: currentUser && currentUser.email });
+else svuotaDatiUtenteLocali();
 currentUser = null;
 if(db && !DEV_MODE && db.terminate){
 return Promise.race([db.terminate().then(function(){ return db.clearPersistence(); }).catch(function(){}),
@@ -16628,6 +16888,46 @@ return wrap;
 }
 /* Quello che il salvataggio legge. Prima girava sulle caselle; adesso gira
    sulle righe, che ci sono solo se sono state scelte. */
+/* IL PROFILO COM'ERA QUANDO L'ABBIAMO LETTO DAL CLOUD. Serve a sapere cosa e'
+   cambiato QUI, invece di riscrivere tutto. (20/09/2026, fase 10.) */
+var profiloBase = null;
+function campiProfiloCambiati(base, nuovo, federazioni){
+base = base || {};
+var out = {};
+Object.keys(nuovo).forEach(function(k){
+var a = base[k] === undefined ? null : base[k], b = nuovo[k] === undefined ? null : nuovo[k];
+if(JSON.stringify(a) !== JSON.stringify(b)) out[k] = b;
+});
+var prima = {}, dopo = {};
+(base.federazioni || []).forEach(function(f){ if(f && f.code) prima[f.code] = f.tessera || ""; });
+(federazioni || []).forEach(function(f){ if(f && f.code) dopo[f.code] = f.tessera || ""; });
+var toccate = false;
+Object.keys(dopo).forEach(function(c){
+if(prima[c] !== dopo[c]){ out["federazioniMap." + c] = { tessera: dopo[c] }; toccate = true; }
+});
+Object.keys(prima).forEach(function(c){
+if(!(c in dopo)){ out["federazioniMap." + c] = firebase.firestore.FieldValue.delete(); toccate = true; }
+});
+// L'elenco intero si riscrive solo se QUI si sono toccate le tessere: e' quello
+// che leggono le app di prima. Chi legge la mappa non ne dipende.
+if(toccate) out.federazioni = federazioni;
+return out;
+}
+/* Tessere dal cloud: la mappa vince, l'elenco (scritto dalle app di prima)
+   completa con quello che la mappa non ha. */
+function federazioniDalCloud(data){
+var out = [], visti = {};
+var mappa = data.federazioniMap || {};
+Object.keys(mappa).forEach(function(c){
+var v = mappa[c];
+if(v && typeof v === "object"){ out.push({ code: c, tessera: v.tessera || "" }); visti[c] = true; }
+});
+(data.federazioni || []).forEach(function(f){
+if(f && f.code && !visti[f.code] && !(f.code in mappa)){ out.push({ code: f.code, tessera: f.tessera || "" }); visti[f.code] = true; }
+});
+return out;
+}
+
 function federazioniScelte(wrap){
 var out = [];
 Array.prototype.forEach.call(wrap.querySelectorAll(".pf-fed-row[data-fed]"), function(row){
@@ -17169,8 +17469,7 @@ segnaPush(true);
 pushRegisteredHere = false;
 // Solo la voce di questo dispositivo: prima si cancellava l'unico token, e
 // «Spegni» sul computer spegneva anche il telefono. (19/09/2026, N1)
-(tokenScrittoQui ? togliTokenPush(currentUser.uid, tokenScrittoQui)
-  : db.collection("users").doc(currentUser.uid).update({ fcmToken: firebase.firestore.FieldValue.delete() }))
+togliTokenPush(currentUser.uid, tokenScrittoQui)
 .then(function(){
 notifStatus.textContent = t("notif_off_done");
 notifStatus.style.color = "var(--muted)";
@@ -17276,11 +17575,19 @@ compagnia: clubCod, compagniaNome: clubNome
 state.theme = themeSel;
 save();
 if(!DEV_MODE && currentUser && db){
-db.collection("users").doc(currentUser.uid).update({
-nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, federazioni: federazioni, arco: arcoSel,
-bio: bioVal || null, mostraNumeri: mostraNum,
-compagnia: clubCod, compagniaNome: clubNome
-}).then(function(){
+/* SI SCRIVE SOLO QUELLO CHE E' CAMBIATO. (20/09/2026, fase 10.) Prima partiva
+   il profilo intero, `federazioni` compreso: il telefono aggiungeva la tessera
+   FITARCO, il computer — col profilo vecchio — cambiava la bio e riscriveva le
+   federazioni di prima. La tessera spariva. Adesso si confronta col profilo
+   com'era all'apertura (`profiloBase`) e si mandano i soli campi toccati; le
+   tessere viaggiano anche una per federazione in `federazioniMap.<codice>`,
+   che il computer vecchio non tocca. */
+var campi = campiProfiloCambiati(profiloBase, {
+nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, username: username, arco: arcoSel,
+bio: bioVal || null, mostraNumeri: mostraNum, compagnia: clubCod, compagniaNome: clubNome
+}, federazioni);
+profiloBase = JSON.parse(JSON.stringify(state.profile));
+(Object.keys(campi).length ? db.collection("users").doc(currentUser.uid).update(campi) : Promise.resolve()).then(function(){
 syncMyPublicProfile({ username: username, nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, compagnia: clubCod, compagniaNome: clubNome, arco: arcoSel, bio: bioVal, mostraNumeri: mostraNum });
 }).catch(function(){});
 }
@@ -18883,6 +19190,23 @@ tr.appendChild(b);
 return tr;
 }
 
+/* «Sono tuoi?» — l'unica strada per cui dati di origine sconosciuta salgono
+   in un account: un tocco di chi c'e'. (fase P0-2) */
+function cartaOrfani(){
+var x = orfaniSenzaProprietario();
+if(!x || !currentUser) return null;
+var n = giriOrfani(x);
+if(!n && !x.giro) return null;
+var c = el('<div class="card orfani-carta" role="region"></div>');
+c.appendChild(el('<div class="nota">'+escapeHtml(t("orfani_testo", { n: n }))+'</div>'));
+var si = el('<button class="btn btn-primary btn-block">'+escapeHtml(t("orfani_aggiungi"))+'</button>');
+si.addEventListener("click", function(){ aggiungiOrfaniAlMioAccount(); render(); });
+var no = el('<button class="btn btn-ghost btn-block">'+escapeHtml(t("orfani_lascia"))+'</button>');
+armDoubleConfirm(no, t("clear_confirm"), function(){ lasciaOrfani(); render(); });
+c.appendChild(si); c.appendChild(no);
+return c;
+}
+
 function homeScreen(){
 var wrap = el('<div class="menu-cols"></div>');
 var inCorso = (state.roundActive === true) || (state.screen === "round");
@@ -18895,6 +19219,9 @@ var inCorso = (state.roundActive === true) || (state.screen === "round");
    tasto: quello resta dentro i margini della pagina, perche' e' un discorso,
    non un dato. */
 var strati = el('<div class="strati"></div>');
+// Prima di tutto, se ci sono giri di origine sconosciuta: la domanda. (P0-2)
+var carOrf = cartaOrfani();
+if(carOrf) strati.appendChild(carOrf);
 
 if(inCorso){
 var fatte = Math.max(1, state.target || 1);
@@ -19980,6 +20307,7 @@ leggiCampo();
 var n = clamp(parseInt(document.getElementById("formatInput").value,10), mode.minFormat, mode.maxFormat);
 state.pendingFormat = n;
 state.arrowsPerTargetOverride = isFiarcTraining ? (state.trainingArrowsChoice||1) : null;
+if(!confermaGiroNuovo(startBtn)) return;
 beginRound(trainKey);
 });
 wrap.appendChild(startBtn);
@@ -20091,7 +20419,7 @@ wrap.appendChild(modeCard);
 wrap.appendChild(campoCard());
 wrap.appendChild(assettoCard());
 var startBtn = el('<button class="btn btn-primary btn-block" style="padding:var(--s-4);font-size:var(--t-lg);">'+t("start_gara_btn")+'</button>');
-startBtn.addEventListener("click", function(){ leggiCampo(); beginRound(modeKey); });
+startBtn.addEventListener("click", function(){ if(!confermaGiroNuovo(startBtn)) return; leggiCampo(); beginRound(modeKey); });
 wrap.appendChild(startBtn);
 
 
@@ -22988,20 +23316,66 @@ try{ var raw = localStorage.getItem(ATTREZZI_KEY); var a = raw ? JSON.parse(raw)
 catch(e){ return []; }
 }
 function salvaAttrezzi(lista){
+var prima = caricaAttrezzi();
+/* OGNI ASSETTO HA LA SUA ORA. (20/09/2026, fase 10.) Chi e' cambiato qui prende
+   `aggiornato`: e' cosi' che, fra due dispositivi, vince la modifica piu'
+   recente di QUELL'assetto, non l'elenco intero dell'ultimo che salva. */
+var vecchi = {};
+prima.forEach(function(a){ if(a && a.id) vecchi[a.id] = JSON.stringify(a); });
+var ora = Date.now();
+lista.forEach(function(a){
+if(!a || !a.id) return;
+var senza = JSON.parse(JSON.stringify(a)); delete senza.aggiornato;
+var v = vecchi[a.id] ? JSON.parse(vecchi[a.id]) : null;
+if(v) delete v.aggiornato;
+if(!v || JSON.stringify(v) !== JSON.stringify(senza)) a.aggiornato = ora;
+});
 try{ localStorage.setItem(ATTREZZI_KEY, JSON.stringify(lista)); }catch(e){}
 // e sul cloud, se c'e' qualcuno a cui appartengono. Best effort: se non parte,
 // l'assetto e' comunque sul telefono e non si e' perso niente.
 if(!DEV_MODE && db && currentUser){
-try{ db.collection("users").doc(currentUser.uid).set({ attrezzatura: lista }, { merge:true }).catch(function(){}); }catch(e){}
+/* Sul cloud una voce per assetto (`assetti.<id>`): si mandano solo quelli
+   cambiati o tolti. L'elenco `attrezzatura` resta per le app di prima. */
+var campi = { attrezzatura: lista };
+var nuovi = {};
+lista.forEach(function(a){
+if(!a || !a.id) return;
+nuovi[a.id] = true;
+if(vecchi[a.id] !== JSON.stringify(a)) campi["assetti." + a.id] = a;
+});
+Object.keys(vecchi).forEach(function(id){ if(!nuovi[id]) campi["assetti." + id] = firebase.firestore.FieldValue.delete(); });
+try{
+db.collection("users").doc(currentUser.uid).update(campi).catch(function(){
+db.collection("users").doc(currentUser.uid).set({ attrezzatura: lista }, { merge:true }).catch(function(){});
+});
+}catch(e){}
 }
 }
 /* All'accesso: se qui non c'e' niente e sul cloud si', si prende quella. Non il
    contrario, e non si fondono: il telefono che hai in mano ha ragione, come
    per il giro in corso. */
 function recuperaAttrezziDalCloud(dati){
-if(!dati || !dati.attrezzatura || !dati.attrezzatura.length) return;
-if(caricaAttrezzi().length) return;
-try{ localStorage.setItem(ATTREZZI_KEY, JSON.stringify(dati.attrezzatura)); }catch(e){}
+if(!dati) return;
+/* SI FONDONO, ASSETTO PER ASSETTO. (20/09/2026, fase 10.) Prima: se il telefono
+   ne aveva gia' uno, il cloud si ignorava, e un assetto creato sul computer non
+   arrivava mai. Adesso per ogni assetto vince la versione con l'`aggiornato`
+   piu' recente; quelli che il telefono non ha arrivano; `attrezzatura` (le app
+   di prima) completa quello che la mappa non ha. */
+var locale = caricaAttrezzi();
+var perId = {};
+locale.forEach(function(a){ if(a && a.id) perId[a.id] = a; });
+var cloud = {};
+(dati.attrezzatura || []).forEach(function(a){ if(a && a.id) cloud[a.id] = a; });
+Object.keys(dati.assetti || {}).forEach(function(id){ var a = dati.assetti[id]; if(a && a.id) cloud[id] = a; });
+var cambiato = false;
+Object.keys(cloud).forEach(function(id){
+var c = cloud[id], l = perId[id];
+var tc = c.aggiornato || c.creato || 0, tl = l ? (l.aggiornato || l.creato || 0) : -1;
+if(!l || tc > tl){ perId[id] = c; cambiato = true; }
+});
+if(!cambiato) return;
+var fuse = Object.keys(perId).map(function(id){ return perId[id]; });
+try{ localStorage.setItem(ATTREZZI_KEY, JSON.stringify(fuse)); }catch(e){}
 }
 function attrezziVivi(){ return caricaAttrezzi().filter(function(a){ return !a.archiviato; }); }
 
@@ -24720,7 +25094,7 @@ msgList.scrollTop = msgList.scrollHeight;
 setTimeout(loadOtMsgs, 0);
 
 var inputRow = el('<div style="display:flex;gap:var(--s-2);align-items:flex-end;"></div>');
-var textInp = el('<textarea class="input-field in-riga" placeholder="'+escapeHtml(t("ot_msg_placeholder"))+'" rows="2"></textarea>');
+var textInp = el('<textarea class="input-field in-riga" maxlength="2000" placeholder="'+escapeHtml(t("ot_msg_placeholder"))+'" rows="2"></textarea>');
 var sendBtn = el('<button class="btn btn-primary" style="padding:var(--s-2) var(--s-4);">'+t("ot_msg_send")+'</button>');
 inputRow.appendChild(textInp);
 inputRow.appendChild(sendBtn);
@@ -24981,36 +25355,51 @@ var pushRegisteredHere = false;
 // Il token che QUESTO telefono ha scritto: all'uscita si toglie solo se e' ancora
 // lui, cosi' uscire qui non spegne gli avvisi di un altro dispositivo.
 var tokenScrittoQui = "";
-/* UN TOKEN PER DISPOSITIVO. (19/09/2026, audit N1.) Prima `fcmToken` era un
-   campo solo: l'ultimo dispositivo aperto cancellava gli altri, e le push
-   smettevano in silenzio sul telefono appena si apriva l'app dal computer.
-   Adesso ogni dispositivo scrive la SUA voce in `fcmTokens.<chiave>`; la
-   chiave e' un'impronta corta del token (i token sono lunghi e hanno ':').
+/* UN DOCUMENTO PER DISPOSITIVO. (19-20/09/2026, audit N1, fase 16.) Prima
+   `fcmToken` era un campo solo: l'ultimo dispositivo aperto cancellava gli
+   altri, e le push smettevano in silenzio sul telefono appena si apriva l'app
+   dal computer. Adesso ogni dispositivo ha users/{uid}/devices/{deviceId}:
+   { token, platform, language, enabled, createdAt, updatedAt, lastSeen }.
+   `deviceId` e' `idDispositivo()`: un numero a caso nato qui. `platform` e'
+   solo «android / ios / desktop»: niente impronte del dispositivo.
    `fcmToken` si scrive ancora per le Cloud Functions di prima, finche' non
    vengono ripubblicate: quelle leggono solo lui. */
-function chiaveToken(tok){
-var h = 5381;
-for(var i = 0; i < tok.length; i++){ h = ((h << 5) + h + tok.charCodeAt(i)) >>> 0; }
-return "d" + h.toString(36) + tok.length.toString(36);
+function piattaforma(){
+var ua = navigator.userAgent || "";
+if(/android/i.test(ua)) return "android";
+if(/iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) return "ios";
+return "desktop";
 }
 function scriviTokenPush(token){
-var campi = { fcmToken: token };
-campi["fcmTokens." + chiaveToken(token)] = { token: token, aggiornato: firebase.firestore.FieldValue.serverTimestamp() };
 tokenScrittoQui = token;
-return db.collection("users").doc(currentUser.uid).update(campi);
+var utente = db.collection("users").doc(currentUser.uid);
+var dev = utente.collection("devices").doc(idDispositivo());
+var ora = firebase.firestore.FieldValue.serverTimestamp();
+return dev.get().then(function(d){
+var campi = { token: token, platform: piattaforma(), language: String(state.lang || "it").slice(0, 5),
+              enabled: true, updatedAt: ora, lastSeen: ora };
+if(!d.exists) campi.createdAt = ora;
+return dev.set(campi, { merge: true });
+}).then(function(){
+return utente.update({ fcmToken: token });
+});
 }
 function togliTokenPush(uid, token){
-if(!uid || !token || !db) return Promise.resolve();
-var ref = db.collection("users").doc(uid);
-return ref.get().then(function(d){
-if(!d.exists) return;
-var x = d.data() || {};
-var cambi = {};
-var k = chiaveToken(token);
-if(x.fcmTokens && x.fcmTokens[k]) cambi["fcmTokens." + k] = firebase.firestore.FieldValue.delete();
-if(x.fcmToken === token) cambi.fcmToken = firebase.firestore.FieldValue.delete();
-if(Object.keys(cambi).length) return ref.update(cambi);
-}).catch(function(){});
+if(!uid || !db) return Promise.resolve();
+var utente = db.collection("users").doc(uid);
+var passi = [
+utente.collection("devices").doc(idDispositivo()).set(
+{ enabled: false, token: firebase.firestore.FieldValue.delete(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+{ merge: true }).catch(function(){})
+];
+if(token){
+passi.push(utente.get().then(function(d){
+if(d.exists && (d.data() || {}).fcmToken === token){
+return utente.update({ fcmToken: firebase.firestore.FieldValue.delete() });
+}
+}).catch(function(){}));
+}
+return Promise.all(passi);
 }
 
 // Rinfresca in silenzio il token di questo dispositivo a ogni apertura.
@@ -25453,6 +25842,8 @@ function wipeAccountData(uid){
 var jobs = [];
 // Giri salvati sul cloud (comprese le "lapidi" dei giri gia' cancellati)
 jobs.push(deleteQueryDocs(db.collection("users").doc(uid).collection("storico").limit(400)));
+// I dispositivi (token delle push): con l'account se ne vanno anche loro.
+jobs.push(deleteQueryDocs(db.collection("users").doc(uid).collection("devices").limit(50)));
 // Notifiche ricevute
 jobs.push(deleteQueryDocs(db.collection("notifications").doc(uid).collection("items").limit(400)));
 // rate_limits/{uid} NON si cancella: lo scrive solo la Cloud Function e le
@@ -26574,7 +26965,7 @@ dmMarkRead(chatId);
 }, 0);
 
 var inputRow = el('<div class="chat-scrivi"></div>');
-var textInp = el('<textarea class="input-field in-riga" data-keep="dm:draft:'+chatId+'" placeholder="'+escapeHtml(t("dm_placeholder"))+'" rows="2"></textarea>');
+var textInp = el('<textarea class="input-field in-riga" maxlength="2000" data-keep="dm:draft:'+chatId+'" placeholder="'+escapeHtml(t("dm_placeholder"))+'" rows="2"></textarea>');
 var sendBtn = el('<button class="btn btn-primary" style="padding:var(--s-2) var(--s-4);">'+t("dm_send")+'</button>');
 inputRow.appendChild(textInp);
 inputRow.appendChild(sendBtn);
@@ -27320,6 +27711,20 @@ by:e.by || null, at:e.at || 0, legacy:true, legacyConfirmed:!!e.confirmed });
 return out;
 }
 
+/* UN GIRO NUOVO SOPRA UNO APERTO SI CHIEDE. (20/09/2026, fase 8E.) Il 19/09
+   `beginRound` archiviava da solo il giro aperto: niente perso, ma una scelta
+   presa senza dire niente. Adesso il tasto chiede un secondo tocco, e solo
+   allora il giro aperto si chiude (nello storico, come interrotto). */
+function confermaGiroNuovo(btn){
+if(state.roundActive !== true) return true;
+if(btn.classList.contains("btn-armed")) return true;
+var prima = btn.innerHTML;
+btn.textContent = t("nuovo_giro_conferma");
+btn.classList.add("btn-armed");
+setTimeout(function(){ if(btn.classList.contains("btn-armed")){ btn.innerHTML = prima; btn.classList.remove("btn-armed"); } }, 5000);
+return false;
+}
+
 function beginRound(modeKey){
 /* UN GIRO NUOVO NON CANCELLA QUELLO APERTO. (19/09/2026, audit P1.)
    Prima i tasti «Allenamento» e «Gara» della scheda Tira partivano anche con
@@ -27343,6 +27748,8 @@ archers.forEach(function(a){ scores[a.id] = []; });
 state.roundActive = true;
 // L'identita' del giro: viaggia con la copia cloud e finisce nello storico.
 state.roundId = nuovoRoundId();
+state.roundRev = 0; state.roundBaseRev = 0; state.roundDirty = false;
+giroConflitto = null;
 // Il marchio si mette QUI, all'inizio: cosi' viaggia col giro aperto anche
 // sul cloud, e un giro ripreso su un altro telefono sa con che tabella e'
 // cominciato senza doverlo dedurre dai punteggi.
@@ -27390,6 +27797,7 @@ state.sessionId = createSharedSession(modeKey, !!state.doubleConfirm, archers);
 state.sessionId = null;
 }
 save(); salvaGiroSulCloud(true); render();
+ascoltaGiroCloud();
 }
 
 // ---------- ROUND ----------
@@ -27414,6 +27822,16 @@ startOwnSessionListener();
 
 var mode = effectiveMode();
 var wrap = el('<div class="pista"></div>');
+if(giroConflitto){
+var cf = el('<div class="card giro-conflitto" role="alert"></div>');
+cf.appendChild(el('<div class="nota">'+escapeHtml(t("giro_conflitto_testo", { n: giroConflitto.piazzola, m: state.target || 1 }))+'</div>'));
+var cfAltro = el('<button class="btn btn-primary btn-block">'+escapeHtml(t("giro_conflitto_altro", { n: giroConflitto.piazzola }))+'</button>');
+cfAltro.addEventListener("click", function(){ scegliGiroConflitto(false); });
+var cfQui = el('<button class="btn btn-ghost btn-block">'+escapeHtml(t("giro_conflitto_questo", { m: state.target || 1 }))+'</button>');
+armDoubleConfirm(cfQui, t("clear_confirm"), function(){ scegliGiroConflitto(true); });
+cf.appendChild(cfAltro); cf.appendChild(cfQui);
+wrap.appendChild(cf);
+}
 
 // ── battuta: prima si dichiara che piazzola e', poi si tira ──
 if(mode.key === "battuta" && state.pendingArrows.length === 0 && !(state.liveBattutaTypes && state.liveBattutaTypes[state.target])){
@@ -27623,10 +28041,19 @@ dipingiTimer(); avviaConto();
 regola.appendChild(meno); regola.appendChild(dur); regola.appendChild(piu); regola.appendChild(via);
 }
 }
+/* IL CONTO SI CALCOLA DALL'ORA DI FINE. (20/09/2026, audit P2 cronometro.)
+   Prima ogni battito toglieva un secondo. Ma con lo schermo spento o la pagina
+   in secondo piano il telefono rallenta o ferma i battiti: il conto si fermava
+   e ripartiva da dov'era, e la vibrazione di fine arrivava tardi o mai. Adesso
+   il tempo che resta e' `fine - adesso`: qualunque cosa faccia il telefono coi
+   battiti, al primo che arriva il numero e' giusto. Niente Wake Lock: non serve
+   tenere acceso lo schermo per contare giusto. */
+function restaTimer(){ return Math.max(0, Math.ceil((timerFineAt - Date.now()) / 1000)); }
 function avviaConto(){
 if(timerIntervalId){ clearInterval(timerIntervalId); }
+timerFineAt = Date.now() + Math.max(0, timerRemaining || 0) * 1000;
 timerIntervalId = setInterval(function(){
-timerRemaining--;
+timerRemaining = restaTimer();
 if(timerRemaining <= 0){
 clearInterval(timerIntervalId); timerIntervalId = null;
 timerRemaining = 0; timerRunning = false;
@@ -27645,6 +28072,8 @@ tintaTimer();
 // si perde niente) e riprende; azzerare e' un comando a parte, a timer fermo.
 chip.addEventListener("click", function(){
 if(timerRunning){
+// In pausa si ferma il conto a quello che resta DAVVERO adesso.
+if(timerFineAt) timerRemaining = restaTimer();
 if(timerIntervalId){ clearInterval(timerIntervalId); timerIntervalId = null; }
 timerRunning = false;
 } else if(timerRemaining > 0){
@@ -27828,7 +28257,10 @@ var adesso = Date.now();
 // La zona, non i punti: dopo la prima freccia la cifra sul tasto cambia
 // (la seconda vale meno), ma il tasto sotto il dito e' lo stesso.
 var chiaveTasto = b.getAttribute("data-zona") || b.getAttribute("data-pts");
-if(chiaveTasto === ultimoTastoAccettato && adesso - ultimoPuntoAccettato < 300) return;
+// 150 ms (20/09/2026, fase 8B): 300 mangiavano un tocco voluto a 250 ms. Il
+// rimbalzo di un dito sta sotto i 100; `misuraTocco` usava gia' 0,15 s come
+// soglia del rumore. tests/banco-tiri.js: 20/50/80 ms = un tiro, 250 = due.
+if(chiaveTasto === ultimoTastoAccettato && adesso - ultimoPuntoAccettato < 150) return;
 ultimoPuntoAccettato = adesso;
 ultimoTastoAccettato = chiaveTasto;
 if(navigator.vibrate){ navigator.vibrate(15); }
@@ -28173,6 +28605,8 @@ save();
 }
 
 function chiudiGiro(interrotto){
+smettiAscoltoGiro();
+giroConflitto = null;
 state.roundActive = false;
 state.screen = "summary";
 state.panel = null;
@@ -28187,8 +28621,33 @@ scriviGiroNelloStorico(interrotto === true);
 cancellaGiroSulCloud();
 }
 
-function nuovoRoundId(){
-return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+/* L'IDENTITA' DEL GIRO. (19-20/09/2026, fase 8.) Nasce all'inizio, non dipende
+   dalla data di fine, e resiste alle collisioni: 128 bit casuali da
+   `crypto.getRandomValues` (dove manca, data + Math.random, meglio di niente). */
+function casuale(nbyte){
+try{
+var b = new Uint8Array(nbyte); (window.crypto || window.msCrypto).getRandomValues(b);
+return Array.prototype.map.call(b, function(x){ return ("0" + x.toString(16)).slice(-2); }).join("");
+}catch(e){
+var s = ""; while(s.length < nbyte * 2) s += Math.random().toString(16).slice(2);
+return s.slice(0, nbyte * 2);
+}
+}
+function nuovoRoundId(){ return "g" + Date.now().toString(36) + casuale(16); }
+/* QUESTO dispositivo: un numero a caso, nato qui, che non dice niente di chi lo
+   usa (niente impronte). Resta anche dopo l'uscita: e' del telefono. */
+var DISPOSITIVO_KEY = "arctrail3d_dispositivo_v1";
+function idDispositivo(){
+try{
+var d = localStorage.getItem(DISPOSITIVO_KEY);
+if(!d){ d = "d" + casuale(12); localStorage.setItem(DISPOSITIVO_KEY, d); }
+return d;
+}catch(e){ return "d-senza-memoria"; }
+}
+
+function assicuraRoundId(){
+if(state.roundActive === true && !state.roundId){ state.roundId = nuovoRoundId(); state.roundRev = 0; state.roundBaseRev = 0; }
+delete state.roundIdDaCaricare;
 }
 
 function advanceToNextTarget(){
@@ -28210,6 +28669,10 @@ save(); if(!dipingiPista()) render();
 
 var ultimoPuntoAccettato = 0, ultimoTastoAccettato = "";
 function registerShot(score){
+if(giroConflitto) return;   // prima si sceglie quale giro tenere (fase 8)
+// Qui c'e' un cambiamento che il cloud non ha: se intanto un altro dispositivo
+// scrive lo stesso giro, e' un conflitto, non una copia da prendere. (fase 8)
+state.roundDirty = true;
 var mode = effectiveMode();
 var archer = state.archers[state.archerIndex];
 state.pendingArrows = state.pendingArrows || [];
@@ -28289,6 +28752,8 @@ save(); if(!dipingiPista()) render();
 }
 
 function undoLastShot(){
+if(giroConflitto) return;
+state.roundDirty = true;
 misura("annulli"); ultimoTocco = null;
 // La striscia dell'annulla mostra l'ultimo tiro: appena lo si toglie, sparisce.
 state.lastShotInfo = null;

@@ -137,6 +137,9 @@ banco "banco-pista-schermi.js (i tasti del punteggio stanno nello schermo: orizz
 banco "banco-recapiti.js (telefono, email e sito delle compagnie diventano link solo se lo sono)" "node tests/banco-recapiti.js"
 banco "controlla-pwa.js (zoom, scuro forzato, icona iOS, manifest, foto pigre)" "node tests/controlla-pwa.js"
 banco "controlla-pubblicazione.js (sul sito va il sito: diari, banchi, regole e archivio restano fuori)" "node tests/controlla-pubblicazione.js"
+banco "banco-tiri.js (rimbalzi, tocchi voluti, annulla: 1, 2 e 4 arcieri)" "node tests/banco-tiri.js"
+banco "banco-cronometro.js (lo schermo spento non ferma il conto)" "node tests/banco-cronometro.js"
+banco "banco-esterni.js (Google Fonts o gstatic appesi: l'app parte lo stesso)" "node tests/banco-esterni.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"

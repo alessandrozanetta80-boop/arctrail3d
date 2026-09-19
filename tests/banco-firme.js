@@ -61,6 +61,9 @@ function closeSharedSession(){}
 // sotto), che scrive lo storico: lo storico qui e' una sagoma, lo prova
 // banco-giro-flusso.js.
 function scriviGiroNelloStorico(){}
+// Dal 20/09 registerShot si ferma se c'e' un conflitto fra dispositivi: qui no.
+var giroConflitto = null;
+function smettiAscoltoGiro(){}
 function ensureRotationBase(){ state.rotBase = state.rotBase || state.archers.map(function(a){ return a.id; }); }
 function orderForTarget(n){
   // rotazione FIARC: a ogni piazzola la testa passa al successivo

@@ -6,7 +6,7 @@
  *
  * PERCHE' ESISTE. (19/09/2026, audit N1, N3, N4, N5.) `banco-push` prova il
  * server e il service worker. Questo prova la meta' che sta nell'app:
- *   1. il token si scrive PER DISPOSITIVO (`fcmTokens.<chiave>`), non al posto
+ *   1. il token si scrive PER DISPOSITIVO (users/{uid}/devices/{id}, dal 20/09), non al posto
  *      di quello degli altri dispositivi;
  *   2. uscendo si toglie solo la voce di questo dispositivo;
  *   3. con l'app aperta (`onMessage`) la push diventa comunque una notifica;
@@ -68,7 +68,8 @@ function cloud() {
   d.users[U.uid] = { email: U.email, approved: true, nomeCognome: "Mario Rossi", username: "mariorossi",
                      federazioni: [{ code: "fiarc", tessera: "FI111" }], privacy: true, terms: true,
                      // un altro dispositivo e' gia' registrato: non deve sparire
-                     fcmTokens: { dAltro: { token: "token-dell-altro-telefono" } }, fcmToken: "token-dell-altro-telefono" };
+                     fcmToken: "token-dell-altro-telefono" };
+  d["users/" + U.uid + "/devices"] = { dAltro: { token: "token-dell-altro-telefono", platform: "desktop", enabled: true } };
   d["notifications/" + U.uid + "/items"] = {
     "avviso-9": { title: "Nuovo messaggio", body: "Anna ti ha scritto", read: false, fromUid: "uidAnna",
                   dest: { k: "dm", uid: "uidAnna" }, createdAt: { __ts: Date.now() } }
@@ -103,12 +104,22 @@ function utenteCloud(page) { return page.evaluate(function (uid) { return JSON.p
 (async function () {
   browser = await chromium.launch();
 
-  console.log("\n  UN TOKEN PER DISPOSITIVO\n");
+  console.log("\n  UN DOCUMENTO PER DISPOSITIVO (users/{uid}/devices)\n");
   var a = await apri("");
+  function dispositivi(page) {
+    return page.evaluate(function (uid) { return JSON.parse(JSON.stringify(window.__DATI["users/" + uid + "/devices"] || {})); }, U.uid);
+  }
+  var dv = await dispositivi(a.page);
+  var miei = Object.keys(dv).filter(function (k) { return dv[k].token === "token-di-questo-telefono"; });
+  prova("questo telefono ha il SUO documento in devices", miei.length === 1, JSON.stringify(dv));
+  var mio = miei.length ? dv[miei[0]] : {};
+  prova("con piattaforma, lingua, attivo, date - e niente impronte",
+        ["android", "ios", "desktop"].indexOf(mio.platform) >= 0 && mio.language === "it" && mio.enabled === true &&
+        !!mio.createdAt && !!mio.lastSeen && Object.keys(mio).every(function (k) {
+          return ["token", "platform", "language", "enabled", "createdAt", "updatedAt", "lastSeen"].indexOf(k) >= 0; }),
+        JSON.stringify(mio));
   var u1 = await utenteCloud(a.page);
-  var voci = Object.keys(u1.fcmTokens || {}).map(function (k) { return u1.fcmTokens[k].token; });
-  prova("questo telefono ha la SUA voce in fcmTokens", voci.indexOf("token-di-questo-telefono") >= 0, JSON.stringify(u1.fcmTokens));
-  prova("la voce dell'altro dispositivo e' ancora li'", voci.indexOf("token-dell-altro-telefono") >= 0, JSON.stringify(u1.fcmTokens));
+  prova("il vecchio fcmToken si scrive ancora (le Functions di prima)", u1.fcmToken === "token-di-questo-telefono", u1.fcmToken);
 
   console.log("\n  CON L'APP APERTA LA PUSH SI VEDE\n");
   var disegnata = await a.page.evaluate(function () {
@@ -132,10 +143,11 @@ function utenteCloud(page) { return page.evaluate(function (uid) { return JSON.p
   console.log("\n  USCENDO SI TOGLIE SOLO QUESTO DISPOSITIVO\n");
   await a.page.evaluate(function () { window.__prova.esci(); });
   await a.page.waitForTimeout(3800);
-  var u2 = await utenteCloud(a.page);
-  var voci2 = Object.keys(u2.fcmTokens || {}).map(function (k) { return u2.fcmTokens[k].token; });
-  prova("la voce di questo telefono non c'e' piu'", voci2.indexOf("token-di-questo-telefono") < 0, JSON.stringify(u2.fcmTokens));
-  prova("quella dell'altro dispositivo resta", voci2.indexOf("token-dell-altro-telefono") >= 0, JSON.stringify(u2.fcmTokens));
+  var dv2 = await dispositivi(a.page);
+  var mio2 = miei.length ? dv2[miei[0]] : null;
+  prova("il documento di questo telefono si spegne (enabled:false, niente token)", !!mio2 && mio2.enabled === false && !mio2.token, JSON.stringify(mio2));
+  var altri = Object.keys(dv2).filter(function (k) { return k !== miei[0]; });
+  prova("gli altri dispositivi non si toccano", altri.every(function (k) { return JSON.stringify(dv2[k]) === JSON.stringify(dv[k]); }), JSON.stringify(dv2));
   prova("nessun errore JavaScript", a.err.length === 0, a.err[0]);
   await a.ctx.close();
 

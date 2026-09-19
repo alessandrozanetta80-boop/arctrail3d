@@ -198,6 +198,67 @@ function contiene(scritture, testo) {
   prova("in tedesco la schermata d'accesso e' in tedesco", /Melde dich/.test(t6) && !/Accedi con la tua email/.test(t6), t6.slice(0, 120));
   await s6.ctx.close();
 
+  console.log("\n  DATI MESSI DA PARTE: TORNANO A CHI SONO, NON A CHI ENTRA (P0-2)\n");
+  // Il telefono di Anna (dati di prima, profilo con la sua email). Entra Bruno,
+  // esce; poi rientra Anna: i SUOI giri tornano, e salgono nel SUO cloud.
+  var s7 = await apri(browser, B, semeA, datiCloud);
+  var t7 = await s7.page.evaluate(function () { return (document.querySelector("#app") || {}).innerText || ""; });
+  prova("a Bruno NON si offrono i giri di Anna", !/Sono tuoi/i.test(t7));
+  var orf7 = await s7.page.evaluate(function () { return JSON.parse(localStorage.getItem("arctrail3d_orfani_v1") || "[]"); });
+  prova("i dati di Anna sono messi da parte (non persi), col suo indirizzo", orf7.length === 1 && orf7[0].email === A.email,
+        JSON.stringify(orf7.map(function (x) { return { uid: x.uid, email: x.email }; })));
+  await s7.page.evaluate(function () { window.__prova.esci(); });
+  await s7.page.waitForTimeout(3800);
+  await s7.page.evaluate(function (u) { window.__scritture = []; window.__entra(u); }, A);
+  await s7.page.waitForTimeout(2500);
+  var loc7 = await s7.page.evaluate(function () { return localStorage.getItem("arctrail3d_storico_v1") || ""; });
+  prova("rientra Anna: i suoi giri tornano sul telefono", loc7.indexOf("Campo di Anna") >= 0);
+  var w7 = await scrittureVerso(s7.page, "users/" + A.uid + "/storico");
+  prova("e salgono nel SUO cloud", contiene(w7, "Campo di Anna"));
+  var w7b = await scrittureVerso(s7.page, "users/" + B.uid);
+  prova("e mai in quello di Bruno", !contiene(w7b, "Campo di Anna"));
+  await s7.ctx.close();
+
+  // Dati di nessuno che si sappia (usato senza account, profilo senza email).
+  var C = { uid: "uidCarla", email: "carla@esempio.it" };
+  var datiC = { users: {} }; datiC.users[C.uid] = docUtente(C, "Carla Verdi", "C-3333");
+  var semeAnon = {
+    "arctrail3d_state_v3": JSON.stringify(Object.assign({}, STATO_A, { profile: { nomeCognome: "Qualcuno", username: "qualcuno" } })),
+    "arctrail3d_storico_v1": JSON.stringify([giro(2, 88, "Campo senza nome")])
+  };
+  var s8 = await apri(browser, C, semeAnon, datiC);
+  var w8 = await scrittureVerso(s8.page, "users/" + C.uid + "/storico");
+  prova("dati senza proprietario: NON salgono da soli", !contiene(w8, "Campo senza nome"));
+  var t8 = await s8.page.evaluate(function () { return (document.querySelector("#app") || {}).innerText || ""; });
+  prova("e la Home chiede «Sono tuoi?»", /Sono tuoi/i.test(t8), t8.slice(0, 160));
+  await s8.page.evaluate(function () {
+    var b = Array.prototype.filter.call(document.querySelectorAll("#app button"), function (x) { return /aggiungili/i.test(x.textContent); })[0];
+    if (b) b.click();
+  });
+  await s8.page.waitForTimeout(1500);
+  var w8b = await scrittureVerso(s8.page, "users/" + C.uid + "/storico");
+  prova("con «Sì, aggiungili» salgono nel suo cloud", contiene(w8b, "Campo senza nome"));
+  await s8.ctx.close();
+
+  // Uscita senza rete con un giro non salvato: da parte a nome di chi esce.
+  var semeGiro2 = Object.assign({}, semeAconProprietario, { "arctrail3d_state_v3": JSON.stringify(Object.assign({}, STATO_A, { roundActive: true, target: 5 })) });
+  var s9 = await apri(browser, A, semeGiro2, datiCloud);
+  await s9.ctx.setOffline(true);
+  await s9.page.evaluate(function () {
+    var b = document.createElement("button"); b.textContent = "Esci"; document.body.appendChild(b);
+    window.__prova.esciConTasto(b); window.__prova.esciConTasto(b);
+  });
+  await s9.page.waitForTimeout(3800);
+  var dopo9 = await s9.page.evaluate(function () { return { st: localStorage.getItem("arctrail3d_storico_v1"), orf: JSON.parse(localStorage.getItem("arctrail3d_orfani_v1") || "[]") }; });
+  prova("uscita con dati non salvati: niente in vista", !dopo9.st);
+  prova("ma messi da parte a nome di chi esce", dopo9.orf.some(function (x) { return x.uid === A.uid; }), JSON.stringify(dopo9.orf.map(function (x) { return x.uid; })));
+  await s9.ctx.setOffline(false);
+  await s9.page.evaluate(function (u) { window.__entra(u); }, A);
+  await s9.page.waitForTimeout(2500);
+  var rit9 = await s9.page.evaluate(function () { var s = JSON.parse(localStorage.getItem("arctrail3d_state_v3") || "{}"); return { giro: s.roundActive === true, t: s.target, st: localStorage.getItem("arctrail3d_storico_v1") || "" }; });
+  prova("rientrando ritrova il giro aperto e lo storico", rit9.giro && rit9.t === 5 && rit9.st.indexOf("Campo di Anna") >= 0, JSON.stringify({ giro: rit9.giro, t: rit9.t }));
+  await s9.ctx.close();
+
   await browser.close();
   try { fs.rmSync(DOVE, { recursive: true, force: true }); } catch (x) {}
   console.log("\n  " + ok + " passate, " + ko + " fallite.");

@@ -577,6 +577,42 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
   await prova('chi NON e\' sospeso apre ancora un allenamento', () =>
     assertSucceeds(db(B).doc('open_trainings/otB').set({ ownerUid:B.uid, field:'Y', spots:2, participantUids:[B.uid], participants:[] })));
 
+  console.log('\n  I DISPOSITIVI (users/{uid}/devices) — fase 16\n');
+  await prova('A scrive il documento del suo telefono', () =>
+    assertSucceeds(db(A).doc('users/'+A.uid+'/devices/dTelefono').set(
+      { token:'tok-1', platform:'android', language:'it', enabled:true, createdAt:new Date(), updatedAt:new Date(), lastSeen:new Date() })));
+  await prova('B NON legge i dispositivi di A (dove riceve le push)', () =>
+    assertFails(db(B).doc('users/'+A.uid+'/devices/dTelefono').get()));
+  await prova('B NON scrive un dispositivo nell\'account di A', () =>
+    assertFails(db(B).doc('users/'+A.uid+'/devices/dSuo').set({ token:'tok-b', enabled:true })));
+  await prova('una piattaforma inventata NON si scrive (niente impronte)', () =>
+    assertFails(db(A).doc('users/'+A.uid+'/devices/dStrano').set(
+      { token:'tok-2', platform:'Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit', enabled:true })));
+  await prova('un campo in piu\' NON si scrive', () =>
+    assertFails(db(A).doc('users/'+A.uid+'/devices/dExtra').set({ token:'tok-3', imei:'123456789' })));
+  await prova('A spegne il suo dispositivo', () =>
+    assertSucceeds(db(A).doc('users/'+A.uid+'/devices/dTelefono').set({ enabled:false }, { merge:true })));
+
+  console.log('\n  LIMITI: MESSAGGI, ERRORI, SCHEDA COMPAGNIA — fase 4\n');
+  await scena(async d => {
+    await d.doc('direct_chats/'+[A.uid,B.uid].sort().join('__')).set({ members:[A.uid,B.uid].sort() });
+  });
+  const chat = [A.uid,B.uid].sort().join('__');
+  await prova('un messaggio normale passa', () =>
+    assertSucceeds(db(A).collection('direct_chats/'+chat+'/messages').add(
+      { senderUid:A.uid, senderName:'Anna', text:'ci vediamo alla 12', createdAt:new Date() })));
+  await prova('un messaggio da 3000 caratteri NON passa', () =>
+    assertFails(db(A).collection('direct_chats/'+chat+'/messages').add(
+      { senderUid:A.uid, senderName:'Anna', text:'x'.repeat(3000), createdAt:new Date() })));
+  await prova('un errore normale si registra', () =>
+    assertSucceeds(db(NV).collection('errors').add({ uid:NV.uid, msg:'crash', dove:'pista', at:Date.now() })));
+  await prova('un errore con uno stack da 5000 caratteri NON si registra', () =>
+    assertFails(db(NV).collection('errors').add({ uid:NV.uid, msg:'crash', stack:'y'.repeat(5000), at:Date.now() })));
+  await prova('il referente scrive i dati della compagnia', () =>
+    assertSucceeds(db(A).doc('compagnie_admin/01VERB').update({ referente:'Anna Rossi', tel:'347 1234567', note:'chiave al bar' })));
+  await prova('ma non una nota da 20.000 caratteri', () =>
+    assertFails(db(A).doc('compagnie_admin/01VERB').update({ note:'z'.repeat(20000) })));
+
   console.log('\n  LE PORTE CHE DEVONO RESTARE APERTE\n');
 
   await prova('chi non ha confermato l\'email si cancella dall\'elenco', () =>

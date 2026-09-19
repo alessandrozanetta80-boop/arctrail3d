@@ -60,12 +60,53 @@ function prova(n, c, extra){
 var trigger = {};
 var inviati = [];
 var fallisce = {};          // token → codice d'errore FCM
-var aggiornamenti = [];     // update fatti in transazione su users/{uid}
+var aggiornamenti = [];     // update fatti in transazione: { path, cambi }
 var notificheScritte = [];  // documenti scritti da sendNotification
-var UTENTE = {
-  fcmToken: "token-telefono",                               // quello delle app di prima
-  fcmTokens: { dTel: { token: "token-telefono" }, dPc: { token: "token-computer" } }
-};
+/* L'ARCHIVIO FINTO, PER PERCORSI. (20/09/2026) Da quando i dispositivi sono
+   documenti (users/{uid}/devices/{id}) il server legge una sottoraccolta con
+   `where`, e spegne il dispositivo morto in transazione sul SUO documento.
+   Un archivio che rispondeva sempre lo stesso utente non poteva vederlo. */
+var ARCHIVIO = {};
+function azzeraArchivio(){
+  ARCHIVIO = {
+    "users/u-destinatario": { fcmToken: "token-telefono" },       // quello delle app di prima
+    "users/u-destinatario/devices/dTel": { token: "token-telefono", enabled: true },
+    "users/u-destinatario/devices/dPc": { token: "token-computer", enabled: true },
+    "users/u-destinatario/devices/dVecchio": { token: "token-spento", enabled: false },
+    "users/mittente-vero": { approved: true }
+  };
+}
+azzeraArchivio();
+function istantanea(p){
+  var d = ARCHIVIO[p];
+  return { exists: !!d, id: p.split("/").pop(), data: function(){ return d || {}; },
+           get: function(k){ return d ? d[k] : undefined; } };
+}
+function rifDoc(p){
+  return {
+    path: p,
+    get: function(){ return Promise.resolve(istantanea(p)); },
+    update: function(c){ aggiornamenti.push({ path: p, cambi: c }); return Promise.resolve(); },
+    set: function(){ return Promise.resolve(); },
+    collection: function(n){ return rifRaccolta(p + "/" + n); }
+  };
+}
+function rifRaccolta(p, filtri){
+  filtri = filtri || [];
+  return {
+    doc: function(id){ return rifDoc(p + "/" + id); },
+    add: function(doc){ notificheScritte.push(doc); return Promise.resolve(); },
+    where: function(k, op, v){ return rifRaccolta(p, filtri.concat([[k, v]])); },
+    get: function(){
+      var docs = Object.keys(ARCHIVIO).filter(function(k){
+        return k.indexOf(p + "/") === 0 && k.slice(p.length + 1).indexOf("/") < 0;
+      }).filter(function(k){
+        return filtri.every(function(f){ return ARCHIVIO[k][f[0]] === f[1]; });
+      }).map(istantanea);
+      return Promise.resolve({ forEach: function(fn){ docs.forEach(fn); }, docs: docs, size: docs.length });
+    }
+  };
+}
 
 var finto = {
   "firebase-functions/v2/firestore": {
@@ -94,33 +135,11 @@ var finto = {
     },
     firestore: Object.assign(function(){
       return {
-        collection: function(nomeRaccolta){
-          return {
-            doc: function(){
-              return {
-                get: function(){
-                  // `sospesi` e' vuota: nessuno e' sospeso in questo banco.
-                  if(nomeRaccolta === "sospesi") return Promise.resolve({ exists:false, data:function(){ return {}; }, get:function(){} });
-                  return Promise.resolve({
-                    exists: !!UTENTE,
-                    data: function(){ return UTENTE || {}; },
-                    get: function(k){ return UTENTE ? UTENTE[k] : undefined; }
-                  });
-                },
-                update: function(){ return Promise.resolve(); },
-                set: function(){ return Promise.resolve(); },
-                collection: function(){
-                  return { add: function(doc){ notificheScritte.push(doc); return Promise.resolve(); },
-                           doc: function(){ return { set: function(){ return Promise.resolve(); } }; } };
-                }
-              };
-            }
-          };
-        },
+        collection: function(n){ return rifRaccolta(n); },
         runTransaction: function(fn){
           var tx = {
-            get: function(){ return Promise.resolve({ exists: !!UTENTE, data: function(){ return UTENTE || {}; } }); },
-            set: function(){}, update: function(_r, cambi){ aggiornamenti.push(cambi); }
+            get: function(r){ return r.get(); },
+            set: function(){}, update: function(r, cambi){ aggiornamenti.push({ path: r.path, cambi: cambi }); }
           };
           return Promise.resolve().then(function(){ return fn(tx); });
         }
@@ -241,14 +260,15 @@ var AVVISO = {
     prova("urgenza alta: in Doze non aspetta lo sblocco",
           !!(m.webpush && m.webpush.headers && m.webpush.headers.Urgency === "high"), JSON.stringify(m.webpush));
 
-    // A2 — un dispositivo morto: si toglie SOLO lui, e solo se e' ancora lui
+    prova("un dispositivo spento (enabled:false) non riceve", tk.indexOf("token-spento") < 0, JSON.stringify(m.tokens));
+
+    // A2 — un dispositivo morto: si spegne SOLO lui, e solo se e' ancora lui
     inviati = []; aggiornamenti = []; fallisce = { "token-computer": "messaging/registration-token-not-registered" };
     await mandaPush({ data:{ data:function(){ return AVVISO; } }, params:{ uid:"u-destinatario", itemId:"avviso-8" } });
-    var cambi = aggiornamenti[0] || {};
-    prova("token morto: si toglie la voce del computer", Object.prototype.hasOwnProperty.call(cambi, "fcmTokens.dPc"),
-          JSON.stringify(aggiornamenti));
-    prova("token morto: il telefono resta", !Object.prototype.hasOwnProperty.call(cambi, "fcmTokens.dTel") &&
-          !Object.prototype.hasOwnProperty.call(cambi, "fcmToken"), JSON.stringify(cambi));
+    var suPc = aggiornamenti.filter(function(a){ return /devices\/dPc$/.test(a.path); })[0];
+    prova("token morto: il documento del computer si spegne", !!(suPc && suPc.cambi.enabled === false), JSON.stringify(aggiornamenti));
+    prova("token morto: il telefono e il vecchio fcmToken restano",
+          !aggiornamenti.some(function(a){ return /dTel$/.test(a.path) || a.path === "users/u-destinatario"; }), JSON.stringify(aggiornamenti));
     fallisce = {};
   }
 
@@ -258,15 +278,21 @@ var AVVISO = {
     notificheScritte = [];
     await chiama({ auth:{ uid:"mittente-vero", token:{ email_verified:true } },
                    data:{ toUid:"mittente-vero", title:"Ciao", body:"x", dest: dest } });
-    return (notificheScritte[0] || {}).dest;
+    ultimaNotifica = notificheScritte[0] || {};
+    return ultimaNotifica.dest;
   }
+  var ultimaNotifica = {};
   var dm = await manda({ k:"dm", uid:"qualcun-altro" });
   prova("dm: la destinazione e' la chat col MITTENTE VERO, non quello dichiarato",
         !!(dm && dm.k === "dm" && dm.uid === "mittente-vero"), JSON.stringify(dm));
   var ot = await manda({ k:"ot", id:"allenamento-1" });
   prova("ot: l'allenamento resta", !!(ot && ot.k === "ot" && ot.id === "allenamento-1"), JSON.stringify(ot));
+  prova("ot: il tipo e' «allenamento», deciso dal server", ultimaNotifica.type === "allenamento", ultimaNotifica.type);
+  prova("ot: entityId e' l'allenamento", ultimaNotifica.entityId === "allenamento-1", ultimaNotifica.entityId);
+  prova("senderUid e' il mittente vero", ultimaNotifica.senderUid === "mittente-vero", ultimaNotifica.senderUid);
   var strano = await manda({ k:"<script>", id:"x" });
   prova("una destinazione sconosciuta non si salva", strano === undefined, JSON.stringify(strano));
+  prova("e il tipo resta «avviso»", ultimaNotifica.type === "avviso", ultimaNotifica.type);
 
   console.log("\n  B. COSA RIESCE A DISEGNARE IL SERVICE WORKER");
   var sw = stanzaSW();

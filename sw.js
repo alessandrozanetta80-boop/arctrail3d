@@ -53,10 +53,18 @@
 // Qualunque dei due sia attivo, il telefono si comporta allo stesso modo.
 // Un nome solo per file vale anche quando i file sono due: allora uno dei due
 // deve ESSERE l'altro.
-importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
+/* SENZA gstatic IL SERVICE WORKER SI INSTALLA LO STESSO. (20/09/2026, fase 15.)
+   Un `importScripts` che fallisce fa fallire la valutazione dell'intero file:
+   niente installazione, quindi niente app offline — alla prima visita con
+   gstatic irraggiungibile, il telefono restava senza copia. Adesso le due
+   librerie si provano: se non arrivano, le notifiche aspettano il prossimo
+   service worker, ma la cassa dell'app si fa. */
+try {
+  importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
+  importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
+} catch (e) {}
 
-firebase.initializeApp({
+if (self.firebase) firebase.initializeApp({
   apiKey: "AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",
   authDomain: "arctrail3d.firebaseapp.com",
   projectId: "arctrail3d",
@@ -184,7 +192,7 @@ var CACHE_PARENT = "arctrail3d-v166";
 // La controlla `tests/controlla-cache.js`: se un file della shell cambia e il
 // nome no, il banco dice no. Si riscrive con `--scrivi`, DOPO aver alzato
 // CACHE_NAME (il banco rifiuta di farlo prima). (19/09/2026, audit S4.)
-var SHELL_IMPRONTA = "arctrail3d-v167:859a8ed0bf417656";
+var SHELL_IMPRONTA = "arctrail3d-v167:22a1b09ebe511fca";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.

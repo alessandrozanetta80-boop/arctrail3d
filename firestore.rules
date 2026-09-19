@@ -1,7 +1,16 @@
 rules_version = '2';
 // ArcTrail 3D — regole Firestore
-// Versione 2026-09-19-porte-chiuse
+// Versione 2026-09-20-dispositivi
 // Nata da: 2026-08-28-porte-verified (l'ultima incollata in console)
+//
+// NOVITA' 2026-09-20 — DISPOSITIVI, TIPI E LIMITI (risanamento notturno)
+//  1) users/{uid}/devices/{deviceId}: un documento per telefono (token delle push).
+//     Solo il proprietario; campi fissi, tipi, lunghezze.
+//  2) Messaggi (chat private, chat degli allenamenti): testo con un limite.
+//  3) errors: campi con un limite di lunghezza (si scrivono anche senza email
+//     confermata, quindi sono la porta piu' aperta).
+//  4) compagnie_admin: tipi e lunghezze dei campi del referente.
+//  Versione intermedia mai incollata: 2026-09-19-porte-chiuse.
 //
 // NOVITA' 2026-09-19 (2) — QUATTRO PORTE DELL'AUDIT
 //  1) CHAT PRIVATE: l'id `uidA__uidB` deve essere quello dei due membri, in
@@ -392,7 +401,12 @@ service cloud.firestore {
     }
     // Firma vera del messaggio: senderUid deve combaciare con chi scrive.
     function firmaValida() {
-      return request.resource.data.get('senderUid', '') == request.auth.uid;
+      return request.resource.data.get('senderUid', '') == request.auth.uid
+        // 20/09/2026: ogni messaggio ha un testo di al massimo 2000 caratteri e
+        // un nome corto (l'app ha lo stesso limite nel campo). Senza, un client
+        // modificato riempiva una chat con documenti da un megabyte.
+        && testoOpz(request.resource.data, 'text', 2000)
+        && testoOpz(request.resource.data, 'senderName', 120);
     }
     function dmMembers(chatId) {
       return get(/databases/$(database)/documents/direct_chats/$(chatId)).data.members;
@@ -446,6 +460,21 @@ service cloud.firestore {
 
       match /storico/{roundId} {
         allow read, write: if signedIn() && request.auth.uid == userId;
+      }
+
+      // UN DOCUMENTO PER DISPOSITIVO. (20/09/2026, fase 16.) Il token delle push di
+      // un telefono. Lo legge e lo scrive solo il proprietario (il server usa
+      // l'Admin SDK). Niente impronte: `platform` e' una di tre parole.
+      match /devices/{deviceId} {
+        allow read, delete: if signedIn() && request.auth.uid == userId;
+        allow create, update: if signedIn() && request.auth.uid == userId
+          && deviceId.size() <= 64
+          && request.resource.data.keys().hasOnly(['token','platform','language','enabled','createdAt','updatedAt','lastSeen'])
+          && testoOpz(request.resource.data, 'token', 4096)
+          && (request.resource.data.get('platform', null) == null
+              || request.resource.data.platform in ['android','ios','desktop'])
+          && testoOpz(request.resource.data, 'language', 5)
+          && (request.resource.data.get('enabled', null) == null || request.resource.data.enabled is bool);
       }
 
       // IL GIRO IN CORSO. (21/08/2026, PRD 16.5-16.7.)
@@ -837,7 +866,16 @@ service cloud.firestore {
                     && request.resource.data.get('uid', '') == request.auth.uid
                     && request.resource.data.get('msg', '') is string
                     && request.resource.data.keys().hasOnly(
-                         ['uid','msg','stack','dove','screen','build','lang','ua','online','at','extra']);
+                         ['uid','msg','stack','dove','screen','build','lang','ua','online','at','extra'])
+                    // 20/09/2026: le stesse lunghezze che l'app gia' taglia.
+                    && testoOpz(request.resource.data, 'msg', 300)
+                    && testoOpz(request.resource.data, 'stack', 700)
+                    && testoOpz(request.resource.data, 'dove', 60)
+                    && testoOpz(request.resource.data, 'extra', 200)
+                    && testoOpz(request.resource.data, 'screen', 60)
+                    && testoOpz(request.resource.data, 'build', 60)
+                    && testoOpz(request.resource.data, 'lang', 8)
+                    && testoOpz(request.resource.data, 'ua', 200);
       allow read: if isAdmin()
                   || (signedIn() && resource.data.get('uid', '') == request.auth.uid);
       allow delete: if isAdmin()
@@ -1065,7 +1103,14 @@ service cloud.firestore {
       allow update: if isAdmin()
                     || (signedIn()
                         && resource.data.adminUid == request.auth.uid
-                        && request.resource.data.adminUid == resource.data.adminUid);
+                        && request.resource.data.adminUid == resource.data.adminUid
+                        // 20/09/2026: i campi che scrive il referente, con tipo e lunghezza.
+                        && testoOpz(request.resource.data, 'referente', 120)
+                        && testoOpz(request.resource.data, 'emailComp', 200)
+                        && testoOpz(request.resource.data, 'tel', 40)
+                        && testoOpz(request.resource.data, 'sito', 300)
+                        && testoOpz(request.resource.data, 'indirizzo', 300)
+                        && testoOpz(request.resource.data, 'note', 5000));
     }
 
     // --- NOTE PRIVATE DELL'ADMIN ---
