@@ -14413,6 +14413,16 @@ saveLifetime(lt);
 // backfill rimetterebbe i giri di ieri sotto `ifaa_3d`.
 migraSchemaIfaa();
 backfillLifetimeOnce();
+/* IL GIRO APERTO PRIMA DELL'AGGIORNAMENTO NON AVEVA UN NOME. (20/09/2026,
+   trovato da tests/banco-salto-versione.js.) Il `roundId` e' nato ieri:
+   chi aveva un giro in corso quando e' arrivata la versione nuova lo
+   riprendeva senza. Finora il nome glielo dava solo `salvaGiroSulCloud`, che
+   pero' torna indietro subito se il cloud non c'e' — cioe' in bosco, che e'
+   esattamente dove quel giro sta. Senza nome, quel giro non si riconosce fra
+   due telefoni e non si difende da una sovrascrittura: qui glielo si da',
+   all'avvio, prima che serva a qualcuno. */
+// Il nome va scritto subito in casa: se no il primo riavvio lo perde.
+if(assicuraRoundId()) save();
 
 // ---------- COPIA DELLO STORICO SUL CLOUD ----------
 // Principio: il telefono resta la fonte primaria. Il cloud \u00e8 una copia di sicurezza.
@@ -28769,8 +28779,10 @@ return d;
 }
 
 function assicuraRoundId(){
-if(state.roundActive === true && !state.roundId){ state.roundId = nuovoRoundId(); state.roundRev = 0; state.roundBaseRev = 0; }
+var nato = false;
+if(state.roundActive === true && !state.roundId){ state.roundId = nuovoRoundId(); state.roundRev = 0; state.roundBaseRev = 0; nato = true; }
 delete state.roundIdDaCaricare;
+return nato;
 }
 
 function advanceToNextTarget(){
