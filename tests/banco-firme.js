@@ -57,6 +57,10 @@ function unsyncShotFromSession(){}
 function salvaGiroSulCloud(){}
 function cancellaGiroSulCloud(){}
 function closeSharedSession(){}
+// Dal 19/09/2026 la fine del giro passa da `chiudiGiro` (vera, estratta qui
+// sotto), che scrive lo storico: lo storico qui e' una sagoma, lo prova
+// banco-giro-flusso.js.
+function scriviGiroNelloStorico(){}
 function ensureRotationBase(){ state.rotBase = state.rotBase || state.archers.map(function(a){ return a.id; }); }
 function orderForTarget(n){
   // rotazione FIARC: a ogni piazzola la testa passa al successivo
@@ -93,6 +97,7 @@ eval(estrai("mediana"));
 var MISURE_KEY = "banco", MISURE_MAX = 300, ultimoTocco = null;
 
 eval(estrai("targetArrowCount"));
+eval(estrai("chiudiGiro"));
 eval(estrai("advanceToNextTarget"));
 eval(estrai("registerShot"));
 eval(estrai("undoLastShot"));

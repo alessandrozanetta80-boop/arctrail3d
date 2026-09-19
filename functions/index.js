@@ -1,6 +1,15 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-08-28-notifica-verificata
-// Nata da: 2026-08-20-percorso-proposto
+// Versione 2026-09-19-push-dispositivi
+// Nata da: 2026-08-28-notifica-verificata (col layout functions/ del 17/09)
+//
+// NOVITA' 2026-09-19 — LE PUSH ARRIVANO A TUTTI I DISPOSITIVI E PORTANO DOVE DEVONO
+//  (audit del 19/09, N1-N8.) `pushNotifica` legge `users/{uid}.fcmTokens` (una voce per
+//  dispositivo) oltre al vecchio `fcmToken`, manda con sendEachForMulticast un messaggio
+//  SOLO `data` con `link` all'app (`/app.html?n=<id>`), Urgency high e TTL di un giorno,
+//  e toglie i token morti uno per uno in transazione, solo se sono ancora quelli.
+//  `sendNotification` torna a salvare `dest` (destPulito, perso il 18/08).
+//  DEPLOY: si pubblicano con `bash ~/pubblica.sh` DOPO che `app.html` 2026-09-19 e' online
+//  (regola 18): le app vecchie scrivono ancora solo `fcmToken`, che qui si legge ancora.
 //
 // NOVITA' 2026-08-28 — `sendNotification` CHIEDE L'EMAIL CONFERMATA.
 //  Dopo la revisione indipendente: il chiamante deve avere `email_verified`
@@ -100,12 +109,35 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 setGlobalOptions({ region: "europe-west1", maxInstances: 10 });
 
-// La regione deve combaciare con FUNCTIONS_REGION in index.html, altrimenti la
+// La regione deve combaciare con FUNCTIONS_REGION in app.html, altrimenti la
 // chiamata parte verso us-central1 e torna "not-found".
 
 const MAX_TITOLO = 120;
 const MAX_TESTO = 500;
 const LIMITE_AL_MINUTO = 40; // un invito ad allenamento ne manda uno per invitato
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DOVE PORTA L'AVVISO. (19/09/2026, audit N8: regressione del 18/08.)
+// `destPulito` c'era fino al commit 44b638b e poi e' sparito: l'app continuava a
+// mandare `dest` — «apri la chat con chi scrive», «apri l'allenamento» — e il
+// server lo buttava. Le notifiche di chat e di invito arrivavano, ma il tocco
+// non portava da nessuna parte, e un commento nell'app diceva il contrario.
+// Le forme sono quelle che `destinazioneNotifica()` in app.html sa leggere.
+// Per `dm` l'uid NON viene dal client: e' il mittente vero, dal token.
+// ─────────────────────────────────────────────────────────────────────────────
+function destPulito(d, mittente) {
+  const MAX_ID = 128;
+  if (!d || typeof d !== "object") return null;
+  const id = typeof d.id === "string" ? d.id.trim().slice(0, MAX_ID) : "";
+  if (d.k === "dm") return { k: "dm", uid: mittente };
+  if (d.k === "ot") return id ? { k: "ot", id: id } : null;
+  if (d.k === "annuncio") return id ? { k: "annuncio", id: id } : null;
+  if (d.k === "club-space") {
+    const code = typeof d.code === "string" ? d.code.trim().toUpperCase() : "";
+    return /^[A-Z0-9]{2,20}$/.test(code) ? { k: "club-space", code: code } : null;
+  }
+  return null;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1) SCRITTURA DELLA NOTIFICA — chiamata dall'app
@@ -171,13 +203,16 @@ exports.sendNotification = onCall({ cors: true }, async (req) => {
   }
 
   // fromUid lo mette il server: e' la firma vera, non quella dichiarata.
-  await db.collection("notifications").doc(toUid).collection("items").add({
+  const doc = {
     title: title,
     body: body,
     read: false,
     fromUid: uid,
     createdAt: admin.firestore.FieldValue.serverTimestamp()
-  });
+  };
+  const dest = destPulito(d.dest, uid);
+  if (dest) doc.dest = dest;
+  await db.collection("notifications").doc(toUid).collection("items").add(doc);
 
   return { ok: true };
 });
@@ -195,88 +230,100 @@ exports.pushNotifica = onDocumentCreated(
     if (!snap) return;
     const d = snap.data() || {};
     const uid = event.params.uid;
+    const itemId = event.params.itemId;
+    const utenteRef = admin.firestore().collection("users").doc(uid);
 
-    const userSnap = await admin.firestore().collection("users").doc(uid).get();
-    const token = userSnap.exists ? userSnap.get("fcmToken") : null;
-    if (!token) {
-      // Prima era un `return` muto. Ma «non ha mai attivato le notifiche» e
-      // «il token e' stato cancellato qui sotto perche' era scaduto» sono due
-      // situazioni molto diverse che finivano nello stesso silenzio: nel
-      // secondo caso l'utente CREDE di avere le notifiche accese e non riceve
-      // piu' niente, finche' non riapre l'app e il token si rinnova da solo.
-      // Nei log adesso si vede, e si vede anche quante ne sono andate perse.
-      console.log("push per " + uid + ": nessun token, avviso «" +
-                  (d.title || "?") + "» non consegnato");
+    /* UN TOKEN PER DISPOSITIVO. (19/09/2026, audit N1.) Prima c'era un solo
+       `fcmToken` per utente, e l'ultimo dispositivo aperto sovrascriveva gli
+       altri: chi usa telefono e computer riceveva le push solo sull'ultimo, e
+       sugli altri smettevano in silenzio — «tornano quando riapro l'app» era
+       questo. Adesso ogni dispositivo scrive la sua voce in `fcmTokens`
+       ({ chiave: { token, aggiornato } }). `fcmToken` si legge ancora: e' quello
+       che scrivono le app di prima, finche' non si aggiornano. */
+    const userSnap = await utenteRef.get();
+    const u = userSnap.exists ? (userSnap.data() || {}) : {};
+    const voci = [];
+    Object.keys(u.fcmTokens || {}).forEach(function (k) {
+      const v = u.fcmTokens[k];
+      if (v && typeof v.token === "string" && v.token) voci.push({ chiave: k, token: v.token });
+    });
+    if (typeof u.fcmToken === "string" && u.fcmToken &&
+        !voci.some(function (v) { return v.token === u.fcmToken; })) {
+      voci.push({ chiave: null, token: u.fcmToken });
+    }
+    if (!voci.length) {
+      console.log("push per " + uid + ": nessun token, avviso «" + (d.title || "?") + "» non consegnato");
       return;
     }
 
+    /* SOLO `data`, E IL SERVICE WORKER DISEGNA SEMPRE LUI. (19/09/2026, N3-N4.)
+       Con un blocco `notification` disegnava l'SDK: il clic lo gestiva lui
+       (e `sw.js` non lo vedeva mai), portava a `fcmOptions.link` — la vetrina —
+       e con una pagina qualunque del sito aperta la push veniva consegnata alla
+       pagina senza nessuna notifica. Con solo `data` passa sempre da
+       `onBackgroundMessage` in sw.js, che disegna con l'etichetta giusta e al
+       clic porta `link` all'app, che apre la notifica `n`.
+       `Urgency: high`: su Android in Doze una push normale aspetta lo sblocco.
+       TTL un giorno: un avviso vecchio di tre giorni non serve piu'. */
+    const dati = {
+      tag: itemId,
+      title: String(d.title || "ArcTrail 3D"),
+      body: String(d.body || ""),
+      link: "/app.html?n=" + encodeURIComponent(itemId),
+    };
+    if (d.apri) dati.apri = String(d.apri);
+    if (d.adId) dati.adId = String(d.adId);
+    if (d.clubCode) dati.clubCode = String(d.clubCode);
+    if (d.dest) dati.dest = JSON.stringify(d.dest);
+
+    const tokens = voci.map(function (v) { return v.token; });
+    let esito;
     try {
-      // L'ETICHETTA. Ogni avviso porta l'id del documento che l'ha fatto
-      // nascere, e il service worker la passa a showNotification come `tag`.
-      // Con lo stesso tag il sistema operativo SOSTITUISCE invece di impilare:
-      // se per qualunque motivo la stessa notizia prendesse due strade — la
-      // push vera e la copia locale che l'app mostra da se' quando e' aperta —
-      // sullo schermo ne resta comunque UNA.
-      // Scritta anche in `data` e non solo in `webpush.notification`, perche'
-      // in `onBackgroundMessage` i campi di `notification` arrivano scremati
-      // mentre `data` arriva sempre intero.
-      const tag = event.params.itemId;
-      // LE PAROLE VANNO ANCHE IN `data`, E NON E' UN DOPPIONE. (17/09/2026.)
-      // `sw.js` legge `d.title || n.title` e `d.body || n.body` proprio perche'
-      // in `onBackgroundMessage` il blocco `notification` puo' arrivare
-      // scremato, mentre `data` arriva intero. Ma qui in `data` c'era SOLO il
-      // tag: dove l'SDK non disegna da se', il telefono riceveva un avviso che
-      // diceva «ArcTrail 3D» con il corpo vuoto. Misurato in tests/banco-push.js.
-      //
-      // E CI VANNO I CAMPI DI INSTRADAMENTO CHE IL DOCUMENTO HA GIA'. Non un
-      // indirizzo nuovo deciso qui: `destinazioneNotifica()` nell'app sa gia'
-      // leggere `apri`, `adId` e `clubCode`, e due di quelle destinazioni
-      // dipendono da chi e' collegato (il pannello vuole l'admin). Un link
-      // assoluto scritto dal server sarebbe una seconda verita' da tenere
-      // allineata, e una porta aperta prima di sapere chi bussa.
-      //
-      // Tutto stringa: `data` accetta solo stringhe, e un campo assente non si
-      // scrive affatto invece di diventare "undefined".
-      const dati = { tag: tag };
-      if (d.title) dati.title = String(d.title);
-      if (d.body) dati.body = String(d.body);
-      if (d.apri) dati.apri = String(d.apri);
-      if (d.adId) dati.adId = String(d.adId);
-      if (d.clubCode) dati.clubCode = String(d.clubCode);
-      await admin.messaging().send({
-        token: token,
-        notification: {
-          title: d.title || "ArcTrail 3D",
-          body: d.body || "",
-        },
+      esito = await admin.messaging().sendEachForMulticast({
+        tokens: tokens,
         data: dati,
         webpush: {
-          notification: {
-            icon: "/icon-192.png",
-            badge: "/icon-192.png",
-            tag: tag,
-          },
-          fcmOptions: { link: "https://arctrail3d.com" },
+          headers: { Urgency: "high", TTL: "86400" },
+          fcmOptions: { link: "https://arctrail3d.com" + dati.link },
         },
       });
     } catch (err) {
-      // Token scaduto o revocato (telefono cambiato, app disinstallata):
-      // si cancella, altrimenti ogni notifica futura fallisce allo stesso modo.
-      const code = err && err.errorInfo ? err.errorInfo.code : "";
-      if (
-        code === "messaging/registration-token-not-registered" ||
-        code === "messaging/invalid-registration-token"
-      ) {
-        console.warn("push per " + uid + ": token scaduto o revocato, lo tolgo." +
-                     " Da adesso questo utente NON ricevera' push finche' non" +
-                     " riapre l'app (refreshPushToken lo rimette da solo).");
-        await admin.firestore().collection("users").doc(uid)
-          .update({ fcmToken: admin.firestore.FieldValue.delete() })
-          .catch(() => {});
-      } else {
-        console.error("push fallita per", uid, err);
-      }
+      console.error("push fallita per", uid, err);
+      return;
     }
+
+    /* I TOKEN MORTI SI TOLGONO UNO PER UNO, E SOLO SE SONO ANCORA QUELLI.
+       (19/09/2026, audit N7.) Prima si cancellava `fcmToken` senza guardare: se
+       nel frattempo l'utente aveva aperto l'app e scritto il token NUOVO, veniva
+       cancellato quello nuovo. Adesso in transazione, e solo se il valore sul
+       documento e' ancora il token che ha fallito. */
+    const morti = [];
+    (esito.responses || []).forEach(function (r, i) {
+      if (r.success) return;
+      const code = r.error && (r.error.code || (r.error.errorInfo && r.error.errorInfo.code)) || "";
+      if (code === "messaging/registration-token-not-registered" ||
+          code === "messaging/invalid-registration-token" ||
+          code === "messaging/invalid-argument") {
+        morti.push(voci[i]);
+      } else {
+        console.error("push fallita per", uid, code || r.error);
+      }
+    });
+    if (!morti.length) return;
+    console.warn("push per " + uid + ": " + morti.length + " token scaduti o revocati, li tolgo.");
+    await admin.firestore().runTransaction(async function (tx) {
+      const ora = await tx.get(utenteRef);
+      if (!ora.exists) return;
+      const x = ora.data() || {};
+      const cambi = {};
+      morti.forEach(function (m) {
+        if (m.chiave && x.fcmTokens && x.fcmTokens[m.chiave] && x.fcmTokens[m.chiave].token === m.token) {
+          cambi["fcmTokens." + m.chiave] = admin.firestore.FieldValue.delete();
+        }
+        if (x.fcmToken === m.token) cambi.fcmToken = admin.firestore.FieldValue.delete();
+      });
+      if (Object.keys(cambi).length) tx.update(utenteRef, cambi);
+    }).catch(function () {});
   }
 );
 

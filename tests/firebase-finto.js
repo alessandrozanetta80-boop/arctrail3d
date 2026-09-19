@@ -44,20 +44,25 @@ function installa(opzioni) {
   }
   var DELETE = { __fv: "delete" };
   function marca() { var n = Date.now(); return { __ts: n, toMillis: function () { return n; }, toDate: function () { return new Date(n); }, seconds: Math.floor(n / 1000) }; }
+  /* `update({"a.b": v})`: il percorso a punti tocca un campo dentro una mappa. */
+  function puntato(out, k, v) {
+    var parti = k.split("."), o = out;
+    for (var i = 0; i < parti.length - 1; i++) { o[parti[i]] = o[parti[i]] || {}; o = o[parti[i]]; }
+    var ultimo = parti[parti.length - 1];
+    if (v && v.__fv === "delete") { delete o[ultimo]; return; }
+    if (v && v.__fv === "ts") { o[ultimo] = marca(); return; }
+    o[ultimo] = (v && typeof v === "object" && !Array.isArray(v) && !v.__ts) ? applica({}, v, false) : copia(v);
+  }
   function applica(vecchio, nuovo, fondi) {
     var out = fondi && vecchio ? copia(vecchio) : {};
     Object.keys(nuovo || {}).forEach(function (k) {
       var v = nuovo[k];
+      if (k.indexOf(".") > 0) return puntato(out, k, v);
       if (v && v.__fv === "delete") { delete out[k]; return; }
       if (v && v.__fv === "ts") { out[k] = marca(); return; }
       if (v && v.__fv === "union") { var a = (out[k] || []).slice(); v.v.forEach(function (x) { if (a.indexOf(x) < 0) a.push(x); }); out[k] = a; return; }
       if (v && v.__fv === "remove") { out[k] = (out[k] || []).filter(function (x) { return v.v.indexOf(x) < 0; }); return; }
       if (v && v.__fv === "inc") { out[k] = (out[k] || 0) + v.v; return; }
-      if (k.indexOf(".") > 0) {
-        var parti = k.split("."), o = out;
-        for (var i = 0; i < parti.length - 1; i++) { o[parti[i]] = o[parti[i]] || {}; o = o[parti[i]]; }
-        o[parti[parti.length - 1]] = v; return;
-      }
       if (fondi && v && typeof v === "object" && !Array.isArray(v) && !v.__ts && out[k] && typeof out[k] === "object") {
         out[k] = applica(out[k], v, true); return;
       }
@@ -65,7 +70,22 @@ function installa(opzioni) {
     });
     return out;
   }
-  function notifica() { ascoltatori.slice().forEach(function (f) { try { f(); } catch (e) {} }); }
+  /* Gli ascoltatori si avvisano DOPO, e solo quelli della raccolta toccata:
+     come Firestore vero. Avvisarli subito e tutti faceva girare in tondo un
+     ascoltatore che a sua volta scrive (e bloccava la pagina). */
+  var inCoda = false, raccolteToccate = {};
+  function notifica(racc) {
+    raccolteToccate[racc] = true;
+    if (inCoda) return;
+    inCoda = true;
+    setTimeout(function () {
+      var toccate = raccolteToccate; raccolteToccate = {}; inCoda = false;
+      ascoltatori.slice().forEach(function (a) {
+        if (!toccate[a.racc]) return;
+        try { a.f(); } catch (e) {}
+      });
+    }, 0);
+  }
   function scrivi(op, percorso, data) { window.__scritture.push({ op: op, path: percorso, data: copia(data) }); }
 
   function istantaneaDoc(racc, id) {
@@ -83,19 +103,19 @@ function installa(opzioni) {
       set: function (data, opz) {
         var c = raccolta(racc);
         c[id] = applica(c[id], data, !!(opz && opz.merge));
-        scrivi("set", percorso, data); notifica(); return Promise.resolve();
+        scrivi("set", percorso, data); notifica(racc); return Promise.resolve();
       },
       update: function (data) {
         var c = raccolta(racc);
         if (!c[id]) return Promise.reject(Object.assign(new Error("not-found"), { code: "not-found" }));
         c[id] = applica(c[id], data, true);
-        scrivi("update", percorso, data); notifica(); return Promise.resolve();
+        scrivi("update", percorso, data); notifica(racc); return Promise.resolve();
       },
-      delete: function () { delete raccolta(racc)[id]; scrivi("delete", percorso, null); notifica(); return Promise.resolve(); },
+      delete: function () { delete raccolta(racc)[id]; scrivi("delete", percorso, null); notifica(racc); return Promise.resolve(); },
       onSnapshot: function (cb) {
-        var f = function () { cb(istantaneaDoc(racc, id)); };
-        ascoltatori.push(f); setTimeout(f, 0);
-        return function () { var i = ascoltatori.indexOf(f); if (i >= 0) ascoltatori.splice(i, 1); };
+        var a = { racc: racc, f: function () { cb(istantaneaDoc(racc, id)); } };
+        ascoltatori.push(a); setTimeout(a.f, 0);
+        return function () { var i = ascoltatori.indexOf(a); if (i >= 0) ascoltatori.splice(i, 1); };
       },
       collection: function (n) { return interrogazione(percorso + "/" + n, []); }
     };
@@ -141,9 +161,9 @@ function installa(opzioni) {
       startAfter: function () { return this; },
       get: function () { return Promise.resolve(istantanea()); },
       onSnapshot: function (cb) {
-        var f = function () { cb(istantanea()); };
-        ascoltatori.push(f); setTimeout(f, 0);
-        return function () { var i = ascoltatori.indexOf(f); if (i >= 0) ascoltatori.splice(i, 1); };
+        var a = { racc: racc, f: function () { cb(istantanea()); } };
+        ascoltatori.push(a); setTimeout(a.f, 0);
+        return function () { var i = ascoltatori.indexOf(a); if (i >= 0) ascoltatori.splice(i, 1); };
       },
       doc: function (id) { return refDoc(racc, id || ("auto" + Math.random().toString(36).slice(2, 10))); },
       add: function (data) {

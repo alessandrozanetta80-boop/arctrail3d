@@ -131,6 +131,8 @@ banco "banco-xss.js (quello che scrive un altro non diventa codice sul mio telef
 banco "banco-account.js (due persone, un telefono: i dati di A non vanno a B)" "node tests/banco-account.js"
 banco "banco-sw-aggiornamento.js (una versione nuova non toglie l'app di mano, nemmeno a meta' giro)" "node tests/banco-sw-aggiornamento.js"
 banco "controlla-cache.js (se cambia un file della shell, CACHE_NAME sale)" "node tests/controlla-cache.js"
+banco "banco-giro-flusso.js (il giro si apre, si chiude e non si sdoppia)" "node tests/banco-giro-flusso.js"
+banco "banco-push-app.js (le push viste dall'app: token per dispositivo, primo piano, tocco)" "node tests/banco-push-app.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"

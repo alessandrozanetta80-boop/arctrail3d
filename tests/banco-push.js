@@ -16,6 +16,17 @@
  * `vm`, con `self`, `caches`, `clients` e `firebase` costruiti qui. Si prova
  * il FILE VERO: ricopiarne le righe proverebbe la copia.
  *
+ * DAL 19/09/2026 (audit N1-N8) IL CONTRATTO E' CAMBIATO, e il banco con lui:
+ *   - un token PER DISPOSITIVO (`fcmTokens`), piu' il vecchio `fcmToken`;
+ *   - messaggio SOLO `data` (niente blocco notification: disegna sempre sw.js);
+ *   - `data.link` = /app.html?n=<id>: il tocco apre QUELLA notifica nell'app,
+ *     che poi la instrada con `destinazioneNotifica()` come prima;
+ *   - Urgency high; token morti tolti uno per uno, solo se ancora quelli;
+ *   - `sendNotification` salva di nuovo `dest` (perso il 18/08);
+ *   - il clic con l'app aperta NON ricarica: postMessage alla finestra.
+ * Il paragrafo qui sotto e' la storia di prima, e resta per capire perche'
+ * `destinazioneNotifica()` decide ancora lei la destinazione finale.
+ *
  * LA DESTINAZIONE NON E' UN `link`, ED E' UNA COSA DA SAPERE PRIMA DI
  * PROVARLA. Questo progetto non manda indirizzi dentro la push: il documento
  * porta `dest` / `apri` / `adId` / `clubCode`, e a tradurli in un posto dove
@@ -36,6 +47,9 @@ var path = require("path");
 var vm = require("vm");
 
 var RADICE = path.resolve(__dirname, "..");
+// Sabotaggio: FUNZIONI=<index.js di un'altra versione> SW=<sw.js di un'altra versione>
+var FILE_FUNZIONI = process.env.FUNZIONI ? path.resolve(process.env.FUNZIONI) : path.join(RADICE, "functions", "index.js");
+var FILE_SW = process.env.SW ? path.resolve(process.env.SW) : path.join(RADICE, "sw.js");
 var ok = 0, ko = 0;
 function prova(n, c, extra){
   if(c){ ok++; console.log("  ✓ " + n); }
@@ -45,7 +59,13 @@ function prova(n, c, extra){
 /* ══ A. COSA MANDA IL SERVER ═══════════════════════════════════════════════ */
 var trigger = {};
 var inviati = [];
-var UTENTE = { fcmToken: "token-finto-123" };
+var fallisce = {};          // token → codice d'errore FCM
+var aggiornamenti = [];     // update fatti in transazione su users/{uid}
+var notificheScritte = [];  // documenti scritti da sendNotification
+var UTENTE = {
+  fcmToken: "token-telefono",                               // quello delle app di prima
+  fcmTokens: { dTel: { token: "token-telefono" }, dPc: { token: "token-computer" } }
+};
 
 var finto = {
   "firebase-functions/v2/firestore": {
@@ -59,7 +79,15 @@ var finto = {
   "firebase-admin": {
     initializeApp: function(){},
     messaging: function(){
-      return { send: function(msg){ inviati.push(msg); return Promise.resolve("id-finto"); } };
+      return {
+        send: function(msg){ inviati.push(msg); return Promise.resolve("id-finto"); },
+        sendEachForMulticast: function(msg){
+          inviati.push(msg);
+          return Promise.resolve({ responses: msg.tokens.map(function(t){
+            return fallisce[t] ? { success:false, error:{ code: fallisce[t] } } : { success:true };
+          }) });
+        }
+      };
     },
     auth: function(){
       return { getUserByEmail: function(m){ return Promise.resolve({ uid:"admin-uid", email:m }); } };
@@ -80,14 +108,20 @@ var finto = {
                 update: function(){ return Promise.resolve(); },
                 set: function(){ return Promise.resolve(); },
                 collection: function(){
-                  return { add: function(){ return Promise.resolve(); },
+                  return { add: function(doc){ notificheScritte.push(doc); return Promise.resolve(); },
                            doc: function(){ return { set: function(){ return Promise.resolve(); } }; } };
                 }
               };
             }
           };
         },
-        runTransaction: function(){ return Promise.resolve(); }
+        runTransaction: function(fn){
+          var tx = {
+            get: function(){ return Promise.resolve({ exists: !!UTENTE, data: function(){ return UTENTE || {}; } }); },
+            set: function(){}, update: function(_r, cambi){ aggiornamenti.push(cambi); }
+          };
+          return Promise.resolve().then(function(){ return fn(tx); });
+        }
       };
     }, { FieldValue: { serverTimestamp: function(){ return "@ora"; },
                        delete: function(){ return "@cancella"; },
@@ -100,15 +134,15 @@ Module._load = function(richiesto){
   if(Object.prototype.hasOwnProperty.call(finto, richiesto)) return finto[richiesto];
   return caricaVero.apply(this, arguments);
 };
-require(path.join(RADICE, "functions", "index.js"));
+var funzioni = require(FILE_FUNZIONI);
 Module._load = caricaVero;
 
 var mandaPush = trigger["notifications/{uid}/items/{itemId}"];
 
 /* ══ B/C. IL SERVICE WORKER IN PROVETTA ════════════════════════════════════ */
 function stanzaSW(){
-  var testo = fs.readFileSync(path.join(RADICE, "sw.js"), "utf8");
-  var disegnate = [], gia = [], aperte = [], ascolt = {}, sfondo = null;
+  var testo = fs.readFileSync(FILE_SW, "utf8");
+  var disegnate = [], gia = [], aperte = [], ascolt = {}, sfondo = null, finestre = [], messaggi = [], navigate = [];
 
   var stanza = {
     console: { log: function(){}, warn: function(){}, error: function(){} },
@@ -132,7 +166,7 @@ function stanzaSW(){
        stesso oggetto, quindi porta tutte e tre le cose: separarli vuol dire
        che uno dei due arriva a mani vuote. */
     clients: {
-      matchAll: function(){ return Promise.resolve([]); },
+      matchAll: function(){ return Promise.resolve(finestre.slice()); },
       openWindow: function(u){ aperte.push(u); return Promise.resolve({}); },
       claim: function(){ return Promise.resolve(); }
     },
@@ -158,7 +192,16 @@ function stanzaSW(){
     click: function(){ return ascolt["notificationclick"]; },
     disegnate: function(){ return disegnate; },
     aperte: function(){ return aperte; },
-    azzera: function(){ disegnate = []; gia = []; aperte = []; }
+    messaggi: function(){ return messaggi; },
+    navigate: function(){ return navigate; },
+    conFinestra: function(url){
+      var w = { url: url,
+        focus: function(){ return Promise.resolve(w); },
+        navigate: function(u){ navigate.push(u); return Promise.resolve(w); },
+        postMessage: function(m){ messaggi.push(m); } };
+      finestre.push(w);
+    },
+    azzera: function(){ disegnate = []; gia = []; aperte = []; finestre = []; messaggi = []; navigate = []; }
   };
 }
 
@@ -181,25 +224,47 @@ var AVVISO = {
     await mandaPush({ data:{ data:function(){ return AVVISO; } },
                       params:{ uid:"u-destinatario", itemId:"avviso-7" } });
     m = inviati[0] || {};
-    prova("parte una push sola", inviati.length === 1, inviati.length + " inviate");
-    prova("va al token del destinatario", m.token === "token-finto-123");
-    prova("il blocco notification porta titolo e corpo",
-          !!(m.notification && m.notification.title === AVVISO.title && m.notification.body === AVVISO.body));
+    prova("parte un invio solo, per tutti i dispositivi", inviati.length === 1, inviati.length + " invii");
+    var tk = (m.tokens || []).slice().sort();
+    prova("va a TUTTI i dispositivi dell'utente, senza doppioni del vecchio fcmToken",
+          tk.length === 2 && tk[0] === "token-computer" && tk[1] === "token-telefono", JSON.stringify(m.tokens));
+    prova("niente blocco notification: la disegna sempre sw.js", !m.notification, JSON.stringify(m.notification));
     prova("data porta l'etichetta dell'avviso", !!(m.data && m.data.tag === "avviso-7"));
-    /* IL DIFETTO PRINCIPALE. `sw.js` legge `d.title || n.title` e
-       `d.body || n.body`, col commento «i dati arrivano interi, notification
-       arriva scremato». Ma in `data` il server mette SOLO il tag: dove l'SDK
-       non disegna da se', il telefono riceve un avviso senza parole. */
-    prova("data porta ANCHE il titolo (sw.js legge d.title)", !!(m.data && m.data.title),
-          JSON.stringify(m.data));
-    prova("data porta ANCHE il corpo (sw.js legge d.body)", !!(m.data && m.data.body),
-          JSON.stringify(m.data));
-    /* L'INSTRADAMENTO CHE IL DOCUMENTO HA GIA'. Non un indirizzo nuovo: i
-       campi che `destinazioneNotifica()` sa gia' leggere. Senza, il tocco
-       arriva all'app e l'app non sa piu' di cosa si parlava. */
+    prova("data porta il titolo (sw.js legge d.title)", !!(m.data && m.data.title === AVVISO.title), JSON.stringify(m.data));
+    prova("data porta il corpo (sw.js legge d.body)", !!(m.data && m.data.body === AVVISO.body), JSON.stringify(m.data));
     prova("data non perde l'instradamento gia' scritto sull'avviso (apri)",
           !!(m.data && m.data.apri === "marketplace"), JSON.stringify(m.data));
+    prova("data.link porta all'app, su QUESTA notifica", !!(m.data && m.data.link === "/app.html?n=avviso-7"),
+          m.data && m.data.link);
+    prova("urgenza alta: in Doze non aspetta lo sblocco",
+          !!(m.webpush && m.webpush.headers && m.webpush.headers.Urgency === "high"), JSON.stringify(m.webpush));
+
+    // A2 — un dispositivo morto: si toglie SOLO lui, e solo se e' ancora lui
+    inviati = []; aggiornamenti = []; fallisce = { "token-computer": "messaging/registration-token-not-registered" };
+    await mandaPush({ data:{ data:function(){ return AVVISO; } }, params:{ uid:"u-destinatario", itemId:"avviso-8" } });
+    var cambi = aggiornamenti[0] || {};
+    prova("token morto: si toglie la voce del computer", Object.prototype.hasOwnProperty.call(cambi, "fcmTokens.dPc"),
+          JSON.stringify(aggiornamenti));
+    prova("token morto: il telefono resta", !Object.prototype.hasOwnProperty.call(cambi, "fcmTokens.dTel") &&
+          !Object.prototype.hasOwnProperty.call(cambi, "fcmToken"), JSON.stringify(cambi));
+    fallisce = {};
   }
+
+  console.log("\n  A3. DOVE PORTA L'AVVISO (sendNotification salva dest)");
+  var chiama = funzioni.sendNotification;
+  async function manda(dest){
+    notificheScritte = [];
+    await chiama({ auth:{ uid:"mittente-vero", token:{ email_verified:true } },
+                   data:{ toUid:"mittente-vero", title:"Ciao", body:"x", dest: dest } });
+    return (notificheScritte[0] || {}).dest;
+  }
+  var dm = await manda({ k:"dm", uid:"qualcun-altro" });
+  prova("dm: la destinazione e' la chat col MITTENTE VERO, non quello dichiarato",
+        !!(dm && dm.k === "dm" && dm.uid === "mittente-vero"), JSON.stringify(dm));
+  var ot = await manda({ k:"ot", id:"allenamento-1" });
+  prova("ot: l'allenamento resta", !!(ot && ot.k === "ot" && ot.id === "allenamento-1"), JSON.stringify(ot));
+  var strano = await manda({ k:"<script>", id:"x" });
+  prova("una destinazione sconosciuta non si salva", strano === undefined, JSON.stringify(strano));
 
   console.log("\n  B. COSA RIESCE A DISEGNARE IL SERVICE WORKER");
   var sw = stanzaSW();
@@ -235,18 +300,34 @@ var AVVISO = {
     prova("col payload vero l'etichetta resta quella dell'avviso",
           !!(d3.opzioni && d3.opzioni.tag === "avviso-7"), "tag: " + ((d3.opzioni||{}).tag || ""));
 
-    // B4 — il clic: quando la notifica porta una destinazione, ci si va
+    // B4 — il clic. Ad app chiusa si apre l'app su quella notifica.
     if(sw.click()){
+      async function clicca(dati){
+        var chiuso = false, atteso = [];
+        sw.click()({ notification: { data: dati, close:function(){ chiuso = true; } },
+                     waitUntil: function(p){ atteso.push(p); } });
+        await Promise.all(atteso);
+        return chiuso;
+      }
       sw.azzera();
-      var chiuso = false, atteso = [];
-      sw.click()({
-        notification: { data:{ link:"/app.html" }, close:function(){ chiuso = true; } },
-        waitUntil: function(p){ atteso.push(p); }
-      });
-      await Promise.all(atteso);
+      var chiuso = await clicca(d3.opzioni && d3.opzioni.data || {});
       prova("il clic chiude l'avviso", chiuso === true);
-      prova("il clic apre la destinazione della notifica",
-            sw.aperte().indexOf("/app.html") >= 0, JSON.stringify(sw.aperte()));
+      prova("ad app chiusa il clic apre l'app su quella notifica",
+            sw.aperte().indexOf("/app.html?n=avviso-7") >= 0, JSON.stringify(sw.aperte()));
+      // Con l'app gia' aperta (magari a meta' giro): niente ricarica.
+      sw.azzera();
+      sw.conFinestra("https://arctrail3d.com/app.html");
+      await clicca({ link:"/app.html?n=avviso-7", n:"avviso-7" });
+      prova("ad app aperta il clic NON ricarica la pagina", sw.navigate().length === 0, JSON.stringify(sw.navigate()));
+      prova("ad app aperta il clic dice all'app quale notifica aprire",
+            sw.messaggi().some(function(x){ return x && x.tipo === "apri-notifica" && x.n === "avviso-7"; }),
+            JSON.stringify(sw.messaggi()));
+      // Una finestra che non e' l'app (la vetrina): si porta sull'app.
+      sw.azzera();
+      sw.conFinestra("https://arctrail3d.com/");
+      await clicca({ link:"/app.html?n=avviso-7", n:"avviso-7" });
+      prova("dalla vetrina il clic porta all'app", sw.navigate().indexOf("/app.html?n=avviso-7") >= 0,
+            JSON.stringify(sw.navigate()));
     }
 
     console.log("\n  C. LA DEDUPLICA");

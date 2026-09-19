@@ -14088,7 +14088,7 @@ var CAMPI_DEL_GIRO = ["roundActive","archersBase","rotBaseTarget","mode","format
 "archers","scores","target","archerIndex","arrowIndex","pendingArrows",
 "liveBattutaTypes","awaitingStep","savedToHistory","roundEntryDate","firme",
 "consegna","sessionId","campo","doubleConfirm","arrowsPerTargetOverride",
-"startedAt","assetto","assettoNome","scoringVersion"];
+"startedAt","assetto","assettoNome","scoringVersion","roundId"];
 
 function pezzoDelGiro(){
 var out = {};
@@ -14207,7 +14207,7 @@ if(state.roundActive === true || state.screen === "round" || state.screen === "s
      senza copia fino alla piazzola dopo. Le due direzioni sono la stessa
      domanda posta nello stesso momento: se stanno in due posti, uno dei due
      si dimentica. */
-  if(state.roundActive === true) salvaGiroSulCloud(true);
+  if(state.roundActive === true) verificaGiroAltrove();
   return;
 }
 var ref = cloudGiroRef();
@@ -14248,6 +14248,48 @@ if(!st || st.mode !== "ifaa_3d" || st.roundActive !== true) return false;
 if(st.scoringVersion === IFAA_SCHEMA) return false;
 st.mode = "ifaa_3d_v1";
 return true;
+}
+
+/* DUE TELEFONI, UN GIRO. (19/09/2026, audit P1 «due dispositivi».)
+   Il telefono si spegne alla piazzola 12, il giro si riprende e si finisce sul
+   tablet. La sera il telefono si riaccende col giro ancora aperto: prima lo
+   rimandava sul cloud, mostrava «Riprendi», e chiudendolo nasceva un secondo
+   giro nello storico.
+   Adesso, prima di rimandare la copia, si chiede al cloud:
+   - lo storico ha gia' un giro con questo roundId? Allora e' stato chiuso
+     altrove: qui si chiude senza riscriverlo (la riga arriva dallo storico);
+   - la copia cloud e' lo STESSO giro ma piu' avanti? Allora si prosegue da
+     quella, invece di riportarla indietro.
+   Senza roundId (giri cominciati prima di oggi) si fa come prima. */
+function verificaGiroAltrove(){
+var ref = cloudGiroRef(), hist = cloudHistoryRef();
+if(!state.roundId || !ref || !hist){ salvaGiroSulCloud(true); return; }
+var id = state.roundId;
+hist.where("roundId", "==", id).limit(1).get().then(function(snap){
+var chiuso = false;
+snap.forEach(function(d){ var x = d.data() || {}; if(x.deleted !== true) chiuso = true; });
+if(chiuso){
+if(state.roundId !== id || state.roundActive !== true) return;
+state.roundActive = false;
+state.savedToHistory = true;
+if(state.screen === "round" || state.screen === "summary") state.screen = "menu";
+save(); render();
+return;
+}
+return ref.get().then(function(doc){
+if(state.roundId !== id || state.roundActive !== true) return;
+var d = doc && doc.exists ? (doc.data() || {}) : null;
+var giro = null;
+if(d && d.giro){ try{ giro = JSON.parse(d.giro); }catch(e){ giro = null; } }
+if(giro && giro.roundId === id && giro.roundActive === true && (giro.target || 1) > (state.target || 1)){
+CAMPI_DEL_GIRO.forEach(function(k){ if(giro[k] !== undefined) state[k] = giro[k]; });
+state.panel = null; state.lastShotInfo = null; state.awaitingStep = null;
+giroNube.inviato = "";
+save(); render();
+}
+salvaGiroSulCloud(true);
+});
+}).catch(function(){ salvaGiroSulCloud(true); });
 }
 
 function riprendiGiroRitrovato(){
@@ -14664,14 +14706,7 @@ if(btn) btn.disabled = true;
 var uid = currentUser && currentUser.uid;
 var passi = [];
 if(uid && db && !DEV_MODE){
-if(tokenScrittoQui){
-var tok = tokenScrittoQui;
-passi.push(db.collection("users").doc(uid).get().then(function(d){
-if(d.exists && d.data().fcmToken === tok){
-return db.collection("users").doc(uid).update({ fcmToken: firebase.firestore.FieldValue.delete() });
-}
-}).catch(function(){}));
-}
+if(tokenScrittoQui){ passi.push(togliTokenPush(uid, tokenScrittoQui)); }
 if(messaging && messaging.deleteToken){ passi.push(Promise.resolve().then(function(){ return messaging.deleteToken(); }).catch(function(){})); }
 if(state.sessionId && !state.roundActive){ try{ closeSharedSession(); }catch(e){} }
 }
@@ -15391,6 +15426,22 @@ function forgetScroll(){ delete keepScroll[scrollKey()]; }
 function forgetDraft(k){ delete keepDraft[k]; }
 
 var vtKey = "";
+/* LA PISTA NON SI RIDISEGNA PER UN AVVISO. (19/09/2026, audit 5.4.)
+   Allenamenti aperti (di tutto il mondo), notifiche e sessioni in arrivo
+   chiamavano `render()` a ogni loro modifica, anche con la pista aperta:
+   `app.innerHTML = ""` ricostruiva il tasto sotto il dito, e un tocco caduto
+   fra il vecchio nodo e il nuovo non diventava un click — punto non segnato.
+   Proprio il guasto che `dipingiPista()` evita per i tocchi.
+   Adesso quegli ascoltatori passano da qui: con la pista a vista non si
+   ridisegna; i dati nuovi sono gia' nelle variabili, e il disegno arriva
+   appena si esce dalla pista (ogni navigazione chiama `render()`). */
+function pistaAVista(){
+return authState === "ready" && state.screen === "round" && !homeOverride;
+}
+function renderSeNonInPista(){
+if(pistaAVista()) return;
+render();
+}
 function render(){
 // Un aggiornamento arrivato a meta' giro si applica al primo disegno fuori
 // dal giro. (P0-3) Asincrono: prima si finisce di disegnare.
@@ -15403,7 +15454,13 @@ captureContinuity();
 var still = (typeof window.matchMedia === "function")
 && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 if(!moved || still || typeof document.startViewTransition !== "function"){ renderNow(); return; }
-try{ document.startViewTransition(function(){ renderNow(); }); }
+try{
+var vt = document.startViewTransition(function(){ renderNow(); });
+// Due disegni ravvicinati fanno SALTARE la transizione: e' previsto, non un
+// guasto. Senza questi catch la promessa rifiutata arrivava al registro errori
+// come «Transition was skipped». (19/09/2026)
+if(vt){ [vt.ready, vt.finished, vt.updateCallbackDone].forEach(function(pr){ if(pr && pr.catch) pr.catch(function(){}); }); }
+}
 catch(e){ renderNow(); }
 }
 
@@ -16722,7 +16779,8 @@ return messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg 
 }).then(function(token){
 if(!token){ statusEl.textContent = t("notif_token_error"); btnEl.disabled = false; return; }
 segnaPush(false);
-db.collection("users").doc(currentUser.uid).update({ fcmToken: token }).then(function(){
+pushRegisteredHere = true; ascoltaPushInPrimoPiano();
+scriviTokenPush(token).then(function(){
 pushRegisteredHere = true;
 statusEl.textContent = t("notif_enabled");
 statusEl.style.color = "var(--accent-soft)";
@@ -16939,8 +16997,10 @@ spegniBtn.addEventListener("click", function(){
 spegniBtn.disabled = true;
 segnaPush(true);
 pushRegisteredHere = false;
-db.collection("users").doc(currentUser.uid)
-.update({ fcmToken: firebase.firestore.FieldValue.delete() })
+// Solo la voce di questo dispositivo: prima si cancellava l'unico token, e
+// «Spegni» sul computer spegneva anche il telefono. (19/09/2026, N1)
+(tokenScrittoQui ? togliTokenPush(currentUser.uid, tokenScrittoQui)
+  : db.collection("users").doc(currentUser.uid).update({ fcmToken: firebase.firestore.FieldValue.delete() }))
 .then(function(){
 notifStatus.textContent = t("notif_off_done");
 notifStatus.style.color = "var(--muted)";
@@ -24622,7 +24682,7 @@ list.push(d);
 // Prima quello che sta per succedere, non quello piu' lontano nel tempo
 list.sort(function(a,b){ return (a.datetime||0) - (b.datetime||0); });
 openTrainings = list;
-render();
+renderSeNonInPista();
 }, function(err){ console.error("loadOpenTrainings:", err); openTrainings = []; });
 }
 
@@ -24744,6 +24804,37 @@ var pushRegisteredHere = false;
 // Il token che QUESTO telefono ha scritto: all'uscita si toglie solo se e' ancora
 // lui, cosi' uscire qui non spegne gli avvisi di un altro dispositivo.
 var tokenScrittoQui = "";
+/* UN TOKEN PER DISPOSITIVO. (19/09/2026, audit N1.) Prima `fcmToken` era un
+   campo solo: l'ultimo dispositivo aperto cancellava gli altri, e le push
+   smettevano in silenzio sul telefono appena si apriva l'app dal computer.
+   Adesso ogni dispositivo scrive la SUA voce in `fcmTokens.<chiave>`; la
+   chiave e' un'impronta corta del token (i token sono lunghi e hanno ':').
+   `fcmToken` si scrive ancora per le Cloud Functions di prima, finche' non
+   vengono ripubblicate: quelle leggono solo lui. */
+function chiaveToken(tok){
+var h = 5381;
+for(var i = 0; i < tok.length; i++){ h = ((h << 5) + h + tok.charCodeAt(i)) >>> 0; }
+return "d" + h.toString(36) + tok.length.toString(36);
+}
+function scriviTokenPush(token){
+var campi = { fcmToken: token };
+campi["fcmTokens." + chiaveToken(token)] = { token: token, aggiornato: firebase.firestore.FieldValue.serverTimestamp() };
+tokenScrittoQui = token;
+return db.collection("users").doc(currentUser.uid).update(campi);
+}
+function togliTokenPush(uid, token){
+if(!uid || !token || !db) return Promise.resolve();
+var ref = db.collection("users").doc(uid);
+return ref.get().then(function(d){
+if(!d.exists) return;
+var x = d.data() || {};
+var cambi = {};
+var k = chiaveToken(token);
+if(x.fcmTokens && x.fcmTokens[k]) cambi["fcmTokens." + k] = firebase.firestore.FieldValue.delete();
+if(x.fcmToken === token) cambi.fcmToken = firebase.firestore.FieldValue.delete();
+if(Object.keys(cambi).length) return ref.update(cambi);
+}).catch(function(){});
+}
 
 // Rinfresca in silenzio il token di questo dispositivo a ogni apertura.
 // Non chiede niente all'utente: parte solo se il permesso e' gia' concesso.
@@ -24773,9 +24864,78 @@ return messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg 
 }).then(function(token){
 if(!token) return;
 pushRegisteredHere = true;
-tokenScrittoQui = token;
-return db.collection("users").doc(currentUser.uid).update({ fcmToken: token }).catch(function(){});
+ascoltaPushInPrimoPiano();
+return scriviTokenPush(token).catch(function(){});
 }).catch(function(){});
+}
+
+/* CON L'APP APERTA LA PUSH SI VEDE LO STESSO. (19/09/2026, audit N3 / 6.3.)
+   Con la pagina visibile l'SDK non passa la push al service worker: la
+   consegna qui, a `onMessage`. Nessuno la ascoltava, e `showLocalNotification`
+   tace apposta quando questo dispositivo riceve le push vere
+   (`pushRegisteredHere`): quindi con l'app aperta l'avviso non compariva da
+   nessuna parte, e su iOS una push senza notifica puo' costare la
+   sottoscrizione. Adesso la si disegna qui, tramite il service worker, con la
+   stessa etichetta del server: se arriva anche per un'altra strada resta una. */
+var pushInPrimoPianoAttivo = false;
+function ascoltaPushInPrimoPiano(){
+if(pushInPrimoPianoAttivo || !messaging || typeof messaging.onMessage !== "function") return;
+pushInPrimoPianoAttivo = true;
+try{
+messaging.onMessage(function(payload){
+var d = (payload && payload.data) || {};
+var n = (payload && payload.notification) || {};
+var titolo = d.title || n.title || "ArcTrail 3D";
+var opz = { body: d.body || n.body || "", icon: "/icon-192.png", badge: "/icon-192.png",
+            tag: d.tag || titolo, renotify: false, data: { link: d.link || "/app.html", n: d.tag || "" } };
+if(!navigator.serviceWorker || !navigator.serviceWorker.getRegistration) return;
+navigator.serviceWorker.getRegistration().then(function(reg){
+if(!reg) return;
+if(!reg.getNotifications) return reg.showNotification(titolo, opz);
+return reg.getNotifications({ tag: opz.tag }).then(function(gia){
+if(gia && gia.length) return;
+return reg.showNotification(titolo, opz);
+});
+}).catch(function(){});
+});
+}catch(e){ pushInPrimoPianoAttivo = false; }
+}
+
+/* IL TOCCO SU UNA PUSH APRE QUELLA NOTIFICA. (19/09/2026, audit N4.)
+   Arriva da due strade: il link `app.html?n=<id>` (app chiusa) e il messaggio
+   del service worker (app gia' aperta, niente ricarica). In tutti e due i casi
+   si apre il centro notifiche e si tocca la riga di quella notifica: la stessa
+   strada del dito, quindi la stessa destinazione — chat, allenamento, pannello,
+   spazio compagnia, annuncio. Se la notifica non e' ancora arrivata dal
+   database, si aspetta il prossimo aggiornamento dell'elenco. */
+var notifDaAprire = "";
+function apriNotificaDaPush(id){
+if(id) notifDaAprire = String(id);
+if(!notifDaAprire || authState !== "ready" || !currentUser) return;
+var cerca = notifDaAprire;
+var n = myNotifications.filter(function(x){ return x && x.id === cerca; })[0];
+if(state.screen !== "notifiche"){ state.screen = "notifiche"; save(); render(); }
+if(!n) return;
+notifDaAprire = "";
+// La schermata nuova puo' arrivare con una transizione: la riga compare un
+// attimo dopo. Si aspetta lei, non un tempo fisso (al massimo un secondo).
+var tentativi = 0;
+(function cercaRiga(){
+var righe = document.querySelectorAll(".notif-riga[data-notif]");
+for(var i = 0; i < righe.length; i++){
+if(righe[i].getAttribute("data-notif") === cerca){
+if(righe[i].classList.contains("apribile")) righe[i].click();
+return;
+}
+}
+if(++tentativi < 20) setTimeout(cercaRiga, 50);
+})();
+}
+if(navigator.serviceWorker && navigator.serviceWorker.addEventListener){
+navigator.serviceWorker.addEventListener("message", function(ev){
+var m = ev && ev.data;
+if(m && m.tipo === "apri-notifica" && m.n) apriNotificaDaPush(m.n);
+});
 }
 
 function showLocalNotification(d){
@@ -24876,8 +25036,10 @@ var firma = firmaNotifiche(arr);
 if(firma !== notifFirma || nuove.length){
 notifFirma = firma;
 notifUnreadCount = unread;
-render();
+renderSeNonInPista();
 }
+// Una push toccata prima che l'elenco arrivasse aspettava questo momento.
+if(notifDaAprire){ apriNotificaDaPush(); }
 }, function(err){ console.error("notifiche:", err); });
 }
 
@@ -26470,6 +26632,7 @@ quando = dt.toLocaleDateString(locale) + " " + dt.toLocaleTimeString(locale, {ho
 var nonLetta = (n.read !== true);
 var dove = destinazioneNotifica(n);
 var row = el('<div class="notif-riga'+(nonLetta?" nuova":"")+(dove?" apribile":"")+'"></div>');
+row.setAttribute("data-notif", String(n.id || ""));
 if(dove){ row.setAttribute("role","button"); row.setAttribute("tabindex","0"); }
 // Ogni notifica, letta o no, si puo' buttare via
 var delOne = el('<button class="notif-via" title="'+t("notif_delete_one")+'" aria-label="'+t("notif_delete_one")+'">&times;</button>');
@@ -26899,7 +27062,7 @@ return;
 d.id = doc.id; list.push(d);
 });
 incomingSessions = list;
-render();
+renderSeNonInPista();
 }, function(){ /* indice Firestore mancante o permessi: ignorato in silenzio */ });
 }
 
@@ -26968,6 +27131,13 @@ return out;
 }
 
 function beginRound(modeKey){
+/* UN GIRO NUOVO NON CANCELLA QUELLO APERTO. (19/09/2026, audit P1.)
+   Prima i tasti «Allenamento» e «Gara» della scheda Tira partivano anche con
+   un giro aperto, e questa funzione lo sovrascriveva — sul telefono e sulla
+   copia cloud — senza chiedere niente: quindici piazzole sparite con un tocco
+   al posto di «Riprendi». Adesso il giro aperto si chiude come interrotto: va
+   nello storico, si ritrova nel diario, non conta nel riepilogo permanente. */
+if(state.roundActive === true){ chiudiGiro(true); }
 homeOverride = false; // senza questo un percorso nuovo veniva dirottato al menu
 stopOwnSessionListener(); // la pastiglia non deve raccontare il giro di ieri
 var mode = GAME_MODES[modeKey];
@@ -26981,6 +27151,8 @@ archers.sort(function(a,b){ return a.name.localeCompare(b.name, state.lang || "i
 var scores = {};
 archers.forEach(function(a){ scores[a.id] = []; });
 state.roundActive = true;
+// L'identita' del giro: viaggia con la copia cloud e finisce nello storico.
+state.roundId = nuovoRoundId();
 // Il marchio si mette QUI, all'inizio: cosi' viaggia col giro aperto anche
 // sul cloud, e un giro ripreso su un altro telefono sa con che tabella e'
 // cominciato senza doverlo dedurre dai punteggi.
@@ -27453,6 +27625,22 @@ riga.forEach(function(v){
 // vecchia segnerebbe il punteggio della freccia precedente.
 var b = el('<button class="btn quick-btn '+v.cls+'" data-pts="'+v.pts+'" data-zona="'+(v.key||"")+'"><span class="quick-lbl">'+v.label+'</span><span class="quick-pts">'+v.pts+'</span></button>');
 b.addEventListener("click", function(){
+/* UN DOPPIO TOCCO E' UN TOCCO. (19/09/2026, audit P1.) Il guanto, la mano
+   fredda, il rimbalzo del dito: due click in meno di 300 ms sono un gesto solo.
+   Prima il secondo passava, e in gruppo con una freccia per piazzola segnava
+   anche L'ARCIERE DOPO. Fra due frecce vere passano secondi, non decimi:
+   `misuraTocco` scartava gia' sotto 0,15 s come rumore, ma solo dalla
+   statistica, non dal punteggio.
+   Conta lo STESSO tasto: il rimbalzo e' del dito su un punto. Due tasti
+   diversi in fretta sono due decisioni (chi segna per il gruppo li preme
+   cosi'), e non si toccano. */
+var adesso = Date.now();
+// La zona, non i punti: dopo la prima freccia la cifra sul tasto cambia
+// (la seconda vale meno), ma il tasto sotto il dito e' lo stesso.
+var chiaveTasto = b.getAttribute("data-zona") || b.getAttribute("data-pts");
+if(chiaveTasto === ultimoTastoAccettato && adesso - ultimoPuntoAccettato < 300) return;
+ultimoPuntoAccettato = adesso;
+ultimoTastoAccettato = chiaveTasto;
 if(navigator.vibrate){ navigator.vibrate(15); }
 var zona = b.getAttribute("data-zona");
 if(zona === "perfect" || zona === "superspot"){ leafBurst(b); }
@@ -27604,7 +27792,9 @@ p.appendChild(piazzFlow);
 var sotto = el('<div class="pannello-sotto"></div>');
 var stop = el('<button class="btn btn-ghost-danger btn-block">'+t("interrupt_btn")+'</button>');
 armDoubleConfirm(stop, t("clear_confirm"), function(){
-state.panel = null; state.screen = "summary"; save(); render();
+// Chiude il giro (storico + via la copia cloud + sessione chiusa): prima
+// lasciava roundActive acceso, e «Riprendi» riapriva un giro gia' salvato.
+chiudiGiro(true); save(); render();
 });
 sotto.appendChild(stop);
 if(state.arrowsPerTargetOverride && (GAME_MODES[state.mode]||{}).freeFormat){
@@ -27729,6 +27919,88 @@ ruotate.forEach(function(p){ p.forEach(function(a){ out.push(a); }); });
 return out;
 }
 
+/* IL GIRO ENTRA NELLO STORICO QUANDO SI CHIUDE, NON QUANDO SI DISEGNA.
+   (19/09/2026, audit P1 «Interrompi» e P2-2.) Prima questa scrittura stava
+   dentro `summaryScreen`: il giro entrava nel diario solo se il riepilogo si
+   disegnava, e `advanceToNextTarget` aveva gia' cancellato la copia sul cloud.
+   Un disegno mancato = un giro orfano. E «Interrompi» portava al riepilogo
+   lasciando il giro ATTIVO: si poteva riprenderlo, finirlo, e le piazzole
+   dopo l'interruzione non entravano mai nello storico (gia' salvato), oppure
+   nasceva un doppione su un altro telefono.
+   Adesso `chiudiGiro` fa le tre cose in ordine: giro non attivo, riga nello
+   storico, poi — solo poi — via la copia di sicurezza. */
+function scriviGiroNelloStorico(interrotto){
+if(state.savedToHistory) return;
+var mLabel = modeLabel(state.mode);
+var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
+var hist = loadHistory();
+var nowISO = new Date().toISOString();
+var roundEntry = {
+date: nowISO,
+/* CHE COSA E' STATA QUESTA SESSIONE. Oggi l'app sa fare solo 3D, quindi qui
+   c'e' sempre "3d": si scrive lo stesso, perche' un campo che compare solo
+   quando serve costringe chi legge a indovinare cosa vuol dire la sua
+   assenza in un record nuovo. Chi non ce l'ha e' vecchio, e basta. */
+sessionType: SESSIONE_3D,
+format: state.format,
+modeKey: state.mode,
+modeLabel: mLabel,
+// QUALE TABELLA HA CALCOLATO QUESTI NUMERI. Senza questa riga il giro non
+// si distingue da uno del barème vecchio, e i due si sommerebbero.
+scoringVersion: schemaPunteggio(state.mode),
+// DOVE. Puo' essere null, ed e' giusto: chi non l'ha scritto non deve
+// ritrovarsi un campo inventato nel proprio diario.
+campo: state.campo || null,
+// Quanto e' durato, in minuti. `null` per i giri cominciati prima che l'app
+// segnasse l'ora: meglio niente che uno zero, che sembrerebbe un dato.
+durata: state.startedAt ? Math.max(1, Math.round((Date.now() - state.startedAt) / 60000)) : null,
+assetto: state.assetto || null,
+assettoNome: state.assettoNome || null,
+// L'IDENTITA' DEL GIRO (19/09/2026): lo stesso giro ripreso su un altro
+// telefono porta lo stesso roundId, e chi lo ritrova gia' chiuso non lo
+// chiude una seconda volta. Assente nei giri di prima.
+roundId: state.roundId || null,
+// Interrotto a meta': resta nel diario, ma non conta nel riepilogo
+// permanente come un giro intero (audit P2-3).
+interrotto: interrotto === true,
+results: ranked.map(function(a){
+var entries = state.scores[a.id] || [];
+return { name: a.name, total: totalFor(a.id), isSelf: (a.isSelf === true), ownerUid: a.ownerUid || null, perTarget: entries.map(function(e){ return e.total; }), arrows: entries.map(function(e){ return e.arrows; }) };
+})
+};
+hist.unshift(roundEntry);
+roundEntry.results.forEach(function(r){
+if(!interrotto) recordLifetime(r.name, modoDelGiro(state.mode, roundEntry.scoringVersion), mLabel, r.total, nowISO, state.format, r.ownerUid, r.isSelf);
+});
+if(hist.length > HISTORY_MAX) hist.length = HISTORY_MAX;
+saveHistoryList(hist);
+backupRoundToCloud(roundEntry);
+state.savedToHistory = true;
+// La riga appena scritta si ritrova per data: alla consegna serve QUESTA, non
+// la prima della lista.
+state.roundEntryDate = nowISO;
+save();
+}
+
+function chiudiGiro(interrotto){
+state.roundActive = false;
+state.screen = "summary";
+state.panel = null;
+state.awaitingStep = null;
+// Finito vuol dire ARRIVATO IN FONDO. L'interruzione porta alla stessa
+// schermata ma non e' la stessa cosa, e contarla insieme cancellerebbe
+// proprio il numero che si voleva sapere.
+if(!interrotto) misura("giriFiniti");
+closeSharedSession();
+scriviGiroNelloStorico(interrotto === true);
+// Il giro e' nello storico: la copia di sicurezza ha finito il suo mestiere.
+cancellaGiroSulCloud();
+}
+
+function nuovoRoundId(){
+return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+}
+
 function advanceToNextTarget(){
 var mode = GAME_MODES[state.mode] || GAME_MODES.training;
 state.awaitingStep = null;
@@ -27741,21 +28013,12 @@ state.target += 1;
 ensureRotationBase();
 state.archers = orderForTarget(state.target);
 } else {
-state.roundActive = false;
-state.screen = "summary";
-// Finito vuol dire ARRIVATO IN FONDO. L'interruzione dalla classifica porta
-// alla stessa schermata ma non e' la stessa cosa, e contarla insieme
-// cancellerebbe proprio il numero che si voleva sapere.
-misura("giriFiniti");
-closeSharedSession();
-// Il giro e' arrivato in fondo: la copia di sicurezza ha finito il suo
-// mestiere, e la consegna scrivera' nello storico. Cancellarla qui evita
-// che il cartello «giro non finito» si presenti dopo un giro finito.
-cancellaGiroSulCloud();
+chiudiGiro(false);
 }
 save(); if(!dipingiPista()) render();
 }
 
+var ultimoPuntoAccettato = 0, ultimoTastoAccettato = "";
 function registerShot(score){
 var mode = effectiveMode();
 var archer = state.archers[state.archerIndex];
@@ -28333,46 +28596,7 @@ card.appendChild(el('<h2 class="section-title">'+t("classifica_title",{mode:esca
 var ranked = state.archers.slice().sort(function(a,b){ return totalFor(b.id) - totalFor(a.id); });
 
 if(!state.savedToHistory){
-var hist = loadHistory();
-var nowISO = new Date().toISOString();
-var roundEntry = {
-date: nowISO,
-/* CHE COSA E' STATA QUESTA SESSIONE. Oggi l'app sa fare solo 3D, quindi qui
-   c'e' sempre "3d": si scrive lo stesso, perche' un campo che compare solo
-   quando serve costringe chi legge a indovinare cosa vuol dire la sua
-   assenza in un record nuovo. Chi non ce l'ha e' vecchio, e basta. */
-sessionType: SESSIONE_3D,
-format: state.format,
-modeKey: state.mode,
-modeLabel: mLabel,
-// QUALE TABELLA HA CALCOLATO QUESTI NUMERI. Senza questa riga il giro non
-// si distingue da uno del barème vecchio, e i due si sommerebbero.
-scoringVersion: schemaPunteggio(state.mode),
-// DOVE. Puo' essere null, ed e' giusto: chi non l'ha scritto non deve
-// ritrovarsi un campo inventato nel proprio diario.
-campo: state.campo || null,
-// Quanto e' durato, in minuti. `null` per i giri cominciati prima che l'app
-// segnasse l'ora: meglio niente che uno zero, che sembrerebbe un dato.
-durata: state.startedAt ? Math.max(1, Math.round((Date.now() - state.startedAt) / 60000)) : null,
-assetto: state.assetto || null,
-assettoNome: state.assettoNome || null,
-results: ranked.map(function(a){
-var entries = state.scores[a.id] || [];
-return { name: a.name, total: totalFor(a.id), isSelf: (a.isSelf === true), ownerUid: a.ownerUid || null, perTarget: entries.map(function(e){ return e.total; }), arrows: entries.map(function(e){ return e.arrows; }) };
-})
-};
-hist.unshift(roundEntry);
-roundEntry.results.forEach(function(r){
-recordLifetime(r.name, modoDelGiro(state.mode, roundEntry.scoringVersion), mLabel, r.total, nowISO, state.format, r.ownerUid, r.isSelf);
-});
-if(hist.length > HISTORY_MAX) hist.length = HISTORY_MAX;
-saveHistoryList(hist);
-backupRoundToCloud(roundEntry);
-state.savedToHistory = true;
-// La riga appena scritta si ritrova per data: alla consegna serve QUESTA, non
-// la prima della lista.
-state.roundEntryDate = nowISO;
-save();
+scriviGiroNelloStorico(false);
 setTimeout(celebrationBurst, 150);
 }
 
@@ -28731,10 +28955,14 @@ state.lang = lang;
 try{ save(); }catch(e){}
 }
 var da = (q.get("da") === "email");
+// Il tocco su una push ad app chiusa arriva come `?n=<id della notifica>`:
+// si ricorda qui e si apre quando l'accesso e l'elenco sono pronti. (N4)
+var nPush = q.get("n");
+if(nPush && /^[A-Za-z0-9_-]{1,128}$/.test(nPush)) notifDaAprire = nPush;
 // L'indirizzo si pulisce sempre, anche quando non c'era niente da prendere:
 // un `?da=email` che resta attaccato tornerebbe a ogni ricarica e a ogni
 // preferito, e manderebbe al login chi sta gia' usando l'app.
-if(lang || da){
+if(lang || da || nPush){
 try{ window.history.replaceState({}, document.title, window.location.pathname); }catch(e){}
 }
 return da;

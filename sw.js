@@ -104,7 +104,9 @@ try {
       badge: "icon-192.png",
       tag: tag,
       renotify: false,
-      data: { link: d.link || "/" }
+      // Dal 19/09/2026 il server manda `link` = /app.html?n=<id>: il tocco apre
+      // quella notifica nell'app. Senza link (server vecchio) si va all'app.
+      data: { link: d.link || "/app.html", n: d.tag || "" }
     };
 
     function disegna(){ return self.registration.showNotification(title, opzioni); }
@@ -131,20 +133,33 @@ self.addEventListener("notificationclick", function(event){
   // Se l'avviso l'ha disegnato l'SDK, il suo gestore chiude l'evento prima di
   // arrivare qui. Questo vale per quelli disegnati sopra.
   var dati = event.notification.data || {};
-  var dove = dati.link || "/";
+  var dove = dati.link || "/app.html";
+  var n = dati.n || "";
   event.notification.close();
+  /* L'APP APERTA NON SI RICARICA PER UN AVVISO. (19/09/2026, audit N4.)
+     Prima, con una finestra gia' aperta, qui si faceva `navigate(dove)`: una
+     ricarica, anche a meta' giro. Adesso si preferisce la finestra dell'APP,
+     la si porta davanti e le si DICE quale notifica aprire (postMessage): la
+     pagina ci va da sola, senza ricaricarsi. Una finestra che non e' l'app
+     (vetrina, mercatino) invece si porta sull'app. Nessuna finestra: se ne
+     apre una sul link. */
   event.waitUntil(
     clients.matchAll({ type:"window", includeUncontrolled:true }).then(function(list){
+      var app = null, altra = null;
       for(var i=0;i<list.length;i++){
         var c = list[i];
-        if("focus" in c){
-          // Una finestra c'e' gia': si porta davanti. Aprirne una seconda sullo
-          // stesso sito e' il modo piu' rapido per far perdere il giro in corso.
-          if(dove !== "/" && c.url.indexOf(dove) === -1 && "navigate" in c){
-            return c.focus().then(function(cl){ return cl.navigate(dove).catch(function(){ return cl; }); });
-          }
-          return c.focus();
-        }
+        if(!("focus" in c)) continue;
+        if(c.url.indexOf("/app.html") >= 0){ app = c; break; }
+        if(!altra) altra = c;
+      }
+      if(app){
+        return app.focus().then(function(cl){
+          (cl || app).postMessage({ tipo:"apri-notifica", n: n });
+          return cl;
+        });
+      }
+      if(altra && "navigate" in altra){
+        return altra.focus().then(function(cl){ return (cl || altra).navigate(dove).catch(function(){ return cl; }); });
       }
       if(clients.openWindow) return clients.openWindow(dove);
     })
@@ -169,7 +184,7 @@ var CACHE_PARENT = "arctrail3d-v166";
 // La controlla `tests/controlla-cache.js`: se un file della shell cambia e il
 // nome no, il banco dice no. Si riscrive con `--scrivi`, DOPO aver alzato
 // CACHE_NAME (il banco rifiuta di farlo prima). (19/09/2026, audit S4.)
-var SHELL_IMPRONTA = "arctrail3d-v167:1b247c1257593b47";
+var SHELL_IMPRONTA = "arctrail3d-v167:6e19344b8023e405";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
