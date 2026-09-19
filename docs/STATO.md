@@ -11,7 +11,7 @@ intero**. Gli archivi non si leggono mai tutti: si cercano.
 | **NOTE-DESIGN.md** | perché l'app è così — archivio | si cerca |
 | **NOTE-MERCATINO.md** | perché il mercatino è così — archivio | si cerca |
 
-Aggiornato il **17/09/2026**.
+Aggiornato il **20/09/2026** (risanamento notturno, §R).
 
 ---
 
@@ -22,25 +22,23 @@ più vecchio chiama `index.html` l'app.
 
 | file | cos'è | timbro | copia buona |
 |---|---|---|---|
-| `index.html` | la vetrina, porta di casa | `2026-08-29-sfsf` | **GitHub** |
-| `app.html` | l'app | `2026-09-17-safe-area` | **GitHub** |
-| `compagnie-data.js` | le societa', 4912 in sette paesi | — | **GitHub** |
+| `index.html` | la vetrina, porta di casa | online `2026-09-18-inglese` · ramo `2026-09-19-risanamento` | **GitHub** |
+| `app.html` | l'app | online `2026-09-18-campi-fiarc` · ramo `2026-09-20-notturno` | **GitHub** |
+| `compagnie-data.js` | le societa', 4950 in otto paesi | — | **GitHub** |
 | `marketplace.html` | il mercatino | `2026-08-25-radice` | **GitHub** |
-| `sw.js` | | `arctrail3d-v159` | **GitHub** |
+| `sw.js` | | online `arctrail3d-v166` · ramo `v167` | **GitHub** |
 | `favicon.ico` | l'icona per chi guarda da fuori | — | GitHub, caricata a mano |
 | cinque `vetrina-*.webp` | le foto della vetrina | — | GitHub, caricate a mano |
-| `functions/index.js` | le 7 Cloud Functions *(dal 17/09 non più in radice)* | — | GitHub *(dal Cloud Shell: `firebase deploy --only functions:pushNotifica`)* |
-| `firestore.rules` | | — | GitHub **e** console Firebase |
+| `functions/index.js` | le 7 Cloud Functions *(dal 17/09 in `functions/`)* | ramo `2026-09-20-dispositivi` | GitHub *(deploy: `bash ~/pubblica.sh`)* |
+| `firestore.rules` | | console `2026-08-28-porte-verified` · ramo `2026-09-20-dispositivi` | GitHub **e** console Firebase |
 | diari, banchi, script | `docs/`, `tests/`, `tools/` | — | il progetto, **e dal 15/09 anche GitHub**: `docs/STRUTTURA-REPOSITORY.md` |
 | `DOPPIE-TESSERE-ITALIA.md` | le 40 società italiane con due tessere | — | il progetto; su GitHub in `docs/` |
 
 `vetrina.html` e `vetrina-anteprima.html` **non sono più pagine del sito** (25/08); l'anteprima è conservata in `archive/` (15/09).
 
-**30/08/2026 — Alessandro conferma che le Cloud Functions e le regole Firestore
-attive sono aggiornate rispetto al lavoro corrente.** Quindi **non si richiede
-conferma di deploy o pubblicazione** nelle sessioni che non toccano `index.js` o
-`firestore.rules`. Se uno dei due cambia, torna a valere la regola 9 e il nuovo
-stato va verificato.
+**20/09/2026 — `index.js` e `firestore.rules` sono cambiati** (ramo
+`risanamento-post-audit`, non ancora su `main`): torna a valere la regola 9. Cosa
+va pubblicato, in che ordine, e cosa si guarda col telefono: §R.
 
 **`tests/controlla-base.js` confronta i TIMBRI, non il contenuto:** file diversi con
 lo stesso timbro e il banco dice IN PARI. **Prima di ogni consegna di un FILE DEL
@@ -63,20 +61,17 @@ i tre livelli della regola 3 — **MICRO, STANDARD, CRITICO**. Nel MICRO il giro
 completo non si fa; prima di consegnare è obbligatorio **dallo STANDARD in su**.
 *(Allineato alla regola 3 il 29/08: qui c'era scritto «a ogni livello».)*
 
-**«Tutti passati» non è mai la fotografia di ieri:** lo dà l'ultima esecuzione, e C24
-rende il parallelo inaffidabile come fotografia singola. Il 17/09/2026, in fila (`PAR=1`) su
-`2026-09-17-safe-area`: **31 banchi locali e 1 esterno**, l'unico rosso `controlla-token` (C30). Tre sono nati il 17/09: `banco-functions-layout` tiene ferma la struttura del backend. `banco-push` prova il percorso server → FCM → service worker → clic, che nessuno guardava: ad app chiusa l'avviso arrivava muto («ArcTrail 3D», corpo vuoto) perché in `data` c'era solo il tag, e adesso ci vanno anche titolo, corpo e l'instradamento già scritto sull'avviso, mentre la deduplica guarda l'etichetta e non le parole. `banco-safe-area` misura la tacca del telefono, che ora si conta **una volta sola**: `header.top` la chiedeva nel margine **e** nel riempimento, quindi in PWA la prima riga stava due tacche sotto il bordo e saltava di una tacca intera appena la barra si attaccava; adesso la tiene solo il `padding-top`, e il banco vieta anche staticamente il doppio uso. Prima erano 21/8:
-cinque rossi erano banchi fragili (`\n` contro i fine riga CRLF di questa copia), due attese erano superate dal
-brief del 30/08. Nessun bug dell'app. In `banco-ritorno` due prove restano **in attesa**: la scorciatoia Impostazioni → Attrezzatura del brief del 30/08 (punto 6) non è mai stata pubblicata — `attrBtn` esiste solo nell'`app.html` dello zip in `archive/` — quindi non falliscono, si leggono a ogni giro e diventeranno verdi da sole il giorno che la porta si farà. È una decisione futura, non una regressione.
+**«Tutti passati» non è mai la fotografia di ieri:** lo dà l'ultima esecuzione.
+L'ultimo conto sta in `docs/RISANAMENTO-2026-09-19.md`. Dal 19/09 **`banco-regole`
+gira con gli altri** (`tests/lancia-regole.sh`, emulatore, Java ≥ 17: senza, dice
+no) e `tests/firebase-finto.js` fa girare l'app in PRODUZIONE (non DEV_MODE) su un
+Firebase in memoria. Il runner conta anche le **prove**, non solo i banchi, ed
+elenca a parte quelli che non ne contano nessuna. In `banco-ritorno` due prove
+restano **in attesa** (`attrBtn`, brief del 30/08 mai pubblicato).
 
-In una chat nuova può mancare `jsdom`:
-`npm install jsdom`. Se poi playwright dice che il browser non esiste, la copia
-locale è senza browser: si allinea la versione di `playwright` a quella del
-browser presente in `/opt/pw-browsers` invece di scaricarne uno nuovo.
-**`banco-porta` è una prova d'INTEGRAZIONE, non della suite locale** *(16/09)*: vuole
-`gstatic.com` e Firebase vivi, e dove non arrivano l'app su stato vergine disegna — giustamente —
-«Connessione non riuscita». Il runner la nomina a ogni giro e la salta; si lancia con
-`ESTERNI=1 sh tests/controlla-tutto.sh` da una macchina con la rete vera. *(Verificato il 30/08 e il 16/09.)*
+Dipendenze: tutte in `package.json` (anche l'emulatore, dal 19/09): `npm install`.
+**`banco-porta` è una prova d'INTEGRAZIONE** (vuole `gstatic.com` e Firebase vivi):
+il runner la nomina e la salta; `ESTERNI=1 sh tests/controlla-tutto.sh` con la rete vera.
 
 **Il guardiano dello stile non è a zero, ed è normale.** Il tetto in
 `tests/tetto-token.json` non sale mai. I numeri li stampa lui: **qui non si ricopiano.**
@@ -128,64 +123,46 @@ propongono come lavoro finché non è Alessandro a riaprirle.
 - **C1. La classifica per divisione e la gara staccata dal formato** sono **un
   lavoro solo**: aspettano *il giro che sa da quale gara viene*. Gli arcieri sono
   `{id, name}`. **Il lavoro è quel collegamento, non la tabella.**
-- **C2. Il token FCM si rinnova solo aprendo l'app**, e a app chiusa le notifiche
-  smettono. **La cura ovvia non esiste:** nel service worker non c'è `getToken`
-  né `currentUser`. O si *misura* quanto spesso scade, o si *esce da FCM*.
-- **C3. La chat dell'allenamento attacca un ascoltatore a ogni ridisegno e non lo stacca mai** (`loadOtMsgs`). **C4.** Si ferma a 50 messaggi e non ha un conto dei non letti: l'unico segnale è entrare a guardare.
-- **C6. Chi entra con Google passa la porta al primo giro:** `approved:false` ma `authState = "ready"`. **C7.** Gli avvisi scritti dal server sono in italiano, tutte e sette le funzioni.
-- **C8. Paese e federazione vivono solo in `localStorage`**: ogni browser nuovo
-  li richiede. Vanno fatti scendere dal profilo dopo l'accesso.
+- **C2. Il token FCM si rinnova solo aprendo l'app.** Dal 19/09 (ramo) un token
+  PER DISPOSITIVO, push solo `data`, `onMessage`, tocco che apre la notifica.
+  Resta `pushsubscriptionchange` non gestito: si *misura* dai log di `pushNotifica`.
+- **C3/C4. La chat dell'allenamento attacca un ascoltatore a ogni ridisegno e non lo stacca mai** (`loadOtMsgs`); si ferma a 50 messaggi e non conta i non letti.
+- **C7.** Gli avvisi scritti dal server sono in italiano, tutte e sette le funzioni.
+- **C8. Paese e federazione vivono solo in `localStorage`**: ogni browser nuovo li richiede. Vanno fatti scendere dal profilo dopo l'accesso.
 - **C9. Il campo del giro è testo libero.** «Cerrione» e «Fornasona, Cerrione»
   sono lo stesso posto. *Un giro nato da un allenamento aperto conosce già il
   campo e lo chiede lo stesso: è il primo posto dove togliere la domanda.*
 - **C10. Container query per le schede.** Metà fatto: sulla pagina, non sulle
   schede dentro le schermate.
-- **C11. Un solo alfabeto di icone.** Restano emoji sparse: si disegnano diverse
-  su ogni telefono, quindi il marchio non controlla come appaiono.
-  `navIcon()` e `ICON_PATHS` esistono già.
-- **C12. Il marchio in SVG.** I file hanno il **verde vecchio dentro i pixel**:
-  non si ritingono con un token. Sagoma di animale, non un
-  altro bersaglio ad anelli.
-- **C13. Il bianco durante la lettura del file.** `app.html` è oltre un
-  megabyte: fra la prima riga e `DOMContentLoaded` `#app` è vuoto — le cure
-  fatte coprono l'attesa della *rete*, non della *lettura*.
+- **C11. Un solo alfabeto di icone.** Restano emoji sparse, disegnate diverse su
+  ogni telefono: `navIcon()` e `ICON_PATHS` esistono già.
+- **C12. Il marchio in SVG** ha il **verde vecchio dentro i pixel**: non si ritinge
+  con un token. Sagoma di animale, non un altro bersaglio ad anelli.
 - **C15. L'elenco «Scopri» non ha una ricerca**, e `compagnie-data.js` ha qualche provincia sbagliata. Non è codice: è l'elenco.
-- **C16. Nessun banco misura un'altezza sullo schermo.** `tests/banco-bordi.js` misura
-  i margini; che le tre porte di Tira siano alte uguale l'ha scoperto Alessandro
-  guardando l'app.
+- **C16. Che le tre porte di Tira siano alte uguale non lo misura nessuno.** La
+  tastiera sì, dal 19/09: `banco-pista-schermi` in undici schermi.
 - **C17. Due code del ridisegno chat.** *(a)* Segnala e Blocca in cima: spostarli
   tocca un obbligo per gli store. *(b)* La riga di scrittura tocca
   `.input-field`, che vive in tutta l'app.
-- **C21. Nessun controllo dice «questo nome di classe è già di qualcun
-  altro».** Il 28/08 `.prof-testa` è stata riusata per la testa del profilo ed
-  esisteva già nella schermata di modifica: la carta d'identità si è disegnata
-  tutta su una riga. `tests/controlla-token.js` sa dire il contrario — classe
-  nominata dal JS e mai definita — non questo. Visto fotografando.
-- **C23. Cinque versioni senza una voce propria** (verificate il 30/08, l'ultima il 15/09):
-  `2026-08-28-sito` e `2026-08-28-nfas-fonte` citate solo come genitori,
-  `2026-08-29-freeze` solo come genitore di `2026-08-29-verifica`, `2026-08-29-locale`
-  che negli archivi non compare: **nessuna è ricostruibile dai file**. E
-  `2026-08-30-profilo-assetti`, l'app online: il codice c'è, il racconto no. Le
-  cinque pagine SEO dei regolamenti stanno nel `sitemap.xml` e in nessun archivio.
-- **C24. In parallelo qualche banco dice no, e ogni giro e' un banco diverso.**
-  Primo giro: `banco-finale`. Secondo: `banco-giro-sicuro` e `banco-regolamenti`.
-  Da soli passavano tutti e tre il 30/08 (94 su 94); dal 15/09 `banco-giro-sicuro`
-  è rosso anche da solo (§2). *Un insieme che cambia a ogni giro non e' un difetto del prodotto: e' il parallelo.* Un giro che dice
-  no a caso insegna a ignorarlo, ed è il modo in cui un banco vero passa
-  inosservato. **La procedura è la regola 23 di `REGOLE-LAVORO.md`.**
+- **C21. Nessun controllo dice «questo nome di classe è già di qualcun altro».**
+  Il 28/08 `.prof-testa` è stata riusata e la carta d'identità si è disegnata
+  tutta su una riga. `controlla-token.js` sa dire il contrario, non questo.
+- **C23. Cinque versioni senza una voce propria** (verificate il 30/08, l'ultima
+  il 15/09): `2026-08-28-sito`, `2026-08-28-nfas-fonte`, `2026-08-29-freeze`,
+  `2026-08-29-locale` e `2026-08-30-profilo-assetti`, cioè l'app online: il
+  codice c'è, il racconto no. **Nessuna è ricostruibile dai file.** Le cinque
+  pagine SEO dei regolamenti stanno nel `sitemap.xml` e in nessun archivio.
+- **C24. In parallelo qualche banco dice no, e ogni giro è un banco diverso.**
+  Causa probabile, dall'audit: 164 `waitForTimeout` e nessuna attesa su una
+  condizione. **La procedura è la regola 23 di `REGOLE-LAVORO.md`.**
 - **C25. Il calendario mostra dieci gare inventate, e lo dichiara in cima.**
-  `calEventi()` è l'unica giuntura, `calUrlSicuro()` vaglia già gli indirizzi.
-  Il cartello si toglie **nella stessa mossa** in cui entra il primo feed.
-  *Con diciassette federazioni le pastiglie diventano una parete: si ripensa
-  coi dati veri davanti.* **«La mia regione» resterà un filtro per regione
-  finché non ci saranno coordinate: il nome vero di «vicino» costa i dati, non
-  il codice.**
-- **C30. Il guardiano dello stile è rosso sull'online, non solo qui.**
-  Verificato il 30/08 sul file `2026-08-29-verifica` intatto: 35 `!important`
-  (tetto 3), 4 `clamp()` su un carattere (tetto 0), tutti dal blocco
-  «Controlla la tua email» del 29/08 (righe ~5196–5374). *Il tetto non sale
-  mai: è il blocco che va rifatto coi token.* Finché resta, nessun giro
-  completo può dire «tutti passati».
+  `calEventi()` è l'unica giuntura, `calUrlSicuro()` vaglia già gli indirizzi: il
+  cartello si toglie **nella stessa mossa** in cui entra il primo feed. Con
+  diciassette federazioni le pastiglie diventano una parete: si ripensa coi dati
+  veri davanti. **«La mia regione» resta un filtro per regione finché non ci
+  saranno coordinate: il nome vero di «vicino» costa i dati, non il codice.**
+- **C30. Il debito dello stile.** Il guardiano è verde (tetto 35 `!important`):
+  il debito sono i tre blocchi «mockup-fedele-v1/v2» e «home-compatta-v2».
 
 ### D — Mercatino
 
@@ -221,6 +198,30 @@ e chi arriva per la prima volta non ha una seconda occasione.
   distinti: servono nove URL vere.
 - **F3. Le 702 stringhe della vetrina non le ha lette nessuno che le parli.**
   Stesso debito di D1, sulla pagina che si vede una volta sola nella vita.
+
+### R — Il risanamento (19–20/09): pubblicare, poi guardare
+
+Ramo `risanamento-post-audit`, **non su `main`, niente pubblicato**. Racconto,
+conti dei banchi e cosa resta: `docs/RISANAMENTO-2026-09-19.md`.
+
+- **R1. Pubblicare, in quest'ordine** (le regole stringono: regola 18, il sito
+  prima). *(1)* `main` ← ramo: `app.html`, `sw.js`, `index.html`,
+  `manifest.json`, `compagnie-data.js`, `_config.yml`, `.github/`, banchi.
+  *(2)* Guardare che il sito vero sia la versione nuova
+  (`node tests/controlla-base.js`). *(3)* `bash ~/pubblica.sh` (Functions
+  `2026-09-20-dispositivi`). *(4)* Incollare in console `firestore.rules`
+  `2026-09-20-dispositivi` e premere **Pubblica**.
+- **R2. Col telefono in mano:** push (app chiusa, in background, aperta, due
+  dispositivi) e tocco; orizzontale; Samsung con lo scuro forzato; avvio senza
+  rete a giro aperto; tastiera aperta in chat e in fondo al profilo;
+  `docs/` non piu' raggiungibile su arctrail3d.com.
+- **R3. Il primo aggiornamento vero va guardato**: chi ha l'app installata passa
+  da `v166` a `v167`, magari con un giro aperto. Il banco lo prova
+  (`banco-salto-versione.js`, anche dalla `v156` del 29/08); la prima volta no.
+- **R4. `tests/chiavi-compagnie.json` è un'istantanea di 4950 chiavi**: se
+  l'elenco società viene rigenerato dice quali sono sparite **prima** che
+  spariscano gli iscritti. Si aggiorna a mano, dopo aver guardato:
+  `node tests/banco-chiavi-compagnie.js --scrivi`.
 
 ### E — Fuori dal codice
 
