@@ -141,6 +141,7 @@ banco "banco-tiri.js (rimbalzi, tocchi voluti, annulla: 1, 2 e 4 arcieri)" "node
 banco "banco-cronometro.js (lo schermo spento non ferma il conto)" "node tests/banco-cronometro.js"
 banco "banco-esterni.js (Google Fonts o gstatic appesi: l'app parte lo stesso)" "node tests/banco-esterni.js"
 banco "banco-accessibile.js (finestre dichiarate, fuoco che non scappa, bersagli da 44)" "node tests/banco-accessibile.js"
+banco "banco-tastiera.js (con la tastiera aperta si arriva a scrivere e a mandare)" "node tests/banco-tastiera.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"

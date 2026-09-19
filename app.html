@@ -4,7 +4,15 @@
 <meta charset="UTF-8">
 <!-- Niente maximum-scale (19/09/2026, audit M3): chi ci vede poco deve poter ingrandire con due dita.
      Il doppio tocco sui tasti non zooma: .tastiera .quick-btn ha touch-action:manipulation. -->
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- `interactive-widget=resizes-content`: quando si apre la tastiera la
+     pagina si ACCORCIA invece di restare alta con la tastiera appoggiata
+     sopra. Cosi' il pulsante che manda resta dentro la parte che si vede,
+     e la barra in basso si appoggia sopra la tastiera invece di sparirci
+     dietro. Chrome/Android da 108 in poi; chi non lo conosce (Safari di
+     iPhone, Firefox) ignora la parola e si comporta come prima — per loro
+     c'e' lo spazio di corsa qui sotto in `spazioPerLaTastiera`.
+     (20/09/2026, provato da tests/banco-tastiera.js.) -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#ECEDE6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -29659,6 +29667,54 @@ if(!DEV_MODE && navigator.serviceWorker && navigator.serviceWorker.getRegistrati
 navigator.serviceWorker.getRegistration().then(function(reg){ if(reg) reg.update(); }).catch(function(){});
 }
 render();
+});
+
+/* LA CORSA CHE MANCA QUANDO SI APRE LA TASTIERA. (20/09/2026.)
+   Su iPhone — e su Android prima di Chrome 108 — la tastiera non accorcia la
+   pagina: ci si appoggia sopra. La pagina resta alta com'era, quindi NON HA
+   NIENTE DA SCORRERE, e l'ultimo campo di un modulo (con il suo pulsante
+   «Salva») rimane sotto la tastiera. Il browser non puo' portarlo su: non c'e'
+   dove andare. Misurato: in fondo al profilo il tasto che salva finiva a 675
+   pixel dall'alto con 400 di tastiera — cioe' dietro di lei.
+
+   La cura e' banale e sta tutta qui: mentre un campo ha il fuoco, in fondo
+   alla pagina c'e' uno spazio vuoto alto quanto una tastiera. Serve solo a
+   dare corsa allo scorrimento. Appena il fuoco esce, sparisce: nessuno vede
+   mai un buco in fondo alla schermata.
+
+   Non si usa `padding-bottom` perche' quello in fondo all'app e' gia' scritto
+   a mano quando c'e' la barra (92px): sovrascriverlo qui farebbe sparire la
+   barra dalla pista. Uno spazio e' un elemento in piu', e non toglie niente
+   a nessuno. */
+function spazioPerLaTastiera(acceso){
+var app = document.getElementById("app");
+if(!app) return;
+var sp = document.getElementById("spazioTastiera");
+if(!acceso){ if(sp && sp.parentNode) sp.parentNode.removeChild(sp); return; }
+if(!sp){
+sp = document.createElement("div");
+sp.id = "spazioTastiera";
+sp.setAttribute("aria-hidden", "true");
+app.appendChild(sp);
+}
+/* Meta' schermo e' la tastiera piu' alta che si vede in giro. Di piu' non
+   serve, e sarebbe corsa a vuoto. */
+sp.style.height = Math.round((window.innerHeight || 800) * 0.5) + "px";
+}
+document.addEventListener("focusin", function(ev){
+var t = ev.target;
+if(!t || !/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+if(t.type === "checkbox" || t.type === "radio" || t.type === "button") return;
+spazioPerLaTastiera(true);
+});
+document.addEventListener("focusout", function(){
+/* Un giro di attesa: passando da un campo all'altro il fuoco esce e rientra,
+   e togliere lo spazio nel mezzo farebbe sobbalzare la pagina sotto le dita. */
+setTimeout(function(){
+var a = document.activeElement;
+if(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;
+spazioPerLaTastiera(false);
+}, 120);
 });
 
 // Ridimensionando la finestra del browser si passa da telefono a computer:
