@@ -1,15 +1,18 @@
 /* banco-regole.js — le regole Firestore, provate invece che sperate.
  *
- * NON GIRA CON GLI ALTRI BANCHI, e non e' una dimenticanza: vuole
- * l'emulatore Firestore, cioe' Java e un download da Google. Sta fuori da
- * `controlla-tutto.sh` perche' un banco che non parte in meta' degli ambienti
- * insegna a ignorare le uscite rosse.
+ * DAL 19/09/2026 GIRA CON GLI ALTRI BANCHI, tramite `tests/lancia-regole.sh`.
+ * Prima stava fuori da `controlla-tutto.sh` perche' vuole l'emulatore
+ * Firestore (Java e un download da Google), e il risultato era che le regole
+ * erano l'unica cosa che nessun giro provava. Se l'emulatore non parte, il
+ * lanciatore dice NO e dice perche'.
  *
- * COME SI LANCIA (una volta sola, la prima):
- *     npm install --no-audit --no-fund @firebase/rules-unit-testing firebase-tools
+ * DIPENDENZE: sono in package.json (devDependencies, versioni fisse):
+ * `@firebase/rules-unit-testing` 5.0.2, `firebase` 12.19.0, `firebase-tools`
+ * 13.35.1 (l'ultima che accetta Java 17). Basta `npm install`.
  *
- * POI, ogni volta:
- *     npx firebase emulators:exec --only firestore "node tests/banco-regole.js"
+ * COME SI LANCIA DA SOLO:
+ *     sh tests/lancia-regole.sh
+ *     REGOLE=altre.rules sh tests/lancia-regole.sh   # sabotaggio
  *
  * Si lancia dalla radice del repository, dove sta `firebase.json`, con dentro almeno:
  *     { "firestore": { "rules": "firestore.rules" },
@@ -25,7 +28,8 @@ const { initializeTestEnvironment, assertFails, assertSucceeds } =
 const fs = require('fs');
 
 const PROGETTO = 'arctrail3d-prova';
-const REGOLE = 'firestore.rules';
+// REGOLE=percorso permette il sabotaggio: stesso banco, regole di un'altra versione.
+const REGOLE = process.env.REGOLE || 'firestore.rules';
 
 /* Chi sono le persone di questa storia.
    `email_verified` e' un pezzo del token, non del documento utente: e' il
@@ -467,6 +471,55 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
      che questo progetto non ha ancora. Dichiarato per non farlo credere
      coperto. */
   console.log('    (nota: il gate email_verified di sendNotification e\' una Cloud Function, non provabile in questo banco)');
+
+  /* P0-1 DELL'AUDIT (19/09/2026): I CAMPI CHE SI VEDONO SUL TELEFONO DI UN ALTRO.
+     Ognuno di questi finiva nell'HTML di chi guarda. Il carico e' sempre lo
+     stesso: un <img> con onerror, cioe' codice eseguito da chi apre la lista.
+     Accanto a ogni «no» c'e' il «si'» dello stesso gesto fatto dall'app vera,
+     perche' una regola che rifiuta tutto passa questo banco e rompe l'app. */
+  console.log('\n  P0-1: CAMPI CON UN TIPO (19/09)\n');
+  const XSS = '<img src=x onerror=alert(1)>';
+
+  await prova('allenamento con posti = testo NON si crea', () =>
+    assertFails(db(A).doc('open_trainings/otX').set(
+      { ownerUid:A.uid, field:'Vignone', spots:XSS, participantUids:[A.uid], participants:[] })));
+  await prova('allenamento con posti = 3 si crea (come fa l\'app)', () =>
+    assertSucceeds(db(A).doc('open_trainings/otN').set(
+      { ownerUid:A.uid, field:'Vignone', spots:3, participantUids:[A.uid], participants:[] })));
+  await prova('l\'organizzatore NON trasforma i posti in testo dopo', () =>
+    assertFails(db(A).doc('open_trainings/otN').update({ spots:XSS })));
+
+  await prova('percorso proposto con piazzole = testo NON si crea', () =>
+    assertFails(db(A).doc('percorsi_campo/pX').set(
+      { createdBy:A.uid, clubCode:'01VERB', stato:'proposto', nome:'Alto', piazzole:XSS })));
+  await prova('percorso proposto con piazzole = 24 si crea', () =>
+    assertSucceeds(db(A).doc('percorsi_campo/pN').set(
+      { createdBy:A.uid, clubCode:'01VERB', stato:'proposto', nome:'Alto', piazzole:24, note:'' })));
+  await prova('il referente NON riscrive le piazzole come testo', () =>
+    assertFails(db(A).doc('percorsi_campo/pN').update({ piazzole:XSS })));
+
+  await prova('segnalazione con piazzola = testo NON si crea', () =>
+    assertFails(db(A).collection('field_reports').add(
+      { reporterUid:A.uid, clubCode:'01VERB', type:'target', piazzola:XSS, description:'x' })));
+  await prova('segnalazione con piazzola = 7 si crea', () =>
+    assertSucceeds(db(A).collection('field_reports').add(
+      { reporterUid:A.uid, clubCode:'01VERB', type:'target', piazzola:7, description:'ramo' })));
+  await prova('segnalazione senza piazzola (null) si crea', () =>
+    assertSucceeds(db(A).collection('field_reports').add(
+      { reporterUid:A.uid, clubCode:'01VERB', type:'other', piazzola:null, description:'ramo' })));
+
+  await prova('profilo pubblico con numeri.giri = testo NON si scrive', () =>
+    assertFails(db(A).doc('public_profiles/'+A.uid).set(
+      { username:'anna', numeri:{ giri:XSS, piazzole:10, campi:1 } })));
+  await prova('profilo pubblico con un campo estraneo dentro numeri NON si scrive', () =>
+    assertFails(db(A).doc('public_profiles/'+A.uid).set(
+      { username:'anna', numeri:{ giri:3, script:XSS } })));
+  await prova('profilo pubblico con numeri veri si scrive', () =>
+    assertSucceeds(db(A).doc('public_profiles/'+A.uid).set(
+      { username:'anna', nomeCognome:'Anna Rossi', numeri:{ giri:3, piazzole:72, campi:2 } })));
+  await prova('profilo pubblico con un nome di 500 caratteri NON si scrive', () =>
+    assertFails(db(A).doc('public_profiles/'+A.uid).set(
+      { username:'anna', nomeCognome:'x'.repeat(500) })));
 
   console.log('\n  LE PORTE CHE DEVONO RESTARE APERTE\n');
 

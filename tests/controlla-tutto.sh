@@ -124,6 +124,10 @@ banco "banco-ibo.js (il bareme IBO, sulle regole 2026)" "node tests/banco-ibo.js
 banco "banco-calendario.js (il calendario dice da chi viene il dato)" "node tests/banco-calendario.js app.html"
 banco "banco-ritorno.js (il ritorno canonico e le cose che non tornano)" "node tests/banco-ritorno.js app.html"
 banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node tests/controlla-diari.js"
+# Dal 19/09/2026 (risanamento post-audit). Le regole Firestore non giravano in
+# nessun giro: adesso si, e se manca Java il banco dice no invece di saltare.
+banco "banco-regole.js (le regole Firestore sull'emulatore: chi puo' scrivere cosa)" "sh tests/lancia-regole.sh"
+banco "banco-xss.js (quello che scrive un altro non diventa codice sul mio telefono)" "node tests/banco-xss.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"

@@ -1,7 +1,22 @@
 rules_version = '2';
 // ArcTrail 3D — regole Firestore
-// Versione 2026-08-28-porte-verified
-// Nata da: 2026-08-28-offerta
+// Versione 2026-09-19-tipi-sicuri
+// Nata da: 2026-08-28-porte-verified
+//
+// NOVITA' 2026-09-19 — I CAMPI CHE FINISCONO SULLO SCHERMO DI UN ALTRO HANNO UN TIPO
+//  L'audit del 19/09 ha trovato cinque XSS salvati (P0-1): `open_trainings.spots`,
+//  `percorsi_campo.piazzole`, `field_reports.piazzola`, `public_profiles.numeri.*`
+//  e i nomi di `public_profiles` finivano nell'HTML di chi guarda, e qui non si
+//  chiedeva che fossero numeri o testi corti. Il client (2026-09-19) ora li rifa'
+//  numero e li passa da escapeHtml; queste regole chiudono la stessa porta dal
+//  lato del database, per i client modificati e per quelli vecchi.
+//  `numeroOpz` / `testoOpz`: il campo puo' mancare o essere null; se c'e' deve
+//  essere del tipo giusto e dentro un limite. I limiti stanno sopra a quelli del
+//  client (maxlength), quindi nessun documento scritto dall'app vera viene
+//  rifiutato.
+//  REGOLA 18: stringono. `app.html` 2026-09-19 va online PRIMA di incollarle.
+//
+// Versione precedente: 2026-08-28-porte-verified, nata da 2026-08-28-offerta.
 //
 // ATTENZIONE AL GENITORE (2). Il genitore qui e' `2026-08-28-offerta`, cioe'
 //  la versione che mi e' stata consegnata come ultima. NON ho la console, non
@@ -299,6 +314,17 @@ service cloud.firestore {
     function verified() {
       return signedIn() && request.auth.token.get('email_verified', false) == true;
     }
+    // TIPI DEI CAMPI CHE SI MOSTRANO AGLI ALTRI. (19/09/2026, audit P0-1.)
+    // Assente o null va bene; se c'e', numero >= 0 sotto un tetto largo, o testo
+    // non piu' lungo di `max`. Un numero non porta mai HTML.
+    function numeroOpz(d, k) {
+      return d.get(k, null) == null
+        || (d.get(k, null) is number && d.get(k, 0) >= 0 && d.get(k, 0) <= 100000);
+    }
+    function testoOpz(d, k, max) {
+      return d.get(k, null) == null
+        || (d.get(k, null) is string && d.get(k, '').size() <= max);
+    }
     function isBeta() {
       return signedIn()
         && exists(/databases/$(database)/documents/users/$(request.auth.uid))
@@ -449,6 +475,23 @@ service cloud.firestore {
                                 && request.resource.data.keys().hasOnly(
                                      ['username','nomeCognome','compagnia','compagniaNome','updatedAt',
                                       'bio','arco','numeri'])
+                                // 19/09/2026 (P0-1): tipi e lunghezze. `numeri` e' una
+                                // mappa di soli numeri: `giri` finiva nell'HTML di chi
+                                // apre il profilo. `media` resta ammessa per i documenti
+                                // scritti prima del 29/08 (set con merge la conserva).
+                                && testoOpz(request.resource.data, 'username', 60)
+                                && testoOpz(request.resource.data, 'nomeCognome', 120)
+                                && testoOpz(request.resource.data, 'compagnia', 20)
+                                && testoOpz(request.resource.data, 'compagniaNome', 200)
+                                && testoOpz(request.resource.data, 'bio', 200)
+                                && testoOpz(request.resource.data, 'arco', 40)
+                                && (request.resource.data.get('numeri', null) == null
+                                    || (request.resource.data.numeri is map
+                                        && request.resource.data.numeri.keys().hasOnly(['giri','piazzole','campi','media'])
+                                        && numeroOpz(request.resource.data.numeri, 'giri')
+                                        && numeroOpz(request.resource.data.numeri, 'piazzole')
+                                        && numeroOpz(request.resource.data.numeri, 'campi')
+                                        && numeroOpz(request.resource.data.numeri, 'media')))
                                 && exists(/databases/$(database)/documents/users/$(userId))
                                 && get(/databases/$(database)/documents/users/$(userId)).data.approved == true);
       // delete senza il controllo approved: chi elimina l'account deve poter
@@ -814,7 +857,9 @@ service cloud.firestore {
       allow read: if signedIn();
       // 28/08/2026: `signedIn()` -> `verified()`. Un allenamento aperto lo
       // vede tutta l'app, col nome e il posto di chi lo organizza.
-      allow create: if verified() && request.resource.data.ownerUid == request.auth.uid;
+      // 19/09/2026 (P0-1): `spots` numero. Finiva in «taken/total» nell'elenco di tutti.
+      allow create: if verified() && request.resource.data.ownerUid == request.auth.uid
+                    && numeroOpz(request.resource.data, 'spots');
       // CI SI ISCRIVE DA SOLI, E SOLO SE STESSI. (28/08/2026.)
       //
       // Prima qualunque utente loggato poteva riscrivere per intero
@@ -840,7 +885,8 @@ service cloud.firestore {
       // sanno scorrere un elenco, quindi si puo' solo contare: al massimo una
       // voce che entra e una che esce. Cosa resta scoperto e' scritto in
       // fondo al file, e non lo chiamo protetto.
-      allow update: if signedIn() && (
+      // 19/09/2026 (P0-1): anche l'organizzatore non puo' trasformare `spots` in testo dopo.
+      allow update: if signedIn() && numeroOpz(request.resource.data, 'spots') && (
         request.auth.uid == resource.data.ownerUid || isAdmin() ||
         (verified()
          && request.resource.data.diff(resource.data).affectedKeys()
@@ -908,6 +954,11 @@ service cloud.firestore {
                     && request.resource.data.createdBy == request.auth.uid
                     && request.resource.data.clubCode is string
                     && request.resource.data.clubCode != ''
+                    // 19/09/2026 (P0-1): `piazzole` finiva nel pannello admin senza
+                    // escape. Numero; nome e note corti come nel client (80 / 300).
+                    && numeroOpz(request.resource.data, 'piazzole')
+                    && testoOpz(request.resource.data, 'nome', 120)
+                    && testoOpz(request.resource.data, 'note', 500)
                     && (
                          (verified() && request.resource.data.stato == 'proposto')
                          || ((isAdmin() || isClubAdmin(request.resource.data.clubCode))
@@ -920,6 +971,7 @@ service cloud.firestore {
       // nemmeno lui poteva piu' correggerlo. Vale anche per l'admin: un
       // percorso che cambia compagnia si cancella e si rifa'.
       allow update: if (isAdmin() || isClubAdmin(resource.data.get('clubCode', '')))
+                    && numeroOpz(request.resource.data, 'piazzole')
                     && request.resource.data.get('clubCode', '') == resource.data.get('clubCode', '')
                     && request.resource.data.get('createdBy', '') == resource.data.get('createdBy', '');
       // Chi ha proposto puo' ritirare finche' nessuno ha risposto. Dopo no:
@@ -945,7 +997,12 @@ service cloud.firestore {
     match /field_reports/{id} {
       // 28/08/2026: `signedIn()` -> `verified()`. Una segnalazione arriva sul
       // telefono di un referente di compagnia che non conosce chi scrive.
-      allow create: if verified() && request.resource.data.reporterUid == request.auth.uid;
+      // 19/09/2026 (P0-1): `piazzola` numero (il client scrive parseInt o null);
+      // `type` testo corto: si mostra solo tramite la tabella TIPI.
+      allow create: if verified() && request.resource.data.reporterUid == request.auth.uid
+                    && numeroOpz(request.resource.data, 'piazzola')
+                    && testoOpz(request.resource.data, 'type', 30)
+                    && testoOpz(request.resource.data, 'description', 5000);
       allow read: if isAdmin()
                   || (signedIn() && resource.data.get('reporterUid', '') == request.auth.uid)
                   || isClubAdmin(resource.data.get('clubCode', ''));

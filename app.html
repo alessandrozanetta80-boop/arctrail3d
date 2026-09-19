@@ -14560,6 +14560,12 @@ var entries = state.scores[archerId] || [];
 return entries.reduce(function(sum,ent){ return sum + ent.total; }, 0);
 }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+/* UN NUMERO CHE ARRIVA DA FUORI SI RIFA' NUMERO PRIMA DI TOCCARE L'HTML. (19/09/2026, audit P0-1.)
+   `spots`, `piazzole`, `piazzola`, `numeri.*`, `piazzolaPartenza` li scrive il telefono di un
+   altro. Le regole ora chiedono un numero, ma un documento scritto prima o un client modificato
+   possono portare una stringa, e `1 + "<img onerror=...>"` dentro un template diventa codice
+   eseguito da chi guarda. Qui torna sempre un intero >= 0, e 0 vuol dire «non c'e'». */
+function interoSicuro(v){ var n = parseInt(v, 10); return (isFinite(n) && n > 0) ? n : 0; }
 
 // pulsante a doppia conferma: primo tocco arma (mostra conferma), secondo tocco entro pochi secondi esegue
 function armDoubleConfirm(btn, armedLabel, onConfirm){
@@ -17538,7 +17544,7 @@ save(); render();
 card.appendChild(useBtn);
 if(p.squadre && p.squadre.length){
 p.squadre.forEach(function(s, gIdx){
-card.appendChild(el('<div style="font-size:var(--t-sm);background:var(--bg-panel-2);border-radius:var(--r-xs);padding:var(--s-1) var(--s-2);margin-bottom:var(--s-1);"><b style="color:var(--gold);">'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
+card.appendChild(el('<div style="font-size:var(--t-sm);background:var(--bg-panel-2);border-radius:var(--r-xs);padding:var(--s-1) var(--s-2);margin-bottom:var(--s-1);"><b style="color:var(--gold);">'+t("pg_piazzola_partenza",{n:interoSicuro(s.piazzolaPartenza)})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+(s.membri||[]).map(function(m){return escapeHtml(m.cognome||"")+(m.nome?' '+escapeHtml(m.nome):'');}).join(", ")+'</div>'));
 });
 }
 d.appendChild(card);
@@ -17987,7 +17993,7 @@ if(state.pgDraft.squadre.length){
 var numPiazzole = state.pgDraft.piazzole.length || state.pgDraft.numPiazzole || 1;
 d.appendChild(el('<h4 class="pg-titolo-squadre">'+t("pg_organizer_view_title")+'</h4>'));
 state.pgDraft.squadre.forEach(function(s, gIdx){
-d.appendChild(el('<div class="pg-squadra"><b>'+t("pg_piazzola_partenza",{n:s.piazzolaPartenza})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+s.membri.map(function(m){return m.cognome+(m.nome?' '+m.nome:'');}).join(", ")+'</div>'));
+d.appendChild(el('<div class="pg-squadra"><b>'+t("pg_piazzola_partenza",{n:interoSicuro(s.piazzolaPartenza)})+'</b> \u2014 '+t("pg_squadra_n",{n:gIdx+1})+': '+(s.membri||[]).map(function(m){return escapeHtml(m.cognome||"")+(m.nome?' '+escapeHtml(m.nome):'');}).join(", ")+'</div>'));
 });
 
 var saveBtn = el('<button class="btn btn-primary btn-block pg-stacco-sopra">'+t("pg_save_route_btn")+'</button>');
@@ -18099,7 +18105,7 @@ function otRowEl(ot){
 var myUid = currentUser && currentUser.uid;
 var isOwner = ot.ownerUid === myUid;
 var joined = myUid && (ot.participantUids||[]).indexOf(myUid) !== -1;
-var total = 1 + (ot.spots||2); // organizzatore + posti
+var total = 1 + (interoSicuro(ot.spots)||2); // organizzatore + posti; numero rifatto (P0-1)
 var taken = 1 + (ot.participantUids||[]).length;
 var full = taken >= total;
 var spotsLeft = total - taken;
@@ -19930,7 +19936,7 @@ var classe = "cp-percorso-card" + (aperto ? " open" : "") + (attesa ? " in-attes
 var box = el('<div class="'+classe+'"></div>');
 
 var meta = [];
-if(p.piazzole) meta.push(p.piazzole + " " + t("compagnie_piazzole_word"));
+if(interoSicuro(p.piazzole)) meta.push(interoSicuro(p.piazzole) + " " + t("compagnie_piazzole_word"));
 if(conRisultati) meta.push(risP.length + " " + t("compagnie_punteggi_word"));
 
 var testa = el('<div class="cp-percorso-top"><div><h3>'+escapeHtml(p.nome || "?")
@@ -21620,7 +21626,7 @@ return;
 attesa.forEach(function(p){
 var riga = el('<div class="pc-attesa"></div>');
 var meta = [];
-if(p.piazzole) meta.push(p.piazzole + " " + t("compagnie_piazzole_word"));
+if(interoSicuro(p.piazzole)) meta.push(interoSicuro(p.piazzole) + " " + t("compagnie_piazzole_word"));
 meta.push(t("club_report_by", { name: escapeHtml(p.createdByName || "?") }));
 riga.appendChild(el('<div class="pc-nome">'+escapeHtml(p.nome || "?")+'</div>'));
 riga.appendChild(el('<div class="nota">'+escapeHtml(meta.join(" \u00b7 "))+'</div>'));
@@ -21674,7 +21680,7 @@ mostra.forEach(function(r){
 var chiuso = (r.status === "closed");
 var row = el('<div style="border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s-2) var(--s-3);margin-bottom:var(--s-2);'+(chiuso?'opacity:.55;':'')+'"></div>');
 var testa = el('<div style="display:flex;justify-content:space-between;gap:var(--s-2);align-items:center;margin-bottom:var(--s-1);"></div>');
-testa.appendChild(el('<span style="font-size:var(--t-xs);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.03em;">'+(TIPI[r.type]||TIPI.other)+(r.piazzola ? ' \u00b7 '+t("club_piazzola_word")+' '+r.piazzola : '')+'</span>'));
+testa.appendChild(el('<span style="font-size:var(--t-xs);font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.03em;">'+(Object.prototype.hasOwnProperty.call(TIPI, r.type) ? TIPI[r.type] : TIPI.other)+(interoSicuro(r.piazzola) ? ' \u00b7 '+t("club_piazzola_word")+' '+interoSicuro(r.piazzola) : '')+'</span>'));
 if(chiuso){ testa.appendChild(el('<span style="font-size:var(--t-xs);font-weight:700;color:var(--accent-soft);">'+t("club_report_resolved")+'</span>')); }
 row.appendChild(testa);
 row.appendChild(el('<div style="font-size:var(--t-sm);line-height:1.35;">'+escapeHtml(r.description||"")+'</div>'));
@@ -22213,7 +22219,7 @@ var riga = el('<div class="pc-attesa"></div>');
 var nomeComp = (typeof COMPAGNIE !== "undefined" && COMPAGNIE[p.clubCode]) ? COMPAGNIE[p.clubCode].nome : p.clubCode;
 riga.appendChild(el('<div class="pc-nome">'+escapeHtml(p.nome || "?")+'</div>'));
 var meta = [escapeHtml(String(p.clubCode||"?")) + " \u00b7 " + escapeHtml(String(nomeComp||"?"))];
-if(p.piazzole) meta.push(p.piazzole + " " + t("compagnie_piazzole_word"));
+if(interoSicuro(p.piazzole)) meta.push(interoSicuro(p.piazzole) + " " + t("compagnie_piazzole_word"));
 meta.push(t("club_report_by", { name: escapeHtml(p.createdByName || p.createdByEmail || "?") }));
 riga.appendChild(el('<div class="nota">'+meta.join(" \u00b7 ")+'</div>'));
 if(p.note){ riga.appendChild(el('<div class="pc-note">'+escapeHtml(p.note)+'</div>')); }
@@ -22426,7 +22432,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-09-18-campi-fiarc";
+var BUILD_STAMP = "2026-09-19-risanamento";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -22435,7 +22441,7 @@ var BUILD_STAMP = "2026-09-18-campi-fiarc";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-09-18-codice-fiarc";
+var BUILD_PARENT = "2026-09-18-campi-fiarc";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -25860,9 +25866,9 @@ if(p.bio) card.appendChild(el('<div class="pp-bio">'+escapeHtml(p.bio)+'</div>')
 
 if(p.numeri){
 var q = el('<div class="home-numeri pp-numeri"></div>');
-q.appendChild(el('<div class="home-num"><b>'+(p.numeri.giri||0)+'</b><span>'+escapeHtml(t("home_rounds_word"))+'</span></div>'));
-q.appendChild(el('<div class="home-num"><b>'+(p.numeri.piazzole||0)+'</b><span>'+escapeHtml(t("diario_targets_word"))+'</span></div>'));
-q.appendChild(el('<div class="home-num"><b>'+(p.numeri.campi||0)+'</b><span>'+escapeHtml(t("pp_campi"))+'</span></div>'));
+q.appendChild(el('<div class="home-num"><b>'+interoSicuro(p.numeri.giri)+'</b><span>'+escapeHtml(t("home_rounds_word"))+'</span></div>'));
+q.appendChild(el('<div class="home-num"><b>'+interoSicuro(p.numeri.piazzole)+'</b><span>'+escapeHtml(t("diario_targets_word"))+'</span></div>'));
+q.appendChild(el('<div class="home-num"><b>'+interoSicuro(p.numeri.campi)+'</b><span>'+escapeHtml(t("pp_campi"))+'</span></div>'));
 /* LA MEDIA NON SI PUBBLICA PIU'. (29/08/2026.) I documenti scritti prima di
    oggi hanno ancora `numeri.media` dentro: non si rompe niente, semplicemente
    non lo si legge. *Non si cancella e non si migra un documento di qualcun
