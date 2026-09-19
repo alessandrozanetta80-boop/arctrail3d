@@ -391,8 +391,11 @@ ok("il marchio viaggia col giro aperto",
    /var CAMPI_DEL_GIRO = \[[^\]]*"scoringVersion"[^\]]*\]/.test(src));
 ok("il giro nuovo nasce marchiato",
    /state\.scoringVersion = schemaPunteggio\(modeKey\)/.test(src));
+/* Si guardano i due RICHIAMI, non cosa viene dopo: il 20/09/2026 sotto il
+   backfill e' comparsa un'altra riga (il nome del giro gia' aperto) e la prova
+   e' diventata rossa con l'ordine ancora giusto. */
 ok("la migrazione gira PRIMA del backfill",
-   src.indexOf("migraSchemaIfaa();") < src.indexOf("backfillLifetimeOnce();\n\n"));
+   src.indexOf("migraSchemaIfaa();\nbackfillLifetimeOnce();") > 0);
 ok("nessun punteggio viene riscritto dalla migrazione",
    !/h\.results\s*=|r\.total\s*=/.test(ritaglia("function migraSchemaIfaa(){", "// ---------- RIEPILOGO")));
 
