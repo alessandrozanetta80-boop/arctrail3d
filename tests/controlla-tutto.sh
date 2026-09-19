@@ -176,13 +176,23 @@ while [ $i -le $n ]; do
   riga "$i/$n — $tit"
   cat "$D/$i.out"
   [ "$(cat "$D/$i.esito" 2>/dev/null)" = "0" ] || fallito=1
+  # Prima la riga di riepilogo del banco; se non ce l'ha, si contano i segni di
+  # spunta che ha stampato. Quattro banchi non fanno ne' l'una ne' l'altra cosa
+  # (raccontano a parole): quelli si elencano, e si leggono a mano.
   conto="$(grep -o '[0-9][0-9]* passate, [0-9][0-9]* fallite' "$D/$i.out" | tail -1)"
   if [ -n "$conto" ]; then
     prove=$((prove + $(echo "$conto" | cut -d' ' -f1) + $(echo "$conto" | cut -d' ' -f3)))
     cadute=$((cadute + $(echo "$conto" | cut -d' ' -f3)))
   else
-    muti="$muti
+    buone=$(grep -c "✓" "$D/$i.out")
+    male=$(grep -c "✗" "$D/$i.out")
+    if [ "$buone" -gt 0 ] || [ "$male" -gt 0 ]; then
+      prove=$((prove + buone + male))
+      cadute=$((cadute + male))
+    else
+      muti="$muti
       $i/$n $tit"
+    fi
   fi
   if grep -qi "saltat" "$D/$i.out"; then muti="$muti
       $i/$n $tit (dice di aver saltato qualcosa)"; fi
