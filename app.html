@@ -5992,6 +5992,11 @@ cb(list);
 
 function onAuthReady(user){
 currentUser = user;
+// PRIMA DI TUTTO: di chi sono i dati di questo telefono? (P0-2) Se sono di un
+// altro si svuotano adesso, prima che una qualunque sincronia li porti nel
+// cloud di chi e' appena entrato.
+if(datiLocaliDiUnAltro(user)){ svuotaDatiUtenteLocali(); }
+segnaProprietario(user.uid);
 flushErrorQueue();
 // Se su questo telefono non c'e' nessun giro aperto, ma sul cloud si',
 // c'e' qualcosa da dire. Vedi cercaGiroSulCloud: se qui il giro c'e',
@@ -6075,7 +6080,13 @@ var data = doc.data();
 IS_BETA_TESTER = (data.betaTester === true);
 IS_PREMIUM = (data.premium === true);
 blockedUsers = data.blockedUsers || {};
-if(!state.profile && data.nomeCognome){
+/* IL PROFILO SCENDE DAL CLOUD A OGNI ACCESSO. (19/09/2026, audit DM-02.)
+   Prima scendeva solo se il telefono non ne aveva uno: una tessera aggiunta
+   sul telefono spariva dal cloud appena il PC, col profilo vecchio, salvava la
+   bio. Il documento `users` e' la copia buona: anche una modifica fatta offline
+   c'e', perche' Firestore restituisce le scritture ancora in coda insieme al
+   documento. */
+if(data.nomeCognome){
 state.profile = {
 nomeCognome: data.nomeCognome, nomeNascosto: (data.nomeNascosto === true), username: data.username || "",
 email: data.email || user.email, federazioni: data.federazioni || [], arco: data.arco || null, privacy: true,
@@ -6183,6 +6194,53 @@ var HISTORY_KEY = "arctrail3d_storico_v1";
 var LIFETIME_KEY = "arctrail3d_lifetime_v1"; // riepilogo permanente: non viene mai cancellato dal taglio dello storico
 var DELETED_KEY = "arctrail3d_storico_cancellati_v1"; // elenco dei giri cancellati apposta: impedisce che tornino dal cloud
 var HISTORY_MAX = 150;
+
+/* ══ I DATI DI QUESTO TELEFONO HANNO UN PROPRIETARIO. (19/09/2026, audit P0-2.) ══
+   Prima nessuna chiave locale sapeva di chi fosse. Uscire faceva solo
+   `auth.signOut()`: lo storico, il riepilogo, il profilo con le tessere,
+   l'attrezzatura e il giro aperto restavano nel telefono, e al primo accesso di
+   un'altra persona `pushLocalHistoryToCloud` caricava i giri di A nello storico
+   di B, `cercaGiroSulCloud` metteva il giro di A nella copia di B, e il
+   profilo di A veniva salvato nel documento di B. Su un telefono di compagnia,
+   o di famiglia, e' il caso normale, non quello raro.
+
+   Adesso: `PROPRIETARIO_KEY` dice di chi sono i dati. All'accesso, se il
+   proprietario e' un altro, i dati locali si svuotano PRIMA di qualunque
+   sincronia. Uscire svuota gli stessi dati (vedi `esciDallAccount`).
+
+   COSA RESTA sul telefono: lingua, tema, paese e federazione. Sono scelte del
+   telefono, non dati di una persona, e chi rientra non deve rifarle.
+   I dati di prima di questa versione non hanno proprietario: sono di chi entra,
+   tranne quando il profilo salvato porta un'altra email — allora sono di un
+   altro, e si svuotano. */
+var PROPRIETARIO_KEY = "arctrail3d_proprietario_v1";
+function leggiProprietario(){ try{ return localStorage.getItem(PROPRIETARIO_KEY) || ""; }catch(e){ return ""; } }
+function segnaProprietario(uid){ try{ if(uid) localStorage.setItem(PROPRIETARIO_KEY, uid); }catch(e){} }
+function datiLocaliDiUnAltro(user){
+if(!user) return false;
+var prima = leggiProprietario();
+if(prima) return prima !== user.uid;
+var em = state && state.profile && state.profile.email;
+return !!(em && user.email && String(em).toLowerCase() !== String(user.email).toLowerCase());
+}
+function svuotaDatiUtenteLocali(){
+var tieni = { lang: state.lang, theme: state.theme, country: state.country, federation: state.federation };
+var chiavi = [STORAGE_KEY, HISTORY_KEY, LIFETIME_KEY, DELETED_KEY, PROPRIETARIO_KEY,
+  "arctrail3d_ifaa_schema_v1", "arctrail3d_misure_v1", "arctrail3d_attrezzi_v1",
+  "arctrail3d_push_spenta", "arctrail3d_pending_profile", "arctrail3d_pending_email"];
+try{
+chiavi.forEach(function(k){ localStorage.removeItem(k); });
+var altre = [];
+for(var i = 0; i < localStorage.length; i++){
+var k = localStorage.key(i);
+if(k && k.indexOf("arctrail3d_avviso_") === 0) altre.push(k);
+}
+altre.forEach(function(k){ localStorage.removeItem(k); });
+}catch(e){}
+state = { screen:"menu", tab:"home", pendingArchers:[], percorsi:[],
+          lang: tieni.lang, theme: tieni.theme, country: tieni.country, federation: tieni.federation };
+save();
+}
 
 var state = { screen:"menu", pendingArchers:[] };
 try{
@@ -6749,6 +6807,7 @@ login_need_email_first: "Inserisci prima la tua email qui sopra.",
 login_bad_credentials: "Email o password non corretti.",
 login_reset_error: "Non sono riuscito a inviare l\u2019email, riprova.",
 logout_word: "Esci",
+logout_warn_unsaved: "Dati non ancora salvati online: tocca di nuovo per uscire e perderli",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Sagoma", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letale", zone_ffta_spot: "Vitale", zone_ffta_sagoma: "Corpo",
 zone_fitarco_perfect: "Cerchio piccolo", zone_fitarco_superspot: "Cerchio grande", zone_fitarco_spot: "Zona vitale", zone_fitarco_sagoma: "Corpo",
@@ -7486,6 +7545,7 @@ login_need_email_first: "Enter your email address above first.",
 login_bad_credentials: "Email or password is not correct.",
 login_reset_error: "I couldn\u2019t send the email, please try again.",
 logout_word: "Log out",
+logout_warn_unsaved: "Data not saved online yet: tap again to log out and lose it",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Center", zone_ffta_superspot: "Kill", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Body",
 zone_fitarco_perfect: "Small ring", zone_fitarco_superspot: "Large ring", zone_fitarco_spot: "Vital zone", zone_fitarco_sagoma: "Body",
@@ -8222,6 +8282,7 @@ login_need_email_first: "Saisissez d\u2019abord votre e-mail ci-dessus.",
 login_bad_credentials: "E-mail ou mot de passe incorrect.",
 login_reset_error: "Je n\u2019ai pas pu envoyer l\u2019e-mail, r\u00e9essayez.",
 logout_word: "D\u00e9connexion",
+logout_warn_unsaved: "Donn\u00e9es pas encore enregistr\u00e9es en ligne : touchez \u00e0 nouveau pour vous d\u00e9connecter et les perdre",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Petit tu\u00e9", zone_ffta_superspot: "Tu\u00e9", zone_ffta_spot: "Zone vitale", zone_ffta_sagoma: "Corps",
 zone_fitarco_perfect: "Petit cercle", zone_fitarco_superspot: "Grand cercle", zone_fitarco_spot: "Zone vitale", zone_fitarco_sagoma: "Corps",
@@ -8958,6 +9019,7 @@ login_need_email_first: "Gib zuerst oben deine E-Mail-Adresse ein.",
 login_bad_credentials: "E-Mail oder Passwort ist falsch.",
 login_reset_error: "Die E-Mail konnte nicht gesendet werden, versuch es noch einmal.",
 logout_word: "Abmelden",
+logout_warn_unsaved: "Daten noch nicht online gespeichert: erneut tippen, um dich abzumelden und sie zu verlieren",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouette", zone_perfect: "Perfect",
 zone_ffta_perfect: "Kern", zone_ffta_superspot: "T\u00f6dlich", zone_ffta_spot: "Vital", zone_ffta_sagoma: "K\u00f6rper",
 zone_fitarco_perfect: "Kleiner Kreis", zone_fitarco_superspot: "Gro\u00dfer Kreis", zone_fitarco_spot: "Vitalzone", zone_fitarco_sagoma: "K\u00f6rper",
@@ -9713,6 +9775,7 @@ login_need_email_first: "\u00d6nce yukar\u0131ya e-posta adresini gir.",
 login_bad_credentials: "E-posta veya \u015fifre do\u011fru de\u011fil.",
 login_reset_error: "E-postay\u0131 g\u00f6nderemedim, tekrar dene.",
 logout_word: "\u00c7\u0131k\u0131\u015f",
+logout_warn_unsaved: "Veriler hen\u00fcz \u00e7evrimi\u00e7i kaydedilmedi: \u00e7\u0131k\u0131p onlar\u0131 kaybetmek i\u00e7in tekrar dokun",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Siluet", zone_perfect: "Perfect",
 zone_ffta_perfect: "Merkez", zone_ffta_superspot: "\u00d6ld\u00fcr\u00fcc\u00fc", zone_ffta_spot: "Hayati", zone_ffta_sagoma: "G\u00f6vde",
 zone_fitarco_perfect: "K\u00fc\u00e7\u00fck daire", zone_fitarco_superspot: "B\u00fcy\u00fck daire", zone_fitarco_spot: "Hayati b\u00f6lge", zone_fitarco_sagoma: "G\u00f6vde",
@@ -10462,6 +10525,7 @@ login_need_email_first: "Сначала введите свою почту вы�
 login_bad_credentials: "Неверная почта или пароль.",
 login_reset_error: "Не удалось отправить письмо, попробуйте ещё раз.",
 logout_word: "Выйти",
+logout_warn_unsaved: "\u0414\u0430\u043d\u043d\u044b\u0435 \u0435\u0449\u0451 \u043d\u0435 \u0441\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u044b \u0432 \u0441\u0435\u0442\u0438: \u043d\u0430\u0436\u043c\u0438\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437, \u0447\u0442\u043e\u0431\u044b \u0432\u044b\u0439\u0442\u0438 \u0438 \u043f\u043e\u0442\u0435\u0440\u044f\u0442\u044c \u0438\u0445",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Силуэт", zone_perfect: "Perfect",
 zone_ffta_perfect: "Центр", zone_ffta_superspot: "Смертельная", zone_ffta_spot: "Жизненная", zone_ffta_sagoma: "Тело",
 zone_fitarco_perfect: "Малый круг", zone_fitarco_superspot: "Большой круг", zone_fitarco_spot: "Жизненная зона", zone_fitarco_sagoma: "Тело",
@@ -11211,6 +11275,7 @@ login_need_email_first: "Introduce antes tu email aqu\u00ed arriba.",
 login_bad_credentials: "Email o contrase\u00f1a incorrectos.",
 login_reset_error: "No he podido enviar el email, int\u00e9ntalo de nuevo.",
 logout_word: "Salir",
+logout_warn_unsaved: "Datos a\u00fan no guardados en l\u00ednea: toca de nuevo para salir y perderlos",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silueta", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centro", zone_ffta_superspot: "Letal", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Cuerpo",
 zone_fitarco_perfect: "C\u00edrculo peque\u00f1o", zone_fitarco_superspot: "C\u00edrculo grande", zone_fitarco_spot: "Zona vital", zone_fitarco_sagoma: "Cuerpo",
@@ -11960,6 +12025,7 @@ login_need_email_first: "Ange f\u00f6rst din e-postadress h\u00e4r ovanf\u00f6r.
 login_bad_credentials: "Fel e-postadress eller l\u00f6senord.",
 login_reset_error: "Jag kunde inte skicka e-postmeddelandet, f\u00f6rs\u00f6k igen.",
 logout_word: "Logga ut",
+logout_warn_unsaved: "Data \u00e4r inte sparade online \u00e4nnu: tryck igen f\u00f6r att logga ut och f\u00f6rlora dem",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhuett", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centrum", zone_ffta_superspot: "D\u00f6dlig", zone_ffta_spot: "Vital", zone_ffta_sagoma: "Kropp",
 zone_fitarco_perfect: "Liten ring", zone_fitarco_superspot: "Stor ring", zone_fitarco_spot: "Vitalzon", zone_fitarco_sagoma: "Kropp",
@@ -12709,6 +12775,7 @@ login_need_email_first: "Voer eerst hierboven je e-mailadres in.",
 login_bad_credentials: "E-mailadres of wachtwoord klopt niet.",
 login_reset_error: "Het is niet gelukt de e-mail te versturen, probeer het opnieuw.",
 logout_word: "Uitloggen",
+logout_warn_unsaved: "Gegevens nog niet online opgeslagen: tik nogmaals om uit te loggen en ze kwijt te raken",
 zone_superspot: "Super Spot", zone_spot: "Spot", zone_sagoma: "Silhouet", zone_perfect: "Perfect",
 zone_ffta_perfect: "Centrum", zone_ffta_superspot: "Dodelijk", zone_ffta_spot: "Vitaal", zone_ffta_sagoma: "Lichaam",
 zone_fitarco_perfect: "Kleine ring", zone_fitarco_superspot: "Grote ring", zone_fitarco_spot: "Vitale zone", zone_fitarco_sagoma: "Lichaam",
@@ -14568,6 +14635,63 @@ function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return {
 function interoSicuro(v){ var n = parseInt(v, 10); return (isFinite(n) && n > 0) ? n : 0; }
 
 // pulsante a doppia conferma: primo tocco arma (mostra conferma), secondo tocco entro pochi secondi esegue
+/* USCIRE DALL'ACCOUNT. (19/09/2026, audit P0-2.)
+   Prima: `auth.signOut()` e basta, in tre posti. Adesso un posto solo, che:
+   1. se ci sono dati non ancora salvati online (giro in coda, offline) chiede
+      un secondo tocco: uscire li cancella da questo telefono;
+   2. stacca da questo telefono gli avvisi push (il token si toglie solo se e'
+      ancora quello scritto qui) e chiude una sessione condivisa rimasta aperta
+      senza giro: chi seguiva non vede piu' un giro «attivo» di chi e' uscito;
+   3. esce, svuota i dati dell'utente dal telefono e la cache di Firestore;
+   4. ricarica la pagina: ascoltatori, notifiche, chat e cache in memoria
+      ripartono da zero. Un'uscita che lascia vivo mezzo stato e' il difetto.
+   Il giro aperto e gia' salvato non si perde: la copia nel cloud resta, e al
+   prossimo accesso di chi l'ha fatto torna come «giro ritrovato». */
+function datiNonSalvatiOnline(){
+if(navigator.onLine === false && (state.roundActive || leggiStoricoGrezzo())) return true;
+return (giroNube.stato === "coda" || giroNube.stato === "invio" || giroNube.stato === "errore");
+}
+function leggiStoricoGrezzo(){ try{ return !!localStorage.getItem(HISTORY_KEY); }catch(e){ return false; } }
+function esciDallAccount(btn){
+if(btn && datiNonSalvatiOnline() && !btn.classList.contains("btn-armed")){
+var prima = btn.textContent;
+btn.textContent = t("logout_warn_unsaved");
+btn.classList.add("btn-armed");
+setTimeout(function(){ btn.textContent = prima; btn.classList.remove("btn-armed"); }, 5000);
+return;
+}
+if(btn) btn.disabled = true;
+var uid = currentUser && currentUser.uid;
+var passi = [];
+if(uid && db && !DEV_MODE){
+if(tokenScrittoQui){
+var tok = tokenScrittoQui;
+passi.push(db.collection("users").doc(uid).get().then(function(d){
+if(d.exists && d.data().fcmToken === tok){
+return db.collection("users").doc(uid).update({ fcmToken: firebase.firestore.FieldValue.delete() });
+}
+}).catch(function(){}));
+}
+if(messaging && messaging.deleteToken){ passi.push(Promise.resolve().then(function(){ return messaging.deleteToken(); }).catch(function(){})); }
+if(state.sessionId && !state.roundActive){ try{ closeSharedSession(); }catch(e){} }
+}
+var tempo = new Promise(function(r){ setTimeout(r, 3000); });
+Promise.race([Promise.all(passi), tempo]).then(function(){
+return (auth && !DEV_MODE) ? auth.signOut().catch(function(){}) : null;
+}).then(function(){
+try{ stopOpenTrainings(); }catch(e){}
+svuotaDatiUtenteLocali();
+currentUser = null;
+if(db && !DEV_MODE && db.terminate){
+return Promise.race([db.terminate().then(function(){ return db.clearPersistence(); }).catch(function(){}),
+                     new Promise(function(r){ setTimeout(r, 3000); })]);
+}
+}).then(function(){
+if(window.__esciSenzaRicarica){ authState = "needLogin"; render(); return; }
+window.location.reload();
+});
+}
+
 function armDoubleConfirm(btn, armedLabel, onConfirm){
 var originalLabel = btn.textContent;
 var armed = false, timer = null;
@@ -15641,9 +15765,7 @@ msg.textContent = t("verify_error");
 });
 wrap.appendChild(resendBtn);
 var outBtn = el('<button class="btn btn-ghost" style="margin-top:var(--s-2);">'+escapeHtml(t("logout_word"))+'</button>');
-outBtn.addEventListener("click", function(){
-auth.signOut().then(function(){ stopOpenTrainings(); authState = "needLogin"; currentUser = null; render(); });
-});
+outBtn.addEventListener("click", function(){ esciDallAccount(outBtn); });
 wrap.appendChild(outBtn);
 return wrap;
 }
@@ -15664,9 +15786,7 @@ onAuthReady(currentUser);
 });
 wrap.appendChild(refreshBtn);
 var logoutBtn = el('<button class="btn btn-ghost" style="margin-top:var(--s-2);">'+escapeHtml(t("logout_word"))+'</button>');
-logoutBtn.addEventListener("click", function(){
-auth.signOut().then(function(){ stopOpenTrainings(); authState = "needLogin"; currentUser = null; render(); });
-});
+logoutBtn.addEventListener("click", function(){ esciDallAccount(logoutBtn); });
 wrap.appendChild(logoutBtn);
 return wrap;
 }
@@ -19477,9 +19597,7 @@ setCard.appendChild(legalRow);
 
 if(currentUser){
 var logoutBtn2 = el('<button class="btn btn-ghost btn-block btn-sm" style="margin-top:var(--s-2);">'+t("logout_word")+' ('+escapeHtml(currentUser.email)+')</button>');
-logoutBtn2.addEventListener("click", function(){
-auth.signOut().then(function(){ stopOpenTrainings(); authState = "needLogin"; currentUser = null; render(); });
-});
+logoutBtn2.addEventListener("click", function(){ esciDallAccount(logoutBtn2); });
 setCard.appendChild(logoutBtn2);
 var delAccBtn = el('<button class="btn btn-ghost btn-outline-danger btn-block btn-sm" style="margin-top:var(--s-3);">'+t("acc_delete_btn")+'</button>');
 delAccBtn.addEventListener("click", function(){ state.screen = "account-delete"; save(); render(); });
@@ -24620,6 +24738,9 @@ localStorage.setItem("at3d_notif_shown", JSON.stringify(l));
 // locale, altrimenti se ne vedono due identiche: una la mostra il service
 // worker su comando del server, l'altra la mostrerebbe qui il listener.
 var pushRegisteredHere = false;
+// Il token che QUESTO telefono ha scritto: all'uscita si toglie solo se e' ancora
+// lui, cosi' uscire qui non spegne gli avvisi di un altro dispositivo.
+var tokenScrittoQui = "";
 
 // Rinfresca in silenzio il token di questo dispositivo a ogni apertura.
 // Non chiede niente all'utente: parte solo se il permesso e' gia' concesso.
@@ -24649,6 +24770,7 @@ return messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg 
 }).then(function(token){
 if(!token) return;
 pushRegisteredHere = true;
+tokenScrittoQui = token;
 return db.collection("users").doc(currentUser.uid).update({ fcmToken: token }).catch(function(){});
 }).catch(function(){});
 }

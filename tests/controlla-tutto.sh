@@ -128,6 +128,7 @@ banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node tes
 # nessun giro: adesso si, e se manca Java il banco dice no invece di saltare.
 banco "banco-regole.js (le regole Firestore sull'emulatore: chi puo' scrivere cosa)" "sh tests/lancia-regole.sh"
 banco "banco-xss.js (quello che scrive un altro non diventa codice sul mio telefono)" "node tests/banco-xss.js"
+banco "banco-account.js (due persone, un telefono: i dati di A non vanno a B)" "node tests/banco-account.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"
