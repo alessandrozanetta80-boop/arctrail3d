@@ -129,6 +129,8 @@ banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node tes
 banco "banco-regole.js (le regole Firestore sull'emulatore: chi puo' scrivere cosa)" "sh tests/lancia-regole.sh"
 banco "banco-xss.js (quello che scrive un altro non diventa codice sul mio telefono)" "node tests/banco-xss.js"
 banco "banco-account.js (due persone, un telefono: i dati di A non vanno a B)" "node tests/banco-account.js"
+banco "banco-sw-aggiornamento.js (una versione nuova non toglie l'app di mano, nemmeno a meta' giro)" "node tests/banco-sw-aggiornamento.js"
+banco "controlla-cache.js (se cambia un file della shell, CACHE_NAME sale)" "node tests/controlla-cache.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"

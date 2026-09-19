@@ -15392,6 +15392,9 @@ function forgetDraft(k){ delete keepDraft[k]; }
 
 var vtKey = "";
 function render(){
+// Un aggiornamento arrivato a meta' giro si applica al primo disegno fuori
+// dal giro. (P0-3) Asincrono: prima si finisce di disegnare.
+if(aggiornamentoPronto && !giroInCorso()){ setTimeout(function(){ applicaAggiornamentoSeLibero(false); }, 0); }
 var key = String(state.screen) + "|" + String(state.tab) + "|" + String(authState);
 var moved = (vtKey !== "" && key !== vtKey);
 vtKey = key;
@@ -28582,13 +28585,39 @@ navigator.serviceWorker.register('sw.js').catch(function(){});
    arriva, `controller` e' gia' quello nuovo e la domanda non si puo' piu'
    fare. */
 var avevaControllore = !!navigator.serviceWorker.controller;
-var swReloaded = false;
+/* MAI UNA RICARICA SOTTO IL DITO. (19/09/2026, audit P0-3.)
+   Il ramo sopra ricaricava appena arrivava il service worker nuovo, anche a
+   meta' giro: una versione pubblicata il giorno della gara rimbalzava l'app
+   alla Home sotto il dito, perdeva la striscia dell'annulla e il pannello
+   aperto, e con la rete debole poteva lasciare lo schermo bianco.
+   Adesso l'aggiornamento si SEGNA e si applica solo quando e' innocuo:
+   niente giro in corso, niente campo di testo con dentro qualcosa che si sta
+   scrivendo. Se non e' innocuo ora, lo diventa piu' tardi: `render()` e il
+   passaggio in secondo piano lo richiedono di nuovo (vedi
+   `applicaAggiornamentoSeLibero`). La pagina vecchia intanto continua a
+   funzionare: e' un file solo, gia' tutto caricato. */
 navigator.serviceWorker.addEventListener('controllerchange', function(){
 if(!avevaControllore) return;
-if(swReloaded) return;
+aggiornamentoPronto = true;
+applicaAggiornamentoSeLibero(false);
+});
+}
+var aggiornamentoPronto = false;
+var swReloaded = false;
+// Il giro e' «in corso» finche' non e' chiuso, anche se si guarda il menu;
+// il riepilogo conta solo mentre lo si sta leggendo («Torna al menu» lascia
+// `screen` a "summary" e accende `homeOverride`).
+function giroInCorso(){
+if(state.roundActive === true) return true;
+return !homeOverride && (state.screen === "round" || state.screen === "summary");
+}
+function applicaAggiornamentoSeLibero(nascosta){
+if(!aggiornamentoPronto || swReloaded) return;
+if(giroInCorso()) return;
+var a = document.activeElement;
+if(!nascosta && a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.value) return;
 swReloaded = true;
 window.location.reload();
-});
 }
 /* IL RIENTRO DOPO UNA PAUSA — ED E' QUI CHE STAVA IL REFRESH ALL'APERTURA.
    (23/08/2026, dopo che Alessandro lo ha segnalato per la terza volta.)
@@ -28624,7 +28653,9 @@ window.location.reload();
    freschi. E' quello che «ripartire pulita» voleva dire, e costa zero. */
 var appHiddenAt = 0;
 document.addEventListener("visibilitychange", function(){
-if(document.hidden){ appHiddenAt = Date.now(); return; }
+// In secondo piano la ricarica non si vede: e' il momento giusto per
+// applicare un aggiornamento rimasto in attesa (mai a giro aperto). (P0-3)
+if(document.hidden){ appHiddenAt = Date.now(); applicaAggiornamentoSeLibero(true); return; }
 if(!appHiddenAt) return;
 var fermo = Date.now() - appHiddenAt;
 appHiddenAt = 0;

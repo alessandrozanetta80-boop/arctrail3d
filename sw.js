@@ -165,6 +165,11 @@ var CACHE_NAME = "arctrail3d-v167";
 // continuerebbe a servire la copia di prima e la correzione non si
 // vedrebbe. Stessa regola del BUILD_STAMP, stesso motivo.
 var CACHE_PARENT = "arctrail3d-v166";
+// L'impronta dei file di APP_SHELL, scritta per questo CACHE_NAME.
+// La controlla `tests/controlla-cache.js`: se un file della shell cambia e il
+// nome no, il banco dice no. Si riscrive con `--scrivi`, DOPO aver alzato
+// CACHE_NAME (il banco rifiuta di farlo prima). (19/09/2026, audit S4.)
+var SHELL_IMPRONTA = "arctrail3d-v167:1b247c1257593b47";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
@@ -223,25 +228,58 @@ function isCdn(url){
   return false;
 }
 
+/* LE DUE COSE SENZA CUI L'APP NON SI APRE SENZA RETE. (19/09/2026, audit P0-3.)
+   Prima ogni file si scaricava «per conto suo», con `.catch()` muto: un'icona
+   rinominata non doveva bloccare l'installazione, e fin qui era giusto. Ma lo
+   stesso `.catch()` copriva anche `app.html`. Con un 4G debole al campo il
+   download di un megabyte si interrompeva, l'installazione finiva lo stesso,
+   `activate` buttava la cache vecchia — quella buona — e la pagina si
+   ricaricava: senza rete, niente app. A meta' giro.
+   Adesso le ESSENZIALI non hanno rete di sicurezza: se una non arriva intera,
+   l'installazione FALLISCE, la cache nuova e mezza vuota si butta, e il service
+   worker di prima resta al comando con la sua cache intatta. Il browser
+   riprova da solo alla prossima occasione. Le altre (icone, vetrina, librerie
+   Firebase) restano facoltative come prima: senza di loro l'app si apre lo
+   stesso (senza librerie va in modalita' locale e segna). */
+var ESSENZIALI = ["app.html", "compagnie-data.js"];
+
 self.addEventListener("install", function(event){
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache){
-      // addAll() fallisce tutto se un solo file manca: qui ognuno per conto suo,
-      // cosi' un'icona rinominata non impedisce l'installazione.
-      return Promise.all(APP_SHELL.concat(CDN_SHELL).map(function(u){
+      var essenziali = ESSENZIALI.map(function(u){
+        return cache.add(new Request(u, { cache: "reload" }));   // niente catch: e' il punto
+      });
+      var facoltative = APP_SHELL.concat(CDN_SHELL).filter(function(u){
+        return ESSENZIALI.indexOf(u) < 0;
+      }).map(function(u){
         return cache.add(new Request(u, { cache: "reload" })).catch(function(){});
-      }));
+      });
+      return Promise.all(essenziali.concat(facoltative));
+    }).catch(function(err){
+      // Installazione mancata: la cache a meta' non deve restare in giro.
+      return caches.delete(CACHE_NAME).then(function(){ throw err; });
     }).then(function(){ return self.skipWaiting(); })
   );
 });
 
+/* LA CACHE VECCHIA SI BUTTA SOLO QUANDO LA NUOVA E' BUONA. (19/09/2026, P0-3.)
+   Prima: tutto quello che non si chiamava CACHE_NAME, subito. Adesso si
+   controlla che la nuova abbia davvero le essenziali; se no le vecchie
+   restano (il fetch qui sotto cerca in tutte le cache, non solo nella nuova).
+   E si toccano solo le cache di ArcTrail: il resto dell'origine non e' nostro. */
 self.addEventListener("activate", function(event){
   event.waitUntil(
-    caches.keys().then(function(names){
-      return Promise.all(
-        names.filter(function(n){ return n !== CACHE_NAME; })
-             .map(function(n){ return caches.delete(n); })
-      );
+    caches.open(CACHE_NAME).then(function(cache){
+      return Promise.all(ESSENZIALI.map(function(u){ return cache.match(u); }));
+    }).then(function(trovate){
+      var buona = trovate.every(function(r){ return !!r; });
+      if(!buona) return null;
+      return caches.keys().then(function(names){
+        return Promise.all(
+          names.filter(function(n){ return n !== CACHE_NAME && n.indexOf("arctrail3d-") === 0; })
+               .map(function(n){ return caches.delete(n); })
+        );
+      });
     }).then(function(){ return self.clients.claim(); })
   );
 });
@@ -311,7 +349,9 @@ function ripiego(request, cache){
   try{ p = new URL(request.url).pathname; }catch(e){ p = ""; }
   var doc = (p.indexOf("app.html") >= 0 || p.indexOf("marketplace.html") >= 0)
           ? "app.html" : "index.html";
-  return cache.match(doc).then(function(d){ return d || cache.match("./"); });
+  // `caches.match`, non `cache.match`: se la cache nuova fosse incompleta, la
+  // vecchia (tenuta da `activate`) risponde lo stesso. (P0-3)
+  return caches.match(doc).then(function(d){ return d || caches.match("./"); });
 }
 
 self.addEventListener("fetch", function(event){
@@ -348,7 +388,7 @@ self.addEventListener("fetch", function(event){
   event.respondWith(
     caches.open(CACHE_NAME).then(function(cache){
       return fromNetwork(event.request, cache, NET_TIMEOUT).catch(function(){
-        return cache.match(event.request).then(function(cached){
+        return caches.match(event.request).then(function(cached){
           return cached || ripiego(event.request, cache);
         });
       });
