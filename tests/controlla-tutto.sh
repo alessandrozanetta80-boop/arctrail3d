@@ -140,6 +140,7 @@ banco "controlla-pubblicazione.js (sul sito va il sito: diari, banchi, regole e 
 banco "banco-tiri.js (rimbalzi, tocchi voluti, annulla: 1, 2 e 4 arcieri)" "node tests/banco-tiri.js"
 banco "banco-cronometro.js (lo schermo spento non ferma il conto)" "node tests/banco-cronometro.js"
 banco "banco-esterni.js (Google Fonts o gstatic appesi: l'app parte lo stesso)" "node tests/banco-esterni.js"
+banco "banco-accessibile.js (finestre dichiarate, fuoco che non scappa, bersagli da 44)" "node tests/banco-accessibile.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"
@@ -157,15 +158,37 @@ done
 wait
 
 # ── SI LEGGONO IN FILA, NELL'ORDINE DI SEMPRE ─────────────────────────────
+# Si contano anche le PROVE, non solo i banchi: «53 verdi» non dice quanto
+# e' stato davvero controllato, e un banco che non conta niente (perche' ha
+# saltato tutto) da' lo stesso verde di uno che ha fatto cento prove. Quelli
+# senza conto vengono elencati a parte: si guardano a mano. (20/09/2026)
 i=1
+prove=0
+cadute=0
+muti=""
 while [ $i -le $n ]; do
-  riga "$i/$n — $(cat "$D/$i.tit")"
+  tit="$(cat "$D/$i.tit")"
+  riga "$i/$n — $tit"
   cat "$D/$i.out"
   [ "$(cat "$D/$i.esito" 2>/dev/null)" = "0" ] || fallito=1
+  conto="$(grep -o '[0-9][0-9]* passate, [0-9][0-9]* fallite' "$D/$i.out" | tail -1)"
+  if [ -n "$conto" ]; then
+    prove=$((prove + $(echo "$conto" | cut -d' ' -f1) + $(echo "$conto" | cut -d' ' -f3)))
+    cadute=$((cadute + $(echo "$conto" | cut -d' ' -f3)))
+  else
+    muti="$muti
+      $i/$n $tit"
+  fi
+  if grep -qi "saltat" "$D/$i.out"; then muti="$muti
+      $i/$n $tit (dice di aver saltato qualcosa)"; fi
   i=$((i + 1))
 done
 rm -rf "$D"
 
 echo ""
+echo "  $n banchi, $prove prove contate, $cadute cadute."
+if [ -n "$muti" ]; then
+  echo "  Banchi che non hanno contato le prove (da leggere a mano):$muti"
+fi
 if [ $fallito -eq 0 ]; then echo "TUTTI PASSATI."; else echo "ALMENO UNO HA DETTO NO — leggere sopra."; fi
 exit $fallito

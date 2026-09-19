@@ -5069,7 +5069,7 @@ border-color:color-mix(in srgb, var(--danger-role) 40%, var(--line)); margin-lef
    Da fermo e' un comando che si apre. Mentre corre e' un numero che cambia
    colore. In nessuno dei due casi merita il terzo migliore dello schermo. */
 .chip-timer{ display:inline-flex; align-items:center; gap:var(--s-1);
-min-height:32px; padding:0 var(--s-3); border-radius:var(--r-pill);
+min-height:var(--hit); padding:0 var(--s-3); border-radius:var(--r-pill);
 background:var(--surface-2); border:1.5px solid var(--border-strong);
 color:var(--text-2); font-family:var(--font-ui); font-size:var(--t-xs);
 font-weight:700; cursor:pointer; flex:0 0 auto;
@@ -5097,6 +5097,12 @@ transition:background var(--dur-2) var(--ease), border-color var(--dur-2) var(--
    misura naturale finche' c'e' posto, si comprime quando non ce n'e'. Cede la
    scena, mai la tastiera. */
 .pista-scena{ flex:0 1 auto; min-height:0; overflow-y:auto; text-align:left; margin-bottom:0; }
+/* Il conflitto fra due dispositivi e la domanda sui giri di origine
+   sconosciuta: due carte che chiedono una scelta, e si vedono. (20/09/2026) */
+.giro-conflitto{ flex:0 0 auto; border-color:var(--danger); margin-bottom:var(--s-2); }
+.giro-conflitto .btn{ margin-top:var(--s-2); }
+.orfani-carta{ border-color:var(--accent); margin-bottom:var(--s-3); }
+.orfani-carta .btn{ margin-top:var(--s-2); }
 .pista-arciere{ font-size:var(--t-xl); font-weight:800; line-height:1.1;
 color:var(--text-1); margin:0; text-wrap:balance; }
 /* Fraunces e' un carattere da titoli, con grazie e contrasto forte. Un nome
@@ -5285,7 +5291,11 @@ body.schermo-percorso #app{ padding-top:var(--s-1); padding-bottom:var(--s-1); }
 body.schermo-percorso header.top{ margin-top:calc(var(--s-1) * -1); margin-bottom:var(--s-1); }
 .pista-scorciatoie{ margin-bottom:var(--s-1); }
 .pista-spazio{ min-height:0; }
-.pista-scena{ padding:var(--s-1) var(--s-3); }
+/* A 320 px di altezza il riquadro della scena perde il respiro verticale: lo
+   spazio va al nome (o alla piazzola), che e' il motivo per cui la scena c'e'.
+   Il cronometro resta 44: e' un bersaglio da dito. (20/09/2026, fase 21.) */
+.pista-scena{ padding:0 var(--s-3); }
+.pista-piazzola .cifre{ font-size:var(--t-lg); }
 /* La barra d'avanzamento dice la stessa cosa di «PIAZZOLA 3 / 24» scritto
    subito sopra: a 320 px quello spazio serve al protagonista della scena. */
 .pista-testa .progress-track{ display:none; }
@@ -5300,7 +5310,9 @@ margin-bottom:var(--s-2); box-shadow:var(--elev-2); overflow-y:auto; }
 .pannello-testa{ display:flex; align-items:center; gap:var(--s-2);
 margin-bottom:var(--s-3); flex:0 0 auto; }
 .pannello-titolo{ font-size:var(--t-md); font-weight:700; color:var(--text-1); }
-.pannello-chiudi{ margin-left:auto; width:36px; height:36px; flex:0 0 auto;
+/* 44x44: e' la X che chiude Classifica e Sagoma, e si preme camminando, con il
+   guanto. Trentasei erano sotto la soglia di chiunque. (20/09/2026, fase 21.) */
+.pannello-chiudi{ margin-left:auto; width:var(--hit); height:var(--hit); flex:0 0 auto;
 display:inline-flex; align-items:center; justify-content:center;
 background:none; border:1.5px solid var(--border-strong); border-radius:var(--r-sm);
 color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer; }
@@ -5610,7 +5622,22 @@ document.body.classList.add("theme-" + th);
 })();
 </script>
 
-<div id="app"></div>
+<!-- LO SCHELETRO DELL'AVVIO. (20/09/2026, fase 23; audit C13.)
+     `app.html` pesa mezzo megabyte compresso e il copione che disegna sta in
+     fondo: prima di lui il browser deve aver scaricato tutto. Misurato: 4,1 s
+     su 4G lento, 15 s su 3G di schermo bianco. Questo pezzo invece sta in cima
+     al corpo, subito dopo il foglio di stile: si dipinge ai primi byte, mentre
+     il resto scende. Non e' una finta schermata — dice solo il nome e che si
+     sta aprendo — e sparisce al primo disegno vero (paintScreen svuota #app).
+     Stili in riga: non deve dipendere da nessuna classe che arriva dopo. -->
+<div id="app"><div id="avvioScheletro" aria-busy="true" style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px 16px;text-align:center;">
+<div style="font-family:var(--font-display,sans-serif);font-size:1.6rem;font-weight:800;letter-spacing:.02em;color:var(--text-1,#132615);">ArcTrail 3D</div>
+<div style="width:132px;height:6px;border-radius:999px;background:var(--line,#D9DCCF);overflow:hidden;">
+<div style="width:40%;height:100%;border-radius:999px;background:var(--accent,#315B35);animation:avvioBarra 1.1s ease-in-out infinite;"></div>
+</div>
+</div></div>
+<style>@keyframes avvioBarra{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
+@media (prefers-reduced-motion:reduce){#avvioScheletro div div{animation:none}}</style>
 
 <script>
 (function(){
@@ -5627,7 +5654,14 @@ app.innerHTML = '<div style="padding:40px 20px;text-align:center;font-family:san
 });
 })();
 </script>
-<script src="compagnie-data.js" defer></script>
+<!-- LE SOCIETA' ARRIVANO DOPO LA PRIMA SCHERMATA. (20/09/2026, fase 23.)
+     Con `defer` questo mezzo megabyte, 186 KB compressi, scaricava INSIEME ad
+     app.html e si divideva la banda: su 3G la Home aspettava anche lui.
+     Adesso l'app parte, disegna, e poi se lo tira giu' da sola
+     (`caricaCompagnie()`); quando arriva, la schermata si ridisegna.
+     `COMPAGNIE` nasce come elenco vuoto: chi lo legge prima trova zero societa',
+     non un errore. Il service worker lo tiene in cassa come prima. -->
+<script>window.COMPAGNIE = window.COMPAGNIE || {};</script>
 <script>
 /* L'AVVIO NON ASPETTA PER SEMPRE LE LIBRERIE ESTERNE. (20/09/2026, fase 15.)
    L'app partiva a `DOMContentLoaded`, che aspetta le cinque librerie Firebase
@@ -5638,14 +5672,21 @@ app.innerHTML = '<div style="padding:40px 20px;text-align:center;font-family:san
    4 secondi, si parte lo stesso: senza librerie, `modalitaLocale()` apre il
    telefono gia' configurato e si segna. Parte UNA volta sola. */
 (function(){
-var partita = false;
+/* SI PARTE SUBITO, NON A `DOMContentLoaded`. (20/09/2026, fase 23.)
+   Questo copione sta in fondo al <body>: quando viene eseguito la pagina e'
+   gia' letta, e l'app puo' disegnarsi. `DOMContentLoaded` invece aspetta gli
+   script `defer` — le cinque librerie Firebase e il mezzo megabyte delle
+   societa' — e aspettarli voleva dire schermo bianco per tutto quel tempo:
+   misurato, 4,1 s su 4G lento e 15 s su 3G prima della prima schermata utile.
+   Adesso si disegna appena si puo'; l'accesso parte quando le librerie sono
+   arrivate (vedi `avviaAccessoQuandoPronto`), e se non arrivano mai si va in
+   modalita' locale invece di restare bianchi. */
 window.__avviaArcTrail = function(fn){
-function una(){ if(partita) return; partita = true; fn(); }
-document.addEventListener("DOMContentLoaded", una);
-var guarda = setInterval(function(){
-if(partita){ clearInterval(guarda); return; }
-if(document.readyState !== "loading"){ clearInterval(guarda); setTimeout(una, 4000); }
-}, 100);
+// Si parte SUBITO: questo copione e' l'ultimo elemento del <body>, quindi
+// tutto quello che serve a disegnare (compreso #app) c'e' gia'. Aspettare
+// `DOMContentLoaded` vorrebbe dire aspettare anche gli script `defer`.
+try{ fn(); }
+catch(e){ document.addEventListener("DOMContentLoaded", fn); }
 };
 })();
 window.__avviaArcTrail(function(){
@@ -6253,6 +6294,35 @@ authState = "authError";
 authErrorMsg = t("auth_error_profile");
 render();
 });
+}
+
+/* Le societa': si caricano appena l'app ha disegnato. (fase 23) */
+var compagnieCaricate = false;
+function caricaCompagnie(){
+if(compagnieCaricate) return;
+compagnieCaricate = true;
+try{
+var s = document.createElement("script");
+s.src = "compagnie-data.js";
+s.async = true;
+s.onload = function(){ try{ render(); }catch(e){} };
+document.head.appendChild(s);
+}catch(e){}
+}
+
+var accessoPartito = false;
+function avviaAccessoQuandoPronto(){
+function vai(){
+if(accessoPartito) return;
+accessoPartito = true;
+// Le societa' arrivano col loro script: quando ci sono, si ridisegna.
+if(typeof COMPAGNIE !== "undefined") render();
+initAuthFlow();
+}
+if(DEV_MODE || fbVivo()){ vai(); return; }
+document.addEventListener("DOMContentLoaded", vai);
+window.addEventListener("load", vai);
+setTimeout(vai, 4000);
 }
 
 function initAuthFlow(){
@@ -14436,6 +14506,8 @@ var n = document.querySelector(".pista-sotto .pista-stato");
 if(!n) return;
 var s = statoGiroTesto();
 n.className = "pista-stato " + s.cl;
+// Lo dice anche a chi non guarda lo schermo: «Al sicuro», «Parte con la rete».
+if(!n.getAttribute("role")) { n.setAttribute("role", "status"); n.setAttribute("aria-live", "polite"); }
 /* «Non inviato» diceva cosa era successo e non cosa fare. La parola in piu'
    compare solo nello stato in cui c'e' qualcosa da fare, e il tocco funziona
    solo li': un cartellino che risponde sempre sembra un tasto, e nella pista
@@ -15153,6 +15225,40 @@ return Promise.race([db.terminate().then(function(){ return db.clearPersistence(
 if(window.__esciSenzaRicarica){ authState = "needLogin"; render(); return; }
 window.location.reload();
 });
+}
+
+/* LE FINESTRE CHE COPRONO LO SCHERMO. (20/09/2026, fase 21.) Erano `div` e
+   basta: chi usa la tastiera o un lettore di schermo poteva uscirne col TAB e
+   continuare a premere cose dietro, senza sapere che c'era qualcosa davanti.
+   Qui diventano finestre di dialogo dichiarate: `role="dialog"`,
+   `aria-modal`, il titolo che le nomina, il fuoco che entra e NON esce,
+   ESC che chiude, e il fuoco che torna dov'era. Niente redesign: le stesse
+   finestre, dette bene. */
+function apriFinestra(ov, box, chiudi){
+var tornaA = document.activeElement;
+ov.setAttribute("role", "dialog");
+ov.setAttribute("aria-modal", "true");
+var tit = box.querySelector("h2, h3");
+if(tit){
+if(!tit.id) tit.id = "dlg" + Math.random().toString(36).slice(2, 8);
+ov.setAttribute("aria-labelledby", tit.id);
+}
+function fuocabili(){
+return Array.prototype.filter.call(
+box.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'),
+function(x){ return x.offsetParent !== null; });
+}
+ov.addEventListener("keydown", function(ev){
+if(ev.key === "Escape" && chiudi){ ev.preventDefault(); chiudi(); return; }
+if(ev.key !== "Tab") return;
+var f = fuocabili();
+if(!f.length) return;
+var primo = f[0], ultimo = f[f.length - 1];
+if(ev.shiftKey && document.activeElement === primo){ ev.preventDefault(); ultimo.focus(); }
+else if(!ev.shiftKey && document.activeElement === ultimo){ ev.preventDefault(); primo.focus(); }
+});
+setTimeout(function(){ var f = fuocabili(); if(f.length) f[0].focus(); }, 0);
+return function(){ try{ if(tornaA && tornaA.focus) tornaA.focus(); }catch(e){} };
 }
 
 function armDoubleConfirm(btn, armedLabel, onConfirm){
@@ -16064,6 +16170,13 @@ if(ov.parentNode) ov.parentNode.removeChild(ov);
 box.appendChild(okBtn);
 ov.appendChild(box);
 document.body.appendChild(ov);
+// Finestra dichiarata, fuoco dentro, ESC chiude, fuoco che torna. (fase 21)
+var tornaFuoco = apriFinestra(ov, box, function(){
+welcomeNoteDone = true;
+if(ov.parentNode) ov.parentNode.removeChild(ov);
+tornaFuoco();
+});
+[reportBtn, okBtn].forEach(function(b){ b.addEventListener("click", function(){ tornaFuoco(); }); });
 }
 
 // ---------- AUTENTICAZIONE ----------
@@ -27993,7 +28106,9 @@ if(state.campo) dove.push(escapeHtml(state.campo));
 dove.push(escapeHtml(modeLabel(state.mode)));
 sotto.appendChild(el('<span class="pista-dove">'+dove.join(" \u00b7 ")+'</span>'));
 var st = statoGiroTesto();
-var chipStato = el('<span class="pista-stato '+st.cl+'">'+escapeHtml(st.txt)+'</span>');
+// role=status + aria-live: «Al sicuro» o «Parte con la rete» lo sente anche
+// chi non guarda lo schermo, ed e' la riga che dice se si puo' spegnere. (fase 21)
+var chipStato = el('<span class="pista-stato '+st.cl+'" role="status" aria-live="polite">'+escapeHtml(st.txt)+'</span>');
 chipStato.addEventListener("click", function(){
 if(giroNube.stato === "errore") salvaGiroSulCloud(true);
 });
@@ -29634,7 +29749,11 @@ arrivaDaEmail = leggiRitornoEmail();
 // di li', perche' senza state.lang paintScreen() va dritto al primo passo.
 // *Un'attesa dichiarata e' un'attesa; un'attesa bianca e' un guasto.*
 render();
-initAuthFlow();
+caricaCompagnie();
+/* L'accesso parte quando le librerie Firebase sono arrivate: se sono gia' qui
+   subito, altrimenti a `DOMContentLoaded`, e comunque entro 4 secondi —
+   passati quelli si tira lo stesso, in modalita' locale. (fase 23) */
+avviaAccessoQuandoPronto();
 });
 </script>
 </body>
