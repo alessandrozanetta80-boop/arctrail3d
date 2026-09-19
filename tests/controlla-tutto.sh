@@ -133,6 +133,9 @@ banco "banco-sw-aggiornamento.js (una versione nuova non toglie l'app di mano, n
 banco "controlla-cache.js (se cambia un file della shell, CACHE_NAME sale)" "node tests/controlla-cache.js"
 banco "banco-giro-flusso.js (il giro si apre, si chiude e non si sdoppia)" "node tests/banco-giro-flusso.js"
 banco "banco-push-app.js (le push viste dall'app: token per dispositivo, primo piano, tocco)" "node tests/banco-push-app.js"
+banco "banco-pista-schermi.js (i tasti del punteggio stanno nello schermo: orizzontale, zoom, S26 Ultra)" "node tests/banco-pista-schermi.js"
+banco "banco-recapiti.js (telefono, email e sito delle compagnie diventano link solo se lo sono)" "node tests/banco-recapiti.js"
+banco "controlla-pwa.js (zoom, scuro forzato, icona iOS, manifest, foto pigre)" "node tests/controlla-pwa.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"

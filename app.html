@@ -2,7 +2,9 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<!-- Niente maximum-scale (19/09/2026, audit M3): chi ci vede poco deve poter ingrandire con due dita.
+     Il doppio tocco sui tasti non zooma: .tastiera .quick-btn ha touch-action:manipulation. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ECEDE6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -59,7 +61,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js" defer></script>
 
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
 <link rel="icon" href="icon-192.png">
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -440,7 +442,10 @@
    E' anche in :root perche' prima che parta il JS il body non ha ancora
    nessuna classe di tema: senza questo, mezzo secondo di pagina senza colori. */
 :root, body.theme-light{
-color-scheme:light;
+/* «only light»: Chrome e Samsung Internet con lo scuro forzato non ricolorano
+   questa pagina (e i cinque tasti del punteggio, che devono restare quelli).
+   (19/09/2026, audit M4; su un Samsung vero resta DA VERIFICARE.) */
+color-scheme:only light;
 
 /* superfici */
 --surface:var(--sand-200); --surface-1:var(--sand-50); --surface-2:var(--sand-100);
@@ -859,7 +864,7 @@ color-scheme:dark;
    e leggerebbero i ruoli di :root, cioe' quelli del chiaro. E' il bug scritto
    in cima a questo foglio, quello che torna sempre. */
 body.theme-sole{
-color-scheme:light;
+color-scheme:only light;
 
 /* PRIMA VERSIONE TROPPO TIMIDA, e l'ha detto il campo lo stesso giorno:
    «la modalita' sole non cambia molto dalla light». Aveva ragione — erano
@@ -5191,7 +5196,7 @@ font-size:var(--t-sm); font-weight:600; }
 body.theme-dark .striscia-annulla{ background:color-mix(in srgb, var(--gold-400) 16%, var(--surface-1));
 border-color:var(--gold-400); color:var(--gold-400); }
 .striscia-annulla .num{ font-weight:800; }
-.striscia-annulla > span{ min-width:0; }
+.striscia-annulla > span{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 /* Il rimedio non va a capo. Sul telefono vero "Annulla freccia" si spezzava in
    due righe e la striscia diventava alta il doppio del tasto che la contiene:
    un comando spezzato sembra due comandi. Il testo a sinistra puo' accorciarsi
@@ -5223,7 +5228,7 @@ padding-bottom:env(safe-area-inset-bottom); }
 .tastiera-riga[data-n="1"]{ grid-template-columns:1fr; }
 .tastiera-riga[data-n="2"]{ grid-template-columns:repeat(2,1fr); }
 .tastiera-riga[data-n="3"]{ grid-template-columns:repeat(3,1fr); }
-.tastiera .quick-btn{ height:auto; min-height:64px; gap:2px; }
+.tastiera .quick-btn{ height:auto; min-height:64px; gap:2px; touch-action:manipulation; }
 /* La misura ora e' quella base (vedi .quick-lbl): qui resta solo cio' che
    e' davvero specifico del percorso. */
 .tastiera .quick-btn .quick-lbl{ letter-spacing:.03em; }
@@ -5234,6 +5239,50 @@ padding-bottom:env(safe-area-inset-bottom); }
 .tastiera .quick-btn{ min-height:52px; }
 .tastiera .quick-btn .quick-pts{ font-size:var(--t-lg); }
 .pista-turni{ margin-top:var(--s-2); padding-top:var(--s-2); }
+/* (19/09/2026, audit M2.) Col testo di sistema grande o lo zoom al 125%, dopo
+   il primo tocco la striscia dell'annulla spingeva la tastiera fuori dallo
+   schermo. Qui prende il minimo che resta comodo: il suo tasto resta 44. */
+.pista-testa{ margin-bottom:var(--s-2); }
+.striscia-annulla{ min-height:var(--hit); margin-bottom:var(--s-1); }
+.striscia-annulla button{ min-height:var(--hit); }
+}
+/* IN ORIZZONTALE I TASTI STANNO SU UNA RIGA. (19/09/2026, audit M1.)
+   Con il telefono girato (iPhone e le schede del browser ignorano
+   `orientation: portrait` del manifest) lo schermo e' alto 320-412 px: la
+   tastiera a due righe finiva sotto il bordo, e la pista non scorre — NULLA e
+   SAGOMA non si potevano piu' toccare. Qui la tastiera diventa una riga sola:
+   ogni tasto resta largo il doppio del minimo e alto 48, l'ordine da sinistra
+   a destra e' lo stesso della lettura in verticale. Niente di nuovo da
+   imparare: stessi tasti, stessi colori, messi in fila. */
+@media (max-height:460px){
+.tastiera{ display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:var(--s-2); }
+.tastiera-riga{ display:contents; }
+.tastiera .quick-btn{ min-height:48px; }
+.pista-testa{ margin-bottom:var(--s-1); }
+.pista-passo-riga{ margin-bottom:var(--s-1); }
+.pista-sotto{ margin-top:var(--s-1); }
+.pista-scorciatoie .btn{ min-height:var(--hit); }
+/* La scena resta, piu' stretta: da solo la cifra della piazzola perde
+   l'etichetta «PIAZZOLA», che e' gia' scritta in testa alla pista. */
+.pista-scena{ padding:var(--s-2) var(--s-3); }
+.pista-piazzola .eti{ display:none; }
+.pista-piazzola .cifre{ font-size:var(--t-xl); }
+}
+/* IL TELEFONO PIU' BASSO GIRATO (320-360 px). Qui ogni riga conta: i tasti
+   scendono al minimo per un dito (44, il --hit di tutta l'app), la testata
+   della pista stringe il respiro. Nome, contatore, stato e comandi restano. */
+@media (max-height:360px){
+.tastiera .quick-btn{ min-height:var(--hit); }
+.tastiera .quick-btn .quick-lbl{ font-size:var(--t-xs); }
+body.schermo-percorso header.top{ min-height:var(--hit); }
+body.schermo-percorso #app{ padding-top:var(--s-1); padding-bottom:var(--s-1); }
+body.schermo-percorso header.top{ margin-top:calc(var(--s-1) * -1); margin-bottom:var(--s-1); }
+.pista-scorciatoie{ margin-bottom:var(--s-1); }
+.pista-spazio{ min-height:0; }
+.pista-scena{ padding:var(--s-1) var(--s-3); }
+/* La barra d'avanzamento dice la stessa cosa di «PIAZZOLA 3 / 24» scritto
+   subito sopra: a 320 px quello spazio serve al protagonista della scena. */
+.pista-testa .progress-track{ display:none; }
 }
 
 /* ── i pannelli: sagoma e classifica ──
@@ -14674,6 +14723,41 @@ function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return {
    altro. Le regole ora chiedono un numero, ma un documento scritto prima o un client modificato
    possono portare una stringa, e `1 + "<img onerror=...>"` dentro un template diventa codice
    eseguito da chi guarda. Qui torna sempre un intero >= 0, e 0 vuol dire «non c'e'». */
+/* I RECAPITI DIVENTANO LINK SOLO SE SONO RECAPITI. (19/09/2026, audit IT-05.)
+   In `compagnie-data.js` il telefono puo' essere «3473761506 (Pisi Romano)» o
+   «— (contattare via mail)», l'email due indirizzi con «;», il sito
+   «Facebook/Arcieri/Stadium/Besozzo», «Instagram @…» o «no». Il link si
+   costruiva lo stesso (`tel:3473761506(PisiRomano)`, `https://no`): un tocco
+   su un link rotto, e un nome di persona scritto sullo schermo.
+   Qui si tira fuori il recapito vero; se non c'e', niente link (e niente riga).
+   `…Testo` e' quello che si mostra, `…Link` quello che si apre: tutti e due
+   gia' ripuliti, e comunque passano da escapeHtml. */
+function telTesto(v){
+var m = String(v || "").match(/\+?\d[\d .\/-]{4,}\d/);
+return m ? m[0].trim() : "";
+}
+function telLink(v){
+var n = telTesto(v).replace(/[^\d+]/g, "");
+return n.length >= 6 ? "tel:" + n : "";
+}
+function mailTesto(v){
+var m = String(v || "").match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
+return m ? m[0] : "";
+}
+function mailLink(v){ var e = mailTesto(v); return e ? "mailto:" + e : ""; }
+function sitoTesto(v){
+var s = String(v || "").trim().replace(/^(www\.)\s+/i, "$1");
+if(!s || /\s|@/.test(s)) return "";
+if(!/^(https?:\/\/)?([A-Za-z0-9-]+\.)+[A-Za-z]{2,}(\/\S*)?$/.test(s)) return "";
+return s.replace(/^https?:\/\//i, "");
+}
+function sitoLink(v){
+var s = String(v || "").trim();
+var t = sitoTesto(v);
+if(!t) return "";
+return (/^http:\/\//i.test(s) ? "http://" : "https://") + t;
+}
+
 function interoSicuro(v){ var n = parseInt(v, 10); return (isFinite(n) && n > 0) ? n : 0; }
 
 // pulsante a doppia conferma: primo tocco arma (mostra conferma), secondo tocco entro pochi secondi esegue
@@ -20404,9 +20488,9 @@ dentro.appendChild(conti);
 //    toccare, e stanno su una riga sola. ─────────────────────────────────
 if(c && c.completa){
 var ferri = el('<div class="comp-ferri"></div>');
-if(c.telefono){ ferri.appendChild(el('<a class="comp-ferro" href="tel:'+c.telefono.split(" ").join("")+'">'+icon("phone",16)+' '+t("cp_admin_tel")+'</a>')); }
-if(c.email){ ferri.appendChild(el('<a class="comp-ferro" href="mailto:'+escapeHtml(c.email)+'">'+icon("mail",16)+' '+t("cp_admin_email_label")+'</a>')); }
-if(c.sito){ ferri.appendChild(el('<a class="comp-ferro" href="https://'+escapeHtml(c.sito)+'" target="_blank" rel="noopener">'+icon("globe",16)+' '+t("cp_admin_sito")+'</a>')); }
+if(telLink(c.telefono)){ ferri.appendChild(el('<a class="comp-ferro" href="'+escapeHtml(telLink(c.telefono))+'">'+icon("phone",16)+' '+t("cp_admin_tel")+'</a>')); }
+if(mailLink(c.email)){ ferri.appendChild(el('<a class="comp-ferro" href="'+escapeHtml(mailLink(c.email))+'">'+icon("mail",16)+' '+t("cp_admin_email_label")+'</a>')); }
+if(sitoLink(c.sito)){ ferri.appendChild(el('<a class="comp-ferro" href="'+escapeHtml(sitoLink(c.sito))+'" target="_blank" rel="noopener">'+icon("globe",16)+' '+t("cp_admin_sito")+'</a>')); }
 if(ferri.childNodes.length) dentro.appendChild(ferri);
 }
 
@@ -20592,14 +20676,14 @@ infoCard.appendChild(el(codiceFiarcDi(state.compagniaAttiva)
 : '<h2 class="section-title">'+escapeHtml(compagnia.nome)+' <span style="color:var(--muted);font-weight:600;font-size:var(--t-sm);">('+escapeHtml(state.compagniaAttiva)+')</span></h2>'));
 if(compagnia.completa){
 infoCard.appendChild(el('<div class="cp-info-row">'+icon("pin",16)+' '+escapeHtml(compagnia.luogo)+'</div>'));
-if(compagnia.telefono){
-infoCard.appendChild(el('<div class="cp-info-row"><a href="tel:'+compagnia.telefono.replace(/\s/g,"")+'">\uD83D\uDCDE '+compagnia.telefono+'</a></div>'));
+if(telLink(compagnia.telefono)){
+infoCard.appendChild(el('<div class="cp-info-row"><a href="'+escapeHtml(telLink(compagnia.telefono))+'">\uD83D\uDCDE '+escapeHtml(telTesto(compagnia.telefono))+'</a></div>'));
 }
-if(compagnia.email){
-infoCard.appendChild(el('<div class="cp-info-row"><a href="mailto:'+compagnia.email+'">\u2709\uFE0F '+compagnia.email+'</a></div>'));
+if(mailLink(compagnia.email)){
+infoCard.appendChild(el('<div class="cp-info-row"><a href="'+escapeHtml(mailLink(compagnia.email))+'">\u2709\uFE0F '+escapeHtml(mailTesto(compagnia.email))+'</a></div>'));
 }
-if(compagnia.sito){
-infoCard.appendChild(el('<div class="cp-info-row"><a href="https://'+compagnia.sito+'" target="_blank" rel="noopener">\uD83C\uDF10 '+compagnia.sito+'</a></div>'));
+if(sitoLink(compagnia.sito)){
+infoCard.appendChild(el('<div class="cp-info-row"><a href="'+escapeHtml(sitoLink(compagnia.sito))+'" target="_blank" rel="noopener">\uD83C\uDF10 '+escapeHtml(sitoTesto(compagnia.sito))+'</a></div>'));
 }
 } else {
 infoCard.appendChild(el('<div class="cp-info-row placeholder">'+icon("pin",16)+' '+escapeHtml(compagnia.luogo)+'</div>'));
@@ -21505,9 +21589,9 @@ box.appendChild(el('<div class="cp-info-row chi">'+escapeHtml(c.nome)+'</div>'))
 } else {
 box.appendChild(el('<div class="cp-info-row chi">'+escapeHtml(c.nome)+' · '+escapeHtml(cod)+'</div>'));
 }
-if(c.telefono){ box.appendChild(el('<div class="cp-info-row"><a href="tel:'+c.telefono.replace(/\s/g,"")+'">📞 '+escapeHtml(c.telefono)+'</a></div>')); }
-if(c.email){ box.appendChild(el('<div class="cp-info-row"><a href="mailto:'+escapeHtml(c.email)+'">✉️ '+escapeHtml(c.email)+'</a></div>')); }
-if(c.sito){ box.appendChild(el('<div class="cp-info-row"><a href="https://'+escapeHtml(c.sito)+'" target="_blank" rel="noopener">🌐 '+escapeHtml(c.sito)+'</a></div>')); }
+if(telLink(c.telefono)){ box.appendChild(el('<div class="cp-info-row"><a href="'+escapeHtml(telLink(c.telefono))+'">📞 '+escapeHtml(telTesto(c.telefono))+'</a></div>')); }
+if(mailLink(c.email)){ box.appendChild(el('<div class="cp-info-row"><a href="'+escapeHtml(mailLink(c.email))+'">✉️ '+escapeHtml(mailTesto(c.email))+'</a></div>')); }
+if(sitoLink(c.sito)){ box.appendChild(el('<div class="cp-info-row"><a href="'+escapeHtml(sitoLink(c.sito))+'" target="_blank" rel="noopener">🌐 '+escapeHtml(sitoTesto(c.sito))+'</a></div>')); }
 
 // Chi si allena qui, se qualcuno si allena qui. Un campo con un allenamento
 // gia' annunciato e' un'altra cosa da un campo e basta: e' una porta aperta.
