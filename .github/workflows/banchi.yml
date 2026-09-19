@@ -24,6 +24,13 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Tutta la storia, non l'ultimo commit: banco-salto-versione.js
+          # installa la versione del 29/08 presa da qui, e controlla-versioni.js
+          # chiede a git QUANDO un file e' cambiato l'ultima volta. Con la
+          # profondita' 1 il primo non parte e il secondo crede che sia tutto di
+          # oggi. (20/09/2026)
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
