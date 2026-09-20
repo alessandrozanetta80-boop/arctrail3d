@@ -207,9 +207,9 @@ conti dei banchi e cosa resta: `docs/RISANAMENTO-2026-09-19.md`.
 - **R1. Pubblicare.** *(1)* `main` ← ramo: `app.html`, `sw.js`, `index.html`,
   `manifest.json`, `compagnie-data.js`, `_config.yml`, `.github/`, banchi.
   *(2)* `node tests/controlla-base.js` (il sito vero è la versione nuova?).
-  *(3)* `bash ~/pubblica.sh` (Functions `2026-09-20-visibilita`, otto).
-  *(4)* Incollare `firestore.rules` `2026-09-20-visibilita` in console.
-  **L'ordine conta, e in questo verso** (20/09 sera): sito → Functions → regole.
+  *(3)* Functions `2026-09-20-visibilita`, otto: `pubblica.sh` (dal Cloud Shell).
+  *(4)* Regole `2026-09-20-visibilita`: `firebase deploy --only firestore:rules`,
+  oppure in console. **L'ordine conta:** sito → Functions → regole.
   Comandi, cosa guardare e come si torna indietro: `ROLLOUT-2026-09-20.md`.
 - **R2. Col telefono in mano:** push (app chiusa, in background, aperta, due
   dispositivi) e tocco; orizzontale; Samsung con lo scuro forzato; avvio senza
