@@ -2,7 +2,7 @@
 #
 # pubblica.sh — pubblica le Cloud Functions di ArcTrail 3D dal Cloud Shell.
 #
-#   bash ~/pubblica.sh                 # tutte e sette
+#   bash ~/pubblica.sh                 # tutte (otto dal 20/09/2026)
 #   bash ~/pubblica.sh pushNotifica    # una sola
 #
 # COSA E' CAMBIATO IL 17/09/2026, E PERCHE' CONTA.
@@ -128,7 +128,7 @@ if [ -n "$SOLO" ]; then
 else
   BERSAGLIO="functions"
   echo ""
-  echo "══ deploy di tutte e sette ══"
+  echo "══ deploy di tutte ══"
 fi
 
 giallo "  Alla domanda «create» rispondi  y"
