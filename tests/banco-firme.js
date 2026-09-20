@@ -99,6 +99,17 @@ eval(estrai("misuraTocco"));
 eval(estrai("mediana"));
 var MISURE_KEY = "banco", MISURE_MAX = 300, ultimoTocco = null;
 
+/* I TRE AIUTANTI DELLE FRECCE. (20/09/2026, fase 7.) Dal 20/09 accanto al
+   punto si salva la ZONA, in un elenco parallelo, e `registerShot` non tocca
+   piu' `pendingArrows` a mano: passa da qui. Senza queste tre righe il banco
+   cade dentro `registerShot` con «frecceInCorso is not defined» — cioe' dice
+   no, ma per una ragione che non c'entra niente col ridisegno. */
+eval(estrai("frecceInCorso"));
+eval(estrai("zoneInCorso"));
+eval(estrai("aggiungiFreccia"));
+eval(estrai("togliUltimaFreccia"));
+eval(estrai("azzeraFrecce"));
+
 eval(estrai("targetArrowCount"));
 eval(estrai("chiudiGiro"));
 eval(estrai("advanceToNextTarget"));

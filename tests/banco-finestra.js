@@ -192,6 +192,26 @@ function scrittureDiOggi(){
     await prova(nome, () => assertSucceeds(fn()));
   }
 
+  /* ── QUELLO CHE L'APP DI IERI PERDE, DETTO PRIMA ────────────────────────
+     (20/09/2026, SEC-09.) `compagnie_admin` conteneva insieme due cose: chi
+     gestisce una compagnia (serve a tutti) e i dati del referente — nome,
+     telefono, indirizzo, note private (non servono a nessun altro). Le regole
+     non sanno nascondere un campo, quindi il documento si chiude al suo
+     referente e i due dati pubblici passano da `compagnie_contatto`.
+     L'APP DI IERI NON SA CHE ESISTE. Durante la finestra, chi non ha ancora
+     aggiornato, aprendo la pagina di una compagnia gestita, vedra' «chiedi di
+     gestire» invece di «gestita da»; e una segnalazione di campo non trovera'
+     l'email del club. Non si perde niente e non si rompe niente: si perde una
+     riga di informazione, per qualche ora.
+     LA SCELTA E' DICHIARATA, e la si e' fatta in questo verso perche'
+     l'alternativa — lasciare la scheda leggibile finche' tutti aggiornano —
+     vuol dire lasciare il telefono di casa di una persona leggibile da
+     chiunque abbia un account, per un tempo che non decide nessuno. */
+  await prova("la scheda del referente NON si legge piu' dall'app di ieri (previsto)", () =>
+    assertFails(db(B).doc('compagnie_admin/01VERB').get()));
+  await prova('ma il suo referente la legge ancora', () =>
+    assertSucceeds(db(A).doc('compagnie_admin/01VERB').get()));
+
   /* ── PARTE 2 ──────────────────────────────────────────────────────────
      L'app nuova contro le regole ancora vecchie: succede a chiunque apra
      l'app fra la pubblicazione del sito e quella delle regole. */

@@ -2747,6 +2747,12 @@ color:var(--text-3); font-size:var(--t-lg); line-height:1; }
 .notif-riga.nuova .notif-titolo{ font-weight:800; }
 .notif-testo{ font-size:var(--t-sm); line-height:1.4; margin-top:var(--s-1); }
 .notif-quando{ font-size:var(--t-xs); color:var(--text-3); margin-top:var(--s-1); }
+/* CHI HA SCRITTO L'AVVISO. (20/09/2026, audit SEC-12.) Sta sotto il testo e
+   non sopra: il titolo resta la prima cosa che si legge, la firma e' quello
+   che si va a cercare quando il titolo dice qualcosa di strano. Nessun colore
+   nuovo: la firma del sistema e' la stessa dell'ora. */
+.notif-da{ font-size:var(--t-xs); color:var(--text-3); margin-top:var(--s-1); font-weight:600; }
+.notif-da.sistema{ font-weight:400; }
 .notif-vai{
 display:flex; align-items:center; gap:var(--s-1); margin-top:var(--s-2);
 font-size:var(--t-xs); font-weight:700; color:var(--accent-soft); }
@@ -5732,6 +5738,7 @@ firebaseReady = false;
 } else {
 try{
 var fbApp = firebase.initializeApp(firebaseConfig);
+attivaAppCheck();
 auth = firebase.auth();
 db = firebase.firestore();
 try{ db.enablePersistence({ synchronizeTabs:true }).catch(function(){}); }catch(e){}
@@ -5740,6 +5747,70 @@ try{ if(firebase.functions){ fns = firebase.app().functions(FUNCTIONS_REGION); }
 } catch(initErr){
 firebaseReady = false;
 }
+}
+
+/* ══ APP CHECK: IL CODICE C'E', L'OBBLIGO NO ══════════════════════════════
+   (20/09/2026, audit SEC-14: «nessun App Check».)
+
+   COS'E'. Le regole di Firestore sanno CHI sta scrivendo (l'utente), non CON
+   COSA. Un programma qualunque con la chiave pubblica dell'app — che sta nel
+   sorgente, e sta nel sorgente di ogni app web — puo' registrarsi e scrivere
+   come farebbe un telefono vero. App Check aggiunge la seconda domanda: «e
+   questa richiesta viene davvero dall'app?».
+
+   DUE COSE DIVERSE, E QUI CE N'E' UNA SOLA.
+     CODICE PRONTO   ← questo. La chiave si incolla in un posto solo, e da
+                       quel momento ogni richiesta porta il suo timbro.
+     OBBLIGO ATTIVO  ← NON e' qui, e non puo' esserlo: si accende dalla
+                       console Firebase (Firestore, Storage, Functions), e
+                       accenderlo prima che i telefoni mandino il timbro
+                       vorrebbe dire spegnere l'app a tutti in un colpo.
+                       L'ordine e' sempre: prima i timbri, poi l'obbligo, e in
+                       mezzo si guardano le metriche «richieste non
+                       verificate» finche' non sono quasi zero.
+
+   COSA SERVE DALLA CONSOLE, per filo e per segno:
+     1. Firebase Console → App Check → registra l'app web con reCAPTCHA v3;
+        se ne esce una SITE KEY: si incolla qui sotto.
+     2. Con la chiave incollata e pubblicata, si aspetta. La console mostra,
+        per Firestore e per le Functions, quante richieste arrivano verificate
+        e quante no: le «non verificate» sono i telefoni non ancora
+        aggiornati, e calano da sole man mano che aggiornano.
+     3. Quando sono quasi zero: App Check → Firestore → «Applica». Poi
+        Storage. Le Functions hanno il loro interruttore nel codice
+        (`functions/index.js`, `APP_CHECK_OBBLIGATORIO`), e va rifatto il
+        deploy.
+     4. Ogni passo si puo' disfare: togliere l'obbligo e' immediato.
+
+   FINCHE' LA CHIAVE E' QUESTA, NON SUCCEDE NIENTE. Nessuna libreria in piu'
+   da scaricare, nessun ritardo all'avvio: la riga qui sotto esce subito.
+   E' la stessa forma che ha gia' `VAPID_KEY`. */
+var APP_CHECK_SITE_KEY = "INCOLLA_QUI_LA_SITE_KEY_RECAPTCHA";
+var APP_CHECK_SDK = "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js";
+var appCheckStato = "spento";   // spento | in-arrivo | acceso | guasto
+function appCheckConfigurato(){
+return typeof APP_CHECK_SITE_KEY === "string"
+    && APP_CHECK_SITE_KEY.length > 20
+    && APP_CHECK_SITE_KEY.indexOf("INCOLLA") !== 0;
+}
+function attivaAppCheck(){
+if(!appCheckConfigurato()) return;          // il caso di oggi: non si fa nulla
+appCheckStato = "in-arrivo";
+try{
+var sc = document.createElement("script");
+sc.src = APP_CHECK_SDK;
+sc.onload = function(){
+try{
+if(!firebase.appCheck){ appCheckStato = "guasto"; return; }
+firebase.appCheck().activate(
+new firebase.appCheck.ReCaptchaV3Provider(APP_CHECK_SITE_KEY),
+true /* i timbri si rinnovano da soli */);
+appCheckStato = "acceso";
+}catch(e){ appCheckStato = "guasto"; }
+};
+sc.onerror = function(){ appCheckStato = "guasto"; };
+document.head.appendChild(sc);
+}catch(e){ appCheckStato = "guasto"; }
 }
 
 /* ══ FIREBASE C'E' O NO, E COSA SI PUO' FARE SENZA ════════════════════════
@@ -6256,6 +6327,9 @@ startIncomingSessionsListener();
 loadOpenTrainings();
 startNotificationsListener();
 refreshPushToken();
+// Se il browser ha rifatto la sottoscrizione mentre l'app era chiusa, il
+// service worker ha lasciato un segno: qui si raccoglie. (audit N7)
+ascoltaSegnoPush();
 startDirectChatsListener();
 // I giri tirati su un altro dispositivo scendono qui. Sta insieme agli altri
 // ascoltatori perche' e' la stessa domanda: cosa e' successo mentre non
@@ -6799,6 +6873,7 @@ notif_self_invite_body: "Hai invitato {n} arcieri all'allenamento del {date}.",
 notif_center_title: "Notifiche",
 notif_center_sub: "Compaiono qui anche se non hai attivato le notifiche del telefono.",
 notif_center_empty: "Nessuna notifica.",
+notif_da: "da {name}", notif_da_sistema: "da ArcTrail 3D", notif_da_ignoto: "un altro iscritto",
 notif_center_markall: "Segna tutte come lette",
 notif_open_msg: "Apri il messaggio",
 notif_open_chat: "Apri la conversazione con {name}",
@@ -7520,6 +7595,7 @@ notif_self_invite_body: "You invited {n} archers to the training on {date}.",
 notif_center_title: "Notifications",
 notif_center_sub: "They appear here even if you have not enabled phone notifications.",
 notif_center_empty: "No notifications.",
+notif_da: "from {name}", notif_da_sistema: "from ArcTrail 3D", notif_da_ignoto: "another member",
 notif_center_markall: "Mark all as read",
 notif_open_msg: "Open the message",
 notif_open_chat: "Open the conversation with {name}",
@@ -8271,6 +8347,7 @@ notif_self_invite_body: "Vous avez invit\u00e9 {n} archers \u00e0 l’entra\u00e
 notif_center_title: "Notifications",
 notif_center_sub: "Elles apparaissent ici m\u00eame si vous n’avez pas activ\u00e9 les notifications du t\u00e9l\u00e9phone.",
 notif_center_empty: "Aucune notification.",
+notif_da: "de {name}", notif_da_sistema: "d'ArcTrail 3D", notif_da_ignoto: "un autre licencié",
 notif_center_markall: "Tout marquer comme lu",
 notif_open_msg: "Ouvrir le message",
 notif_open_chat: "Ouvrir la conversation avec {name}",
@@ -9022,6 +9099,7 @@ notif_self_invite_body: "Du hast {n} Sch\u00fctzen zum Training am {date} eingel
 notif_center_title: "Benachrichtigungen",
 notif_center_sub: "Sie erscheinen hier auch dann, wenn du die Handy-Benachrichtigungen nicht aktiviert hast.",
 notif_center_empty: "Keine Benachrichtigungen.",
+notif_da: "von {name}", notif_da_sistema: "von ArcTrail 3D", notif_da_ignoto: "einem anderen Mitglied",
 notif_center_markall: "Alle als gelesen markieren",
 notif_open_msg: "Nachricht \u00f6ffnen",
 notif_open_chat: "Unterhaltung mit {name} \u00f6ffnen",
@@ -9773,6 +9851,7 @@ notif_self_invite_body: "{date} tarihli antrenmana {n} ok\u00e7u davet ettin.",
 notif_center_title: "Bildirimler",
 notif_center_sub: "Telefon bildirimlerini a\u00e7mam\u0131\u015f olsan da burada g\u00f6r\u00fcn\u00fcrler.",
 notif_center_empty: "Bildirim yok.",
+notif_da: "{name} tarafından", notif_da_sistema: "ArcTrail 3D tarafından", notif_da_ignoto: "başka bir üye",
 notif_center_markall: "Hepsini okundu i\u015faretle",
 notif_open_msg: "Mesaj\u0131 a\u00e7",
 notif_open_chat: "{name} ile olan sohbeti a\u00e7",
@@ -10537,6 +10616,7 @@ notif_self_invite_body: "\u0412\u044b \u043f\u0440\u0438\u0433\u043b\u0430\u0441
 notif_center_title: "\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f",
 notif_center_sub: "\u041e\u043d\u0438 \u043f\u043e\u044f\u0432\u043b\u044f\u044e\u0442\u0441\u044f \u0437\u0434\u0435\u0441\u044c, \u0434\u0430\u0436\u0435 \u0435\u0441\u043b\u0438 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f \u0442\u0435\u043b\u0435\u0444\u043e\u043d\u0430 \u043d\u0435 \u0432\u043a\u043b\u044e\u0447\u0435\u043d\u044b.",
 notif_center_empty: "\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u0439 \u043d\u0435\u0442.",
+notif_da: "от {name}", notif_da_sistema: "от ArcTrail 3D", notif_da_ignoto: "другого участника",
 notif_center_markall: "\u041e\u0442\u043c\u0435\u0442\u0438\u0442\u044c \u0432\u0441\u0435 \u043a\u0430\u043a \u043f\u0440\u043e\u0447\u0438\u0442\u0430\u043d\u043d\u044b\u0435",
 notif_open_msg: "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435",
 notif_open_chat: "\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043a\u0443 \u0441 {name}",
@@ -11301,6 +11381,7 @@ notif_self_invite_body: "Has invitado a {n} arqueros al entrenamiento del {date}
 notif_center_title: "Notificaciones",
 notif_center_sub: "Aparecen aqu\u00ed aunque no hayas activado las notificaciones del tel\u00e9fono.",
 notif_center_empty: "No hay notificaciones.",
+notif_da: "de {name}", notif_da_sistema: "de ArcTrail 3D", notif_da_ignoto: "otro miembro",
 notif_center_markall: "Marcar todas como le\u00eddas",
 notif_open_msg: "Abrir el mensaje",
 notif_open_chat: "Abrir la conversaci\u00f3n con {name}",
@@ -12065,6 +12146,7 @@ notif_self_invite_body: "Du bj\u00f6d in {n} skyttar till tr\u00e4ningen den {da
 notif_center_title: "Notiser",
 notif_center_sub: "De visas h\u00e4r \u00e4ven om du inte har aktiverat telefonens notiser.",
 notif_center_empty: "Inga notiser.",
+notif_da: "från {name}", notif_da_sistema: "från ArcTrail 3D", notif_da_ignoto: "en annan medlem",
 notif_center_markall: "Markera alla som l\u00e4sta",
 notif_open_msg: "\u00d6ppna meddelandet",
 notif_open_chat: "\u00d6ppna konversationen med {name}",
@@ -12829,6 +12911,7 @@ notif_self_invite_body: "Je hebt {n} boogschutters uitgenodigd voor de training 
 notif_center_title: "Meldingen",
 notif_center_sub: "Ze verschijnen hier ook als je de meldingen van je telefoon niet hebt aangezet.",
 notif_center_empty: "Geen meldingen.",
+notif_da: "van {name}", notif_da_sistema: "van ArcTrail 3D", notif_da_ignoto: "een ander lid",
 notif_center_markall: "Alles als gelezen markeren",
 notif_open_msg: "Bericht openen",
 notif_open_chat: "Gesprek met {name} openen",
@@ -14244,11 +14327,59 @@ var IFAA_SCHEMA = "ifaa-standard-2021";
    gara: se ASA cambia un numero, cambia per tutti e due. */
 var ASA_SCHEMA = "asa-proam-2026";
 var IBO_SCHEMA = "ibo-rules-2026";
-function schemaPunteggio(modeKey){
-if(modeKey === "ifaa_3d") return IFAA_SCHEMA;
-if(modeKey === "asa_proam" || modeKey === "asa_training") return ASA_SCHEMA;
-if(modeKey === "ibo_3d" || modeKey === "ibo_training") return IBO_SCHEMA;
-return null;
+/* ══ ANCHE GLI ALTRI BARÈME HANNO UN NOME ════════════════════════════════
+   (20/09/2026, audit «barème non versionati per FIARC, FITARCO, WA e NFAS».)
+
+   Finora il marchio ce l'avevano solo IFAA, ASA e IBO — cioe' i tre che erano
+   gia' cambiati sotto i piedi. Gli altri quattro rispondevano `null`, e
+   `null` vuol dire due cose diverse che nessuno puo' piu' distinguere: «giro
+   con un barème mai cambiato» e «giro di prima che i marchi esistessero».
+   Il giorno che FIARC ritocca un punteggio — e il 28/08 e' successo a IFAA —
+   i giri vecchi e quelli nuovi si sommerebbero nella stessa media, e la
+   differenza non sarebbe piu' ricostruibile da nessun dato.
+
+   IL NOME PORTA LA FONTE E L'ANNO, non un numero di versione: `fiarc-rt-2023`
+   e' il Regolamento Tecnico da cui sono presi i numeri, e si ritrova. Quando
+   una federazione cambia, si aggiunge una costante nuova e si lascia stare
+   la vecchia: e' quello che ha fatto IFAA.
+
+   L'ASSENZA RESTA L'INFORMAZIONE. I giri gia' in archivio non si riscrivono:
+   `scoringVersion: null` continua a dire «prima dei marchi», e `modoDelGiro`
+   non cambia comportamento per nessuno — guarda solo `ifaa_3d`, e li' la
+   regola e' quella di sempre.
+
+   LA CHIAVE E' IL REGOLAMENTO, NON IL MODO. Ogni modo in `GAME_MODES` dichiara
+   gia' da quale libro vengono i suoi numeri (`regolamento`), e sono nove libri
+   per trentaquattro modi. Elencare i modi vorrebbe dire dimenticarsene uno il
+   giorno che entra una federazione nuova — e il giorno dopo `nfas_3d`, che qui
+   avevo scritto a mano, non esisterebbe comunque: si chiama `nfas_biggame`.
+   Cosi' invece un modo nuovo nasce marchiato da solo.
+
+   `ifaa_3d_v1` RESTA SENZA MARCHIO, ed e' l'unica eccezione: e' il modo di
+   compatibilita' che PORTA la tabella vecchia. Dargli un nome direbbe il
+   contrario di quello che e'. */
+var SCHEMI_PER_REGOLAMENTO = {
+ifaa_book: IFAA_SCHEMA,              // gia' in uso dal 28/08: non si tocca
+asa_proam: ASA_SCHEMA,
+ibo_rules: IBO_SCHEMA,
+fiarc_rt: "fiarc-rt-2023",           // Regolamento Tecnico FIARC, delibera 033/2023/D
+wa_book4: "wa-book4-2026",           // World Archery Book 4 (3D): FITARCO e le altre WA
+ffta_reglement: "ffta-reglement-2026",
+sbf_regler: "sbf-regler-2026",
+dsb_sportordnung: "dsb-sportordnung-2026",
+nfas_rules: "nfas-rules-2026"
+};
+/* `modi` si passa solo dalle prove, che eseguono questo pezzo da solo senza
+   `GAME_MODES` intorno: una funzione che si prova in isolamento non deve
+   dipendere da un globale per rispondere. Nell'app si chiama con un argomento
+   solo, come prima. */
+function schemaPunteggio(modeKey, modi){
+if(modeKey === "ifaa_3d_v1") return null;   // il modo che E' la tabella vecchia
+modi = modi || (typeof GAME_MODES !== "undefined" ? GAME_MODES : {});
+var m = modi[modeKey];
+var reg = m && m.regolamento;
+return (reg && Object.prototype.hasOwnProperty.call(SCHEMI_PER_REGOLAMENTO, reg))
+     ? SCHEMI_PER_REGOLAMENTO[reg] : null;
 }
 
 /* La chiave con cui un giro entra in media, record e confronti. E' l'unica
@@ -14569,7 +14700,7 @@ return db.collection("users").doc(currentUser.uid).collection("giro_aperto").doc
    torna incompleto — per questo `banco-giro-sicuro.js` non confronta un elenco
    di nomi, ma RIPRENDE un giro vero e controlla che sia lo stesso. */
 var CAMPI_DEL_GIRO = ["roundActive","archersBase","rotBaseTarget","mode","format",
-"archers","scores","target","archerIndex","arrowIndex","pendingArrows",
+"archers","scores","target","archerIndex","arrowIndex","pendingArrows","pendingZones",
 "liveBattutaTypes","awaitingStep","savedToHistory","roundEntryDate","firme",
 "consegna","sessionId","campo","doubleConfirm","arrowsPerTargetOverride",
 "startedAt","assetto","assettoNome","scoringVersion","roundId"];
@@ -14930,6 +15061,12 @@ out.perTarget = Array.isArray(r.perTarget) ? r.perTarget.slice() : [];
 out.arrows = Array.isArray(r.arrows) ? r.arrows.map(function(a){
 return { v: Array.isArray(a) ? a.slice() : (a == null ? [] : [a]) };
 }) : [];
+/* LE ZONE, dal 20/09/2026. Stessa forma delle frecce — un elenco di elenchi,
+   incartato perche' Firestore non tiene un array dentro un array. Assenti nei
+   giri di prima, e li' `null` vuol dire «non registrate», non «nulla». */
+if(Array.isArray(r.zones)) out.zones = r.zones.map(function(z){
+return { v: Array.isArray(z) ? z.slice() : [] };
+});
 return out;
 }
 function unpackRound(r){
@@ -14940,6 +15077,10 @@ out.arrows = Array.isArray(r.arrows) ? r.arrows.map(function(a){
 if(a && Array.isArray(a.v)) return a.v.slice();
 return Array.isArray(a) ? a.slice() : [];
 }) : [];
+if(Array.isArray(r.zones)) out.zones = r.zones.map(function(z){
+if(z && Array.isArray(z.v)) return z.v.slice();
+return Array.isArray(z) ? z.slice() : [];
+});
 return out;
 }
 function packResults(list){ return (Array.isArray(list) ? list : []).map(packRound); }
@@ -15025,6 +15166,10 @@ nota: h.nota || null,
    conosce e lascia stare gli altri. */
 roundId: h.roundId || null,
 interrotto: (h.interrotto === true),
+// Da quale gara viene (fase 5). `null` e' una risposta, non un buco.
+federation: h.federation || null,
+division: h.division || null,
+eventId: h.eventId || null,
 results: packResults(h.results)
 };
 }
@@ -15049,6 +15194,9 @@ nota: d.nota || null,
 // risposta giusta, non un dato inventato.
 roundId: d.roundId || null,
 interrotto: (d.interrotto === true),
+federation: d.federation || null,
+division: d.division || null,
+eventId: d.eventId || null,
 results: unpackResults(d.results)
 };
 }
@@ -16107,6 +16255,10 @@ function render(){
 // Un aggiornamento arrivato a meta' giro si applica al primo disegno fuori
 // dal giro. (P0-3) Asincrono: prima si finisce di disegnare.
 if(aggiornamentoPronto && !giroInCorso()){ setTimeout(function(){ applicaAggiornamentoSeLibero(false); }, 0); }
+// Uscendo dalla chat di un allenamento il suo ascoltatore si chiude. (audit C3)
+// Qui e non nel gestore del tasto «indietro»: dalla chat si esce da sei posti
+// diversi, e sei chiusure scritte a mano diventano cinque il giorno dopo.
+if(state.screen !== "ot-chat") stopOtChat();
 var key = String(state.screen) + "|" + String(state.tab) + "|" + String(authState);
 var moved = (vtKey !== "" && key !== vtKey);
 vtKey = key;
@@ -16563,7 +16715,7 @@ selLang.appendChild(opt);
 });
 selLang.addEventListener("change", function(){
 state.lang = selLang.value;
-if(!setupCountry && !state.country) setupCountry = LANG_TO_COUNTRY[state.lang] || null;
+if(!setupCountry && !state.country) setupCountry = paeseProbabile();
 save(); render();
 });
 c1.appendChild(selLang);
@@ -16572,7 +16724,7 @@ wrap.appendChild(c1);
 if(!state.lang) return wrap;
 
 // ---- 2. nazione ----
-if(setupCountry === null) setupCountry = state.country || LANG_TO_COUNTRY[state.lang] || null;
+if(setupCountry === null) setupCountry = state.country || paeseProbabile();
 
 var c2 = el('<div class="passo"></div>');
 c2.appendChild(el('<label>2 &middot; '+t("setup_country_label")+'</label>'));
@@ -16716,7 +16868,59 @@ return wrap;
    26/08/2026 (dati non recuperabili). La LINGUA resta, ed e' giusto: un
    russo puo' tirare in Italia. Senza voce qui, la tendina delle nazioni si
    apre vuota e sceglie lui, invece di partire da un paese che non c'e'. */
-var LANG_TO_COUNTRY = { it:"it", fr:"fr", de:"de", tr:"tr", es:"es", sv:"se", nl:"nl", en:"uk" };
+/* ══ UNA LINGUA NON E' UN PAESE ═══════════════════════════════════════════
+   (20/09/2026, audit: «l'inglese preseleziona il Regno Unito».)
+
+   Qui c'era `en:"uk"`: chiunque avesse il telefono in inglese si trovava
+   Archery GB ed EFAA proposte per prime, e un americano partiva dalla
+   federazione sbagliata invece che da ASA o IBO. La vetrina lo ha corretto il
+   18/09 («l'inglese non e' un paese»); l'app no, e non e' solo l'inglese:
+
+     `de-AT` e `de-CH` finivano in Germania — e in Austria c'e' OBSV, in
+     Svizzera SwissArchery e FAAS. Sono tre federazioni sbagliate su tre.
+     `fr-CH` e `it-CH` la stessa cosa.
+     `en-CA` e `en-AU` sono paesi che l'app NON copre: proporre UK e' peggio
+     che non proporre niente, perche' una scelta sbagliata gia' fatta non si
+     rilegge.
+
+   LA CAUSA ERA UNA RIGA SOLA, e non questa mappa: `linguaProbabile()` fa
+   `.slice(0,2)` sul locale del telefono, cioe' BUTTA la regione prima che
+   qualcuno possa guardarla. `it-IT`, `de-DE`, `en-GB` portano la risposta
+   scritta dentro, e la si stava gettando.
+
+   ADESSO: la regione, se c'e' e se e' un paese che copriamo, vince. Se non
+   c'e' o non la copriamo, si guarda la lingua — e la lingua risponde solo
+   quando e' parlata in un paese solo fra quelli coperti. L'inglese non
+   risponde: `en` senza regione non preseleziona niente, e la tendina resta da
+   scegliere. *Meglio una domanda che una risposta sbagliata.*
+
+   NON E' UN ELENCO DI LINGUE. Questa mappa diceva anche «questa lingua
+   esiste» in un punto (`leggiRitornoEmail`), che e' un altro mestiere: quello
+   lo fa `LANG_META`, che le nove lingue le ha per davvero. */
+var LANG_TO_COUNTRY = { it:"it", fr:"fr", de:"de", tr:"tr", es:"es", sv:"se", nl:"nl" };
+// `gb` e' la sigla ISO del Regno Unito; dentro l'app il paese si chiama `uk`.
+var REGIONE_A_PAESE = { gb:"uk" };
+function paeseDaLocale(locale){
+var parti = String(locale || "").toLowerCase().replace(/_/g, "-").split("-");
+var lingua = parti[0], regione = "";
+// La regione e' il pezzo di due lettere: `zh-Hans-CN` ha la scrittura in mezzo.
+for(var i = 1; i < parti.length; i++){ if(/^[a-z]{2}$/.test(parti[i])){ regione = parti[i]; break; } }
+if(regione){
+var p = REGIONE_A_PAESE[regione] || regione;
+for(var j = 0; j < COUNTRY_LIST.length; j++){ if(COUNTRY_LIST[j].code === p) return p; }
+// Regione dichiarata e non coperta (en-CA, en-AU, pt-BR): non si indovina.
+return null;
+}
+return LANG_TO_COUNTRY[lingua] || null;
+}
+/* Il paese da proporre quando l'utente non ne ha ancora scelto uno: prima il
+   locale vero del telefono, poi la lingua scelta nell'app. */
+function paeseProbabile(){
+var dalTelefono = null;
+try{ dalTelefono = paeseDaLocale(navigator.language || navigator.userLanguage || ""); }catch(e){}
+if(dalTelefono) return dalTelefono;
+return state.lang ? (LANG_TO_COUNTRY[state.lang] || null) : null;
+}
 
 var COUNTRY_LIST = [
 { code:"it", flag:"\uD83C\uDDEE\uD83C\uDDF9", key:"country_italy" },
@@ -16837,6 +17041,49 @@ cb(map);
    ridisegno, e non si mescola con quella delle mie: sono due cose diverse —
    una dice «cosa amministro», l'altra «cosa sto guardando adesso». */
 var compagniaAdminUna = {};
+/* ══ QUELLO CHE DEVONO SAPERE TUTTI, E QUELLO CHE E' DEL REFERENTE ════════
+   (20/09/2026, audit SEC-09.)
+
+   `compagnie_admin/{codice}` teneva insieme due cose molto diverse: il
+   REFERENTE (nome della persona, telefono, indirizzo, note private della
+   compagnia) e due dati che servono a chiunque — chi la gestisce, e l'email a
+   cui si scrive per segnalare un campo rotto. Le regole dicevano
+   `read: if signedIn()`: quindi il telefono di casa del referente e le note
+   private del club le leggeva qualunque account, anche non verificato.
+   Le regole di Firestore non sanno nascondere UN CAMPO: o si legge il
+   documento o no. Quindi i due dati pubblici si scrivono anche in un
+   documento a parte, `compagnie_contatto/{codice}`, che resta leggibile da
+   tutti; e la scheda del referente si chiude a lui e a chi tiene l'app.
+
+   NON E' UNA COPIA CHE PUO' DIVERGERE IN SILENZIO: si scrive nello stesso
+   gesto del salvataggio (`saveCompagniaInfo`), e chi apre la gestione la
+   riallinea se manca. Le compagnie che avevano gia' un referente prima di
+   oggi non hanno il contatto finche' quel referente non apre la sua scheda:
+   fino ad allora l'app non sa che la compagnia e' gestita, e mostra «chiedi
+   di gestirla». E' un difetto piccolo e dichiarato — meglio di un telefono
+   privato leggibile da chiunque. */
+var contattoUno = {};
+function caricaContattoCompagnia(codice, cb){
+if(!codice){ cb({}); return; }
+if(contattoUno[codice]){ cb(contattoUno[codice]); return; }
+if(!db){ cb({}); return; }
+db.collection("compagnie_contatto").doc(codice).get().then(function(doc){
+var d = (doc && doc.exists) ? (doc.data() || {}) : {};
+contattoUno[codice] = d;
+cb(d);
+}).catch(function(){ cb({}); });
+}
+function scordaContattoCompagnia(codice){ if(codice) delete contattoUno[codice]; }
+/* Il contatto pubblico, ricavato dalla scheda: lo scrive chi puo' scrivere la
+   scheda, cioe' il referente o l'admin. Best effort, come il resto. */
+function allineaContattoCompagnia(codice, info){
+if(!db || !currentUser || !codice) return Promise.resolve();
+var d = { adminUid: (info && info.adminUid) || null,
+          emailComp: (info && info.emailComp) || null,
+          aggiornatoIl: Date.now() };
+scordaContattoCompagnia(codice);
+return db.collection("compagnie_contatto").doc(codice).set(d, { merge:true }).catch(function(){});
+}
 function caricaCompagniaAdmin(codice, cb){
 if(!codice){ cb({}); return; }
 if(compagniaAdminUna[codice]){ cb(compagniaAdminUna[codice]); return; }
@@ -16885,6 +17132,17 @@ if(!compagnieAdminCache) compagnieAdminCache = {};
 if(!compagnieAdminCache[codice]) compagnieAdminCache[codice] = {};
 Object.assign(compagnieAdminCache[codice], info);
 if(compagniaAdminUna[codice]) Object.assign(compagniaAdminUna[codice], info);
+/* Il contatto pubblico si riallinea NELLO STESSO GESTO. (SEC-09) Due
+   scritture separate divergono il giorno che una delle due fallisce, quindi
+   questa sta dentro la catena del salvataggio e non in un tasto a parte.
+   L'`adminUid` non viene da `info` — il referente non lo scrive — ma dalla
+   scheda che abbiamo gia' in mano. */
+var chiGestisce = (compagnieAdminCache[codice] || {}).adminUid
+               || (compagniaAdminUna[codice] || {}).adminUid
+               || (currentUser && currentUser.uid) || null;
+return allineaContattoCompagnia(codice, { adminUid: chiGestisce, emailComp: info.emailComp });
+})
+.then(function(){
 onDone();
 }).catch(onErr);
 }
@@ -17042,9 +17300,11 @@ var lingua = state.lang || "it";
 /* IL TUO PAESE PER PRIMO, POI GLI ALTRI IN ORDINE. (18/09/2026.) In ordine
    alfabetico e basta, un italiano che si registrava trovava prima ÖBSV,
    FFTA, FFTL, DFBV e DSB, e FIARC e FITARCO a meta' tendina. Il paese e'
-   quello scelto; prima di sceglierlo, quello della lingua — tranne
-   l'inglese, che non dice dove sei (la stessa regola della vetrina). */
-var mio = state.country || (lingua !== "en" ? (LANG_TO_COUNTRY[lingua] || "") : "");
+   quello scelto; prima di sceglierlo, quello che si ricava dal telefono —
+   e l'inglese senza regione non ne ricava nessuno (vedi `paeseDaLocale`).
+   Il caso «tranne l'inglese» stava scritto qui a mano: adesso lo decide una
+   funzione sola, e vale anche per de-AT, de-CH e fr-CH. */
+var mio = state.country || paeseProbabile() || "";
 return Object.keys(per).sort(function(a,b){
 if(a === mio && b !== mio) return -1;
 if(b === mio && a !== mio) return 1;
@@ -19099,9 +19359,31 @@ piu.appendChild(actErr);
 
 // Indicazioni e messaggi: due tasti in fila, non due righe in colonna.
 var ferri = el('<div class="al-ferri"></div>');
-if(ot.lat && ot.lng){
+/* ══ IL PUNTO PRECISO NON STA NEL DOCUMENTO CHE LEGGONO TUTTI ═════════════
+   (20/09/2026, audit SEC-09.) `lat` e `lng` stavano dentro `open_trainings`,
+   che qualunque account puo' leggere. Per un allenamento «solo club» erano il
+   dato piu' pesante del documento: dicono dove sara' una persona, e a che ora.
+   La visibilita' «club» era applicata solo qui nel client, cioe' da nessuna
+   parte per chi non usa questo client.
+   Adesso stanno in `open_trainings/{id}/dove/punto`, e le regole le danno a
+   chi partecipa, a chi e' invitato, all'organizzatore — e a tutti solo se
+   l'allenamento e' aperto a tutti.
+   SI CHIEDONO AL TOCCO, non nell'elenco: l'elenco non ne ha bisogno (nessuna
+   mappa, nessuna distanza), e un documento in piu' per ognuno dei cinquanta
+   annunci sarebbe cinquanta letture per una cosa che si preme una volta. */
+if(ot.dove !== false){
 var dirBtn = el('<button class="btn btn-ghost btn-sm">'+t("ot_directions_btn")+'</button>');
-(function(lat,lng){ dirBtn.addEventListener("click", function(){ window.open("https://www.google.com/maps/dir/?api=1&destination="+lat+","+lng, "_blank"); }); })(ot.lat, ot.lng);
+(function(id, pronte){
+dirBtn.addEventListener("click", function(){
+if(pronte){ apriIndicazioni(pronte.lat, pronte.lng); return; }
+dirBtn.disabled = true;
+puntoAllenamento(id, function(p){
+dirBtn.disabled = false;
+if(p && p.lat && p.lng){ apriIndicazioni(p.lat, p.lng); }
+else { dirBtn.style.display = "none"; }   // non c'e', o non e' per me
+});
+});
+})(ot.id, (ot.lat && ot.lng) ? { lat: ot.lat, lng: ot.lng } : null);
 ferri.appendChild(dirBtn);
 }
 // IL TASTO C'E' ANCHE PER L'ORGANIZZATORE. (19/08/2026.) Prima era
@@ -20748,16 +21030,47 @@ var percorsiCampo = {};
 function caricaPercorsiCampo(cod, poi){
 if(!cod) return;
 if(!db){ percorsiCampo[cod] = { stato:"pronto", lista:[] }; if(poi) poi(); return; }
+/* CHI PUO' VEDERE ANCHE LE PROPOSTE. `myAdminClubCodes()` risponde `null`
+   quando l'elenco dei club che amministro non e' ancora sceso: in quel
+   momento non si sa, e «non si sa» non e' «no». Se si trattasse come un no e
+   si mettesse via il risultato come definitivo, il referente aprirebbe la sua
+   compagnia e non vedrebbe le proposte da confermare — fino a quando non esce
+   e rientra. Percio' si segna COME e' stata fatta la lettura, e si rifa' se
+   nel frattempo si e' scoperto di essere referente. */
+function possoVedereProposte(cod){
+if(!currentUser) return false;
+if(currentUser.email === ADMIN_EMAIL) return true;
+var miei = myAdminClubCodes();
+return !!miei && miei.indexOf(cod) >= 0;
+}
 var c = percorsiCampo[cod];
+var posso = possoVedereProposte(cod);
 if(c && c.stato === "carico") return;          // gia' in viaggio
-if(c && c.stato === "pronto"){ if(poi) poi(); return; }
+if(c && c.stato === "pronto" && (c.conProposte || !posso)){ if(poi) poi(); return; }
 percorsiCampo[cod] = { stato:"carico", lista:[] };
-// Niente orderBy insieme al where: eviterebbe un indice composto. Ordino qui.
-db.collection("percorsi_campo").where("clubCode","==",cod).limit(80).get().then(function(snap){
-var arr = [];
-snap.forEach(function(d){ var x = d.data() || {}; x.id = d.id; arr.push(x); });
+/* ══ DUE LETTURE, PERCHE' DUE COSE DIVERSE ════════════════════════════════
+   (20/09/2026, audit SEC-09.) Prima era una `where('clubCode','==',cod)` e
+   basta, e le regole lasciavano leggere tutto a chiunque avesse un account:
+   quindi anche le PROPOSTE non ancora confermate, con dentro il nome — e, nei
+   documenti scritti prima del 19/09, l'email — di chi le aveva mandate.
+   Un percorso confermato e' informazione pubblica del campo: ci si va a
+   tirare. Una proposta e' una cosa fra chi l'ha scritta e il referente, e
+   finche' e' aperta non riguarda gli altri.
+   Da oggi le regole dicono la stessa cosa, e una query che chiedesse tutto
+   verrebbe rifiutata INTERA — Firestore non filtra, nega. Percio' qui si
+   chiede prima quello che si puo' sempre vedere, e le proposte si chiedono
+   solo se si e' il referente di quella compagnia o chi tiene l'app.
+   Niente orderBy insieme al where: eviterebbe un indice composto. Ordino qui. */
+var rif = db.collection("percorsi_campo").where("clubCode","==",cod);
+var letture = [rif.where("stato","==","confermato").limit(80).get()];
+if(posso) letture.push(rif.where("stato","==","proposto").limit(80).get());
+Promise.all(letture).then(function(snaps){
+var arr = [], visti = {};
+snaps.forEach(function(snap){
+snap.forEach(function(d){ if(visti[d.id]) return; visti[d.id] = 1; var x = d.data() || {}; x.id = d.id; arr.push(x); });
+});
 arr.sort(function(a,b){ return String(a.nome||"").localeCompare(String(b.nome||""), "it"); });
-percorsiCampo[cod] = { stato:"pronto", lista:arr };
+percorsiCampo[cod] = { stato:"pronto", lista:arr, conProposte: posso };
 if(poi) poi(); else render();
 }).catch(function(err){
 console.error("percorsi_campo:", err);
@@ -21348,7 +21661,9 @@ sotto.appendChild(infoCard);
 
 // ── SEZIONE ADMIN COMPAGNIA ─────────────────────────────────────────────
 (function(codice){
-caricaCompagniaAdmin(codice, function(dati){
+// Qui serve solo «chi la gestisce»: il contatto pubblico basta, e la scheda
+// del referente non la si apre nemmeno. (SEC-09)
+caricaContattoCompagnia(codice, function(dati){
 var isAdmin = currentUser && dati && dati.adminUid === currentUser.uid;
 var isAppAdmin = isAdmin || (currentUser && currentUser.email === ADMIN_EMAIL);
 var hasPending = false; // controlliamo Firestore solo se serve
@@ -22417,9 +22732,39 @@ wrap.appendChild(compagniaMiaCard(codice));
 var body = el('<div></div>');
 wrap.appendChild(body);
 
+/* PRIMA SI CHIEDE CHI LA GESTISCE, POI semmai si apre la scheda. (SEC-09)
+   Dal 20/09 `compagnie_admin` la legge solo il suo referente: chiederla a
+   tutti vorrebbe dire un «permesso negato» a ogni visita di chi referente non
+   e' — che funzionerebbe lo stesso (il `catch` risponde {}), ma e' un no
+   chiesto apposta, e i no chiesti apposta finiscono per sembrare normali. */
+caricaContattoCompagnia(codice, function(pub){
+var chi = (pub && pub.adminUid) || null;
+/* TRE CASI, E IL TERZO E' QUELLO CHE MI ERO GIA' PERSO UNA VOLTA.
+     - il contatto dice che la gestisco io      -> si apre la scheda;
+     - dice che la gestisce un altro            -> non si chiede niente;
+     - NON DICE NIENTE                          -> si prova lo stesso.
+   Il terzo caso non e' raro: e' ESATTAMENTE la situazione delle compagnie
+   gia' gestite prima del 20/09, che il contatto non ce l'hanno ancora. Se lo
+   si trattasse come «non e' mia», il loro referente vedrebbe «chiedi di
+   gestire» e la riparazione qui sotto non partirebbe MAI — cioe' il rattoppo
+   sarebbe irraggiungibile proprio per i soli casi che deve riparare.
+   Provare costa un «permesso negato» a chi referente non e', e solo per le
+   compagnie senza contatto: finito il giro delle riparazioni, non succede
+   piu' a nessuno. */
+if(chi && !(currentUser && chi === currentUser.uid)){ disegnaGestione({}, false); return; }
 caricaCompagniaAdmin(codice, function(dati){
+var mia = !!(currentUser && dati && dati.adminUid === currentUser.uid);
+// E se la scheda dice che e' mia ma il contatto non lo sa ancora, glielo si
+// dice: e' il solo posto dove chi puo' scriverlo si trova gia'.
+if(mia && !(pub && pub.aggiornatoIl)){
+allineaContattoCompagnia(codice, { adminUid: dati.adminUid, emailComp: dati.emailComp });
+}
+disegnaGestione(mia ? (dati || {}) : {}, mia);
+});
+});
+function disegnaGestione(dati, mia){
 var info = dati || {};
-var isAdmin = currentUser && info.adminUid === currentUser.uid;
+var isAdmin = !!mia;
 body.innerHTML = "";
 
 // ── Chi non e' referente: puo' solo chiedere di diventarlo ────────────────
@@ -22647,7 +22992,7 @@ repList.innerHTML = '<div style="font-size:var(--t-sm);color:var(--danger);">'+e
 });
 }
 caricaSegnalazioni();
-});
+}
 
 if(!embedded){
 var backBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-1);">'+t("cancel_btn")+'</button>');
@@ -23214,9 +23559,12 @@ var ok = el('<button class="btn btn-primary btn-sm btn-block">'+t("admin_club_ap
 ok.addEventListener("click", function(){
 ok.disabled = true;
 db.collection("compagnie_admin").doc(r.codice).set({ adminUid: r.richiedenteUid }, { merge:true })
+// Chi gestisce la compagnia lo devono poter vedere tutti, e la scheda ormai
+// non la legge piu' nessuno all'infuori del referente. (SEC-09)
+.then(function(){ return allineaContattoCompagnia(r.codice, { adminUid: r.richiedenteUid }); })
 .then(function(){ return doc.ref.update({ stato:"approved" }); })
 .then(function(){
-compagnieAdminCache = null; compagniaAdminUna = {}; // e' cambiato un referente
+compagnieAdminCache = null; compagniaAdminUna = {}; contattoUno = {}; // e' cambiato un referente
 sendPushViaFirestore(r.richiedenteUid, t("club_space_title"), nomeComp);
 loadClubRequests();
 }).catch(function(){ ok.disabled = false; });
@@ -25183,7 +25531,9 @@ status: "open",
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }).then(function(){
 // Avvisa il referente della compagnia con la notifica gia' in uso nell'app
-caricaCompagniaAdmin(frCod, function(dati){
+// La segnalazione vuole due cose sole — a chi mandarla e a quale email — e
+// sono tutte e due nel contatto pubblico. (SEC-09)
+caricaContattoCompagnia(frCod, function(dati){
 var adm = dati || {};
 var adminUid = adm.adminUid;
 // Il referente riceve SEMPRE il contenuto della segnalazione, anche quando
@@ -25281,9 +25631,23 @@ card.appendChild(msgList);
 // sua risposta non arrivava a nessuno.
 var otChatUids = {};
 
+/* ══ UN ASCOLTATORE PER CHAT, NON UNO PER RIDISEGNO ═══════════════════════
+   (20/09/2026, audit C3.) `otChatScreen()` viene richiamata a ogni ridisegno
+   — un messaggio che arriva, un tocco, un avviso — e ogni volta apriva un
+   `onSnapshot` NUOVO senza chiudere il precedente. Restando dieci minuti in
+   una chat si accumulavano decine di canali aperti sullo stesso documento:
+   ognuno tiene la radio accesa, ognuno rilegge, e ognuno richiama la funzione
+   che ridisegna — cioe' il numero cresceva da solo. Sul telefono si paga in
+   batteria e in dati; su Firestore si paga in letture.
+   Non si vedeva perche' il risultato era CORRETTO: dieci ascoltatori che
+   disegnano la stessa cosa disegnano la cosa giusta.
+   Adesso l'ascoltatore e' uno: aprendone un altro si chiude quello di prima, e
+   uscendo dalla chat si chiude (vedi `stopOtChat` in `render`). */
+stopOtChat();
 function loadOtMsgs(){
 if(!db) return;
-db.collection("open_trainings").doc(otId).collection("messages")
+stopOtChat();
+otChatUnsub = db.collection("open_trainings").doc(otId).collection("messages")
 .orderBy("createdAt","asc").limit(50)
 .onSnapshot(function(snap){
 msgList.innerHTML = "";
@@ -25486,9 +25850,31 @@ renderSeNonInPista();
 }, function(err){ console.error("loadOpenTrainings:", err); openTrainings = []; });
 }
 
+function apriIndicazioni(lat, lng){
+try{ window.open("https://www.google.com/maps/dir/?api=1&destination="+lat+","+lng, "_blank"); }catch(e){}
+}
+/* Il punto di un allenamento: un documento a parte, letto solo quando serve.
+   La risposta si tiene da parte — premere due volte «Indicazioni» non deve
+   costare due letture — e un «permesso negato» e' una risposta valida: vuol
+   dire che quell'allenamento non e' per me. (SEC-09) */
+var puntiAllenamento = {};
+function puntoAllenamento(id, cb){
+if(!id || !db){ cb(null); return; }
+if(Object.prototype.hasOwnProperty.call(puntiAllenamento, id)){ cb(puntiAllenamento[id]); return; }
+db.collection("open_trainings").doc(id).collection("dove").doc("punto").get().then(function(doc){
+var d = (doc && doc.exists) ? (doc.data() || {}) : null;
+puntiAllenamento[id] = d;
+cb(d);
+}).catch(function(){ puntiAllenamento[id] = null; cb(null); });
+}
 // Si chiude quando si esce, altrimenti resta appesa a un utente che non c'e'
 // piu' e la prima cosa che fa il prossimo accesso e' aprirne una seconda.
 function stopOpenTrainings(){ if(otUnsub){ try{ otUnsub(); }catch(e){} otUnsub = null; } }
+// L'ascoltatore della chat di un allenamento: uno solo, e si chiude uscendo.
+// (20/09/2026, audit C3. Sta qui fuori perche' `otChatScreen` nasce e muore a
+// ogni ridisegno: una variabile dentro di lei non potrebbe chiudere niente.)
+var otChatUnsub = null;
+function stopOtChat(){ if(otChatUnsub){ try{ otChatUnsub(); }catch(e){} otChatUnsub = null; } }
 
 // ── PUSH NOTIFICATIONS via Cloud Function ───────────────────────────────────
 // PRIMA: il telefono scriveva da solo in notifications/{uid}/items. Chiunque
@@ -25695,6 +26081,37 @@ var PUSH_SPENTA_KEY = "arctrail3d_push_spenta";
 function pushSpenta(){ try{ return window.localStorage.getItem(PUSH_SPENTA_KEY) === "1"; }catch(e){ return false; } }
 function segnaPush(spenta){ try{ window.localStorage.setItem(PUSH_SPENTA_KEY, spenta ? "1" : "0"); }catch(e){} }
 
+/* ══ IL TOKEN SI RIFA' ANCHE SENZA RIAPRIRE A MANO ════════════════════════
+   (20/09/2026, audit N7 / C2.) Il service worker adesso sente
+   `pushsubscriptionchange` — il browser che revoca e rifa' la sottoscrizione
+   — e da li' fa due cose: avvisa le finestre aperte, e lascia un segno in una
+   cassa per quando di finestre non ce n'e' nessuna (il caso normale).
+   Qui si raccolgono tutte e due le strade. `forza` salta la memoria del token
+   gia' scritto: senza, si riscriverebbe quello morto. */
+function rinnovaTokenPush(){
+if(pushSpenta()) return;
+if(!messaging || typeof messaging.deleteToken !== "function"){ refreshPushToken(); return; }
+// Si butta il token vecchio PRIMA: `getToken` altrimenti restituisce quello
+// che ha in casa, che e' esattamente quello che non funziona piu'.
+Promise.resolve().then(function(){ return messaging.deleteToken(); })
+.catch(function(){})
+.then(function(){ tokenScrittoQui = ""; refreshPushToken(); });
+}
+function ascoltaSegnoPush(){
+if(!navigator.serviceWorker) return;
+try{
+navigator.serviceWorker.addEventListener("message", function(ev){
+var d = (ev && ev.data) || {};
+if(d.tipo === "push-da-rinnovare"){ rinnovaTokenPush(); return; }
+if(d.tipo === "segno-push" && d.cera === true){ rinnovaTokenPush(); }
+});
+// E si chiede subito se ce n'e' uno lasciato mentre l'app era chiusa.
+navigator.serviceWorker.ready.then(function(reg){
+var sw = (reg && reg.active) || navigator.serviceWorker.controller;
+if(sw) sw.postMessage({ tipo: "segno-push?" });
+}).catch(function(){});
+}catch(e){}
+}
 function refreshPushToken(){
 if(pushSpenta()) return;
 if(!messaging || !db || !currentUser) return;
@@ -26216,14 +26633,52 @@ jobs.push(db.collection("market_favs").doc(uid).delete().catch(function(){}));
 // Le tre domande di una raccolta nuova — chi la scrive, chi la legge, chi la
 // porta via — vanno fatte tutte e tre lo stesso giorno.
 jobs.push(db.collection("market_searches").doc(uid).delete().catch(function(){}));
-// Foto degli annunci caricate su Storage in market/{uid}/
+/* ══ LE FOTO DEL MERCATINO, CHE NON SONO MAI STATE CANCELLATE ═════════════
+   (20/09/2026, audit SEC-10 / H1.) Questo blocco c'era dal primo giorno, e non
+   ha MAI cancellato una foto: `if(firebase.storage)` era sempre falso, perche'
+   `app.html` carica cinque SDK Firebase e `storage-compat` non e' fra quelli.
+   Un `if` che protegge da una libreria mancante, quando la libreria manca
+   sempre, non e' una precauzione: e' il codice spento.
+   Intanto `elimina-account.html` promette, per iscritto, «gli annunci del
+   Mercatino e le relative foto». Le foto restavano sul bucket per sempre.
+
+   SI CARICA QUANDO SERVE, NON ALL'AVVIO. Metterlo fra i cinque in cima
+   costerebbe un sesto download a ogni apertura dell'app per una cosa che
+   serve una volta nella vita di un account — e l'avvio e' proprio quello su
+   cui si e' lavorato ieri notte. Qui si inietta al momento, si aspetta, e si
+   cancella.
+   SE NON ARRIVA, LO SI DICE. Non si tace: `errors` prende una riga, cosi'
+   dalla parte dell'admin si vede che quelle foto sono rimaste. Cancellare
+   l'account viene prima delle sue foto — e senza rete non si cancella niente
+   comunque, perche' tutto il resto passa da Firestore. */
+var STORAGE_SDK = "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js";
+function caricaStorageSDK(){
+if(firebase && firebase.storage) return Promise.resolve(true);
+return new Promise(function(risolvi){
+var fatto = false;
+function finisci(v){ if(!fatto){ fatto = true; risolvi(v); } }
 try{
-if(firebase.storage){
-jobs.push(firebase.storage().ref("market/"+uid).listAll().then(function(res){
-return Promise.all((res.items||[]).map(function(it){ return it.delete().catch(function(){}); }));
-}).catch(function(){}));
+var sc = document.createElement("script");
+sc.src = STORAGE_SDK;
+sc.onload = function(){ finisci(!!(firebase && firebase.storage)); };
+sc.onerror = function(){ finisci(false); };
+document.head.appendChild(sc);
+}catch(e){ finisci(false); }
+// Otto secondi: piu' di cosi' non si aspetta prima di cancellare l'account.
+setTimeout(function(){ finisci(!!(firebase && firebase.storage)); }, 8000);
+});
 }
-}catch(e){}
+jobs.push(caricaStorageSDK().then(function(pronto){
+if(!pronto){
+logError("wipe/foto-mercatino", new Error("storage-compat non caricato: le foto di market/"+uid+" restano"));
+return null;
+}
+return firebase.storage().ref("market/"+uid).listAll().then(function(res){
+return Promise.all((res.items || []).map(function(it){ return it.delete().catch(function(){}); }));
+}).catch(function(err){
+logError("wipe/foto-mercatino", err);
+});
+}));
 return Promise.all(jobs);
 }
 
@@ -27517,6 +27972,25 @@ avviso.textContent = t("error_short", { msg: (e && (e.code || e.message)) || "?"
 row.appendChild(delOne);
 row.appendChild(el('<div class="notif-titolo">'+escapeHtml(n.title||"ArcTrail 3D")+'</div>'));
 if(n.body){ row.appendChild(el('<div class="notif-testo">'+escapeHtml(n.body)+'</div>')); }
+/* ══ CHI L'HA SCRITTO ══════════════════════════════════════════════════════
+   (20/09/2026, audit SEC-12.) Il titolo e il testo di un avviso li scrive il
+   CLIENT: `sendNotification` li prende come sono (li accorcia, e basta). Il
+   mittente invece lo mette il server — `fromUid` dal token, dal 17/08 — ma
+   qui non si mostrava. Quindi un iscritto qualunque poteva mandare a un altro
+   «ArcTrail 3D — il tuo account sara' sospeso, apri la chat» e l'avviso
+   arrivava senza faccia, indistinguibile da uno del sistema.
+   Adesso ogni avviso porta la firma di chi l'ha mandato. Non e' un dettaglio
+   di resa: *un messaggio senza mittente prende in prestito l'autorita' di chi
+   lo consegna.* Quello che il server compone da solo — iscrizioni,
+   segnalazioni, la posta dei club — non ha `fromUid` diverso dal destinatario
+   e resta firmato ArcTrail. */
+var daChi = n.senderUid || n.fromUid || null;
+if(daChi && !(currentUser && daChi === currentUser.uid)){
+var nome = nomeVivo(daChi);
+row.appendChild(el('<div class="notif-da">'+escapeHtml(t("notif_da", { name: nome ? "@"+nome : t("notif_da_ignoto") }))+'</div>'));
+} else {
+row.appendChild(el('<div class="notif-da sistema">'+escapeHtml(t("notif_da_sistema"))+'</div>'));
+}
 if(quando){ row.appendChild(el('<div class="notif-quando">'+quando+'</div>')); }
 if(dove){
 row.appendChild(el('<div class="notif-vai">'+icon("vai",14)+'<span>'+escapeHtml(dove.etichetta)+'</span></div>'));
@@ -27827,8 +28301,11 @@ note: noteInp.value.trim(),
 visibility: visVal,
 clubCode: fieldInp.getAttribute("data-cod") || null,
 invitedUids: invitedUids,
-lat: otLat,
-lng: otLng,
+// `lat`/`lng` NON stanno qui dal 20/09: vanno nel sottodocumento `dove/punto`,
+// che le regole danno solo a chi quell'allenamento riguarda. (SEC-09)
+// `dove` dice se il punto c'e', senza dire dov'e': serve a non mostrare un
+// tasto «Indicazioni» che poi non porta da nessuna parte.
+dove: !!(otLat && otLng),
 participantUids: [],
 participants: [],
 status: "active",
@@ -27843,6 +28320,13 @@ newRef.set(otDoc).then(function(){
 }).catch(function(err){
 console.error("OT save error:", err);
 });
+// Il punto, a parte e solo se c'e'. Non blocca: se non parte, l'allenamento
+// esiste lo stesso e il tasto «Indicazioni» sparisce da solo. (SEC-09)
+if(otLat && otLng){
+newRef.collection("dove").doc("punto").set({ lat: otLat, lng: otLng }).catch(function(err){
+console.error("OT punto:", err);
+});
+}
 
 // Aggiungo subito alla lista locale cos\u00ec compare senza attendere il server
 var localCopy = {};
@@ -28056,7 +28540,7 @@ state.scores = scores;
 state.target = 1;
 state.archerIndex = 0;
 state.arrowIndex = 0;
-state.pendingArrows = [];
+azzeraFrecce();
 state.liveBattutaTypes = {};
 state.awaitingStep = null;
 state.savedToHistory = false;
@@ -28496,7 +28980,10 @@ var mode = c.mode, pts = c.pts;
 var voci = mode.zones.map(function(z){
 return { cls:z.cls, label:t(z.labelKey), pts:pts[z.key], key:z.key };
 });
-voci.push({ cls:"zero", label:t("zero_label"), pts:0, key:null });
+// `key:"zero"` e non `null`: la zona viene salvata col tiro (fase 7), e un
+// nulla VOLUTO deve distinguersi da una zona che non e' stata registrata —
+// che e' quello che dice `null` nei giri di prima.
+voci.push({ cls:"zero", label:t("zero_label"), pts:0, key:"zero" });
 
 var righe;
 if(voci.length <= 3){ righe = [voci]; }
@@ -28544,7 +29031,9 @@ ultimoTastoAccettato = chiaveTasto;
 if(navigator.vibrate){ navigator.vibrate(15); }
 var zona = b.getAttribute("data-zona");
 if(zona === "perfect" || zona === "superspot"){ leafBurst(b); }
-registerShot(Number(b.getAttribute("data-pts")));
+// La zona viaggia col punto: 14 alla seconda freccia NFAS non dice se era
+// kill o innerkill, e il 12 alto ASA vale come quello basso. (fase 7)
+registerShot(Number(b.getAttribute("data-pts")), zona);
 });
 r.appendChild(b);
 });
@@ -28863,9 +29352,45 @@ roundId: state.roundId || null,
 // Interrotto a meta': resta nel diario, ma non conta nel riepilogo
 // permanente come un giro intero (audit P2-3).
 interrotto: interrotto === true,
+/* ══ DA QUALE GARA VIENE QUESTO GIRO ══════════════════════════════════════
+   (20/09/2026, audit: «il giro non sa da quale gara, federazione e divisione
+   viene» — e' cio' che blocca C1, la multi-federazione e My Ranking.)
+
+   Tre campi, e si scrivono SEMPRE, anche quando valgono `null`: e' la stessa
+   regola di `sessionType` qui sopra — un campo che compare solo quando serve
+   costringe chi legge a indovinare cosa vuol dire la sua assenza.
+
+   `federation` ce l'abbiamo davvero: e' quella con cui si sta tirando, e senza
+   di lei un `ifaa_3d` non si puo' attribuire — quella chiave la usano SETTE
+   federazioni, quindi il modo non basta a dire di chi e' il giro.
+
+   `division` e `eventId` per ora sono `null`, e non e' una dimenticanza:
+   - la divisione l'app non la SA ancora. `DIVISIONI` esiste solo per FIARC e
+     vive in Prepara gara, cioe' addosso agli ISCRITTI di una gara, non al
+     profilo di chi tira. Dedurla dall'arco sarebbe peggio di lasciarla vuota:
+     il profilo distingue quattro archi, FIARC otto categorie, e un arco nudo
+     finirebbe marchiato ricurvo. *Meglio un campo vuoto che un dato inventato.*
+     Perche' si riempia serve la classe per federazione nel profilo.
+   - `eventId` non ha ancora una sorgente: nessun giro nasce da una gara
+     preparata (Prepara gara oggi e' uno strumento di pianificazione a parte).
+     Il campo esiste perche' il giorno che nasce l'entita' gara il legame si
+     scrive qui, e i giri di prima si distinguono da soli. */
+federation: state.federation || null,
+division: null,
+eventId: null,
 results: ranked.map(function(a){
 var entries = state.scores[a.id] || [];
-return { name: a.name, total: totalFor(a.id), isSelf: (a.isSelf === true), ownerUid: a.ownerUid || null, perTarget: entries.map(function(e){ return e.total; }), arrows: entries.map(function(e){ return e.arrows; }) };
+/* L'UID DI CHI HA TIRATO, anche se non e' il telefono che segna.
+   (20/09/2026, audit: «`invitedUid` degli arcieri registrati si perde».)
+   Un arciere aggiunto cercandolo per username porta `invitedUid`: e' un
+   iscritto vero, con un account. Finiva nella sessione condivisa e non nel
+   giro, quindi lo storico teneva solo il suo NOME — e un nome cambia, non
+   si confronta, e non serve a nessuna classifica. */
+return { name: a.name, total: totalFor(a.id), isSelf: (a.isSelf === true),
+         ownerUid: a.ownerUid || a.invitedUid || null,
+         perTarget: entries.map(function(e){ return e.total; }),
+         arrows: entries.map(function(e){ return e.arrows; }),
+         zones: entries.map(function(e){ return Array.isArray(e.zones) ? e.zones : []; }) };
 })
 };
 hist.unshift(roundEntry);
@@ -28952,18 +29477,59 @@ save(); if(!dipingiPista()) render();
 }
 
 var ultimoPuntoAccettato = 0, ultimoTastoAccettato = "";
-function registerShot(score){
+/* ══ LA FRECCIA E' UNA ZONA, NON SOLO UN NUMERO ═══════════════════════════
+   (20/09/2026, audit «le frecce sono salvate come punti, non come zone».)
+
+   `pendingArrows` tiene i PUNTI, e i punti non bastano a ricostruire il tiro:
+   nel Big Game NFAS innerkill e kill valgono tutti e due 14 alla seconda
+   freccia, quindi un 14 non dice dove e' andata; in ASA il 12 alto e il 12
+   basso sono due zone diverse con lo stesso punteggio; nella Battuta il tipo
+   di piazzola non si ritrova. Un archivio che tiene solo la somma non potra'
+   mai rispondere a «quante volte ho preso il kill».
+
+   LE ZONE STANNO IN UN ELENCO PARALLELO, non dentro `pendingArrows`: quel
+   campo viaggia nella copia del giro aperto sul cloud e lo legge anche l'app
+   di ieri, che si aspetta numeri. Cambiargli forma romperebbe un giro
+   ripreso durante la finestra di aggiornamento.
+   Due elenchi paralleli pero' possono SCIVOLARE, ed e' il difetto tipico: si
+   toglie una freccia da uno e non dall'altro, e da quel momento ogni zona
+   parla della freccia sbagliata. Quindi non si tocca `pendingArrows` a mano
+   da nessuna parte: si passa da queste tre funzioni, e `banco-tiri` controlla
+   che le due lunghezze restino uguali dopo ogni gesto. */
+function frecceInCorso(){ if(!state.pendingArrows) state.pendingArrows = []; return state.pendingArrows; }
+function zoneInCorso(){
+if(!state.pendingZones) state.pendingZones = [];
+// Un giro aperto con l'app di ieri ha le frecce e non le zone: si pareggia
+// con dei buchi dichiarati invece di far scivolare tutto di una posizione.
+while(state.pendingZones.length < frecceInCorso().length) state.pendingZones.push(null);
+if(state.pendingZones.length > frecceInCorso().length) state.pendingZones.length = frecceInCorso().length;
+return state.pendingZones;
+}
+function aggiungiFreccia(score, zona){
+frecceInCorso().push(score);
+zoneInCorso();                                  // pareggia prima di aggiungere
+state.pendingZones[state.pendingArrows.length - 1] = zona || null;
+}
+function togliUltimaFreccia(){
+frecceInCorso().pop();
+zoneInCorso();
+}
+function azzeraFrecce(arrows, zones){
+state.pendingArrows = Array.isArray(arrows) ? arrows.slice() : [];
+state.pendingZones = Array.isArray(zones) ? zones.slice() : [];
+zoneInCorso();
+}
+function registerShot(score, zona){
 if(giroConflitto) return;   // prima si sceglie quale giro tenere (fase 8)
 // Qui c'e' un cambiamento che il cloud non ha: se intanto un altro dispositivo
 // scrive lo stesso giro, e' un conflitto, non una copia da prendere. (fase 8)
 state.roundDirty = true;
 var mode = effectiveMode();
 var archer = state.archers[state.archerIndex];
-state.pendingArrows = state.pendingArrows || [];
 // L'intervallo vale solo se la freccia precedente e' dello stesso arciere
 // sulla stessa piazzola: fra un arciere e l'altro c'e' un tiro vero di mezzo.
-misuraTocco(state.pendingArrows.length > 0);
-state.pendingArrows.push(score);
+misuraTocco(frecceInCorso().length > 0);
+aggiungiFreccia(score, zona);
 
 var tac = targetArrowCount(mode);
 var liveType = (mode.key === "battuta" && state.liveBattutaTypes) ? (state.liveBattutaTypes[state.target]||{}).tipo : null;
@@ -28983,11 +29549,11 @@ unit: "freccia", n: state.pendingArrows.length, target: state.target };
 
 if(done){
 var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
-var entry = { arrows: state.pendingArrows.slice(), total: total };
+var entry = { arrows: state.pendingArrows.slice(), zones: zoneInCorso().slice(), total: total };
 state.scores[archer.id].push(entry);
 syncShotToSession(archer, entry);
 salvaGiroSulCloud();
-state.pendingArrows = [];
+azzeraFrecce();
 state.arrowIndex = 0;
 // Il passaggio di turno non merita piu' una schermata a se': la fila dei
 // turni nella scena dice gia' a chi tocca, e la diceva anche mentre stavi
@@ -29014,15 +29580,14 @@ save(); if(!dipingiPista()) render();
 
 function finishTargetEarly(){
 var archer = state.archers[state.archerIndex];
-state.pendingArrows = state.pendingArrows || [];
-var total = state.pendingArrows.reduce(function(s,x){ return s+x; }, 0);
-var earlyEntry = { arrows: state.pendingArrows.slice(), total: total };
+var total = frecceInCorso().reduce(function(s,x){ return s+x; }, 0);
+var earlyEntry = { arrows: state.pendingArrows.slice(), zones: zoneInCorso().slice(), total: total };
 state.scores[archer.id].push(earlyEntry);
 salvaGiroSulCloud();
 syncShotToSession(archer, earlyEntry);
 // qui il numero e' la somma della piazzola, non una freccia: va detto.
 state.lastShotInfo = { name: archer.name, score: total, unit: "piazzola", n: null, target: state.target };
-state.pendingArrows = [];
+azzeraFrecce();
 state.arrowIndex = 0;
 if(state.archerIndex < state.archers.length - 1){
 state.archerIndex += 1;
@@ -29043,8 +29608,8 @@ misura("annulli"); ultimoTocco = null;
 state.lastShotInfo = null;
 state.panel = null;
 // Frecce già segnate in questa piazzola ma non ancora completata: si toglie solo l'ultima
-if(state.pendingArrows && state.pendingArrows.length > 0){
-state.pendingArrows.pop();
+if(frecceInCorso().length > 0){
+togliUltimaFreccia();
 state.arrowIndex = state.pendingArrows.length;
 save(); if(!dipingiPista()) render();
 return;
@@ -29081,10 +29646,12 @@ var lastEntry = entries.pop();
 unsyncShotFromSession(archer, lastEntry);
 salvaGiroSulCloud();
 // si toglie solo l'ultima freccia della piazzola: le altre restano gia' segnate, pronte per essere confermate di nuovo
-state.pendingArrows = lastEntry.arrows.slice(0, -1);
+// Le zone tornano con le loro frecce: `azzeraFrecce` pareggia i due elenchi.
+azzeraFrecce(lastEntry.arrows.slice(0, -1),
+             Array.isArray(lastEntry.zones) ? lastEntry.zones.slice(0, -1) : null);
 state.arrowIndex = state.pendingArrows.length;
 } else {
-state.pendingArrows = [];
+azzeraFrecce();
 state.arrowIndex = 0;
 }
 state.target = targetNum;
@@ -29937,7 +30504,10 @@ var lang = q.get("lang");
 // gia' scelto in questo browser ha deciso piu' di recente di chi ha spedito
 // l'email: un indirizzo vecchio in un preferito non deve poter rigirare la
 // lingua a chi sta usando l'app.
-if(!state.lang && lang && Object.prototype.hasOwnProperty.call(LANG_TO_COUNTRY, lang)){
+// `LANG_META` e non `LANG_TO_COUNTRY`: qui la domanda e' «questa lingua
+// esiste?», e dal 20/09 quella mappa non contiene piu' l'inglese — con lei,
+// un ritorno da `?lang=en` avrebbe smesso di funzionare in silenzio.
+if(!state.lang && lang && Object.prototype.hasOwnProperty.call(LANG_META, lang)){
 state.lang = lang;
 try{ save(); }catch(e){}
 }

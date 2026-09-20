@@ -57,14 +57,28 @@ function frecce(st) {
 }
 /* Lo stato e' coerente? Totali = somma delle frecce; turno dentro l'elenco;
    il nome sullo schermo e' quello di turno (in gruppo). */
+/* LE ZONE NON DEVONO SCIVOLARE. (20/09/2026, fase 7.) Dal 20/09 la zona del
+   tiro (kill, innerkill, il 12 alto ASA, il nulla voluto) viaggia accanto al
+   punto, in un elenco PARALLELO — e due elenchi paralleli hanno un difetto
+   tipico: si toglie una freccia da uno e non dall'altro, e da quel momento ogni
+   zona parla della freccia sbagliata. Non si vedrebbe a schermo: i punti
+   restano giusti. Quindi la lunghezza si controlla DOPO OGNI GESTO, dentro
+   questa funzione, invece di una prova sola in fondo. */
 function coerente(st, schermo) {
   var guai = [];
   Object.keys(st.scores || {}).forEach(function (k) {
     (st.scores[k] || []).forEach(function (e, i) {
       var s = (e.arrows || []).reduce(function (a, b) { return a + b; }, 0);
       if (s !== e.total) guai.push(k + " piazzola " + (i + 1) + ": totale " + e.total + " ma frecce " + s);
+      if (!Array.isArray(e.zones)) guai.push(k + " piazzola " + (i + 1) + ": nessuna zona salvata");
+      else if (e.zones.length !== (e.arrows || []).length)
+        guai.push(k + " piazzola " + (i + 1) + ": " + (e.arrows || []).length + " frecce ma " + e.zones.length + " zone");
+      else if (e.zones.some(function (z) { return !z; }))
+        guai.push(k + " piazzola " + (i + 1) + ": una zona vuota (" + JSON.stringify(e.zones) + ")");
     });
   });
+  var nf = (st.pendingArrows || []).length, nz = (st.pendingZones || []).length;
+  if (nf !== nz) guai.push("in sospeso: " + nf + " frecce ma " + nz + " zone");
   if (!(st.archerIndex >= 0 && st.archerIndex < st.archers.length)) guai.push("archerIndex fuori: " + st.archerIndex);
   var chi = st.archers[st.archerIndex];
   if (st.archers.length > 1 && schermo && chi && schermo.indexOf(chi.name) < 0) guai.push("sullo schermo non c'e' " + chi.name);
@@ -73,12 +87,17 @@ function coerente(st, schermo) {
 
 (async function () {
   var browser = await chromium.launch();
-  async function apri(n) {
+  // `ritocca` cambia lo stato di partenza: `addInitScript` gira a OGNI
+  // caricamento, quindi modificarlo dopo con un reload non serve a niente —
+  // il seme lo riscrive e la modifica sparisce. (Provato il 20/09.)
+  async function apri(n, ritocca) {
     var ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     await ctx.route(/^https?:\/\//, function (r) { return r.abort(); });
+    var seme = giro(n);
+    if (ritocca) ritocca(seme);
     await ctx.addInitScript(function (st) {
       try { localStorage.setItem("arctrail3d_state_v3", JSON.stringify(st)); localStorage.setItem("arctrail3d_welcome_v2", "1"); } catch (e) {}
-    }, giro(n));
+    }, seme);
     var page = await ctx.newPage();
     await page.goto(URL);
     await page.waitForFunction(function () { return !!window.__prova; }, null, { timeout: 15000 });
@@ -161,7 +180,46 @@ function coerente(st, schermo) {
   await controlla("annulla oltre la piazzola: torna la piazzola 1, Bea con una freccia", { frecce: 3, sospese: 1, target: 1, turno: 1 });
   await tocco(".quick-btn.zero");
   await controlla("ritirare dopo l'annulla: piazzola 2 di nuovo", { frecce: 4, sospese: 0, target: 2 });
+  /* E LE ZONE DICONO DOVE, non solo quanto. Il nulla e' `zero` e non una casella
+     vuota: un nulla VOLUTO deve distinguersi da una zona non registrata, che e'
+     quello che si trova nei giri di prima del 20/09. */
+  var sz = await stato(u.page);
+  var tutteLeZone = [];
+  Object.keys(sz.scores || {}).forEach(function (k) {
+    (sz.scores[k] || []).forEach(function (e) { tutteLeZone = tutteLeZone.concat(e.zones || []); });
+  });
+  prova("ogni freccia salvata porta la sua zona",
+        tutteLeZone.length === 4 && tutteLeZone.every(function (z) { return !!z; }),
+        JSON.stringify(tutteLeZone) + " (attese 4)");
+  prova("il nulla si chiama «zero», non una casella vuota", tutteLeZone.indexOf("zero") >= 0, JSON.stringify(tutteLeZone));
+  prova("e le zone non sono tutte uguali (superspot, spot, sagoma, zero)",
+        tutteLeZone.filter(function (z, i) { return tutteLeZone.indexOf(z) === i; }).length >= 3, JSON.stringify(tutteLeZone));
   await u.ctx.close();
+
+  /* ── UN GIRO APERTO CON L'APP DI IERI ─────────────────────────────────────
+     Ha `pendingArrows` e non ha `pendingZones`: ripreso oggi, i due elenchi
+     devono pareggiarsi con dei buchi DICHIARATI, non scivolare di una
+     posizione. E' il caso della finestra di aggiornamento. */
+  console.log("\n  UN GIRO DI IERI, RIPRESO OGGI\n");
+  var v = await apri(1, function (st) {
+    st.pendingArrows = [20];      // una freccia gia' segnata ieri
+    st.arrowIndex = 1;
+    delete st.pendingZones;       // ieri le zone non esistevano
+  });
+  await v.page.evaluate(function () { var x = document.querySelector(".quick-btn.spot"); if (x) x.click(); });
+  await v.page.waitForTimeout(500);
+  var sv = await stato(v.page);
+  var chiuse = (sv.scores[Object.keys(sv.scores)[0]] || [])[0];
+  prova("la piazzola si chiude con due frecce", !!chiuse && chiuse.arrows.length === 2,
+        JSON.stringify(chiuse && chiuse.arrows));
+  // Difensiva di proposito: puntata su un'app senza zone questa prova deve
+  // dire NO, non schiantarsi su `undefined.length`. Un banco che crasha non
+  // dice quale invariante e' caduta.
+  var zIeri = (chiuse && Array.isArray(chiuse.zones)) ? chiuse.zones : null;
+  prova("la freccia di ieri ha una zona vuota, quella di oggi no",
+        !!zIeri && zIeri.length === 2 && zIeri[0] === null && !!zIeri[1],
+        JSON.stringify(chiuse && chiuse.zones));
+  await v.ctx.close();
 
   await browser.close();
   try { fs.rmSync(D, { recursive: true, force: true }); } catch (x) {}

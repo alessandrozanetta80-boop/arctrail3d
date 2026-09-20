@@ -120,6 +120,23 @@ setGlobalOptions({ region: "europe-west1", maxInstances: 10 });
 // La regione deve combaciare con FUNCTIONS_REGION in app.html, altrimenti la
 // chiamata parte verso us-central1 e torna "not-found".
 
+/* ══ APP CHECK: L'INTERRUTTORE, SPENTO ════════════════════════════════════
+   (20/09/2026, audit SEC-14.) `app.html` sa gia' mandare il timbro di App
+   Check (vedi `attivaAppCheck`), ma solo quando in console e' stata creata la
+   chiave. Qui c'e' l'altra meta': pretenderlo.
+
+   RESTA SPENTO, E NON E' UNA DIMENTICANZA. Accendere `enforceAppCheck` prima
+   che i telefoni mandino il timbro vuol dire rispondere `unauthenticated` a
+   TUTTI, compresi quelli che non hanno ancora aggiornato l'app — che dopo un
+   deploy sono la maggioranza, per giorni. L'ordine e' sempre lo stesso:
+     1. chiave in console e sito pubblicato (i timbri cominciano ad arrivare);
+     2. si guardano le metriche «richieste non verificate» in console;
+     3. quando sono quasi zero, qui si mette `true` e si ripubblica;
+     4. se qualcosa non torna, si rimette `false` e si ripubblica.
+   Firestore e Storage NON si accendono da qui: hanno il loro interruttore in
+   console (App Check → Applica), e vanno accesi con lo stesso criterio. */
+const APP_CHECK_OBBLIGATORIO = false;
+
 const MAX_TITOLO = 120;
 const MAX_TESTO = 500;
 const LIMITE_AL_MINUTO = 40; // un invito ad allenamento ne manda uno per invitato
@@ -168,7 +185,7 @@ function destPulito(d, mittente) {
 // ─────────────────────────────────────────────────────────────────────────────
 // 1) SCRITTURA DELLA NOTIFICA — chiamata dall'app
 // ─────────────────────────────────────────────────────────────────────────────
-exports.sendNotification = onCall({ cors: true }, async (req) => {
+exports.sendNotification = onCall({ cors: true, enforceAppCheck: APP_CHECK_OBBLIGATORIO }, async (req) => {
 
   // Chi chiama deve essere autenticato. L'uid arriva dal token verificato dal
   // server, non da quello che dichiara il client: e' il punto chiave di tutto.

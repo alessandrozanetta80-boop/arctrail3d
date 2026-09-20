@@ -628,6 +628,69 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
   await prova("ne' un telefono con una nota dentro, se supera il soffitto", () =>
     assertFails(db(A).doc('compagnie_admin/01VERB').update({ tel:'3'.repeat(200) })));
 
+  /* ══ SEC-09: I DATI PRIVATI NON LI LEGGE CHIUNQUE ═══════════════════════
+     (20/09/2026.) Tre raccolte che l'audit aveva messo insieme sotto SEC-09.
+     `percorsi` era gia' stato chiuso il 19/09; queste sono le altre tre. */
+  console.log('\n  SEC-09: LA SCHEDA DEL REFERENTE, I PERCORSI, IL PUNTO\n');
+  await scena(async d => {
+    await d.doc('compagnie_admin/01VERB').set({ adminUid: A.uid, clubCode: '01VERB',
+      referente: 'Anna Rossi', tel: '347 1234567', indirizzo: 'Via A. Alberti', note: 'chiave al bar',
+      emailComp: 'info@arcierivco.it' });
+    await d.doc('compagnie_contatto/01VERB').set({ adminUid: A.uid, emailComp: 'info@arcierivco.it' });
+    await d.doc('percorsi_campo/confermato1').set({ clubCode:'01VERB', stato:'confermato', nome:'Fornasona', createdBy: C.uid });
+    await d.doc('percorsi_campo/proposto1').set({ clubCode:'01VERB', stato:'proposto', nome:'Nuovo', createdBy: C.uid, createdByName:'Carla' });
+    await d.doc('open_trainings/otAperto').set({ ownerUid: A.uid, visibility:'all', clubCode:'01VERB', participantUids:[], invitedUids:[] });
+    await d.doc('open_trainings/otAperto/dove/punto').set({ lat: 45.9, lng: 8.5 });
+    await d.doc('open_trainings/otClub').set({ ownerUid: A.uid, visibility:'club', clubCode:'01VERB', participantUids:[C.uid], invitedUids:[] });
+    await d.doc('open_trainings/otClub/dove/punto').set({ lat: 45.9, lng: 8.5 });
+  });
+
+  await prova('il referente legge la propria scheda di compagnia', () =>
+    assertSucceeds(db(A).doc('compagnie_admin/01VERB').get()));
+  await prova('B NON legge telefono, indirizzo e note di una compagnia altrui', () =>
+    assertFails(db(B).doc('compagnie_admin/01VERB').get()));
+  await prova('nemmeno un utente non verificato', () =>
+    assertFails(db(NV).doc('compagnie_admin/01VERB').get()));
+  await prova('il referente ritrova le sue compagnie (where adminUid == io)', () =>
+    assertSucceeds(db(A).collection('compagnie_admin').where('adminUid','==',A.uid).get()));
+  await prova("ma B NON puo' elencarle tutte", () =>
+    assertFails(db(B).collection('compagnie_admin').get()));
+
+  await prova('il contatto pubblico lo legge chiunque abbia un account', () =>
+    assertSucceeds(db(B).doc('compagnie_contatto/01VERB').get()));
+  await prova('e lo scrive il referente di quella compagnia', () =>
+    assertSucceeds(db(A).doc('compagnie_contatto/01VERB').set({ adminUid:A.uid, emailComp:'nuova@club.it', aggiornatoIl: Date.now() })));
+  await prova('ma non un altro iscritto', () =>
+    assertFails(db(B).doc('compagnie_contatto/01VERB').set({ adminUid:B.uid })));
+  await prova("e non ci si puo' infilare un telefono (hasOnly)", () =>
+    assertFails(db(A).doc('compagnie_contatto/01VERB').set({ adminUid:A.uid, tel:'347 1234567' })));
+
+  await prova('un percorso CONFERMATO lo legge chiunque: ci si va a tirare', () =>
+    assertSucceeds(db(B).doc('percorsi_campo/confermato1').get()));
+  await prova('una PROPOSTA altrui no', () =>
+    assertFails(db(B).doc('percorsi_campo/proposto1').get()));
+  await prova('la propria proposta si', () =>
+    assertSucceeds(db(C).doc('percorsi_campo/proposto1').get()));
+  await prova('e il referente della compagnia la legge (deve valutarla)', () =>
+    assertSucceeds(db(A).doc('percorsi_campo/proposto1').get()));
+  await prova('la query dei confermati passa', () =>
+    assertSucceeds(db(B).collection('percorsi_campo').where('clubCode','==','01VERB').where('stato','==','confermato').get()));
+  await prova('la query che chiede TUTTO il campo viene rifiutata intera', () =>
+    assertFails(db(B).collection('percorsi_campo').where('clubCode','==','01VERB').get()));
+
+  await prova('il punto di un allenamento aperto a tutti si legge', () =>
+    assertSucceeds(db(B).doc('open_trainings/otAperto/dove/punto').get()));
+  await prova('quello di un allenamento «solo club» no', () =>
+    assertFails(db(B).doc('open_trainings/otClub/dove/punto').get()));
+  await prova("ma chi e' iscritto lo legge (ci deve andare)", () =>
+    assertSucceeds(db(C).doc('open_trainings/otClub/dove/punto').get()));
+  await prova("e l'organizzatore anche", () =>
+    assertSucceeds(db(A).doc('open_trainings/otClub/dove/punto').get()));
+  await prova("un estraneo NON puo' spostare il punto di un allenamento altrui", () =>
+    assertFails(db(B).doc('open_trainings/otClub/dove/punto').set({ lat:0, lng:0 })));
+  await prova("l'organizzatore si", () =>
+    assertSucceeds(db(A).doc('open_trainings/otClub/dove/punto').set({ lat:46, lng:8 })));
+
   console.log('\n  LE PORTE CHE DEVONO RESTARE APERTE\n');
 
   await prova('chi non ha confermato l\'email si cancella dall\'elenco', () =>

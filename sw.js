@@ -174,6 +174,79 @@ self.addEventListener("notificationclick", function(event){
   );
 });
 
+/* ══ QUANDO IL BROWSER CAMBIA LA SOTTOSCRIZIONE ═══════════════════════════
+   (20/09/2026, audit N7 / STATO C2: «pushsubscriptionchange non e' gestito».)
+
+   Il browser puo' revocare e rifare la sottoscrizione alle push da solo —
+   aggiornamento di Chrome, pulizia dei dati del sito, scadenza lato Google.
+   Quando lo fa, manda QUESTO evento al service worker, e nessuno lo
+   ascoltava: la sottoscrizione vecchia moriva, il token scritto su Firestore
+   restava quello morto, e le push smettevano. Ed e' un guasto che si avvita:
+   l'unico posto dove il token si rinnovava era l'apertura dell'app, ma la
+   persona non apre l'app PROPRIO perche' non le arriva piu' niente.
+
+   COSA SI PUO' FARE DA QUI, E COSA NO. Da un service worker non si puo'
+   coniare un token FCM: `getToken()` vive nell'SDK della PAGINA, e non c'e'
+   una sua versione qui dentro (la diagnosi in NOTE-DESIGN che diceva «nel SW
+   non c'e' getToken» era giusta come fatto, imprecisa come conclusione).
+   Quindi qui si fanno le tre cose che si possono fare:
+     1. si RISOTTOSCRIVE subito con la stessa chiave VAPID, cosi' il browser
+        ha di nuovo una sottoscrizione valida invece di nessuna;
+     2. si LASCIA UN SEGNO in una cassa, che la pagina legge alla prossima
+        apertura anche se il messaggio non e' arrivato a nessuno;
+     3. si AVVISA ogni finestra aperta, che puo' rifare il token subito.
+   Il segno serve perche' al momento dell'evento, quasi sempre, di finestre
+   aperte non ce n'e' nessuna: e' il caso normale, non quello raro.
+
+   QUELLO CHE RESTA APERTO, dichiarato: se la persona non riapre mai l'app, il
+   token nuovo non arriva mai al server. Chiuderlo per davvero vuol dire
+   mandare le push col protocollo Web Push (l'endpoint della sottoscrizione,
+   firmato VAPID) invece che con i token FCM — cioe' cambiare il server, non
+   questo file. */
+var SEGNO_CASSA = "arctrail3d-segni";
+var SEGNO_TOKEN = "/__push-da-rinnovare";
+function lasciaSegnoToken(){
+  return caches.open(SEGNO_CASSA).then(function(c){
+    return c.put(new Request(SEGNO_TOKEN), new Response(String(Date.now()), {
+      headers: { "Content-Type": "text/plain" } }));
+  }).catch(function(){});
+}
+function avvisaFinestre(messaggio){
+  return clients.matchAll({ type: "window", includeUncontrolled: true }).then(function(list){
+    list.forEach(function(c){ try{ c.postMessage(messaggio); }catch(e){} });
+  }).catch(function(){});
+}
+self.addEventListener("pushsubscriptionchange", function(event){
+  event.waitUntil(
+    Promise.resolve().then(function(){
+      // La chiave e' la stessa della pagina: se cambia, cambia in due posti.
+      var vecchia = event.oldSubscription || null;
+      var chiave = (vecchia && vecchia.options && vecchia.options.applicationServerKey) || null;
+      if(!self.registration.pushManager) return null;
+      return self.registration.pushManager.subscribe(
+        chiave ? { userVisibleOnly: true, applicationServerKey: chiave }
+               : { userVisibleOnly: true }).catch(function(){ return null; });
+    }).then(function(){
+      return Promise.all([lasciaSegnoToken(), avvisaFinestre({ tipo: "push-da-rinnovare" })]);
+    })
+  );
+});
+// La pagina, all'avvio, chiede se c'e' un segno e poi lo cancella.
+self.addEventListener("message", function(event){
+  var d = event.data || {};
+  if(d.tipo !== "segno-push?") return;
+  event.waitUntil(
+    caches.open(SEGNO_CASSA).then(function(c){
+      return c.match(new Request(SEGNO_TOKEN)).then(function(r){
+        if(!r) return false;
+        return c.delete(new Request(SEGNO_TOKEN)).then(function(){ return true; });
+      });
+    }).catch(function(){ return false; }).then(function(c_era){
+      try{ if(event.source) event.source.postMessage({ tipo: "segno-push", cera: !!c_era }); }catch(e){}
+    })
+  );
+});
+
 // ─────────────────────────── CACHE ───────────────────────────
 // v7 (notte fra il 17 e il 18/08/2026). Il numero non si alza per abitudine: si alza perche'
 // cambiando nome, `activate` cancella tutte le cache vecchie. E stasera era
@@ -192,7 +265,7 @@ var CACHE_PARENT = "arctrail3d-v166";
 // La controlla `tests/controlla-cache.js`: se un file della shell cambia e il
 // nome no, il banco dice no. Si riscrive con `--scrivi`, DOPO aver alzato
 // CACHE_NAME (il banco rifiuta di farlo prima). (19/09/2026, audit S4.)
-var SHELL_IMPRONTA = "arctrail3d-v167:aaf6475ebc2ead48";
+var SHELL_IMPRONTA = "arctrail3d-v167:a345c3dc363f893d";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
@@ -299,7 +372,10 @@ self.addEventListener("activate", function(event){
       if(!buona) return null;
       return caches.keys().then(function(names){
         return Promise.all(
-          names.filter(function(n){ return n !== CACHE_NAME && n.indexOf("arctrail3d-") === 0; })
+          // `SEGNO_CASSA` comincia per `arctrail3d-` ma NON e' una shell: e' il
+          // biglietto che dice «il token delle push va rifatto», e va letto dopo
+          // l'aggiornamento, non buttato con le casse vecchie. (20/09/2026)
+          names.filter(function(n){ return n !== CACHE_NAME && n !== SEGNO_CASSA && n.indexOf("arctrail3d-") === 0; })
                .map(function(n){ return caches.delete(n); })
         );
       });

@@ -48,6 +48,62 @@ if (ati && fs.existsSync(ati[1])) {
   prova("e il file e' davvero 180x180", m.w === 180 && m.h === 180, m.w + "x" + m.h);
 } else prova("e il file esiste", false, ati && ati[1]);
 
+/* ══ LE FOTO DEL MERCATINO SI CANCELLANO DAVVERO ══════════════════════════
+   (20/09/2026, audit SEC-10 / H1.) `wipeAccountData` aveva un ramo
+   `if(firebase.storage)` che non e' mai stato vero: `storage-compat` non e' fra
+   gli SDK in cima al file. Un `if` che protegge da una libreria mancante,
+   quando la libreria manca sempre, e' codice spento — e intanto
+   `elimina-account.html` promette per iscritto anche le foto.
+   Qui si chiedono tutte e due le cose insieme, perche' sono in tensione: la
+   libreria DEVE arrivare quando si cancella un account, e NON deve arrivare
+   all'avvio (sarebbe un sesto download a ogni apertura per una cosa che si fa
+   una volta nella vita). */
+console.log("\n  LE FOTO DEL MERCATINO, ALL'ELIMINAZIONE ACCOUNT\n");
+var sdkInTesta = (APP.match(/<script src="https:\/\/www\.gstatic\.com\/firebasejs\/[^"]+"/g) || []);
+prova("storage-compat NON e' fra gli SDK caricati all'avvio",
+      !sdkInTesta.some(function (x) { return /storage-compat/.test(x); }),
+      sdkInTesta.length + " SDK in testa");
+prova("ma si carica quando serve (caricaStorageSDK)",
+      /function caricaStorageSDK\(\)/.test(APP) && /firebasejs\/[0-9.]+\/firebase-storage-compat\.js/.test(APP));
+prova("e la stessa versione degli altri SDK",
+      (function () {
+        var v = (APP.match(/firebasejs\/([0-9.]+)\/firebase-app-compat/) || [])[1];
+        var vs = (APP.match(/firebasejs\/([0-9.]+)\/firebase-storage-compat/) || [])[1];
+        return !!v && v === vs;
+      })(),
+      (APP.match(/firebasejs\/([0-9.]+)\/firebase-storage-compat/) || [])[1] || "assente");
+prova("le foto si cancellano dentro wipeAccountData",
+      /caricaStorageSDK\(\)[\s\S]{0,400}?storage\(\)\.ref\("market\/"\s*\+\s*uid\)[\s\S]{0,200}?listAll\(\)/.test(APP));
+prova("se la libreria non arriva NON si tace: va nel registro degli errori",
+      /caricaStorageSDK\(\)[\s\S]{0,300}?logError\("wipe\/foto-mercatino"/.test(APP));
+prova("il ramo morto `if(firebase.storage)` non c'e' piu'",
+      !/if\(firebase\.storage\)\s*\{?\s*jobs\.push/.test(APP));
+
+/* ══ APP CHECK: PRONTO, NON ACCESO ════════════════════════════════════════
+   (20/09/2026, audit SEC-14.) Due cose che vanno chieste INSIEME, perche' una
+   senza l'altra e' un guaio: il codice deve esserci (se no non si potra' mai
+   accendere), e l'obbligo NON deve essere acceso (accenderlo prima che i
+   telefoni mandino il timbro vuol dire spegnere l'app a tutti).
+   Con la chiave ancora da incollare, l'app non deve scaricare niente in piu'
+   e non deve cambiare di un millisecondo l'avvio. */
+console.log("\n  APP CHECK\n");
+prova("il codice per App Check c'e' (attivaAppCheck)",
+      /function attivaAppCheck\(\)/.test(APP) && /firebase-app-check-compat\.js/.test(APP));
+prova("si chiama subito dopo initializeApp, non dopo",
+      /firebase\.initializeApp\(firebaseConfig\);\s*\n\s*attivaAppCheck\(\);/.test(APP));
+var chiave = (APP.match(/var APP_CHECK_SITE_KEY = "([^"]*)"/) || [])[1];
+prova("la site key e' ancora da incollare (l'obbligo non e' attivo)",
+      chiave !== undefined && /^INCOLLA/.test(chiave), String(chiave).slice(0, 24));
+prova("e finche' e' cosi' l'SDK NON si scarica",
+      /if\(!appCheckConfigurato\(\)\) return;/.test(APP));
+prova("l'SDK di App Check non e' fra quelli caricati all'avvio",
+      !/<script src="[^"]*app-check-compat[^"]*"/.test(APP));
+var FN = fs.readFileSync("functions/index.js", "utf8");
+prova("le Functions hanno l'interruttore, e sta su «spento»",
+      /const APP_CHECK_OBBLIGATORIO = false;/.test(FN));
+prova("ed e' collegato a sendNotification",
+      /enforceAppCheck:\s*APP_CHECK_OBBLIGATORIO/.test(FN));
+
 console.log("\n  IL MANIFEST\n");
 var meta = (APP.match(/<meta name="theme-color" content="([^"]+)"/) || [])[1];
 prova("theme_color del manifest uguale a quello della pagina", (MAN.theme_color || "").toLowerCase() === (meta || "").toLowerCase(),

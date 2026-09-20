@@ -193,6 +193,25 @@ function stanzaSW(){
     },
     setTimeout: setTimeout, clearTimeout: clearTimeout, Promise: Promise, URL: URL
   };
+  /* LA CASSA DEI SEGNI, per davvero. (20/09/2026.) `pushsubscriptionchange`
+     lascia un biglietto in una cassa e la pagina lo legge alla prossima
+     apertura: con un `caches` che dice sempre «niente» non si potrebbe provare
+     ne' che il biglietto viene scritto, ne' che viene letto una volta sola. */
+  var casse = {};
+  stanza.caches.open = function(nome){
+    if(!casse[nome]) casse[nome] = {};
+    var c = casse[nome];
+    return Promise.resolve({
+      put: function(req, res){ c[String(req && req.url || req)] = res; return Promise.resolve(); },
+      match: function(req){ return Promise.resolve(c[String(req && req.url || req)] || null); },
+      delete: function(req){ var k = String(req && req.url || req); var c_era = (k in c); delete c[k]; return Promise.resolve(c_era); },
+      add: function(){ return Promise.resolve(); },
+      addAll: function(){ return Promise.resolve(); },
+      keys: function(){ return Promise.resolve(Object.keys(c)); }
+    });
+  };
+  stanza.Response = function(corpo, o){ this.corpo = corpo; this.opzioni = o; };
+  var sottoscrizioni = [];
   stanza.self = stanza;
   stanza.self.addEventListener = function(nome, fn){ ascolt[nome] = fn; };
   stanza.self.skipWaiting = function(){ return Promise.resolve(); };
@@ -202,7 +221,10 @@ function stanzaSW(){
       gia.push({ tag:(opzioni||{}).tag, title:titolo, body:(opzioni||{}).body });
       return Promise.resolve();
     },
-    getNotifications: function(){ return Promise.resolve(gia.slice()); }
+    getNotifications: function(){ return Promise.resolve(gia.slice()); },
+    pushManager: {
+      subscribe: function(o){ sottoscrizioni.push(o); return Promise.resolve({ endpoint:"nuovo" }); }
+    }
   };
 
   vm.createContext(stanza);
@@ -211,6 +233,9 @@ function stanzaSW(){
   return {
     sfondo: function(){ return sfondo; },
     click: function(){ return ascolt["notificationclick"]; },
+    ascoltatore: function(nome){ return ascolt[nome]; },
+    sottoscrizioni: function(){ return sottoscrizioni; },
+    casse: function(){ return casse; },
     disegnate: function(){ return disegnate; },
     aperte: function(){ return aperte; },
     messaggi: function(){ return messaggi; },
@@ -373,6 +398,54 @@ var AVVISO = {
     await sw.sfondo()({ data:{ tag:"avviso-11", title:"Nuovo messaggio", body:"Hai un messaggio" } });
     prova("due avvisi diversi con lo stesso testo restano due",
           sw.disegnate().length === 2, sw.disegnate().length + " disegnate");
+
+    /* ── D. QUANDO IL BROWSER RIFA' LA SOTTOSCRIZIONE ────────────────────────
+       (20/09/2026, audit N7 / C2.) `pushsubscriptionchange` non era gestito:
+       il browser revocava la sottoscrizione, il token su Firestore restava
+       quello morto e le push smettevano. Il guasto si avvita — la persona non
+       riapre l'app proprio perche' non le arriva piu' niente — quindi il
+       service worker deve fare tre cose: risottoscriversi, avvisare le
+       finestre aperte, e lasciare un segno per quando non ce n'e' nessuna.
+       Quest'ultima e' la sola che conta davvero: al momento dell'evento, di
+       finestre aperte non ce n'e' quasi mai. */
+    console.log("\n  D. LA SOTTOSCRIZIONE CHE CAMBIA");
+    var cambio = sw.ascoltatore("pushsubscriptionchange");
+    prova("il service worker ascolta pushsubscriptionchange", typeof cambio === "function");
+    if (typeof cambio === "function") {
+      sw.azzera();
+      sw.conFinestra("https://arctrail3d.com/app.html");
+      var atteso = null;
+      await cambio({ waitUntil: function(p){ atteso = p; return p; },
+                     oldSubscription: { options: { userVisibleOnly:true, applicationServerKey:"CHIAVE-VAPID" } } });
+      if (atteso) await atteso;
+      prova("si risottoscrive con la stessa chiave VAPID",
+            sw.sottoscrizioni().length === 1 && sw.sottoscrizioni()[0].applicationServerKey === "CHIAVE-VAPID",
+            JSON.stringify(sw.sottoscrizioni()));
+      prova("avvisa la finestra aperta, che puo' rifare il token subito",
+            sw.messaggi().some(function(m){ return m && m.tipo === "push-da-rinnovare"; }),
+            JSON.stringify(sw.messaggi()));
+      var cassaSegni = sw.casse()["arctrail3d-segni"] || {};
+      prova("e lascia un segno per quando nessuna finestra e' aperta",
+            Object.keys(cassaSegni).length === 1, JSON.stringify(Object.keys(cassaSegni)));
+
+      // La pagina chiede il segno: lo riceve UNA volta, poi non c'e' piu'.
+      var posta = sw.ascoltatore("message");
+      prova("il service worker risponde alla domanda «c'e' un segno?»", typeof posta === "function");
+      if (typeof posta === "function") {
+        var risposte = [];
+        var finta = { postMessage: function(m){ risposte.push(m); } };
+        var p1 = null;
+        await posta({ data:{ tipo:"segno-push?" }, source: finta, waitUntil: function(p){ p1 = p; return p; } });
+        if (p1) await p1;
+        prova("la prima volta dice che c'era", risposte.length === 1 && risposte[0].cera === true,
+              JSON.stringify(risposte));
+        var p2 = null;
+        await posta({ data:{ tipo:"segno-push?" }, source: finta, waitUntil: function(p){ p2 = p; return p; } });
+        if (p2) await p2;
+        prova("la seconda no: il segno si consuma, il token non si rifa' due volte",
+              risposte.length === 2 && risposte[1].cera === false, JSON.stringify(risposte));
+      }
+    }
   }
 
   console.log("\n  " + ok + " passate, " + ko + " fallite.\n");

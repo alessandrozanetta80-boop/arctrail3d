@@ -72,7 +72,20 @@ function cloud() {
   d["users/" + U.uid + "/devices"] = { dAltro: { token: "token-dell-altro-telefono", platform: "desktop", enabled: true } };
   d["notifications/" + U.uid + "/items"] = {
     "avviso-9": { title: "Nuovo messaggio", body: "Anna ti ha scritto", read: false, fromUid: "uidAnna",
-                  dest: { k: "dm", uid: "uidAnna" }, createdAt: { __ts: Date.now() } }
+                  senderUid: "uidAnna", dest: { k: "dm", uid: "uidAnna" }, createdAt: { __ts: Date.now() } },
+    /* L'AVVISO CHE SI FINGE IL SISTEMA. (20/09/2026, audit SEC-12.) Titolo e
+       testo li scrive il client: un iscritto qualunque puo' mandare a un altro
+       una frase che sembra dell'app. Il mittente invece lo mette il server, e
+       fino al 20/09 non si mostrava — quindi questo avviso arrivava senza
+       faccia. Qui si pretende che la faccia ci sia. */
+    "avviso-finto": { title: "ArcTrail 3D", body: "Il tuo account sara' sospeso: apri la chat.",
+                      read: false, fromUid: "uidBruno", senderUid: "uidBruno",
+                      createdAt: { __ts: Date.now() } },
+    /* E uno vero del sistema: il server scrive `fromUid` uguale al
+       destinatario per le conferme a se stessi. Quello resta firmato ArcTrail. */
+    "avviso-sistema": { title: "Percorso confermato", body: "Fornasona e' nell'elenco.",
+                        read: false, fromUid: U.uid, senderUid: U.uid,
+                        createdAt: { __ts: Date.now() } }
   };
   d.public_profiles = { uidAnna: { username: "anna", nomeCognome: "Anna Rossi" } };
   return d;
@@ -160,6 +173,38 @@ function utenteCloud(page) { return page.evaluate(function (uid) { return JSON.p
   prova("l'indirizzo si pulisce (niente ?n= a ogni ricarica)", !/\?n=/.test(await b.page.evaluate(function () { return location.search; })));
   prova("nessun errore JavaScript", b.err.length === 0, b.err[0]);
   await b.ctx.close();
+
+  /* ── OGNI AVVISO PORTA LA SUA FIRMA ─────────────────────────────────────── */
+  console.log("\n  CHI HA SCRITTO L'AVVISO\n");
+  var c = await apri("");
+  // Al centro notifiche si arriva dalla campanella, come ci arriva una persona.
+  await c.page.evaluate(function () {
+    var b = Array.prototype.filter.call(document.querySelectorAll("button"), function (x) {
+      return x.offsetParent && /notifiche|Notifiche/i.test(x.textContent + " " + (x.getAttribute("aria-label") || ""));
+    })[0];
+    if (b) b.click();
+  });
+  await c.page.waitForTimeout(700);
+  var firme = await c.page.evaluate(function () {
+    return Array.prototype.map.call(document.querySelectorAll(".notif-riga"), function (r) {
+      var t = r.querySelector(".notif-titolo"), d = r.querySelector(".notif-da");
+      return { titolo: t ? t.textContent : "", da: d ? d.textContent : null,
+               sistema: !!(d && d.classList.contains("sistema")) };
+    });
+  });
+  prova("ogni avviso nel centro notifiche porta una firma",
+        firme.length >= 3 && firme.every(function (f) { return !!f.da; }), JSON.stringify(firme));
+  var finto = firme.filter(function (f) { return /sospeso/.test(f.titolo) || /ArcTrail 3D/.test(f.titolo); })[0];
+  var daAltri = firme.filter(function (f) { return f.da && /@/.test(f.da); });
+  prova("un avviso scritto da un altro iscritto dice il suo nome",
+        daAltri.length >= 1 && daAltri.some(function (f) { return /@anna|@uidBruno|@/.test(f.da); }),
+        JSON.stringify(firme.map(function (f) { return f.da; })));
+  prova("e quello che si finge il sistema NON risulta firmato ArcTrail",
+        !!finto && finto.sistema === false, JSON.stringify(finto));
+  prova("mentre un avviso vero del sistema resta firmato ArcTrail",
+        firme.some(function (f) { return f.sistema === true; }), JSON.stringify(firme));
+  prova("nessun errore JavaScript", c.err.length === 0, c.err[0]);
+  await c.ctx.close();
 
   await browser.close();
   try { fs.rmSync(DOVE, { recursive: true, force: true }); } catch (x) {}

@@ -46,12 +46,25 @@ function secondi(txt) { var m = String(txt || "").match(/(\d+):(\d\d)/); return 
   var page = await ctx.newPage();
   await page.clock.install();
   await page.goto(URL);
-  await page.clock.runFor(1500);
+  /* ══ SI ASPETTA UNA CONDIZIONE, NON UN NUMERO DI MILLISECONDI ════════════
+     (20/09/2026.) Qui c'erano tre `clock.runFor()` con dei numeri: 1500 per
+     l'avvio, 600 per il ridisegno, 300 per il pannello. Con l'orologio finto
+     quei numeri fanno avanzare il tempo VIRTUALE, ma l'avvio dell'app costa
+     tempo VERO — leggere un megabyte e mezzo di sorgente, costruire la
+     schermata — e su una macchina occupata non basta. Il banco diceva no con
+     «letto null», cioe' «la schermata non c'era ancora», che non ha niente a
+     che vedere col cronometro.
+     E' la C24 dei diari: 164 attese a tempo fisso e nessuna su una
+     condizione. Qui si aspetta l'elemento, con un tetto vero. */
+  await page.waitForFunction(function () { return !!document.querySelector(".home-riprendi, .chip-timer"); },
+                             null, { timeout: 20000 });
   await page.evaluate(function () { var x = document.querySelector(".home-riprendi"); if (x) x.click(); });
-  await page.clock.runFor(600);
+  await page.waitForSelector(".chip-timer", { timeout: 20000 });
   // Si apre il cronometro e si avvia (2:00 di partenza).
   await page.evaluate(function () { var c = document.querySelector(".chip-timer"); if (c) c.click(); });
-  await page.clock.runFor(300);
+  await page.waitForFunction(function () {
+    return Array.prototype.some.call(document.querySelectorAll("button"), function (x) { return /Via|Avvia|Start|Parti/i.test(x.textContent); });
+  }, null, { timeout: 20000 });
   var avviato = await page.evaluate(function () {
     var b = Array.prototype.filter.call(document.querySelectorAll("button"), function (x) { return /Via|Avvia|Start|Parti/i.test(x.textContent); })[0];
     if (b) { b.click(); return true; } return false;

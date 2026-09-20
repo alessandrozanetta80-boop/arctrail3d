@@ -31,8 +31,19 @@ var NL=String.fromCharCode(10);
 var GANCIO = NL + "window.__prova = {" +
   " entra:function(u){ currentUser = { uid:u, email:'io@esempio.it' }; }," +
   " club:function(c){ state.profile = state.profile || {}; state.profile.compagnia = c; }," +
-  " referente:function(cod,uid){ compagniaAdminUna[cod] = { adminUid:uid, referente:'Mario Rossi', emailComp:'privata@club.it', tel:'333 1234567', note:'Cancello aperto, chiave sotto il sasso' }; }," +
-  " nessunReferente:function(cod){ compagniaAdminUna[cod] = {}; }," +
+  /* DUE DOCUMENTI DAL 20/09 (audit SEC-09): `compagnie_contatto` dice a tutti
+     CHI gestisce la compagnia, `compagnie_admin` tiene i dati del referente e
+     la legge solo lui. La schermata chiede prima il contatto, e apre la scheda
+     solo se il referente e' chi sta guardando: il gancio deve dire tutte e due
+     le cose, se no si prova una scena che non esiste. */
+  " referente:function(cod,uid){ contattoUno[cod] = { adminUid:uid, emailComp:'privata@club.it', aggiornatoIl:1 };" +
+  "   compagniaAdminUna[cod] = { adminUid:uid, referente:'Mario Rossi', emailComp:'privata@club.it', tel:'333 1234567', note:'Cancello aperto, chiave sotto il sasso' }; }," +
+  " nessunReferente:function(cod){ contattoUno[cod] = {}; compagniaAdminUna[cod] = {}; }," +
+  /* IL CASO DI CHI GESTIVA GIA' PRIMA DEL 20/09: la scheda dice che e' sua, il
+     contatto pubblico non esiste ancora. Deve comunque vedere la sua schermata,
+     se no la riparazione automatica non parte mai proprio per lui. */
+  " referenteSenzaContatto:function(cod,uid){ contattoUno[cod] = {};" +
+  "   compagniaAdminUna[cod] = { adminUid:uid, referente:'Mario Rossi', emailComp:'privata@club.it', tel:'333 1234567', note:'Cancello aperto, chiave sotto il sasso' }; }," +
   " spazio:function(cod){ state.clubSpaceCode = cod; state.screen = 'club-space'; render(); }" +
   "};" + NL;
 var src=fs.readFileSync(process.argv[2]||"app.html","utf8");
@@ -102,5 +113,16 @@ prova("vede l'email della compagnia", r2.emailPrivata);
 prova("vede le note del campo", r2.note);
 prova("ha il tasto per salvare", r2.salva);
 prova("non gli si chiede di diventare referente", !r2.chiedi);
+
+/* ══ CHI GESTIVA GIA' PRIMA DEL 20/09 ═══════════════════════════════════════
+   Dal 20/09 la schermata chiede prima `compagnie_contatto`, che per le
+   compagnie gia' gestite non esiste ancora. Se «non lo so» venisse trattato
+   come «non e' tua», il referente vedrebbe «chiedi di gestire» — e la
+   riparazione che scrive il contatto sta DENTRO il ramo che non verrebbe mai
+   preso: il rattoppo sarebbe irraggiungibile per i soli casi da riparare. */
+console.log("\n  REFERENTE DI PRIMA (contatto pubblico non ancora scritto)");
+var r3=await apri(()=>{ window.__prova.entra("u1"); window.__prova.club("01VERB"); window.__prova.referenteSenzaContatto("01VERB","u1"); window.__prova.spazio("01VERB"); });
+prova("vede lo stesso la sua schermata", r3.modificabili > 0, r3.modificabili+" campi");
+prova("e non gli si chiede di diventare referente", !r3.chiedi);
 console.log("\n  "+ok+" passate, "+ko+" fallite.\n");
 await b.close(); process.exit(ko?1:0);})();

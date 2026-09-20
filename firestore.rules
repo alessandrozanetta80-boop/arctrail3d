@@ -1011,6 +1011,39 @@ service cloud.firestore {
       );
       allow delete: if signedIn() && (request.auth.uid == resource.data.ownerUid || isAdmin());
 
+      /* ══ DOVE SI TIRA, E A CHE ORA ═══════════════════════════════════════
+         (20/09/2026, audit SEC-09.) `lat` e `lng` stavano nel documento
+         dell'allenamento, che ogni account puo' leggere. Per un allenamento
+         «solo club» sono il dato piu' pesante che ci sia: dicono dove sara'
+         una persona, e quando. La visibilita' «club» era applicata solo nel
+         client, cioe' da nessuna parte per chi non usa questo client.
+         Adesso il punto sta qui sotto, e lo legge chi quell'allenamento
+         riguarda: l'organizzatore, gli invitati, gli iscritti — e tutti, se
+         l'allenamento e' aperto a tutti.
+         NON CHIUDE LA VISIBILITA' DELL'ELENCO, e non voglio che sembri di si':
+         chi ha un account vede ancora CHE c'e' un allenamento al campo X alle
+         nove. Chiuderlo per davvero vuol dire spezzare in tre la query
+         dell'elenco e creare due indici composti — cioe' una modifica legata a
+         un deploy, non a un file. Sta scritto nel rapporto. */
+      match /dove/{quale} {
+        allow read: if signedIn() && (
+          otExists(otId) && (
+            get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('visibility', 'all') != 'club'
+            || get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('ownerUid', '') == request.auth.uid
+            || request.auth.uid in get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('invitedUids', [])
+            || request.auth.uid in get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('participantUids', [])
+          )
+        ) || isAdmin();
+        allow write: if signedIn() && (
+          isAdmin()
+          || (otExists(otId)
+              && get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('ownerUid', '') == request.auth.uid)
+          // Alla creazione l'allenamento e il suo punto nascono insieme: il
+          // documento di sopra puo' non esserci ancora quando arriva questo.
+          || !otExists(otId)
+        ) && request.resource.data.keys().hasOnly(['lat','lng']);
+      }
+
       match /messages/{msgId} {
         allow read: if signedIn();
         // Prima era "create: if signedIn()" e basta: chiunque poteva scrivere in
@@ -1050,7 +1083,24 @@ service cloud.firestore {
     // nel documento dalla console — a meno di essere il referente di quella
     // compagnia o chi tiene l'app.
     match /percorsi_campo/{id} {
-      allow read: if signedIn();
+      /* ══ UN PERCORSO CONFERMATO E' PUBBLICO, UNA PROPOSTA NO ═════════════
+         (20/09/2026, audit SEC-09.) Qui c'era `read: if signedIn()`, quindi
+         anche le proposte non ancora valutate — col nome di chi le ha scritte
+         e, nei documenti di prima del 19/09, la sua email — le leggeva
+         qualunque account.
+         Un percorso confermato e' informazione del campo: ci si va a tirare, e
+         si deve poter vedere. Una proposta e' una cosa fra chi l'ha mandata e
+         il referente, finche' e' aperta.
+         L'APP CHIEDE DUE QUERY SEPARATE (`caricaPercorsiCampo`), e non e' un
+         dettaglio: Firestore non filtra una query che tocca documenti vietati,
+         la RIFIUTA intera. Una query sola su `clubCode` fallirebbe per tutti
+         appena la compagnia ha una proposta aperta. */
+      allow read: if signedIn() && (
+        resource.data.get('stato', '') == 'confermato'
+        || resource.data.get('createdBy', '') == request.auth.uid
+        || isClubAdmin(resource.data.get('clubCode', ''))
+        || isAdmin()
+      );
       // 28/08/2026 (seconda passata): un percorso 'proposto' fa scattare
       // `avvisaPercorso` — push al referente e all'admin, e una email in coda
       // alla compagnia. E' una cosa che arriva addosso a chi non conosce chi
@@ -1132,7 +1182,17 @@ service cloud.firestore {
     // delete solo admin: se un referente elimina l'account, adminUid resta
     // puntato a un uid morto e va ripulito a mano dal pannello.
     match /compagnie_admin/{codice} {
-      allow read: if signedIn();
+      /* ══ LA SCHEDA DEL REFERENTE E' SUA ═══════════════════════════════════
+         (20/09/2026, audit SEC-09.) Qui c'era `read: if signedIn()`, e dentro
+         il documento ci sono il nome del referente, il suo telefono,
+         l'indirizzo e le note private del club: li leggeva qualunque account,
+         anche non verificato. Le regole non sanno nascondere UN CAMPO — o si
+         legge il documento o no — quindi i due dati che servono davvero a
+         tutti (chi la gestisce, l'email a cui scrivere) sono stati spostati
+         in `compagnie_contatto/{codice}`, qui sotto.
+         La query dell'app e' `where('adminUid','==',uid)`, che resta valida:
+         ogni documento che torna passa questa regola. */
+      allow read: if isAdmin() || (signedIn() && resource.data.get('adminUid', '') == request.auth.uid);
       allow create, delete: if isAdmin();
       allow update: if isAdmin()
                     || (signedIn()
@@ -1158,6 +1218,26 @@ service cloud.firestore {
     // con criterio, non allargato a signedIn().
     match /admin_notes/{userId} {
       allow read, write: if isAdmin();
+    }
+
+    /* --- IL CONTATTO PUBBLICO DI UNA COMPAGNIA ---------------------------
+       (20/09/2026, audit SEC-09.) Due campi soli, e sono quelli che l'app
+       chiede per tutte le compagnie: `adminUid` (c'e' un referente? sono io?)
+       ed `emailComp` (a chi mando la segnalazione di un campo rotto).
+       Li scrive chi puo' scrivere la scheda — il referente di QUELLA
+       compagnia, o chi tiene l'app — e li legge chiunque abbia un account.
+       `hasOnly` e' stretto apposta: se un giorno qui dentro finisse un
+       telefono, saremmo tornati al punto di partenza senza accorgercene. */
+    match /compagnie_contatto/{codice} {
+      allow read: if signedIn();
+      allow write: if (isAdmin() || isClubAdmin(codice))
+                   && request.resource.data.keys().hasOnly(['adminUid','emailComp','aggiornatoIl'])
+                   && testoOpz(request.resource.data, 'adminUid', 128)
+                   && testoOpz(request.resource.data, 'emailComp', 320)
+                   // NON `numeroOpz`: quello ha un tetto a 100.000 ed e' fatto per i
+                   // conteggi. Qui c'e' un `Date.now()`, che di zeri ne ha tredici.
+                   && (request.resource.data.get('aggiornatoIl', null) == null
+                       || request.resource.data.aggiornatoIl is number);
     }
 
     // --- RICHIESTE DI GESTIONE COMPAGNIA ---
