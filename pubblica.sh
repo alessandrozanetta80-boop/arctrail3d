@@ -40,7 +40,11 @@ SOLO="${1:-}"          # nome di una funzione, oppure vuoto per tutte
 
 # Le funzioni che devono esserci. Se il file non le contiene tutte, non e' il
 # file giusto e il deploy cancellerebbe quelle mancanti.
-ATTESE="sendNotification pushNotifica avvisaRicerche avvisaSegnalazione avvisaIscrizione avvisaRichiestaClub avvisaPercorso"
+# `claimCompagnia` e' entrata il 20/09/2026: mette la compagnia nel token come
+# custom claim, perche' una regola di Firestore che chiama `get()` non
+# restringe le query. Finche' non e' pubblicata, i soci non vedono nell'elenco
+# gli allenamenti «solo club» della loro compagnia.
+ATTESE="sendNotification pushNotifica avvisaRicerche avvisaSegnalazione avvisaIscrizione avvisaRichiestaClub avvisaPercorso claimCompagnia"
 
 rosso()  { printf '\033[31m%s\033[0m\n' "$*"; }
 verde()  { printf '\033[32m%s\033[0m\n' "$*"; }

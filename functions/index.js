@@ -109,7 +109,7 @@
 //   non e' una formula: e' una domanda su chi rimane senza permesso mentre
 //   i pezzi non sono ancora tutti al loro posto.*
 
-const { onDocumentCreated } = require("firebase-functions/v2/firestore");
+const { onDocumentCreated, onDocumentWritten } = require("firebase-functions/v2/firestore");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { setGlobalOptions } = require("firebase-functions/v2");
 const admin = require("firebase-admin");
@@ -916,3 +916,62 @@ exports.avvisaPercorso = onDocumentCreated(
     await Promise.all(lavori);
   }
 );
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 8) LA COMPAGNIA NEL TOKEN
+// Scatta a ogni scrittura su users/{uid}.
+//
+// PERCHE' ESISTE. (20/09/2026, audit SEC-09, seconda passata.) Un allenamento
+// «solo club» deve poterlo ELENCARE chi e' di quella compagnia, e nessun
+// altro. Una regola di Firestore puo' chiedere la compagnia al documento
+// utente con `get()` — ma una regola che chiama `get()` NON restringe le
+// query: protegge la lettura di un documento e lascia passare l'elenco.
+// (Misurato sull'emulatore il 20/09: con una regola senza `get()` la stessa
+// query viene rifiutata, con `get()` passa.)
+//
+// L'unica cosa che una regola puo' guardare su una query, senza leggere
+// niente, e' il TOKEN di chi chiede. Quindi la compagnia va nel token, come
+// `custom claim`, e la scrive qui il server: il client non puo' regalarsela.
+//
+// NON E' ATTIVA FINCHE' NON SI PUBBLICA, ed e' voluto: `firestore.rules` la
+// guarda gia' (`elencaAllenamento`), e finche' il claim non c'e' i soci non
+// vedono nell'elenco i «solo club» della loro compagnia. Una funzione in meno
+// per qualche ora, non una porta aperta per sempre.
+//
+// IL TOKEN NON CAMBIA DA SOLO. Un claim nuovo entra nel token al rinnovo, che
+// l'SDK fa circa ogni ora — oppure subito, se l'app chiede
+// `getIdToken(true)`. `app.html` lo chiede all'accesso e quando la compagnia
+// cambia: senza quella riga, cambiare compagnia si vedrebbe un'ora dopo.
+//
+// COSTA UNA SCRITTURA DI AUTH per ogni cambio di compagnia, non per ogni
+// scrittura sull'utente: se la compagnia non e' cambiata, qui si esce subito.
+// Senza quel controllo, ogni salvataggio del profilo — e ogni token push
+// scritto a ogni apertura — rinnoverebbe i claim di tutti.
+// ─────────────────────────────────────────────────────────────────────────────
+exports.claimCompagnia = onDocumentWritten("users/{uid}", async (event) => {
+  const uid = event.params.uid;
+  const prima = event.data && event.data.before && event.data.before.exists
+    ? (event.data.before.data() || {}) : {};
+  const dopo = event.data && event.data.after && event.data.after.exists
+    ? (event.data.after.data() || {}) : {};
+
+  const vecchia = typeof prima.compagnia === "string" ? prima.compagnia : "";
+  const nuova = typeof dopo.compagnia === "string" ? dopo.compagnia : "";
+  if (vecchia === nuova) return;              // non e' cambiata: niente da fare
+
+  // Il codice compagnia e' una chiave di `compagnie-data.js`: lettere, cifre,
+  // corta. Un valore che non ha quella forma non entra nel token — e non e'
+  // una precauzione teorica: `users.compagnia` lo scrive il client.
+  const pulita = /^[A-Za-z0-9]{2,20}$/.test(nuova) ? nuova : "";
+
+  try {
+    await admin.auth().setCustomUserClaims(uid, pulita ? { compagnia: pulita } : {});
+    // Una riga nel documento dice QUANDO il claim e' stato messo: serve a
+    // capire, guardando un utente, se il suo token e' gia' quello nuovo.
+    await admin.firestore().collection("users").doc(uid)
+      .set({ claimAl: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+  } catch (err) {
+    // L'utente puo' essere stato cancellato fra la scrittura e questo trigger.
+    console.error("claim compagnia per " + uid + ":", err && err.code ? err.code : err);
+  }
+});

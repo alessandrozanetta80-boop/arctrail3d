@@ -448,6 +448,90 @@ service cloud.firestore {
     function convExists(conversationId) {
       return exists(/databases/$(database)/documents/market_conversations/$(conversationId));
     }
+    /* ══ CHI PUO' VEDERE UN ALLENAMENTO ══════════════════════════════════════
+       (20/09/2026, audit SEC-09, seconda passata.) La visibilita' «solo club»
+       era un `if` dentro `app.html`, cioe' una tenda: bastava un client
+       diverso — o la console di Firestore — per leggere tutto.
+       Qui diventa una porta. `mioClub()` chiede la compagnia a `users/{uid}`:
+       Firestore tiene in cache le letture fatte dalle regole DENTRO la stessa
+       richiesta, quindi una query da cinquanta documenti costa una lettura in
+       piu', non cinquanta.
+       `clubCode` vuoto NON vale come «stesso club»: due allenamenti senza
+       codice non sono della stessa compagnia, sono due allenamenti senza
+       codice. */
+    function mioClub() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('compagnia', '')
+        : '';
+    }
+    /* ══ DUE VERSIONI DELLA STESSA DOMANDA, E NON E' UN DOPPIONE ═════════════
+       (20/09/2026, misurato sull'emulatore, non dedotto.)
+
+       Scritta una volta sola, con dentro `mioClub()`, questa condizione
+       proteggeva la lettura di UN documento e NON proteggeva l'elenco: una
+       query senza filtri tornava anche i «solo club» di un'altra compagnia,
+       mentre il `get` dello stesso documento veniva negato. Provato: con una
+       regola senza `get()` la stessa query viene RIFIUTATA; con `get()` passa.
+       Una regola che chiama `get()` non restringe le query.
+
+       *Una protezione che vale solo per la porta piccola non e' una
+       protezione: e' un cartello.* Quindi:
+
+         `vedeAllenamento`     — per il `get`. Puo' chiedere la compagnia al
+                                 documento utente, costa una lettura, ed e'
+                                 la piu' larga: comprende i soci del club.
+         `elencaAllenamento`   — per la `list`. NON chiama `get()`, quindi
+                                 vale davvero. Guarda solo il documento e il
+                                 TOKEN di chi chiede.
+
+       La compagnia nel token e' un `custom claim` che la Cloud Function
+       `claimCompagnia` scrive quando cambia `users/{uid}.compagnia`. Finche'
+       quella funzione non e' pubblicata e i token non si sono rinnovati, il
+       claim non c'e': l'elenco dei «solo club» della propria compagnia resta
+       vuoto per i soci, e l'app se lo aspetta (vedi `loadOpenTrainings`).
+       E' una funzione in meno per qualche ora, non una porta aperta per
+       sempre. */
+    function vedeAllenamento(d) {
+      return elencaAllenamento(d)
+        || (d.get('clubCode', '') != '' && d.get('clubCode', '') == mioClub());
+    }
+    /* ══ QUI SI LEGGONO I CAMPI DIRETTAMENTE, E NON E' UNA SVISTA ════════════
+       (20/09/2026, misurato sull'emulatore tre volte prima di crederci.)
+
+       Ovunque altro in questo file si scrive `d.get('campo', default)`: e'
+       difensivo, e sui documenti vecchi evita un errore. DENTRO UNA REGOLA DI
+       `list` QUELLA FORMA NON CONTROLLA NIENTE. Provato:
+
+         list con `resource.data.get('visibility','all') != 'club'`  -> PASSA
+         list con `resource.data.visibility != 'club'`               -> RIFIUTA
+         list con `'visibility' in resource.data && ...`             -> PASSA
+
+       Cioe' la versione prudente lasciava passare l'elenco intero, e quella
+       «ingenua» e' l'unica che chiude. Ci sono cascato: la prima stesura di
+       questa regola usava `.get()`, sembrava giusta, e non proteggeva niente.
+       *Una regola si prova contro il database, non si legge.*
+
+       IL PREZZO: se a un documento manca uno di questi cinque campi, la
+       regola va in errore e la query viene rifiutata INTERA — un documento
+       vecchio spegnerebbe l'elenco a tutti (provato anche quello). Percio':
+         1. i cinque campi nascono insieme alla funzione (primo commit che
+            scrive `visibility` e' lo stesso di `invitedUids`,
+            `participantUids`, `clubCode` e `ownerUid`): in produzione non
+            esiste un allenamento che ne manchi uno;
+         2. la `create` qui sotto li PRETENDE, cosi' resta vero anche domani;
+         3. l'ordine delle righe conta: un allenamento aperto a tutti esce
+            alla prima, senza toccare gli altri quattro campi.
+
+       `request.auth.token.get(...)` invece va benissimo: il divieto riguarda
+       i campi del DOCUMENTO, non il token, e il token lo scrive il server
+       (`claimCompagnia`). */
+    function elencaAllenamento(d) {
+      return d.visibility != 'club'
+        || d.ownerUid == request.auth.uid
+        || request.auth.uid in d.invitedUids
+        || request.auth.uid in d.participantUids
+        || d.clubCode == request.auth.token.get('compagnia', '');
+    }
     function otExists(otId) {
       return exists(/databases/$(database)/documents/open_trainings/$(otId));
     }
@@ -961,12 +1045,32 @@ service cloud.firestore {
     }
 
     match /open_trainings/{otId} {
-      allow read: if signedIn();
+      /* LE REGOLE NON FILTRANO UNA QUERY: LA RIFIUTANO. Quindi non basta
+         scrivere qui la condizione — la deve rispettare anche la domanda che
+         fa l'app, o l'elenco sparisce per tutti. `loadOpenTrainings` chiede
+         quattro cose separate (aperti a tutti / della mia compagnia / a cui
+         sono invitato / miei), ognuna su un campo solo, e ognuna torna solo
+         documenti che passano di qui.
+         CONSEGUENZA DICHIARATA: l'app di ieri chiede `status == "active"` e
+         basta, quindi da quando queste regole sono in console il suo elenco
+         allenamenti resta VUOTO finche' non si aggiorna. E' una perdita di
+         funzione per qualche ora, e si e' scelta quella: l'alternativa era
+         lasciare che un annuncio «solo per i soci» lo leggesse chiunque
+         finche' l'ultimo telefono non aggiorna, cioe' non chiuderlo affatto.
+         *La compatibilita' di FORMATO si mantiene sempre; quella di SICUREZZA
+         non esiste.* */
+      allow get: if signedIn() && (isAdmin() || vedeAllenamento(resource.data));
+      allow list: if signedIn() && (isAdmin() || elencaAllenamento(resource.data));
       // 28/08/2026: `signedIn()` -> `verified()`. Un allenamento aperto lo
       // vede tutta l'app, col nome e il posto di chi lo organizza.
       // 19/09/2026 (P0-1): `spots` numero. Finiva in «taken/total» nell'elenco di tutti.
       allow create: if attivo() && request.resource.data.ownerUid == request.auth.uid
-                    && numeroOpz(request.resource.data, 'spots');
+                    && numeroOpz(request.resource.data, 'spots')
+                    // I cinque campi che `elencaAllenamento` legge senza rete di
+                    // protezione: se ne manca uno, quella regola va in errore e
+                    // l'elenco si spegne per TUTTI. Si pretendono alla nascita.
+                    && request.resource.data.keys().hasAll(
+                         ['visibility','ownerUid','invitedUids','participantUids','clubCode']);
       // CI SI ISCRIVE DA SOLI, E SOLO SE STESSI. (28/08/2026.)
       //
       // Prima qualunque utente loggato poteva riscrivere per intero
@@ -1026,22 +1130,29 @@ service cloud.firestore {
          dell'elenco e creare due indici composti — cioe' una modifica legata a
          un deploy, non a un file. Sta scritto nel rapporto. */
       match /dove/{quale} {
-        allow read: if signedIn() && (
-          otExists(otId) && (
-            get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('visibility', 'all') != 'club'
-            || get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('ownerUid', '') == request.auth.uid
-            || request.auth.uid in get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('invitedUids', [])
-            || request.auth.uid in get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('participantUids', [])
-          )
-        ) || isAdmin();
-        allow write: if signedIn() && (
-          isAdmin()
-          || (otExists(otId)
-              && get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('ownerUid', '') == request.auth.uid)
-          // Alla creazione l'allenamento e il suo punto nascono insieme: il
-          // documento di sopra puo' non esserci ancora quando arriva questo.
-          || !otExists(otId)
-        ) && request.resource.data.keys().hasOnly(['lat','lng']);
+        // Stessa porta del documento di sopra: se non puoi vedere
+        // l'allenamento, non puoi sapere dove si tira.
+        allow read: if signedIn()
+                    && (isAdmin()
+                        || (otExists(otId)
+                            && vedeAllenamento(get(/databases/$(database)/documents/open_trainings/$(otId)).data)));
+        /* L'ALLENAMENTO DEVE ESISTERE GIA'. (Corretto il 20/09/2026, poche ore
+           dopo averlo scritto male io stesso.) Qui c'era anche
+           `|| !otExists(otId)`, con la scusa che «alla creazione nascono
+           insieme e il documento di sopra puo' non esserci ancora». Quella
+           riga diceva, in pratica: *chiunque puo' scrivere il punto di un
+           allenamento che non esiste* — e una sottoraccolta in Firestore vive
+           benissimo senza il suo documento padre. Era una comodita' di
+           scrittura travestita da compatibilita', cioe' esattamente il modo in
+           cui una porta chiusa torna aperta.
+           La comodita' costava una riga nell'app: `app.html` adesso scrive il
+           punto DOPO che l'allenamento e' nato. Il codice si adatta alla
+           regola, non il contrario. */
+        allow write: if signedIn()
+                     && otExists(otId)
+                     && (isAdmin()
+                         || get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('ownerUid', '') == request.auth.uid)
+                     && request.resource.data.keys().hasOnly(['lat','lng']);
       }
 
       match /messages/{msgId} {

@@ -18088,6 +18088,23 @@ bio: bioVal || null, mostraNumeri: mostraNum, compagnia: clubCod, compagniaNome:
 }, federazioni);
 profiloBase = JSON.parse(JSON.stringify(state.profile));
 (Object.keys(campi).length ? db.collection("users").doc(currentUser.uid).update(campi) : Promise.resolve()).then(function(){
+/* SE E' CAMBIATA LA COMPAGNIA, IL TOKEN VA RINNOVATO. (20/09/2026.)
+   La Cloud Function `claimCompagnia` scrive la compagnia nel token come
+   custom claim, ed e' quello — non il documento utente — che le regole
+   guardano per decidere se puoi ELENCARE gli allenamenti «solo club» della
+   tua compagnia (una regola con `get()` non restringe le query).
+   Un claim nuovo entra nel token al rinnovo, che l'SDK fa da solo circa ogni
+   ora: senza questa riga, chi cambia compagnia vedrebbe i suoi allenamenti
+   un'ora dopo, e non saprebbe perche'. Si aspetta un attimo perche' il claim
+   lo scrive il server DOPO la scrittura di qui. */
+if(campi.compagnia !== undefined && currentUser && currentUser.getIdToken){
+setTimeout(function(){
+if(!currentUser || !currentUser.getIdToken) return;
+currentUser.getIdToken(true).then(function(){
+stopOpenTrainings(); loadOpenTrainings();
+}).catch(function(){});
+}, 2500);
+}
 syncMyPublicProfile({ username: username, nomeCognome: nomeCognome, nomeNascosto: nomeNascosto, compagnia: clubCod, compagniaNome: clubNome, arco: arcoSel, bio: bioVal, mostraNumeri: mostraNum });
 }).catch(function(){});
 }
@@ -20102,7 +20119,13 @@ gruppoOpen.forEach(function(ot){ otCard.appendChild(otRowEl(ot)); });
 if(!compact){
 var perche = [];
 if(otNascosti.far)  perche.push(otNascosti.far  + " " + t("ot_why_far"));
-if(otNascosti.club) perche.push(otNascosti.club + " " + t("ot_why_club"));
+/* «Nascosti perche' di un'altra compagnia» NON si conta piu'. (20/09/2026.)
+   Dal momento in cui il filtro lo fa il server, quei documenti non arrivano:
+   contarli vorrebbe dire inventarsi un numero. Dire «te ne nascondo tre»
+   quando non si sa se sono tre e' peggio che non dire niente — e questo
+   cartello esiste proprio per non far dubitare di aver scritto.
+   La chiave `ot_why_club` resta nei dizionari: la toglie chi decide che
+   quella frase non servira' mai piu'. */
 if(otNascosti.blk)  perche.push(otNascosti.blk  + " " + t("ot_why_blocked"));
 if(nascostiFiltro)  perche.push(nascostiFiltro  + " " + t("ot_why_filter"));
 if(perche.length){
@@ -25811,43 +25834,101 @@ return (state.profile && state.profile.compagnia) || null;
 // QUELLI CHE RESTANO FUORI SI CONTANO. Vedi `.ot-nascosti` nel foglio: un
 // elenco che toglie senza dirlo fa dubitare di aver scritto, non di non aver
 // letto.
-var otNascosti = { far:0, club:0, blk:0 };
-var otUnsub = null;
-function loadOpenTrainings(){
-if(!db) return;
-if(otUnsub) return;   // gia' in ascolto: la finestra e' una sola
-var cutoff = new Date(Date.now() - OT_MAX_AGE_MS);
-otUnsub = db.collection("open_trainings")
-.where("status","==","active")
-.limit(50)
-.onSnapshot(function(snap){
-var list = [];
-otNascosti = { far:0, club:0, blk:0 };   // si riconta a ogni notizia
-snap.forEach(function(doc){
-var d = doc.data(); d.id = doc.id;
-// Rimuovi automaticamente quelli scaduti (data/ora passata)
-if(d.datetime && d.datetime < Date.now() - OT_MAX_AGE_MS){
-doc.ref.update({status:"closed"}).catch(function(){});
-return;
-}
-// Finestra: solo i prossimi 7 giorni, altrimenti la lista si riempie di annunci lontani
-if(d.datetime && d.datetime > Date.now() + OT_WINDOW_MS){ otNascosti.far++; return; }
-// Visibilita': "club" lo vede solo chi e' della stessa compagnia
-// (l'organizzatore e gli invitati lo vedono sempre)
-var myUid = currentUser && currentUser.uid;
+/* ══ LA VISIBILITA' «SOLO CLUB» LA FA IL SERVER, NON IL TELEFONO ══════════
+   (20/09/2026, audit SEC-09, seconda passata.)
+
+   Fino a stamattina qui c'era UNA domanda — «dammi tutti gli allenamenti
+   attivi» — e la visibilita' «solo club» era un `if` in questo ciclo. Cioe'
+   una tenda, non una porta: chiunque con un client diverso da questo (o con
+   la console di Firestore aperta) leggeva tutto, compresi gli allenamenti che
+   una compagnia aveva annunciato solo ai suoi.
+
+   PERCHE' NON BASTAVA CAMBIARE LE REGOLE. Le regole di Firestore, su una
+   query, non filtrano: **rifiutano**. Se la regola dice «i club-only solo ai
+   soci» e la query chiede tutto, la query viene negata INTERA — l'elenco
+   sparisce per tutti. Le regole non possono leggere i filtri di una query:
+   l'unico modo e' che sia la query a chiedere solo cio' che le spetta.
+
+   QUATTRO FINESTRE, E OGNUNA CHIEDE UNA COSA SOLA:
+     1. `visibility == "all"`                 gli allenamenti aperti a tutti
+     2. `clubCode == la mia compagnia`        quelli della mia compagnia
+     3. `invitedUids array-contains io`       quelli a cui sono invitato
+     4. `ownerUid == io`                      i miei
+   Ognuna e' un'uguaglianza su UN campo: Firestore le serve con gli indici che
+   crea da solo, quindi **non serve nessun indice composto** e non c'e' niente
+   da creare in console prima di pubblicare. E' il motivo per cui non c'e'
+   `status == "active"` insieme: due uguaglianze in una query sola sarebbero
+   un indice da dichiarare, e un indice che manca non si vede in prova — si
+   vede in produzione, come un elenco vuoto.
+   Lo stato si filtra qui sotto, dove si filtravano gia' la data e i bloccati.
+
+   QUELLO CHE ARRIVA DOPPIO SI FONDE per id: un allenamento della mia
+   compagnia aperto a tutti torna da due finestre, ed e' lo stesso documento.
+
+   IL CONTO «NASCOSTI PER COMPAGNIA» NON C'E' PIU', e non e' una dimenticanza:
+   adesso quei documenti non arrivano proprio, quindi contarli vorrebbe dire
+   inventarsi un numero. Dire «te ne nascondo tre» quando non si sa se sono
+   tre e' peggio che non dire niente. */
+var otNascosti = { far:0, blk:0 };
+var otUnsub = [];
+var otPezzi = {};        // id -> documento, da tutte e quattro le finestre
+function otRicomponi(){
+var ora = Date.now(), list = [];
+otNascosti = { far:0, blk:0 };
+Object.keys(otPezzi).forEach(function(id){
+var d = otPezzi[id];
+if(!d || d.status !== "active") return;
+if(d.datetime && d.datetime < ora - OT_MAX_AGE_MS) return;   // scaduto
+if(d.datetime && d.datetime > ora + OT_WINDOW_MS){ otNascosti.far++; return; }
 if(isUserBlocked(d.ownerUid)){ otNascosti.blk++; return; }
-var mine = d.ownerUid === myUid;
-var invited = myUid && (d.invitedUids||[]).indexOf(myUid) !== -1;
-if(d.visibility === "club" && !mine && !invited){
-if(!myClubCode() || d.clubCode !== myClubCode()){ otNascosti.club++; return; }
-}
 list.push(d);
 });
-// Prima quello che sta per succedere, non quello piu' lontano nel tempo
 list.sort(function(a,b){ return (a.datetime||0) - (b.datetime||0); });
 openTrainings = list;
 renderSeNonInPista();
-}, function(err){ console.error("loadOpenTrainings:", err); openTrainings = []; });
+}
+/* UNA FINESTRA CHE NON SI APRE NON DEVE CHIUDERE LE ALTRE. (20/09/2026.)
+   La finestra «della mia compagnia» chiede documenti che le regole danno solo
+   a chi ha la compagnia NEL TOKEN (`claimCompagnia`, Cloud Function). Finche'
+   quella funzione non e' pubblicata e il token non si e' rinnovato, quella
+   query riceve un no — e se il no passasse per un guasto qualunque, l'elenco
+   intero resterebbe a meta' senza che nessuno capisca perche'.
+   Qui il no si legge per quello che e': una fonte in meno, non un guasto. */
+function otFinestra(query, nome){
+return query.limit(50).onSnapshot(function(snap){
+snap.docChanges().forEach(function(c){
+var d = c.doc.data(); d.id = c.doc.id;
+if(c.type === "removed"){ delete otPezzi[d.id]; return; }
+// Gli scaduti si chiudono da soli, come prima.
+if(d.status === "active" && d.datetime && d.datetime < Date.now() - OT_MAX_AGE_MS){
+c.doc.ref.update({status:"closed"}).catch(function(){});
+}
+otPezzi[d.id] = d;
+});
+otRicomponi();
+}, function(err){
+var negato = err && (err.code === "permission-denied" || /permission/i.test(String(err.message||"")));
+if(negato && nome === "compagnia"){
+// Previsto finche' il claim non c'e'. Si dice una volta e si tira avanti.
+console.warn("allenamenti della compagnia: il token non porta ancora la compagnia (claimCompagnia non pubblicata).");
+return;
+}
+console.error("loadOpenTrainings [" + nome + "]:", err);
+});
+}
+function loadOpenTrainings(){
+if(!db) return;
+if(otUnsub.length) return;   // gia' in ascolto
+var col = db.collection("open_trainings");
+var myUid = currentUser && currentUser.uid;
+otPezzi = {};
+otUnsub.push(otFinestra(col.where("visibility","==","all"), "aperti"));
+var club = myClubCode();
+if(club) otUnsub.push(otFinestra(col.where("clubCode","==",club), "compagnia"));
+if(myUid){
+otUnsub.push(otFinestra(col.where("invitedUids","array-contains",myUid), "invitato"));
+otUnsub.push(otFinestra(col.where("ownerUid","==",myUid), "miei"));
+}
 }
 
 function apriIndicazioni(lat, lng){
@@ -25869,7 +25950,10 @@ cb(d);
 }
 // Si chiude quando si esce, altrimenti resta appesa a un utente che non c'e'
 // piu' e la prima cosa che fa il prossimo accesso e' aprirne una seconda.
-function stopOpenTrainings(){ if(otUnsub){ try{ otUnsub(); }catch(e){} otUnsub = null; } }
+function stopOpenTrainings(){
+otUnsub.forEach(function(u){ try{ u(); }catch(e){} });
+otUnsub = []; otPezzi = {};
+}
 // L'ascoltatore della chat di un allenamento: uno solo, e si chiude uscendo.
 // (20/09/2026, audit C3. Sta qui fuori perche' `otChatScreen` nasce e muore a
 // ogni ridisegno: una variabile dentro di lei non potrebbe chiudere niente.)
@@ -28315,18 +28399,20 @@ createdAt: firebase.firestore.FieldValue.serverTimestamp()
 // Scrittura non bloccante: Firestore mette in coda e sincronizza da solo.
 // Non aspettiamo l'ack del server, altrimenti su rete lenta il form resta bloccato.
 var newRef = db.collection("open_trainings").doc();
+/* IL PUNTO SI SCRIVE DOPO, e in fila. (20/09/2026.) La prima versione le
+   mandava insieme, e per farle passare la regola del punto accettava anche un
+   allenamento «che non esiste ancora» — cioe' lasciava scrivere il punto di
+   QUALUNQUE allenamento inesistente, a chiunque. La regola e' stata chiusa, e
+   qui si aspetta: il padre nasce, poi nasce il punto.
+   Non blocca il modulo: se il punto non parte, l'allenamento esiste lo stesso
+   e il tasto «Indicazioni» sparisce da solo. */
 newRef.set(otDoc).then(function(){
-// Sincronizzato davvero col server
+if(otLat && otLng){
+return newRef.collection("dove").doc("punto").set({ lat: otLat, lng: otLng });
+}
 }).catch(function(err){
 console.error("OT save error:", err);
 });
-// Il punto, a parte e solo se c'e'. Non blocca: se non parte, l'allenamento
-// esiste lo stesso e il tasto «Indicazioni» sparisce da solo. (SEC-09)
-if(otLat && otLng){
-newRef.collection("dove").doc("punto").set({ lat: otLat, lng: otLng }).catch(function(err){
-console.error("OT punto:", err);
-});
-}
 
 // Aggiungo subito alla lista locale cos\u00ec compare senza attendere il server
 var localCopy = {};

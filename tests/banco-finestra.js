@@ -110,9 +110,16 @@ function scrittureDiIeri(){
     ['manda un messaggio lungo, che la casella di ieri non taglia  (26133)', () =>
       db(A).collection('direct_chats/'+CHAT+'/messages').add({ senderUid:A.uid,
         senderName:'anna', text:'x'.repeat(3000), createdAt:new Date() })],
+    /* LA FORMA E' QUELLA VERA, compresi i cinque campi che la regola
+       dell'elenco legge direttamente. L'app di ieri li scrive gia' tutti e
+       cinque — nascono insieme alla funzione — quindi la `create` nuova non
+       la taglia fuori. Se il banco ne scrivesse meno proverebbe un documento
+       che nessuna app ha mai mandato. */
     ['pubblica un allenamento aperto  (26674)', () =>
       db(A).collection('open_trainings').add({ ownerUid:A.uid, ownerName:'anna',
-        spots:3, campo:'Cerrione', datetime:Date.now(), createdAt:new Date() })],
+        spots:3, campo:'Cerrione', datetime:Date.now(), createdAt:new Date(),
+        visibility:'all', clubCode:'01VERB', invitedUids:[], participantUids:[],
+        participants:[], status:'active' })],
     ['scrive nella chat dell\'allenamento  (24373)', () =>
       db(A).collection('open_trainings/ot1/messages').add({ senderUid:A.uid,
         senderName:'anna', text:'arrivo alle 9', createdAt:new Date() })],
@@ -209,6 +216,27 @@ function scrittureDiOggi(){
      chiunque abbia un account, per un tempo che non decide nessuno. */
   await prova("la scheda del referente NON si legge piu' dall'app di ieri (previsto)", () =>
     assertFails(db(B).doc('compagnie_admin/01VERB').get()));
+  /* E L'ELENCO DEGLI ALLENAMENTI SI SPEGNE, ED E' LA PERDITA PIU' VISIBILE.
+     (20/09/2026.) L'app di ieri chiede `status == "active"` e basta. Firestore
+     autorizza una query solo se la regola e' implicata dai FILTRI: quel filtro
+     non dice niente sulla visibilita', quindi la query viene rifiutata intera
+     e l'elenco resta vuoto finche' il telefono non aggiorna.
+     Si e' scelto questo, e non e' una sfumatura: l'alternativa era lasciare che
+     un annuncio «solo per i soci» lo leggesse chiunque finche' l'ultimo
+     telefono non aggiorna — cioe' non chiuderlo. La compatibilita' di FORMATO
+     si mantiene sempre (i documenti vecchi si leggono tutti); quella di
+     SICUREZZA non esiste.
+     CONSEGUENZA PRATICA SULL'ORDINE: conviene pubblicare il SITO per primo e
+     le regole dopo, cosi' la maggior parte dei telefoni ha gia' l'app nuova
+     quando l'elenco comincia a filtrare. */
+  await prova("l'elenco allenamenti dell'app di ieri si spegne (previsto)", () =>
+    assertFails(db(B).collection('open_trainings').where('status','==','active').limit(50).get()));
+  await prova("mentre le tre domande senza claim dell'app di oggi passano", async () => {
+    const col = db(B).collection('open_trainings');
+    await assertSucceeds(col.where('visibility','==','all').limit(50).get());
+    await assertSucceeds(col.where('invitedUids','array-contains',B.uid).limit(50).get());
+    await assertSucceeds(col.where('ownerUid','==',B.uid).limit(50).get());
+  });
   await prova('ma il suo referente la legge ancora', () =>
     assertSucceeds(db(A).doc('compagnie_admin/01VERB').get()));
 

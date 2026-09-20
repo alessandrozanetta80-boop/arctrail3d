@@ -34,9 +34,16 @@ function leggi(p){ try{ return fs.readFileSync(path.join(RADICE, p), "utf8"); }c
    dal file che deve controllare non puo' dire di no: se domani una sparisce,
    l'elenco sparirebbe con lei e il banco direbbe di si'. Queste sono quelle
    che `pubblica.sh` pretende da sempre, nello stesso ordine. */
+/* L'OTTAVA, dal 20/09/2026: `claimCompagnia`. Mette la compagnia nel token
+   come custom claim, perche' una regola di Firestore che chiama `get()` NON
+   restringe le query — protegge il `get` e lascia passare l'elenco (misurato
+   sull'emulatore). Sull'elenco l'unica cosa che una regola puo' guardare
+   senza leggere niente e' il token.
+   Il conto resta scritto a mano apposta: un export in piu' e' una funzione
+   che viene PUBBLICATA, e deve passare da qui e non da una distrazione. */
 var ATTESE = ["sendNotification", "pushNotifica", "avvisaRicerche",
               "avvisaSegnalazione", "avvisaRichiestaClub", "avvisaIscrizione",
-              "avvisaPercorso"];
+              "avvisaPercorso", "claimCompagnia"];
 
 console.log("\n  DOVE FIREBASE VA A CERCARE IL BACKEND");
 
@@ -77,7 +84,7 @@ console.log("\n  LE SETTE FUNZIONI, NE' UNA IN PIU' NE' UNA IN MENO");
 var src = leggi("functions/index.js") || "";
 var trovate = (src.match(/^exports\.[A-Za-z0-9_]+/gm) || [])
   .map(function(x){ return x.replace("exports.", ""); });
-prova("gli export sono sette", trovate.length === 7, trovate.length + ": " + trovate.join(", "));
+prova("gli export sono otto", trovate.length === ATTESE.length, trovate.length + ": " + trovate.join(", "));
 ATTESE.forEach(function(nome){
   prova("c'e' " + nome, trovate.indexOf(nome) >= 0);
 });

@@ -378,42 +378,23 @@ rossi sui casi nuovi.
 
 ---
 
-## PROBLEMI IMPORTANTI RIMASTI
+## Cosa resta aperto
 
-1. **La visibilità «club» degli allenamenti non è applicata all'elenco.** Le
-   coordinate sono protette (§2), ma chi ha un account vede ancora *che* c'è un
-   allenamento al campo X alle nove. Chiuderlo vuol dire tre query invece di una e
-   **due indici composti** — legato a un deploy, non a un file.
-2. **La divisione non si può riempire.** Manca la classe per federazione nel
-   profilo: `DIVISIONI` esiste solo per FIARC e vive negli iscritti di una gara.
-   Finché non c'è, `division` resta `null` per scelta (§5). È il pezzo che manca a
-   C1 e a My Ranking.
-3. **`pushsubscriptionchange` non si chiude del tutto** senza cambiare il server:
-   servirebbe il protocollo Web Push al posto dei token FCM (§10).
-4. **I documenti vecchi non sono stati ripuliti.** `percorsi` e `percorsi_campo`
-   scritti prima del 19/09 portano ancora `createdByEmail`. Le regole ora li
-   proteggono, ma il dato è lì: va deciso se cancellarlo (una passata a mano, o
-   una Function usa e getta).
-5. **Le compagnie già gestite non hanno il contatto pubblico** finché il loro
-   referente non apre la scheda. Fino ad allora l'app non sa che sono gestite. Si
-   può chiudere con una passata dell'admin.
-6. **`sendNotification` accetta ancora testi liberi dal client.** Il mittente
-   adesso si vede (§4), che è la metà che conta; comporre i testi sul server
-   vorrebbe dire un elenco chiuso di tipi di avviso — e una migrazione di tutti i
-   punti che ne mandano.
-7. **`enforceAppCheck` è spento**, e l'obbligo su Firestore e Storage non è
-   attivo. Il codice c'è; i passi sono in §3 e vanno fatti in quell'ordine.
-8. **C24 — i banchi in parallelo restano fragili.** `banco-cronometro` è stato
-   sistemato, ma restano **oltre centocinquanta** attese a tempo fisso negli altri.
-   Ogni giro può ancora dire no in un punto diverso.
-9. **La vetrina dice ancora «non copriamo il tuo paese»** a ES, SE, UK e TR, che
-   hanno 479, 155, 249 e 38 società: `CLUB_CONTI` in `index.html` ha solo de, fr,
-   it, nl, e il generatore non è nel repository.
-10. **Il mercatino resta con `esc()` che non codifica l'apice** e con ID di
-    documento dentro `onclick` in linea (SEC-06). È chiuso ai collaudatori, quindi
-    non è urgente — ma **diventa P0 il giorno che si apre**.
+L'elenco puntuale **non sta qui**, e non è una dimenticanza:
+`docs/APERTI-2026-09-20.md`, che `.gitignore` tiene fuori da git.
 
----
+Il motivo è lo stesso per cui `AUDIT-TECNICO-2026-09-19.md` non è mai stato
+aggiunto: **il repository è il sito** (`docs/STRUTTURA-REPOSITORY.md`), quindi
+quello che sta qui dentro lo legge chiunque lo apra su GitHub. `_config.yml`
+tiene `docs/` fuori dal **sito**, non dal **repository**: sono due cose diverse,
+e fino a oggi l'audit era protetto solo dal fatto che nessuno aveva scritto
+`git add -A`.
 
-*Nessun push. Nessun deploy. Le regole e le Functions sono cambiate nel ramo e
-non in console: finché non si pubblicano, §2 e §3 non esistono per chi usa l'app.*
+*Un elenco ordinato delle debolezze ancora aperte è una mappa, non un diario.*
+Il racconto di cosa è stato fatto — questo file — resta pubblico: il codice lo è
+comunque, e leggerlo insieme alle ragioni fa bene a chiunque lo apra.
+
+Per orientarsi, senza dettagli: restano **nove** voci. Quattro aspettano un
+deploy o la console Firebase, due una decisione, tre sono lavoro. Le due che
+pesano di più sul rilascio sono la **pulizia dei documenti scritti prima del
+19/09** e l'**attivazione di App Check**, entrambe descritte qui sopra ai §2 e §3.

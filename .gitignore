@@ -1,3 +1,16 @@
+# ── I DIARI CHE NON DEVONO ANDARE SU GITHUB ─────────────────────────────────
+# Il repository E' il sito (docs/STRUTTURA-REPOSITORY.md): quello che sta qui
+# dentro e' leggibile da chiunque apra il repository su GitHub. `_config.yml`
+# tiene `docs/` fuori dal SITO — non dal repository.
+# `AUDIT-TECNICO-2026-09-19.md` e' rimasto fuori finora perche' nessuno l'ha
+# aggiunto: cioe' era protetto da una distrazione mancata, non da una regola.
+# Un `git add -A` bastava. Adesso c'e' la regola.
+# Questi file elencano per filo e per segno le debolezze ancora aperte di
+# un'app viva: sono la mappa, non il racconto. Il racconto (cosa e' stato
+# fatto, e perche') sta nei RISANAMENTO-*, che vanno su GitHub.
+/docs/AUDIT-*.md
+/docs/APERTI-*.md
+
 # Dipendenze dei banchi (npm install)
 node_modules/
 

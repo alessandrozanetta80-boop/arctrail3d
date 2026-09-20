@@ -40,6 +40,21 @@ const C  = { uid:'utenteC', email:'c@esempio.it', email_verified:true  };
 const NV = { uid:'utenteNV',email:'nv@esempio.it',email_verified:false };
 const AD = { uid:'admin',   email:'alessandro.zanetta80@gmail.com', email_verified:true };
 
+/* LA FORMA VERA DI UN ALLENAMENTO, come la scrive `app.html`. (20/09/2026.)
+   Dal 20/09 la `create` pretende i cinque campi che la regola dell'ELENCO
+   legge senza rete di protezione: se a un documento ne manca uno, quella
+   regola va in errore e l'elenco si spegne per tutti. I banchi creavano
+   allenamenti scarni — piu' comodi da scrivere, e diversi da quelli veri —
+   quindi non avrebbero mai visto il problema. Qui si parte dalla forma vera e
+   si cambia solo quello che la prova vuole cambiare. */
+function allenamento(extra){
+  const d = { ownerUid:'utenteA', ownerName:'Anna', field:'Cerrione', spots:3,
+              visibility:'all', clubCode:'01VERB', invitedUids:[], participantUids:[],
+              participants:[], status:'active', datetime:Date.now() };
+  Object.keys(extra || {}).forEach(k => { d[k] = extra[k]; });
+  return d;
+}
+
 let env, fatti = 0, guai = [];
 
 async function prova(nome, fn){
@@ -157,9 +172,8 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
       { username:'anna', compagnia:'01VERB' })));
 
   await prova('apre un allenamento', () =>
-    assertSucceeds(db(A).doc('open_trainings/ot1').set(
-      { ownerUid:A.uid, date:'2026-09-01', field:'Vignone',
-        participantUids:[A.uid], participants:[{uid:A.uid,name:'Anna'}] })));
+    assertSucceeds(db(A).doc('open_trainings/ot1').set(allenamento(
+      { ownerUid:A.uid, participantUids:[A.uid], participants:[{uid:A.uid,name:'Anna'}] }))));
 
   await prova('apre una chat privata', () =>
     assertSucceeds(db(A).doc('direct_chats/utenteA__utenteB').set(
@@ -171,9 +185,12 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
 
   console.log('\n  ALLENAMENTO APERTO: A organizza, B si iscrive\n');
 
-  await scena(async d => d.doc('open_trainings/ot1').set(
-    { ownerUid:A.uid, date:'2026-09-01', field:'Vignone', titolo:'Domenica',
-      participantUids:[A.uid], participants:[{uid:A.uid,name:'Anna'}] }));
+  // Anche la scena parte dalla forma vera: un documento scarno scritto con le
+  // regole spente farebbe cadere la query dell'elenco piu' avanti, e il banco
+  // direbbe no per colpa della scena, non delle regole.
+  await scena(async d => d.doc('open_trainings/ot1').set(allenamento(
+    { ownerUid:A.uid, titolo:'Domenica',
+      participantUids:[A.uid], participants:[{uid:A.uid,name:'Anna'}] })));
 
   await prova('B iscrive SE STESSO', () =>
     assertSucceeds(db(B).doc('open_trainings/ot1').update(
@@ -481,11 +498,25 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
   const XSS = '<img src=x onerror=alert(1)>';
 
   await prova('allenamento con posti = testo NON si crea', () =>
-    assertFails(db(A).doc('open_trainings/otX').set(
-      { ownerUid:A.uid, field:'Vignone', spots:XSS, participantUids:[A.uid], participants:[] })));
+    assertFails(db(A).doc('open_trainings/otX').set(allenamento(
+      { ownerUid:A.uid, spots:XSS, participantUids:[A.uid] }))));
   await prova('allenamento con posti = 3 si crea (come fa l\'app)', () =>
-    assertSucceeds(db(A).doc('open_trainings/otN').set(
-      { ownerUid:A.uid, field:'Vignone', spots:3, participantUids:[A.uid], participants:[] })));
+    assertSucceeds(db(A).doc('open_trainings/otN').set(allenamento(
+      { ownerUid:A.uid, spots:3, participantUids:[A.uid] }))));
+  /* I CINQUE CAMPI SI PRETENDONO ALLA NASCITA. (20/09/2026.) La regola
+     dell'ELENCO li legge direttamente — e' l'unica forma che controlla
+     davvero — e un documento che ne manca uno la manda in errore, cioe'
+     spegne l'elenco per TUTTI. Meglio rifiutare la nascita di quel documento
+     che scoprirlo dall'elenco vuoto. */
+  await prova('un allenamento senza `visibility` NON si crea', () => {
+    const d = allenamento({ ownerUid:A.uid }); delete d.visibility;
+    return assertFails(db(A).doc('open_trainings/otSenza').set(d));
+  });
+  await prova('e nemmeno uno senza `invitedUids`', () => {
+    const d = allenamento({ ownerUid:A.uid }); delete d.invitedUids;
+    return assertFails(db(A).doc('open_trainings/otSenza2').set(d));
+  });
+
   await prova('l\'organizzatore NON trasforma i posti in testo dopo', () =>
     assertFails(db(A).doc('open_trainings/otN').update({ spots:XSS })));
 
@@ -561,7 +592,7 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
     await d.doc('sospesi/' + S.uid).set({ da:'admin' });
   });
   await prova('il sospeso NON apre un allenamento', () =>
-    assertFails(db(S).doc('open_trainings/otS').set({ ownerUid:S.uid, field:'X', spots:2, participantUids:[S.uid], participants:[] })));
+    assertFails(db(S).doc('open_trainings/otS').set(allenamento({ ownerUid:S.uid, spots:2, participantUids:[S.uid] }))));
   await prova('il sospeso NON apre una chat', () =>
     assertFails(db(S).doc('direct_chats/' + [S.uid, A.uid].sort().join('__')).set({ members:[S.uid, A.uid].sort() })));
   await prova('il sospeso NON si ricrea approvato (cancella e ricrea users/{uid})', async () => {
@@ -575,7 +606,7 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
     await assertSucceeds(db(AD).doc('sospesi/utenteX').delete());
   });
   await prova('chi NON e\' sospeso apre ancora un allenamento', () =>
-    assertSucceeds(db(B).doc('open_trainings/otB').set({ ownerUid:B.uid, field:'Y', spots:2, participantUids:[B.uid], participants:[] })));
+    assertSucceeds(db(B).doc('open_trainings/otB').set(allenamento({ ownerUid:B.uid, spots:2, participantUids:[B.uid] }))));
 
   console.log('\n  I DISPOSITIVI (users/{uid}/devices) — fase 16\n');
   await prova('A scrive il documento del suo telefono', () =>
@@ -690,6 +721,138 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
     assertFails(db(B).doc('open_trainings/otClub/dove/punto').set({ lat:0, lng:0 })));
   await prova("l'organizzatore si", () =>
     assertSucceeds(db(A).doc('open_trainings/otClub/dove/punto').set({ lat:46, lng:8 })));
+
+  /* ══ LA VISIBILITA' «SOLO CLUB» E' UNA PORTA, NON UNA TENDA ═════════════
+     (20/09/2026, seconda passata su SEC-09.) Fino a stamattina la regola
+     diceva `read: if signedIn()` e il filtro stava in `app.html`: bastava un
+     client diverso per leggere tutto. Qui si chiede al database, che e'
+     l'unico posto dove la risposta vale anche per chi l'app non la usa.
+     E si chiede anche la cosa che nessuno chiede mai: che il FORMATO VECCHIO
+     non sia una scorciatoia. */
+  console.log('\n  ALLENAMENTI: CHI VEDE COSA (SEC-09, lato server)\n');
+  await scena(async d => {
+    await d.doc('users/'+A.uid).set({ email:A.email, approved:true, compagnia:'01VERB' }, { merge:true });
+    await d.doc('users/'+B.uid).set({ email:B.email, approved:true, compagnia:'09ALTRA' }, { merge:true });
+    await d.doc('users/'+C.uid).set({ email:C.email, approved:true }, { merge:true });
+    await d.doc('open_trainings/otTutti').set({ ownerUid:A.uid, visibility:'all', clubCode:'01VERB',
+      status:'active', participantUids:[], invitedUids:[] });
+    await d.doc('open_trainings/otSoloClub').set({ ownerUid:A.uid, visibility:'club', clubCode:'01VERB',
+      status:'active', participantUids:[], invitedUids:[] });
+    await d.doc('open_trainings/otSoloClubInvito').set({ ownerUid:A.uid, visibility:'club', clubCode:'01VERB',
+      status:'active', participantUids:[], invitedUids:[C.uid] });
+    await d.doc('open_trainings/otSoloClubIscritto').set({ ownerUid:A.uid, visibility:'club', clubCode:'01VERB',
+      status:'active', participantUids:[C.uid], invitedUids:[] });
+    /* IL FORMATO VECCHIO: lat/lng ancora DENTRO il documento, come li scriveva
+       l'app fino a stamattina. Se la porta fosse solo sul sottodocumento, qui
+       ci sarebbe la scorciatoia. */
+    await d.doc('open_trainings/otVecchioSoloClub').set({ ownerUid:A.uid, visibility:'club',
+      clubCode:'01VERB', status:'active', participantUids:[], invitedUids:[], lat:45.9, lng:8.5 });
+    await d.doc('open_trainings/otSoloClub/dove/punto').set({ lat:45.9, lng:8.5 });
+  });
+
+  await prova('un allenamento aperto a tutti lo vede chiunque', () =>
+    assertSucceeds(db(B).doc('open_trainings/otTutti').get()));
+  await prova("un «solo club» lo vede chi e' della compagnia", () =>
+    assertSucceeds(db(A).doc('open_trainings/otSoloClub').get()));
+  await prova("NON lo vede chi e' di un'altra compagnia", () =>
+    assertFails(db(B).doc('open_trainings/otSoloClub').get()));
+  await prova('NON lo vede chi non ha compagnia', () =>
+    assertFails(db(C).doc('open_trainings/otSoloClub').get()));
+  await prova("ma lo vede chi e' stato invitato", () =>
+    assertSucceeds(db(C).doc('open_trainings/otSoloClubInvito').get()));
+  await prova("e chi si e' iscritto", () =>
+    assertSucceeds(db(C).doc('open_trainings/otSoloClubIscritto').get()));
+
+  /* IL FORMATO VECCHIO NON E' UNA SCORCIATOIA. Le coordinate stanno adesso in
+     un sottodocumento, ma i documenti scritti prima ce le hanno ancora
+     dentro: se la porta fosse solo sul sottodocumento, basterebbe leggere il
+     documento vecchio. Non basta, perche' la porta e' sul documento. */
+  await prova('un documento VECCHIO con lat/lng dentro non si legge lo stesso', () =>
+    assertFails(db(B).doc('open_trainings/otVecchioSoloClub').get()));
+
+  /* LE QUATTRO DOMANDE DELL'APP, una per una: devono passare tutte, se no
+     l'elenco sparisce — e sparirebbe per TUTTI, non solo per chi non deve
+     vedere. */
+  await prova('query 1: gli allenamenti aperti a tutti', () =>
+    assertSucceeds(db(B).collection('open_trainings').where('visibility','==','all').limit(50).get()));
+  /* ══ QUI SI VEDE COME FIRESTORE AUTORIZZA DAVVERO UNA QUERY ══════════════
+     (20/09/2026, misurato.) Non valuta la regola documento per documento: la
+     autorizza solo se la condizione e' IMPLICATA DAI FILTRI della query.
+     Percio' `where('clubCode','==','01VERB')` passa solo se la regola puo'
+     dedurre dal filtro che chi chiede ha diritto — cioe' se `01VERB` e' la
+     compagnia scritta nel SUO TOKEN. Non basta essere il proprietario di
+     tutti i documenti che tornerebbero: il proprietario A, senza claim, viene
+     rifiutato lo stesso (provato).
+     E' la ragione per cui serve `claimCompagnia`, ed e' anche la ragione per
+     cui questa prova sta qui in due versioni: la stessa domanda, prima e dopo
+     che il token porti la compagnia. */
+  await prova("query 2 SENZA il claim: rifiutata (la funzione non e' ancora pubblicata)", () =>
+    assertFails(db(A).collection('open_trainings').where('clubCode','==','01VERB').limit(50).get()));
+  const ACLAIM = { uid:'utenteA', email:'a@esempio.it', email_verified:true, compagnia:'01VERB' };
+  await prova('query 2 CON il claim: passa', () =>
+    assertSucceeds(db(ACLAIM).collection('open_trainings').where('clubCode','==','01VERB').limit(50).get()));
+  await prova("ma il claim di un'altra compagnia non apre questa", () =>
+    assertFails(db({ uid:'utenteB', email:'b@esempio.it', email_verified:true, compagnia:'09ALTRA' })
+      .collection('open_trainings').where('clubCode','==','01VERB').limit(50).get()));
+  await prova('query 3: quelli a cui sono invitato', () =>
+    assertSucceeds(db(C).collection('open_trainings').where('invitedUids','array-contains',C.uid).limit(50).get()));
+  await prova('query 4: i miei', () =>
+    assertSucceeds(db(A).collection('open_trainings').where('ownerUid','==',A.uid).limit(50).get()));
+  /* E LA DOMANDA DELL'APP DI IERI — «dammi tutti gli attivi» — viene rifiutata
+     INTERA. E' la conseguenza dichiarata: il suo elenco resta vuoto finche'
+     non si aggiorna. Meglio un elenco vuoto per qualche ora che un annuncio
+     «solo per i soci» leggibile da chiunque per sempre. */
+  await prova("la query dell'app di ieri (tutti gli attivi) viene RIFIUTATA", () =>
+    assertFails(db(B).collection('open_trainings').where('status','==','active').limit(50).get()));
+  await prova('e quella di B sulla compagnia di un ALTRO club viene rifiutata', () =>
+    assertFails(db(B).collection('open_trainings').where('clubCode','==','01VERB').limit(50).get()));
+
+  await prova('il punto di un «solo club» non lo legge un estraneo', () =>
+    assertFails(db(B).doc('open_trainings/otSoloClub/dove/punto').get()));
+  await prova('un estraneo NON scrive il punto di un allenamento che non esiste', () =>
+    assertFails(db(B).doc('open_trainings/otInventato/dove/punto').set({ lat:0, lng:0 })));
+  await prova("e nemmeno il punto dell'allenamento di un altro", () =>
+    assertFails(db(B).doc('open_trainings/otTutti/dove/punto').set({ lat:0, lng:0 })));
+  await prova("l'organizzatore lo scrive", () =>
+    assertSucceeds(db(A).doc('open_trainings/otTutti/dove/punto').set({ lat:46, lng:8 })));
+
+  /* ══ IL GIRO NUOVO, SULL'EMULATORE VERO ═════════════════════════════════
+     (20/09/2026.) Dal 20/09 un giro porta `roundId`, `interrotto`,
+     `federation`/`division`/`eventId`, l'uid di CHI HA TIRATO (anche se non e'
+     il telefono che segna) e le ZONE di ogni freccia. Sono dati nuovi in un
+     documento che finora nessuna prova aveva mai scritto nella sua forma
+     intera contro le regole vere.
+     Le due domande che contano sono sempre le stesse: entra? e lo legge solo
+     chi deve? Lo storico e' della persona e di nessun altro — nemmeno
+     dell'admin. */
+  console.log('\n  IL GIRO: uid di chi ha tirato, zone delle frecce\n');
+  const GIRO = {
+    date: new Date().toISOString(), deleted:false, sessionType:'3d', format:24,
+    modeKey:'round3d', modeLabel:'Round 3D', scoringVersion:'fiarc-rt-2023',
+    campo:'Cerrione', durata:180, roundId:'g' + 'a'.repeat(40), interrotto:false,
+    federation:'fiarc', division:null, eventId:null,
+    results:[{ name:'anna', total:420, isSelf:true, ownerUid:'utenteA',
+               perTarget:[20,18], arrows:[{v:[20]},{v:[18]}],
+               zones:[{v:['superspot']},{v:['spot']}] },
+             { name:'bruno', total:400, isSelf:false, ownerUid:'utenteB',
+               perTarget:[20,16], arrows:[{v:[20]},{v:[16]}],
+               zones:[{v:['superspot']},{v:['sagoma']}] }]
+  };
+  await prova('il giro nuovo entra nello storico del suo proprietario', () =>
+    assertSucceeds(db(A).doc('users/'+A.uid+'/storico/20260920120000000').set(GIRO)));
+  await prova("B NON legge il giro di A, anche se dentro c'e' il suo uid", () =>
+    assertFails(db(B).doc('users/'+A.uid+'/storico/20260920120000000').get()));
+  await prova("e nemmeno l'admin: lo storico non lo legge nessun altro", () =>
+    assertFails(db(AD).doc('users/'+A.uid+'/storico/20260920120000000').get()));
+  await prova("B NON puo' scrivere un giro nello storico di A", () =>
+    assertFails(db(B).doc('users/'+A.uid+'/storico/20260920130000000').set(GIRO)));
+  await prova('A rilegge il proprio giro con le zone dentro', async () => {
+    const d = await db(A).doc('users/'+A.uid+'/storico/20260920120000000').get();
+    if (!d.exists) throw new Error("il giro non c'e'");
+    const r = d.data().results;
+    if (r[1].ownerUid !== 'utenteB') throw new Error("manca l'uid del secondo arciere");
+    if (r[0].zones[0].v[0] !== 'superspot') throw new Error('manca la zona della prima freccia');
+  });
 
   console.log('\n  LE PORTE CHE DEVONO RESTARE APERTE\n');
 

@@ -58,6 +58,7 @@ function prova(n, c, extra){
 
 /* ══ A. COSA MANDA IL SERVER ═══════════════════════════════════════════════ */
 var trigger = {};
+var scritti = {};
 var inviati = [];
 var fallisce = {};          // token → codice d'errore FCM
 var aggiornamenti = [];     // update fatti in transazione: { path, cambi }
@@ -110,7 +111,14 @@ function rifRaccolta(p, filtri){
 
 var finto = {
   "firebase-functions/v2/firestore": {
-    onDocumentCreated: function(percorso, fn){ trigger[percorso] = fn; return fn; }
+    onDocumentCreated: function(percorso, fn){ trigger[percorso] = fn; return fn; },
+    // TIPI DIVERSI, REGISTRI DIVERSI. (20/09/2026.) `claimCompagnia` ascolta
+    // `users/{uid}` con `onDocumentWritten`, ed e' lo STESSO percorso di
+    // `avvisaIscrizione`, che lo ascolta con `onDocumentCreated`. Con un
+    // registro solo, chiave il percorso, la seconda registrazione cancellava la
+    // prima: il banco chiamava la funzione sbagliata e diceva no su prove che
+    // non c'entravano niente. Qui restano separati, come in Firebase.
+    onDocumentWritten: function(percorso, fn){ scritti[percorso] = fn; return fn; }
   },
   "firebase-functions/v2/https": {
     onCall: function(_o, fn){ return fn; },
