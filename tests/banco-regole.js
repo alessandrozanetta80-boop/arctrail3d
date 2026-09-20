@@ -601,17 +601,32 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
   await prova('un messaggio normale passa', () =>
     assertSucceeds(db(A).collection('direct_chats/'+chat+'/messages').add(
       { senderUid:A.uid, senderName:'Anna', text:'ci vediamo alla 12', createdAt:new Date() })));
-  await prova('un messaggio da 3000 caratteri NON passa', () =>
-    assertFails(db(A).collection('direct_chats/'+chat+'/messages').add(
+  /* IL TETTO E' IL SOFFITTO DELL'ABUSO, NON IL LIMITE DI PRODOTTO.
+     (20/09/2026, finestra di deploy.) Il 19/09 qui c'era «3000 caratteri NON
+     passa», con il tetto a 2000 come la casella dell'app. Ma la casella si
+     ferma a 2000 solo DA QUESTA VERSIONE: l'app che sta nei telefoni manda
+     quello che uno ha scritto. Con il tetto a 2000, il giorno in cui si
+     pubblicano le regole, un messaggio lungo scritto da un'app non ancora
+     aggiornata sparisce in silenzio. Adesso il tetto e' 8000: quello che una
+     persona vera scrive passa, il deposito da un megabyte no. */
+  await prova("un messaggio lungo dell'app di ieri (3000) passa ancora", () =>
+    assertSucceeds(db(A).collection('direct_chats/'+chat+'/messages').add(
       { senderUid:A.uid, senderName:'Anna', text:'x'.repeat(3000), createdAt:new Date() })));
+  await prova('un messaggio da 9000 caratteri NON passa', () =>
+    assertFails(db(A).collection('direct_chats/'+chat+'/messages').add(
+      { senderUid:A.uid, senderName:'Anna', text:'x'.repeat(9000), createdAt:new Date() })));
   await prova('un errore normale si registra', () =>
     assertSucceeds(db(NV).collection('errors').add({ uid:NV.uid, msg:'crash', dove:'pista', at:Date.now() })));
   await prova('un errore con uno stack da 5000 caratteri NON si registra', () =>
     assertFails(db(NV).collection('errors').add({ uid:NV.uid, msg:'crash', stack:'y'.repeat(5000), at:Date.now() })));
   await prova('il referente scrive i dati della compagnia', () =>
     assertSucceeds(db(A).doc('compagnie_admin/01VERB').update({ referente:'Anna Rossi', tel:'347 1234567', note:'chiave al bar' })));
-  await prova('ma non una nota da 20.000 caratteri', () =>
-    assertFails(db(A).doc('compagnie_admin/01VERB').update({ note:'z'.repeat(20000) })));
+  await prova("una nota lunga dell'app di ieri (6000) passa ancora", () =>
+    assertSucceeds(db(A).doc('compagnie_admin/01VERB').update({ note:'z'.repeat(6000) })));
+  await prova('ma non una nota da 30.000 caratteri', () =>
+    assertFails(db(A).doc('compagnie_admin/01VERB').update({ note:'z'.repeat(30000) })));
+  await prova("ne' un telefono con una nota dentro, se supera il soffitto", () =>
+    assertFails(db(A).doc('compagnie_admin/01VERB').update({ tel:'3'.repeat(200) })));
 
   console.log('\n  LE PORTE CHE DEVONO RESTARE APERTE\n');
 

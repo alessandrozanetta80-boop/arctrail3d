@@ -24,8 +24,19 @@ if [ ! -x node_modules/.bin/firebase ] && [ ! -f node_modules/.bin/firebase ]; t
   exit 1
 fi
 
+# DUE BANCHI, UN EMULATORE SOLO. (20/09/2026.)
+# `banco-finestra.js` vuole anche lui l'emulatore, e l'emulatore vuole la porta
+# 8080 — una sola. Lanciati come due banchi separati, nel giro a sei alla volta
+# partivano insieme e il secondo trovava la porta occupata: un rosso che non
+# diceva niente sulle regole, diceva solo che due processi si erano pestati i
+# piedi. (Successo davvero il 20/09, alla prima passata.)
+# Stanno dentro la STESSA esecuzione: si avvia un emulatore invece di due (che
+# e' anche la parte lenta) e la corsa non esiste piu'. Girano tutti e due anche
+# se il primo dice no — se no un guasto nelle regole nasconderebbe la finestra.
+# `emulators:exec` non passa il comando a una shell: la fila dei due banchi sta
+# in `tests/regole-e-finestra.js`, che ha anche il perche' scritto dentro.
 npx --no-install firebase emulators:exec --only firestore --project arctrail3d-prova \
-  "node tests/banco-regole.js" > "${TMPDIR:-/tmp}/arctrail-regole.$$" 2>&1
+  "node tests/regole-e-finestra.js" > "${TMPDIR:-/tmp}/arctrail-regole.$$" 2>&1
 esito=$?
 # L'emulatore parla molto: si tengono le righe del banco, non i suoi diari.
 grep -E "^  |passate|Error|errore" "${TMPDIR:-/tmp}/arctrail-regole.$$" | grep -v "@firebase/firestore"

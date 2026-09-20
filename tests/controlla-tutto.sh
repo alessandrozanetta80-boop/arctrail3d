@@ -126,7 +126,12 @@ banco "banco-ritorno.js (il ritorno canonico e le cose che non tornano)" "node t
 banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node tests/controlla-diari.js"
 # Dal 19/09/2026 (risanamento post-audit). Le regole Firestore non giravano in
 # nessun giro: adesso si, e se manca Java il banco dice no invece di saltare.
-banco "banco-regole.js (le regole Firestore sull'emulatore: chi puo' scrivere cosa)" "sh tests/lancia-regole.sh"
+# I DUE BANCHI DELL'EMULATORE STANNO INSIEME, e non e' una comodita': l'emulatore
+# ha una porta sola, e lanciati separati nel giro a sei alla volta si pestavano i
+# piedi. `banco-regole` chiede se le regole dicono di NO a chi deve;
+# `banco-finestra` chiede se dicono di SI' a chi non ha ancora aggiornato l'app —
+# due domande diverse, e la seconda si scopre solo il giorno del deploy.
+banco "banco-regole.js + banco-finestra.js (le regole sull'emulatore: chi puo' scrivere cosa, e la finestra di deploy)" "sh tests/lancia-regole.sh"
 banco "banco-xss.js (quello che scrive un altro non diventa codice sul mio telefono)" "node tests/banco-xss.js"
 banco "banco-account.js (due persone, un telefono: i dati di A non vanno a B)" "node tests/banco-account.js"
 banco "banco-sw-aggiornamento.js (una versione nuova non toglie l'app di mano, nemmeno a meta' giro)" "node tests/banco-sw-aggiornamento.js"
@@ -145,6 +150,7 @@ banco "banco-tastiera.js (con la tastiera aperta si arriva a scrivere e a mandar
 banco "banco-salto-versione.js (telefono fermo da settimane: si aggiorna e non perde i dati)" "node tests/banco-salto-versione.js"
 banco "controlla-versioni.js (i sei timbri di versione dicono la verita' e si muovono insieme)" "node tests/controlla-versioni.js"
 banco "banco-chiavi-compagnie.js (la chiave di una societa' non cambia mai sotto i piedi)" "node tests/banco-chiavi-compagnie.js"
+banco "banco-riepilogo.js (il riepilogo permanente si aggiunge, non si rifa' dai 150 rimasti)" "node tests/banco-riepilogo.js"
 banco "banco-fumo.js (una sessione sola, dall'inizio alla fine, come la farebbe una persona)" "node tests/banco-fumo.js"
 
 echo ""

@@ -349,6 +349,33 @@ service cloud.firestore {
       return d.get(k, null) == null
         || (d.get(k, null) is string && d.get(k, '').size() <= max);
     }
+    // QUANTO DEVE ESSERE ALTO `max`. (20/09/2026, finestra di deploy.)
+    //
+    // Il 19/09 questi tetti erano stati messi uguali al limite del PRODOTTO —
+    // 2000 caratteri per un messaggio, perche' tanto «l'app ha lo stesso
+    // limite nel campo». Sbagliato per due motivi, e il secondo e' grave.
+    //
+    // 1. L'APP DI IERI NON HA QUEL LIMITE. `maxlength` sulle caselle della
+    //    chat e' arrivato con questa versione: l'app pubblicata il 18/09 —
+    //    quella che sta nei telefoni, e che ci resta finche' non si aggiorna —
+    //    manda quello che uno ha scritto, lungo quanto gli pare. Con un tetto
+    //    a 2000 nelle regole, il giorno in cui si pubblicano, un messaggio
+    //    lungo di un'app non ancora aggiornata viene RIFIUTATO. In silenzio:
+    //    il `catch` scrive in console e la persona vede il messaggio sparire.
+    //    La finestra di deploy dura quanto la cassa del service worker, cioe'
+    //    giorni, non minuti.
+    //
+    // 2. NON E' IL MESTIERE DI UNA REGOLA. Il limite di prodotto lo dice il
+    //    campo, dove chi scrive lo VEDE mentre scrive. La regola risponde a
+    //    un'altra domanda — «questo e' un documento o un attacco?» — e la
+    //    risposta non cambia fra 2.000 e 8.000 caratteri: cambia fra ottomila
+    //    e un milione, che era il difetto vero («un client modificato
+    //    riempiva una chat con documenti da un megabyte»).
+    //
+    // Quindi: qui sotto i tetti sono SOFFITTI D'ABUSO, larghi abbastanza da
+    // non dire mai di no a una persona vera, stretti abbastanza da non far
+    // passare un documento che serve solo a occupare spazio. Il limite di
+    // prodotto sta in `app.html`, sulla casella, ed e' piu' basso.
     // ACCOUNT ATTIVO: email confermata e NON sospeso. (19/09/2026, SEC-08.)
     // Il segno sta in `sospesi/{uid}`, scritto solo dall'admin: a differenza di
     // `users.approved` non si cancella cancellando il proprio documento.
@@ -402,11 +429,12 @@ service cloud.firestore {
     // Firma vera del messaggio: senderUid deve combaciare con chi scrive.
     function firmaValida() {
       return request.resource.data.get('senderUid', '') == request.auth.uid
-        // 20/09/2026: ogni messaggio ha un testo di al massimo 2000 caratteri e
-        // un nome corto (l'app ha lo stesso limite nel campo). Senza, un client
-        // modificato riempiva una chat con documenti da un megabyte.
-        && testoOpz(request.resource.data, 'text', 2000)
-        && testoOpz(request.resource.data, 'senderName', 120);
+        // Soffitto d'abuso, non limite di prodotto (vedi sopra `testoOpz`):
+        // la casella della chat si ferma a 2000, qui si dice no a chi vuole
+        // usare una conversazione come deposito. `senderName` largo il doppio
+        // del nome piu' lungo che l'app sappia comporre.
+        && testoOpz(request.resource.data, 'text', 8000)
+        && testoOpz(request.resource.data, 'senderName', 240);
     }
     function dmMembers(chatId) {
       return get(/databases/$(database)/documents/direct_chats/$(chatId)).data.members;
@@ -532,12 +560,15 @@ service cloud.firestore {
                                 // mappa di soli numeri: `giri` finiva nell'HTML di chi
                                 // apre il profilo. `media` resta ammessa per i documenti
                                 // scritti prima del 29/08 (set con merge la conserva).
-                                && testoOpz(request.resource.data, 'username', 60)
-                                && testoOpz(request.resource.data, 'nomeCognome', 120)
-                                && testoOpz(request.resource.data, 'compagnia', 20)
-                                && testoOpz(request.resource.data, 'compagniaNome', 200)
-                                && testoOpz(request.resource.data, 'bio', 200)
-                                && testoOpz(request.resource.data, 'arco', 40)
+                                // Soffitti d'abuso (vedi `testoOpz`): l'app di ieri non
+                                // ha un tetto sul nome e sull'username, e un nome lungo
+                                // non deve far fallire l'allineamento del profilo.
+                                && testoOpz(request.resource.data, 'username', 120)
+                                && testoOpz(request.resource.data, 'nomeCognome', 240)
+                                && testoOpz(request.resource.data, 'compagnia', 40)
+                                && testoOpz(request.resource.data, 'compagniaNome', 400)
+                                && testoOpz(request.resource.data, 'bio', 600)
+                                && testoOpz(request.resource.data, 'arco', 80)
                                 && (request.resource.data.get('numeri', null) == null
                                     || (request.resource.data.numeri is map
                                         && request.resource.data.numeri.keys().hasOnly(['giri','piazzole','campi','media'])
@@ -1033,8 +1064,9 @@ service cloud.firestore {
                     // 19/09/2026 (P0-1): `piazzole` finiva nel pannello admin senza
                     // escape. Numero; nome e note corti come nel client (80 / 300).
                     && numeroOpz(request.resource.data, 'piazzole')
-                    && testoOpz(request.resource.data, 'nome', 120)
-                    && testoOpz(request.resource.data, 'note', 500)
+                    // Soffitti d'abuso (vedi `testoOpz`): la casella dice 80 e 300.
+                    && testoOpz(request.resource.data, 'nome', 240)
+                    && testoOpz(request.resource.data, 'note', 2000)
                     && (
                          (attivo() && request.resource.data.stato == 'proposto')
                          || ((isAdmin() || isClubAdmin(request.resource.data.clubCode))
@@ -1077,8 +1109,10 @@ service cloud.firestore {
       // `type` testo corto: si mostra solo tramite la tabella TIPI.
       allow create: if attivo() && request.resource.data.reporterUid == request.auth.uid
                     && numeroOpz(request.resource.data, 'piazzola')
-                    && testoOpz(request.resource.data, 'type', 30)
-                    && testoOpz(request.resource.data, 'description', 5000);
+                    && testoOpz(request.resource.data, 'type', 60)
+                    // La casella della segnalazione dice 5000 da questa versione;
+                    // quella di ieri non diceva niente. Qui il soffitto e' l'abuso.
+                    && testoOpz(request.resource.data, 'description', 20000);
       allow read: if isAdmin()
                   || (signedIn() && resource.data.get('reporterUid', '') == request.auth.uid)
                   || isClubAdmin(resource.data.get('clubCode', ''));
@@ -1105,12 +1139,16 @@ service cloud.firestore {
                         && resource.data.adminUid == request.auth.uid
                         && request.resource.data.adminUid == resource.data.adminUid
                         // 20/09/2026: i campi che scrive il referente, con tipo e lunghezza.
-                        && testoOpz(request.resource.data, 'referente', 120)
-                        && testoOpz(request.resource.data, 'emailComp', 200)
-                        && testoOpz(request.resource.data, 'tel', 40)
-                        && testoOpz(request.resource.data, 'sito', 300)
-                        && testoOpz(request.resource.data, 'indirizzo', 300)
-                        && testoOpz(request.resource.data, 'note', 5000));
+                        // Soffitti d'abuso: i tetti che si VEDONO stanno sulle caselle
+                        // in app.html (120, 200, 40, 300, 300, 5000). L'app di ieri non
+                        // li ha, e un telefono con la nota scritta fuori misura non deve
+                        // prendere un no che non sa spiegare.
+                        && testoOpz(request.resource.data, 'referente', 240)
+                        && testoOpz(request.resource.data, 'emailComp', 320)
+                        && testoOpz(request.resource.data, 'tel', 120)
+                        && testoOpz(request.resource.data, 'sito', 600)
+                        && testoOpz(request.resource.data, 'indirizzo', 600)
+                        && testoOpz(request.resource.data, 'note', 20000));
     }
 
     // --- NOTE PRIVATE DELL'ADMIN ---
@@ -1132,7 +1170,7 @@ service cloud.firestore {
       allow create: if attivo() && isRequester(request.resource.data)
                     && request.resource.data.get('richiedenteUid', '') == request.auth.uid
                     && request.resource.data.get('richiedenteEmail', '') == request.auth.token.get('email', '')
-                    && testoOpz(request.resource.data, 'richiedenteName', 120);
+                    && testoOpz(request.resource.data, 'richiedenteName', 240);
       allow read: if isAdmin() || (signedIn() && isRequester(resource.data));
       allow update: if isAdmin();
       // Chi ha fatto la richiesta puo' ritirarla (e l'eliminazione account

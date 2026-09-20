@@ -110,6 +110,21 @@ async function iniziaRound3D(page) {
   var wa = await scritture(a.page);
   prova("la copia di sicurezza sul cloud e' stata tolta",
         wa.some(function (w) { return w.op === "delete" && /giro_aperto\/corrente$/.test(w.path); }));
+  /* IL DOCUMENTO CHE L'APP SCRIVE DAVVERO. (20/09/2026.)
+     Piu' sotto, la prova dei due telefoni SEMINA a mano un documento di
+     storico col `roundId` dentro, e cosi' verificava la lettura dando per
+     buona la scrittura. Non lo era: fino a oggi `giroPerNuvola` non ci
+     metteva il `roundId`, quindi la domanda «questo giro e' gia' chiuso
+     altrove?» non poteva trovare niente, e il giro resuscitava. Qui si
+     guarda il documento vero, quello uscito dall'app. */
+  var docStorico = wa.filter(function (w) { return /\/storico\//.test(w.path) && (w.op === "set" || w.op === "add"); })[0];
+  prova("il giro chiuso arriva sul cloud", !!docStorico, JSON.stringify(wa.map(function (w) { return w.op + " " + w.path; })));
+  prova("e il documento sul cloud porta il roundId, non solo lo storico del telefono",
+        !!(docStorico && docStorico.data && docStorico.data.roundId && docStorico.data.roundId === la.storico[0].roundId),
+        docStorico ? "roundId=" + JSON.stringify(docStorico.data.roundId) : "nessun documento");
+  prova("e dice che era interrotto, cosi' un altro telefono non lo conta intero",
+        !!(docStorico && docStorico.data && docStorico.data.interrotto === true),
+        docStorico ? "interrotto=" + JSON.stringify(docStorico.data.interrotto) : "nessun documento");
   await tocca(a.page, "Torna al menu");
   prova("la Home non offre di riprendere un giro gia' chiuso", !/Riprendi/.test(await testo(a.page)));
   await a.ctx.close();

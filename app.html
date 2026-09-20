@@ -6379,6 +6379,10 @@ render();
 var STORAGE_KEY = "arctrail3d_state_v3";
 var HISTORY_KEY = "arctrail3d_storico_v1";
 var LIFETIME_KEY = "arctrail3d_lifetime_v1"; // riepilogo permanente: non viene mai cancellato dal taglio dello storico
+// Le identita' dei giri gia' contati nel riepilogo: sta QUI e non accanto alle
+// sue funzioni perche' `CHIAVI_DA_PARTE`, poche righe sotto, la legge subito —
+// e una `var` dichiarata piu' in basso a quel punto vale `undefined`.
+var LIFETIME_VISTI_KEY = "arctrail3d_lifetime_visti_v1";
 var DELETED_KEY = "arctrail3d_storico_cancellati_v1"; // elenco dei giri cancellati apposta: impedisce che tornino dal cloud
 var HISTORY_MAX = 150;
 
@@ -6416,7 +6420,7 @@ function segnaProprietario(uid){ try{ if(uid) localStorage.setItem(PROPRIETARIO_
    - con un tocco esplicito, «Aggiungili al mio account», quando non si sa di
      chi siano (LEGACY_ORPHANED: dati di prima, profilo senza email). */
 var ORFANI_KEY = "arctrail3d_orfani_v1";
-var CHIAVI_DA_PARTE = [HISTORY_KEY, LIFETIME_KEY, DELETED_KEY, "arctrail3d_attrezzi_v1", "arctrail3d_ifaa_schema_v1"];
+var CHIAVI_DA_PARTE = [HISTORY_KEY, LIFETIME_KEY, LIFETIME_VISTI_KEY, DELETED_KEY, "arctrail3d_attrezzi_v1", "arctrail3d_ifaa_schema_v1"];
 function leggiOrfani(){ try{ var o = JSON.parse(localStorage.getItem(ORFANI_KEY) || "[]"); return Array.isArray(o) ? o : []; }catch(e){ return []; } }
 function scriviOrfani(o){ try{ if(o.length) localStorage.setItem(ORFANI_KEY, JSON.stringify(o)); else localStorage.removeItem(ORFANI_KEY); }catch(e){} }
 function ciSonoDatiUtente(){
@@ -6466,13 +6470,16 @@ if(!x) return;
 scriviOrfani(leggiOrfani().filter(function(y){ return y !== x && !(y.il === x.il && !y.uid && !y.email); }));
 var miei = loadHistory(), suoi = [];
 try{ suoi = JSON.parse((x.dati || {})[HISTORY_KEY] || "[]"); }catch(e){}
-var viste = {};
+var viste = {}, aggiunti = [];
 miei.forEach(function(h){ if(h && h.date) viste[h.date] = true; });
-suoi.forEach(function(h){ if(h && h.date && !viste[h.date]){ miei.push(h); viste[h.date] = true; } });
+suoi.forEach(function(h){ if(h && h.date && !viste[h.date]){ miei.push(h); viste[h.date] = true; aggiunti.push(h); } });
 miei.sort(function(a, b){ return (b.date || "").localeCompare(a.date || ""); });
+// Prima si contano i giri arrivati, poi si taglia: il riepilogo non si rifa'
+// da capo (perderebbe tutto quello che sta oltre i 150). Vedi
+// `contaGiroNelRiepilogo`.
+assicuraVisti();
+aggiunti.forEach(function(h){ contaGiroNelRiepilogo(h); });
 saveHistoryList(miei.slice(0, HISTORY_MAX));
-try{ localStorage.removeItem(LIFETIME_KEY); }catch(e){}
-backfillLifetimeOnce();
 if(x.giro && state.roundActive !== true){ Object.keys(x.giro).forEach(function(k){ state[k] = x.giro[k]; }); }
 save();
 giaRiallineato = false;
@@ -6486,7 +6493,7 @@ scriviOrfani(leggiOrfani().filter(function(y){ return !(y.il === x.il && !y.uid 
 function svuotaDatiUtenteLocali(){
 var tieni = { lang: state.lang, theme: state.theme, country: state.country, federation: state.federation };
 // ORFANI_KEY NON sta qui: i dati messi da parte restano finche' non tornano al loro proprietario.
-var chiavi = [STORAGE_KEY, HISTORY_KEY, LIFETIME_KEY, DELETED_KEY, PROPRIETARIO_KEY,
+var chiavi = [STORAGE_KEY, HISTORY_KEY, LIFETIME_KEY, LIFETIME_VISTI_KEY, DELETED_KEY, PROPRIETARIO_KEY,
   "arctrail3d_ifaa_schema_v1", "arctrail3d_misure_v1", "arctrail3d_attrezzi_v1",
   "arctrail3d_push_spenta", "arctrail3d_pending_profile", "arctrail3d_pending_email"];
 try{
@@ -14379,6 +14386,75 @@ saveLifetime(lt);
 return e;
 }
 
+/* ══ IL RIEPILOGO SI AGGIUNGE, NON SI RIFA' ═══════════════════════════════
+   (20/09/2026, audit P1 «riepilogo permanente ricostruito dagli ultimi 150
+   giri».)
+
+   Il riepilogo permanente esiste per una ragione sola: lo storico si taglia a
+   HISTORY_MAX (150) e i record devono sopravvivere al taglio. Ma in due punti
+   il codice faceva l'esatto contrario — `localStorage.removeItem(LIFETIME_KEY)`
+   e poi `backfillLifetimeOnce()`, che ricostruisce **dai giri rimasti**. Cioe'
+   proprio dai 150. Chi ne ha di piu', la prima volta che dei giri scendono dal
+   cloud, perde record e totali di tutto quello che sta oltre. Il commento
+   accanto alla chiave diceva «non viene mai cancellato»: la riga sotto lo
+   cancellava.
+
+   Rifare il conto da capo era l'unico modo per non contare due volte lo stesso
+   giro, perche' il riepilogo non sa QUALI giri ha gia' contato: tiene somme,
+   non elenchi. Adesso lo sa: `arctrail3d_lifetime_visti_v1` e' l'elenco delle
+   identita' gia' contate, e il conto diventa una somma che si aggiunge.
+
+   LA CHIAVE E' `roundDocId(date)`, NON `roundId`, e la differenza conta: il
+   `roundId` esiste solo dai giri del 19/09 in poi, e i documenti scritti sul
+   cloud prima di oggi non ce l'hanno. Lo stesso giro tornerebbe con due nomi
+   diversi e verrebbe contato due volte. `roundDocId(date)` invece e' lo stesso
+   da sempre in tutte e due le parti: e' gia' l'id del documento sul cloud.
+
+   CHI AGGIORNA OGGI con un riepilogo gia' fatto: l'elenco nasce dai giri che
+   ha in casa adesso, quindi quelli non si ricontano. Quelli gia' tagliati non
+   ci sono, e se scendono dal cloud entrano nel conto una volta — che e' quello
+   che dovevano fare dall'inizio. */
+function leggiVisti(){
+try{ var raw = localStorage.getItem(LIFETIME_VISTI_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+function scriviVisti(v){ try{ localStorage.setItem(LIFETIME_VISTI_KEY, JSON.stringify(v)); }catch(e){} }
+function segnaVisto(h){
+if(!h || !h.date) return;
+var v = leggiVisti() || {};
+v[roundDocId(h.date)] = 1;
+scriviVisti(v);
+}
+/* L'elenco per chi ce l'aveva gia': una volta sola, dai giri in casa. */
+function assicuraVisti(){
+var v = leggiVisti();
+if(v) return v;
+v = {};
+loadHistory().forEach(function(h){ if(h && h.date) v[roundDocId(h.date)] = 1; });
+scriviVisti(v);
+return v;
+}
+/* Aggiunge al riepilogo un giro che il telefono non aveva ancora contato.
+   Torna true se l'ha contato davvero. */
+function contaGiroNelRiepilogo(h){
+if(!h || !h.date) return false;
+var v = assicuraVisti();
+var id = roundDocId(h.date);
+if(v[id]) return false;
+v[id] = 1;
+scriviVisti(v);
+// Un giro interrotto resta nel diario ma non conta come giro intero.
+if(h.interrotto === true) return false;
+// Gli stessi due argomenti che usa `backfillLifetimeOnce`: la chiave del
+// riepilogo nasce da `(modeKey || modeLabel || "?")` e deve venire fuori
+// identica, se no lo stesso arciere finisce in due righe diverse.
+var modo = modoDelGiro(h.modeKey, h.scoringVersion) || null;
+(h.results || []).forEach(function(r){
+if(!r || typeof r.total !== "number") return;
+recordLifetime(r.name, modo, h.modeLabel || "", r.total, h.date, h.format, r.ownerUid, r.isSelf);
+});
+return true;
+}
+
 // Ricostruisce il riepilogo dallo storico presente: serve una sola volta per chi
 // aggiorna l'app avendo gi\u00e0 dei giri salvati da prima.
 function backfillLifetimeOnce(){
@@ -14389,6 +14465,12 @@ if(!hist.length){ saveLifetime({}); return; }
 var lt = {};
 for(var i = hist.length - 1; i >= 0; i--){
 var h = hist[i];
+// Un giro interrotto non conta come giro intero: e' la stessa regola che
+// applica `scriviGiroNelloStorico`. Qui mancava, e ricostruendo il riepilogo
+// (aggiornamento, o giri scesi dal cloud) le mezze gare rientravano dalla
+// finestra. Dal 20/09 `interrotto` viaggia anche nel documento sul cloud,
+// quindi qui si sa. (20/09/2026)
+if(h && h.interrotto === true) continue;
 (h.results || []).forEach(function(r){
 if(!r || typeof r.total !== "number") return;
 var k = r.name + "|" + (modoDelGiro(h.modeKey, h.scoringVersion) || h.modeLabel || "?");
@@ -14924,6 +15006,25 @@ assetto: h.assetto || null,
 assettoNome: h.assettoNome || null,
 consegna: h.consegna || null,
 nota: h.nota || null,
+/* IL NOME DEL GIRO VIENE ANCHE QUI. (20/09/2026.)
+   Il `roundId` e' nato il 19/09 e finiva in tre posti su quattro: lo stato,
+   lo storico del telefono e la copia del giro APERTO sul cloud. Non nel
+   documento dello storico sul cloud — cioe' proprio in quello che
+   `verificaGiroAltrove()` interroga con
+   `storico.where("roundId","==",id)` per sapere se il giro e' gia' stato
+   chiuso ALTROVE. Quella domanda non poteva avere risposta: il campo non
+   c'era in nessun documento, quindi il telefono spento alla piazzola 12
+   resuscitava il giro gia' finito sul tablet, che era il difetto che il
+   `roundId` doveva chiudere.
+   Non se n'era accorto nessuno perche' il banco (`banco-giro-flusso`) il
+   documento se lo SCRIVEVA da solo, col campo dentro: provava la regola di
+   lettura, non quello che l'app scrive davvero.
+   `interrotto` sta qui per la stessa ragione: un giro chiuso a meta' non
+   deve tornare da un altro telefono e contare come intero.
+   Aggiungere campi non rompe l'app di ieri: `giroDaNuvola` copia i campi che
+   conosce e lascia stare gli altri. */
+roundId: h.roundId || null,
+interrotto: (h.interrotto === true),
 results: packResults(h.results)
 };
 }
@@ -14944,6 +15045,10 @@ assetto: d.assetto || null,
 assettoNome: d.assettoNome || null,
 consegna: d.consegna || null,
 nota: d.nota || null,
+// Assenti nei documenti scritti prima del 20/09: `null` e `false` sono la
+// risposta giusta, non un dato inventato.
+roundId: d.roundId || null,
+interrotto: (d.interrotto === true),
 results: unpackResults(d.results)
 };
 }
@@ -15113,7 +15218,7 @@ purgeDeletedFromLocal(gone);
 var local = loadHistory();
 var haveLocal = {};
 local.forEach(function(h){ if(h && h.date) haveLocal[roundDocId(h.date)] = true; });
-var added = 0;
+var added = 0, scesi = [];
 snap.forEach(function(doc){
 if(haveLocal[doc.id] || gone[doc.id]) return;
 var d = doc.data();
@@ -15122,15 +15227,19 @@ if(!d || !d.date || d.deleted === true) return;
    28/08/2026 non ha `scoringVersion`, e la sua assenza e'
    l'informazione: quel giro e' del barème vecchio. Si normalizza qui,
    alla lettura, invece di riscrivere Firestore in massa. */
-local.push(giroDaNuvola(d));
+var giro = giroDaNuvola(d);
+local.push(giro);
+scesi.push(giro);
 added++;
 });
 if(added){
 local.sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
+// I giri scesi si contano PRIMA del taglio: sono il motivo per cui il
+// riepilogo permanente esiste, e dopo il taglio non ci sarebbero piu'.
+assicuraVisti();
+scesi.forEach(function(h){ contaGiroNelRiepilogo(h); });
 if(local.length > HISTORY_MAX) local.length = HISTORY_MAX;
 saveHistoryList(local);
-try{ localStorage.removeItem(LIFETIME_KEY); }catch(e){}
-backfillLifetimeOnce();
 }
 if(cb) cb(null, added);
 }).catch(function(err){
@@ -22363,19 +22472,27 @@ infoCard.appendChild(el('<div class="nota stacco-3">'+t("club_contacts_hint")+'<
 var griglia = el('<div class="campi-coppie"></div>');
 infoCard.appendChild(griglia);
 
-function campo(dove, label, tipo, valore, ph){
+/* IL TETTO STA NEL CAMPO, NON SOLO NELLA REGOLA. (20/09/2026.)
+   Dal 20/09 le regole di Firestore danno una lunghezza massima a questi campi
+   (`referente` 120, `emailComp` 200, `tel` 40, `sito` 300, `indirizzo` 300,
+   `note` 5000). Senza un tetto anche QUI, un referente che scrive due righe
+   di troppo riceve un no dal server dopo aver premuto Salva — e il no di una
+   regola non dice quale campo, dice solo «permessi». *Un limite che l'utente
+   scopre solo quando lo supera non e' un limite: e' una trappola.* */
+function campo(dove, label, tipo, valore, ph, tetto){
 var box = el('<div class="campo-blocco"></div>');
 box.appendChild(el('<label class="campo-eti">'+label+'</label>'));
-var inp = el('<input type="'+tipo+'" class="input-field in-modulo" placeholder="'+escapeHtml(ph||label)+'" value="'+escapeHtml(valore||"")+'">');
+var inp = el('<input type="'+tipo+'" class="input-field in-modulo"'+(tetto ? ' maxlength="'+tetto+'"' : '')+' placeholder="'+escapeHtml(ph||label)+'" value="'+escapeHtml(valore||"")+'">');
 box.appendChild(inp);
 dove.appendChild(box);
 return inp;
 }
-var refInp   = campo(griglia, t("club_ref_name"), "text", info.referente, "Es. Mario Rossi");
-var emailInp = campo(griglia, t("cp_admin_email_label"), "email", info.emailComp, "info@compagnia.it");
-var telInp   = campo(griglia, t("cp_admin_tel"), "tel", info.tel, "+39 333 1234567");
-var sitoInp  = campo(griglia, t("cp_admin_sito"), "text", info.sito, "www.compagnia.it");
-var addrInp  = campo(infoCard, t("club_addr"), "text", info.indirizzo, "Via A. Alberti, Vignone (VB)");
+// I tetti sono gli stessi di firestore.rules (compagnie_admin): si muovono insieme.
+var refInp   = campo(griglia, t("club_ref_name"), "text", info.referente, "Es. Mario Rossi", 120);
+var emailInp = campo(griglia, t("cp_admin_email_label"), "email", info.emailComp, "info@compagnia.it", 200);
+var telInp   = campo(griglia, t("cp_admin_tel"), "tel", info.tel, "+39 333 1234567", 40);
+var sitoInp  = campo(griglia, t("cp_admin_sito"), "text", info.sito, "www.compagnia.it", 300);
+var addrInp  = campo(infoCard, t("club_addr"), "text", info.indirizzo, "Via A. Alberti, Vignone (VB)", 300);
 
 /* LE NOTE PER GLI ARCIERI NON SI SCRIVONO IN UNA FESSURA. (22/08/2026.)
    Tre righe visibili per un testo che spiega come si arriva al campo, dove si
@@ -22385,7 +22502,7 @@ var addrInp  = campo(infoCard, t("club_addr"), "text", info.indirizzo, "Via A. A
    campo che si rilegge prima di salvare.* */
 var noteBox = el('<div class="campo-blocco"></div>');
 noteBox.appendChild(el('<label class="campo-eti">'+t("club_notes")+'</label>'));
-var noteInp = el('<textarea class="input-field in-modulo campo-note" rows="12"></textarea>');
+var noteInp = el('<textarea class="input-field in-modulo campo-note" rows="12" maxlength="5000"></textarea>');
 noteInp.value = info.note || "";
 noteBox.appendChild(noteInp);
 infoCard.appendChild(noteBox);
@@ -25031,7 +25148,8 @@ card.appendChild(pzSel);
 
 // ── Descrizione ───────────────────────────────────────────────────────────
 card.appendChild(el('<div class="campo-eti">'+t("fr_report_desc")+'</div>'));
-var descInp = el('<textarea class="input-field in-modulo" placeholder="'+escapeHtml(t("fr_report_desc_ph"))+'" rows="4"></textarea>');
+// 5000: lo stesso tetto di `field_reports.description` in firestore.rules.
+var descInp = el('<textarea class="input-field in-modulo" maxlength="5000" placeholder="'+escapeHtml(t("fr_report_desc_ph"))+'" rows="4"></textarea>');
 card.appendChild(descInp);
 
 var status = el('<div class="fr-stato"></div>');
@@ -25501,18 +25619,45 @@ if(/android/i.test(ua)) return "android";
 if(/iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) return "ios";
 return "desktop";
 }
+/* LE DUE SCRITTURE NON SI TENGONO PER MANO. (20/09/2026, finestra di deploy.)
+   Erano in fila: prima il documento del dispositivo, POI `fcmToken`. Sembrava
+   giusto — il campo vecchio e' un ripiego — ma legava il ripiego al successo
+   della cosa nuova. `users/{uid}/devices` esiste solo nelle regole del
+   20/09: finche' quelle non sono in console, la prima scrittura viene
+   RIFIUTATA e la seconda non parte nemmeno. Risultato: chi apre l'app nuova
+   prima che le regole siano pubblicate non registra le push da nessuna parte,
+   ne' nel modo nuovo ne' in quello di prima. Cioe' esattamente la finestra di
+   deploy, dove il sito arriva per primo.
+   Adesso partono INSIEME e si aspettano a vicenda senza dipendere l'una
+   dall'altra. Basta che UNA delle due riesca: il server (`pushNotifica`
+   2026-09-20) legge i dispositivi E il vecchio `fcmToken`, quindi una sola
+   delle due basta a far arrivare la push. Si dice di no solo se cadono
+   entrambe — quello si', e' un guasto da mostrare.
+   Vale in tutte e quattro le combinazioni della finestra:
+     client nuovo + regole vecchie -> passa `fcmToken`, i dispositivi no;
+     client nuovo + regole nuove   -> passano tutte e due;
+     client vecchio + regole nuove -> scrive solo `fcmToken`, che le regole
+                                      permettono ancora (non e' stato tolto). */
+var ultimoErrorePush = null;   // l'ultimo no ricevuto: si mostra solo se cadono entrambe
 function scriviTokenPush(token){
 tokenScrittoQui = token;
 var utente = db.collection("users").doc(currentUser.uid);
 var dev = utente.collection("devices").doc(idDispositivo());
 var ora = firebase.firestore.FieldValue.serverTimestamp();
-return dev.get().then(function(d){
+var perDispositivo = dev.get().then(function(d){
 var campi = { token: token, platform: piattaforma(), language: String(state.lang || "it").slice(0, 5),
               enabled: true, updatedAt: ora, lastSeen: ora };
 if(!d.exists) campi.createdAt = ora;
 return dev.set(campi, { merge: true });
-}).then(function(){
-return utente.update({ fcmToken: token });
+});
+var comePrima = utente.update({ fcmToken: token });
+// `Promise.all` cadrebbe alla prima delle due: qui si aspettano tutte e due e
+// si guarda dopo com'e' andata. (`allSettled` non c'e': l'app e' in ES5.)
+var esiti = [perDispositivo, comePrima].map(function(p){
+return p.then(function(){ return true; }, function(err){ ultimoErrorePush = err; return false; });
+});
+return Promise.all(esiti).then(function(andate){
+if(andate.indexOf(true) < 0) throw (ultimoErrorePush || new Error("token non scritto"));
 });
 }
 function togliTokenPush(uid, token){
@@ -28727,6 +28872,10 @@ hist.unshift(roundEntry);
 roundEntry.results.forEach(function(r){
 if(!interrotto) recordLifetime(r.name, modoDelGiro(state.mode, roundEntry.scoringVersion), mLabel, r.total, nowISO, state.format, r.ownerUid, r.isSelf);
 });
+// Contato qui, una volta. Senza questo segno lo stesso giro, riscendendo dal
+// cloud su questo telefono, verrebbe contato una seconda volta.
+assicuraVisti();
+segnaVisto(roundEntry);
 if(hist.length > HISTORY_MAX) hist.length = HISTORY_MAX;
 saveHistoryList(hist);
 backupRoundToCloud(roundEntry);
