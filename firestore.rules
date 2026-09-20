@@ -1,46 +1,7 @@
 rules_version = '2';
 // ArcTrail 3D — regole Firestore
-// Versione 2026-09-20-visibilita
-// Nata da: 2026-08-28-porte-verified (l'ultima incollata in console)
-//
-// NOVITA' 2026-09-20 — DISPOSITIVI, TIPI E LIMITI (risanamento notturno)
-//  1) users/{uid}/devices/{deviceId}: un documento per telefono (token delle push).
-//     Solo il proprietario; campi fissi, tipi, lunghezze.
-//  2) Messaggi (chat private, chat degli allenamenti): testo con un limite.
-//  3) errors: campi con un limite di lunghezza (si scrivono anche senza email
-//     confermata, quindi sono la porta piu' aperta).
-//  4) compagnie_admin: tipi e lunghezze dei campi del referente.
-//  Versione intermedia mai incollata: 2026-09-19-porte-chiuse.
-//
-// NOVITA' 2026-09-19 (2) — QUATTRO PORTE DELL'AUDIT
-//  1) CHAT PRIVATE: l'id `uidA__uidB` deve essere quello dei due membri, in
-//     ordine. Prima un terzo creava `A__B` con dentro se stesso e leggeva i
-//     messaggi che A credeva di mandare a B (SEC-07).
-//  2) SOSPENSIONE: `sospesi/{uid}` lo scrive l'admin revocando. Chi e' sospeso
-//     non apre allenamenti, chat, sessioni, segnalazioni o percorsi, e non
-//     puo' ricrearsi `users/{uid}` con approved:true (SEC-08).
-//  3) `percorsi` (le bozze di Prepara gara, con tessere di atleti terzi) si
-//     leggono solo da chi le ha fatte e dall'admin (SEC-09).
-//  4) Chi chiede di gestire una compagnia non sceglie il proprio nome ed email:
-//     l'email e' quella del token (SEC-13).
-//  Stringono: `app.html` 2026-09-19 prima, poi queste (regola 18).
-//
-// Versione intermedia mai incollata: 2026-09-19-tipi-sicuri (campi con un tipo).
-//
-// NOVITA' 2026-09-19 — I CAMPI CHE FINISCONO SULLO SCHERMO DI UN ALTRO HANNO UN TIPO
-//  L'audit del 19/09 ha trovato cinque XSS salvati (P0-1): `open_trainings.spots`,
-//  `percorsi_campo.piazzole`, `field_reports.piazzola`, `public_profiles.numeri.*`
-//  e i nomi di `public_profiles` finivano nell'HTML di chi guarda, e qui non si
-//  chiedeva che fossero numeri o testi corti. Il client (2026-09-19) ora li rifa'
-//  numero e li passa da escapeHtml; queste regole chiudono la stessa porta dal
-//  lato del database, per i client modificati e per quelli vecchi.
-//  `numeroOpz` / `testoOpz`: il campo puo' mancare o essere null; se c'e' deve
-//  essere del tipo giusto e dentro un limite. I limiti stanno sopra a quelli del
-//  client (maxlength), quindi nessun documento scritto dall'app vera viene
-//  rifiutato.
-//  REGOLA 18: stringono. `app.html` 2026-09-19 va online PRIMA di incollarle.
-//
-// Versione precedente: 2026-08-28-porte-verified, nata da 2026-08-28-offerta.
+// Versione 2026-08-28-porte-verified
+// Nata da: 2026-08-28-offerta
 //
 // ATTENZIONE AL GENITORE (2). Il genitore qui e' `2026-08-28-offerta`, cioe'
 //  la versione che mi e' stata consegnata come ultima. NON ho la console, non
@@ -338,51 +299,6 @@ service cloud.firestore {
     function verified() {
       return signedIn() && request.auth.token.get('email_verified', false) == true;
     }
-    // TIPI DEI CAMPI CHE SI MOSTRANO AGLI ALTRI. (19/09/2026, audit P0-1.)
-    // Assente o null va bene; se c'e', numero >= 0 sotto un tetto largo, o testo
-    // non piu' lungo di `max`. Un numero non porta mai HTML.
-    function numeroOpz(d, k) {
-      return d.get(k, null) == null
-        || (d.get(k, null) is number && d.get(k, 0) >= 0 && d.get(k, 0) <= 100000);
-    }
-    function testoOpz(d, k, max) {
-      return d.get(k, null) == null
-        || (d.get(k, null) is string && d.get(k, '').size() <= max);
-    }
-    // QUANTO DEVE ESSERE ALTO `max`. (20/09/2026, finestra di deploy.)
-    //
-    // Il 19/09 questi tetti erano stati messi uguali al limite del PRODOTTO —
-    // 2000 caratteri per un messaggio, perche' tanto «l'app ha lo stesso
-    // limite nel campo». Sbagliato per due motivi, e il secondo e' grave.
-    //
-    // 1. L'APP DI IERI NON HA QUEL LIMITE. `maxlength` sulle caselle della
-    //    chat e' arrivato con questa versione: l'app pubblicata il 18/09 —
-    //    quella che sta nei telefoni, e che ci resta finche' non si aggiorna —
-    //    manda quello che uno ha scritto, lungo quanto gli pare. Con un tetto
-    //    a 2000 nelle regole, il giorno in cui si pubblicano, un messaggio
-    //    lungo di un'app non ancora aggiornata viene RIFIUTATO. In silenzio:
-    //    il `catch` scrive in console e la persona vede il messaggio sparire.
-    //    La finestra di deploy dura quanto la cassa del service worker, cioe'
-    //    giorni, non minuti.
-    //
-    // 2. NON E' IL MESTIERE DI UNA REGOLA. Il limite di prodotto lo dice il
-    //    campo, dove chi scrive lo VEDE mentre scrive. La regola risponde a
-    //    un'altra domanda — «questo e' un documento o un attacco?» — e la
-    //    risposta non cambia fra 2.000 e 8.000 caratteri: cambia fra ottomila
-    //    e un milione, che era il difetto vero («un client modificato
-    //    riempiva una chat con documenti da un megabyte»).
-    //
-    // Quindi: qui sotto i tetti sono SOFFITTI D'ABUSO, larghi abbastanza da
-    // non dire mai di no a una persona vera, stretti abbastanza da non far
-    // passare un documento che serve solo a occupare spazio. Il limite di
-    // prodotto sta in `app.html`, sulla casella, ed e' piu' basso.
-    // ACCOUNT ATTIVO: email confermata e NON sospeso. (19/09/2026, SEC-08.)
-    // Il segno sta in `sospesi/{uid}`, scritto solo dall'admin: a differenza di
-    // `users.approved` non si cancella cancellando il proprio documento.
-    function attivo() {
-      return verified()
-        && !exists(/databases/$(database)/documents/sospesi/$(request.auth.uid));
-    }
     function isBeta() {
       return signedIn()
         && exists(/databases/$(database)/documents/users/$(request.auth.uid))
@@ -428,13 +344,7 @@ service cloud.firestore {
     }
     // Firma vera del messaggio: senderUid deve combaciare con chi scrive.
     function firmaValida() {
-      return request.resource.data.get('senderUid', '') == request.auth.uid
-        // Soffitto d'abuso, non limite di prodotto (vedi sopra `testoOpz`):
-        // la casella della chat si ferma a 2000, qui si dice no a chi vuole
-        // usare una conversazione come deposito. `senderName` largo il doppio
-        // del nome piu' lungo che l'app sappia comporre.
-        && testoOpz(request.resource.data, 'text', 8000)
-        && testoOpz(request.resource.data, 'senderName', 240);
+      return request.resource.data.get('senderUid', '') == request.auth.uid;
     }
     function dmMembers(chatId) {
       return get(/databases/$(database)/documents/direct_chats/$(chatId)).data.members;
@@ -447,90 +357,6 @@ service cloud.firestore {
     }
     function convExists(conversationId) {
       return exists(/databases/$(database)/documents/market_conversations/$(conversationId));
-    }
-    /* ══ CHI PUO' VEDERE UN ALLENAMENTO ══════════════════════════════════════
-       (20/09/2026, audit SEC-09, seconda passata.) La visibilita' «solo club»
-       era un `if` dentro `app.html`, cioe' una tenda: bastava un client
-       diverso — o la console di Firestore — per leggere tutto.
-       Qui diventa una porta. `mioClub()` chiede la compagnia a `users/{uid}`:
-       Firestore tiene in cache le letture fatte dalle regole DENTRO la stessa
-       richiesta, quindi una query da cinquanta documenti costa una lettura in
-       piu', non cinquanta.
-       `clubCode` vuoto NON vale come «stesso club»: due allenamenti senza
-       codice non sono della stessa compagnia, sono due allenamenti senza
-       codice. */
-    function mioClub() {
-      return exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('compagnia', '')
-        : '';
-    }
-    /* ══ DUE VERSIONI DELLA STESSA DOMANDA, E NON E' UN DOPPIONE ═════════════
-       (20/09/2026, misurato sull'emulatore, non dedotto.)
-
-       Scritta una volta sola, con dentro `mioClub()`, questa condizione
-       proteggeva la lettura di UN documento e NON proteggeva l'elenco: una
-       query senza filtri tornava anche i «solo club» di un'altra compagnia,
-       mentre il `get` dello stesso documento veniva negato. Provato: con una
-       regola senza `get()` la stessa query viene RIFIUTATA; con `get()` passa.
-       Una regola che chiama `get()` non restringe le query.
-
-       *Una protezione che vale solo per la porta piccola non e' una
-       protezione: e' un cartello.* Quindi:
-
-         `vedeAllenamento`     — per il `get`. Puo' chiedere la compagnia al
-                                 documento utente, costa una lettura, ed e'
-                                 la piu' larga: comprende i soci del club.
-         `elencaAllenamento`   — per la `list`. NON chiama `get()`, quindi
-                                 vale davvero. Guarda solo il documento e il
-                                 TOKEN di chi chiede.
-
-       La compagnia nel token e' un `custom claim` che la Cloud Function
-       `claimCompagnia` scrive quando cambia `users/{uid}.compagnia`. Finche'
-       quella funzione non e' pubblicata e i token non si sono rinnovati, il
-       claim non c'e': l'elenco dei «solo club» della propria compagnia resta
-       vuoto per i soci, e l'app se lo aspetta (vedi `loadOpenTrainings`).
-       E' una funzione in meno per qualche ora, non una porta aperta per
-       sempre. */
-    function vedeAllenamento(d) {
-      return elencaAllenamento(d)
-        || (d.get('clubCode', '') != '' && d.get('clubCode', '') == mioClub());
-    }
-    /* ══ QUI SI LEGGONO I CAMPI DIRETTAMENTE, E NON E' UNA SVISTA ════════════
-       (20/09/2026, misurato sull'emulatore tre volte prima di crederci.)
-
-       Ovunque altro in questo file si scrive `d.get('campo', default)`: e'
-       difensivo, e sui documenti vecchi evita un errore. DENTRO UNA REGOLA DI
-       `list` QUELLA FORMA NON CONTROLLA NIENTE. Provato:
-
-         list con `resource.data.get('visibility','all') != 'club'`  -> PASSA
-         list con `resource.data.visibility != 'club'`               -> RIFIUTA
-         list con `'visibility' in resource.data && ...`             -> PASSA
-
-       Cioe' la versione prudente lasciava passare l'elenco intero, e quella
-       «ingenua» e' l'unica che chiude. Ci sono cascato: la prima stesura di
-       questa regola usava `.get()`, sembrava giusta, e non proteggeva niente.
-       *Una regola si prova contro il database, non si legge.*
-
-       IL PREZZO: se a un documento manca uno di questi cinque campi, la
-       regola va in errore e la query viene rifiutata INTERA — un documento
-       vecchio spegnerebbe l'elenco a tutti (provato anche quello). Percio':
-         1. i cinque campi nascono insieme alla funzione (primo commit che
-            scrive `visibility` e' lo stesso di `invitedUids`,
-            `participantUids`, `clubCode` e `ownerUid`): in produzione non
-            esiste un allenamento che ne manchi uno;
-         2. la `create` qui sotto li PRETENDE, cosi' resta vero anche domani;
-         3. l'ordine delle righe conta: un allenamento aperto a tutti esce
-            alla prima, senza toccare gli altri quattro campi.
-
-       `request.auth.token.get(...)` invece va benissimo: il divieto riguarda
-       i campi del DOCUMENTO, non il token, e il token lo scrive il server
-       (`claimCompagnia`). */
-    function elencaAllenamento(d) {
-      return d.visibility != 'club'
-        || d.ownerUid == request.auth.uid
-        || request.auth.uid in d.invitedUids
-        || request.auth.uid in d.participantUids
-        || d.clubCode == request.auth.token.get('compagnia', '');
     }
     function otExists(otId) {
       return exists(/databases/$(database)/documents/open_trainings/$(otId));
@@ -552,9 +378,7 @@ service cloud.firestore {
       // che nessuno nasca gia' collaudatore o premium.
       allow create: if signedIn() && request.auth.uid == userId
                     && request.resource.data.get('betaTester', false) == false
-                    && request.resource.data.get('premium', false) == false
-                    && (request.resource.data.get('approved', false) != true
-                        || !exists(/databases/$(database)/documents/sospesi/$(userId)));
+                    && request.resource.data.get('premium', false) == false;
       // update: l'interessato modifica il proprio profilo ma NON i tre campi
       // che decidono cosa puo' fare (approved, betaTester, premium): quelli li
       // muove solo l'admin dal pannello Approvazioni.
@@ -572,21 +396,6 @@ service cloud.firestore {
 
       match /storico/{roundId} {
         allow read, write: if signedIn() && request.auth.uid == userId;
-      }
-
-      // UN DOCUMENTO PER DISPOSITIVO. (20/09/2026, fase 16.) Il token delle push di
-      // un telefono. Lo legge e lo scrive solo il proprietario (il server usa
-      // l'Admin SDK). Niente impronte: `platform` e' una di tre parole.
-      match /devices/{deviceId} {
-        allow read, delete: if signedIn() && request.auth.uid == userId;
-        allow create, update: if signedIn() && request.auth.uid == userId
-          && deviceId.size() <= 64
-          && request.resource.data.keys().hasOnly(['token','platform','language','enabled','createdAt','updatedAt','lastSeen'])
-          && testoOpz(request.resource.data, 'token', 4096)
-          && (request.resource.data.get('platform', null) == null
-              || request.resource.data.platform in ['android','ios','desktop'])
-          && testoOpz(request.resource.data, 'language', 5)
-          && (request.resource.data.get('enabled', null) == null || request.resource.data.enabled is bool);
       }
 
       // IL GIRO IN CORSO. (21/08/2026, PRD 16.5-16.7.)
@@ -640,38 +449,11 @@ service cloud.firestore {
                                 && request.resource.data.keys().hasOnly(
                                      ['username','nomeCognome','compagnia','compagniaNome','updatedAt',
                                       'bio','arco','numeri'])
-                                // 19/09/2026 (P0-1): tipi e lunghezze. `numeri` e' una
-                                // mappa di soli numeri: `giri` finiva nell'HTML di chi
-                                // apre il profilo. `media` resta ammessa per i documenti
-                                // scritti prima del 29/08 (set con merge la conserva).
-                                // Soffitti d'abuso (vedi `testoOpz`): l'app di ieri non
-                                // ha un tetto sul nome e sull'username, e un nome lungo
-                                // non deve far fallire l'allineamento del profilo.
-                                && testoOpz(request.resource.data, 'username', 120)
-                                && testoOpz(request.resource.data, 'nomeCognome', 240)
-                                && testoOpz(request.resource.data, 'compagnia', 40)
-                                && testoOpz(request.resource.data, 'compagniaNome', 400)
-                                && testoOpz(request.resource.data, 'bio', 600)
-                                && testoOpz(request.resource.data, 'arco', 80)
-                                && (request.resource.data.get('numeri', null) == null
-                                    || (request.resource.data.numeri is map
-                                        && request.resource.data.numeri.keys().hasOnly(['giri','piazzole','campi','media'])
-                                        && numeroOpz(request.resource.data.numeri, 'giri')
-                                        && numeroOpz(request.resource.data.numeri, 'piazzole')
-                                        && numeroOpz(request.resource.data.numeri, 'campi')
-                                        && numeroOpz(request.resource.data.numeri, 'media')))
                                 && exists(/databases/$(database)/documents/users/$(userId))
                                 && get(/databases/$(database)/documents/users/$(userId)).data.approved == true);
       // delete senza il controllo approved: chi elimina l'account deve poter
       // sparire dall'elenco anche se nel frattempo e' stato revocato.
       allow delete: if isAdmin() || (signedIn() && request.auth.uid == userId);
-    }
-
-    // CHI E' SOSPESO. Lo scrive e lo toglie solo l'admin; l'interessato puo'
-    // leggerlo (l'app gli dice perche' certe porte sono chiuse).
-    match /sospesi/{uid} {
-      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
-      allow write: if isAdmin();
     }
 
     match /sessions/{sessionId} {
@@ -689,7 +471,7 @@ service cloud.firestore {
       // noto e accettato che un verificato possa invitare altri alla
       // creazione (invito arbitrario/banner): e' MEDIO, non un takeover — i
       // tiri, il regolamento e gli arcieri restano protetti dall'update.
-      allow create: if attivo()   // 19/09/2026 (SEC-08): non sospeso
+      allow create: if verified()
                     && request.auth.uid == request.resource.data.ownerUid
                     && request.auth.uid in request.resource.data.participantUids;
       // CHI SEGNA E CHI CONTROFIRMA NON FANNO LO STESSO MESTIERE. (28/08/2026.)
@@ -752,9 +534,7 @@ service cloud.firestore {
     }
 
     match /percorsi/{percorsoId} {
-      // 19/09/2026 (SEC-09): dentro ci sono gli iscritti di una gara, con tessera
-      // e categoria di atleti terzi. Li legge chi li ha scritti, e l'admin.
-      allow read: if signedIn() && (resource.data.get('createdBy', '') == request.auth.uid || isAdmin());
+      allow read: if signedIn();
       allow create: if signedIn() && request.auth.uid == request.resource.data.createdBy;
       allow update, delete: if signedIn()
                             && (request.auth.uid == resource.data.createdBy || isAdmin());
@@ -981,16 +761,7 @@ service cloud.firestore {
                     && request.resource.data.get('uid', '') == request.auth.uid
                     && request.resource.data.get('msg', '') is string
                     && request.resource.data.keys().hasOnly(
-                         ['uid','msg','stack','dove','screen','build','lang','ua','online','at','extra'])
-                    // 20/09/2026: le stesse lunghezze che l'app gia' taglia.
-                    && testoOpz(request.resource.data, 'msg', 300)
-                    && testoOpz(request.resource.data, 'stack', 700)
-                    && testoOpz(request.resource.data, 'dove', 60)
-                    && testoOpz(request.resource.data, 'extra', 200)
-                    && testoOpz(request.resource.data, 'screen', 60)
-                    && testoOpz(request.resource.data, 'build', 60)
-                    && testoOpz(request.resource.data, 'lang', 8)
-                    && testoOpz(request.resource.data, 'ua', 200);
+                         ['uid','msg','stack','dove','screen','build','lang','ua','online','at','extra']);
       allow read: if isAdmin()
                   || (signedIn() && resource.data.get('uid', '') == request.auth.uid);
       allow delete: if isAdmin()
@@ -1010,14 +781,9 @@ service cloud.firestore {
       // l'ha chiesto: e' il caso di scuola per cui la conferma esiste.
       // Leggere, elencare e cancellare restano su `signedIn()`: chi e' gia'
       // dentro una conversazione non ne resta prigioniero.
-      // 19/09/2026 (SEC-07): l'id e' `membroMinore__membroMaggiore`, come lo
-      // costruisce l'app ([a,b].sort().join("__")). Senza questo un terzo creava
-      // `A__B` mettendoci dentro se stesso e leggeva la conversazione di A.
-      allow create: if attivo()
+      allow create: if verified()
                     && request.resource.data.members.size() == 2
-                    && request.auth.uid in request.resource.data.members
-                    && request.resource.data.members[0] < request.resource.data.members[1]
-                    && chatId == request.resource.data.members[0] + '__' + request.resource.data.members[1];
+                    && request.auth.uid in request.resource.data.members;
       // I membri non possono cambiare dopo la creazione.
       allow update: if signedIn()
                     && request.auth.uid in resource.data.members
@@ -1031,7 +797,7 @@ service cloud.firestore {
         // firmaValida(): in una chat a due, senza questo controllo si poteva
         // scrivere un messaggio che sembrava dell'altro.
         // 28/08/2026: `signedIn()` -> `verified()`.
-        allow create: if attivo()   // 19/09/2026 (SEC-08): non sospeso
+        allow create: if verified()
                       && firmaValida()
                       && dmExists(chatId)
                       && request.auth.uid in dmMembers(chatId);
@@ -1045,32 +811,10 @@ service cloud.firestore {
     }
 
     match /open_trainings/{otId} {
-      /* LE REGOLE NON FILTRANO UNA QUERY: LA RIFIUTANO. Quindi non basta
-         scrivere qui la condizione — la deve rispettare anche la domanda che
-         fa l'app, o l'elenco sparisce per tutti. `loadOpenTrainings` chiede
-         quattro cose separate (aperti a tutti / della mia compagnia / a cui
-         sono invitato / miei), ognuna su un campo solo, e ognuna torna solo
-         documenti che passano di qui.
-         CONSEGUENZA DICHIARATA: l'app di ieri chiede `status == "active"` e
-         basta, quindi da quando queste regole sono in console il suo elenco
-         allenamenti resta VUOTO finche' non si aggiorna. E' una perdita di
-         funzione per qualche ora, e si e' scelta quella: l'alternativa era
-         lasciare che un annuncio «solo per i soci» lo leggesse chiunque
-         finche' l'ultimo telefono non aggiorna, cioe' non chiuderlo affatto.
-         *La compatibilita' di FORMATO si mantiene sempre; quella di SICUREZZA
-         non esiste.* */
-      allow get: if signedIn() && (isAdmin() || vedeAllenamento(resource.data));
-      allow list: if signedIn() && (isAdmin() || elencaAllenamento(resource.data));
+      allow read: if signedIn();
       // 28/08/2026: `signedIn()` -> `verified()`. Un allenamento aperto lo
       // vede tutta l'app, col nome e il posto di chi lo organizza.
-      // 19/09/2026 (P0-1): `spots` numero. Finiva in «taken/total» nell'elenco di tutti.
-      allow create: if attivo() && request.resource.data.ownerUid == request.auth.uid
-                    && numeroOpz(request.resource.data, 'spots')
-                    // I cinque campi che `elencaAllenamento` legge senza rete di
-                    // protezione: se ne manca uno, quella regola va in errore e
-                    // l'elenco si spegne per TUTTI. Si pretendono alla nascita.
-                    && request.resource.data.keys().hasAll(
-                         ['visibility','ownerUid','invitedUids','participantUids','clubCode']);
+      allow create: if verified() && request.resource.data.ownerUid == request.auth.uid;
       // CI SI ISCRIVE DA SOLI, E SOLO SE STESSI. (28/08/2026.)
       //
       // Prima qualunque utente loggato poteva riscrivere per intero
@@ -1096,8 +840,7 @@ service cloud.firestore {
       // sanno scorrere un elenco, quindi si puo' solo contare: al massimo una
       // voce che entra e una che esce. Cosa resta scoperto e' scritto in
       // fondo al file, e non lo chiamo protetto.
-      // 19/09/2026 (P0-1): anche l'organizzatore non puo' trasformare `spots` in testo dopo.
-      allow update: if signedIn() && numeroOpz(request.resource.data, 'spots') && (
+      allow update: if signedIn() && (
         request.auth.uid == resource.data.ownerUid || isAdmin() ||
         (verified()
          && request.resource.data.diff(resource.data).affectedKeys()
@@ -1115,46 +858,6 @@ service cloud.firestore {
       );
       allow delete: if signedIn() && (request.auth.uid == resource.data.ownerUid || isAdmin());
 
-      /* ══ DOVE SI TIRA, E A CHE ORA ═══════════════════════════════════════
-         (20/09/2026, audit SEC-09.) `lat` e `lng` stavano nel documento
-         dell'allenamento, che ogni account puo' leggere. Per un allenamento
-         «solo club» sono il dato piu' pesante che ci sia: dicono dove sara'
-         una persona, e quando. La visibilita' «club» era applicata solo nel
-         client, cioe' da nessuna parte per chi non usa questo client.
-         Adesso il punto sta qui sotto, e lo legge chi quell'allenamento
-         riguarda: l'organizzatore, gli invitati, gli iscritti — e tutti, se
-         l'allenamento e' aperto a tutti.
-         NON CHIUDE LA VISIBILITA' DELL'ELENCO, e non voglio che sembri di si':
-         chi ha un account vede ancora CHE c'e' un allenamento al campo X alle
-         nove. Chiuderlo per davvero vuol dire spezzare in tre la query
-         dell'elenco e creare due indici composti — cioe' una modifica legata a
-         un deploy, non a un file. Sta scritto nel rapporto. */
-      match /dove/{quale} {
-        // Stessa porta del documento di sopra: se non puoi vedere
-        // l'allenamento, non puoi sapere dove si tira.
-        allow read: if signedIn()
-                    && (isAdmin()
-                        || (otExists(otId)
-                            && vedeAllenamento(get(/databases/$(database)/documents/open_trainings/$(otId)).data)));
-        /* L'ALLENAMENTO DEVE ESISTERE GIA'. (Corretto il 20/09/2026, poche ore
-           dopo averlo scritto male io stesso.) Qui c'era anche
-           `|| !otExists(otId)`, con la scusa che «alla creazione nascono
-           insieme e il documento di sopra puo' non esserci ancora». Quella
-           riga diceva, in pratica: *chiunque puo' scrivere il punto di un
-           allenamento che non esiste* — e una sottoraccolta in Firestore vive
-           benissimo senza il suo documento padre. Era una comodita' di
-           scrittura travestita da compatibilita', cioe' esattamente il modo in
-           cui una porta chiusa torna aperta.
-           La comodita' costava una riga nell'app: `app.html` adesso scrive il
-           punto DOPO che l'allenamento e' nato. Il codice si adatta alla
-           regola, non il contrario. */
-        allow write: if signedIn()
-                     && otExists(otId)
-                     && (isAdmin()
-                         || get(/databases/$(database)/documents/open_trainings/$(otId)).data.get('ownerUid', '') == request.auth.uid)
-                     && request.resource.data.keys().hasOnly(['lat','lng']);
-      }
-
       match /messages/{msgId} {
         allow read: if signedIn();
         // Prima era "create: if signedIn()" e basta: chiunque poteva scrivere in
@@ -1165,7 +868,7 @@ service cloud.firestore {
         // request.auth.uid in get(.../open_trainings/$(otId)).data.participantUids
         // 28/08/2026: `signedIn()` -> `verified()`. E' una chat che leggono
         // tutti, anche chi non partecipa: e' il posto piu' pubblico dell'app.
-        allow create: if attivo()   // 19/09/2026 (SEC-08): non sospeso
+        allow create: if verified()
                       && firmaValida()
                       && otExists(otId);
         // senderUid e admin PRIMA del get(), e get() protetto da exists(): se
@@ -1194,24 +897,7 @@ service cloud.firestore {
     // nel documento dalla console — a meno di essere il referente di quella
     // compagnia o chi tiene l'app.
     match /percorsi_campo/{id} {
-      /* ══ UN PERCORSO CONFERMATO E' PUBBLICO, UNA PROPOSTA NO ═════════════
-         (20/09/2026, audit SEC-09.) Qui c'era `read: if signedIn()`, quindi
-         anche le proposte non ancora valutate — col nome di chi le ha scritte
-         e, nei documenti di prima del 19/09, la sua email — le leggeva
-         qualunque account.
-         Un percorso confermato e' informazione del campo: ci si va a tirare, e
-         si deve poter vedere. Una proposta e' una cosa fra chi l'ha mandata e
-         il referente, finche' e' aperta.
-         L'APP CHIEDE DUE QUERY SEPARATE (`caricaPercorsiCampo`), e non e' un
-         dettaglio: Firestore non filtra una query che tocca documenti vietati,
-         la RIFIUTA intera. Una query sola su `clubCode` fallirebbe per tutti
-         appena la compagnia ha una proposta aperta. */
-      allow read: if signedIn() && (
-        resource.data.get('stato', '') == 'confermato'
-        || resource.data.get('createdBy', '') == request.auth.uid
-        || isClubAdmin(resource.data.get('clubCode', ''))
-        || isAdmin()
-      );
+      allow read: if signedIn();
       // 28/08/2026 (seconda passata): un percorso 'proposto' fa scattare
       // `avvisaPercorso` — push al referente e all'admin, e una email in coda
       // alla compagnia. E' una cosa che arriva addosso a chi non conosce chi
@@ -1222,14 +908,8 @@ service cloud.firestore {
                     && request.resource.data.createdBy == request.auth.uid
                     && request.resource.data.clubCode is string
                     && request.resource.data.clubCode != ''
-                    // 19/09/2026 (P0-1): `piazzole` finiva nel pannello admin senza
-                    // escape. Numero; nome e note corti come nel client (80 / 300).
-                    && numeroOpz(request.resource.data, 'piazzole')
-                    // Soffitti d'abuso (vedi `testoOpz`): la casella dice 80 e 300.
-                    && testoOpz(request.resource.data, 'nome', 240)
-                    && testoOpz(request.resource.data, 'note', 2000)
                     && (
-                         (attivo() && request.resource.data.stato == 'proposto')
+                         (verified() && request.resource.data.stato == 'proposto')
                          || ((isAdmin() || isClubAdmin(request.resource.data.clubCode))
                              && request.resource.data.stato == 'confermato')
                        );
@@ -1240,7 +920,6 @@ service cloud.firestore {
       // nemmeno lui poteva piu' correggerlo. Vale anche per l'admin: un
       // percorso che cambia compagnia si cancella e si rifa'.
       allow update: if (isAdmin() || isClubAdmin(resource.data.get('clubCode', '')))
-                    && numeroOpz(request.resource.data, 'piazzole')
                     && request.resource.data.get('clubCode', '') == resource.data.get('clubCode', '')
                     && request.resource.data.get('createdBy', '') == resource.data.get('createdBy', '');
       // Chi ha proposto puo' ritirare finche' nessuno ha risposto. Dopo no:
@@ -1266,14 +945,7 @@ service cloud.firestore {
     match /field_reports/{id} {
       // 28/08/2026: `signedIn()` -> `verified()`. Una segnalazione arriva sul
       // telefono di un referente di compagnia che non conosce chi scrive.
-      // 19/09/2026 (P0-1): `piazzola` numero (il client scrive parseInt o null);
-      // `type` testo corto: si mostra solo tramite la tabella TIPI.
-      allow create: if attivo() && request.resource.data.reporterUid == request.auth.uid
-                    && numeroOpz(request.resource.data, 'piazzola')
-                    && testoOpz(request.resource.data, 'type', 60)
-                    // La casella della segnalazione dice 5000 da questa versione;
-                    // quella di ieri non diceva niente. Qui il soffitto e' l'abuso.
-                    && testoOpz(request.resource.data, 'description', 20000);
+      allow create: if verified() && request.resource.data.reporterUid == request.auth.uid;
       allow read: if isAdmin()
                   || (signedIn() && resource.data.get('reporterUid', '') == request.auth.uid)
                   || isClubAdmin(resource.data.get('clubCode', ''));
@@ -1293,33 +965,12 @@ service cloud.firestore {
     // delete solo admin: se un referente elimina l'account, adminUid resta
     // puntato a un uid morto e va ripulito a mano dal pannello.
     match /compagnie_admin/{codice} {
-      /* ══ LA SCHEDA DEL REFERENTE E' SUA ═══════════════════════════════════
-         (20/09/2026, audit SEC-09.) Qui c'era `read: if signedIn()`, e dentro
-         il documento ci sono il nome del referente, il suo telefono,
-         l'indirizzo e le note private del club: li leggeva qualunque account,
-         anche non verificato. Le regole non sanno nascondere UN CAMPO — o si
-         legge il documento o no — quindi i due dati che servono davvero a
-         tutti (chi la gestisce, l'email a cui scrivere) sono stati spostati
-         in `compagnie_contatto/{codice}`, qui sotto.
-         La query dell'app e' `where('adminUid','==',uid)`, che resta valida:
-         ogni documento che torna passa questa regola. */
-      allow read: if isAdmin() || (signedIn() && resource.data.get('adminUid', '') == request.auth.uid);
+      allow read: if signedIn();
       allow create, delete: if isAdmin();
       allow update: if isAdmin()
                     || (signedIn()
                         && resource.data.adminUid == request.auth.uid
-                        && request.resource.data.adminUid == resource.data.adminUid
-                        // 20/09/2026: i campi che scrive il referente, con tipo e lunghezza.
-                        // Soffitti d'abuso: i tetti che si VEDONO stanno sulle caselle
-                        // in app.html (120, 200, 40, 300, 300, 5000). L'app di ieri non
-                        // li ha, e un telefono con la nota scritta fuori misura non deve
-                        // prendere un no che non sa spiegare.
-                        && testoOpz(request.resource.data, 'referente', 240)
-                        && testoOpz(request.resource.data, 'emailComp', 320)
-                        && testoOpz(request.resource.data, 'tel', 120)
-                        && testoOpz(request.resource.data, 'sito', 600)
-                        && testoOpz(request.resource.data, 'indirizzo', 600)
-                        && testoOpz(request.resource.data, 'note', 20000));
+                        && request.resource.data.adminUid == resource.data.adminUid);
     }
 
     // --- NOTE PRIVATE DELL'ADMIN ---
@@ -1331,37 +982,12 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
-    /* --- IL CONTATTO PUBBLICO DI UNA COMPAGNIA ---------------------------
-       (20/09/2026, audit SEC-09.) Due campi soli, e sono quelli che l'app
-       chiede per tutte le compagnie: `adminUid` (c'e' un referente? sono io?)
-       ed `emailComp` (a chi mando la segnalazione di un campo rotto).
-       Li scrive chi puo' scrivere la scheda — il referente di QUELLA
-       compagnia, o chi tiene l'app — e li legge chiunque abbia un account.
-       `hasOnly` e' stretto apposta: se un giorno qui dentro finisse un
-       telefono, saremmo tornati al punto di partenza senza accorgercene. */
-    match /compagnie_contatto/{codice} {
-      allow read: if signedIn();
-      allow write: if (isAdmin() || isClubAdmin(codice))
-                   && request.resource.data.keys().hasOnly(['adminUid','emailComp','aggiornatoIl'])
-                   && testoOpz(request.resource.data, 'adminUid', 128)
-                   && testoOpz(request.resource.data, 'emailComp', 320)
-                   // NON `numeroOpz`: quello ha un tetto a 100.000 ed e' fatto per i
-                   // conteggi. Qui c'e' un `Date.now()`, che di zeri ne ha tredici.
-                   && (request.resource.data.get('aggiornatoIl', null) == null
-                       || request.resource.data.aggiornatoIl is number);
-    }
-
     // --- RICHIESTE DI GESTIONE COMPAGNIA ---
     match /compagnie_admin_requests/{id} {
       // 28/08/2026: `signedIn()` -> `verified()`. Chiedere di gestire una
       // compagnia e' una richiesta che una persona vera legge e valuta.
       // (Resta aperto il punto B3: non si chiede nessuna prova.)
-      // 19/09/2026 (SEC-13): nome ed email non li sceglie chi chiede. L'uid e'
-      // il suo, l'email e' quella del token, il nome e' un testo corto.
-      allow create: if attivo() && isRequester(request.resource.data)
-                    && request.resource.data.get('richiedenteUid', '') == request.auth.uid
-                    && request.resource.data.get('richiedenteEmail', '') == request.auth.token.get('email', '')
-                    && testoOpz(request.resource.data, 'richiedenteName', 240);
+      allow create: if verified() && isRequester(request.resource.data);
       allow read: if isAdmin() || (signedIn() && isRequester(resource.data));
       allow update: if isAdmin();
       // Chi ha fatto la richiesta puo' ritirarla (e l'eliminazione account

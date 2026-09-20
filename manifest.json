@@ -3,38 +3,16 @@
   "name": "ArcTrail 3D",
   "short_name": "ArcTrail 3D",
   "description": "Segnapunti per il tiro con l'arco 3D",
-  "lang": "it",
-  "dir": "ltr",
   "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#ECEDE6",
-  "theme_color": "#ECEDE6",
+  "background_color": "#201F1E",
+  "theme_color": "#201F1E",
   "orientation": "portrait",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-192-maskable.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icon-512-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

@@ -2,7 +2,7 @@
 #
 # pubblica.sh — pubblica le Cloud Functions di ArcTrail 3D dal Cloud Shell.
 #
-#   bash ~/pubblica.sh                 # tutte (otto dal 20/09/2026)
+#   bash ~/pubblica.sh                 # tutte e sette
 #   bash ~/pubblica.sh pushNotifica    # una sola
 #
 # COSA E' CAMBIATO IL 17/09/2026, E PERCHE' CONTA.
@@ -40,11 +40,7 @@ SOLO="${1:-}"          # nome di una funzione, oppure vuoto per tutte
 
 # Le funzioni che devono esserci. Se il file non le contiene tutte, non e' il
 # file giusto e il deploy cancellerebbe quelle mancanti.
-# `claimCompagnia` e' entrata il 20/09/2026: mette la compagnia nel token come
-# custom claim, perche' una regola di Firestore che chiama `get()` non
-# restringe le query. Finche' non e' pubblicata, i soci non vedono nell'elenco
-# gli allenamenti «solo club» della loro compagnia.
-ATTESE="sendNotification pushNotifica avvisaRicerche avvisaSegnalazione avvisaIscrizione avvisaRichiestaClub avvisaPercorso claimCompagnia"
+ATTESE="sendNotification pushNotifica avvisaRicerche avvisaSegnalazione avvisaIscrizione avvisaRichiestaClub avvisaPercorso"
 
 rosso()  { printf '\033[31m%s\033[0m\n' "$*"; }
 verde()  { printf '\033[32m%s\033[0m\n' "$*"; }
@@ -128,7 +124,7 @@ if [ -n "$SOLO" ]; then
 else
   BERSAGLIO="functions"
   echo ""
-  echo "══ deploy di tutte ══"
+  echo "══ deploy di tutte e sette ══"
 fi
 
 giallo "  Alla domanda «create» rispondi  y"

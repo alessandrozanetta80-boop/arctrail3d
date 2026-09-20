@@ -53,18 +53,10 @@
 // Qualunque dei due sia attivo, il telefono si comporta allo stesso modo.
 // Un nome solo per file vale anche quando i file sono due: allora uno dei due
 // deve ESSERE l'altro.
-/* SENZA gstatic IL SERVICE WORKER SI INSTALLA LO STESSO. (20/09/2026, fase 15.)
-   Un `importScripts` che fallisce fa fallire la valutazione dell'intero file:
-   niente installazione, quindi niente app offline — alla prima visita con
-   gstatic irraggiungibile, il telefono restava senza copia. Adesso le due
-   librerie si provano: se non arrivano, le notifiche aspettano il prossimo
-   service worker, ma la cassa dell'app si fa. */
-try {
-  importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
-  importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
-} catch (e) {}
+importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
 
-if (self.firebase) firebase.initializeApp({
+firebase.initializeApp({
   apiKey: "AIzaSyB9SoSHGEMnF-a1QP78hYF9r9E553wYNhY",
   authDomain: "arctrail3d.firebaseapp.com",
   projectId: "arctrail3d",
@@ -112,9 +104,7 @@ try {
       badge: "icon-192.png",
       tag: tag,
       renotify: false,
-      // Dal 19/09/2026 il server manda `link` = /app.html?n=<id>: il tocco apre
-      // quella notifica nell'app. Senza link (server vecchio) si va all'app.
-      data: { link: d.link || "/app.html", n: d.tag || "" }
+      data: { link: d.link || "/" }
     };
 
     function disegna(){ return self.registration.showNotification(title, opzioni); }
@@ -141,108 +131,22 @@ self.addEventListener("notificationclick", function(event){
   // Se l'avviso l'ha disegnato l'SDK, il suo gestore chiude l'evento prima di
   // arrivare qui. Questo vale per quelli disegnati sopra.
   var dati = event.notification.data || {};
-  var dove = dati.link || "/app.html";
-  var n = dati.n || "";
+  var dove = dati.link || "/";
   event.notification.close();
-  /* L'APP APERTA NON SI RICARICA PER UN AVVISO. (19/09/2026, audit N4.)
-     Prima, con una finestra gia' aperta, qui si faceva `navigate(dove)`: una
-     ricarica, anche a meta' giro. Adesso si preferisce la finestra dell'APP,
-     la si porta davanti e le si DICE quale notifica aprire (postMessage): la
-     pagina ci va da sola, senza ricaricarsi. Una finestra che non e' l'app
-     (vetrina, mercatino) invece si porta sull'app. Nessuna finestra: se ne
-     apre una sul link. */
   event.waitUntil(
     clients.matchAll({ type:"window", includeUncontrolled:true }).then(function(list){
-      var app = null, altra = null;
       for(var i=0;i<list.length;i++){
         var c = list[i];
-        if(!("focus" in c)) continue;
-        if(c.url.indexOf("/app.html") >= 0){ app = c; break; }
-        if(!altra) altra = c;
-      }
-      if(app){
-        return app.focus().then(function(cl){
-          (cl || app).postMessage({ tipo:"apri-notifica", n: n });
-          return cl;
-        });
-      }
-      if(altra && "navigate" in altra){
-        return altra.focus().then(function(cl){ return (cl || altra).navigate(dove).catch(function(){ return cl; }); });
+        if("focus" in c){
+          // Una finestra c'e' gia': si porta davanti. Aprirne una seconda sullo
+          // stesso sito e' il modo piu' rapido per far perdere il giro in corso.
+          if(dove !== "/" && c.url.indexOf(dove) === -1 && "navigate" in c){
+            return c.focus().then(function(cl){ return cl.navigate(dove).catch(function(){ return cl; }); });
+          }
+          return c.focus();
+        }
       }
       if(clients.openWindow) return clients.openWindow(dove);
-    })
-  );
-});
-
-/* ══ QUANDO IL BROWSER CAMBIA LA SOTTOSCRIZIONE ═══════════════════════════
-   (20/09/2026, audit N7 / STATO C2: «pushsubscriptionchange non e' gestito».)
-
-   Il browser puo' revocare e rifare la sottoscrizione alle push da solo —
-   aggiornamento di Chrome, pulizia dei dati del sito, scadenza lato Google.
-   Quando lo fa, manda QUESTO evento al service worker, e nessuno lo
-   ascoltava: la sottoscrizione vecchia moriva, il token scritto su Firestore
-   restava quello morto, e le push smettevano. Ed e' un guasto che si avvita:
-   l'unico posto dove il token si rinnovava era l'apertura dell'app, ma la
-   persona non apre l'app PROPRIO perche' non le arriva piu' niente.
-
-   COSA SI PUO' FARE DA QUI, E COSA NO. Da un service worker non si puo'
-   coniare un token FCM: `getToken()` vive nell'SDK della PAGINA, e non c'e'
-   una sua versione qui dentro (la diagnosi in NOTE-DESIGN che diceva «nel SW
-   non c'e' getToken» era giusta come fatto, imprecisa come conclusione).
-   Quindi qui si fanno le tre cose che si possono fare:
-     1. si RISOTTOSCRIVE subito con la stessa chiave VAPID, cosi' il browser
-        ha di nuovo una sottoscrizione valida invece di nessuna;
-     2. si LASCIA UN SEGNO in una cassa, che la pagina legge alla prossima
-        apertura anche se il messaggio non e' arrivato a nessuno;
-     3. si AVVISA ogni finestra aperta, che puo' rifare il token subito.
-   Il segno serve perche' al momento dell'evento, quasi sempre, di finestre
-   aperte non ce n'e' nessuna: e' il caso normale, non quello raro.
-
-   QUELLO CHE RESTA APERTO, dichiarato: se la persona non riapre mai l'app, il
-   token nuovo non arriva mai al server. Chiuderlo per davvero vuol dire
-   mandare le push col protocollo Web Push (l'endpoint della sottoscrizione,
-   firmato VAPID) invece che con i token FCM — cioe' cambiare il server, non
-   questo file. */
-var SEGNO_CASSA = "arctrail3d-segni";
-var SEGNO_TOKEN = "/__push-da-rinnovare";
-function lasciaSegnoToken(){
-  return caches.open(SEGNO_CASSA).then(function(c){
-    return c.put(new Request(SEGNO_TOKEN), new Response(String(Date.now()), {
-      headers: { "Content-Type": "text/plain" } }));
-  }).catch(function(){});
-}
-function avvisaFinestre(messaggio){
-  return clients.matchAll({ type: "window", includeUncontrolled: true }).then(function(list){
-    list.forEach(function(c){ try{ c.postMessage(messaggio); }catch(e){} });
-  }).catch(function(){});
-}
-self.addEventListener("pushsubscriptionchange", function(event){
-  event.waitUntil(
-    Promise.resolve().then(function(){
-      // La chiave e' la stessa della pagina: se cambia, cambia in due posti.
-      var vecchia = event.oldSubscription || null;
-      var chiave = (vecchia && vecchia.options && vecchia.options.applicationServerKey) || null;
-      if(!self.registration.pushManager) return null;
-      return self.registration.pushManager.subscribe(
-        chiave ? { userVisibleOnly: true, applicationServerKey: chiave }
-               : { userVisibleOnly: true }).catch(function(){ return null; });
-    }).then(function(){
-      return Promise.all([lasciaSegnoToken(), avvisaFinestre({ tipo: "push-da-rinnovare" })]);
-    })
-  );
-});
-// La pagina, all'avvio, chiede se c'e' un segno e poi lo cancella.
-self.addEventListener("message", function(event){
-  var d = event.data || {};
-  if(d.tipo !== "segno-push?") return;
-  event.waitUntil(
-    caches.open(SEGNO_CASSA).then(function(c){
-      return c.match(new Request(SEGNO_TOKEN)).then(function(r){
-        if(!r) return false;
-        return c.delete(new Request(SEGNO_TOKEN)).then(function(){ return true; });
-      });
-    }).catch(function(){ return false; }).then(function(c_era){
-      try{ if(event.source) event.source.postMessage({ tipo: "segno-push", cera: !!c_era }); }catch(e){}
     })
   );
 });
@@ -255,17 +159,12 @@ self.addEventListener("message", function(event){
 // Il service worker nuovo il telefono se lo prende da solo, perche' il
 // browser rilegge SEMPRE questo file dalla rete: e' l'unica cosa che non
 // passa dalla cache, ed e' per questo che la cura sta qui e non altrove.
-var CACHE_NAME = "arctrail3d-v167";
+var CACHE_NAME = "arctrail3d-v166";
 // Alzata a v19 il 20/08 per lo stesso motivo di sempre: e' cambiato
 // `index.html`, che sta in APP_SHELL: senza il nome nuovo il telefono
 // continuerebbe a servire la copia di prima e la correzione non si
 // vedrebbe. Stessa regola del BUILD_STAMP, stesso motivo.
-var CACHE_PARENT = "arctrail3d-v166";
-// L'impronta dei file di APP_SHELL, scritta per questo CACHE_NAME.
-// La controlla `tests/controlla-cache.js`: se un file della shell cambia e il
-// nome no, il banco dice no. Si riscrive con `--scrivi`, DOPO aver alzato
-// CACHE_NAME (il banco rifiuta di farlo prima). (19/09/2026, audit S4.)
-var SHELL_IMPRONTA = "arctrail3d-v167:04383af4a04cd76a";
+var CACHE_PARENT = "arctrail3d-v165";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
@@ -324,61 +223,25 @@ function isCdn(url){
   return false;
 }
 
-/* LE DUE COSE SENZA CUI L'APP NON SI APRE SENZA RETE. (19/09/2026, audit P0-3.)
-   Prima ogni file si scaricava «per conto suo», con `.catch()` muto: un'icona
-   rinominata non doveva bloccare l'installazione, e fin qui era giusto. Ma lo
-   stesso `.catch()` copriva anche `app.html`. Con un 4G debole al campo il
-   download di un megabyte si interrompeva, l'installazione finiva lo stesso,
-   `activate` buttava la cache vecchia — quella buona — e la pagina si
-   ricaricava: senza rete, niente app. A meta' giro.
-   Adesso le ESSENZIALI non hanno rete di sicurezza: se una non arriva intera,
-   l'installazione FALLISCE, la cache nuova e mezza vuota si butta, e il service
-   worker di prima resta al comando con la sua cache intatta. Il browser
-   riprova da solo alla prossima occasione. Le altre (icone, vetrina, librerie
-   Firebase) restano facoltative come prima: senza di loro l'app si apre lo
-   stesso (senza librerie va in modalita' locale e segna). */
-var ESSENZIALI = ["app.html", "compagnie-data.js"];
-
 self.addEventListener("install", function(event){
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache){
-      var essenziali = ESSENZIALI.map(function(u){
-        return cache.add(new Request(u, { cache: "reload" }));   // niente catch: e' il punto
-      });
-      var facoltative = APP_SHELL.concat(CDN_SHELL).filter(function(u){
-        return ESSENZIALI.indexOf(u) < 0;
-      }).map(function(u){
+      // addAll() fallisce tutto se un solo file manca: qui ognuno per conto suo,
+      // cosi' un'icona rinominata non impedisce l'installazione.
+      return Promise.all(APP_SHELL.concat(CDN_SHELL).map(function(u){
         return cache.add(new Request(u, { cache: "reload" })).catch(function(){});
-      });
-      return Promise.all(essenziali.concat(facoltative));
-    }).catch(function(err){
-      // Installazione mancata: la cache a meta' non deve restare in giro.
-      return caches.delete(CACHE_NAME).then(function(){ throw err; });
+      }));
     }).then(function(){ return self.skipWaiting(); })
   );
 });
 
-/* LA CACHE VECCHIA SI BUTTA SOLO QUANDO LA NUOVA E' BUONA. (19/09/2026, P0-3.)
-   Prima: tutto quello che non si chiamava CACHE_NAME, subito. Adesso si
-   controlla che la nuova abbia davvero le essenziali; se no le vecchie
-   restano (il fetch qui sotto cerca in tutte le cache, non solo nella nuova).
-   E si toccano solo le cache di ArcTrail: il resto dell'origine non e' nostro. */
 self.addEventListener("activate", function(event){
   event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache){
-      return Promise.all(ESSENZIALI.map(function(u){ return cache.match(u); }));
-    }).then(function(trovate){
-      var buona = trovate.every(function(r){ return !!r; });
-      if(!buona) return null;
-      return caches.keys().then(function(names){
-        return Promise.all(
-          // `SEGNO_CASSA` comincia per `arctrail3d-` ma NON e' una shell: e' il
-          // biglietto che dice «il token delle push va rifatto», e va letto dopo
-          // l'aggiornamento, non buttato con le casse vecchie. (20/09/2026)
-          names.filter(function(n){ return n !== CACHE_NAME && n !== SEGNO_CASSA && n.indexOf("arctrail3d-") === 0; })
-               .map(function(n){ return caches.delete(n); })
-        );
-      });
+    caches.keys().then(function(names){
+      return Promise.all(
+        names.filter(function(n){ return n !== CACHE_NAME; })
+             .map(function(n){ return caches.delete(n); })
+      );
     }).then(function(){ return self.clients.claim(); })
   );
 });
@@ -448,9 +311,7 @@ function ripiego(request, cache){
   try{ p = new URL(request.url).pathname; }catch(e){ p = ""; }
   var doc = (p.indexOf("app.html") >= 0 || p.indexOf("marketplace.html") >= 0)
           ? "app.html" : "index.html";
-  // `caches.match`, non `cache.match`: se la cache nuova fosse incompleta, la
-  // vecchia (tenuta da `activate`) risponde lo stesso. (P0-3)
-  return caches.match(doc).then(function(d){ return d || caches.match("./"); });
+  return cache.match(doc).then(function(d){ return d || cache.match("./"); });
 }
 
 self.addEventListener("fetch", function(event){
@@ -487,7 +348,7 @@ self.addEventListener("fetch", function(event){
   event.respondWith(
     caches.open(CACHE_NAME).then(function(cache){
       return fromNetwork(event.request, cache, NET_TIMEOUT).catch(function(){
-        return caches.match(event.request).then(function(cached){
+        return cache.match(event.request).then(function(cached){
           return cached || ripiego(event.request, cache);
         });
       });

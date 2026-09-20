@@ -144,18 +144,9 @@ function ot(id, clubCode) {
   prova("e l'altro non e' in elenco", !/Campo 2/.test(r5.testo));
 
   console.log("\n  E ANCHE QUELLO CHE TOLGONO I FILTRI VOLUTI");
-  var r6 = await monta([ot("1", A)], "", "", { far: 2, blk: 1 });
+  var r6 = await monta([ot("1", A)], "", "", { far: 2, club: 1, blk: 0 });
   prova("dice i sette giorni", r6.nascosti && /2 oltre i 7 giorni/.test(r6.nascosti), r6.nascosti);
-  prova("dice i bloccati", r6.nascosti && /1/.test(r6.nascosti), r6.nascosti);
-  /* «NASCOSTI PERCHE' DI UN'ALTRA COMPAGNIA» NON SI CONTA PIU'. (20/09/2026.)
-     Da quando il filtro lo fa il server — le regole, non un `if` in pagina —
-     quei documenti non arrivano proprio: contarli vorrebbe dire inventarsi un
-     numero. Questo cartello esiste per non far dubitare di aver scritto, e un
-     numero inventato farebbe l'opposto.
-     La prova resta, girata: il conto non deve tornare da nessuna parte. */
-  var r6b = await monta([ot("1", A)], "", "", { far: 0, club: 3, blk: 0 });
-  prova("l'app non inventa piu' un conto per l'altra compagnia",
-        !r6b.nascosti || !/altra compagnia/.test(r6b.nascosti), String(r6b.nascosti));
+  prova("dice l'altra compagnia", r6.nascosti && /1 altra compagnia/.test(r6.nascosti), r6.nascosti);
   var r7 = await monta([ot("1", A)], "", "", { far: 0, club: 0, blk: 0 });
   prova("e quando non manca niente non dice niente", r7.nascosti === null, r7.nascosti);
 

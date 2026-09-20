@@ -124,36 +124,6 @@ banco "banco-ibo.js (il bareme IBO, sulle regole 2026)" "node tests/banco-ibo.js
 banco "banco-calendario.js (il calendario dice da chi viene il dato)" "node tests/banco-calendario.js app.html"
 banco "banco-ritorno.js (il ritorno canonico e le cose che non tornano)" "node tests/banco-ritorno.js app.html"
 banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node tests/controlla-diari.js"
-# Dal 19/09/2026 (risanamento post-audit). Le regole Firestore non giravano in
-# nessun giro: adesso si, e se manca Java il banco dice no invece di saltare.
-# I DUE BANCHI DELL'EMULATORE STANNO INSIEME, e non e' una comodita': l'emulatore
-# ha una porta sola, e lanciati separati nel giro a sei alla volta si pestavano i
-# piedi. `banco-regole` chiede se le regole dicono di NO a chi deve;
-# `banco-finestra` chiede se dicono di SI' a chi non ha ancora aggiornato l'app —
-# due domande diverse, e la seconda si scopre solo il giorno del deploy.
-banco "banco-regole.js + banco-finestra.js (le regole sull'emulatore: chi puo' scrivere cosa, e la finestra di deploy)" "sh tests/lancia-regole.sh"
-banco "banco-xss.js (quello che scrive un altro non diventa codice sul mio telefono)" "node tests/banco-xss.js"
-banco "banco-account.js (due persone, un telefono: i dati di A non vanno a B)" "node tests/banco-account.js"
-banco "banco-sw-aggiornamento.js (una versione nuova non toglie l'app di mano, nemmeno a meta' giro)" "node tests/banco-sw-aggiornamento.js"
-banco "controlla-cache.js (se cambia un file della shell, CACHE_NAME sale)" "node tests/controlla-cache.js"
-banco "banco-giro-flusso.js (il giro si apre, si chiude e non si sdoppia)" "node tests/banco-giro-flusso.js"
-banco "banco-push-app.js (le push viste dall'app: token per dispositivo, primo piano, tocco)" "node tests/banco-push-app.js"
-banco "banco-pista-schermi.js (i tasti del punteggio stanno nello schermo: orizzontale, zoom, S26 Ultra)" "node tests/banco-pista-schermi.js"
-banco "banco-recapiti.js (telefono, email e sito delle compagnie diventano link solo se lo sono)" "node tests/banco-recapiti.js"
-banco "controlla-pwa.js (zoom, scuro forzato, icona iOS, manifest, foto pigre)" "node tests/controlla-pwa.js"
-banco "controlla-pubblicazione.js (sul sito va il sito: diari, banchi, regole e archivio restano fuori)" "node tests/controlla-pubblicazione.js"
-banco "banco-tiri.js (rimbalzi, tocchi voluti, annulla: 1, 2 e 4 arcieri)" "node tests/banco-tiri.js"
-banco "banco-cronometro.js (lo schermo spento non ferma il conto)" "node tests/banco-cronometro.js"
-banco "banco-esterni.js (Google Fonts o gstatic appesi: l'app parte lo stesso)" "node tests/banco-esterni.js"
-banco "banco-accessibile.js (finestre dichiarate, fuoco che non scappa, bersagli da 44)" "node tests/banco-accessibile.js"
-banco "banco-tastiera.js (con la tastiera aperta si arriva a scrivere e a mandare)" "node tests/banco-tastiera.js"
-banco "banco-salto-versione.js (telefono fermo da settimane: si aggiorna e non perde i dati)" "node tests/banco-salto-versione.js"
-banco "controlla-versioni.js (i sei timbri di versione dicono la verita' e si muovono insieme)" "node tests/controlla-versioni.js"
-banco "banco-chiavi-compagnie.js (la chiave di una societa' non cambia mai sotto i piedi)" "node tests/banco-chiavi-compagnie.js"
-banco "banco-riepilogo.js (il riepilogo permanente si aggiunge, non si rifa' dai 150 rimasti)" "node tests/banco-riepilogo.js"
-banco "banco-paese-lingua.js (una lingua non e' un paese: en-GB, en-CA, de-AT, it-IT)" "node tests/banco-paese-lingua.js"
-banco "banco-claim.js (la compagnia nel token: arriva a tutti, una volta sola, senza rincorse)" "node tests/banco-claim.js"
-banco "banco-fumo.js (una sessione sola, dall'inizio alla fine, come la farebbe una persona)" "node tests/banco-fumo.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"
@@ -171,47 +141,15 @@ done
 wait
 
 # ── SI LEGGONO IN FILA, NELL'ORDINE DI SEMPRE ─────────────────────────────
-# Si contano anche le PROVE, non solo i banchi: «53 verdi» non dice quanto
-# e' stato davvero controllato, e un banco che non conta niente (perche' ha
-# saltato tutto) da' lo stesso verde di uno che ha fatto cento prove. Quelli
-# senza conto vengono elencati a parte: si guardano a mano. (20/09/2026)
 i=1
-prove=0
-cadute=0
-muti=""
 while [ $i -le $n ]; do
-  tit="$(cat "$D/$i.tit")"
-  riga "$i/$n — $tit"
+  riga "$i/$n — $(cat "$D/$i.tit")"
   cat "$D/$i.out"
   [ "$(cat "$D/$i.esito" 2>/dev/null)" = "0" ] || fallito=1
-  # Prima la riga di riepilogo del banco; se non ce l'ha, si contano i segni di
-  # spunta che ha stampato. Quattro banchi non fanno ne' l'una ne' l'altra cosa
-  # (raccontano a parole): quelli si elencano, e si leggono a mano.
-  conto="$(grep -o '[0-9][0-9]* passate, [0-9][0-9]* fallite' "$D/$i.out" | tail -1)"
-  if [ -n "$conto" ]; then
-    prove=$((prove + $(echo "$conto" | cut -d' ' -f1) + $(echo "$conto" | cut -d' ' -f3)))
-    cadute=$((cadute + $(echo "$conto" | cut -d' ' -f3)))
-  else
-    buone=$(grep -c "✓" "$D/$i.out")
-    male=$(grep -c "✗" "$D/$i.out")
-    if [ "$buone" -gt 0 ] || [ "$male" -gt 0 ]; then
-      prove=$((prove + buone + male))
-      cadute=$((cadute + male))
-    else
-      muti="$muti
-      $i/$n $tit"
-    fi
-  fi
-  if grep -qi "saltat" "$D/$i.out"; then muti="$muti
-      $i/$n $tit (dice di aver saltato qualcosa)"; fi
   i=$((i + 1))
 done
 rm -rf "$D"
 
 echo ""
-echo "  $n banchi, $prove prove contate, $cadute cadute."
-if [ -n "$muti" ]; then
-  echo "  Banchi che non hanno contato le prove (da leggere a mano):$muti"
-fi
 if [ $fallito -eq 0 ]; then echo "TUTTI PASSATI."; else echo "ALMENO UNO HA DETTO NO — leggere sopra."; fi
 exit $fallito

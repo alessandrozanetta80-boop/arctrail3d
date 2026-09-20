@@ -23,8 +23,7 @@ const fs = require('fs');
 const path = require('path');
 
 // ── i moduli che index.js si aspetta ────────────────────────────────────────
-const trigger = {};
-const scritti = {};                 // percorso -> funzione registrata
+const trigger = {};                 // percorso -> funzione registrata
 let ADMIN_ESISTE = true;            // c'e' un account per ADMIN_EMAIL?
 let AVVISI_ESISTENTI = {};          // avvisi gia' nati, per provare il `create`
 let ROMPI_CREATE = false;           // per provare un guaio che NON e' «esiste gia'`
@@ -43,14 +42,7 @@ function docFinto(raccolta, id) {
 
 const finto = {
   'firebase-functions/v2/firestore': {
-    onDocumentCreated: function (percorso, fn) { trigger[percorso] = fn; return fn; },
-    // TIPI DIVERSI, REGISTRI DIVERSI. (20/09/2026.) `claimCompagnia` ascolta
-    // `users/{uid}` con `onDocumentWritten`, ed e' lo STESSO percorso di
-    // `avvisaIscrizione`, che lo ascolta con `onDocumentCreated`. Con un
-    // registro solo, chiave il percorso, la seconda registrazione cancellava la
-    // prima: il banco chiamava la funzione sbagliata e diceva no su prove che
-    // non c'entravano niente. Qui restano separati, come in Firebase.
-    onDocumentWritten: function(percorso, fn){ scritti[percorso] = fn; return fn; }
+    onDocumentCreated: function (percorso, fn) { trigger[percorso] = fn; return fn; }
   },
   'firebase-functions/v2/https': {
     onCall: function (_o, fn) { return fn; },

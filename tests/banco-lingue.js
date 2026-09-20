@@ -161,14 +161,8 @@ var chiudeRit = app.indexOf("return da;", apreRit);
 if(apreRit < 0 || chiudeRit < 0){ no("leggiRitornoEmail non si estrae dal file"); }
 else {
   var corpoRit = app.slice(app.indexOf("{", apreRit) + 1, chiudeRit) + "return da;";
-  /* Dal 20/09/2026 `leggiRitornoEmail` chiede a `LANG_META` se la lingua
-     dell'indirizzo esiste, e non piu' a `LANG_TO_COUNTRY`: quella mappa dice
-     in quale PAESE si parla una lingua, e dal 20/09 non contiene piu'
-     l'inglese (l'inglese non e' un paese). Con lei, un ritorno da `?lang=en`
-     avrebbe smesso di funzionare in silenzio — ed e' la lingua della meta'
-     dei collaudatori. */
-  var META = {};
-  LINGUE.forEach(function(l){ META[l] = { name: l, locale: l, flag: "" }; });
+  var PAESI = {};
+  LINGUE.forEach(function(l){ PAESI[l] = l; });
   var provaRit = function(indirizzo, langGiaQui){
     var stato = { lang: langGiaQui || undefined };
     var pulito = false;
@@ -176,8 +170,8 @@ else {
       location: { search: indirizzo, pathname: "/" },
       history: { replaceState: function(){ pulito = true; } }
     };
-    var fn = new Function("URLSearchParams", "state", "save", "LANG_META", "window", "document", corpoRit);
-    var da = fn(URLSearchParams, stato, function(){}, META, finta, { title: "" });
+    var fn = new Function("URLSearchParams", "state", "save", "LANG_TO_COUNTRY", "window", "document", corpoRit);
+    var da = fn(URLSearchParams, stato, function(){}, PAESI, finta, { title: "" });
     return { lang: stato.lang, da: da, pulito: pulito };
   };
 
@@ -188,14 +182,6 @@ else {
   var r2 = provaRit("?da=email&lang=de", "it");
   if(r2.lang === "it") ok("chi ha gia' scelto qui non si vede rigirare la lingua");
   else no("un indirizzo vecchio ha sovrascritto la lingua scelta");
-
-  /* L'INGLESE, CHE IL 20/09 STAVA PER CADERE. La lingua dell'indirizzo si
-     verificava contro `LANG_TO_COUNTRY`, e quel giorno l'inglese ne e' uscito
-     (non e' un paese). Senza questa prova, `?lang=en` avrebbe smesso di
-     funzionare e non l'avrebbe detto nessuno. */
-  var rEn = provaRit("?da=email&lang=en");
-  if(rEn.lang === "en") ok("?da=email&lang=en: l'inglese passa, e non e' un paese");
-  else no("?lang=en non e' stato letto (lang=" + rEn.lang + ")");
 
   var r3 = provaRit("?da=email&lang=klingon");
   if(r3.lang === undefined) ok("una lingua che non esiste viene ignorata");

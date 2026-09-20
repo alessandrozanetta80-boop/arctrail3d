@@ -216,34 +216,10 @@ try {
 ok("il blocco della migrazione si compila", !!M);
 
 if (M) {
-  /* AGGIORNATA IL 20/09/2026. Diceva «il marchio si mette SOLO sullo Standard
-   * IFAA», e cioe' pretendeva che FIARC, FITARCO, WA e NFAS restassero senza:
-   * era il difetto, non l'invariante. L'audit lo ha chiamato per nome — un
-   * regolamento che cambia renderebbe i giri vecchi indistinguibili, come e'
-   * successo a IFAA il 28/08 — e adesso ogni modo prende il nome del LIBRO da
-   * cui vengono i suoi numeri.
-   * `modi` si passa a mano perche' qui `GAME_MODES` non c'e': questo blocco
-   * gira da solo, ed e' giusto che la funzione risponda comunque. */
-  var MODI = { ifaa_3d:{regolamento:"ifaa_book"}, ifaa_hunting:{regolamento:"ifaa_book"},
-               percorso:{regolamento:"fiarc_rt"}, tracciato:{regolamento:"fiarc_rt"},
-               fitarco3d:{regolamento:"wa_book4"}, nfas_biggame:{regolamento:"nfas_rules"},
-               asa_proam:{regolamento:"asa_proam"}, ibo_3d:{regolamento:"ibo_rules"},
-               ifaa_3d_v1:{regolamento:"ifaa_book"} };
-  ok("lo Standard IFAA tiene il marchio che ha dal 28/08",
-     M.schemaPunteggio("ifaa_3d", MODI) === "ifaa-standard-2021",
-     String(M.schemaPunteggio("ifaa_3d", MODI)));
-  ok("e adesso ce l'hanno anche FIARC, FITARCO e NFAS",
-     M.schemaPunteggio("percorso", MODI) === "fiarc-rt-2023"
-     && M.schemaPunteggio("fitarco3d", MODI) === "wa-book4-2026"
-     && M.schemaPunteggio("nfas_biggame", MODI) === "nfas-rules-2026",
-     [M.schemaPunteggio("percorso", MODI), M.schemaPunteggio("fitarco3d", MODI),
-      M.schemaPunteggio("nfas_biggame", MODI)].join(" / "));
-  ok("la caccia IFAA porta lo stesso libro dello Standard",
-     M.schemaPunteggio("ifaa_hunting", MODI) === "ifaa-standard-2021",
-     String(M.schemaPunteggio("ifaa_hunting", MODI)));
-  ok("un modo che non esiste non si invento' un marchio",
-     M.schemaPunteggio("modo_che_non_esiste", MODI) === null
-     && M.schemaPunteggio(undefined, MODI) === null);
+  ok("il marchio si mette solo sullo Standard IFAA",
+     M.schemaPunteggio("ifaa_3d") === "ifaa-standard-2021"
+     && M.schemaPunteggio("percorso") === null
+     && M.schemaPunteggio("ifaa_hunting") === null);
   /* CORRETTO IL 28/08/2026 INSIEME AL CODICE. Questa prova pretendeva il
    * contrario, e pretendeva una cosa sbagliata: il marchio dice «calcolato
    * con la tabella nuova», e sul modo di ieri quella frase e' falsa.
@@ -253,13 +229,11 @@ if (M) {
   ok("il modo di ieri NON riceve il marchio del barème nuovo",
      M.schemaPunteggio("ifaa_3d_v1") === null,
      String(M.schemaPunteggio("ifaa_3d_v1")));
-  /* Il modo di compatibilita' resta senza marchio anche ora che tutti gli
-   * altri ce l'hanno: lui E' la tabella vecchia, dargli un nome direbbe il
-   * contrario di quello che e'. Ed e' il caso che morde davvero — un giro di
-   * ieri chiuso col marchio nuovo sarebbe indistinguibile da uno vero. */
-  ok("il modo di ieri resta senza marchio anche col libro dichiarato",
-     M.schemaPunteggio("ifaa_3d_v1", MODI) === null,
-     String(M.schemaPunteggio("ifaa_3d_v1", MODI)));
+  ok("e nessun altro modo lo riceve",
+     M.schemaPunteggio("ifaa_hunting") === null
+     && M.schemaPunteggio("percorso") === null
+     && M.schemaPunteggio("tracciato") === null
+     && M.schemaPunteggio(undefined) === null);
 
   /* Il giro di ieri, dalla ripresa alla chiusura. E' la catena intera:
    * `adattaGiroIfaa` lo sposta, `schemaPunteggio` decide cosa scrivergli
@@ -267,7 +241,7 @@ if (M) {
   const ieriRipreso = { mode: "ifaa_3d", roundActive: true,
     scores: { a1: [{ arrows: [20, 16], total: 36 }] }, pendingArrows: [] };
   if (typeof adatta === "function") adatta(ieriRipreso);
-  const marchioAllaChiusura = M.schemaPunteggio(ieriRipreso.mode, MODI);
+  const marchioAllaChiusura = M.schemaPunteggio(ieriRipreso.mode);
   ok("giro di ieri ripreso: finisce su ifaa_3d_v1",
      ieriRipreso.mode === "ifaa_3d_v1", ieriRipreso.mode);
   ok("giro di ieri chiuso: nessun marchio addosso",
@@ -410,18 +384,12 @@ ok("e la porta unica il marchio se lo porta dietro",
    /scoringVersion:\s*h\.scoringVersion \|\| null/.test(src));
 ok("il giro che scende dal cloud viene normalizzato alla lettura",
    /modeKey:\s*modoDelGiro\(d\.modeKey,\s*d\.scoringVersion\)/.test(src));
-/* Si chiede che `scoringVersion` sia DENTRO l'elenco dei campi del giro, non
-   che l'elenco finisca con lui: il 19/09/2026 ci e' entrato `roundId` in coda e
-   la prova, che guardava la forma, e' diventata rossa col marchio ancora li'. */
 ok("il marchio viaggia col giro aperto",
-   /var CAMPI_DEL_GIRO = \[[^\]]*"scoringVersion"[^\]]*\]/.test(src));
+   /"startedAt","assetto","assettoNome","scoringVersion"\]/.test(src));
 ok("il giro nuovo nasce marchiato",
    /state\.scoringVersion = schemaPunteggio\(modeKey\)/.test(src));
-/* Si guardano i due RICHIAMI, non cosa viene dopo: il 20/09/2026 sotto il
-   backfill e' comparsa un'altra riga (il nome del giro gia' aperto) e la prova
-   e' diventata rossa con l'ordine ancora giusto. */
 ok("la migrazione gira PRIMA del backfill",
-   src.indexOf("migraSchemaIfaa();\nbackfillLifetimeOnce();") > 0);
+   src.indexOf("migraSchemaIfaa();") < src.indexOf("backfillLifetimeOnce();\n\n"));
 ok("nessun punteggio viene riscritto dalla migrazione",
    !/h\.results\s*=|r\.total\s*=/.test(ritaglia("function migraSchemaIfaa(){", "// ---------- RIEPILOGO")));
 
@@ -433,19 +401,8 @@ console.log("\n  LO STORICO SI LEGGE ANCORA\n");
 ok("il giro chiuso salva i punti gia' calcolati, non le zone",
    /perTarget: entries\.map\(function\(e\)\{ return e\.total; \}\)/.test(src)
    && /arrows: entries\.map\(function\(e\)\{ return e\.arrows; \}\)/.test(src));
-/* AGGIORNATA IL 20/09/2026. Guardava la riga `state.pendingArrows.push(score)`
- * e quella riga non c'e' piu': dal 20/09 le frecce passano da
- * `aggiungiFreccia(score, zona)`, perche' accanto al punto si salva anche la
- * ZONA (kill o innerkill valgono lo stesso 14, e senza la zona non si
- * distinguono mai piu').
- * L'INVARIANTE PERO' E' LA STESSA, ed e' quella che conta qui: dentro
- * `pendingArrows` ci vanno NUMERI. Se ci finisse una zona, ogni somma di ogni
- * giro gia' salvato cambierebbe significato. Le zone stanno in un elenco
- * accanto, e `banco-tiri` controlla che i due restino lunghi uguali. */
-ok("la freccia registrata e' un numero, e la zona sta accanto",
-   /aggiungiFreccia\(score, zona\)/.test(src)
-   && /frecceInCorso\(\)\.push\(score\)/.test(src)
-   && /state\.pendingZones\[state\.pendingArrows\.length - 1\] = zona \|\| null;/.test(src));
+ok("la freccia registrata e' un numero",
+   /state\.pendingArrows\.push\(score\)/.test(src));
 
 // Un totale di ieri non deve cambiare: si ricalcola dai numeri salvati.
 const giroDiIeri = [{ arrows: [20, 16], total: 36 }, { arrows: [18, 14], total: 32 }];

@@ -1,23 +1,6 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-09-20-visibilita
-// Nata da: 2026-08-28-notifica-verificata (col layout functions/ del 17/09)
-//
-// NOVITA' 2026-09-20 — I DISPOSITIVI SONO DOCUMENTI: users/{uid}/devices/{deviceId}
-//  { token, platform, language, enabled, createdAt, updatedAt, lastSeen }. deviceId e'
-//  casuale e nasce sul telefono; niente impronte del dispositivo. `pushNotifica` legge
-//  i dispositivi `enabled` e, per la migrazione, anche il vecchio `users/{uid}.fcmToken`
-//  (le app non ancora aggiornate scrivono solo quello). La mappa `fcmTokens` del
-//  19/09 non e' mai andata online: non si legge. Ogni notifica porta `type`,
-//  `senderUid`, `dest` ed `entityId`, decisi QUI (il client suggerisce, il server vaglia).
-//
-// NOVITA' 2026-09-19 — LE PUSH ARRIVANO A TUTTI I DISPOSITIVI E PORTANO DOVE DEVONO
-//  (audit del 19/09, N1-N8.) `pushNotifica` leggeva una mappa di token (sostituita il 20/09
-//  dai documenti in devices/) oltre al vecchio `fcmToken`, manda con sendEachForMulticast un messaggio
-//  SOLO `data` con `link` all'app (`/app.html?n=<id>`), Urgency high e TTL di un giorno,
-//  e toglie i token morti uno per uno in transazione, solo se sono ancora quelli.
-//  `sendNotification` torna a salvare `dest` (destPulito, perso il 18/08).
-//  DEPLOY: si pubblicano con `bash ~/pubblica.sh` DOPO che `app.html` 2026-09-19 e' online
-//  (regola 18): le app vecchie scrivono ancora solo `fcmToken`, che qui si legge ancora.
+// Versione 2026-08-28-notifica-verificata
+// Nata da: 2026-08-20-percorso-proposto
 //
 // NOVITA' 2026-08-28 — `sendNotification` CHIEDE L'EMAIL CONFERMATA.
 //  Dopo la revisione indipendente: il chiamante deve avere `email_verified`
@@ -109,7 +92,7 @@
 //   non e' una formula: e' una domanda su chi rimane senza permesso mentre
 //   i pezzi non sono ancora tutti al loro posto.*
 
-const { onDocumentCreated, onDocumentWritten } = require("firebase-functions/v2/firestore");
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { setGlobalOptions } = require("firebase-functions/v2");
 const admin = require("firebase-admin");
@@ -117,75 +100,17 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 setGlobalOptions({ region: "europe-west1", maxInstances: 10 });
 
-// La regione deve combaciare con FUNCTIONS_REGION in app.html, altrimenti la
+// La regione deve combaciare con FUNCTIONS_REGION in index.html, altrimenti la
 // chiamata parte verso us-central1 e torna "not-found".
-
-/* ══ APP CHECK: L'INTERRUTTORE, SPENTO ════════════════════════════════════
-   (20/09/2026, audit SEC-14.) `app.html` sa gia' mandare il timbro di App
-   Check (vedi `attivaAppCheck`), ma solo quando in console e' stata creata la
-   chiave. Qui c'e' l'altra meta': pretenderlo.
-
-   RESTA SPENTO, E NON E' UNA DIMENTICANZA. Accendere `enforceAppCheck` prima
-   che i telefoni mandino il timbro vuol dire rispondere `unauthenticated` a
-   TUTTI, compresi quelli che non hanno ancora aggiornato l'app — che dopo un
-   deploy sono la maggioranza, per giorni. L'ordine e' sempre lo stesso:
-     1. chiave in console e sito pubblicato (i timbri cominciano ad arrivare);
-     2. si guardano le metriche «richieste non verificate» in console;
-     3. quando sono quasi zero, qui si mette `true` e si ripubblica;
-     4. se qualcosa non torna, si rimette `false` e si ripubblica.
-   Firestore e Storage NON si accendono da qui: hanno il loro interruttore in
-   console (App Check → Applica), e vanno accesi con lo stesso criterio. */
-const APP_CHECK_OBBLIGATORIO = false;
 
 const MAX_TITOLO = 120;
 const MAX_TESTO = 500;
 const LIMITE_AL_MINUTO = 40; // un invito ad allenamento ne manda uno per invitato
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DOVE PORTA L'AVVISO. (19/09/2026, audit N8: regressione del 18/08.)
-// `destPulito` c'era fino al commit 44b638b e poi e' sparito: l'app continuava a
-// mandare `dest` — «apri la chat con chi scrive», «apri l'allenamento» — e il
-// server lo buttava. Le notifiche di chat e di invito arrivavano, ma il tocco
-// non portava da nessuna parte, e un commento nell'app diceva il contrario.
-// Le forme sono quelle che `destinazioneNotifica()` in app.html sa leggere.
-// Per `dm` l'uid NON viene dal client: e' il mittente vero, dal token.
-// ─────────────────────────────────────────────────────────────────────────────
-/* IL TIPO DELL'AVVISO. (20/09/2026, fase 17.) Deciso qui, da `dest`: il client
-   puo' suggerirlo, ma vale solo se e' uno dei tipi noti E coincide con la
-   destinazione. Serve al telefono per decidere l'icona e il testo, e a chi legge
-   i log per contare cosa parte. */
-const TIPI_AVVISO = ["dm", "allenamento", "annuncio", "compagnia", "avviso"];
-function tipoDa(dest) {
-  if (!dest) return "avviso";
-  if (dest.k === "dm") return "dm";
-  if (dest.k === "ot") return "allenamento";
-  if (dest.k === "annuncio") return "annuncio";
-  if (dest.k === "club-space") return "compagnia";
-  return "avviso";
-}
-function entitaDi(dest) {
-  if (!dest) return null;
-  return dest.id || dest.code || dest.uid || null;
-}
-
-function destPulito(d, mittente) {
-  const MAX_ID = 128;
-  if (!d || typeof d !== "object") return null;
-  const id = typeof d.id === "string" ? d.id.trim().slice(0, MAX_ID) : "";
-  if (d.k === "dm") return { k: "dm", uid: mittente };
-  if (d.k === "ot") return id ? { k: "ot", id: id } : null;
-  if (d.k === "annuncio") return id ? { k: "annuncio", id: id } : null;
-  if (d.k === "club-space") {
-    const code = typeof d.code === "string" ? d.code.trim().toUpperCase() : "";
-    return /^[A-Z0-9]{2,20}$/.test(code) ? { k: "club-space", code: code } : null;
-  }
-  return null;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // 1) SCRITTURA DELLA NOTIFICA — chiamata dall'app
 // ─────────────────────────────────────────────────────────────────────────────
-exports.sendNotification = onCall({ cors: true, enforceAppCheck: APP_CHECK_OBBLIGATORIO }, async (req) => {
+exports.sendNotification = onCall({ cors: true }, async (req) => {
 
   // Chi chiama deve essere autenticato. L'uid arriva dal token verificato dal
   // server, non da quello che dichiara il client: e' il punto chiave di tutto.
@@ -214,13 +139,6 @@ exports.sendNotification = onCall({ cors: true, enforceAppCheck: APP_CHECK_OBBLI
   }
 
   const db = admin.firestore();
-
-  // SOSPESO = NON AVVISA NESSUNO. (19/09/2026, audit SEC-08.) Lo stesso segno
-  // che le regole guardano (`sospesi/{uid}`, scritto dall'admin revocando).
-  const sospeso = await db.collection("sospesi").doc(uid).get();
-  if (sospeso.exists) {
-    throw new HttpsError("permission-denied", "Account sospeso.");
-  }
 
   // Freno anti-abuso: massimo LIMITE_AL_MINUTO invii per utente al minuto.
   // In transazione, altrimenti due invii simultanei leggono lo stesso valore.
@@ -253,22 +171,13 @@ exports.sendNotification = onCall({ cors: true, enforceAppCheck: APP_CHECK_OBBLI
   }
 
   // fromUid lo mette il server: e' la firma vera, non quella dichiarata.
-  const doc = {
+  await db.collection("notifications").doc(toUid).collection("items").add({
     title: title,
     body: body,
     read: false,
     fromUid: uid,
     createdAt: admin.firestore.FieldValue.serverTimestamp()
-  };
-  const dest = destPulito(d.dest, uid);
-  if (dest) doc.dest = dest;
-  // Chi manda, di che tipo e' e a cosa si riferisce: deciso dal server.
-  doc.senderUid = uid;
-  doc.type = tipoDa(dest);
-  const ent = entitaDi(dest);
-  if (ent) doc.entityId = ent;
-  if (TIPI_AVVISO.indexOf(doc.type) < 0) doc.type = "avviso";
-  await db.collection("notifications").doc(toUid).collection("items").add(doc);
+  });
 
   return { ok: true };
 });
@@ -286,110 +195,87 @@ exports.pushNotifica = onDocumentCreated(
     if (!snap) return;
     const d = snap.data() || {};
     const uid = event.params.uid;
-    const itemId = event.params.itemId;
-    const utenteRef = admin.firestore().collection("users").doc(uid);
 
-    /* UN DOCUMENTO PER DISPOSITIVO. (19-20/09/2026, audit N1, fase 16.)
-       Prima c'era un solo `fcmToken` per utente, e l'ultimo dispositivo aperto
-       sovrascriveva gli altri: chi usa telefono e computer riceveva le push solo
-       sull'ultimo. Adesso ogni dispositivo ha users/{uid}/devices/{deviceId}.
-       `fcmToken` si legge ancora: e' quello che scrivono le app di prima. */
-    const userSnap = await utenteRef.get();
-    const u = userSnap.exists ? (userSnap.data() || {}) : {};
-    const voci = [];
-    const dispositivi = await utenteRef.collection("devices").where("enabled", "==", true).get();
-    dispositivi.forEach(function (doc) {
-      const v = doc.data() || {};
-      if (typeof v.token === "string" && v.token &&
-          !voci.some(function (x) { return x.token === v.token; })) {
-        voci.push({ device: doc.id, token: v.token });
-      }
-    });
-    if (typeof u.fcmToken === "string" && u.fcmToken &&
-        !voci.some(function (v) { return v.token === u.fcmToken; })) {
-      voci.push({ device: null, token: u.fcmToken });
-    }
-    if (!voci.length) {
-      console.log("push per " + uid + ": nessun token, avviso «" + (d.title || "?") + "» non consegnato");
+    const userSnap = await admin.firestore().collection("users").doc(uid).get();
+    const token = userSnap.exists ? userSnap.get("fcmToken") : null;
+    if (!token) {
+      // Prima era un `return` muto. Ma «non ha mai attivato le notifiche» e
+      // «il token e' stato cancellato qui sotto perche' era scaduto» sono due
+      // situazioni molto diverse che finivano nello stesso silenzio: nel
+      // secondo caso l'utente CREDE di avere le notifiche accese e non riceve
+      // piu' niente, finche' non riapre l'app e il token si rinnova da solo.
+      // Nei log adesso si vede, e si vede anche quante ne sono andate perse.
+      console.log("push per " + uid + ": nessun token, avviso «" +
+                  (d.title || "?") + "» non consegnato");
       return;
     }
 
-    /* SOLO `data`, E IL SERVICE WORKER DISEGNA SEMPRE LUI. (19/09/2026, N3-N4.)
-       Con un blocco `notification` disegnava l'SDK: il clic lo gestiva lui
-       (e `sw.js` non lo vedeva mai), portava a `fcmOptions.link` — la vetrina —
-       e con una pagina qualunque del sito aperta la push veniva consegnata alla
-       pagina senza nessuna notifica. Con solo `data` passa sempre da
-       `onBackgroundMessage` in sw.js, che disegna con l'etichetta giusta e al
-       clic porta `link` all'app, che apre la notifica `n`.
-       `Urgency: high`: su Android in Doze una push normale aspetta lo sblocco.
-       TTL un giorno: un avviso vecchio di tre giorni non serve piu'. */
-    const dati = {
-      tag: itemId,
-      title: String(d.title || "ArcTrail 3D"),
-      body: String(d.body || ""),
-      link: "/app.html?n=" + encodeURIComponent(itemId),
-    };
-    if (d.apri) dati.apri = String(d.apri);
-    if (d.adId) dati.adId = String(d.adId);
-    if (d.clubCode) dati.clubCode = String(d.clubCode);
-    if (d.dest) dati.dest = JSON.stringify(d.dest);
-    if (d.type) dati.type = String(d.type);
-    if (d.senderUid) dati.senderUid = String(d.senderUid);
-    if (d.entityId) dati.entityId = String(d.entityId);
-
-    const tokens = voci.map(function (v) { return v.token; });
-    let esito;
     try {
-      esito = await admin.messaging().sendEachForMulticast({
-        tokens: tokens,
+      // L'ETICHETTA. Ogni avviso porta l'id del documento che l'ha fatto
+      // nascere, e il service worker la passa a showNotification come `tag`.
+      // Con lo stesso tag il sistema operativo SOSTITUISCE invece di impilare:
+      // se per qualunque motivo la stessa notizia prendesse due strade — la
+      // push vera e la copia locale che l'app mostra da se' quando e' aperta —
+      // sullo schermo ne resta comunque UNA.
+      // Scritta anche in `data` e non solo in `webpush.notification`, perche'
+      // in `onBackgroundMessage` i campi di `notification` arrivano scremati
+      // mentre `data` arriva sempre intero.
+      const tag = event.params.itemId;
+      // LE PAROLE VANNO ANCHE IN `data`, E NON E' UN DOPPIONE. (17/09/2026.)
+      // `sw.js` legge `d.title || n.title` e `d.body || n.body` proprio perche'
+      // in `onBackgroundMessage` il blocco `notification` puo' arrivare
+      // scremato, mentre `data` arriva intero. Ma qui in `data` c'era SOLO il
+      // tag: dove l'SDK non disegna da se', il telefono riceveva un avviso che
+      // diceva «ArcTrail 3D» con il corpo vuoto. Misurato in tests/banco-push.js.
+      //
+      // E CI VANNO I CAMPI DI INSTRADAMENTO CHE IL DOCUMENTO HA GIA'. Non un
+      // indirizzo nuovo deciso qui: `destinazioneNotifica()` nell'app sa gia'
+      // leggere `apri`, `adId` e `clubCode`, e due di quelle destinazioni
+      // dipendono da chi e' collegato (il pannello vuole l'admin). Un link
+      // assoluto scritto dal server sarebbe una seconda verita' da tenere
+      // allineata, e una porta aperta prima di sapere chi bussa.
+      //
+      // Tutto stringa: `data` accetta solo stringhe, e un campo assente non si
+      // scrive affatto invece di diventare "undefined".
+      const dati = { tag: tag };
+      if (d.title) dati.title = String(d.title);
+      if (d.body) dati.body = String(d.body);
+      if (d.apri) dati.apri = String(d.apri);
+      if (d.adId) dati.adId = String(d.adId);
+      if (d.clubCode) dati.clubCode = String(d.clubCode);
+      await admin.messaging().send({
+        token: token,
+        notification: {
+          title: d.title || "ArcTrail 3D",
+          body: d.body || "",
+        },
         data: dati,
         webpush: {
-          headers: { Urgency: "high", TTL: "86400" },
-          fcmOptions: { link: "https://arctrail3d.com" + dati.link },
+          notification: {
+            icon: "/icon-192.png",
+            badge: "/icon-192.png",
+            tag: tag,
+          },
+          fcmOptions: { link: "https://arctrail3d.com" },
         },
       });
     } catch (err) {
-      console.error("push fallita per", uid, err);
-      return;
-    }
-
-    /* I TOKEN MORTI SI TOLGONO UNO PER UNO, E SOLO SE SONO ANCORA QUELLI.
-       (19/09/2026, audit N7.) Prima si cancellava `fcmToken` senza guardare: se
-       nel frattempo l'utente aveva aperto l'app e scritto il token NUOVO, veniva
-       cancellato quello nuovo. Adesso in transazione, e solo se il valore sul
-       documento e' ancora il token che ha fallito. */
-    const morti = [];
-    (esito.responses || []).forEach(function (r, i) {
-      if (r.success) return;
-      const code = r.error && (r.error.code || (r.error.errorInfo && r.error.errorInfo.code)) || "";
-      if (code === "messaging/registration-token-not-registered" ||
-          code === "messaging/invalid-registration-token" ||
-          code === "messaging/invalid-argument") {
-        morti.push(voci[i]);
+      // Token scaduto o revocato (telefono cambiato, app disinstallata):
+      // si cancella, altrimenti ogni notifica futura fallisce allo stesso modo.
+      const code = err && err.errorInfo ? err.errorInfo.code : "";
+      if (
+        code === "messaging/registration-token-not-registered" ||
+        code === "messaging/invalid-registration-token"
+      ) {
+        console.warn("push per " + uid + ": token scaduto o revocato, lo tolgo." +
+                     " Da adesso questo utente NON ricevera' push finche' non" +
+                     " riapre l'app (refreshPushToken lo rimette da solo).");
+        await admin.firestore().collection("users").doc(uid)
+          .update({ fcmToken: admin.firestore.FieldValue.delete() })
+          .catch(() => {});
       } else {
-        console.error("push fallita per", uid, code || r.error);
+        console.error("push fallita per", uid, err);
       }
-    });
-    if (!morti.length) return;
-    console.warn("push per " + uid + ": " + morti.length + " token scaduti o revocati, li tolgo.");
-    // Il dispositivo morto si spegne (enabled:false, token tolto) solo se il suo
-    // token e' ancora quello che ha fallito; il vecchio fcmToken idem.
-    for (const m of morti) {
-      await admin.firestore().runTransaction(async function (tx) {
-        if (m.device) {
-          const ref = utenteRef.collection("devices").doc(m.device);
-          const ora = await tx.get(ref);
-          if (ora.exists && (ora.data() || {}).token === m.token) {
-            tx.update(ref, { enabled: false, token: admin.firestore.FieldValue.delete(),
-                             updatedAt: admin.firestore.FieldValue.serverTimestamp() });
-          }
-        } else {
-          const ora = await tx.get(utenteRef);
-          if (ora.exists && (ora.data() || {}).fcmToken === m.token) {
-            tx.update(utenteRef, { fcmToken: admin.firestore.FieldValue.delete() });
-          }
-        }
-      }).catch(function () {});
     }
   }
 );
@@ -916,82 +802,3 @@ exports.avvisaPercorso = onDocumentCreated(
     await Promise.all(lavori);
   }
 );
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 8) LA COMPAGNIA NEL TOKEN
-// Scatta a ogni scrittura su users/{uid}.
-//
-// PERCHE' ESISTE. (20/09/2026, audit SEC-09, seconda passata.) Un allenamento
-// «solo club» deve poterlo ELENCARE chi e' di quella compagnia, e nessun
-// altro. Una regola di Firestore puo' chiedere la compagnia al documento
-// utente con `get()` — ma una regola che chiama `get()` NON restringe le
-// query: protegge la lettura di un documento e lascia passare l'elenco.
-// (Misurato sull'emulatore il 20/09: con una regola senza `get()` la stessa
-// query viene rifiutata, con `get()` passa.)
-//
-// L'unica cosa che una regola puo' guardare su una query, senza leggere
-// niente, e' il TOKEN di chi chiede. Quindi la compagnia va nel token, come
-// `custom claim`, e la scrive qui il server: il client non puo' regalarsela.
-//
-// NON E' ATTIVA FINCHE' NON SI PUBBLICA, ed e' voluto: `firestore.rules` la
-// guarda gia' (`elencaAllenamento`), e finche' il claim non c'e' i soci non
-// vedono nell'elenco i «solo club» della loro compagnia. Una funzione in meno
-// per qualche ora, non una porta aperta per sempre.
-//
-// IL TOKEN NON CAMBIA DA SOLO. Un claim nuovo entra nel token al rinnovo, che
-// l'SDK fa circa ogni ora — oppure subito, se l'app chiede
-// `getIdToken(true)`. `app.html` lo chiede all'accesso e quando la compagnia
-// cambia: senza quella riga, cambiare compagnia si vedrebbe un'ora dopo.
-//
-// COSTA UNA SCRITTURA DI AUTH per ogni cambio di compagnia, non per ogni
-// scrittura sull'utente: se la compagnia non e' cambiata, qui si esce subito.
-// Senza quel controllo, ogni salvataggio del profilo — e ogni token push
-// scritto a ogni apertura — rinnoverebbe i claim di tutti.
-// ─────────────────────────────────────────────────────────────────────────────
-exports.claimCompagnia = onDocumentWritten("users/{uid}", async (event) => {
-  const uid = event.params.uid;
-  const prima = event.data && event.data.before && event.data.before.exists
-    ? (event.data.before.data() || {}) : {};
-  const dopo = event.data && event.data.after && event.data.after.exists
-    ? (event.data.after.data() || {}) : {};
-
-  // Il codice compagnia e' una chiave di `compagnie-data.js`: lettere, cifre,
-  // corta. Un valore che non ha quella forma non entra nel token — e non e'
-  // una precauzione teorica: `users.compagnia` lo scrive il client.
-  const grezza = typeof dopo.compagnia === "string" ? dopo.compagnia : "";
-  const nuova = /^[A-Za-z0-9]{2,20}$/.test(grezza) ? grezza : "";
-
-  /* ══ NON «SE E' CAMBIATA», MA «SE NON E' ANCORA APPLICATA» ════════════════
-     (20/09/2026, corretto poche ore dopo averla scritta.) La prima stesura
-     usciva subito se `prima.compagnia === dopo.compagnia`. Sembrava giusto —
-     perche' rifare un lavoro gia' fatto? — ed era il difetto: il giorno della
-     pubblicazione NESSUN iscritto ha il claim, e per nessuno di loro la
-     compagnia sta per cambiare. Sarebbero rimasti tutti senza, per sempre,
-     aspettando un cambio che non arriva.
-     La domanda giusta non e' «e' cambiata», e' «quella nel token e' gia'
-     questa?». La risposta sta in `claimApplicata`, che scrive SOLO il server:
-     se manca, il claim va messo, e questo copre anche tutti quelli di prima.
-
-     E NON SI AVVITA: la riga qui sotto riscrive `users/{uid}`, quindi questo
-     trigger riparte una seconda volta — e la seconda volta `applicata` e'
-     uguale a `nuova` e si esce alla prima riga. Due esecuzioni per cambio,
-     non infinite. */
-  const applicata = typeof dopo.claimApplicata === "string" ? dopo.claimApplicata : null;
-  if (applicata === nuova) return;
-
-  try {
-    await admin.auth().setCustomUserClaims(uid, nuova ? { compagnia: nuova } : {});
-    // `claimApplicata` dice COSA c'e' nel token, `claimAl` QUANDO ce l'abbiamo
-    // messo: guardando un utente si capisce se il suo token e' gia' quello
-    // nuovo senza aprire la console di Auth.
-    await admin.firestore().collection("users").doc(uid).set({
-      claimApplicata: nuova,
-      claimAl: admin.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true });
-  } catch (err) {
-    // L'utente puo' essere stato cancellato fra la scrittura e questo trigger.
-    // Non si riprova: al prossimo accesso l'app scrive di nuovo e si ripassa
-    // di qui. Riprovare qui vorrebbe dire una coda da sorvegliare.
-    console.error("claim compagnia per " + uid + ":", err && err.code ? err.code : err);
-  }
-});

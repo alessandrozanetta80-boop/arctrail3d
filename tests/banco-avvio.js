@@ -16,8 +16,7 @@
 var fs = require("fs");
 var { JSDOM } = require("jsdom");
 
-// APP=percorso per il sabotaggio: stesso banco, un'altra copia dell'app.
-var src = fs.readFileSync(process.env.APP || "app.html", "utf8").replace(/\r\n/g, "\n");
+var src = fs.readFileSync("app.html", "utf8").replace(/\r\n/g, "\n");
 var ok = 0, ko = 0;
 function prova(nome, cond){ if(cond){ ok++; console.log("  \u2713 " + nome); } else { ko++; console.log("  \u2717 " + nome); } }
 
@@ -84,13 +83,8 @@ prova("JSON illeggibile \u2192 theme-light lo stesso", dom.window.document.body.
 
 /* ── Si disegna prima di chiedere a Firebase chi sei ───────────────────── */
 console.log("\n  SI DISEGNA SUBITO, POI SI CHIEDE CHI SEI");
-/* Dal 20/09/2026 in mezzo ci sono due righe (le societa' che si caricano dopo,
-   e l'accesso che aspetta le librerie): si chiede la SOSTANZA — prima si
-   disegna, poi si chiede chi sei — non piu' la forma esatta. */
-var iRender = src.lastIndexOf("\nrender();");
-var iAccesso = src.lastIndexOf("\navviaAccessoQuandoPronto();");
-prova("si disegna PRIMA di chiedere a Firebase chi sei", iRender > 0 && iAccesso > iRender);
-prova("le societa' si caricano dopo il primo disegno", src.indexOf("\nrender();\ncaricaCompagnie();") > 0);
+var iRender = src.lastIndexOf("\nrender();\ninitAuthFlow();");
+prova("render() sta subito prima di initAuthFlow()", iRender > 0);
 prova("initAuthFlow() e' chiamato una volta sola",
       (src.match(/^initAuthFlow\(\);$/gm) || []).length === 1);
 prova("authState parte da \"loading\", cioe' c'e' qualcosa da disegnare",

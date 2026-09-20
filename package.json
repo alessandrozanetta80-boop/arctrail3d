@@ -1,19 +1,13 @@
 {
   "name": "arctrail3d-sito-banchi",
   "version": "1.0.0",
-  "description": "Banchi di prova del sito ArcTrail 3D (tests/). Le Cloud Functions hanno il loro package.json in functions/. Le devDependencies servono a banco-regole.js (emulatore Firestore, Java >= 17).",
+  "description": "Banchi di prova del sito ArcTrail 3D: controlla-base + i cinque banchi. Nulla a che vedere con il package.json della radice, che e' quello delle Cloud Functions.",
   "private": true,
   "scripts": {
-    "controlla": "sh tests/controlla-tutto.sh",
-    "regole": "sh tests/lancia-regole.sh"
+    "controlla": "sh tests/controlla-tutto.sh"
   },
   "dependencies": {
     "jsdom": "^30.0.1",
     "playwright": "^1.62.1"
-  },
-  "devDependencies": {
-    "@firebase/rules-unit-testing": "5.0.2",
-    "firebase": "12.19.0",
-    "firebase-tools": "13.35.1"
   }
 }

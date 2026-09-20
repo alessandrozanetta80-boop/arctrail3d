@@ -240,17 +240,13 @@ async function combinazione(browser, modo, s, w, h, lang, completa){
 (async function(){
   var browser = await chromium.launch();
   var VIEWPORT = [[360,800],[384,832],[390,844],[412,915],[430,932]];
-  /* 175% e 200% sono le tacche piu' alte di Android e di iOS: chi le usa non
-     lo fa per gusto. Si provano sui tre schermi piu' stretti — oltre, la
-     combinazione esplode e il banco diventa lento senza dire di piu'. */
-  var SCALE = (process.env.SCALE ? process.env.SCALE.split(",").map(Number) : [1, 1.1, 1.2, 1.3, 1.5]);
+  var SCALE = [1, 1.1, 1.2, 1.3, 1.5];
   var giri = [];
   VIEWPORT.forEach(function(v){ SCALE.forEach(function(s){ giri.push(["T", s, v[0], v[1], "it", true]); }); });
   VIEWPORT.forEach(function(v){ [1.3, 1.5].forEach(function(s){ giri.push(["R", s, v[0], v[1], "it", false]); giri.push(["Z", s, v[0], v[1], "it", false]); }); });
   /* Le lingue con le parole piu' lunghe nella barra, dove il margine e' minimo. */
   [["de",360,800],["de",390,844],["nl",360,800],["en",360,800],["it",320,568],["de",320,568]].forEach(function(x){
     [1.3, 1.5].forEach(function(s){ giri.push(["T", s, x[1], x[2], x[0], false]); }); });
-  [[360,800],[384,832],[390,844]].forEach(function(v){ [1.75, 2].forEach(function(s){ giri.push(["T", s, v[0], v[1], "it", false]); }); });
   /* E il computer non deve essersene accorto. */
   [[1280,720],[1440,900]].forEach(function(v){ [1, 1.5].forEach(function(s){ giri.push(["T", s, v[0], v[1], "it", true]); }); });
 

@@ -1,18 +1,15 @@
 /* banco-regole.js — le regole Firestore, provate invece che sperate.
  *
- * DAL 19/09/2026 GIRA CON GLI ALTRI BANCHI, tramite `tests/lancia-regole.sh`.
- * Prima stava fuori da `controlla-tutto.sh` perche' vuole l'emulatore
- * Firestore (Java e un download da Google), e il risultato era che le regole
- * erano l'unica cosa che nessun giro provava. Se l'emulatore non parte, il
- * lanciatore dice NO e dice perche'.
+ * NON GIRA CON GLI ALTRI BANCHI, e non e' una dimenticanza: vuole
+ * l'emulatore Firestore, cioe' Java e un download da Google. Sta fuori da
+ * `controlla-tutto.sh` perche' un banco che non parte in meta' degli ambienti
+ * insegna a ignorare le uscite rosse.
  *
- * DIPENDENZE: sono in package.json (devDependencies, versioni fisse):
- * `@firebase/rules-unit-testing` 5.0.2, `firebase` 12.19.0, `firebase-tools`
- * 13.35.1 (l'ultima che accetta Java 17). Basta `npm install`.
+ * COME SI LANCIA (una volta sola, la prima):
+ *     npm install --no-audit --no-fund @firebase/rules-unit-testing firebase-tools
  *
- * COME SI LANCIA DA SOLO:
- *     sh tests/lancia-regole.sh
- *     REGOLE=altre.rules sh tests/lancia-regole.sh   # sabotaggio
+ * POI, ogni volta:
+ *     npx firebase emulators:exec --only firestore "node tests/banco-regole.js"
  *
  * Si lancia dalla radice del repository, dove sta `firebase.json`, con dentro almeno:
  *     { "firestore": { "rules": "firestore.rules" },
@@ -28,8 +25,7 @@ const { initializeTestEnvironment, assertFails, assertSucceeds } =
 const fs = require('fs');
 
 const PROGETTO = 'arctrail3d-prova';
-// REGOLE=percorso permette il sabotaggio: stesso banco, regole di un'altra versione.
-const REGOLE = process.env.REGOLE || 'firestore.rules';
+const REGOLE = 'firestore.rules';
 
 /* Chi sono le persone di questa storia.
    `email_verified` e' un pezzo del token, non del documento utente: e' il
@@ -39,21 +35,6 @@ const B  = { uid:'utenteB', email:'b@esempio.it', email_verified:true  };
 const C  = { uid:'utenteC', email:'c@esempio.it', email_verified:true  };
 const NV = { uid:'utenteNV',email:'nv@esempio.it',email_verified:false };
 const AD = { uid:'admin',   email:'alessandro.zanetta80@gmail.com', email_verified:true };
-
-/* LA FORMA VERA DI UN ALLENAMENTO, come la scrive `app.html`. (20/09/2026.)
-   Dal 20/09 la `create` pretende i cinque campi che la regola dell'ELENCO
-   legge senza rete di protezione: se a un documento ne manca uno, quella
-   regola va in errore e l'elenco si spegne per tutti. I banchi creavano
-   allenamenti scarni — piu' comodi da scrivere, e diversi da quelli veri —
-   quindi non avrebbero mai visto il problema. Qui si parte dalla forma vera e
-   si cambia solo quello che la prova vuole cambiare. */
-function allenamento(extra){
-  const d = { ownerUid:'utenteA', ownerName:'Anna', field:'Cerrione', spots:3,
-              visibility:'all', clubCode:'01VERB', invitedUids:[], participantUids:[],
-              participants:[], status:'active', datetime:Date.now() };
-  Object.keys(extra || {}).forEach(k => { d[k] = extra[k]; });
-  return d;
-}
 
 let env, fatti = 0, guai = [];
 
@@ -172,8 +153,9 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
       { username:'anna', compagnia:'01VERB' })));
 
   await prova('apre un allenamento', () =>
-    assertSucceeds(db(A).doc('open_trainings/ot1').set(allenamento(
-      { ownerUid:A.uid, participantUids:[A.uid], participants:[{uid:A.uid,name:'Anna'}] }))));
+    assertSucceeds(db(A).doc('open_trainings/ot1').set(
+      { ownerUid:A.uid, date:'2026-09-01', field:'Vignone',
+        participantUids:[A.uid], participants:[{uid:A.uid,name:'Anna'}] })));
 
   await prova('apre una chat privata', () =>
     assertSucceeds(db(A).doc('direct_chats/utenteA__utenteB').set(
@@ -185,12 +167,9 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
 
   console.log('\n  ALLENAMENTO APERTO: A organizza, B si iscrive\n');
 
-  // Anche la scena parte dalla forma vera: un documento scarno scritto con le
-  // regole spente farebbe cadere la query dell'elenco piu' avanti, e il banco
-  // direbbe no per colpa della scena, non delle regole.
-  await scena(async d => d.doc('open_trainings/ot1').set(allenamento(
-    { ownerUid:A.uid, titolo:'Domenica',
-      participantUids:[A.uid], participants:[{uid:A.uid,name:'Anna'}] })));
+  await scena(async d => d.doc('open_trainings/ot1').set(
+    { ownerUid:A.uid, date:'2026-09-01', field:'Vignone', titolo:'Domenica',
+      participantUids:[A.uid], participants:[{uid:A.uid,name:'Anna'}] }));
 
   await prova('B iscrive SE STESSO', () =>
     assertSucceeds(db(B).doc('open_trainings/ot1').update(
@@ -488,371 +467,6 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
      che questo progetto non ha ancora. Dichiarato per non farlo credere
      coperto. */
   console.log('    (nota: il gate email_verified di sendNotification e\' una Cloud Function, non provabile in questo banco)');
-
-  /* P0-1 DELL'AUDIT (19/09/2026): I CAMPI CHE SI VEDONO SUL TELEFONO DI UN ALTRO.
-     Ognuno di questi finiva nell'HTML di chi guarda. Il carico e' sempre lo
-     stesso: un <img> con onerror, cioe' codice eseguito da chi apre la lista.
-     Accanto a ogni «no» c'e' il «si'» dello stesso gesto fatto dall'app vera,
-     perche' una regola che rifiuta tutto passa questo banco e rompe l'app. */
-  console.log('\n  P0-1: CAMPI CON UN TIPO (19/09)\n');
-  const XSS = '<img src=x onerror=alert(1)>';
-
-  await prova('allenamento con posti = testo NON si crea', () =>
-    assertFails(db(A).doc('open_trainings/otX').set(allenamento(
-      { ownerUid:A.uid, spots:XSS, participantUids:[A.uid] }))));
-  await prova('allenamento con posti = 3 si crea (come fa l\'app)', () =>
-    assertSucceeds(db(A).doc('open_trainings/otN').set(allenamento(
-      { ownerUid:A.uid, spots:3, participantUids:[A.uid] }))));
-  /* I CINQUE CAMPI SI PRETENDONO ALLA NASCITA. (20/09/2026.) La regola
-     dell'ELENCO li legge direttamente — e' l'unica forma che controlla
-     davvero — e un documento che ne manca uno la manda in errore, cioe'
-     spegne l'elenco per TUTTI. Meglio rifiutare la nascita di quel documento
-     che scoprirlo dall'elenco vuoto. */
-  await prova('un allenamento senza `visibility` NON si crea', () => {
-    const d = allenamento({ ownerUid:A.uid }); delete d.visibility;
-    return assertFails(db(A).doc('open_trainings/otSenza').set(d));
-  });
-  await prova('e nemmeno uno senza `invitedUids`', () => {
-    const d = allenamento({ ownerUid:A.uid }); delete d.invitedUids;
-    return assertFails(db(A).doc('open_trainings/otSenza2').set(d));
-  });
-
-  await prova('l\'organizzatore NON trasforma i posti in testo dopo', () =>
-    assertFails(db(A).doc('open_trainings/otN').update({ spots:XSS })));
-
-  await prova('percorso proposto con piazzole = testo NON si crea', () =>
-    assertFails(db(A).doc('percorsi_campo/pX').set(
-      { createdBy:A.uid, clubCode:'01VERB', stato:'proposto', nome:'Alto', piazzole:XSS })));
-  await prova('percorso proposto con piazzole = 24 si crea', () =>
-    assertSucceeds(db(A).doc('percorsi_campo/pN').set(
-      { createdBy:A.uid, clubCode:'01VERB', stato:'proposto', nome:'Alto', piazzole:24, note:'' })));
-  await prova('il referente NON riscrive le piazzole come testo', () =>
-    assertFails(db(A).doc('percorsi_campo/pN').update({ piazzole:XSS })));
-
-  await prova('segnalazione con piazzola = testo NON si crea', () =>
-    assertFails(db(A).collection('field_reports').add(
-      { reporterUid:A.uid, clubCode:'01VERB', type:'target', piazzola:XSS, description:'x' })));
-  await prova('segnalazione con piazzola = 7 si crea', () =>
-    assertSucceeds(db(A).collection('field_reports').add(
-      { reporterUid:A.uid, clubCode:'01VERB', type:'target', piazzola:7, description:'ramo' })));
-  await prova('segnalazione senza piazzola (null) si crea', () =>
-    assertSucceeds(db(A).collection('field_reports').add(
-      { reporterUid:A.uid, clubCode:'01VERB', type:'other', piazzola:null, description:'ramo' })));
-
-  await prova('profilo pubblico con numeri.giri = testo NON si scrive', () =>
-    assertFails(db(A).doc('public_profiles/'+A.uid).set(
-      { username:'anna', numeri:{ giri:XSS, piazzole:10, campi:1 } })));
-  await prova('profilo pubblico con un campo estraneo dentro numeri NON si scrive', () =>
-    assertFails(db(A).doc('public_profiles/'+A.uid).set(
-      { username:'anna', numeri:{ giri:3, script:XSS } })));
-  await prova('profilo pubblico con numeri veri si scrive', () =>
-    assertSucceeds(db(A).doc('public_profiles/'+A.uid).set(
-      { username:'anna', nomeCognome:'Anna Rossi', numeri:{ giri:3, piazzole:72, campi:2 } })));
-  await prova('profilo pubblico con un nome di 500 caratteri NON si scrive', () =>
-    assertFails(db(A).doc('public_profiles/'+A.uid).set(
-      { username:'anna', nomeCognome:'x'.repeat(500) })));
-
-  /* QUATTRO PORTE DELL'AUDIT (19/09/2026, seconda passata delle regole). */
-  console.log('\n  CHAT PRIVATE: L\'ID E\' DEI DUE MEMBRI (SEC-07)\n');
-  // Una coppia MAI usata prima: se il documento esistesse gia', il tentativo
-  // diventerebbe un update e fallirebbe per un altro motivo (la prima versione
-  // di questa prova passava cosi' anche sulle regole vecchie: era cieca).
-  await prova('C NON crea la chat «utenteA__utenteZ» (di A con Z) mettendoci dentro se stesso', () =>
-    assertFails(db(C).doc('direct_chats/utenteA__utenteZ').set(
-      { members:[A.uid, C.uid], memberNames:{} })));
-  await prova('C NON crea una chat con un id che non e\' la coppia dei membri', () =>
-    assertFails(db(C).doc('direct_chats/qualsiasi').set(
-      { members:[C.uid, A.uid].sort() })));
-  await prova('A crea la chat con B come fa l\'app ([a,b].sort().join("__"))', () =>
-    assertSucceeds(db(A).doc('direct_chats/' + [A.uid, B.uid].sort().join('__')).set(
-      { members:[A.uid, B.uid].sort() })));
-
-  console.log('\n  PREPARA GARA: LE BOZZE SONO DI CHI LE FA (SEC-09)\n');
-  await scena(async d => d.doc('percorsi/bozzaA').set(
-    { createdBy:A.uid, nome:'Gara di A', iscritti:[{ cognome:'Rossi', tessera:'FI-123' }] }));
-  await prova('B NON legge la bozza di A (tessere di atleti terzi)', () =>
-    assertFails(db(B).doc('percorsi/bozzaA').get()));
-  await prova('A legge la propria bozza', () =>
-    assertSucceeds(db(A).doc('percorsi/bozzaA').get()));
-  await prova('A elenca le proprie bozze (la query dell\'app)', () =>
-    assertSucceeds(db(A).collection('percorsi').where('createdBy', '==', A.uid).get()));
-
-  console.log('\n  GESTIRE UNA COMPAGNIA: IL NOME NON SI SCEGLIE (SEC-13)\n');
-  await prova('A NON chiede la gestione con l\'email di un altro', () =>
-    assertFails(db(A).doc('compagnie_admin_requests/02XXXX_' + A.uid).set(
-      { codice:'02XXXX', richiedenteUid:A.uid, richiedenteEmail:'presidente@compagnia.it', richiedenteName:'Il Presidente', stato:'pending' })));
-  await prova('A chiede la gestione con la sua email', () =>
-    assertSucceeds(db(A).doc('compagnie_admin_requests/02XXXX_' + A.uid).set(
-      { codice:'02XXXX', richiedenteUid:A.uid, richiedenteEmail:A.email, richiedenteName:'Anna', stato:'pending' })));
-
-  console.log('\n  SOSPENSIONE (SEC-08)\n');
-  const S = { uid:'utenteS', email:'s@esempio.it', email_verified:true };
-  await scena(async d => {
-    await d.doc('users/' + S.uid).set({ approved:false });
-    await d.doc('sospesi/' + S.uid).set({ da:'admin' });
-  });
-  await prova('il sospeso NON apre un allenamento', () =>
-    assertFails(db(S).doc('open_trainings/otS').set(allenamento({ ownerUid:S.uid, spots:2, participantUids:[S.uid] }))));
-  await prova('il sospeso NON apre una chat', () =>
-    assertFails(db(S).doc('direct_chats/' + [S.uid, A.uid].sort().join('__')).set({ members:[S.uid, A.uid].sort() })));
-  await prova('il sospeso NON si ricrea approvato (cancella e ricrea users/{uid})', async () => {
-    await assertSucceeds(db(S).doc('users/' + S.uid).delete());
-    await assertFails(db(S).doc('users/' + S.uid).set({ email:S.email, approved:true }));
-  });
-  await prova('il sospeso NON si toglie il segno da solo', () =>
-    assertFails(db(S).doc('sospesi/' + S.uid).delete()));
-  await prova('l\'admin sospende e riammette', async () => {
-    await assertSucceeds(db(AD).doc('sospesi/utenteX').set({ da:AD.uid }));
-    await assertSucceeds(db(AD).doc('sospesi/utenteX').delete());
-  });
-  await prova('chi NON e\' sospeso apre ancora un allenamento', () =>
-    assertSucceeds(db(B).doc('open_trainings/otB').set(allenamento({ ownerUid:B.uid, spots:2, participantUids:[B.uid] }))));
-
-  console.log('\n  I DISPOSITIVI (users/{uid}/devices) — fase 16\n');
-  await prova('A scrive il documento del suo telefono', () =>
-    assertSucceeds(db(A).doc('users/'+A.uid+'/devices/dTelefono').set(
-      { token:'tok-1', platform:'android', language:'it', enabled:true, createdAt:new Date(), updatedAt:new Date(), lastSeen:new Date() })));
-  await prova('B NON legge i dispositivi di A (dove riceve le push)', () =>
-    assertFails(db(B).doc('users/'+A.uid+'/devices/dTelefono').get()));
-  await prova('B NON scrive un dispositivo nell\'account di A', () =>
-    assertFails(db(B).doc('users/'+A.uid+'/devices/dSuo').set({ token:'tok-b', enabled:true })));
-  await prova('una piattaforma inventata NON si scrive (niente impronte)', () =>
-    assertFails(db(A).doc('users/'+A.uid+'/devices/dStrano').set(
-      { token:'tok-2', platform:'Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit', enabled:true })));
-  await prova('un campo in piu\' NON si scrive', () =>
-    assertFails(db(A).doc('users/'+A.uid+'/devices/dExtra').set({ token:'tok-3', imei:'123456789' })));
-  await prova('A spegne il suo dispositivo', () =>
-    assertSucceeds(db(A).doc('users/'+A.uid+'/devices/dTelefono').set({ enabled:false }, { merge:true })));
-
-  console.log('\n  LIMITI: MESSAGGI, ERRORI, SCHEDA COMPAGNIA — fase 4\n');
-  await scena(async d => {
-    await d.doc('direct_chats/'+[A.uid,B.uid].sort().join('__')).set({ members:[A.uid,B.uid].sort() });
-  });
-  const chat = [A.uid,B.uid].sort().join('__');
-  await prova('un messaggio normale passa', () =>
-    assertSucceeds(db(A).collection('direct_chats/'+chat+'/messages').add(
-      { senderUid:A.uid, senderName:'Anna', text:'ci vediamo alla 12', createdAt:new Date() })));
-  /* IL TETTO E' IL SOFFITTO DELL'ABUSO, NON IL LIMITE DI PRODOTTO.
-     (20/09/2026, finestra di deploy.) Il 19/09 qui c'era «3000 caratteri NON
-     passa», con il tetto a 2000 come la casella dell'app. Ma la casella si
-     ferma a 2000 solo DA QUESTA VERSIONE: l'app che sta nei telefoni manda
-     quello che uno ha scritto. Con il tetto a 2000, il giorno in cui si
-     pubblicano le regole, un messaggio lungo scritto da un'app non ancora
-     aggiornata sparisce in silenzio. Adesso il tetto e' 8000: quello che una
-     persona vera scrive passa, il deposito da un megabyte no. */
-  await prova("un messaggio lungo dell'app di ieri (3000) passa ancora", () =>
-    assertSucceeds(db(A).collection('direct_chats/'+chat+'/messages').add(
-      { senderUid:A.uid, senderName:'Anna', text:'x'.repeat(3000), createdAt:new Date() })));
-  await prova('un messaggio da 9000 caratteri NON passa', () =>
-    assertFails(db(A).collection('direct_chats/'+chat+'/messages').add(
-      { senderUid:A.uid, senderName:'Anna', text:'x'.repeat(9000), createdAt:new Date() })));
-  await prova('un errore normale si registra', () =>
-    assertSucceeds(db(NV).collection('errors').add({ uid:NV.uid, msg:'crash', dove:'pista', at:Date.now() })));
-  await prova('un errore con uno stack da 5000 caratteri NON si registra', () =>
-    assertFails(db(NV).collection('errors').add({ uid:NV.uid, msg:'crash', stack:'y'.repeat(5000), at:Date.now() })));
-  await prova('il referente scrive i dati della compagnia', () =>
-    assertSucceeds(db(A).doc('compagnie_admin/01VERB').update({ referente:'Anna Rossi', tel:'347 1234567', note:'chiave al bar' })));
-  await prova("una nota lunga dell'app di ieri (6000) passa ancora", () =>
-    assertSucceeds(db(A).doc('compagnie_admin/01VERB').update({ note:'z'.repeat(6000) })));
-  await prova('ma non una nota da 30.000 caratteri', () =>
-    assertFails(db(A).doc('compagnie_admin/01VERB').update({ note:'z'.repeat(30000) })));
-  await prova("ne' un telefono con una nota dentro, se supera il soffitto", () =>
-    assertFails(db(A).doc('compagnie_admin/01VERB').update({ tel:'3'.repeat(200) })));
-
-  /* ══ SEC-09: I DATI PRIVATI NON LI LEGGE CHIUNQUE ═══════════════════════
-     (20/09/2026.) Tre raccolte che l'audit aveva messo insieme sotto SEC-09.
-     `percorsi` era gia' stato chiuso il 19/09; queste sono le altre tre. */
-  console.log('\n  SEC-09: LA SCHEDA DEL REFERENTE, I PERCORSI, IL PUNTO\n');
-  await scena(async d => {
-    await d.doc('compagnie_admin/01VERB').set({ adminUid: A.uid, clubCode: '01VERB',
-      referente: 'Anna Rossi', tel: '347 1234567', indirizzo: 'Via A. Alberti', note: 'chiave al bar',
-      emailComp: 'info@arcierivco.it' });
-    await d.doc('compagnie_contatto/01VERB').set({ adminUid: A.uid, emailComp: 'info@arcierivco.it' });
-    await d.doc('percorsi_campo/confermato1').set({ clubCode:'01VERB', stato:'confermato', nome:'Fornasona', createdBy: C.uid });
-    await d.doc('percorsi_campo/proposto1').set({ clubCode:'01VERB', stato:'proposto', nome:'Nuovo', createdBy: C.uid, createdByName:'Carla' });
-    await d.doc('open_trainings/otAperto').set({ ownerUid: A.uid, visibility:'all', clubCode:'01VERB', participantUids:[], invitedUids:[] });
-    await d.doc('open_trainings/otAperto/dove/punto').set({ lat: 45.9, lng: 8.5 });
-    await d.doc('open_trainings/otClub').set({ ownerUid: A.uid, visibility:'club', clubCode:'01VERB', participantUids:[C.uid], invitedUids:[] });
-    await d.doc('open_trainings/otClub/dove/punto').set({ lat: 45.9, lng: 8.5 });
-  });
-
-  await prova('il referente legge la propria scheda di compagnia', () =>
-    assertSucceeds(db(A).doc('compagnie_admin/01VERB').get()));
-  await prova('B NON legge telefono, indirizzo e note di una compagnia altrui', () =>
-    assertFails(db(B).doc('compagnie_admin/01VERB').get()));
-  await prova('nemmeno un utente non verificato', () =>
-    assertFails(db(NV).doc('compagnie_admin/01VERB').get()));
-  await prova('il referente ritrova le sue compagnie (where adminUid == io)', () =>
-    assertSucceeds(db(A).collection('compagnie_admin').where('adminUid','==',A.uid).get()));
-  await prova("ma B NON puo' elencarle tutte", () =>
-    assertFails(db(B).collection('compagnie_admin').get()));
-
-  await prova('il contatto pubblico lo legge chiunque abbia un account', () =>
-    assertSucceeds(db(B).doc('compagnie_contatto/01VERB').get()));
-  await prova('e lo scrive il referente di quella compagnia', () =>
-    assertSucceeds(db(A).doc('compagnie_contatto/01VERB').set({ adminUid:A.uid, emailComp:'nuova@club.it', aggiornatoIl: Date.now() })));
-  await prova('ma non un altro iscritto', () =>
-    assertFails(db(B).doc('compagnie_contatto/01VERB').set({ adminUid:B.uid })));
-  await prova("e non ci si puo' infilare un telefono (hasOnly)", () =>
-    assertFails(db(A).doc('compagnie_contatto/01VERB').set({ adminUid:A.uid, tel:'347 1234567' })));
-
-  await prova('un percorso CONFERMATO lo legge chiunque: ci si va a tirare', () =>
-    assertSucceeds(db(B).doc('percorsi_campo/confermato1').get()));
-  await prova('una PROPOSTA altrui no', () =>
-    assertFails(db(B).doc('percorsi_campo/proposto1').get()));
-  await prova('la propria proposta si', () =>
-    assertSucceeds(db(C).doc('percorsi_campo/proposto1').get()));
-  await prova('e il referente della compagnia la legge (deve valutarla)', () =>
-    assertSucceeds(db(A).doc('percorsi_campo/proposto1').get()));
-  await prova('la query dei confermati passa', () =>
-    assertSucceeds(db(B).collection('percorsi_campo').where('clubCode','==','01VERB').where('stato','==','confermato').get()));
-  await prova('la query che chiede TUTTO il campo viene rifiutata intera', () =>
-    assertFails(db(B).collection('percorsi_campo').where('clubCode','==','01VERB').get()));
-
-  await prova('il punto di un allenamento aperto a tutti si legge', () =>
-    assertSucceeds(db(B).doc('open_trainings/otAperto/dove/punto').get()));
-  await prova('quello di un allenamento «solo club» no', () =>
-    assertFails(db(B).doc('open_trainings/otClub/dove/punto').get()));
-  await prova("ma chi e' iscritto lo legge (ci deve andare)", () =>
-    assertSucceeds(db(C).doc('open_trainings/otClub/dove/punto').get()));
-  await prova("e l'organizzatore anche", () =>
-    assertSucceeds(db(A).doc('open_trainings/otClub/dove/punto').get()));
-  await prova("un estraneo NON puo' spostare il punto di un allenamento altrui", () =>
-    assertFails(db(B).doc('open_trainings/otClub/dove/punto').set({ lat:0, lng:0 })));
-  await prova("l'organizzatore si", () =>
-    assertSucceeds(db(A).doc('open_trainings/otClub/dove/punto').set({ lat:46, lng:8 })));
-
-  /* ══ LA VISIBILITA' «SOLO CLUB» E' UNA PORTA, NON UNA TENDA ═════════════
-     (20/09/2026, seconda passata su SEC-09.) Fino a stamattina la regola
-     diceva `read: if signedIn()` e il filtro stava in `app.html`: bastava un
-     client diverso per leggere tutto. Qui si chiede al database, che e'
-     l'unico posto dove la risposta vale anche per chi l'app non la usa.
-     E si chiede anche la cosa che nessuno chiede mai: che il FORMATO VECCHIO
-     non sia una scorciatoia. */
-  console.log('\n  ALLENAMENTI: CHI VEDE COSA (SEC-09, lato server)\n');
-  await scena(async d => {
-    await d.doc('users/'+A.uid).set({ email:A.email, approved:true, compagnia:'01VERB' }, { merge:true });
-    await d.doc('users/'+B.uid).set({ email:B.email, approved:true, compagnia:'09ALTRA' }, { merge:true });
-    await d.doc('users/'+C.uid).set({ email:C.email, approved:true }, { merge:true });
-    await d.doc('open_trainings/otTutti').set({ ownerUid:A.uid, visibility:'all', clubCode:'01VERB',
-      status:'active', participantUids:[], invitedUids:[] });
-    await d.doc('open_trainings/otSoloClub').set({ ownerUid:A.uid, visibility:'club', clubCode:'01VERB',
-      status:'active', participantUids:[], invitedUids:[] });
-    await d.doc('open_trainings/otSoloClubInvito').set({ ownerUid:A.uid, visibility:'club', clubCode:'01VERB',
-      status:'active', participantUids:[], invitedUids:[C.uid] });
-    await d.doc('open_trainings/otSoloClubIscritto').set({ ownerUid:A.uid, visibility:'club', clubCode:'01VERB',
-      status:'active', participantUids:[C.uid], invitedUids:[] });
-    /* IL FORMATO VECCHIO: lat/lng ancora DENTRO il documento, come li scriveva
-       l'app fino a stamattina. Se la porta fosse solo sul sottodocumento, qui
-       ci sarebbe la scorciatoia. */
-    await d.doc('open_trainings/otVecchioSoloClub').set({ ownerUid:A.uid, visibility:'club',
-      clubCode:'01VERB', status:'active', participantUids:[], invitedUids:[], lat:45.9, lng:8.5 });
-    await d.doc('open_trainings/otSoloClub/dove/punto').set({ lat:45.9, lng:8.5 });
-  });
-
-  await prova('un allenamento aperto a tutti lo vede chiunque', () =>
-    assertSucceeds(db(B).doc('open_trainings/otTutti').get()));
-  await prova("un «solo club» lo vede chi e' della compagnia", () =>
-    assertSucceeds(db(A).doc('open_trainings/otSoloClub').get()));
-  await prova("NON lo vede chi e' di un'altra compagnia", () =>
-    assertFails(db(B).doc('open_trainings/otSoloClub').get()));
-  await prova('NON lo vede chi non ha compagnia', () =>
-    assertFails(db(C).doc('open_trainings/otSoloClub').get()));
-  await prova("ma lo vede chi e' stato invitato", () =>
-    assertSucceeds(db(C).doc('open_trainings/otSoloClubInvito').get()));
-  await prova("e chi si e' iscritto", () =>
-    assertSucceeds(db(C).doc('open_trainings/otSoloClubIscritto').get()));
-
-  /* IL FORMATO VECCHIO NON E' UNA SCORCIATOIA. Le coordinate stanno adesso in
-     un sottodocumento, ma i documenti scritti prima ce le hanno ancora
-     dentro: se la porta fosse solo sul sottodocumento, basterebbe leggere il
-     documento vecchio. Non basta, perche' la porta e' sul documento. */
-  await prova('un documento VECCHIO con lat/lng dentro non si legge lo stesso', () =>
-    assertFails(db(B).doc('open_trainings/otVecchioSoloClub').get()));
-
-  /* LE QUATTRO DOMANDE DELL'APP, una per una: devono passare tutte, se no
-     l'elenco sparisce — e sparirebbe per TUTTI, non solo per chi non deve
-     vedere. */
-  await prova('query 1: gli allenamenti aperti a tutti', () =>
-    assertSucceeds(db(B).collection('open_trainings').where('visibility','==','all').limit(50).get()));
-  /* ══ QUI SI VEDE COME FIRESTORE AUTORIZZA DAVVERO UNA QUERY ══════════════
-     (20/09/2026, misurato.) Non valuta la regola documento per documento: la
-     autorizza solo se la condizione e' IMPLICATA DAI FILTRI della query.
-     Percio' `where('clubCode','==','01VERB')` passa solo se la regola puo'
-     dedurre dal filtro che chi chiede ha diritto — cioe' se `01VERB` e' la
-     compagnia scritta nel SUO TOKEN. Non basta essere il proprietario di
-     tutti i documenti che tornerebbero: il proprietario A, senza claim, viene
-     rifiutato lo stesso (provato).
-     E' la ragione per cui serve `claimCompagnia`, ed e' anche la ragione per
-     cui questa prova sta qui in due versioni: la stessa domanda, prima e dopo
-     che il token porti la compagnia. */
-  await prova("query 2 SENZA il claim: rifiutata (la funzione non e' ancora pubblicata)", () =>
-    assertFails(db(A).collection('open_trainings').where('clubCode','==','01VERB').limit(50).get()));
-  const ACLAIM = { uid:'utenteA', email:'a@esempio.it', email_verified:true, compagnia:'01VERB' };
-  await prova('query 2 CON il claim: passa', () =>
-    assertSucceeds(db(ACLAIM).collection('open_trainings').where('clubCode','==','01VERB').limit(50).get()));
-  await prova("ma il claim di un'altra compagnia non apre questa", () =>
-    assertFails(db({ uid:'utenteB', email:'b@esempio.it', email_verified:true, compagnia:'09ALTRA' })
-      .collection('open_trainings').where('clubCode','==','01VERB').limit(50).get()));
-  await prova('query 3: quelli a cui sono invitato', () =>
-    assertSucceeds(db(C).collection('open_trainings').where('invitedUids','array-contains',C.uid).limit(50).get()));
-  await prova('query 4: i miei', () =>
-    assertSucceeds(db(A).collection('open_trainings').where('ownerUid','==',A.uid).limit(50).get()));
-  /* E LA DOMANDA DELL'APP DI IERI — «dammi tutti gli attivi» — viene rifiutata
-     INTERA. E' la conseguenza dichiarata: il suo elenco resta vuoto finche'
-     non si aggiorna. Meglio un elenco vuoto per qualche ora che un annuncio
-     «solo per i soci» leggibile da chiunque per sempre. */
-  await prova("la query dell'app di ieri (tutti gli attivi) viene RIFIUTATA", () =>
-    assertFails(db(B).collection('open_trainings').where('status','==','active').limit(50).get()));
-  await prova('e quella di B sulla compagnia di un ALTRO club viene rifiutata', () =>
-    assertFails(db(B).collection('open_trainings').where('clubCode','==','01VERB').limit(50).get()));
-
-  await prova('il punto di un «solo club» non lo legge un estraneo', () =>
-    assertFails(db(B).doc('open_trainings/otSoloClub/dove/punto').get()));
-  await prova('un estraneo NON scrive il punto di un allenamento che non esiste', () =>
-    assertFails(db(B).doc('open_trainings/otInventato/dove/punto').set({ lat:0, lng:0 })));
-  await prova("e nemmeno il punto dell'allenamento di un altro", () =>
-    assertFails(db(B).doc('open_trainings/otTutti/dove/punto').set({ lat:0, lng:0 })));
-  await prova("l'organizzatore lo scrive", () =>
-    assertSucceeds(db(A).doc('open_trainings/otTutti/dove/punto').set({ lat:46, lng:8 })));
-
-  /* ══ IL GIRO NUOVO, SULL'EMULATORE VERO ═════════════════════════════════
-     (20/09/2026.) Dal 20/09 un giro porta `roundId`, `interrotto`,
-     `federation`/`division`/`eventId`, l'uid di CHI HA TIRATO (anche se non e'
-     il telefono che segna) e le ZONE di ogni freccia. Sono dati nuovi in un
-     documento che finora nessuna prova aveva mai scritto nella sua forma
-     intera contro le regole vere.
-     Le due domande che contano sono sempre le stesse: entra? e lo legge solo
-     chi deve? Lo storico e' della persona e di nessun altro — nemmeno
-     dell'admin. */
-  console.log('\n  IL GIRO: uid di chi ha tirato, zone delle frecce\n');
-  const GIRO = {
-    date: new Date().toISOString(), deleted:false, sessionType:'3d', format:24,
-    modeKey:'round3d', modeLabel:'Round 3D', scoringVersion:'fiarc-rt-2023',
-    campo:'Cerrione', durata:180, roundId:'g' + 'a'.repeat(40), interrotto:false,
-    federation:'fiarc', division:null, eventId:null,
-    results:[{ name:'anna', total:420, isSelf:true, ownerUid:'utenteA',
-               perTarget:[20,18], arrows:[{v:[20]},{v:[18]}],
-               zones:[{v:['superspot']},{v:['spot']}] },
-             { name:'bruno', total:400, isSelf:false, ownerUid:'utenteB',
-               perTarget:[20,16], arrows:[{v:[20]},{v:[16]}],
-               zones:[{v:['superspot']},{v:['sagoma']}] }]
-  };
-  await prova('il giro nuovo entra nello storico del suo proprietario', () =>
-    assertSucceeds(db(A).doc('users/'+A.uid+'/storico/20260920120000000').set(GIRO)));
-  await prova("B NON legge il giro di A, anche se dentro c'e' il suo uid", () =>
-    assertFails(db(B).doc('users/'+A.uid+'/storico/20260920120000000').get()));
-  await prova("e nemmeno l'admin: lo storico non lo legge nessun altro", () =>
-    assertFails(db(AD).doc('users/'+A.uid+'/storico/20260920120000000').get()));
-  await prova("B NON puo' scrivere un giro nello storico di A", () =>
-    assertFails(db(B).doc('users/'+A.uid+'/storico/20260920130000000').set(GIRO)));
-  await prova('A rilegge il proprio giro con le zone dentro', async () => {
-    const d = await db(A).doc('users/'+A.uid+'/storico/20260920120000000').get();
-    if (!d.exists) throw new Error("il giro non c'e'");
-    const r = d.data().results;
-    if (r[1].ownerUid !== 'utenteB') throw new Error("manca l'uid del secondo arciere");
-    if (r[0].zones[0].v[0] !== 'superspot') throw new Error('manca la zona della prima freccia');
-  });
 
   console.log('\n  LE PORTE CHE DEVONO RESTARE APERTE\n');
 
