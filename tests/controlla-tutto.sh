@@ -152,6 +152,7 @@ banco "controlla-versioni.js (i sei timbri di versione dicono la verita' e si mu
 banco "banco-chiavi-compagnie.js (la chiave di una societa' non cambia mai sotto i piedi)" "node tests/banco-chiavi-compagnie.js"
 banco "banco-riepilogo.js (il riepilogo permanente si aggiunge, non si rifa' dai 150 rimasti)" "node tests/banco-riepilogo.js"
 banco "banco-paese-lingua.js (una lingua non e' un paese: en-GB, en-CA, de-AT, it-IT)" "node tests/banco-paese-lingua.js"
+banco "banco-claim.js (la compagnia nel token: arriva a tutti, una volta sola, senza rincorse)" "node tests/banco-claim.js"
 banco "banco-fumo.js (una sessione sola, dall'inizio alla fine, come la farebbe una persona)" "node tests/banco-fumo.js"
 
 echo ""

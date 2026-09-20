@@ -207,10 +207,10 @@ conti dei banchi e cosa resta: `docs/RISANAMENTO-2026-09-19.md`.
 - **R1. Pubblicare.** *(1)* `main` ← ramo: `app.html`, `sw.js`, `index.html`,
   `manifest.json`, `compagnie-data.js`, `_config.yml`, `.github/`, banchi.
   *(2)* `node tests/controlla-base.js` (il sito vero è la versione nuova?).
-  *(3)* `bash ~/pubblica.sh` (Functions `2026-09-20-dispositivi`).
-  *(4)* Incollare `firestore.rules` `2026-09-20-dispositivi` in console.
-  **L'ordine non è più un vincolo** (20/09): lo provano le quattro combinazioni
-  di `tests/banco-finestra.js`. Il perché: `RISANAMENTO-2026-09-19.md` §4.
+  *(3)* `bash ~/pubblica.sh` (Functions `2026-09-20-visibilita`, otto).
+  *(4)* Incollare `firestore.rules` `2026-09-20-visibilita` in console.
+  **L'ordine conta, e in questo verso** (20/09 sera): sito → Functions → regole.
+  Comandi, cosa guardare e come si torna indietro: `ROLLOUT-2026-09-20.md`.
 - **R2. Col telefono in mano:** push (app chiusa, in background, aperta, due
   dispositivi) e tocco; orizzontale; Samsung con lo scuro forzato; avvio senza
   rete a giro aperto; tastiera aperta in chat e in fondo al profilo;

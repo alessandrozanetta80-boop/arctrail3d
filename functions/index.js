@@ -1,5 +1,5 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-09-20-dispositivi
+// Versione 2026-09-20-visibilita
 // Nata da: 2026-08-28-notifica-verificata (col layout functions/ del 17/09)
 //
 // NOVITA' 2026-09-20 — I DISPOSITIVI SONO DOCUMENTI: users/{uid}/devices/{deviceId}
@@ -955,23 +955,43 @@ exports.claimCompagnia = onDocumentWritten("users/{uid}", async (event) => {
   const dopo = event.data && event.data.after && event.data.after.exists
     ? (event.data.after.data() || {}) : {};
 
-  const vecchia = typeof prima.compagnia === "string" ? prima.compagnia : "";
-  const nuova = typeof dopo.compagnia === "string" ? dopo.compagnia : "";
-  if (vecchia === nuova) return;              // non e' cambiata: niente da fare
-
   // Il codice compagnia e' una chiave di `compagnie-data.js`: lettere, cifre,
   // corta. Un valore che non ha quella forma non entra nel token — e non e'
   // una precauzione teorica: `users.compagnia` lo scrive il client.
-  const pulita = /^[A-Za-z0-9]{2,20}$/.test(nuova) ? nuova : "";
+  const grezza = typeof dopo.compagnia === "string" ? dopo.compagnia : "";
+  const nuova = /^[A-Za-z0-9]{2,20}$/.test(grezza) ? grezza : "";
+
+  /* ══ NON «SE E' CAMBIATA», MA «SE NON E' ANCORA APPLICATA» ════════════════
+     (20/09/2026, corretto poche ore dopo averla scritta.) La prima stesura
+     usciva subito se `prima.compagnia === dopo.compagnia`. Sembrava giusto —
+     perche' rifare un lavoro gia' fatto? — ed era il difetto: il giorno della
+     pubblicazione NESSUN iscritto ha il claim, e per nessuno di loro la
+     compagnia sta per cambiare. Sarebbero rimasti tutti senza, per sempre,
+     aspettando un cambio che non arriva.
+     La domanda giusta non e' «e' cambiata», e' «quella nel token e' gia'
+     questa?». La risposta sta in `claimApplicata`, che scrive SOLO il server:
+     se manca, il claim va messo, e questo copre anche tutti quelli di prima.
+
+     E NON SI AVVITA: la riga qui sotto riscrive `users/{uid}`, quindi questo
+     trigger riparte una seconda volta — e la seconda volta `applicata` e'
+     uguale a `nuova` e si esce alla prima riga. Due esecuzioni per cambio,
+     non infinite. */
+  const applicata = typeof dopo.claimApplicata === "string" ? dopo.claimApplicata : null;
+  if (applicata === nuova) return;
 
   try {
-    await admin.auth().setCustomUserClaims(uid, pulita ? { compagnia: pulita } : {});
-    // Una riga nel documento dice QUANDO il claim e' stato messo: serve a
-    // capire, guardando un utente, se il suo token e' gia' quello nuovo.
-    await admin.firestore().collection("users").doc(uid)
-      .set({ claimAl: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    await admin.auth().setCustomUserClaims(uid, nuova ? { compagnia: nuova } : {});
+    // `claimApplicata` dice COSA c'e' nel token, `claimAl` QUANDO ce l'abbiamo
+    // messo: guardando un utente si capisce se il suo token e' gia' quello
+    // nuovo senza aprire la console di Auth.
+    await admin.firestore().collection("users").doc(uid).set({
+      claimApplicata: nuova,
+      claimAl: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
   } catch (err) {
     // L'utente puo' essere stato cancellato fra la scrittura e questo trigger.
+    // Non si riprova: al prossimo accesso l'app scrive di nuovo e si ripassa
+    // di qui. Riprovare qui vorrebbe dire una coda da sorvegliare.
     console.error("claim compagnia per " + uid + ":", err && err.code ? err.code : err);
   }
 });

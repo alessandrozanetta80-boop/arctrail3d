@@ -18098,6 +18098,9 @@ profiloBase = JSON.parse(JSON.stringify(state.profile));
    un'ora dopo, e non saprebbe perche'. Si aspetta un attimo perche' il claim
    lo scrive il server DOPO la scrittura di qui. */
 if(campi.compagnia !== undefined && currentUser && currentUser.getIdToken){
+// Qui la compagnia E' cambiata, quindi il claim cambiera' e il conto dei
+// tentativi riparte: e' un caso nuovo, non una rincorsa di quello vecchio.
+claimTentativi = 0; claimRichiesta = false; claimNegata = false;
 setTimeout(function(){
 if(!currentUser || !currentUser.getIdToken) return;
 currentUser.getIdToken(true).then(function(){
@@ -25909,8 +25912,17 @@ otRicomponi();
 }, function(err){
 var negato = err && (err.code === "permission-denied" || /permission/i.test(String(err.message||"")));
 if(negato && nome === "compagnia"){
-// Previsto finche' il claim non c'e'. Si dice una volta e si tira avanti.
-console.warn("allenamenti della compagnia: il token non porta ancora la compagnia (claimCompagnia non pubblicata).");
+/* Previsto: il token non porta (ancora) la compagnia. Si prova a rimediare,
+   al massimo due volte per sessione — vedi `recuperaClaimCompagnia`. Le altre
+   tre finestre non ne soffrono: nell'elenco mancheranno solo i «solo club»
+   della propria compagnia. */
+claimNegata = true;
+if(claimTentativi === 0 && !claimInCorso){
+console.warn("allenamenti della compagnia: il token non porta la compagnia, chiedo un token nuovo.");
+} else if(claimTentativi >= 2){
+console.warn("allenamenti della compagnia: due tentativi fatti, si smette (claimCompagnia pubblicata?).");
+}
+recuperaClaimCompagnia();
 return;
 }
 console.error("loadOpenTrainings [" + nome + "]:", err);
@@ -25922,13 +25934,14 @@ if(otUnsub.length) return;   // gia' in ascolto
 var col = db.collection("open_trainings");
 var myUid = currentUser && currentUser.uid;
 otPezzi = {};
-otUnsub.push(otFinestra(col.where("visibility","==","all"), "aperti"));
+apri("aperti", col.where("visibility","==","all"));
 var club = myClubCode();
-if(club) otUnsub.push(otFinestra(col.where("clubCode","==",club), "compagnia"));
+if(club) apri("compagnia", col.where("clubCode","==",club));
 if(myUid){
-otUnsub.push(otFinestra(col.where("invitedUids","array-contains",myUid), "invitato"));
-otUnsub.push(otFinestra(col.where("ownerUid","==",myUid), "miei"));
+apri("invitato", col.where("invitedUids","array-contains",myUid));
+apri("miei", col.where("ownerUid","==",myUid));
 }
+function apri(nome, query){ otUnsub.push({ nome: nome, stop: otFinestra(query, nome) }); }
 }
 
 function apriIndicazioni(lat, lng){
@@ -25951,8 +25964,98 @@ cb(d);
 // Si chiude quando si esce, altrimenti resta appesa a un utente che non c'e'
 // piu' e la prima cosa che fa il prossimo accesso e' aprirne una seconda.
 function stopOpenTrainings(){
-otUnsub.forEach(function(u){ try{ u(); }catch(e){} });
+otUnsub.forEach(function(u){ try{ u.stop(); }catch(e){} });
 otUnsub = []; otPezzi = {};
+}
+/* Riapre UNA finestra sola. Serve dopo un rinnovo del token: le altre tre
+   stanno lavorando e non c'e' ragione di farle ripartire. */
+function riapriFinestra(nome){
+if(!db || !currentUser) return;
+var i, col = db.collection("open_trainings");
+for(i = otUnsub.length - 1; i >= 0; i--){
+if(otUnsub[i].nome === nome){ try{ otUnsub[i].stop(); }catch(e){} otUnsub.splice(i, 1); }
+}
+if(nome === "compagnia"){
+var club = myClubCode();
+if(club) otUnsub.push({ nome: nome, stop: otFinestra(col.where("clubCode","==",club), nome) });
+}
+}
+/* ══ IL TOKEN VECCHIO, E COME SI CHIEDE QUELLO NUOVO ══════════════════════
+   (20/09/2026.) La finestra «della mia compagnia» la autorizza il TOKEN: le
+   regole leggono `request.auth.token.compagnia`, che ci mette la Cloud
+   Function `claimCompagnia`. Un token vive circa un'ora, quindi subito dopo
+   una pubblicazione il token in mano e' vecchio e quella finestra riceve un
+   no. Qui c'e' la politica, e sta scritta perche' ognuno dei quattro casi
+   porta a una cosa diversa:
+
+   QUANDO SI CHIEDE IL RINNOVO. Solo dopo un «permesso negato» su quella
+   finestra. Mai all'avvio: sarebbe un giro in piu' per tutti, ogni volta, per
+   una cosa che serve una volta.
+
+   TOKEN VECCHIO (il caso normale). `getIdToken(true)` ne chiede uno nuovo ad
+   Auth; se il claim c'e', la finestra riaperta passa.
+
+   IL CLAIM NON C'E' PERCHE' NESSUNO L'HA MAI MESSO. La Function scatta su una
+   SCRITTURA in `users/{uid}`, e a un iscritto che non cambia niente quella
+   scrittura non arriva mai. Percio', una volta per sessione, si scrive un
+   campo che non dice niente (`claimRichiesto`): serve solo a far scattare il
+   trigger. Poi si aspetta qualche secondo e si chiede il token nuovo.
+
+   LA FUNCTION NON E' RAGGIUNGIBILE (non pubblicata, o caduta). La scrittura
+   riesce, il claim non arriva, il secondo tentativo riceve un altro no — e li'
+   si smette. Nessuna terza volta: la finestra resta chiusa, le altre tre
+   lavorano, e nell'elenco mancano solo i «solo club» della propria compagnia.
+
+   OFFLINE. `getIdToken(true)` senza rete non puo' riuscire: non si conta come
+   tentativo e non si insiste. Firestore intanto serve dalla cache. Al rientro
+   in rete si riprova una volta sola — l'ascoltatore `online` e' registrato qui
+   una volta per sessione, non a ogni errore.
+
+   NIENTE RINCORSE. Due tentativi di rinnovo per sessione, una scrittura di
+   richiamo per sessione, e un solo ascoltatore `online`. Un tentativo si conta
+   solo se il rinnovo e' RIUSCITO: se fallisce per la rete, non ha detto niente
+   sul claim e sarebbe sbagliato spenderlo. */
+var claimTentativi = 0;          // al massimo due per sessione
+var claimInCorso = false;
+var claimRichiesta = false;      // la scrittura di richiamo: una sola
+var claimAscoltoRete = false;
+var claimNegata = false;         // la finestra «compagnia» ha ricevuto un no
+function claimRiprovaAlRientro(){
+if(claimAscoltoRete) return;
+claimAscoltoRete = true;
+window.addEventListener("online", function(){
+if(claimNegata && claimTentativi < 2) recuperaClaimCompagnia();
+});
+}
+function recuperaClaimCompagnia(){
+if(claimInCorso || claimTentativi >= 2) return;
+if(!currentUser || !currentUser.getIdToken || !db) return;
+if(navigator.onLine === false){ claimRiprovaAlRientro(); return; }
+claimInCorso = true;
+// Prima il richiamo, e una volta sola: se il claim non c'e' perche' nessuno
+// l'ha mai messo, senza una scrittura in `users/{uid}` non ci arrivera' mai.
+var richiamo = Promise.resolve();
+if(!claimRichiesta){
+claimRichiesta = true;
+richiamo = db.collection("users").doc(currentUser.uid)
+.set({ claimRichiesto: Date.now() }, { merge:true })
+.catch(function(){});   // se non passa, si prova comunque il rinnovo
+}
+richiamo.then(function(){
+// Tre secondi: il trigger e' asincrono, e chiedere il token prima che abbia
+// scritto il claim vorrebbe dire buttare il tentativo.
+return new Promise(function(r){ setTimeout(r, 3000); });
+}).then(function(){
+return currentUser.getIdToken(true);
+}).then(function(){
+claimTentativi++;              // si conta solo un rinnovo RIUSCITO
+claimInCorso = false;
+riapriFinestra("compagnia");
+}).catch(function(){
+// Rete assente, o Auth irraggiungibile: non ha detto niente sul claim.
+claimInCorso = false;
+claimRiprovaAlRientro();
+});
 }
 // L'ascoltatore della chat di un allenamento: uno solo, e si chiude uscendo.
 // (20/09/2026, audit C3. Sta qui fuori perche' `otChatScreen` nasce e muore a

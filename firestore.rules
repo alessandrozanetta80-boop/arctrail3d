@@ -1,6 +1,6 @@
 rules_version = '2';
 // ArcTrail 3D — regole Firestore
-// Versione 2026-09-20-dispositivi
+// Versione 2026-09-20-visibilita
 // Nata da: 2026-08-28-porte-verified (l'ultima incollata in console)
 //
 // NOVITA' 2026-09-20 — DISPOSITIVI, TIPI E LIMITI (risanamento notturno)
