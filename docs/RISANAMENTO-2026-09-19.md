@@ -1,6 +1,10 @@
 # RISANAMENTO 19–20/09/2026 — cosa è cambiato, come si pubblica, cosa resta
 
-Ramo `risanamento-post-audit`, **venti commit locali**, base `main @ 7b0ffe9`.
+Ramo `risanamento-post-audit`, base `main @ 7b0ffe9`.
+**Quanti commit lo dice git, non questa riga:** `git log --oneline main..HEAD | wc -l`.
+*(Qui c'era «quindici», ed erano diciannove: un conto ricopiato in un diario
+invecchia al commit dopo. E' la stessa regola dei banchi — vedi
+`tests/controlla-tutto.sh` in cima.)*
 **Niente è pubblicato.** Questo file racconta il lavoro; `docs/STATO.md` §R dice
 cosa fare col telefono in mano.
 
