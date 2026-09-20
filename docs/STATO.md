@@ -204,20 +204,20 @@ e chi arriva per la prima volta non ha una seconda occasione.
 Ramo `risanamento-post-audit`, **non su `main`, niente pubblicato**. Racconto,
 conti dei banchi e cosa resta: `docs/RISANAMENTO-2026-09-19.md`.
 
-- **R1. Pubblicare, in quest'ordine** (le regole stringono: regola 18, il sito
-  prima). *(1)* `main` ← ramo: `app.html`, `sw.js`, `index.html`,
+- **R1. Pubblicare.** *(1)* `main` ← ramo: `app.html`, `sw.js`, `index.html`,
   `manifest.json`, `compagnie-data.js`, `_config.yml`, `.github/`, banchi.
-  *(2)* Guardare che il sito vero sia la versione nuova
-  (`node tests/controlla-base.js`). *(3)* `bash ~/pubblica.sh` (Functions
-  `2026-09-20-dispositivi`). *(4)* Incollare in console `firestore.rules`
-  `2026-09-20-dispositivi` e premere **Pubblica**.
+  *(2)* `node tests/controlla-base.js` (il sito vero è la versione nuova?).
+  *(3)* `bash ~/pubblica.sh` (Functions `2026-09-20-dispositivi`).
+  *(4)* Incollare `firestore.rules` `2026-09-20-dispositivi` in console.
+  **L'ordine non è più un vincolo** (20/09): lo provano le quattro combinazioni
+  di `tests/banco-finestra.js`. Il perché: `RISANAMENTO-2026-09-19.md` §4.
 - **R2. Col telefono in mano:** push (app chiusa, in background, aperta, due
   dispositivi) e tocco; orizzontale; Samsung con lo scuro forzato; avvio senza
   rete a giro aperto; tastiera aperta in chat e in fondo al profilo;
   `docs/` non piu' raggiungibile su arctrail3d.com.
 - **R3. Il primo aggiornamento vero va guardato**: chi ha l'app installata passa
   da `v166` a `v167`, magari con un giro aperto. Il banco lo prova
-  (`banco-salto-versione.js`, anche dalla `v156` del 29/08); la prima volta no.
+  (`banco-salto-versione.js`, dalla `v156` del 29/08); la prima volta no.
 - **R4. `tests/chiavi-compagnie.json` è un'istantanea di 4950 chiavi**: se
   l'elenco società viene rigenerato dice quali sono sparite **prima** che
   spariscano gli iscritti. Si aggiorna a mano, dopo aver guardato:
