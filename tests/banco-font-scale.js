@@ -186,6 +186,23 @@ async function combinazione(browser, modo, s, w, h, lang, completa){
 
   annota("Home", await p.evaluate(guasti));
 
+  /* QUANTO SCHERMO SI PRENDE LA TESTATA. (21/09/2026, S26 Ultra: «la barra in
+     alto e' troppo grande».) Le prove qui sopra dicono se qualcosa si
+     sovrappone o esce; non dicono quanto e' alta. Con `MISURA=1` si stampa,
+     e una testata che supera un quinto dello schermo (in pixel CSS) e' un
+     guasto, a qualunque dimensione del testo. */
+  var testata = await p.evaluate(function(){ var h = document.querySelector("header.top"); return h ? Math.round(h.getBoundingClientRect().height) : 0; });
+  if (process.env.MISURA) {
+    console.log("    testata " + testata + "px su " + vh + " (" + Math.round(testata / vh * 100) + "%)  " + modo + " " + Math.round(s * 100) + "% " + vw + "x" + vh);
+    if (process.env.MISURA === "2") console.log((await p.evaluate(function(){
+      var h = document.querySelector("header.top"), out = [];
+      Array.prototype.forEach.call(h.children, function(e){ var q = e.getBoundingClientRect();
+        out.push("      " + (e.className || e.tagName) + " top=" + Math.round(q.top) + " h=" + Math.round(q.height) + " x=" + Math.round(q.left) + " w=" + Math.round(q.width)); });
+      return out.join("\n");
+    })));
+  }
+  if (testata > vh / 5) tutti.push("la testata prende " + Math.round(testata / vh * 100) + "% dello schermo (" + testata + "px su " + vh + ")");
+
   if (completa) {
     // La testata: stessa altezza in cima, a meta' e di nuovo in cima; attaccata sta a 0.
     var alt = [];

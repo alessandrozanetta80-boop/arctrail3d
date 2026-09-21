@@ -179,6 +179,19 @@ function doppioni(a) { var v = {}, d = 0; a.forEach(function (x) { if (v[x]) d++
   for (k = 0; k < 3; k++) await clic(z.page, "#app .giri-vecchi");
   var r3 = await righe(z.page);
   prova("tre blocchi dopo: 270 in fila, nessun doppione, nessun buco", uguali(r3, attesi(2000).slice(0, 270)) && doppioni(r3) === 0, "visti " + r3.length);
+  /* Il telefono: CPU rallentata 4 volte (un Android di fascia media), si
+     ridisegna la scheda con 270 righe e si misura. */
+  var cdp = await z.ctx.newCDPSession(z.page);
+  await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+  var tempi = await z.page.evaluate(function () {
+    var t = [];
+    for (var i = 0; i < 3; i++) { var t0 = performance.now(); window.__prova.vai("diario", "rounds"); t.push(performance.now() - t0); }
+    return t;
+  });
+  await cdp.send("Emulation.setCPUThrottlingRate", { rate: 1 });
+  var peggiore = Math.round(Math.max.apply(null, tempi));
+  console.log("    ridisegno con 270 righe, CPU ×4: " + tempi.map(function (x) { return Math.round(x) + " ms"; }).join(", "));
+  prova("270 righe a CPU ×4 si ridisegnano in meno di un secondo", peggiore < 1000, peggiore + " ms");
   var mem = await z.page.evaluate(function () { return localStorage.getItem("arctrail3d_storico_v1").length; });
   prova("lo spazio nel telefono non cresce: sempre 150 giri", (await z.page.evaluate(function () { return window.__prova.storico().length; })) === 150, "byte " + mem);
   // Il dettaglio di un giro vecchio si apre.
