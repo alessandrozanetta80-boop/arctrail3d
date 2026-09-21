@@ -11,5 +11,5 @@
 cd "$(dirname "$0")/.." || exit 1
 if ! command -v java >/dev/null 2>&1; then echo "  ✗ Java non c'e' (serve >= 17)."; exit 1; fi
 if [ ! -f node_modules/.bin/firebase ]; then echo "  ✗ firebase-tools non installato: npm install."; exit 1; fi
-exec node_modules/.bin/firebase emulators:exec --only auth,firestore --project arctrail3d \
+exec node_modules/.bin/firebase emulators:exec --only auth,firestore --project demo-arctrail3d \
   --config tests/e2e-firebase.json "node tests/e2e-emulatore.js"
