@@ -135,7 +135,8 @@ function installa(opzioni) {
       filtri.forEach(function (f) {
         if (f.t === "where") {
           arr = arr.filter(function (e) {
-            var v = e.d[f.campo];
+            /* `FieldPath.documentId()`: il filtro guarda l id, non un campo. (21/09/2026) */
+            var v = f.campo === "__name__" ? e.id : e.d[f.campo];
             if (f.op === "==") return v === f.val;
             if (f.op === "array-contains") return Array.isArray(v) && v.indexOf(f.val) >= 0;
             if (f.op === "in") return f.val.indexOf(v) >= 0;
@@ -149,6 +150,12 @@ function installa(opzioni) {
             if (x && x.__ts) x = x.__ts; if (y && y.__ts) y = y.__ts;
             var r = x < y ? -1 : x > y ? 1 : 0; return f.dir === "desc" ? -r : r;
           });
+        } else if (f.t === "dopo") {
+          /* `startAfter(valore)` sul campo dell ultimo orderBy, come Firestore:
+             prima era un no-op, e un cursore sbagliato non si vedeva. (21/09/2026) */
+          var ord = filtri.filter(function (g) { return g.t === "order"; }).pop();
+          if (ord) arr = arr.filter(function (e) { var x = e.d[ord.campo]; if (x === undefined || x === null) return false;
+            return ord.dir === "desc" ? x < f.val : x > f.val; });
         } else if (f.t === "limit") { arr = arr.slice(0, f.n); }
       });
       return arr;
@@ -165,8 +172,17 @@ function installa(opzioni) {
       orderBy: function (campo, dir) { return piu({ t: "order", campo: campo, dir: dir }); },
       limit: function (n) { return piu({ t: "limit", n: n }); },
       limitToLast: function (n) { return piu({ t: "limit", n: n }); },
-      startAfter: function () { return this; },
-      get: function () { return Promise.resolve(istantanea()); },
+      startAfter: function (v) { return piu({ t: "dopo", val: v }); },
+      /* Ogni documento restituito da una domanda e' una lettura: `__letture[raccolta]`
+         dice quanto costa aprire l'app, e `__rompi(raccolta, filtri)` fa fallire le
+         domande che sceglie, come farebbe la rete. (21/09/2026) */
+      get: function () {
+        if (window.__rompi && window.__rompi(racc, filtri)) return Promise.reject(Object.assign(new Error("unavailable"), { code: "unavailable" }));
+        var x = istantanea();
+        window.__letture = window.__letture || {};
+        window.__letture[racc] = (window.__letture[racc] || 0) + x.size;
+        return Promise.resolve(x);
+      },
       onSnapshot: function (cb) {
         var a = { racc: racc, f: function () { cb(istantanea()); } };
         ascoltatori.push(a); setTimeout(a.f, 0);
@@ -228,6 +244,7 @@ function installa(opzioni) {
   };
   var firestoreFn = function () { return db; };
   firestoreFn.FieldValue = FieldValue;
+  firestoreFn.FieldPath = { documentId: function () { return "__name__"; } };
   firestoreFn.Timestamp = { now: marca, fromMillis: function (n) { return { __ts: n, toMillis: function () { return n; } }; } };
   var authFn = function () { return auth; };
   authFn.EmailAuthProvider = { credential: function () { return {}; } };

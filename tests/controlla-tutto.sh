@@ -154,6 +154,8 @@ banco "banco-riepilogo.js (il riepilogo permanente si aggiunge, non si rifa' dai
 banco "banco-paese-lingua.js (una lingua non e' un paese: en-GB, en-CA, de-AT, it-IT)" "node tests/banco-paese-lingua.js"
 banco "banco-claim.js (la compagnia nel token: arriva a tutti, una volta sola, senza rincorse)" "node tests/banco-claim.js"
 banco "banco-fumo.js (una sessione sola, dall'inizio alla fine, come la farebbe una persona)" "node tests/banco-fumo.js"
+banco "banco-librerie-defer.js (le librerie Firebase arrivano DOPO l'app, come in produzione: si entra e il giro sale)" "node tests/banco-librerie-defer.js"
+banco "banco-storico-150.js (oltre i 150 giri: si vede tutto, niente doppioni, aprire non legge tutto lo storico)" "node tests/banco-storico-150.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"

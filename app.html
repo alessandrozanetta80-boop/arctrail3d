@@ -2234,6 +2234,9 @@ color:var(--success-role); }
 .editorial-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-lg); line-height:1.45; margin-bottom:var(--s-3); text-wrap:balance; }
 .editorial-body{ font-size:var(--t-sm); color:var(--muted); line-height:1.6; max-width:360px; margin:0 auto; }
 .timeline-row{ display:flex; align-items:center; gap:var(--s-3); padding:var(--s-2) var(--s-3); background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:var(--r-sm); margin-bottom:var(--s-2); }
+/* Lo storico a pagine (21/09/2026): i due tasti in fondo alla scheda Giri e le loro righe. */
+.giri-altri, .giri-vecchi{ margin-top:var(--s-2); }
+.giri-vecchi-errore, .giri-vecchi-finiti{ text-align:center; margin-top:var(--s-2); }
 .timeline-icon{ width:30px; height:30px; border-radius:50%; background:var(--verde-bg); color:var(--accent-soft); display:flex; align-items:center; justify-content:center; flex:none; }
 .timeline-content{ flex:1; display:flex; flex-direction:column; min-width:0; }
 .timeline-meta{ font-size:var(--t-sm); color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -5733,9 +5736,25 @@ var auth, db, messaging, fns, messagingInitError = "";
 // altrimenti la chiamata parte verso us-central1 e torna "not-found".
 var FUNCTIONS_REGION = "europe-west1";
 var VAPID_KEY = "BAf1VFe0FFTgirK8pyQ3rDhKxRfO9NuGwEKhFNKERRGZf-1B2--YCTzowswIo-qN0kyztUbRVVEYcKwzJmQe64M"; // Firebase Console -> Impostazioni progetto -> Cloud Messaging -> Web Push certificates
-if(DEV_MODE || !fbVivo()){
-firebaseReady = false;
-} else {
+/* ══ LE LIBRERIE NON CI SONO ANCORA, E NON E' UN «NO». (21/09/2026.) ══════
+   Questa era la causa della regressione del 20/09 («non si registra un
+   allenamento», fascia «Stai lavorando solo su questo telefono»).
+   La fase 23 ha fatto partire l'app SUBITO invece che a `DOMContentLoaded`.
+   Ma le cinque librerie Firebase sono `defer`: il browser le esegue DOPO
+   l'ultimo copione del <body>, cioe' dopo questo. Qui `firebase` quindi non
+   c'era MAI, su nessun telefono e con qualunque rete: `firebaseReady` andava
+   a false per sempre, `initializeApp` non partiva, e un telefono gia' usato
+   finiva in modalita' locale — si segnava, niente saliva sul cloud. Un
+   telefono nuovo vedeva «Connessione non riuscita».
+   I banchi non lo vedevano perche' `firebase-finto.js` mette `window.firebase`
+   PRIMA che la pagina parta: l'ordine vero di caricamento non l'aveva nessuno.
+   Adesso «non ancora» e «mai» sono due cose: se le librerie non ci sono si
+   aspetta (`firebaseInArrivo`), e l'inizializzazione la rifa'
+   `avviaAccessoQuandoPronto` quando arrivano. */
+var firebaseInArrivo = false;
+function inizializzaFirebase(){
+if(auth && db) return true;
+if(DEV_MODE || !fbVivo()) return false;
 try{
 var fbApp = firebase.initializeApp(firebaseConfig);
 attivaAppCheck();
@@ -5744,9 +5763,24 @@ db = firebase.firestore();
 try{ db.enablePersistence({ synchronizeTabs:true }).catch(function(){}); }catch(e){}
 try{ if(firebase.messaging){ messaging = firebase.messaging(); } }catch(e){ messagingInitError = e && e.message ? e.message : String(e); }
 try{ if(firebase.functions){ fns = firebase.app().functions(FUNCTIONS_REGION); } }catch(e){ fns = null; }
+firebaseReady = true;
+return true;
 } catch(initErr){
+auth = db = messaging = fns = undefined;
 firebaseReady = false;
+return false;
 }
+}
+if(DEV_MODE){
+firebaseReady = false;
+} else if(fbVivo()){
+inizializzaFirebase();
+} else {
+// Finche' aspettiamo, niente parla col database: `firebaseReady` resta
+// false come prima. Cambia solo cosa si disegna nel frattempo (vedi
+// `modalitaLocale` e `authState`).
+firebaseReady = false;
+firebaseInArrivo = true;
 }
 
 /* ══ APP CHECK: IL CODICE C'E', L'OBBLIGO NO ══════════════════════════════
@@ -5864,12 +5898,14 @@ return false;
 function backendPronto(){
 return !!firebaseReady && !!auth && !!db;
 }
+// Mentre le librerie stanno arrivando non si e' «solo su questo telefono»:
+// si e' in attesa. La fascia e «Connessione non riuscita» si decidono dopo.
 function modalitaLocale(){
-return !DEV_MODE && !backendPronto() && telefonoConfigurato();
+return !DEV_MODE && !firebaseInArrivo && !backendPronto() && telefonoConfigurato();
 }
 
 var arrivaDaEmail = false;   // acceso da leggiRitornoEmail(), all'avvio
-var authState = DEV_MODE ? "ready" : (firebaseReady ? "loading" : "firebaseError"); // loading | needLogin | linkSent | pendingApproval | authError | firebaseError | ready
+var authState = DEV_MODE ? "ready" : ((firebaseReady || firebaseInArrivo) ? "loading" : "firebaseError"); // loading | needLogin | linkSent | pendingApproval | authError | firebaseError | ready
 var authErrorMsg = "";
 var currentUser = null;
 var PENDING_EMAIL_KEY = "arctrail3d_pending_email";
@@ -6396,15 +6432,32 @@ var accessoPartito = false;
 function avviaAccessoQuandoPronto(){
 function vai(){
 if(accessoPartito) return;
+// Le librerie sono arrivate adesso: e' qui che si inizializza, non all'avvio
+// (vedi `firebaseInArrivo`). (21/09/2026)
+if(firebaseInArrivo || (!DEV_MODE && !backendPronto() && fbVivo())){
+if(!inizializzaFirebase()){ vaiSenzaRete(); return; }
+firebaseInArrivo = false;
+}
 accessoPartito = true;
 // Le societa' arrivano col loro script: quando ci sono, si ridisegna.
 if(typeof COMPAGNIE !== "undefined") render();
 initAuthFlow();
 }
+/* Librerie mancanti: se il documento e' finito e non ci sono, non arriveranno
+   (download fallito); se dopo 4 secondi stanno ancora arrivando, si segna in
+   locale INTANTO. In tutti e due i casi l'accesso NON si chiude: se arrivano
+   dopo — 3G lento, gstatic che si sblocca — `vai` al `load` le prende e la
+   nuvola torna senza ricaricare. Prima il timeout chiudeva la sessione in
+   locale anche a chi stava solo scaricando piano. (21/09/2026) */
+function vaiSenzaRete(){
+if(accessoPartito || backendPronto()) return;
+if(firebaseInArrivo){ firebaseInArrivo = false; authState = "firebaseError"; render(); }
+}
+function scaduto(){ if(!accessoPartito && !fbVivo()) vaiSenzaRete(); else vai(); }
 if(DEV_MODE || fbVivo()){ vai(); return; }
 document.addEventListener("DOMContentLoaded", vai);
 window.addEventListener("load", vai);
-setTimeout(vai, 4000);
+setTimeout(scaduto, 4000);
 }
 
 function initAuthFlow(){
@@ -7143,6 +7196,11 @@ campi_allenamenti_qui: "Allenamenti aperti qui: {n}",
 campi_filter_placeholder: "Filtra per nome o luogo…",
 history_empty: "I percorsi completati appariranno qui in ordine cronologico, con punteggio e piazzole.", history_empty_title: "Ancora nessun percorso", history_empty_cta: "Inizia il primo percorso", stats_rounds: "Gare", stats_avg: "Media", stats_best: "Record",
 history_clear: "Cancella storico",
+hist_mostra_altri: "Mostra altri giri ({n})",
+hist_vecchi_carica: "Carica i giri più vecchi",
+hist_vecchi_in_corso: "Carico…",
+hist_vecchi_finiti: "Non ci sono altri giri.",
+hist_vecchi_errore: "Non riesco a caricare i giri più vecchi. Riprova con la rete.",
 clear_confirm: "Tocca di nuovo per confermare",
 targets_word: "piazzole",
 ordinal_1: "1\u00aa", ordinal_2: "2\u00aa", ordinal_3: "3\u00aa",
@@ -7896,6 +7954,11 @@ campi_allenamenti_qui: "Open trainings here: {n}",
 campi_filter_placeholder: "Filter by name or location…",
 history_empty: "Completed rounds will appear here in chronological order, with score and targets.", history_empty_title: "No rounds yet", history_empty_cta: "Start your first round", stats_rounds: "Rounds", stats_avg: "Average", stats_best: "Best",
 history_clear: "Clear history",
+hist_mostra_altri: "Show more rounds ({n})",
+hist_vecchi_carica: "Load older rounds",
+hist_vecchi_in_corso: "Loading…",
+hist_vecchi_finiti: "No more rounds.",
+hist_vecchi_errore: "Couldn’t load older rounds. Try again when online.",
 clear_confirm: "Tap again to confirm",
 targets_word: "targets",
 ordinal_1: "1st", ordinal_2: "2nd", ordinal_3: "3rd",
@@ -8648,6 +8711,11 @@ campi_allenamenti_qui: "Entraînements ouverts ici : {n}",
 campi_filter_placeholder: "Filtrer par nom ou lieu…",
 history_empty: "Les parcours termin\u00e9s appara\u00eetront ici par ordre chronologique, avec le score et les piquets.", history_empty_title: "Aucun parcours pour l’instant", history_empty_cta: "Commencer le premier parcours", stats_rounds: "Parcours", stats_avg: "Moyenne", stats_best: "Record",
 history_clear: "Effacer l\u2019historique",
+hist_mostra_altri: "Afficher plus de parcours ({n})",
+hist_vecchi_carica: "Charger les parcours plus anciens",
+hist_vecchi_in_corso: "Chargement…",
+hist_vecchi_finiti: "Il n’y a pas d’autres parcours.",
+hist_vecchi_errore: "Impossible de charger les parcours plus anciens. Réessayez avec le réseau.",
 clear_confirm: "Appuyez \u00e0 nouveau pour confirmer",
 targets_word: "cibles",
 ordinal_1: "1\u00e8re", ordinal_2: "2e", ordinal_3: "3e",
@@ -9400,6 +9468,11 @@ campi_allenamenti_qui: "Offene Trainings hier: {n}",
 campi_filter_placeholder: "Nach Name oder Ort filtern…",
 history_empty: "Abgeschlossene Parcours erscheinen hier in chronologischer Reihenfolge, mit Punktzahl und Zielen.", history_empty_title: "Noch keine Runde", history_empty_cta: "Ersten Parcours starten", stats_rounds: "Runden", stats_avg: "Durchschnitt", stats_best: "Bestwert",
 history_clear: "Verlauf l\u00f6schen",
+hist_mostra_altri: "Weitere Runden anzeigen ({n})",
+hist_vecchi_carica: "Ältere Runden laden",
+hist_vecchi_in_corso: "Wird geladen…",
+hist_vecchi_finiti: "Keine weiteren Runden.",
+hist_vecchi_errore: "Ältere Runden konnten nicht geladen werden. Mit Netz erneut versuchen.",
 clear_confirm: "Zum Best\u00e4tigen erneut tippen",
 targets_word: "Ziele",
 ordinal_1: "1.", ordinal_2: "2.", ordinal_3: "3.",
@@ -10171,6 +10244,11 @@ campi_allenamenti_qui: "Burada açık antrenman: {n}",
 campi_filter_placeholder: "Filtrele…",
 history_empty: "Tamamlanan parkurlar puan ve hedeflerle birlikte burada kronolojik s\u0131rayla g\u00f6r\u00fcn\u00fcr.", history_empty_title: "Hen\u00fcz parkur yok", history_empty_cta: "\u0130lk parkuru ba\u015flat", stats_rounds: "Yar\u0131\u015fmalar", stats_avg: "Ortalama", stats_best: "Rekor",
 history_clear: "Ge\u00e7mi\u015fi sil",
+hist_mostra_altri: "Daha fazla tur göster ({n})",
+hist_vecchi_carica: "Eski turları yükle",
+hist_vecchi_in_corso: "Yükleniyor…",
+hist_vecchi_finiti: "Başka tur yok.",
+hist_vecchi_errore: "Eski turlar yüklenemedi. Ağ varken tekrar dene.",
 clear_confirm: "Onaylamak i\u00e7in tekrar dokun",
 targets_word: "hedef",
 ordinal_1: "1.", ordinal_2: "2.", ordinal_3: "3.",
@@ -10936,6 +11014,11 @@ campi_allenamenti_qui: "Открытых тренировок здесь: {n}",
 campi_filter_placeholder: "Фильтр по названию или месту…",
 history_empty: "Завершённые маршруты появятся здесь в хронологическом порядке, с очками и мишенями.", history_empty_title: "Пока нет маршрутов", history_empty_cta: "Начать первый маршрут", stats_rounds: "Соревнования", stats_avg: "Среднее", stats_best: "Рекорд",
 history_clear: "Очистить историю",
+hist_mostra_altri: "Показать ещё раунды ({n})",
+hist_vecchi_carica: "Загрузить более старые раунды",
+hist_vecchi_in_corso: "Загрузка…",
+hist_vecchi_finiti: "Больше раундов нет.",
+hist_vecchi_errore: "Не удалось загрузить старые раунды. Повторите при наличии сети.",
 clear_confirm: "Нажмите ещё раз для подтверждения",
 targets_word: "мишеней",
 ordinal_1: "1-я", ordinal_2: "2-я", ordinal_3: "3-я",
@@ -11701,6 +11784,11 @@ campi_allenamenti_qui: "Entrenamientos abiertos aquí: {n}",
 campi_filter_placeholder: "Filtrar…",
 history_empty: "Los recorridos completados aparecer\u00e1n aqu\u00ed en orden cronol\u00f3gico, con puntuaci\u00f3n y dianas.", history_empty_title: "A\u00fan no hay recorridos", history_empty_cta: "Iniciar el primer recorrido", stats_rounds: "Competiciones", stats_avg: "Media", stats_best: "R\u00e9cord",
 history_clear: "Borrar historial",
+hist_mostra_altri: "Mostrar más rondas ({n})",
+hist_vecchi_carica: "Cargar rondas más antiguas",
+hist_vecchi_in_corso: "Cargando…",
+hist_vecchi_finiti: "No hay más rondas.",
+hist_vecchi_errore: "No se pudieron cargar las rondas más antiguas. Inténtalo de nuevo con red.",
 clear_confirm: "Toca de nuevo para confirmar",
 targets_word: "dianas",
 ordinal_1: "1\u00aa", ordinal_2: "2\u00aa", ordinal_3: "3\u00aa",
@@ -12466,6 +12554,11 @@ campi_allenamenti_qui: "Öppna träningar här: {n}",
 campi_filter_placeholder: "Filtrera…",
 history_empty: "Avslutade rundor visas h\u00e4r i kronologisk ordning, med po\u00e4ng och m\u00e5l.", history_empty_title: "\u00c4nnu inga rundor", history_empty_cta: "Starta din f\u00f6rsta runda", stats_rounds: "T\u00e4vlingar", stats_avg: "Medel", stats_best: "Rekord",
 history_clear: "Rensa historik",
+hist_mostra_altri: "Visa fler rundor ({n})",
+hist_vecchi_carica: "Ladda äldre rundor",
+hist_vecchi_in_corso: "Laddar…",
+hist_vecchi_finiti: "Inga fler rundor.",
+hist_vecchi_errore: "Kunde inte ladda äldre rundor. Försök igen med nät.",
 clear_confirm: "Tryck igen f\u00f6r att bekr\u00e4fta",
 targets_word: "m\u00e5l",
 ordinal_1: "1:a", ordinal_2: "2:a", ordinal_3: "3:e",
@@ -13231,6 +13324,11 @@ campi_allenamenti_qui: "Open trainingen hier: {n}",
 campi_filter_placeholder: "Filteren…",
 history_empty: "Voltooide rondes verschijnen hier in chronologische volgorde, met score en doelen.", history_empty_title: "Nog geen rondes", history_empty_cta: "Start je eerste ronde", stats_rounds: "Wedstrijden", stats_avg: "Gemiddelde", stats_best: "Record",
 history_clear: "Geschiedenis wissen",
+hist_mostra_altri: "Meer rondes tonen ({n})",
+hist_vecchi_carica: "Oudere rondes laden",
+hist_vecchi_in_corso: "Laden…",
+hist_vecchi_finiti: "Geen rondes meer.",
+hist_vecchi_errore: "Oudere rondes konden niet worden geladen. Probeer opnieuw met netwerk.",
 clear_confirm: "Tik nogmaals om te bevestigen",
 targets_word: "doelen",
 ordinal_1: "1e", ordinal_2: "2e", ordinal_3: "3e",
@@ -14279,7 +14377,13 @@ return removed;
 function deleteHistoryRound(idx){
 var hist = loadHistory();
 var h = hist[idx];
-if(!h) return;
+if(!h){
+// Un giro piu' vecchio dei 150, sceso dal cloud per essere guardato: non e'
+// nel telefono, quindi si seppellisce e basta. (21/09/2026)
+var j = idx - hist.length, v = giriVecchi[j];
+if(j >= 0 && v){ giriVecchi.splice(j, 1); if(v.date) markRoundDeleted(v.date); }
+return;
+}
 hist.splice(idx, 1);
 saveHistoryList(hist);
 if(h.date) markRoundDeleted(h.date);
@@ -15243,12 +15347,36 @@ if(riga) backupRoundToCloud(riga);
 
 // Invia sul cloud i giri locali che non ci sono ancora (per chi aveva gi\u00e0 storico
 // prima di questo aggiornamento). Non tocca nulla in locale.
+/* ══ SI CHIEDONO I GIRI CHE SI HANNO, NON TUTTO LO STORICO ═════════════════
+   (21/09/2026, storico oltre i 150.) Qui c'era `ref.get()`: TUTTA la
+   raccolta `storico`, lapidi comprese, a ogni apertura dell'app. Con 2.000
+   giri sul cloud erano 2.000 letture ogni volta, per rispondere a una domanda
+   che riguarda al massimo i 150 giri del telefono e le sue lapidi.
+   Adesso si chiedono per nome esattamente quei documenti, a blocchi di 30
+   (il massimo di un `in`). Le risposte che servono qui sotto — ce l'ha? e'
+   sepolto? — sono le stesse, per gli stessi giri: la domanda e' solo piu'
+   stretta. Le lapidi di giri che questo telefono non ha non servono a
+   nessuna delle due cose. */
+function leggiStoricoPerId(ref, ids){
+var blocchi = [];
+for(var i = 0; i < ids.length; i += 30) blocchi.push(ids.slice(i, i + 30));
+return Promise.all(blocchi.map(function(b){
+return ref.where(firebase.firestore.FieldPath.documentId(), "in", b).get();
+})).then(function(snaps){
+var docs = [];
+snaps.forEach(function(s){ s.forEach(function(d){ docs.push(d); }); });
+return { forEach: function(fn){ docs.forEach(fn); } };
+});
+}
 function pushLocalHistoryToCloud(cb){
 var ref = cloudHistoryRef();
 if(!ref){ if(cb) cb(null, 0); return; }
 var hist = loadHistory();
 if(!hist.length){ if(cb) cb(null, 0); return; }
-ref.get().then(function(snap){
+var chiesti = {}, delLocali = loadDeletedRounds();
+hist.forEach(function(h){ if(h && h.date) chiesti[roundDocId(h.date)] = true; });
+Object.keys(delLocali).forEach(function(id){ chiesti[id] = true; });
+leggiStoricoPerId(ref, Object.keys(chiesti)).then(function(snap){
 var have = {}, gone = {}, giaSepolti = {};
 snap.forEach(function(d){
 have[d.id] = true;
@@ -15393,6 +15521,75 @@ if(cb) cb(null, added);
 }).catch(function(err){
 cloudSyncState.lastError = describeFirebaseError(err);
 if(cb) cb(err, 0);
+});
+}
+/* ══ I GIRI PIU' VECCHI DEI 150: SI GUARDANO, NON SI TENGONO ══════════════
+   (21/09/2026, storico oltre i 150.) Il telefono tiene i 150 giri piu'
+   recenti (HISTORY_MAX) e il cloud li tiene tutti. Quelli oltre non si
+   vedevano mai. Adesso il Diario li chiede quando si tocca «Carica i giri
+   piu' vecchi»: TRENTA alla volta, in ordine di data, ripartendo da dove si
+   era arrivati (`startAfter`), mai tutta la raccolta.
+   - Restano in MEMORIA (`giriVecchi`), non in `localStorage`: il telefono
+     continua a tenerne 150, e chiudere l'app li libera. Riaprendo si
+     richiedono; e' il prezzo giusto per non far crescere lo spazio usato.
+   - Niente doppioni: un giro gia' nel telefono, gia' sceso, o sepolto (qui o
+     sul cloud) non entra.
+   - Non toccano il riepilogo permanente, record e totali: si guardano e
+     basta. Si puo' cancellarli, con la stessa lapide degli altri.
+   - Si azzerano se cambia l'account. */
+var giriMostrati = 20;
+var giriVecchi = [], giriVecchiCursore = null, giriVecchiFiniti = false;
+var giriVecchiInCorso = false, giriVecchiErrore = false, giriVecchiPer = null;
+var GIRI_VECCHI_BLOCCO = 30;
+function azzeraGiriVecchi(){
+giriVecchi = []; giriVecchiCursore = null; giriVecchiFiniti = false;
+giriVecchiInCorso = false; giriVecchiErrore = false; giriMostrati = 20;
+}
+function giriVecchiDiChi(){
+var chi = (currentUser && currentUser.uid) || null;
+if(chi !== giriVecchiPer){ azzeraGiriVecchi(); giriVecchiPer = chi; }
+}
+function giroDelDiario(i){
+var hist = loadHistory();
+if(i >= 0 && i < hist.length) return hist[i];
+return giriVecchi[i - hist.length] || null;
+}
+function caricaGiriVecchi(){
+var ref = cloudHistoryRef();
+if(!ref || giriVecchiInCorso || giriVecchiFiniti) return;
+giriVecchiDiChi();
+var hist = loadHistory();
+var ce = {};
+hist.forEach(function(h){ if(h && h.date) ce[roundDocId(h.date)] = true; });
+giriVecchi.forEach(function(h){ if(h && h.date) ce[roundDocId(h.date)] = true; });
+// Si riparte dal giro piu' vecchio che si ha gia' davanti.
+var cursore = giriVecchiCursore;
+if(!cursore){
+hist.forEach(function(h){ if(h && h.date && (!cursore || String(h.date) < cursore)) cursore = String(h.date); });
+}
+var del = loadDeletedRounds();
+giriVecchiInCorso = true; giriVecchiErrore = false;
+render();
+var q = ref.orderBy("date", "desc");
+if(cursore) q = q.startAfter(cursore);
+q.limit(GIRI_VECCHI_BLOCCO).get().then(function(snap){
+var ultimo = null, arrivati = 0;
+snap.forEach(function(doc){
+arrivati++;
+var d = doc.data();
+if(d && d.date) ultimo = String(d.date);
+if(!d || !d.date || d.deleted === true || del[doc.id] || ce[doc.id]) return;
+ce[doc.id] = true;
+giriVecchi.push(giroDaNuvola(d));
+});
+if(ultimo) giriVecchiCursore = ultimo;
+if(arrivati < GIRI_VECCHI_BLOCCO) giriVecchiFiniti = true;
+giriVecchiInCorso = false;
+render();
+}).catch(function(err){
+cloudSyncState.lastError = describeFirebaseError(err);
+giriVecchiInCorso = false; giriVecchiErrore = true;
+render();
 });
 }
 function hardResetAll(){ var lang = state.lang, country = state.country, federation = state.federation, profile = state.profile, profileSkipped = state.profileSkipped, compagnieData = state.compagnieData, percorsi = state.percorsi; state = { screen:"menu", pendingArchers:[], lang:lang, country:country, federation:federation, profile:profile, profileSkipped:profileSkipped, compagnieData:compagnieData, percorsi:percorsi }; try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} homeOverride=false; render(); }
@@ -16329,7 +16526,7 @@ applyTheme(currentTheme());
    Misurato da tests/banco-porta.js, che parte proprio da uno stato vergine: 20
    rossi, uno per lingua per schermo, tutti «la porta non c'e' proprio».
    Il sito online non era toccato: li' DEV_MODE e' false e Firebase risponde. */
-if(!DEV_MODE && !backendPronto() && !telefonoConfigurato()){ app.appendChild(firebaseErrorScreen()); return; }
+if(!DEV_MODE && !firebaseInArrivo && !backendPronto() && !telefonoConfigurato()){ app.appendChild(firebaseErrorScreen()); return; }
 if(!state.lang){ app.appendChild(setupScreen()); return; }
 if(authState === "loading"){ app.appendChild(loadingScreen()); return; }
 if(authState === "linkSent"){ app.appendChild(linkSentScreen()); return; }
@@ -23740,7 +23937,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-09-20-notturno";
+var BUILD_STAMP = "2026-09-21-avvio-storico";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24954,6 +25151,7 @@ return wrap;
 function historyScreen(){
 var wrap = el('<div></div>');
 var hist = loadHistory();
+giriVecchiDiChi();
 var histCard = el('<div class="card"></div>');
 
 if(!hist.length){
@@ -25010,7 +25208,19 @@ histCard.appendChild(statsRow);
 }
 var histList = el('<div style="margin-top:var(--s-1);"></div>');
 var locale = (LANG_META[state.lang]||LANG_META.it).locale;
-hist.slice(0,20).forEach(function(h, hIdx){
+/* L'ELENCO NON SI FERMA PIU' A VENTI. (21/09/2026, storico oltre i 150.)
+   Qui c'era `hist.slice(0,20)`: dei 150 giri del telefono se ne vedevano
+   venti, e quelli piu' vecchi dei 150 — che sul cloud ci sono tutti — non si
+   vedevano da nessuna parte. Adesso si scorre a pagine: prima i giri del
+   telefono, venti alla volta; finiti quelli, i piu' vecchi si chiedono al
+   cloud, trenta alla volta e solo se si tocca il tasto. Aprire il Diario
+   costa quanto prima: niente scende da solo. */
+var visibili = hist.slice(0, Math.min(giriMostrati, hist.length)).map(function(h, i){ return { h: h, idx: i }; });
+if(giriMostrati >= hist.length){
+giriVecchi.forEach(function(h, j){ visibili.push({ h: h, idx: hist.length + j }); });
+}
+visibili.forEach(function(v){
+var h = v.h, hIdx = v.idx;
 var d = new Date(h.date);
 var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 var winner = h.results.length ? h.results[0] : null;
@@ -25048,6 +25258,19 @@ row.appendChild(delRound);
 histList.appendChild(row);
 });
 histCard.appendChild(histList);
+if(giriMostrati < hist.length){
+var altri = el('<button class="btn btn-ghost btn-block giri-altri">'+escapeHtml(t("hist_mostra_altri",{ n: hist.length - giriMostrati }))+'</button>');
+altri.addEventListener("click", function(){ giriMostrati += 20; render(); });
+histCard.appendChild(altri);
+} else if(cloudHistoryRef() && !giriVecchiFiniti){
+var vecchi = el('<button class="btn btn-ghost btn-block giri-vecchi">'+escapeHtml(t(giriVecchiInCorso ? "hist_vecchi_in_corso" : "hist_vecchi_carica"))+'</button>');
+if(giriVecchiInCorso) vecchi.disabled = true;
+vecchi.addEventListener("click", function(){ caricaGiriVecchi(); });
+histCard.appendChild(vecchi);
+if(giriVecchiErrore) histCard.appendChild(el('<div class="nota giri-vecchi-errore">'+escapeHtml(t("hist_vecchi_errore"))+'</div>'));
+} else if(giriVecchiFiniti && giriVecchi.length){
+histCard.appendChild(el('<div class="nota giri-vecchi-finiti">'+escapeHtml(t("hist_vecchi_finiti"))+'</div>'));
+}
 var clearHistBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-2);">'+t("history_clear")+'</button>');
 histCard.appendChild(clearHistBtn);
 armDoubleConfirm(clearHistBtn, t("clear_confirm"), function(){
@@ -25056,6 +25279,7 @@ armDoubleConfirm(clearHistBtn, t("clear_confirm"), function(){
 var all = loadHistory();
 markRoundsDeleted(all.map(function(h){ return h && h.date; }));
 saveHistoryList([]);
+azzeraGiriVecchi();
 render();
 });
 }
@@ -25066,8 +25290,7 @@ return wrap;
 
 function historyDetailScreen(){
 var wrap = el('<div></div>');
-var hist = loadHistory();
-var h = hist[state.historyIndex];
+var h = giroDelDiario(state.historyIndex);
 if(!h){
 var backBtnEmpty = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-2);">'+t("back_to_history_btn")+'</button>');
 backBtnEmpty.addEventListener("click", function(){ state.screen = "history"; save(); render(); });

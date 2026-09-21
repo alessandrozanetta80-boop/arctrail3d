@@ -93,8 +93,11 @@ prova("si disegna PRIMA di chiedere a Firebase chi sei", iRender > 0 && iAccesso
 prova("le societa' si caricano dopo il primo disegno", src.indexOf("\nrender();\ncaricaCompagnie();") > 0);
 prova("initAuthFlow() e' chiamato una volta sola",
       (src.match(/^initAuthFlow\(\);$/gm) || []).length === 1);
+/* Dal 21/09 si parte da "loading" anche mentre le librerie stanno ARRIVANDO
+   (`firebaseInArrivo`): prima «non ancora» valeva «mai», ed era la regressione
+   del 20/09. banco-librerie-defer.js lo prova col browser. */
 prova("authState parte da \"loading\", cioe' c'e' qualcosa da disegnare",
-      /var authState = DEV_MODE \? "ready" : \(firebaseReady \? "loading"/.test(src));
+      /var authState = DEV_MODE \? "ready" : \(\(firebaseReady \|\| firebaseInArrivo\) \? "loading"/.test(src));
 prova("paintScreen disegna loadingScreen quando authState e' loading",
       /if\(authState === "loading"\)\{ app\.appendChild\(loadingScreen\(\)\); return; \}/.test(src));
 /* Chi apre l'app la prima volta non deve passare dall'attesa: senza lingua si
