@@ -1,5 +1,5 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-09-20-visibilita
+// Versione 2026-09-22-push-argomento
 // Nata da: 2026-08-28-notifica-verificata (col layout functions/ del 17/09)
 //
 // NOVITA' 2026-09-20 — I DISPOSITIVI SONO DOCUMENTI: users/{uid}/devices/{deviceId}
@@ -362,9 +362,15 @@ exports.pushNotifica = onDocumentCreated(
     (esito.responses || []).forEach(function (r, i) {
       if (r.success) return;
       const code = r.error && (r.error.code || (r.error.errorInfo && r.error.errorInfo.code)) || "";
+      const testo = String((r.error && (r.error.message || (r.error.errorInfo && r.error.errorInfo.message))) || "");
+      /* `invalid-argument` E' UN TOKEN MORTO SOLO SE PARLA DEL TOKEN. (21/09/2026.)
+         FCM lo restituisce anche per un messaggio fatto male — e allora fallisce
+         per TUTTI i token: contarlo come token morto spegnerebbe in silenzio
+         tutti i dispositivi di ogni destinatario. banco-push.js, A2-bis. */
+      const tokenNonValido = code === "messaging/invalid-argument" && /registration token/i.test(testo);
       if (code === "messaging/registration-token-not-registered" ||
           code === "messaging/invalid-registration-token" ||
-          code === "messaging/invalid-argument") {
+          tokenNonValido) {
         morti.push(voci[i]);
       } else {
         console.error("push fallita per", uid, code || r.error);

@@ -133,7 +133,8 @@ var finto = {
         sendEachForMulticast: function(msg){
           inviati.push(msg);
           return Promise.resolve({ responses: msg.tokens.map(function(t){
-            return fallisce[t] ? { success:false, error:{ code: fallisce[t] } } : { success:true };
+            // Un errore e' un codice, oppure { code, message } quando conta anche il testo.
+            return fallisce[t] ? { success:false, error: (typeof fallisce[t] === "string" ? { code: fallisce[t] } : fallisce[t]) } : { success:true };
           }) });
         }
       };
@@ -302,6 +303,24 @@ var AVVISO = {
     prova("token morto: il documento del computer si spegne", !!(suPc && suPc.cambi.enabled === false), JSON.stringify(aggiornamenti));
     prova("token morto: il telefono e il vecchio fcmToken restano",
           !aggiornamenti.some(function(a){ return /dTel$/.test(a.path) || a.path === "users/u-destinatario"; }), JSON.stringify(aggiornamenti));
+
+    // A2-bis — `invalid-argument` NON vuol dire sempre «token morto». (21/09/2026)
+    // FCM lo restituisce anche per un messaggio fatto male: allora fallisce per
+    // TUTTI i token, e trattarlo da token morto spegnerebbe in silenzio tutti i
+    // dispositivi di ogni destinatario.
+    inviati = []; aggiornamenti = [];
+    fallisce = {};
+    ["token-telefono", "token-computer", "token-vecchio"].forEach(function(t){
+      fallisce[t] = { code: "messaging/invalid-argument", message: "Invalid data payload: values must be strings" };
+    });
+    await mandaPush({ data:{ data:function(){ return AVVISO; } }, params:{ uid:"u-destinatario", itemId:"avviso-9" } });
+    prova("messaggio fatto male (invalid-argument sul payload): nessun dispositivo si spegne",
+          aggiornamenti.length === 0, JSON.stringify(aggiornamenti));
+    inviati = []; aggiornamenti = [];
+    fallisce = { "token-computer": { code: "messaging/invalid-argument", message: "The registration token is not a valid FCM registration token" } };
+    await mandaPush({ data:{ data:function(){ return AVVISO; } }, params:{ uid:"u-destinatario", itemId:"avviso-10" } });
+    var suPc2 = aggiornamenti.filter(function(a){ return /devices\/dPc$/.test(a.path); })[0];
+    prova("invalid-argument che parla del TOKEN: si spegne quel dispositivo", !!(suPc2 && suPc2.cambi.enabled === false), JSON.stringify(aggiornamenti));
     fallisce = {};
   }
 
