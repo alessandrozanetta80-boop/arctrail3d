@@ -11,7 +11,7 @@ intero**. Gli archivi non si leggono mai tutti: si cercano.
 | **NOTE-DESIGN.md** | perché l'app è così — archivio | si cerca |
 | **NOTE-MERCATINO.md** | perché il mercatino è così — archivio | si cerca |
 
-Aggiornato il **20/09/2026** (risanamento notturno, §R).
+Aggiornato il **21/09/2026** (rollback del 20/09 e sua causa, §R).
 
 ---
 
@@ -23,10 +23,10 @@ più vecchio chiama `index.html` l'app.
 | file | cos'è | timbro | copia buona |
 |---|---|---|---|
 | `index.html` | la vetrina, porta di casa | online `2026-09-18-inglese` · ramo `2026-09-19-risanamento` | **GitHub** |
-| `app.html` | l'app | online `2026-09-18-campi-fiarc` · ramo `2026-09-20-notturno` | **GitHub** |
+| `app.html` | l'app | online `2026-09-18-campi-fiarc` · ramo `2026-09-21-avvio-storico` | **GitHub** |
 | `compagnie-data.js` | le societa', 4950 in otto paesi | — | **GitHub** |
 | `marketplace.html` | il mercatino | `2026-08-25-radice` | **GitHub** |
-| `sw.js` | | online `arctrail3d-v166` · ramo `v167` | **GitHub** |
+| `sw.js` | | online `arctrail3d-v166` · ramo `v168` *(v167 è stata online 30 min il 20/09)* | **GitHub** |
 | `favicon.ico` | l'icona per chi guarda da fuori | — | GitHub, caricata a mano |
 | cinque `vetrina-*.webp` | le foto della vetrina | — | GitHub, caricate a mano |
 | `functions/index.js` | le 7 Cloud Functions *(dal 17/09 in `functions/`)* | ramo `2026-09-20-dispositivi` | GitHub *(deploy: `bash ~/pubblica.sh`)* |
@@ -199,29 +199,28 @@ e chi arriva per la prima volta non ha una seconda occasione.
 - **F3. Le 702 stringhe della vetrina non le ha lette nessuno che le parli.**
   Stesso debito di D1, sulla pagina che si vede una volta sola nella vita.
 
-### R — Il risanamento (19–20/09): pubblicare, poi guardare
+### R — Il risanamento (19–21/09): pubblicato, tornato indietro, corretto
 
-Ramo `risanamento-post-audit`, **non su `main`, niente pubblicato**. Racconto,
-conti dei banchi e cosa resta: `docs/RISANAMENTO-2026-09-19.md`.
+Pubblicato il 20/09 e **tornato indietro tutto** (`1cd0652`): l'app partiva prima
+delle librerie Firebase `defer` e non le inizializzava mai. Corretto nel ramo
+**`fix/avvio-firebase-2026-09-21`**, con lo storico oltre i 150: **`ALLENAMENTI-2026-09-21.md`**.
 
 - **R1. Pubblicare.** *(1)* `main` ← ramo: `app.html`, `sw.js`, `index.html`,
   `manifest.json`, `compagnie-data.js`, `_config.yml`, `.github/`, banchi.
   *(2)* `node tests/controlla-base.js` (il sito vero è la versione nuova?).
   *(3)* Functions `2026-09-20-visibilita`, otto: `pubblica.sh` (dal Cloud Shell).
-  *(4)* Regole `2026-09-20-visibilita`: `firebase deploy --only firestore:rules`,
-  oppure in console. **L'ordine conta:** sito → Functions → regole.
-  Comandi, cosa guardare e come si torna indietro: `ROLLOUT-2026-09-20.md`.
+  *(4)* Regole `2026-09-20-visibilita`: `firebase deploy --only firestore:rules`.
+  **Dal 21/09: UNA componente alla volta, e dopo ciascuna STOP e telefono** —
+  la creazione vera di un allenamento è il cancello. Prove: `ALLENAMENTI-2026-09-21.md`.
 - **R2. Col telefono in mano:** push (app chiusa, in background, aperta, due
   dispositivi) e tocco; orizzontale; Samsung con lo scuro forzato; avvio senza
   rete a giro aperto; tastiera aperta in chat e in fondo al profilo;
   `docs/` non piu' raggiungibile su arctrail3d.com.
 - **R3. Il primo aggiornamento vero va guardato**: chi ha l'app installata passa
-  da `v166` a `v167`, magari con un giro aperto. Il banco lo prova
+  da `v166` (o `v167`, chi l'ha presa il 20/09) a `v168`, magari con un giro aperto. Il banco lo prova
   (`banco-salto-versione.js`, dalla `v156` del 29/08); la prima volta no.
-- **R4. `tests/chiavi-compagnie.json` è un'istantanea di 4950 chiavi**: se
-  l'elenco società viene rigenerato dice quali sono sparite **prima** che
-  spariscano gli iscritti. Si aggiorna a mano, dopo aver guardato:
-  `node tests/banco-chiavi-compagnie.js --scrivi`.
+- **R4. `tests/chiavi-compagnie.json`** (4950 chiavi) dice quali società spariscono
+  **prima** degli iscritti; si aggiorna a mano: `banco-chiavi-compagnie.js --scrivi`.
 
 ### E — Fuori dal codice
 
