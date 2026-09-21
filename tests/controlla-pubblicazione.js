@@ -63,5 +63,41 @@ prova("nessun file del sito e' escluso (" + Object.keys(usati).length + " contro
 var mancanti = Object.keys(usati).filter(function (f) { return !fs.existsSync(f); });
 prova("e tutti esistono", mancanti.length === 0, mancanti.join(", "));
 
+/* ══ L'USCITA DI JEKYLL, SIMULATA SUI FILE VERI ════════════════════════════
+   (21/09/2026.) Le prove sopra guardano un elenco scritto a mano: dicono che
+   `docs/` e' escluso, non che NIENTE di interno esce. Il 20/09 il revert ha
+   tolto `_config.yml` e il sito ha ricominciato a servire diari, banchi,
+   regole e Functions — e un file nuovo in radice (un .md di istruzioni, un
+   .json di configurazione) uscirebbe anche con `_config.yml` al suo posto,
+   perche' l'elenco e' di cosa TOGLIERE, non di cosa METTERE.
+   Qui si parte dai file che git traccia, si applicano le regole di Jekyll
+   (fuori tutto cio' che comincia per «_», «.», «#», «~», piu' `exclude`) e si
+   guarda cosa resta: deve essere tutto roba da sito. Un file che non lo e',
+   o un tipo nuovo, fa dire no — e si decide, invece di scoprirlo online. */
+console.log("\n  L'USCITA DI JEKYLL, FILE PER FILE\n");
+var tracciati = [];
+try { tracciati = require("child_process").execSync("git ls-files", { encoding: "utf8" }).split(/\r?\n/).filter(Boolean); } catch (e) {}
+prova("git elenca i file tracciati", tracciati.length > 20, tracciati.length + " file");
+function jekyllLoTiene(f) {
+  if (f.split("/").some(function (p) { return /^[_.#~]/.test(p); })) return false;
+  if (/^(node_modules|vendor)\//.test(f) || /^Gemfile/.test(f)) return false;
+  return !escluso(f) && !esclusi.some(function (e) { return e.slice(-1) === "/" && f.indexOf(e) === 0; });
+}
+var pubblicati = tracciati.filter(jekyllLoTiene);
+/* Cosa puo' stare sul sito. Pagine, script del sito, immagini, i file che
+   il browser o i motori cercano per nome. Il .json ammesso e' uno solo. */
+var DA_SITO = /\.(html|js|png|webp|jpg|jpeg|svg|ico|xml|txt|woff2?)$/i;
+var PER_NOME = { "CNAME": 1, "manifest.json": 1 };
+var estranei = pubblicati.filter(function (f) { return !DA_SITO.test(f) && !PER_NOME[f]; });
+prova("sul sito escono solo file da sito (" + pubblicati.length + " pubblicati)", estranei.length === 0, estranei.join(", "));
+var INTERNI = /^(docs|tests|tools|archive|functions)\//;
+var dentro = pubblicati.filter(function (f) { return INTERNI.test(f); });
+prova("nessun file di docs/, tests/, tools/, archive/, functions/", dentro.length === 0, dentro.slice(0, 5).join(", "));
+var js = pubblicati.filter(function (f) { return /\.js$/.test(f) && f.indexOf("/") < 0; });
+var JS_DEL_SITO = { "sw.js": 1, "firebase-messaging-sw.js": 1, "compagnie-data.js": 1 };
+var jsEstranei = js.filter(function (f) { return !JS_DEL_SITO[f]; });
+prova("i .js in radice sono solo quelli del sito", jsEstranei.length === 0, jsEstranei.join(", "));
+if (process.env.ELENCO) pubblicati.forEach(function (f) { console.log("    " + f); });
+
 console.log("\n  " + ok + " passate, " + ko + " fallite.\n");
 process.exit(ko ? 1 : 0);

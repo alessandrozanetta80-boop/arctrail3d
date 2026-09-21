@@ -10,6 +10,9 @@
 # fatto, e perche') sta nei RISANAMENTO-*, che vanno su GitHub.
 /docs/AUDIT-*.md
 /docs/APERTI-*.md
+# Le istruzioni di sessione in radice (21/09/2026): la radice E' il sito, e un
+# .md committato qui Jekyll lo pubblicherebbe come pagina.
+/ARCTRAIL3D_*.md
 
 # Dipendenze dei banchi (npm install)
 node_modules/
