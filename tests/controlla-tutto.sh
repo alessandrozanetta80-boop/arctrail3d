@@ -156,6 +156,7 @@ banco "banco-claim.js (la compagnia nel token: arriva a tutti, una volta sola, s
 banco "banco-fumo.js (una sessione sola, dall'inizio alla fine, come la farebbe una persona)" "node tests/banco-fumo.js"
 banco "banco-librerie-defer.js (le librerie Firebase arrivano DOPO l'app, come in produzione: si entra e il giro sale)" "node tests/banco-librerie-defer.js"
 banco "banco-storico-150.js (oltre i 150 giri: si vede tutto, niente doppioni, aprire non legge tutto lo storico)" "node tests/banco-storico-150.js"
+banco "banco-dati-rollback.js (lo stesso telefono: 18/09 → release → 18/09 → ramo; niente si perde, i dati dei primi giorni si riconoscono)" "node tests/banco-dati-rollback.js"
 
 echo ""
 echo "  ($n banchi, $PAR alla volta — PAR=1 li rimette in fila)"

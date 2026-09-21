@@ -6342,6 +6342,9 @@ authState = data.approved ? "ready" : "pendingApproval";
 // Il profilo pubblico si riallinea a ogni apertura: cosi' un cambio di nome
 // o di compagnia fatto altrove non lascia l'elenco arcieri indietro.
 if(data.approved) syncMyPublicProfile(data);
+// Prima gli orfani che si riconoscono, poi l'attrezzatura dal cloud: cosi'
+// quella del telefono c'e' gia' quando si decide cosa manca. (21/09/2026)
+adottaOrfaniSeMiei(data);
 recuperaAttrezziDalCloud(data);
 }
 // LA CONFERMA EMAIL VIENE PRIMA DELL'APPROVAZIONE. (19/08/2026.)
@@ -6607,10 +6610,77 @@ miei.sort(function(a, b){ return (b.date || "").localeCompare(a.date || ""); });
 assicuraVisti();
 aggiunti.forEach(function(h){ contaGiroNelRiepilogo(h); });
 saveHistoryList(miei.slice(0, HISTORY_MAX));
+riprendiIlResto(x.dati || {});
 if(x.giro && state.roundActive !== true){ Object.keys(x.giro).forEach(function(k){ state[k] = x.giro[k]; }); }
+if(x.profilo && !state.profile) state.profile = x.profilo;
 save();
 giaRiallineato = false;
 riallineaStorico();
+}
+/* ══ «AGGIUNGILI» RIPRENDE TUTTO, NON SOLO I GIRI ══════════════════════════
+   (21/09/2026, trovato da banco-dati-rollback.js.) Qui si riprendevano lo
+   storico e il giro aperto, poi il pacchetto usciva dagli orfani — e con lui
+   il riepilogo permanente, l'attrezzatura, le lapidi e il marchio IFAA del
+   telefono. Chi toccava «Aggiungili al mio account» li perdeva per sempre: il
+   tasto che doveva ridargli i dati ne buttava meta'.
+   Adesso ogni chiave torna, e nessuna si somma due volte:
+   - riepilogo: per ogni voce si tiene quella con PIU' giri (chi e' stato
+     messo da parte ha di solito il riepilogo lungo; quello rifatto dal cloud
+     nel frattempo conta solo i giri scesi — sommarli li conterebbe due volte);
+   - giri gia' contati (`visti`), lapidi: unione;
+   - attrezzatura: unione per id, quella del telefono vince a parita' di id;
+   - marchio IFAA: torna se qui non c'e'. */
+function riprendiIlResto(dati){
+function j(v, d){ try{ var x = JSON.parse(v); return (x === null || x === undefined) ? d : x; }catch(e){ return d; } }
+if(dati[LIFETIME_KEY]){
+var suo = j(dati[LIFETIME_KEY], {}), mio = loadLifetime(), cambiato = false;
+Object.keys(suo).forEach(function(k){
+var e = suo[k];
+if(e && (!mio[k] || (e.rounds || 0) > (mio[k].rounds || 0))){ mio[k] = e; cambiato = true; }
+});
+if(cambiato) saveLifetime(mio);
+}
+if(dati[LIFETIME_VISTI_KEY]){
+var v = leggiVisti() || {}, sv = j(dati[LIFETIME_VISTI_KEY], {});
+Object.keys(sv).forEach(function(k){ v[k] = 1; });
+scriviVisti(v);
+}
+if(dati[DELETED_KEY]){
+var del = loadDeletedRounds(), sd = j(dati[DELETED_KEY], {});
+Object.keys(sd).forEach(function(k){ if(!del[k]) del[k] = sd[k]; });
+saveDeletedRounds(del);
+}
+if(dati["arctrail3d_attrezzi_v1"]){
+var qui = j(localStorage.getItem("arctrail3d_attrezzi_v1"), []), loro = j(dati["arctrail3d_attrezzi_v1"], []);
+if(Array.isArray(qui) && Array.isArray(loro)){
+var ids = {};
+qui.forEach(function(a){ if(a && a.id) ids[a.id] = true; });
+loro.forEach(function(a){ if(a && (!a.id || !ids[a.id])) qui.push(a); });
+try{ localStorage.setItem("arctrail3d_attrezzi_v1", JSON.stringify(qui)); }catch(e){}
+}
+}
+if(dati["arctrail3d_ifaa_schema_v1"] && !localStorage.getItem("arctrail3d_ifaa_schema_v1")){
+try{ localStorage.setItem("arctrail3d_ifaa_schema_v1", dati["arctrail3d_ifaa_schema_v1"]); }catch(e){}
+}
+}
+/* ══ I DATI DEI PRIMI GIORNI SI RICONOSCONO DAL NOME UTENTE ════════════════
+   (21/09/2026, banco-dati-rollback.js.) I profili nati prima del 09/08 non
+   hanno l'email: all'accesso i loro dati finiscono «da parte» come se fossero
+   di nessuno, e per riaverli serve un tocco che quasi nessuno capisce — nel
+   frattempo il Diario conta 4 giri invece di 180. La prova che mancava arriva
+   col documento `users` dell'account appena entrato: se il profilo messo da
+   parte ha lo STESSO nome utente e lo stesso nome, e' lo stesso arciere, e
+   i dati tornano da soli. Su un telefono condiviso un altro account ha un
+   altro nome utente, e i dati restano da parte come prima (P0-2). */
+function adottaOrfaniSeMiei(data){
+var x = orfaniSenzaProprietario();
+if(!x || !x.profilo || !data) return false;
+var pu = String(x.profilo.username || "").trim().toLowerCase(), du = String(data.username || "").trim().toLowerCase();
+if(!pu || pu !== du) return false;
+var pn = String(x.profilo.nomeCognome || "").trim().toLowerCase(), dn = String(data.nomeCognome || "").trim().toLowerCase();
+if(pn && dn && pn !== dn) return false;
+aggiungiOrfaniAlMioAccount();
+return true;
 }
 function lasciaOrfani(){
 var x = orfaniSenzaProprietario();
@@ -23937,7 +24007,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-09-21-avvio-storico";
+var BUILD_STAMP = "2026-09-22-avvio-storico";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
