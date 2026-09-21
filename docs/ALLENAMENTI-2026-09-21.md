@@ -46,17 +46,32 @@ nessuna.
 
 ### Quale combinazione app / regole / Functions
 
-Provato, non dedotto (`tests/e2e-emulatore.js`, SDK Firebase 10.12.2 vero,
-emulatori Auth + Firestore, regole vere):
+Provato, non dedotto: la **matrice** (`sh tests/lancia-e2e.sh`, 22/09) — tre app
+× due regole, SDK Firebase 10.12.2 vero, emulatori Auth + Firestore su un progetto
+`demo-*` (non può toccare la produzione), regole vere. Per ogni combinazione: primo
+write e i suoi campi, ownership, un giro **senza rete** che sale al ritorno,
+riapertura senza doppioni, un allenamento «solo club» dal modulo vero, chi lo vede.
 
-| app | regole | risultato |
+| app ↓ · regole → | 18/09 (produzione) | ramo (`2026-09-20-visibilita`) |
 |---|---|---|
-| release 20/09 | qualunque | Firebase mai inizializzato: non si entra, non sale niente |
-| corretta | del ramo (`2026-09-20-visibilita`) | giro sul server ✓, allenamento aperto sul server ✓, elenco ✓, socio con claim vede i «solo club» ✓, altra compagnia no ✓ (nemmeno per nome) |
-| corretta | del 18/09 (`2026-08-28-porte-verified`, produzione) | giro ✓, allenamento ✓, elenco ✓ |
+| **18/09** (produzione) | tutto ✓ | scritture ✓ · **l'elenco allenamenti è rifiutato intero** (la sua query `status == active` non implica la regola) |
+| **release 20/09** | **Firebase mai inizializzato** | **Firebase mai inizializzato** |
+| **ramo** | tutto ✓ | tutto ✓ · il socio **senza** claim non vede i «solo club» (dipendenza da `claimCompagnia`) · altra compagnia no, nemmeno per nome |
 
-Le Functions non entrano nel percorso della registrazione: `claimCompagnia`
-serve solo a far vedere ai soci i «solo club» della loro compagnia.
+Primo write del giro (`users/{uid}/storico/{id}`), campi: con l'app del 18/09
+`assetto, assettoNome, campo, consegna, date, deleted, durata, format, modeKey,
+modeLabel, nota, results, savedAt, scoringVersion, sessionType`; il ramo aggiunge
+`division, eventId, federation, interrotto, roundId`. Nessuna scrittura rifiutata in
+nessuna combinazione, nessun «permesso negato» in console.
+
+**Il terzo asse, le Functions** (`sh tests/lancia-e2e-claim.sh`, `claimCompagnia`
+vera nell'emulatore delle Functions, 11/11): la Function mette il claim; una socia
+senza claim che apre l'app col token vecchio riceve il «no», l'app scrive
+`claimRichiesto`, la Function mette il claim, il token si rinnova e la socia vede i
+«solo club» **senza ricaricare**; chi è di un'altra compagnia no; cambiare
+compagnia sposta il claim; un codice inventato lo svuota. Limite **voluto**: se il
+claim arriva dopo che l'app ha speso i suoi due tentativi, lo si vede riaprendo.
+Le Functions non entrano nel percorso della registrazione di un giro.
 
 ### Perché i banchi non lo vedevano
 
@@ -104,7 +119,8 @@ Quello che la fase 23 voleva — disegnare subito — resta.
 | banco | release 20/09 | ramo corretto |
 |---|---|---|
 | `banco-librerie-defer.js` (nuovo, nel giro) | 7 ✓ · **8 ✗** | **15 ✓** |
-| `e2e-emulatore.js` (nuovo, fuori dal giro: `sh tests/lancia-e2e.sh`) | non parte: Firebase mai inizializzato | **18 ✓** (10 regole nuove + 8 regole del 18/09) |
+| `e2e-emulatore.js` (la matrice, fuori dal giro: `sh tests/lancia-e2e.sh`) | Firebase mai inizializzato, con tutte e due le regole | **18 ✓** |
+| `e2e-claim.js` (Functions vere, fuori dal giro: `sh tests/lancia-e2e-claim.sh`) | — | **11 ✓** |
 
 ### Stato
 
@@ -205,6 +221,7 @@ e il conteggio delle letture (`window.__letture`).
 | letture per vedere 30 giri vecchi | impossibile | 30 |
 | giri in `localStorage` | 150 | 150 |
 | giri in memoria | 150 | 150 + quelli chiesti in questa sessione |
+| ridisegno della scheda con 270 righe, CPU ×4 (telefono medio) | — | 186–268 ms (banco: < 1 s) |
 
 ### Quello che resta, e non è stato toccato
 
@@ -221,16 +238,15 @@ e il conteggio delle letture (`window.__letture`).
 
 ---
 
-## Giro completo e timbri (21/09/2026, sul ramo)
+## Giro completo e timbri
 
-- `sh tests/controlla-tutto.sh`: **64 banchi, 2801 prove, 0 cadute — TUTTI PASSATI**
-  (compresi `banco-regole` e `banco-finestra` sull'emulatore).
-- `sh tests/lancia-e2e.sh`: **18 passate, 0 fallite**.
-- Timbri: `app.html` `2026-09-21-avvio-storico` (nato da `2026-09-18-campi-fiarc`,
-  cioè quello online); `sw.js` `arctrail3d-v168` (nato da `v166`, online). **Non
-  `v167`**: è stata online mezz'ora il 20/09, e un telefono che l'ha presa non
-  prenderebbe un'altra `v167` come nuova. Regole e Functions: invariate rispetto
-  alla release (`2026-09-20-visibilita`).
+Il conto aggiornato alla notte 21–22/09 sta in `STATO-RIPRESA.md`.
+
+- Timbri (22/09): `app.html` `2026-09-22-avvio-storico` (nato da
+  `2026-09-18-campi-fiarc`, cioè quello online); `sw.js` `arctrail3d-v168` (nato da
+  `v166`, online) — non `v167`, che è stata online mezz'ora il 20/09; Functions
+  `2026-09-22-push-argomento` (una riga cambiata, vedi `DIAGNOSI-PUSH-SAMSUNG`);
+  regole invariate (`2026-09-20-visibilita`).
 - Cambiati anche, solo nei banchi: `banco-avvio.js` (la prova statica di
   `authState` ora accetta `firebaseInArrivo`) e `firebase-finto.js` (`startAfter`,
   `FieldPath.documentId()`, conteggio letture).

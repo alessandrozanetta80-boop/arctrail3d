@@ -11,7 +11,7 @@ intero**. Gli archivi non si leggono mai tutti: si cercano.
 | **NOTE-DESIGN.md** | perché l'app è così — archivio | si cerca |
 | **NOTE-MERCATINO.md** | perché il mercatino è così — archivio | si cerca |
 
-Aggiornato il **21/09/2026** (rollback del 20/09 e sua causa, §R).
+Aggiornato il **22/09/2026** (notte senza deploy: si parte da **`STATO-RIPRESA.md`**, §R).
 
 ---
 
@@ -23,14 +23,14 @@ più vecchio chiama `index.html` l'app.
 | file | cos'è | timbro | copia buona |
 |---|---|---|---|
 | `index.html` | la vetrina, porta di casa | online `2026-09-18-inglese` · ramo `2026-09-19-risanamento` | **GitHub** |
-| `app.html` | l'app | online `2026-09-18-campi-fiarc` · ramo `2026-09-21-avvio-storico` | **GitHub** |
+| `app.html` | l'app | online `2026-09-18-campi-fiarc` · ramo `2026-09-22-avvio-storico` | **GitHub** |
 | `compagnie-data.js` | le societa', 4950 in otto paesi | — | **GitHub** |
 | `marketplace.html` | il mercatino | `2026-08-25-radice` | **GitHub** |
 | `sw.js` | | online `arctrail3d-v166` · ramo `v168` *(v167 è stata online 30 min il 20/09)* | **GitHub** |
 | `favicon.ico` | l'icona per chi guarda da fuori | — | GitHub, caricata a mano |
 | cinque `vetrina-*.webp` | le foto della vetrina | — | GitHub, caricate a mano |
-| `functions/index.js` | le 7 Cloud Functions *(dal 17/09 in `functions/`)* | ramo `2026-09-20-dispositivi` | GitHub *(deploy: `bash ~/pubblica.sh`)* |
-| `firestore.rules` | | console `2026-08-28-porte-verified` · ramo `2026-09-20-dispositivi` | GitHub **e** console Firebase |
+| `functions/index.js` | 7 Cloud Functions online, 8 nel ramo *(in `functions/`)* | online `2026-08-28-notifica-verificata` · ramo `2026-09-22-push-argomento` | GitHub *(deploy: `bash ~/pubblica.sh`)* |
+| `firestore.rules` | | console `2026-08-28-porte-verified` · ramo `2026-09-20-visibilita` | GitHub **e** console Firebase |
 | diari, banchi, script | `docs/`, `tests/`, `tools/` | — | il progetto, **e dal 15/09 anche GitHub**: `docs/STRUTTURA-REPOSITORY.md` |
 | `DOPPIE-TESSERE-ITALIA.md` | le 40 società italiane con due tessere | — | il progetto; su GitHub in `docs/` |
 
@@ -211,7 +211,7 @@ delle librerie Firebase `defer` e non le inizializzava mai. Corretto nel ramo
   *(3)* Functions `2026-09-20-visibilita`, otto: `pubblica.sh` (dal Cloud Shell).
   *(4)* Regole `2026-09-20-visibilita`: `firebase deploy --only firestore:rules`.
   **Dal 21/09: UNA componente alla volta, e dopo ciascuna STOP e telefono** —
-  la creazione vera di un allenamento è il cancello. Prove: `ALLENAMENTI-2026-09-21.md`.
+  la creazione vera di un allenamento è il cancello. Procedura: `RUNBOOK-DEPLOY-2026-09-22.md`.
 - **R2. Col telefono in mano:** push (app chiusa, in background, aperta, due
   dispositivi) e tocco; orizzontale; Samsung con lo scuro forzato; avvio senza
   rete a giro aperto; tastiera aperta in chat e in fondo al profilo;

@@ -1,8 +1,63 @@
-# Push e Samsung S26 Ultra — diagnosi del 21/09/2026
+# Push e Samsung S26 Ultra — diagnosi del 21–22/09/2026
 
-Solo diagnosi, **nessuna correzione nuova**. Le due cose si chiudono solo con un
-telefono in mano: qui c'è cosa è già stato fatto, dove sta, e cosa resta da
-guardare.
+Le due cose si chiudono solo con un telefono in mano: qui c'è cosa è già stato
+fatto, dove sta, cosa è stato corretto nella notte fra il 21 e il 22 e cosa resta
+da guardare.
+
+## Notte 21–22/09: cosa è cambiato
+
+**Push — un difetto di codice corretto, uno escluso.**
+
+- **Corretto.** Nel ramo `pushNotifica` trattava `messaging/invalid-argument` come
+  «token morto» (nato con la release, `3efd0b6`; in produzione oggi no). FCM
+  restituisce quel codice anche per un **messaggio** fatto male, e allora fallisce
+  per tutti i token: un solo difetto nel payload avrebbe spento in silenzio i
+  dispositivi di ogni destinatario. Adesso conta come token morto solo se l'errore
+  parla del token. `banco-push.js` A2-bis: prima 1 rosso, adesso 46/46. Functions
+  `2026-09-22-push-argomento`.
+- **Escluso.** Nell'emulatore delle Functions `admin.firestore.FieldValue` vale
+  `undefined`: è firebase-tools 13.35.1 che passa `admin.firestore` come funzione
+  legata (`bind`), e una funzione legata perde le proprietà statiche. In produzione
+  il modulo è quello vero (`pushNotifica` lo usa da agosto; il 20/09
+  `claimApplicata` è stato scritto). Non si è toccato niente.
+- **Controllato e a posto, sul ramo:** token per dispositivo
+  (`users/{uid}/devices`) più il vecchio `fcmToken`; rinnovo a ogni apertura e su
+  `pushsubscriptionchange`; gestore in primo piano (`onMessage` → notifica con la
+  stessa etichetta); gestore in background (`onBackgroundMessage`, messaggio solo
+  `data`, deduplica per etichetta); `notificationclick` apre `app.html?n=<id>`;
+  `Urgency: high`, TTL un giorno; il cambio di cassa (`v168`) non tocca la
+  sottoscrizione, che è della registrazione e non della cassa.
+- **TEST REALE TELEFONO NECESSARIO:** app chiusa (tolta dai recenti), telefono
+  bloccato da minuti (Doze), due dispositivi, e il risparmio batteria di Samsung su
+  Chrome. Nessun banco può provarli.
+
+**S26 Ultra — misurato, nessun difetto di robustezza, una decisione da prendere.**
+
+`banco-font-scale.js` adesso misura anche quanto è alta la testata (`MISURA=1`) e
+dice no se supera un quinto dello schermo. Sul viewport di un S26 Ultra (384×832
+px CSS):
+
+| testo | testata | quota |
+|---|---|---|
+| 100–120% | 61 px | 7% |
+| **130%** | **97 px** | 12% — va a capo: i comandi scendono su una seconda riga |
+| 150% | 102 px | 12% |
+| 175% | 107 px | 13% |
+| 200% | 112 px | 13% |
+| zoom schermo 130% / 150% | 90 px | 14% / 16% |
+
+Al 130% il marchio (150 px) più i comandi (200 px: quattro tasti da 44) non stanno
+più nei 352 px utili, e la testata va a capo **per scelta** (`flex-wrap`): niente si
+sovrappone, niente esce, tutte le 67 combinazioni del banco passano. È con buona
+probabilità la «barra troppo grande»: con il carattere di Samsung al 130% o più la
+testata raddoppia. Tenerla su una riga vuol dire scegliere fra marchio troncato e
+comandi più piccoli (sotto i 44 px di bersaglio): **è una decisione di design, non
+una correzione**, e non è stata presa.
+**TEST REALE S26 ULTRA NECESSARIO:** la testata sta su una riga? Se no, annotare
+Impostazioni → Schermo → «Dimensione e stile carattere» e «Zoom schermo».
+
+---
+
 
 ## A) Notifiche push ad app chiusa o in background
 
