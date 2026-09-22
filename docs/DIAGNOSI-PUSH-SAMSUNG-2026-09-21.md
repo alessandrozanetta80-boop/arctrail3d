@@ -32,7 +32,7 @@ Il telefono di Alessandro al 100% risulta identico nelle misure.
 - **Porte.** `adattaTira()` applica lo stesso principio. Se il titolo di Allenamento o di
   Gara andrebbe a capo, il gruppo prende `porte-strette`:
   - la placca dell'icona passa da 56 a 40;
-  - gli spazi passano a 10;
+  - gli spazi passano a 8;
   - la freccia si avvicina al bordo.
   - Il testo non si rimpicciolisce.
 - **Barra in basso.** Già a posto dal 18/09: quattro voci su una riga, MARKETPLACE dentro

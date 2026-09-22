@@ -434,7 +434,11 @@ var SOLO_GRANDE_OK = {
   "narrow":      "stringe la colonna: da stringere c'e' solo dove c'e' spazio",
   "tabbar-wide": "la barra in cima esiste solo sullo schermo largo",
   "no-print":    "esiste solo sulla carta",
-  "no-smooth":   "esiste solo quando il movimento e' ridotto"
+  "no-smooth":   "esiste solo quando il movimento e' ridotto",
+  /* (22/09/2026.) Al contrario delle altre: esiste solo sul TELEFONO, dentro
+     `@media (max-width:759px)`, come le porte di Tira che stringe
+     (`arctrail-tira-mockup-fedele-v1`). Sul computer quelle porte non ci sono. */
+  "porte-strette": "stringe le porte di Tira, che hanno questa forma solo sul telefono"
 };
 
 function classiSoloDaGrande(){

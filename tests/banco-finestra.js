@@ -38,8 +38,12 @@ const REGOLE_OGGI = process.env.REGOLE || 'firestore.rules';
 // `main` porta anche il firestore.rules nuovo, che NON e' pubblicato (solo
 // il sito lo e'): le regole online restano quelle del 18/09, cioe' di
 // `1cd0652` (il ritorno allo stato del 18/09). Quando le regole nuove vanno
-// online (gate 2), questa riga torna `main`. L'app di ieri resta `main`.
-const BASE = process.env.BASE || '1cd0652';
+// online (gate 2/3), questa riga torna `main`. L'app di ieri resta `main`.
+// DUE COSE DISTINTE, dette per nome: le regole DEL RAMO (REGOLE_OGGI, il file
+// qui accanto) e le regole LIVE (REGOLE_LIVE, un commit preciso). Il banco
+// non deduce mai le regole live da `main`. `BASE` resta come vecchio nome.
+const REGOLE_LIVE = process.env.REGOLE_LIVE || process.env.BASE || '1cd0652';
+const BASE = REGOLE_LIVE;
 
 const A  = { uid:'utenteA', email:'a@esempio.it', email_verified:true };
 const B  = { uid:'utenteB', email:'b@esempio.it', email_verified:true };
@@ -190,6 +194,12 @@ function scrittureDiOggi(){
   } catch (e) {
     console.log('\n  ✗ non riesco a leggere le regole di ' + BASE + ' da git: ' + (e.message||e));
     console.log('    (in CI serve la storia intera: actions/checkout con fetch-depth: 0)\n');
+    process.exit(1);
+  }
+  console.log('\n  regole del ramo: ' + REGOLE_OGGI + '   ·   regole live: ' + REGOLE_LIVE + ':firestore.rules');
+  if (ieri.replace(/\r\n/g, '\n') === oggi.replace(/\r\n/g, '\n')) {
+    console.log('  ✗ le regole live e quelle del ramo sono IDENTICHE: REGOLE_LIVE non punta alle regole pubblicate' +
+                ' (o il ramo non cambia le regole, e allora questo banco non ha niente da confrontare)\n');
     process.exit(1);
   }
 

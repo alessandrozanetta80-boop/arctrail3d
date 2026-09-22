@@ -148,7 +148,7 @@ può raggiungere la produzione.
 - **Fix (22/09 sera, dopo le due foto; ramo non pubblicato).** Si toglie aria solo
   quando serve, senza toccare testo e tasti:
   - testata `stretta`: sentiero 1em, tasti 44×44 attaccati;
-  - porte di Tira `porte-strette`: placca 40, spazi 10.
+  - porte di Tira `porte-strette`: placca 40, spazi 8.
   - Risultato: una riga fino al 150% a 384 px; Allenamento 92 px invece di 140.
   - Oltre il 150%, o con zoom schermo e testo grande insieme, la testata resta su due
     righe (documentato).

@@ -265,7 +265,7 @@ var CACHE_PARENT = "arctrail3d-v168";
 // La controlla `tests/controlla-cache.js`: se un file della shell cambia e il
 // nome no, il banco dice no. Si riscrive con `--scrivi`, DOPO aver alzato
 // CACHE_NAME (il banco rifiuta di farlo prima). (19/09/2026, audit S4.)
-var SHELL_IMPRONTA = "arctrail3d-v169:9a4c66f75f2d4793";
+var SHELL_IMPRONTA = "arctrail3d-v169:5ab22d122f713324";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
