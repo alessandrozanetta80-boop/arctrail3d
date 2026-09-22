@@ -31,6 +31,33 @@ da guardare.
   bloccato da minuti (Doze), due dispositivi, e il risparmio batteria di Samsung su
   Chrome. Nessun banco può provarli.
 
+**Giorno 22/09 (ramo `work/sicurezza-qualita-2026-09-22`).**
+
+- `sendNotification`: `toUid` diventa un percorso Firestore e non era validato;
+  adesso `^[A-Za-z0-9_-]{1,128}$`, altrimenti `invalid-argument` prima di toccare
+  il database (nessun exploit trovato: con una «/» si otteneva un errore o
+  «destinatario inesistente»). `banco-push` A3-bis; con le Functions di prima 2 rossi.
+- Il **TTL** di un giorno c'era nel codice e in nessuna prova: adesso c'è.
+  `banco-push` 49/49, `banco-push-app` 20/20.
+- **App Check: preparato, spento, protetto da un banco.** Stato: `app.html` ha
+  `attivaAppCheck()` con la chiave segnaposto (`APP_CHECK_SITE_KEY =
+  "INCOLLA_QUI…"` → non carica niente); `functions/index.js` ha
+  `APP_CHECK_OBBLIGATORIO = false` su `sendNotification`; `controlla-pwa.js`
+  impedisce di accenderlo per sbaglio. Servizi coinvolti: Firestore, Storage, la
+  callable `sendNotification`. **Cosa protegge davvero:** che le richieste
+  vengano dall'app e non da uno script con la chiave web pubblica — non chi è
+  l'utente (quello lo fanno le regole). **PWA:** compatibile (reCAPTCHA v3 o
+  Enterprise sul web). **Rischio:** accendere l'obbligo prima che i telefoni
+  mandino il timbro spegne l'app a tutti quelli non aggiornati. **Prerequisiti,
+  in ordine:** chiave reCAPTCHA in console → chiave nell'app → caricare la
+  libreria App Check insieme alle altre (oggi arriva dopo l'inizializzazione:
+  le prime richieste partirebbero senza timbro) → pubblicare il sito → guardare
+  in console le «richieste non verificate» finché non sono quasi zero → obbligo
+  su Firestore, poi Storage, poi `APP_CHECK_OBBLIGATORIO = true` e deploy delle
+  Functions. **Test prima dell'obbligo:** emulatore con token di debug App Check,
+  e un telefono vero con l'app aggiornata. **Non è pronto per oggi**, e non è
+  stato toccato.
+
 **S26 Ultra — misurato, nessun difetto di robustezza, una decisione da prendere.**
 
 `banco-font-scale.js` adesso misura anche quanto è alta la testata (`MISURA=1`) e

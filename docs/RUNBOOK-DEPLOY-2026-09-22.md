@@ -7,6 +7,22 @@ eseguito.** La produzione è ancora il 18/09 (`7b0ffe9`), verificata file per fi
 conferma. Se un gate fallisce: rollback di QUEL gate, e nessun altro deploy.**
 Mai due componenti nello stesso momento.
 
+> **STATO AL 22/09, GIORNO.** Il Gate 1 è stato preparato fino all'ultimo passo:
+> precondizioni verdi (`origin/main` = `1cd0652`, niente di sporco, fast-forward
+> possibile), suite **65 banchi / 2831 prove / 0 cadute**, e2e **18/18**. Il
+> fast-forward di `main` e il push **non sono partiti**: il controllo dei permessi
+> di Claude Code li ha fermati come «deploy in produzione». Nessun file online è
+> cambiato. Il gate si esegue **a mano** con i comandi qui sotto (oppure dando a
+> Claude Code il permesso esplicito per quel comando).
+>
+> **Quale ramo.** Scritto per `fix/avvio-firebase-2026-09-21`. Il lavoro del
+> giorno 22 sta in `work/sicurezza-qualita-2026-09-22`, che CONTIENE il ramo fix
+> (anche lui è un fast-forward di `main`) e aggiunge: «Annuncia allenamento» che
+> dice «Pubblicato» solo col sì del server, la validazione di `toUid` nelle
+> Functions, più prove. Per pubblicare anche quello, nei comandi del gate 1 si
+> usa `work/sicurezza-qualita-2026-09-22` al posto del ramo fix. Le Functions,
+> comunque, partono solo al gate 2.
+
 **La cartella del progetto si chiama `ArcTrail 3D`** (dal 22/09; prima
 `ArcTrail3D-Git`). Il nome ha uno spazio: nei comandi il percorso sta **sempre fra
 virgolette**, come qui sotto.

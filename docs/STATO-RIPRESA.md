@@ -164,7 +164,61 @@ può raggiungere la produzione.
 
 ---
 
-## Primo passo stamattina
+## Primo passo
 
-Leggere `RUNBOOK-DEPLOY-2026-09-22.md`, e se si decide di procedere: **GATE 1, solo
-il sito**, poi i test 1–4 e 6 col telefono. Il 2 e il 3 sono il cancello.
+Leggere `RUNBOOK-DEPLOY-2026-09-22.md` (in cima: lo stato del gate 1 e quale ramo
+usare), e se si decide di procedere: **GATE 1, solo il sito, a mano**, poi i test
+1–4 e 6 col telefono. Il 2 e il 3 sono il cancello.
+
+---
+
+## LAVORO AUTONOMO DEL 22/09
+
+**Gate 1 precedente.** Tecnicamente pronto e verificato (precondizioni verdi,
+suite 65/2831/0, e2e 18/18), **non pubblicato**: il fast-forward di `main` e il
+push sono stati fermati dal controllo dei permessi di Claude Code come «deploy in
+produzione». Produzione invariata (sito `v166`, verificato). Si fa a mano.
+
+**Corretto davvero** (ramo `work/sicurezza-qualita-2026-09-22`, nato dal ramo fix):
+- «Annuncia allenamento» dice «Pubblicato» solo col sì del server; rifiuto e rete
+  assente detti chiaramente, dati mai persi (anche dopo un ridisegno), nuovo
+  tentativo e doppio tocco senza doppioni — `banco-annuncia.js` 16/16 (prima 10 ✗);
+- `sendNotification` valida `toUid` prima di usarlo come percorso — `banco-push`
+  A3-bis (prima 2 ✗);
+- prove aggiunte dove mancavano: TTL delle push; 13 confini delle regole (lapidi e
+  cancellazioni nello storico altrui, proprietario falsificato, richiesta di
+  gestione «in attesa», pannelli admin) — verdi, e rosse contro regole aperte;
+  le carte di lavoro locali nel controllo di pubblicazione.
+
+**Sicurezza trovata:** nessuna credenziale amministrativa in tutta la storia git
+(service account, chiavi private, `.env`, token): **nessuna**; le `AIza…` sono la
+configurazione web di Firebase, pubblica per natura. Regole: **nessuna falla** nei
+confini provati. **Limite di prodotto, non corretto:** l'appartenenza a una
+compagnia è autodichiarata (`users.compagnia` la scrive l'utente, la Function ne
+fa un claim), quindi chiunque dichiari un club vede i suoi «solo club».
+**Noto, non toccato:** `isAdmin()` non chiede `email_verified` (P3): prima di
+stringerlo va controllato in console che l'email dell'admin sia verificata.
+**Aperto:** il repository GitHub è pubblico; oggi il sito serve ancora i file
+interni (si chiude col gate 1).
+
+**App Check:** preparato e spento, protetto da `controlla-pwa`; non pronto per
+l'obbligo — prerequisiti in `03-PUSH-SAMSUNG.md`. **Push:** ramo coperto da prove
+(multi-dispositivo, token scaduto, payload invalido, solo `data`, Urgency, TTL,
+`pushsubscriptionchange`, deduplica, tocco); resta `TEST REALE TELEFONO
+NECESSARIO`. **Storico >150:** invariato, 39/39 nella suite.
+
+**APK:** `APK NON GENERATO — ARCTRAIL È ATTUALMENTE PWA E NON ESISTE UNA PIPELINE
+APK SUPPORTATA NEL PROGETTO.`
+
+**Suite finale del ramo:** 66 banchi, 2869 prove, 0 cadute; e2e matrice 18/18;
+claim con Functions vere 11/11.
+
+**Non pubblicato:** sito, Functions, regole — niente. Nessun push.
+
+**Da verificare a mano (massimo 5):**
+1. Gate 1 a mano, poi test 2 e 3 (cancello);
+2. «Annuncia allenamento» da telefono: pubblicato, e in modalità aereo il
+   messaggio «NON è ancora online» senza perdere i dati;
+3. push ad app chiusa, due dispositivi (dopo il gate 2);
+4. S26 Ultra: testata su una riga?;
+5. in console Auth: l'email dell'admin è verificata? (serve per stringere `isAdmin`).

@@ -128,10 +128,29 @@ Quello che la fase 23 voleva — disegnare subito — resta.
 telefono.** Non pubblicato. Il cancello resta la creazione di un allenamento
 vera da telefono (vedi «Cosa provare col telefono» in fondo).
 
-Un difetto visto per strada e **non** corretto, perché non è la regressione: il
-modulo «Annuncia allenamento» scrive senza aspettare il server e dice
-«Pubblicato!» comunque; se il database rifiutasse, l'errore finirebbe solo nella
-console. Oggi le prove dicono che non rifiuta.
+### «Annuncia allenamento» — corretto il 22/09 (ramo `work/sicurezza-qualita-2026-09-22`)
+
+Un difetto visto per strada il 21/09, che non era la regressione: il modulo
+scriveva senza aspettare il server e diceva «Pubblicato!» comunque — inviti
+spediti, ritorno al menu — anche se il database rifiutava; l'errore finiva solo
+in console. E un secondo difetto trovato scrivendo il banco: un **ridisegno**
+della pagina mentre il modulo aspettava (un avviso che arriva) lo svuotava, e con
+lui spariva l'id dell'annuncio — un nuovo tentativo ne avrebbe creato un secondo.
+
+- «Pubblicato!», copia nell'elenco, inviti e ritorno al menu **solo dalla
+  conferma del server**, e una volta sola;
+- l'id nasce al primo tentativo e resta quello: riprovare **non duplica**;
+- il doppio tocco non parte due volte;
+- rifiuto → «Il database ha rifiutato l'annuncio: NON è stato pubblicato. I dati
+  sono ancora qui.»; senza rete → «NON è ancora online… resta in coda e parte da
+  solo»; in tutti e due i casi il modulo resta pieno e il tasto torna attivo;
+- lo stato del modulo (`otModulo`) sopravvive a un ridisegno e si azzera solo
+  entrando da capo nel modulo. Design invariato.
+
+`tests/banco-annuncia.js` (nel giro): **16/16**; sull'app di prima **10 rossi** —
+riuscita, rifiuto, rete assente, ridisegno, nuovo tentativo senza doppioni, doppio
+tocco. I testi nuovi sono in italiano come il resto di questo modulo (che non è
+ancora tradotto).
 
 ---
 
