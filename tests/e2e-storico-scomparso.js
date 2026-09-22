@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* e2e-storico-scomparso.js — «dopo il gate 1 vedo solo l'ultimo giro».
  *
- *   node_modules/.bin/firebase emulators:exec --only auth,firestore --project demo-arctrail3d \n *     --config tests/e2e-firebase.json "node tests/e2e-storico-scomparso.js"
+ *   node_modules/.bin/firebase emulators:exec --only auth,firestore --project demo-arctrail3d \
+ *     --config tests/e2e-firebase.json "node tests/e2e-storico-scomparso.js"
  *
  * (22/09/2026, segnalato da Alessandro dopo il gate 1.) Nel cloud i giri ci
  * sono tutti (verificato in sola lettura). Qui si rifa' il telefono com'era:
@@ -86,7 +87,7 @@ async function scenario(browser, url, nome, profiloLocale) {
       window.__testo = (document.querySelector("#app") || {}).innerText || "";
       return { locali: (j("arctrail3d_storico_v1") || []).length, orfani: (j("arctrail3d_orfani_v1") || []).length,
                proprietario: localStorage.getItem("arctrail3d_proprietario_v1") ? "si" : "no", righeDiario: righe,
-               aggiungili: /Aggiungili/.test(document.body.innerText), testo: window.__testo.replace(/s+/g, " ").slice(0, 260) };
+               aggiungili: /Aggiungili/.test(document.body.innerText), testo: window.__testo.replace(/\s+/g, " ").slice(0, 260) };
     });
   }
   var r1 = await leggi();
