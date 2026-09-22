@@ -13,6 +13,12 @@
 # Le istruzioni di sessione in radice (21/09/2026): la radice E' il sito, e un
 # .md committato qui Jekyll lo pubblicherebbe come pagina.
 /ARCTRAIL3D_*.md
+# La cartella per Alessandro e ChatGPT (22/09/2026): quattro COPIE dei documenti
+# di docs/, aggiornate a fine sessione. Gli originali stanno in docs/ e vanno su
+# GitHub; le copie no (niente doppioni nel repository, niente pagine sul sito).
+/00-ALESSANDRO-CHATGPT/
+# Le carte di sessione locali (istruzioni ricevute, foto e log dei banchi).
+/_SESSIONI-CLAUDE/
 
 # Dipendenze dei banchi (npm install)
 node_modules/

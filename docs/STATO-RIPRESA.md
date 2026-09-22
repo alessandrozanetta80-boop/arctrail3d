@@ -4,6 +4,11 @@ Da qui si riparte. Il dettaglio sta nei tre documenti tecnici:
 `ALLENAMENTI-2026-09-21.md` (registrazione e storico, tenuti separati),
 `DIAGNOSI-PUSH-SAMSUNG-2026-09-21.md`, `RUNBOOK-DEPLOY-2026-09-22.md`.
 
+Nella cartella **`00-ALESSANDRO-CHATGPT`** (radice del progetto, e la stessa in
+Dropbox) gli stessi quattro documenti hanno nomi fissi: questo è
+`00-LEGGIMI-STATO-PROGETTO.md`, il runbook è `01-RUNBOOK-DEPLOY.md`, gli
+allenamenti `02-ALLENAMENTI.md`, push e Samsung `03-PUSH-SAMSUNG.md`.
+
 ---
 
 ## Produzione
@@ -139,6 +144,23 @@ può raggiungere la produzione.
 - Working tree pulito; i file riservati e le istruzioni di sessione sono esclusi.
 - Commit locali: quelli del 21/09 (`811c5f4`, `738cb24`) più quelli della notte —
   l'elenco preciso: `git log --oneline main..fix/avvio-firebase-2026-09-21`.
+
+## Metodo di lavoro (dal 22/09/2026, come Adrenalina e Gestionale Comprensori)
+
+- **Cartella locale:** `C:\Users\Ale\Desktop\PROGETTI\ArcTrail 3D` (prima
+  `ArcTrail3D-Git`). È il repository: la fonte di verità del codice è GitHub.
+- **`00-ALESSANDRO-CHATGPT/`** in radice: SOLO i quattro documenti correnti, nomi
+  fissi, fuori da Git e fuori dal sito. Si aggiornano, non si moltiplicano.
+- **Dropbox** `C:\Users\Ale\Dropbox\PROGETTI\ArcTrail 3D\`: SOLO la stessa cartella
+  `00-ALESSANDRO-CHATGPT`. Niente mirror del repository, niente snapshot, niente
+  sorgenti, niente link al sito, niente APK (ArcTrail non ne ha). Nel sistema di
+  backup ArcTrail ha `"Backup": false`, come Adrenalina.
+- **A fine di ogni sessione sostanziale:** si aggiornano gli originali in `docs/`,
+  poi le quattro copie in `00-ALESSANDRO-CHATGPT`, poi le stesse in Dropbox; si
+  controlla che coincidano; su Dropbox non va altro.
+- Quello che c'era in Dropbox fino al 22/09 (mirror del 20/09 e uno snapshot) è
+  stato spostato, non cancellato, in
+  `C:\Users\Ale\Desktop\PROGETTI\_ARCHIVIO\ArcTrail 3D - Dropbox fino al 2026-09-22\`.
 
 ---
 

@@ -7,6 +7,10 @@ eseguito.** La produzione è ancora il 18/09 (`7b0ffe9`), verificata file per fi
 conferma. Se un gate fallisce: rollback di QUEL gate, e nessun altro deploy.**
 Mai due componenti nello stesso momento.
 
+**La cartella del progetto si chiama `ArcTrail 3D`** (dal 22/09; prima
+`ArcTrail3D-Git`). Il nome ha uno spazio: nei comandi il percorso sta **sempre fra
+virgolette**, come qui sotto.
+
 Cosa contiene ogni componente, e perché l'ordine è questo, sta in
 `STATO-RIPRESA.md`. In breve: **sito → Functions → regole**. Il sito nuovo
 funziona con Functions e regole di oggi (provato: `sh tests/lancia-e2e.sh`, app del
@@ -18,7 +22,7 @@ all'app del 18/09 e vogliono il claim che mette la Function: vanno per ultime.
 ## Prima di tutto (5 minuti, dal portatile)
 
 ```sh
-cd ~/Desktop/PROGETTI/ArcTrail3D-Git
+cd "$HOME/Desktop/PROGETTI/ArcTrail 3D"
 git status --short                       # deve essere vuoto
 git fetch origin
 git log --oneline -1 origin/main         # deve essere 1cd0652 (il revert del 20/09)
@@ -40,7 +44,7 @@ Functions e regole restano quelle di oggi.
 ### Comando pronto
 
 ```sh
-cd ~/Desktop/PROGETTI/ArcTrail3D-Git
+cd "$HOME/Desktop/PROGETTI/ArcTrail 3D"
 git checkout fix/avvio-firebase-2026-09-21
 npm ci && (cd functions && npm ci)
 sh tests/controlla-tutto.sh              # TUTTI PASSATI
@@ -67,7 +71,7 @@ curl -s https://arctrail3d.com/sw.js | grep 'CACHE_NAME ='    # arctrail3d-v168
 ### Rollback del sito (se fallisce il test 2 o il 3)
 
 ```sh
-cd ~/Desktop/PROGETTI/ArcTrail3D-Git
+cd "$HOME/Desktop/PROGETTI/ArcTrail 3D"
 git checkout main
 git read-tree -u --reset 1cd0652          # l'albero del 18/09, esattamente
 git checkout fix/avvio-firebase-2026-09-21 -- _config.yml   # i file interni restano fuori
@@ -96,7 +100,7 @@ il vecchio `fcmToken` si legge ancora.
 ### Comando pronto
 
 ```sh
-cd ~/Desktop/PROGETTI/ArcTrail3D-Git
+cd "$HOME/Desktop/PROGETTI/ArcTrail 3D"
 npx firebase login:list                   # l'account giusto
 npx firebase functions:list --project arctrail3d > ~/functions-prima-gate2.txt
 sh pubblica.sh                            # clona origin/main in ~/at3d-repo e pubblica da li'
@@ -123,7 +127,7 @@ Come il 20/09 (commit `1cd0652`): le sette di prima, **per nome**, poi
 
 ```sh
 rm -rf /tmp/fn-1809 && mkdir /tmp/fn-1809
-git -C ~/Desktop/PROGETTI/ArcTrail3D-Git archive 7b0ffe9 firebase.json .firebaserc functions | tar -x -C /tmp/fn-1809
+git -C "$HOME/Desktop/PROGETTI/ArcTrail 3D" archive 7b0ffe9 firebase.json .firebaserc functions | tar -x -C /tmp/fn-1809
 cd /tmp/fn-1809/functions && npm ci && cd ..
 npx firebase deploy --project arctrail3d --only \
   functions:sendNotification,functions:pushNotifica,functions:avvisaRicerche,functions:avvisaSegnalazione,functions:avvisaIscrizione,functions:avvisaRichiestaClub,functions:avvisaPercorso
@@ -149,7 +153,7 @@ filtro dell'app; il resto delle correzioni di sicurezza del 19–20/09.
 ### Comando pronto
 
 ```sh
-cd ~/Desktop/PROGETTI/ArcTrail3D-Git
+cd "$HOME/Desktop/PROGETTI/ArcTrail 3D"
 git checkout main && git pull --ff-only
 git show 7b0ffe9:firestore.rules > ~/regole-prima-gate3.rules      # la copia per tornare indietro
 diff <(git show origin/main:firestore.rules) firestore.rules && echo "file = main"
@@ -170,7 +174,7 @@ Console Firebase → Firestore → Regole: in cima `// Versione 2026-09-20-visib
 ### Rollback delle regole (secondi, per tutti)
 
 ```sh
-cd ~/Desktop/PROGETTI/ArcTrail3D-Git
+cd "$HOME/Desktop/PROGETTI/ArcTrail 3D"
 cp ~/regole-prima-gate3.rules firestore.rules
 npx firebase deploy --only firestore:rules --project arctrail3d
 git checkout firestore.rules
