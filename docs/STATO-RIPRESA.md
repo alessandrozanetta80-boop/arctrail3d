@@ -249,3 +249,35 @@ Verifica tecnica: `controlla-base` IN PARI (app, sw, vetrina, mercatino);
 `archive/`; sito a 200. **Test reali superati** (vedi «ADESSO» in cima).
 
 **APK.** Vedi la sezione «APK» qui sotto, aggiornata alla ricerca completa.
+
+## APK (ricerca completa, 22/09 pomeriggio)
+
+**`APK UPDATE NON GENERABILE: FIRMA ORIGINALE NON RECUPERATA.`**
+
+- **Cercato**, in sola lettura: Desktop, Downloads, Documents, Dropbox, `PROGETTI` e
+  `_ARCHIVIO`, tutto il profilo utente compresa `AppData` e le cartelle nascoste
+  `.android`, `.gradle`, `.config` (niente `.bubblewrap`); tipi `*.apk`, `*.aab`,
+  `*.jks`, `*.keystore`, `*.p12`, `*.pem`, `twa-manifest.json`, `assetlinks.json`,
+  `android-package*`, `pwabuilder*`, `bubblewrap*`, `signing*`, `keystore*`,
+  `arctrail*`; storia git di tutti i rami e testi (PWABuilder, Bubblewrap, TWA,
+  package name, applicationId, keystore, firma).
+- **Trovato:** nessun APK ArcTrail, nessun keystore di release, nessun artefatto
+  TWA/PWABuilder/Bubblewrap. Solo: `~/.android/debug.keystore` (chiave di DEBUG
+  standard di Android, novembre 2025), la chiave interna della cache di Gradle e
+  file di log di OneDrive — nessuno serve a firmare ArcTrail;
+  `Desktop\Fiarc3DTraining` è un'altra app (nativa Kotlin, `com.fiarc.training`).
+  `NOTE-DESIGN.md` dice solo che un APK esisteva e andava rigenerato «con la stessa
+  chiave di firma».
+- **Telefono:** `adb` presente, nessun dispositivo collegato.
+- **Quindi non noti:** package name, versionCode e certificato SHA-256 dell'APK
+  installato; strumento usato allora.
+- **Cosa manca esattamente:** la chiave di firma privata originale (con PWABuilder è
+  `signing.keystore` più `signing-key-info.txt` nello ZIP scaricato allora,
+  probabilmente sul PC precedente), oppure il telefono collegato via USB per leggere
+  almeno package e certificato.
+- **Da controllare prima di tutto:** se l'app sul telefono fosse stata installata da
+  Chrome («Installa app»), è una **WebAPK** (`org.chromium.webapk.*`): si aggiorna da
+  sola col sito, e non serve nessun APK. Lo si vede in Impostazioni → App, oppure col
+  telefono collegato (`adb shell pm list packages | grep -i -E "webapk|arctrail"`).
+- **Non deciso** (e non si decide qui): un APK nuovo con una firma nuova
+  installerebbe solo da zero, non aggiornerebbe quello esistente.
