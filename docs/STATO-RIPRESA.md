@@ -11,7 +11,14 @@ allenamenti `02-ALLENAMENTI.md`, push e Samsung `03-PUSH-SAMSUNG.md`.
 
 ---
 
-## ADESSO (22/09/2026, sera) — HOME + S26, ramo `work/home-s26-2026-09-22`, NON pubblicato
+## ADESSO (22/09/2026, sera) — HOME + S26 PUBBLICATI (solo sito)
+
+**Online:** `main` = `03b16d0`, app `2026-09-22-home-periodi`, cassa `arctrail3d-v169`.
+Prima del push la suite era verde: 67 banchi, 2890 prove, 0 cadute, «TUTTI PASSATI».
+Dopo il push: `controlla-base` IN PARI, `controlla-sito-pubblico` tutto a posto (file
+interni a 404). **Functions e regole INVARIATE** (7 Functions e regole del 18/09).
+Il push stavolta è passato da Claude Code, autorizzato dal file
+`ARCTRAIL3D_CHIUSURA_HOME_S26_DEPLOY_SITO`.
 
 - **Home.** Il riquadro «Questo mese» ora sceglie il periodo: Questo mese, 3 mesi,
   Stagione, 1 anno. Si apre toccando il titolo (il triangolino); la freccia a destra
@@ -28,9 +35,13 @@ allenamenti `02-ALLENAMENTI.md`, push e Samsung `03-PUSH-SAMSUNG.md`.
 - **Versioni.** App `2026-09-22-home-periodi` (genitore `2026-09-22-avvio-storico`),
   cassa `arctrail3d-v169`.
 - **Test.** Nuovo `banco-home-periodi.js` (21 prove); `banco-font-scale.js` ha 67 combinazioni.
-- **Deploy: NO.** Per pubblicare serve il via di Alessandro: stesso percorso del
-  gate 1, solo sito, Functions e regole invariate.
-- **Test reali da fare dopo la pubblicazione.**
+- **Banco delle regole.** `banco-finestra.js` distingue per nome le regole del ramo
+  (`firestore.rules`) dalle regole live (`REGOLE_LIVE`, di default `1cd0652`, cioè il
+  18/09). Se coincidono, si ferma. Quando le regole nuove andranno online, il default
+  torna `main`.
+- **Test reali da fare (adesso che è online).** Il S26 prende la v169 alla riapertura.
+  Se il problema resta: niente fix alla cieca, servono gli screenshot e i valori del
+  telefono.
   1. Home: cambio periodo.
   2. Home: il periodo resta dopo la riapertura.
   3. S26: testata.

@@ -18,6 +18,15 @@ Mai due componenti nello stesso momento.
 > Il rollback del sito qui sotto resta valido, con `5f4878d` come stato attuale.
 > Prossimo: gate 2 (Functions), solo su decisione esplicita.
 
+> **SECONDO DEPLOY SOLO SITO (22/09/2026, sera): Home + S26.** Il ramo
+> `work/home-s26-2026-09-22` è andato su `main` in fast-forward (`5f4878d..03b16d0`).
+> Prima: suite 67 banchi / 2890 prove / 0 cadute. Il banco delle regole ora confronta
+> con le regole LIVE (`1cd0652`, 18/09) e non con quelle di `main`, che non sono
+> pubblicate. Dopo: `controlla-base` IN PARI, app `2026-09-22-home-periodi`, cassa
+> `arctrail3d-v169`, file interni a 404. **Functions e regole INVARIATE.**
+> Rollback del sito: `git revert` dei 6 commit fino a `5f4878d` (oppure un ramo da
+> `5f4878d` messo su `main`), poi CACHE_NAME v170, genitore v169, e push.
+
 **La cartella del progetto si chiama `ArcTrail 3D`** (dal 22/09; prima
 `ArcTrail3D-Git`). Il nome ha uno spazio: nei comandi il percorso sta **sempre fra
 virgolette**, come qui sotto.

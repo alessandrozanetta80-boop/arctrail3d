@@ -4,7 +4,7 @@ Le due cose si chiudono solo con un telefono in mano: qui c'è cosa è già stat
 fatto, dove sta, cosa è stato corretto nella notte fra il 21 e il 22 e cosa resta
 da guardare.
 
-## 22/09 sera: le due foto del S26 Ultra, la causa e il fix (ramo `work/home-s26-2026-09-22`, NON pubblicato)
+## 22/09 sera: le due foto del S26 Ultra, la causa e il fix (PUBBLICATO la sera del 22/09: `main` = `03b16d0`, cassa `arctrail3d-v169`)
 
 **Le foto.** Sul telefono di Alessandro la testata sta su una riga e le porte di Tira
 sono compatte. Sul S26 Ultra dell'amico la testata va su due righe (marchio sopra,
@@ -71,13 +71,14 @@ Esito: 67/67 sull'app nuova. Sull'app di prima (`main`) le prove nuove falliscon
 
 **TEST REALE S26 ULTRA ANCORA NECESSARIO: SÌ.** Il testo di Samsung è simulato
 (Chromium da computer non applica la scala di Android) e il carattere del telefono non è
-quello del banco. Da guardare sul telefono dell'amico, dopo la pubblicazione di questo
-ramo:
+quello del banco. Da guardare sul telefono dell'amico, quando ha preso la v169:
 1. testata su una riga;
 2. porte di Tira;
 3. barra in basso.
 
-Annotare «Dimensione carattere» e «Zoom schermo».
+Annotare «Dimensione e stile carattere» e «Zoom schermo», e fare uno screenshot
+della Home e uno di Tira. Se il problema resta, niente fix alla cieca: si parte da
+screenshot e valori reali.
 
 ## Notte 21–22/09: cosa è cambiato
 
