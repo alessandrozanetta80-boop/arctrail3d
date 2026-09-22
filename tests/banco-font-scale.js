@@ -68,8 +68,15 @@ function prova(n, c, extra){
    non puo' andare a capo nella sua cella e la riga che non puo' andare a capo. */
 if (SABOTA) {
   src = src + "\n<style>.tabn .tab-lbl{ max-width:none !important; overflow-wrap:normal !important; hyphens:manual !important; }" +
-              " .tabbar-bottom{ flex-wrap:nowrap !important; }</style>\n";
-  console.log("\n  --sabota: l'etichetta della barra torna senza limite e senza a capo. Deve venire rosso.");
+              " .tabbar-bottom{ flex-wrap:nowrap !important; }" +
+              /* E i gradini della testata tornano com'era prima del 22/09 sera: stessa
+                 aria di sempre, sentiero intero, marchio della misura piena. */
+              " header.top[data-stretta]{ gap:var(--s-3) !important; padding-left:var(--s-4) !important; padding-right:var(--s-4) !important; }" +
+              " header.top[data-stretta] .brandblock{ gap:var(--s-3) !important; }" +
+              " header.top[data-stretta] .head-actions{ gap:var(--s-2) !important; }" +
+              " header.top[data-stretta] .brandblock .sentiero{ height:1.25em !important; display:block !important; }" +
+              " header.top[data-stretta] .brand-title{ font-size:var(--t-md) !important; }</style>\n";
+  console.log("\n  --sabota: l'etichetta della barra torna senza limite e senza a capo, e la testata torna con gli spazi di prima. Deve venire rosso.");
 }
 
 var D = path.join(os.tmpdir(), "arctrail-banco-font-scale");
@@ -256,11 +263,21 @@ async function combinazione(browser, modo, s, w, h, lang, completa){
      150%: la testata sta su UNA riga, e la porta di Allenamento non e' piu'
      alta di quella di Gara (era 140 contro 108: il titolo andava a capo).
      Misura a mano di tutte le combinazioni: tools/misura-s26.js. */
-  if (modo === "T" && telefono && w >= 384 && s <= 1.5) {
+  if (modo === "T" && telefono && w >= 320 && s <= 1.5) {
     var righe = await p.evaluate(function(){
       var h = document.querySelector("header.top"), b = h && h.querySelector(".brandblock"), a = h && h.querySelector(".head-actions");
       return (b && a && a.getBoundingClientRect().top > b.getBoundingClientRect().bottom - 4) ? 2 : 1; });
     if (righe > 1) tutti.push("la testata va su due righe");
+    var comandi = await p.evaluate(function(){
+      var a = document.querySelector("header.top .head-actions"), b = a ? a.querySelectorAll(".bar-btn") : [];
+      var min = 0;
+      for (var i = 0; i < b.length; i++){ var q = b[i].getBoundingClientRect(), m = Math.min(q.width, q.height);
+        if (!min || m < min) min = m; }
+      var t = document.querySelector("header.top .brand-title");
+      return { quanti: b.length, tasto: Math.round(min), marchio: t ? parseFloat(getComputedStyle(t).fontSize) : 0 }; });
+    if (comandi.quanti !== 4) tutti.push("nella testata ci sono " + comandi.quanti + " comandi invece di 4");
+    if (comandi.tasto < 44) tutti.push("un comando della testata e' " + comandi.tasto + "px, sotto i 44");
+    if (comandi.marchio < 13) tutti.push("il marchio e' sceso a " + comandi.marchio + "px: non si legge piu'");
     var tira = await p.evaluate(function(){
       var x = document.querySelectorAll(".tabbar-bottom > *")[2];   // Home, Campi, Tira, Marketplace: in ogni lingua
       if (!x) return false; x.click(); return true; });
@@ -271,7 +288,9 @@ async function combinazione(browser, modo, s, w, h, lang, completa){
     if (!tira || !porte.all) tutti.push("non si arriva alle porte di Tira");
     else {
       annota("Tira", await p.evaluate(guasti));
-      if (porte.all > porte.gara + 4) tutti.push("la porta di Allenamento e' alta " + porte.all + "px, Gara " + porte.gara);
+      // Le porte si misurano dove la colonna del testo basta davvero: da 384 px.
+      // Piu' stretto il titolo va a capo comunque, e quello e' il disegno.
+      if (w >= 384 && porte.all > porte.gara + 4) tutti.push("la porta di Allenamento e' alta " + porte.all + "px, Gara " + porte.gara);
     }
   }
   if (errori.length) tutti.push("errori in pagina: " + errori.slice(0, 2).join(" | "));
@@ -288,6 +307,11 @@ async function combinazione(browser, modo, s, w, h, lang, completa){
   var SCALE = (process.env.SCALE ? process.env.SCALE.split(",").map(Number) : [1, 1.1, 1.2, 1.3, 1.5]);
   var giri = [];
   VIEWPORT.forEach(function(v){ SCALE.forEach(function(s){ giri.push(["T", s, v[0], v[1], "it", true]); }); });
+  /* LE LARGHEZZE STRETTE VERE. (22/09/2026, dopo il S26 Ultra dell'amico: col
+     carattere SUL VALORE STANDARD la testata andava a capo lo stesso, quindi la
+     soglia teorica «384 px al 150%» non bastava.) Qui la testata si prova dove lo
+     spazio e' davvero poco, una larghezza alla volta. */
+  [352, 344, 336, 320].forEach(function(w){ [1, 1.2, 1.3, 1.5].forEach(function(s){ giri.push(["T", s, w, 800, "it", false]); }); });
   VIEWPORT.forEach(function(v){ [1.3, 1.5].forEach(function(s){ giri.push(["R", s, v[0], v[1], "it", false]); giri.push(["Z", s, v[0], v[1], "it", false]); }); });
   /* Le lingue con le parole piu' lunghe nella barra, dove il margine e' minimo. */
   [["de",360,800],["de",390,844],["nl",360,800],["en",360,800],["it",320,568],["de",320,568]].forEach(function(x){

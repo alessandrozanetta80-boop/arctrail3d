@@ -40,8 +40,17 @@ Il push stavolta è passato da Claude Code, autorizzato dal file
   18/09). Se coincidono, si ferma. Quando le regole nuove andranno online, il default
   torna `main`.
 - **Test reale Home: SUPERATO** sul telefono di Alessandro (22/09, sera).
-- **S26 Ultra: in attesa degli screenshot** (Home e Tira, con «Dimensione e stile
-  carattere» e «Zoom schermo»).
+- **S26 Ultra, dal telefono vero:** QHD+ 3120×1440, carattere «Predefinito», grassetto
+  OFF, dimensione carattere e zoom schermo sui valori **standard**. Con la v169 le porte
+  di Tira e la barra in basso sono a posto, **la testata era ancora su due righe**: il
+  difetto non dipende da impostazioni estreme.
+- **v170 (pronta, NON pubblicata): il fix della testata a quattro gradini.** Non più una
+  soglia, ma lo spazio misurato: si scende di un gradino alla volta (spazi, bordi,
+  marchio di un gradino più piccolo, sentiero via) e ci si ferma al primo che basta.
+  Testata su una riga a 320, 336, 344, 352, 360 e 384 px dal 100% al 150%, con i quattro
+  tasti sempre a 44 px. Dettaglio e misure: `03-PUSH-SAMSUNG.md`.
+- **`?diag=s26`**: pannello con le misure vere del telefono, solo con quella query.
+- **Test automatici:** `banco-font-scale` da 67 a 83 combinazioni; sabotaggio rosso.
 - **Test reali da fare (adesso che è online).** Il S26 prende la v169 alla riapertura.
   Se il problema resta: niente fix alla cieca, servono gli screenshot e i valori del
   telefono.

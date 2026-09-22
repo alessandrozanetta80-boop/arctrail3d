@@ -26,8 +26,8 @@ function stato(tab) {
   return { screen: "menu", tab: tab, lang: "it", country: "it", federation: "fiarc", theme: "light",
     profile: { nomeCognome: "Mario Rossi", username: "mariorossi" }, profileSkipped: false, pendingArchers: [] };
 }
-async function misura(browser, testo, zoom, tab) {
-  var vw = Math.round(384 / zoom), vh = Math.round(832 / zoom);
+async function misura(browser, testo, zoom, tab, largo) {
+  var vw = Math.round((largo || 384) / zoom), vh = Math.round(832 / zoom);
   var ctx = await browser.newContext({ viewport: { width: vw, height: vh }, isMobile: true, hasTouch: true });
   var p = await ctx.newPage();
   await p.addInitScript(function (st) { localStorage.setItem("arctrail3d_state_v3", JSON.stringify(st)); localStorage.setItem("arctrail3d_welcome_v2", "1"); }, stato(tab));
@@ -46,7 +46,7 @@ async function misura(browser, testo, zoom, tab) {
     var tb = document.querySelector(".tabbar-bottom"), celle = tb ? Array.prototype.slice.call(tb.children) : [];
     var fuori = celle.some(function (c) { var rc = c.getBoundingClientRect(); return Array.prototype.some.call(c.querySelectorAll("*"), function (k) { var rk = k.getBoundingClientRect(); return rk.width && (rk.left < rc.left - 1 || rk.right > rc.right + 1); }); });
     var tbRighe = celle.length ? new Set(celle.map(function (c) { return Math.round(c.getBoundingClientRect().top); })).size : 0;
-    return { testata: h ? Math.round(h.getBoundingClientRect().height) : 0, righe: righe, stretta: !!(h && h.classList.contains("stretta")),
+    return { testata: h ? Math.round(h.getBoundingClientRect().height) : 0, righe: righe, gradino: (h && h.getAttribute("data-stretta")) || "-",
              tastoMin: tasti.length ? Math.min.apply(null, tasti) : 0, carte: carte,
              barra: celle.length + " voci, " + tbRighe + " riga" + (tbRighe > 1 ? "e" : "") + (fuori ? ", ETICHETTA FUORI" : ""),
              laterale: document.documentElement.scrollWidth > window.innerWidth + 1 };
@@ -58,14 +58,15 @@ async function misura(browser, testo, zoom, tab) {
 (async function () {
   var browser = await chromium.launch();
   var casi = [[1, 1], [1.2, 1], [1.3, 1], [1.5, 1], [1.75, 1], [2, 1], [1, 1.15], [1, 1.3], [1.3, 1.15], [1.5, 1.15]];
+  var LARGHEZZE = (process.env.LARGHEZZE ? process.env.LARGHEZZE.split(",").map(Number) : [384]);
   console.log("\n  S26 Ultra, 384×832 px CSS" + (FILE !== "app.html" ? " — " + FILE : "") + "\n");
-  console.log("  testo  zoom   css        testata          stretta  tasto  card Tira (px)     barra in fondo");
-  for (var c of casi) {
-    var home = await misura(browser, c[0], c[1], "home");
-    var tira = await misura(browser, c[0], c[1], "tira");
+  console.log("  testo  zoom   css        testata          gradino  tasto  card Tira (px)     barra in fondo");
+  for (var L of LARGHEZZE) for (var c of casi) {
+    var home = await misura(browser, c[0], c[1], "home", L);
+    var tira = await misura(browser, c[0], c[1], "tira", L);
     var x = home.r;
     console.log("  " + (Math.round(c[0] * 100) + "%").padEnd(6) + " " + (Math.round(c[1] * 100) + "%").padEnd(6) + " " + (home.vw + "×" + home.vh).padEnd(10) + " " +
-      (x.testata + "px, " + x.righe + " rig" + (x.righe > 1 ? "he" : "a")).padEnd(16) + " " + (x.stretta ? "si" : "no").padEnd(8) + " " + String(x.tastoMin).padEnd(6) + " " +
+      (x.testata + "px, " + x.righe + " rig" + (x.righe > 1 ? "he" : "a")).padEnd(16) + " " + String(x.gradino).padEnd(8) + " " + String(x.tastoMin).padEnd(6) + " " +
       tira.r.carte.join(" / ").padEnd(18) + " " + x.barra + (x.laterale || tira.r.laterale ? "  SCORRE DI LATO" : ""));
   }
   await browser.close();

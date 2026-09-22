@@ -1244,14 +1244,42 @@ header.top .logo{ width:var(--s-6); height:var(--s-6); }
 header.top .logo .brandmark{ width:100%; height:100%; }
 header.top .headtxt{ flex:0 0 auto; min-width:0; }
 header.top .head-actions{ flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center; gap:var(--s-2); }
-/* Testata `stretta` (22/09/2026): solo quando andrebbe a capo col testo grande.
-   Si toglie aria, non testo e non tasti: sentiero piu' basso (1em invece di
-   1.25em), spazi 8, tasti attaccati (44x44 ciascuno restano). Vedi
-   `adattaTestata`. Misurato con tools/misura-s26.js: una riga fino al 150%. */
-header.top.stretta{ gap:var(--s-2); }
-header.top.stretta .brandblock{ gap:var(--s-2); }
-header.top.stretta .brandblock .sentiero{ height:1em; }
-header.top.stretta .head-actions{ gap:0; }
+/* TESTATA STRETTA A GRADINI. (22/09/2026, seconda passata: sul S26 Ultra vero,
+   col carattere e lo zoom SUL VALORE STANDARD, la testata andava a capo lo
+   stesso. Un gradino solo non bastava.) `adattaTestata` misura lo spazio che
+   c'e' davvero e scende di un gradino alla volta, fermandosi al primo che
+   basta: dove la riga ci sta gia', `data-stretta` non compare nemmeno.
+     1  l'aria: spazi 8, tasti attaccati, sentiero 1em invece di 1.25em
+     2  i bordi: padding laterale 8 invece di 16, sentiero 0.8em
+     3  il marchio scende di un gradino della scala (--t-sm), sentiero 0.7em
+     4  il sentiero — decorazione, non comando — si toglie
+   Quello che NON si tocca a nessun gradino: i quattro tasti (44x44 ciascuno,
+   sempre tutti e quattro), i colori, l'ordine. Il marchio resta leggibile e
+   non va mai a capo. Misure: tools/misura-s26.js. */
+header.top[data-stretta]{ gap:var(--s-2); }
+header.top[data-stretta] .brandblock{ gap:var(--s-2); }
+header.top[data-stretta] .brandblock .sentiero{ height:1em; }
+header.top[data-stretta] .head-actions{ gap:0; }
+header.top[data-stretta="2"], header.top[data-stretta="3"], header.top[data-stretta="4"]{
+  padding-left:var(--s-2); padding-right:var(--s-2); }
+header.top[data-stretta="2"] .brandblock .sentiero{ height:.8em; }
+header.top[data-stretta="3"] .brandblock .sentiero{ height:.7em; }
+header.top[data-stretta="3"] .brand-title, header.top[data-stretta="4"] .brand-title{ font-size:var(--t-sm); }
+header.top[data-stretta="4"] .brandblock .sentiero{ display:none; }
+
+/* IL PANNELLO DELLE MISURE, SOLO CON `?diag=s26`. (22/09/2026.) Serve a
+   leggere sul telefono VERO i numeri che da computer non si riproducono:
+   quanto e' largo davvero il contenitore, quanto il marchio, quanto i tasti.
+   Senza la query non esiste: non si salva da nessuna parte e non si accende
+   da solo. Niente dati di nessuno: misure e basta. */
+.diag-s26{ position:fixed; left:var(--s-2); right:var(--s-2); bottom:var(--s-2); z-index:9999;
+  max-height:50vh; overflow:auto; padding:var(--s-2); border-radius:var(--r-sm);
+  background:var(--surface); border:1px solid var(--line); color:var(--text-1);
+  font-size:var(--t-xs); line-height:1.35; }
+.diag-s26 b{ display:block; margin-bottom:var(--s-1); }
+.diag-s26 table{ border-collapse:collapse; width:100%; }
+.diag-s26 td{ padding:0 var(--s-1) 0 0; vertical-align:top; }
+.diag-s26 td:last-child{ text-align:right; color:var(--text-2); }
 
 /* Il tasto della barra. Uno solo, sempre uguale, sempre 44x44. */
 /* IL TASTO DELLA TESTATA E' UN'ICONA NUDA. (21/08/2026.) Il bersaglio da
@@ -16606,21 +16634,36 @@ adattaMisurePiuTardi();
    al 130% il marchio («ArcTrail 3D» + il sentiero) e i quattro tasti (4×44
    + 3×8) non stanno piu' nei 352 px utili, e la testata va a capo: da 61 a 97
    px di altezza. Al 150%: marchio 173 + 8 + tasti 176 = 357 px.
-   La cura NON tocca il testo e non tocca i tasti: SOLO QUANDO la testata
-   andrebbe a capo prende la classe `stretta`, che toglie aria dove non serve
-   — sentiero alto 1em invece di 1.25em, i quattro tasti attaccati (restano
-   44×44 ciascuno: e' la zona di tocco, non il disegno). La riga tiene fino al
-   150% (misurato con tools/misura-s26.js). Dove la testata sta gia' su una riga — il
-   telefono di Alessandro — non cambia niente.
+   IL 22/09 SERA, SUL TELEFONO VERO: non bastava. Sul S26 Ultra dell'amico —
+   QHD+, carattere e zoom schermo sui valori STANDARD — la testata restava su
+   due righe anche con un gradino solo. Quindi il difetto non ha bisogno di
+   impostazioni estreme: il carattere di Samsung e' semplicemente piu' largo di
+   quello che il banco puo' simulare da computer.
+   Percio' adesso i gradini sono QUATTRO, e non si sceglie per soglia ne' per
+   modello di telefono: si guarda se la riga ci sta DAVVERO, e si scende finche'
+   ci sta (vedi le regole `header.top[data-stretta]`). Chi ha spazio non vede
+   nessun gradino; chi non ne ha vede solo quanti gliene servono.
+   A nessun gradino si toccano i quattro tasti (44×44, tutti e quattro), i
+   colori o l'ordine; il marchio non va mai a capo.
    Si ricontrolla dopo ogni disegno, al cambio di misura, quando arrivano i
    caratteri e al fotogramma dopo: il testo puo' crescere un istante dopo. */
+var GRADINI_TESTATA = 4;
+function testataACapo(h){
+var b = h.querySelector(".brandblock"), a = h.querySelector(".head-actions");
+if(!b || !a) return false;
+return a.getBoundingClientRect().top > b.getBoundingClientRect().bottom - 4;
+}
 function adattaTestata(){
 var h = document.querySelector("header.top");
 if(!h) return;
-var b = h.querySelector(".brandblock"), a = h.querySelector(".head-actions");
-if(!b || !a) return;
-h.classList.remove("stretta");
-if(a.getBoundingClientRect().top > b.getBoundingClientRect().bottom - 4) h.classList.add("stretta");
+h.removeAttribute("data-stretta");
+if(!testataACapo(h)) return;
+for(var g = 1; g <= GRADINI_TESTATA; g++){
+  h.setAttribute("data-stretta", String(g));
+  if(!testataACapo(h)) return;
+}
+// Nemmeno l'ultimo gradino basta: meglio due righe intere che un marchio
+// tagliato o un tasto sparito. Resta il gradino piu' stretto.
 }
 /* LE PORTE DI TIRA, STESSA CURA. (22/09/2026.) Al 150% «Inizia Allenamento»
    chiede 253 px e la colonna del testo ne ha 225 (placca 56 + 14 di spazio a
@@ -16647,7 +16690,81 @@ c.classList.remove("porte-strette");
 var tit = c.querySelectorAll(".menu-btn.training .menu-txt, .menu-btn.gara .menu-txt");
 for(var i = 0; i < tit.length; i++) if(titoloACapo(tit[i])){ c.classList.add("porte-strette"); return; }
 }
-function adattaMisure(){ adattaTestata(); adattaTira(); }
+/* ══ LE MISURE VERE DEL TELEFONO, A RICHIESTA ══════════════════════════════
+   (22/09/2026.) Il banco simula il carattere grande; il telefono vero no, e
+   fra i due c'e' stata mezza giornata di differenza. Con `?diag=s26` la
+   pagina mostra in fondo i numeri che servono per capire, letti dove il
+   difetto succede: quanto spazio c'e' davvero, quanto ne prendono marchio e
+   tasti, a che gradino e' scesa la testata. Senza quella query non esiste.
+   Non si salva niente e non si manda niente a nessuno. */
+var DIAG_S26 = false;
+try{ DIAG_S26 = String(location.search || "").indexOf("diag=s26") >= 0; }catch(e){}
+function misureTestata(){
+var h = document.querySelector("header.top");
+if(!h) return null;
+var b = h.querySelector(".brandblock"), a = h.querySelector(".head-actions");
+var tit = h.querySelector(".brand-title");
+var cs = window.getComputedStyle(h);
+var pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+var gap = parseFloat(cs.columnGap || cs.gap) || 0;
+var rb = b ? b.getBoundingClientRect() : null, ra = a ? a.getBoundingClientRect() : null;
+var vv = window.visualViewport;
+var tasti = a ? a.querySelectorAll(".bar-btn") : [];
+var minTasto = 0;
+for(var i = 0; i < tasti.length; i++){
+  var q = tasti[i].getBoundingClientRect(), m = Math.min(q.width, q.height);
+  if(!minTasto || m < minTasto) minTasto = m;
+}
+function r(n){ return Math.round(n || 0); }
+return {
+  "finestra (px CSS)":      r(window.innerWidth) + " × " + r(window.innerHeight),
+  "clientWidth":            r(document.documentElement.clientWidth),
+  "visualViewport":         vv ? r(vv.width) + " × " + r(vv.height) + "  (scala " + (Math.round((vv.scale || 1) * 100) / 100) + ")" : "non c'e'",
+  "devicePixelRatio":       String(window.devicePixelRatio || 1),
+  "testata: larghezza":     r(h.getBoundingClientRect().width),
+  "testata: spazio utile":  r(h.clientWidth - pad),
+  "marchio":                rb ? r(rb.width) : "-",
+  "gruppo tasti":           ra ? r(ra.width) : "-",
+  "tasto piu' piccolo":     r(minTasto),
+  "spazi + bordi":          r(pad) + " + " + r(gap),
+  "serve in tutto":         (rb && ra) ? r(rb.width + ra.width + pad) + "  (marchio + tasti + bordi)" : "-",
+  "testata: altezza":       r(h.getBoundingClientRect().height),
+  "testata: righe":         testataACapo(h) ? "2" : "1",
+  "gradino stretta":        h.getAttribute("data-stretta") || "nessuno",
+  "carattere del marchio":  tit ? window.getComputedStyle(tit).fontSize : "-",
+  "porte di Tira":          (function(){
+    var c = document.querySelector(".menu-cols .menu-btn.training");
+    return c ? Math.round(c.getBoundingClientRect().height) + " px" + (c.parentNode && String(c.parentNode.className).indexOf("porte-strette") >= 0 ? " (strette)" : "") : "non in vista";
+  })(),
+  "browser":                String(navigator.userAgent || "").replace(/^Mozilla\/5\.0\s*/, "").slice(0, 90)
+};
+}
+function pannelloDiag(){
+if(!DIAG_S26) return;
+var m = misureTestata();
+if(!m) return;
+var p = document.getElementById("diag-s26");
+if(!p){
+  p = document.createElement("div");
+  p.id = "diag-s26";
+  p.className = "diag-s26";
+  document.body.appendChild(p);
+}
+while(p.firstChild) p.removeChild(p.firstChild);
+var t = document.createElement("b");
+t.textContent = "misure (?diag=s26)";
+p.appendChild(t);
+var tab = document.createElement("table");
+Object.keys(m).forEach(function(k){
+  var tr = document.createElement("tr");
+  var td1 = document.createElement("td"); td1.textContent = k;
+  var td2 = document.createElement("td"); td2.textContent = String(m[k]);
+  tr.appendChild(td1); tr.appendChild(td2); tab.appendChild(tr);
+});
+p.appendChild(tab);
+try{ if(console.table) console.table(m); else console.log(m); }catch(e){}
+}
+function adattaMisure(){ adattaTestata(); adattaTira(); pannelloDiag(); }
 function adattaMisurePiuTardi(){
 try{ requestAnimationFrame(function(){ setTimeout(adattaMisure, 0); }); }catch(e){ setTimeout(adattaMisure, 16); }
 }
@@ -24181,7 +24298,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-09-22-home-periodi";
+var BUILD_STAMP = "2026-09-22-testata-s26";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24190,7 +24307,7 @@ var BUILD_STAMP = "2026-09-22-home-periodi";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-09-22-avvio-storico";
+var BUILD_PARENT = "2026-09-22-home-periodi";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

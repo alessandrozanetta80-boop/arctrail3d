@@ -4,6 +4,88 @@ Le due cose si chiudono solo con un telefono in mano: qui c'è cosa è già stat
 fatto, dove sta, cosa è stato corretto nella notte fra il 21 e il 22 e cosa resta
 da guardare.
 
+## 22/09 notte: il S26 vero smentisce la simulazione, e il fix diventa a gradini
+
+**I valori letti sul telefono dell'amico** (non stimati):
+
+| | |
+|---|---|
+| Risoluzione | QHD+ 3120 × 1440 |
+| Stile carattere | Predefinito |
+| Carattere grassetto | OFF |
+| Dimensione carattere | posizione **centrale/standard**, non estrema |
+| Zoom schermo | posizione **centrale/standard**, non estrema |
+
+**Conclusione, e va scritta chiara: il difetto NON dipende da impostazioni estreme.**
+Con Samsung a valori standard la testata andava a capo lo stesso. Quindi la soglia
+teorica su cui era costruito il primo fix — «384 px al 150% simulato» — non
+descriveva il telefono vero: il carattere di Samsung è semplicemente più largo di
+quello che Chromium da computer può simulare.
+
+**Cosa ha fatto davvero la v169** (provata sul telefono):
+- porte di `TIRA`: **migliorate**, più compatte — il fix regge;
+- barra in basso: **corretta**;
+- testata: **ancora su due righe** (marchio e sentiero sopra, campanella, messaggi,
+  avatar e bandiera sotto). Fix **parziale**.
+
+**Il fix della v170: quattro gradini, scelti misurando.** Non c'è più una soglia, né
+un breakpoint per modello di telefono: `adattaTestata()` guarda se la riga ci sta
+davvero nello spazio del contenitore e scende di un gradino alla volta, fermandosi
+al primo che basta.
+
+| gradino | cosa stringe |
+|---|---|
+| 1 | spazi a 8, quattro tasti attaccati, sentiero 1em invece di 1.25em |
+| 2 | bordi laterali della testata da 16 a 8, sentiero 0.8em |
+| 3 | il marchio scende di un gradino della scala (`--t-sm`), sentiero 0.7em |
+| 4 | il sentiero — decorazione, non comando — si toglie |
+
+A nessun gradino si toccano i quattro comandi (44×44 ciascuno, sempre tutti e
+quattro), i colori o l'ordine; il marchio non va mai a capo e non scende sotto una
+misura leggibile. Chi ha spazio non vede nessun gradino: sul telefono di Alessandro
+al 100% la testata è identica a prima.
+
+**Misure dopo il fix** (`node tools/misura-s26.js`, e con `LARGHEZZE=...` per le
+larghezze strette). Testata **sempre su una riga**, sempre con i quattro tasti a 44 px:
+
+| larghezza | 100% | 120% | 130% | 150% |
+|---|---|---|---|---|
+| 384 px | 1 riga, nessun gradino | 1 riga, gradino 1 | 1 riga, gradino 1 | 1 riga, gradino 1 |
+| 360 px | 1 riga, gradino 1 | 1 riga, gradino 1 | 1 riga, gradino 2 | 1 riga, gradino 2 |
+| 352 px | 1 riga, gradino 1 | 1 riga, gradino 1 | 1 riga, gradino 2 | 1 riga, gradino 4 |
+| 344 px | 1 riga, gradino 1 | 1 riga, gradino 2 | 1 riga, gradino 2 | 1 riga, gradino 4 |
+| 336 px | 1 riga, gradino 1 | 1 riga, gradino 2 | 1 riga, gradino 3 | 1 riga, gradino 4 |
+| 320 px | 1 riga, gradino 2 | 1 riga, gradino 4 | 1 riga, gradino 4 | 1 riga, gradino 4 |
+
+A 384 px la riga regge anche al 175% e al 200% (gradini 3 e 4), che prima andavano
+a capo. Sotto i ~270 px utili — zoom schermo al massimo su un telefono già stretto —
+la testata torna su due righe: meglio due righe intere che un marchio tagliato o un
+comando sparito.
+
+**Le porte di Tira non sono state toccate**: a 384 px «Inizia Allenamento» resta su
+una riga e la porta resta 92 px anche al 150%. Su schermi più stretti il titolo va a
+capo come prima: è il disegno, non una regressione.
+
+**Il pannello delle misure, `?diag=s26`.** Aprendo `https://arctrail3d.com/app.html?diag=s26`
+compare in fondo un riquadro con i numeri veri del telefono: larghezza della finestra
+e del contenitore, spazio utile, larghezza del marchio e del gruppo tasti, il tasto
+più piccolo, altezza e righe della testata, il gradino applicato, il corpo del
+marchio, l'altezza della porta di Allenamento e il browser. Gli stessi valori
+finiscono anche in `console.table`. Senza quella query il pannello non esiste, non si
+salva niente e non si manda niente a nessuno.
+
+**Test automatici.** `banco-font-scale.js` passa da 67 a **83 combinazioni**: alle
+scale 100/120/130/150% si aggiungono le larghezze strette vere (352, 344, 336, 320
+px), e per ognuna si controlla che la testata stia su una riga, che i comandi siano
+quattro, che nessuno scenda sotto 44 px e che il marchio resti leggibile. Il
+sabotaggio rimette gli spazi di prima e deve diventare rosso: **60 rossi su 83**. La
+v169 pubblicata, provata con le regole nuove, cade 20 volte.
+
+**TEST REALE S26 ULTRA ANCORA NECESSARIO: SÌ**, dopo la pubblicazione della v170.
+Serve: aprire l'app quando ha preso la v170, screenshot della Home, screenshot di
+Tira e — se possibile — aprire `?diag=s26` e riportare i valori del riquadro. Quelli
+dicono in un colpo solo quanto spazio c'è davvero e cosa se lo prende.
+
 ## 22/09 sera: le due foto del S26 Ultra, la causa e il fix (PUBBLICATO la sera del 22/09: `main` = `03b16d0`, cassa `arctrail3d-v169`)
 
 **Le foto.** Sul telefono di Alessandro la testata sta su una riga e le porte di Tira
