@@ -7,21 +7,16 @@ eseguito.** La produzione è ancora il 18/09 (`7b0ffe9`), verificata file per fi
 conferma. Se un gate fallisce: rollback di QUEL gate, e nessun altro deploy.**
 Mai due componenti nello stesso momento.
 
-> **STATO AL 22/09, GIORNO.** Il Gate 1 è stato preparato fino all'ultimo passo:
-> precondizioni verdi (`origin/main` = `1cd0652`, niente di sporco, fast-forward
-> possibile), suite **65 banchi / 2831 prove / 0 cadute**, e2e **18/18**. Il
-> fast-forward di `main` e il push **non sono partiti**: il controllo dei permessi
-> di Claude Code li ha fermati come «deploy in produzione». Nessun file online è
-> cambiato. Il gate si esegue **a mano** con i comandi qui sotto (oppure dando a
-> Claude Code il permesso esplicito per quel comando).
->
-> **Quale ramo.** Scritto per `fix/avvio-firebase-2026-09-21`. Il lavoro del
-> giorno 22 sta in `work/sicurezza-qualita-2026-09-22`, che CONTIENE il ramo fix
-> (anche lui è un fast-forward di `main`) e aggiunge: «Annuncia allenamento» che
-> dice «Pubblicato» solo col sì del server, la validazione di `toUid` nelle
-> Functions, più prove. Per pubblicare anche quello, nei comandi del gate 1 si
-> usa `work/sicurezza-qualita-2026-09-22` al posto del ramo fix. Le Functions,
-> comunque, partono solo al gate 2.
+> **GATE 1 FATTO E SUPERATO (22/09/2026, 12:00).** Pubblicato il ramo
+> `work/sicurezza-qualita-2026-09-22` (`main` = `5f4878d`): test verdi (suite 66 /
+> 2869 / 0; e2e 18/18; claim 11/11), fast-forward, push **fatto a mano** da
+> Alessandro (il controllo permessi di Claude Code blocca il push come deploy).
+> Verifica tecnica verde: `controlla-base` IN PARI, file interni a 404, cassa
+> `arctrail3d-v168`. **Test reali superati:** nessuna fascia «solo su questo
+> telefono», giro salvato, chiusura e riapertura, giro ancora presente,
+> sincronizzazione sul secondo dispositivo. **Functions e regole INVARIATE.**
+> Il rollback del sito qui sotto resta valido, con `5f4878d` come stato attuale.
+> Prossimo: gate 2 (Functions), solo su decisione esplicita.
 
 **La cartella del progetto si chiama `ArcTrail 3D`** (dal 22/09; prima
 `ArcTrail3D-Git`). Il nome ha uno spazio: nei comandi il percorso sta **sempre fra

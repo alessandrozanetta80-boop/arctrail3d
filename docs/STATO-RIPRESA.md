@@ -11,7 +11,21 @@ allenamenti `02-ALLENAMENTI.md`, push e Samsung `03-PUSH-SAMSUNG.md`.
 
 ---
 
-## Produzione
+## ADESSO (22/09/2026, 12:00)
+
+**GATE 1 REALE SUPERATO.** Il sito del ramo `work/sicurezza-qualita-2026-09-22` è
+online (`main` = `5f4878d`, push fatto a mano da Alessandro; app
+`2026-09-22-avvio-storico`, cassa `arctrail3d-v168`; i file interni rispondono 404).
+Test col telefono confermati da Alessandro: **nessuna fascia «solo su questo
+telefono»; giro salvato; chiusura e riapertura riuscite; giro ancora presente;
+sincronizzazione verificata sul secondo dispositivo.**
+**Functions e regole restano INVARIATE** (7 Functions del 18/09, regole del 18/09):
+gate 2 e gate 3 solo su decisione esplicita. Le sezioni qui sotto raccontano come si
+è arrivati qui; dove dicono «non pubblicato», vale questa riga.
+
+---
+
+## Produzione (fino al gate 1)
 
 **INVARIATA — NESSUN DEPLOY NOTTURNO.** È il rollback del 20/09, verificato il 21/09
 file per file: sito = `7b0ffe9` (app `2026-09-18-campi-fiarc`, cassa `v166`), sette
@@ -222,3 +236,16 @@ claim con Functions vere 11/11.
 3. push ad app chiusa, due dispositivi (dopo il gate 2);
 4. S26 Ultra: testata su una riga?;
 5. in console Auth: l'email dell'admin è verificata? (serve per stringere `isAdmin`).
+
+---
+
+## SESSIONE DEL 22/09, MATTINA (gate 1 e APK)
+
+**Gate 1.** Test del ramo tutti verdi (suite 66 banchi / 2869 prove / 0 cadute; e2e
+18/18; claim 11/11); `main` avanzato in fast-forward a `5f4878d`; push bloccato dal
+controllo permessi di Claude Code e fatto a mano da Alessandro (`1cd0652..5f4878d`).
+Verifica tecnica: `controlla-base` IN PARI (app, sw, vetrina, mercatino);
+`controlla-sito-pubblico` tutti gli interni a 404, compresa la vecchia app in
+`archive/`; sito a 200. **Test reali superati** (vedi «ADESSO» in cima).
+
+**APK.** Vedi la sezione «APK» qui sotto, aggiornata alla ricerca completa.
