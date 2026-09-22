@@ -108,7 +108,7 @@ async function account(email, compagnia, conClaim) {
 
 var D = fs.mkdtempSync(path.join(os.tmpdir(), "arctrail-e2e-"));
 var GANCIO = "window.__prova = { storico: function(){ try{ return JSON.parse(localStorage.getItem('arctrail3d_storico_v1')||'[]'); }catch(e){ return []; } }," +
-  " vai: function(s){ state.screen = s; save(); render(); }," +
+  " vai: function(s, tab){ state.screen = s; if(tab) state.journalTab = tab; save(); render(); }," +
   " nuovoAllenamento: function(campo, cod){ state.otPrecompile = { field: campo, cod: cod }; state.screen = 'open-training-create'; render(); }," +
   " allenamenti: function(){ return (openTrainings || []).map(function(x){ return x.id; }); }," +
   " ricaricaAllenamenti: function(){ stopOpenTrainings(); loadOpenTrainings(); } };";
@@ -181,4 +181,4 @@ async function aspettaServer(fn, ms) { var t0 = Date.now(), r; while (Date.now()
 
 module.exports = { PROGETTO: PROGETTO, CLUB: CLUB, SDK: SDK, D: D, git: git, librerie: librerie, richiesta: richiesta, seme: seme, elenco: elenco,
   regole: regole, azzera: azzera, account: account, preparaApp: preparaApp, apri: apri, tocca: tocca, premi: premi, unGiro: unGiro,
-  giriSulServer: giriSulServer, aspettaServer: aspettaServer, FS_HOST: FS_HOST, AUTH_HOST: AUTH_HOST };
+  giriSulServer: giriSulServer, aspettaServer: aspettaServer, PONTE: PONTE, FS_HOST: FS_HOST, AUTH_HOST: AUTH_HOST };
