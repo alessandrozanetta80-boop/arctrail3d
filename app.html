@@ -16564,9 +16564,17 @@ restoreContinuity(!lastMoved);
    fa `restoreContinuity`, un istante prima e senza buttare la posizione
    vecchia. Due mani sullo stesso volante sono peggio di una. */
 
+/* Il modulo «Annuncia allenamento» vive piu' a lungo della sua schermata:
+   un ridisegno (un avviso che arriva, l'elenco che si aggiorna) la rifa' da
+   capo, e con lei sparivano i dati inseriti e l'id dell'annuncio — cioe' un
+   nuovo tentativo ne avrebbe creato un secondo. (22/09/2026, banco-annuncia) */
+var otModulo = null, schermoPrecedente = null;
 function paintScreen(){
 var app = document.getElementById("app");
 app.innerHTML = "";
+// Da quale schermata si arriva: il modulo «Annuncia» distingue un'entrata
+// nuova (bozza da capo) da un ridisegno mentre ci si e' dentro. (22/09/2026)
+var eraSchermo = schermoPrecedente; schermoPrecedente = state.screen;
 app.classList.toggle("narrow", !state.lang || (authState !== "ready" && !modalitaLocale()) || !!NARROW_SCREENS[state.screen]);
 app.classList.toggle("modulo", (authState === "ready" || modalitaLocale()) && !!FORM_SCREENS[state.screen]);
 // La pista e' l'unica schermata che non scorre: #app diventa una colonna
@@ -16658,7 +16666,7 @@ case "blocked-users": app.appendChild(blockedUsersScreen()); break;
 case "account-delete": app.appendChild(accountDeleteScreen()); break;
 case "admin": app.appendChild(adminScreen()); break;
 case "session-follow": app.appendChild(sessionFollowScreen()); break;
-case "open-training-create": app.appendChild(openTrainingCreateScreen()); break;
+case "open-training-create": if(eraSchermo !== "open-training-create" && !(otModulo && otModulo.inVolo)) otModulo = null; app.appendChild(openTrainingCreateScreen()); break;
 case "field-report": app.appendChild(fieldReportScreen()); break;
 case "notifiche": app.appendChild(notificationsScreen()); break;
 case "messaggi": app.appendChild(messagesScreen()); break;
@@ -28755,14 +28763,61 @@ var saveStatus = el('<div style="font-size:var(--t-sm);margin-bottom:var(--s-2);
 card.appendChild(saveStatus);
 function setStatus(msg, color){ saveStatus.style.color = color||"var(--muted)"; saveStatus.textContent = msg; }
 
+/* ══ «PUBBLICATO» SOLO QUANDO IL SERVER HA DETTO SI' ══════════════════════
+   (22/09/2026, ALLENAMENTI-2026-09-21.md.) Prima la scrittura partiva senza
+   aspettarla: «Pubblicato!», gli inviti e il ritorno al menu arrivavano
+   subito, e se il database rifiutava l'errore finiva solo nella console —
+   l'annuncio sembrava online e non lo era.
+   Adesso:
+   - `otModulo.ref` nasce al PRIMO tentativo e resta quello: riprovare riscrive lo
+     stesso documento, non ne crea un secondo;
+   - `otModulo.inVolo` tiene fermo il secondo tocco mentre il primo e' in corso;
+   - «Pubblicato!», copia nell'elenco, inviti e ritorno al menu arrivano solo
+     dalla conferma del server, e una volta sola (`otModulo.pubblicato`); e tutto questo sopravvive a un ridisegno;
+   - rifiuto o rete che non risponde: si dice, i dati restano nel modulo, il
+     tasto torna attivo. Senza rete la scrittura resta comunque in coda in
+     Firestore e parte da sola al ritorno: se arriva, e' «Pubblicato». */
+var OT_ATTESA_MS = 10000;
+if(!otModulo) otModulo = { ref: null, inVolo: false, pubblicato: false, bozza: null, messaggio: null };
+var M = otModulo;
+M.ui = { saveBtn: saveBtn, setStatus: setStatus };   // quelli che si vedono ADESSO
+function dice(testo, colore){ M.messaggio = testo ? { testo: testo, colore: colore } : null; M.ui.setStatus(testo || "", colore); }
+// Ridisegno mentre si aspetta o dopo un errore: il modulo torna com'era.
+if(M.bozza){
+var bz = M.bozza;
+if(bz.field){
+fieldInp.value = bz.field;
+if(bz.cod) fieldInp.setAttribute("data-cod", bz.cod); else fieldInp.removeAttribute("data-cod");
+fieldSelectedName.textContent = bz.field;
+fieldSelectedDiv.style.display = "flex";
+fieldSearchInp.style.display = "none";
+fieldListDiv.style.display = "none";
+}
+dateInp.value = bz.date || dateInp.value;
+hSel.value = bz.h || ""; mSel.value = bz.m || "";
+var bottoniPosti = spotsWrap.querySelectorAll("button");
+if(bz.spots && bottoniPosti[bz.spots - 1]) bottoniPosti[bz.spots - 1].click();
+noteInp.value = bz.note || "";
+if(bz.vis && visBtns[bz.vis]) visBtns[bz.vis].click();
+invitedUsers = (bz.invited || []).slice(); renderInviteChips();
+otLat = bz.lat; otLng = bz.lng;
+}
+if(M.messaggio) setStatus(M.messaggio.testo, M.messaggio.colore);
+if(M.inVolo) saveBtn.disabled = true;
+
 saveBtn.addEventListener("click", function(){
+if(M.inVolo || M.pubblicato) return;
 setStatus("");
 if(!fieldInp.value.trim()){ setStatus("Seleziona un campo", "var(--danger)"); fieldSearchInp.focus(); return; }
 if(!dateInp.value){ setStatus("Inserisci la data", "var(--danger)"); dateInp.focus(); return; }
 if(!db){ setStatus("Database non disponibile", "var(--danger)"); return; }
 if(!currentUser){ setStatus("Devi essere loggato", "var(--danger)"); return; }
+M.inVolo = true;
 saveBtn.disabled = true;
-setStatus("Salvataggio in corso\u2026");
+M.bozza = { field: fieldInp.value.trim(), cod: fieldInp.getAttribute("data-cod") || null, date: dateInp.value,
+            h: hSel.value, m: mSel.value, spots: spotsVal, note: noteInp.value, vis: visVal,
+            invited: invitedUsers.slice(), lat: otLat, lng: otLng };
+dice("Salvataggio in corso\u2026");
 try{
 var datetime = new Date(dateInp.value + (timeInp.value ? "T"+timeInp.value : "T00:00")).getTime();
 var invitedUids = invitedUsers.map(function(u){ return u.uid; });
@@ -28792,9 +28847,17 @@ status: "active",
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 };
 
-// Scrittura non bloccante: Firestore mette in coda e sincronizza da solo.
-// Non aspettiamo l'ack del server, altrimenti su rete lenta il form resta bloccato.
-var newRef = db.collection("open_trainings").doc();
+if(!M.ref) M.ref = db.collection("open_trainings").doc();
+var newRef = M.ref, risposto = false;
+var timeStr = timeInp.value ? " alle "+timeInp.value : "";
+function ancoraQui(){ return state.screen === "open-training-create"; }
+// La rete non risponde: si dice, e il tasto torna. La scrittura resta in coda.
+var attesa = setTimeout(function(){
+if(risposto || M.pubblicato) return;
+M.inVolo = false;
+M.ui.saveBtn.disabled = false;
+dice("Nessuna conferma dal server: l'annuncio NON è ancora online. Resta in coda e parte da solo quando torna la rete; puoi anche riprovare, senza creare doppioni.", "var(--danger)");
+}, (navigator.onLine === false) ? 0 : OT_ATTESA_MS);
 /* IL PUNTO SI SCRIVE DOPO, e in fila. (20/09/2026.) La prima versione le
    mandava insieme, e per farle passare la regola del punto accettava anche un
    allenamento «che non esiste ancora» — cioe' lasciava scrivere il punto di
@@ -28803,22 +28866,41 @@ var newRef = db.collection("open_trainings").doc();
    Non blocca il modulo: se il punto non parte, l'allenamento esiste lo stesso
    e il tasto «Indicazioni» sparisce da solo. */
 newRef.set(otDoc).then(function(){
+risposto = true;
+clearTimeout(attesa);
+if(M.pubblicato) return;              // un tentativo precedente e' gia' arrivato
+M.pubblicato = true;
+M.inVolo = false; M.bozza = null;
 if(otLat && otLng){
-return newRef.collection("dove").doc("punto").set({ lat: otLat, lng: otLng });
+newRef.collection("dove").doc("punto").set({ lat: otLat, lng: otLng }).catch(function(err){ console.error("OT punto:", err); });
 }
-}).catch(function(err){
-console.error("OT save error:", err);
-});
-
-// Aggiungo subito alla lista locale cos\u00ec compare senza attendere il server
+// La copia nell'elenco, finche' l'ascolto del server non porta quella vera.
+if(!openTrainings.some(function(x){ return x && x.id === newRef.id; })){
 var localCopy = {};
 for(var k in otDoc){ if(otDoc.hasOwnProperty(k)) localCopy[k] = otDoc[k]; }
 localCopy.id = newRef.id;
 localCopy.createdAt = null;
 openTrainings.unshift(localCopy);
+}
+avvisaInvitati();
+dice("Pubblicato!", "var(--accent-soft)");
+if(ancoraQui()){ state.screen = "menu"; save(); render(); }
+}).catch(function(err){
+risposto = true;
+clearTimeout(attesa);
+if(M.pubblicato) return;
+console.error("OT save error:", err);
+M.inVolo = false;
+M.ui.saveBtn.disabled = false;
+var negato = err && err.code === "permission-denied";
+dice(negato
+  ? "Il database ha rifiutato l'annuncio: NON è stato pubblicato. I dati sono ancora qui."
+  : "Non sono riuscito a pubblicare (" + describeFirebaseError(err) + "). I dati sono ancora qui: riprova.",
+  "var(--danger)");
+});
 
+function avvisaInvitati(){
 // Notifiche agli invitati
-var timeStr = timeInp.value ? " alle "+timeInp.value : "";
 invitedUsers.forEach(function(u){
 // IL `dest` MANCAVA ANCHE QUI. (20/08/2026.) L'invito arrivava come titolo e
 // basta: toccarlo non apriva niente, perche' destinazioneNotifica non aveva
@@ -28835,18 +28917,14 @@ if(invitedUsers.length && currentUser){
 sendPushViaFirestore(currentUser.uid, t("notif_self_invite_title"),
 t("notif_self_invite_body",{ n: invitedUsers.length, date: dateInp.value }));
 }
-
-setStatus("Pubblicato!", "var(--accent-soft)");
-saveBtn.disabled = false;
-state.screen = "menu";
-save(); render();
-// Ricarico dal server in background per allineare
-// Tolto il ripensamento dopo tre secondi: l'elenco e' in ascolto, e la copia
-// locale messa qui sopra viene sostituita dal server appena arriva.
+}
+// L'elenco e' in ascolto: la copia locale messa sopra viene sostituita dal
+// server appena arriva.
 }catch(e){
 console.error("OT publish error:", e);
-saveBtn.disabled = false;
-setStatus("Errore: " + (e && e.message ? e.message : e), "var(--danger)");
+M.inVolo = false;
+M.ui.saveBtn.disabled = false;
+dice("Errore: " + (e && e.message ? e.message : e), "var(--danger)");
 }
 });
 card.appendChild(saveBtn);

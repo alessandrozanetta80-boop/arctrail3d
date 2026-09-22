@@ -107,10 +107,22 @@ function installa(opzioni) {
         }
         return Promise.resolve(istantaneaDoc(racc, id));
       },
+      /* Il server puo' dire no, o non rispondere. (22/09/2026)
+         `__esitoScrittura(percorso, data)` → { rifiuta: "permission-denied" }
+         oppure { trattieni: true } (la scrittura resta in coda finche' non si
+         chiama `__rilascia()`, come senza rete). `__tentativi[percorso]` conta
+         le chiamate, anche quelle non ancora arrivate. */
       set: function (data, opz) {
         var c = raccolta(racc);
-        c[id] = applica(c[id], data, !!(opz && opz.merge));
-        scrivi("set", percorso, data); notifica(racc); return Promise.resolve();
+        window.__tentativi = window.__tentativi || {};
+        window.__tentativi[percorso] = (window.__tentativi[percorso] || 0) + 1;
+        var esito = window.__esitoScrittura ? window.__esitoScrittura(percorso, data) : null;
+        if (esito && esito.rifiuta) return Promise.reject(Object.assign(new Error(esito.rifiuta), { code: esito.rifiuta }));
+        function fai() { c[id] = applica(c[id], data, !!(opz && opz.merge)); scrivi("set", percorso, data); notifica(racc); }
+        if (esito && esito.trattieni) {
+          return new Promise(function (res) { (window.__trattenute = window.__trattenute || []).push(function () { fai(); res(); }); });
+        }
+        fai(); return Promise.resolve();
       },
       update: function (data) {
         var c = raccolta(racc);
@@ -263,6 +275,7 @@ function installa(opzioni) {
     functions: functionsFn
   };
   window.__fakeDb = db;
+  window.__rilascia = function () { var t = window.__trattenute || []; window.__trattenute = []; t.forEach(function (f) { f(); }); return t.length; };
 }
 
 function scriptIniziale(opzioni) {
