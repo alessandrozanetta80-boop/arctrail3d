@@ -99,5 +99,20 @@ var jsEstranei = js.filter(function (f) { return !JS_DEL_SITO[f]; });
 prova("i .js in radice sono solo quelli del sito", jsEstranei.length === 0, jsEstranei.join(", "));
 if (process.env.ELENCO) pubblicati.forEach(function (f) { console.log("    " + f); });
 
+/* ══ LE CARTE DI LAVORO LOCALI NON ENTRANO NEL REPOSITORY ══════════════════
+   (22/09/2026.) La cartella per Alessandro e ChatGPT, le carte di sessione e
+   le istruzioni ricevute stanno nella radice, cioe' nella cartella del sito.
+   Fuori da git restano fuori da GitHub e quindi dal sito: e' il .gitignore a
+   dirlo, e qui si controlla che lo dica, e che nessuno di quei file sia gia'
+   tracciato (un `git add -A` di troppo). */
+var gi = fs.existsSync(".gitignore") ? fs.readFileSync(".gitignore", "utf8") : "";
+[["/00-ALESSANDRO-CHATGPT/", "la cartella per Alessandro e ChatGPT"], ["/_SESSIONI-CLAUDE/", "le carte di sessione"],
+ ["/ARCTRAIL3D_*.md", "le istruzioni di sessione"], ["/docs/APERTI-*.md", "l'elenco dei punti deboli aperti"],
+ ["/docs/AUDIT-*.md", "l'audit tecnico"]].forEach(function (x) {
+  prova(".gitignore tiene fuori " + x[1] + " (" + x[0] + ")", gi.split(/\r?\n/).indexOf(x[0]) >= 0);
+});
+var locali = tracciati.filter(function (f) { return /^(00-ALESSANDRO-CHATGPT|_SESSIONI-CLAUDE)\//.test(f) || /^ARCTRAIL3D_.*\.md$/.test(f) || /^docs\/(APERTI|AUDIT)-/.test(f); });
+prova("nessuna carta di lavoro locale e' tracciata", locali.length === 0, locali.join(", "));
+
 console.log("\n  " + ok + " passate, " + ko + " fallite.\n");
 process.exit(ko ? 1 : 0);

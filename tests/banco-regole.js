@@ -874,6 +874,45 @@ async function scena(fn){ await env.withSecurityRulesDisabled(async ctx => fn(ct
   await prova('la coda della posta non si legge', () =>
     assertFails(db(A).doc('mail/m1').get()));
 
+  /* ══ I CONFINI DEL 22/09 ══════════════════════════════════════════════
+     Quelli che la lista di controllo chiedeva e che qui non erano ancora
+     scritti come prova: lapidi e cancellazioni nello storico altrui,
+     proprietario falsificato alla nascita, la richiesta di gestione ancora
+     in attesa usata come permesso, i pannelli dell'admin letti da un
+     iscritto qualunque. Se una di queste passa, e' una porta vera. */
+  console.log('\n  I CONFINI DEL 22/09\n');
+  await scena(async s => {
+    await s.doc('users/'+A.uid+'/storico/20260922080000000').set({ date:'2026-09-22T08:00:00.000Z', results:[] });
+    await s.doc('open_trainings/otDiA').set(allenamento({ ownerUid:'utenteA' }));
+    await s.doc('compagnie_admin_requests/rA').set({ richiedenteUid:'utenteA', richiedenteEmail:A.email, codice:'09NUOV', stato:'pending' });
+  });
+  await prova("B NON mette una lapide sul giro di A (deleted:true nello storico altrui)", () =>
+    assertFails(db(B).doc('users/'+A.uid+'/storico/20260922080000000').set({ deleted:true }, { merge:true })));
+  await prova("B NON cancella un giro di A", () =>
+    assertFails(db(B).doc('users/'+A.uid+'/storico/20260922080000000').delete()));
+  await prova("A mette la lapide sul proprio giro", () =>
+    assertSucceeds(db(A).doc('users/'+A.uid+'/storico/20260922080000000').set({ deleted:true }, { merge:true })));
+  await prova("B NON crea un allenamento a nome di A (ownerUid falsificato)", () =>
+    assertFails(db(B).collection('open_trainings').add(allenamento({ ownerUid:'utenteA' }))));
+  await prova("B NON si prende l'allenamento di A cambiando ownerUid", () =>
+    assertFails(db(B).doc('open_trainings/otDiA').update({ ownerUid:'utenteB' })));
+  await prova("B NON cancella l'allenamento di A", () =>
+    assertFails(db(B).doc('open_trainings/otDiA').delete()));
+  await prova("richiesta di gestione IN ATTESA: A NON scrive il contatto pubblico della compagnia", () =>
+    assertFails(db(A).doc('compagnie_contatto/09NUOV').set({ adminUid:'utenteA', emailComp:'x@esempio.it' })));
+  await prova("...NON si crea da solo la scheda di referente", () =>
+    assertFails(db(A).doc('compagnie_admin/09NUOV').set({ adminUid:'utenteA' })));
+  await prova("...e NON si approva la richiesta da solo", () =>
+    assertFails(db(A).doc('compagnie_admin_requests/rA').update({ stato:'approved' })));
+  await prova("un iscritto qualunque NON elenca gli utenti (email e token di tutti)", () =>
+    assertFails(db(B).collection('users').get()));
+  await prova("...NON elenca gli errori registrati", () =>
+    assertFails(db(B).collection('errors').get()));
+  await prova("...NON scrive la configurazione dell'app", () =>
+    assertFails(db(B).doc('app_config/admin').set({ uid:'utenteB' })));
+  await prova("...NON legge le note private dell'admin, nemmeno su se stesso", () =>
+    assertFails(db(B).doc('admin_notes/'+B.uid).get()));
+
   await env.cleanup();
   console.log('\n  ' + (fatti - guai.length) + '/' + fatti + ' passate.');
   if (guai.length) { guai.forEach(g => console.log('    \u00b7 ' + g)); process.exit(1); }
