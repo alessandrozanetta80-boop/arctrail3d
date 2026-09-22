@@ -1244,6 +1244,14 @@ header.top .logo{ width:var(--s-6); height:var(--s-6); }
 header.top .logo .brandmark{ width:100%; height:100%; }
 header.top .headtxt{ flex:0 0 auto; min-width:0; }
 header.top .head-actions{ flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center; gap:var(--s-2); }
+/* Testata `stretta` (22/09/2026): solo quando andrebbe a capo col testo grande.
+   Si toglie aria, non testo e non tasti: sentiero piu' basso (1em invece di
+   1.25em), spazi 8, tasti attaccati (44x44 ciascuno restano). Vedi
+   `adattaTestata`. Misurato con tools/misura-s26.js: una riga fino al 150%. */
+header.top.stretta{ gap:var(--s-2); }
+header.top.stretta .brandblock{ gap:var(--s-2); }
+header.top.stretta .brandblock .sentiero{ height:1em; }
+header.top.stretta .head-actions{ gap:0; }
 
 /* Il tasto della barra. Uno solo, sempre uguale, sempre 44x44. */
 /* IL TASTO DELLA TESTATA E' UN'ICONA NUDA. (21/08/2026.) Il bersaglio da
@@ -5023,6 +5031,19 @@ border-color:color-mix(in srgb, var(--danger-role) 40%, var(--line)); margin-lef
   border-right:5px solid transparent; border-top:6px solid var(--text-3);
   transition:transform var(--dur-2) var(--ease); }
 .home-mese.aperta .home-mese-freccia{ transform:rotate(180deg); }
+/* IL PERIODO DELLA HOME (22/09/2026): l'etichetta e' il pulsante, la freccina
+   apre l'andamento, il menu e' una fila corta di quattro voci. Bersagli da 44. */
+.home-periodo-scelta{ display:inline-flex; align-items:center; gap:var(--s-2); min-height:44px;
+  padding:0; background:none; border:0; font:inherit; color:inherit; cursor:pointer; }
+.home-periodo-giu{ flex:0 0 auto; width:0; height:0; border-left:4px solid transparent;
+  border-right:4px solid transparent; border-top:5px solid var(--text-3); }
+.home-mese-apri{ display:inline-flex; align-items:center; justify-content:center; min-width:44px;
+  min-height:44px; padding:0; background:none; border:0; cursor:pointer; }
+.home-periodi{ display:flex; flex-wrap:wrap; gap:var(--s-1); margin-bottom:var(--s-2); }
+.home-periodo-voce{ flex:1 1 0; min-height:44px; padding:var(--s-2) var(--s-1); border:1px solid var(--line);
+  border-radius:var(--r-sm); background:var(--surface-1); color:var(--text-2); font:inherit;
+  font-size:var(--t-sm); font-weight:700; cursor:pointer; }
+.home-periodo-voce[aria-checked="true"]{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
 .home-mese-dentro{ margin-top:var(--s-4); padding-top:var(--s-4);
   border-top:1px solid var(--border); }
 .home-mese-dentro .home-titolo h2{ font-size:var(--t-md); }
@@ -5464,6 +5485,25 @@ header.top .brandblock .sentiero{ height:1.25em; width:auto; display:block;
   .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara,
   .menu-cols:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara{
     padding-right:42px;
+  }
+  /* `porte-strette` (22/09/2026): solo quando un titolo andrebbe a capo col
+     testo grande. Si stringe il disegno, non il testo. Vedi `adattaTira`. */
+  .menu-cols.porte-strette:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training,
+  .menu-cols.porte-strette:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara,
+  .menu-cols.porte-strette:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara{
+    padding-left:8px;
+    padding-right:28px;
+    gap:10px;
+  }
+  .menu-cols.porte-strette:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn .menu-icon{
+    width:40px;
+    height:40px;
+    flex:0 0 40px;
+  }
+  .menu-cols.porte-strette:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.training::after,
+  .menu-cols.porte-strette:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.gara::after,
+  .menu-cols.porte-strette:has(.menu-btn.training):not(:has(.home-eroe)) .menu-btn.prepara::after{
+    right:8px;
   }
 
   /* La porta spenta mantiene la stessa geometria: cambia solo lo stato. */
@@ -7487,6 +7527,7 @@ home_pitch_title: "Il segnapunti per il tiro con l’arco 3D", home_pitch_body: 
 home_greet_m: "Buongiorno", home_greet_p: "Buon pomeriggio", home_greet_s: "Buonasera",
 att_overview: "Insieme", att_season: "Stagione {y}", nav_activity: "Attività",
 home_trend: "Andamento", home_range_3: "3 mesi", home_range_y: "Stagione",
+home_range_a: "1 anno", home_periodo_vuoto: "Nessun giro in questo periodo.", home_periodo_scegli: "Scegli il periodo",
 home_trend_few: "Servono almeno quattro giri per vedere un andamento.",
 home_ready: "Pronto a tirare?", home_start: "Inizia un giro", home_find: "Trova un campo",
 home_resume_title: "Riprendi il tuo giro", home_month: "Questo mese", home_rounds_word: "Giri",
@@ -8208,6 +8249,7 @@ home_login_link: "Already have an account?", home_login_link_word: "Log in", hom
 home_greet_m: "Good morning", home_greet_p: "Good afternoon", home_greet_s: "Good evening",
 att_overview: "Overview", att_season: "{y} season", nav_activity: "Activity",
 home_trend: "Trend", home_range_3: "3 months", home_range_y: "Season",
+home_range_a: "1 year", home_periodo_vuoto: "No rounds in this period.", home_periodo_scegli: "Choose the period",
 home_trend_few: "It takes at least four rounds to show a trend.",
 home_ready: "Ready to shoot?", home_start: "Start a round", home_find: "Find a field",
 home_resume_title: "Resume your round", home_month: "This month", home_rounds_word: "Rounds",
@@ -8965,6 +9007,7 @@ home_login_link: "Vous avez d\u00e9j\u00e0 un compte\u00a0?", home_login_link_wo
 home_greet_m: "Bonjour", home_greet_p: "Bon après-midi", home_greet_s: "Bonsoir",
 att_overview: "Vue d’ensemble", att_season: "Saison {y}", nav_activity: "Activité",
 home_trend: "Évolution", home_range_3: "3 mois", home_range_y: "Saison",
+home_range_a: "1 an", home_periodo_vuoto: "Aucun parcours sur cette période.", home_periodo_scegli: "Choisir la période",
 home_trend_few: "Il faut au moins quatre parcours pour voir une évolution.",
 home_ready: "Prêt à tirer ?", home_start: "Commencer un parcours", home_find: "Trouver un terrain",
 home_resume_title: "Reprendre ton parcours", home_month: "Ce mois-ci", home_rounds_word: "Parcours",
@@ -9722,6 +9765,7 @@ home_login_link: "Hast du schon ein Konto?", home_login_link_word: "Anmelden", h
 home_greet_m: "Guten Morgen", home_greet_p: "Guten Tag", home_greet_s: "Guten Abend",
 att_overview: "Überblick", att_season: "Saison {y}", nav_activity: "Aktivität",
 home_trend: "Verlauf", home_range_3: "3 Monate", home_range_y: "Saison",
+home_range_a: "1 Jahr", home_periodo_vuoto: "Keine Runden in diesem Zeitraum.", home_periodo_scegli: "Zeitraum wählen",
 home_trend_few: "Für einen Verlauf braucht es mindestens vier Runden.",
 home_ready: "Bereit zu schießen?", home_start: "Runde starten", home_find: "Parcours finden",
 home_resume_title: "Runde fortsetzen", home_month: "Diesen Monat", home_rounds_word: "Runden",
@@ -10528,6 +10572,7 @@ home_pitch_title: "3D okçuluk için skor defteri", home_pitch_body: "Parkurda �
 home_greet_m: "Günaydın", home_greet_p: "İyi günler", home_greet_s: "İyi akşamlar",
 att_overview: "Genel bakış", att_season: "{y} sezonu", nav_activity: "Etkinlik",
 home_trend: "Gidişat", home_range_3: "3 ay", home_range_y: "Sezon",
+home_range_a: "1 yıl", home_periodo_vuoto: "Bu dönemde tur yok.", home_periodo_scegli: "Dönemi seç",
 home_trend_few: "Bir gidişat görmek için en az dört tur gerekir.",
 home_ready: "Atışa hazır mısın?", home_start: "Tura başla", home_find: "Parkur bul",
 home_resume_title: "Turuna devam et", home_month: "Bu ay", home_rounds_word: "Tur",
@@ -11298,6 +11343,7 @@ home_pitch_title: "Счётчик очков для 3D-стрельбы из л�
 home_greet_m: "Доброе утро", home_greet_p: "Добрый день", home_greet_s: "Добрый вечер",
 att_overview: "Обзор", att_season: "Сезон {y}", nav_activity: "Активность",
 home_trend: "Динамика", home_range_3: "3 месяца", home_range_y: "Сезон",
+home_range_a: "1 год", home_periodo_vuoto: "За этот период раундов нет.", home_periodo_scegli: "Выбрать период",
 home_trend_few: "Чтобы увидеть динамику, нужно хотя бы четыре круга.",
 home_ready: "Готов стрелять?", home_start: "Начать круг", home_find: "Найти площадку",
 home_resume_title: "Продолжить круг", home_month: "В этом месяце", home_rounds_word: "Круги",
@@ -12068,6 +12114,7 @@ home_pitch_title: "El marcador para el tiro con arco 3D", home_pitch_body: "Anot
 home_greet_m: "Buenos días", home_greet_p: "Buenas tardes", home_greet_s: "Buenas noches",
 att_overview: "Resumen", att_season: "Temporada {y}", nav_activity: "Actividad",
 home_trend: "Evolución", home_range_3: "3 meses", home_range_y: "Temporada",
+home_range_a: "1 año", home_periodo_vuoto: "No hay rondas en este periodo.", home_periodo_scegli: "Elegir el periodo",
 home_trend_few: "Hacen falta al menos cuatro recorridos para ver una evolución.",
 home_ready: "¿Listo para tirar?", home_start: "Empezar un recorrido", home_find: "Buscar un campo",
 home_resume_title: "Reanudar tu recorrido", home_month: "Este mes", home_rounds_word: "Recorridos",
@@ -12838,6 +12885,7 @@ home_pitch_title: "Poängräknaren för 3D-bågskytte", home_pitch_body: "Skriv 
 home_greet_m: "God morgon", home_greet_p: "God eftermiddag", home_greet_s: "God kväll",
 att_overview: "Översikt", att_season: "Säsongen {y}", nav_activity: "Aktivitet",
 home_trend: "Utveckling", home_range_3: "3 månader", home_range_y: "Säsong",
+home_range_a: "1 år", home_periodo_vuoto: "Inga rundor under perioden.", home_periodo_scegli: "Välj period",
 home_trend_few: "Det krävs minst fyra rundor för att visa en utveckling.",
 home_ready: "Redo att skjuta?", home_start: "Starta en runda", home_find: "Hitta en bana",
 home_resume_title: "Återuppta din runda", home_month: "Den här månaden", home_rounds_word: "Rundor",
@@ -13608,6 +13656,7 @@ home_pitch_title: "De scoreteller voor 3D-boogschieten", home_pitch_body: "Notee
 home_greet_m: "Goedemorgen", home_greet_p: "Goedemiddag", home_greet_s: "Goedenavond",
 att_overview: "Overzicht", att_season: "Seizoen {y}", nav_activity: "Activiteit",
 home_trend: "Verloop", home_range_3: "3 maanden", home_range_y: "Seizoen",
+home_range_a: "1 jaar", home_periodo_vuoto: "Geen rondes in deze periode.", home_periodo_scegli: "Kies de periode",
 home_trend_few: "Er zijn minstens vier rondes nodig om een verloop te tonen.",
 home_ready: "Klaar om te schieten?", home_start: "Start een ronde", home_find: "Zoek een parcours",
 home_resume_title: "Hervat je ronde", home_month: "Deze maand", home_rounds_word: "Rondes",
@@ -16547,7 +16596,63 @@ catch(e){ renderNow(); }
 function renderNow(){
 paintScreen();
 restoreContinuity(!lastMoved);
+adattaMisure();
+adattaMisurePiuTardi();
 }
+
+/* ══ LA TESTATA STA SU UNA RIGA ANCHE COL TESTO GRANDE ═════════════════════
+   (22/09/2026, Samsung S26 Ultra dell'amico di Alessandro: testata su due
+   righe, marchio sopra e icone sotto.) Su 384 px CSS col carattere di Android
+   al 130% il marchio («ArcTrail 3D» + il sentiero) e i quattro tasti (4×44
+   + 3×8) non stanno piu' nei 352 px utili, e la testata va a capo: da 61 a 97
+   px di altezza. Al 150%: marchio 173 + 8 + tasti 176 = 357 px.
+   La cura NON tocca il testo e non tocca i tasti: SOLO QUANDO la testata
+   andrebbe a capo prende la classe `stretta`, che toglie aria dove non serve
+   — sentiero alto 1em invece di 1.25em, i quattro tasti attaccati (restano
+   44×44 ciascuno: e' la zona di tocco, non il disegno). La riga tiene fino al
+   150% (misurato con tools/misura-s26.js). Dove la testata sta gia' su una riga — il
+   telefono di Alessandro — non cambia niente.
+   Si ricontrolla dopo ogni disegno, al cambio di misura, quando arrivano i
+   caratteri e al fotogramma dopo: il testo puo' crescere un istante dopo. */
+function adattaTestata(){
+var h = document.querySelector("header.top");
+if(!h) return;
+var b = h.querySelector(".brandblock"), a = h.querySelector(".head-actions");
+if(!b || !a) return;
+h.classList.remove("stretta");
+if(a.getBoundingClientRect().top > b.getBoundingClientRect().bottom - 4) h.classList.add("stretta");
+}
+/* LE PORTE DI TIRA, STESSA CURA. (22/09/2026.) Al 150% «Inizia Allenamento»
+   chiede 253 px e la colonna del testo ne ha 225 (placca 56 + 14 di spazio a
+   sinistra, 42 per la freccia a destra): il titolo va a capo e la porta passa
+   da 92 a 140 px, mentre Gara, che sta su una riga, arriva a 108. SOLO QUANDO
+   il titolo di Allenamento o di Gara andrebbe a capo il gruppo prende
+   `porte-strette`: placca 40, spazi 10, freccia piu' vicina al bordo. Il
+   testo resta com'e'. Prepara non conta: il suo titolo va a capo gia' al 100%,
+   ed e' il disegno scelto. */
+function titoloACapo(txt){
+var n = txt && txt.firstChild;
+if(!n || n.nodeType !== 3) return false;
+var r = document.createRange(); r.selectNodeContents(n);
+var q = r.getClientRects();
+return q.length > 1 && q[q.length - 1].top > q[0].top + 2;
+}
+function adattaTira(){
+var b = document.querySelector(".menu-cols .menu-btn.training");
+if(!b) return;
+var c = b.parentNode;
+while(c && !(c.classList && c.classList.contains("menu-cols"))) c = c.parentNode;
+if(!c) return;
+c.classList.remove("porte-strette");
+var tit = c.querySelectorAll(".menu-btn.training .menu-txt, .menu-btn.gara .menu-txt");
+for(var i = 0; i < tit.length; i++) if(titoloACapo(tit[i])){ c.classList.add("porte-strette"); return; }
+}
+function adattaMisure(){ adattaTestata(); adattaTira(); }
+function adattaMisurePiuTardi(){
+try{ requestAnimationFrame(function(){ setTimeout(adattaMisure, 0); }); }catch(e){ setTimeout(adattaMisure, 16); }
+}
+window.addEventListener("resize", adattaMisurePiuTardi);
+try{ if(document.fonts && document.fonts.ready) document.fonts.ready.then(adattaMisurePiuTardi); }catch(e){}
 
 /* UNA SCHERMATA NUOVA COMINCIA DALL'INIZIO. (22/08/2026, visto da Alessandro:
    «se nella pagina precedente sei a meta', la pagina nuova si apre a meta'».)
@@ -19754,10 +19859,10 @@ ctx: contestoDi(g, io), eti: contestoDi(g, io) ? etichettaContesto(g, io) : "",
             dove: g.campo || g.modeLabel || "", formato: g.format || 0 });
 });
 if(!miei.length) return null;
-var ora = new Date();
-var mese = miei.filter(function(x){
-return x.data.getFullYear() === ora.getFullYear() && x.data.getMonth() === ora.getMonth();
-});
+/* IL PERIODO E' QUELLO SCELTO NELLA HOME, con la definizione del Diario
+   (`inizioPeriodo`). (22/09/2026.) Prima era sempre il mese di calendario. */
+var da = inizioPeriodo(homePeriodo);
+var mese = miei.filter(function(x){ return x.data.getTime() >= da; });
 // La media e' del MESE: un numero che non si muove mai non e' una notizia.
 // Se questo mese non si e' ancora tirato, si prende tutto lo storico e lo
 // si dice cambiando etichetta, invece di mostrare un vuoto.
@@ -19768,7 +19873,11 @@ return x.data.getFullYear() === ora.getFullYear() && x.data.getMonth() === ora.g
    calendario. `gruppoOmogeneo` tiene il gruppo di formato piu' numeroso; se
    i formati sono tutti uguali — il caso normale — il numero e' identico a
    ieri. La formula sta scritta per esteso accanto a `gruppoOmogeneo`. */
-var baseTutta = mese.length ? mese : miei;
+/* NIENTE PIU' RIPIEGO SU TUTTO LO STORICO. (22/09/2026.) Quando il mese era
+   l'unico periodo, un mese vuoto mostrava tutto lo storico sotto l'etichetta
+   «Diario». Con un periodo SCELTO, mostrare altro da quello che si e' scelto
+   sarebbe un numero sbagliato col nome giusto: un periodo vuoto si dice. */
+var baseTutta = mese;
 var gruppoHome = gruppoOmogeneo(baseTutta.map(function(x){
 return { format:x.formato, punti:x.punti, piazzole:x.piazzole, ctx:x.ctx, eti:x.eti }; }));
 /* NIENTE RIPIEGO SU `baseTutta`. (29/08/2026.) Qui c'era un `? :` che, se
@@ -19857,6 +19966,39 @@ return t("home_greet_s");
    La linea usa `--chart-line`, che e' scelto tema per tema e verificato a
    3:1 su tutti e tre — vedi il commento accanto ai ruoli. */
 var homeFinestra = "m";   // m = mese, 3 = tre mesi, y = stagione. Fuori da render().
+
+/* ══ I PERIODI SONO GLI STESSI, NELLA HOME E NEL DIARIO ════════════════════
+   (22/09/2026, chiesto da Alessandro: vedere 3 mesi, stagione e un anno senza
+   entrare nel Diario.) Prima i periodi erano scritti DENTRO `homeSerie` — per
+   il grafico del Diario — e la Home ne aveva un altro suo: «questo mese» voleva
+   dire il mese di calendario nella Home e gli ultimi 31 giorni nel Diario, cioe'
+   due numeri diversi con lo stesso nome. Adesso c'e' una definizione sola:
+     m = ultimi 31 giorni · 3 = ultimi 92 · y = dal 1° gennaio (la «Stagione»
+     del Diario) · a = ultimi 365.
+   La scelta della Home sta nel telefono (`arctrail3d_home_periodo`): e' una
+   preferenza di come guardare, non un dato da sincronizzare. */
+var HOME_PERIODO_KEY = "arctrail3d_home_periodo";
+var PERIODI_HOME = ["m", "3", "y", "a"];
+function leggiPeriodoHome(){
+try{ var p = localStorage.getItem(HOME_PERIODO_KEY); return PERIODI_HOME.indexOf(p) >= 0 ? p : "m"; }catch(e){ return "m"; }
+}
+var homePeriodo = leggiPeriodoHome(), homePeriodiAperti = false;
+function scegliPeriodoHome(p){
+if(PERIODI_HOME.indexOf(p) < 0) return;
+homePeriodo = p; homePeriodiAperti = false;
+try{ localStorage.setItem(HOME_PERIODO_KEY, p); }catch(e){}
+render();
+}
+function inizioPeriodo(p, ora){
+ora = ora || Date.now();
+if(p === "3") return ora - 92 * 86400000;
+if(p === "a") return ora - 365 * 86400000;
+if(p === "y"){ var g0 = new Date(ora); g0.setMonth(0, 1); g0.setHours(0, 0, 0, 0); return g0.getTime(); }
+return ora - 31 * 86400000;
+}
+function etichettaPeriodo(p){
+return t(p === "3" ? "home_range_3" : p === "y" ? "home_range_y" : p === "a" ? "home_range_a" : "home_month");
+}
 var attScheda = "i";      // i = insieme, g = giri, r = record. Idem: sopravvive al ridisegno.
 
 function homeSerie(){
@@ -19877,11 +20019,7 @@ punti.push({ q: d.getTime(), data: d, v: io.total || 0, dove: g.campo || g.modeL
 ctx: contestoDi(g, io), eti: contestoDi(g, io) ? etichettaContesto(g, io) : "" });
 });
 punti.sort(function(a,b){ return a.q - b.q; });   // il tempo va da sinistra a destra
-var ora = Date.now();
-var da = 0;
-if(homeFinestra === "m") da = ora - 31 * 86400000;
-else if(homeFinestra === "3") da = ora - 92 * 86400000;
-else { var g0 = new Date(); g0.setMonth(0,1); g0.setHours(0,0,0,0); da = g0.getTime(); }
+var da = inizioPeriodo(homeFinestra);
 var dentro = punti.filter(function(p){ return p.q >= da && !!p.ctx; });
 var gr = gruppoOmogeneo(dentro.map(function(p){
 return { ctx:p.ctx, eti:p.eti, p:p }; }));
@@ -20173,11 +20311,37 @@ strati.appendChild(vuota);
 if(n){
 var aperta = (state.homeMese === true);
 var sez = el('<div class="strato home-mese'+(aperta ? " aperta" : "")+'"></div>');
+/* IL PERIODO SI SCEGLIE QUI. (22/09/2026.) L'etichetta era un testo dentro il
+   pulsante che apre l'andamento; adesso e' lei il pulsante del periodo, e apre
+   un menu corto con i quattro periodi. La freccina e i numeri continuano ad
+   aprire l'andamento, come prima. Niente barra a quattro tab fissa: la Home
+   resta quella che era, con una parola in piu' da toccare. */
+var capo = el('<div class="home-mese-capo"></div>');
+var scelta = el('<button type="button" class="home-periodo-scelta" aria-haspopup="true" aria-expanded="'+homePeriodiAperti+'"></button>');
+scelta.setAttribute("aria-label", t("home_periodo_scegli") + ": " + etichettaPeriodo(homePeriodo));
+scelta.appendChild(el('<span class="home-mese-eti">'+escapeHtml(etichettaPeriodo(homePeriodo))+'</span>'));
+scelta.appendChild(el('<span class="home-periodo-giu" aria-hidden="true"></span>'));
+scelta.addEventListener("click", function(){ homePeriodiAperti = !homePeriodiAperti; render(); });
+capo.appendChild(scelta);
+var apri = el('<button type="button" class="home-mese-apri" aria-expanded="'+aperta+'"></button>');
+apri.setAttribute("aria-label", t("home_trend"));
+apri.appendChild(el('<span class="home-mese-freccia" aria-hidden="true"></span>'));
+apri.addEventListener("click", function(){ state.homeMese = !aperta; save(); render(); });
+capo.appendChild(apri);
+sez.appendChild(capo);
+if(homePeriodiAperti){
+var menu = el('<div class="home-periodi" role="menu"></div>');
+PERIODI_HOME.forEach(function(p){
+var voce = el('<button type="button" role="menuitemradio" class="home-periodo-voce"></button>');
+voce.setAttribute("aria-checked", String(p === homePeriodo));
+voce.setAttribute("data-periodo", p);
+voce.textContent = etichettaPeriodo(p);
+voce.addEventListener("click", function(){ scegliPeriodoHome(p); });
+menu.appendChild(voce);
+});
+sez.appendChild(menu);
+}
 var barra = el('<button class="home-mese-barra" aria-expanded="'+aperta+'"></button>');
-var capo = el('<span class="home-mese-capo"></span>');
-capo.appendChild(el('<span class="home-mese-eti">'+escapeHtml(n.nelMese ? t("home_month") : t("journal_title"))+'</span>'));
-capo.appendChild(el('<span class="home-mese-freccia" aria-hidden="true"></span>'));
-barra.appendChild(capo);
 /* IL PANNELLO DEI NUMERI. (22/08/2026, chiesto da Alessandro: «e' un'utilita'
    dove uno vede i propri numeri, dovrebbe avere un look piu' tecnico, adesso
    si fonde con tutto il resto».)
@@ -20215,7 +20379,9 @@ voci.push([t("diario_targets_word"), n.piazzole]);
 voci.forEach(function(p){
 riga.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(p[1]))+'</b><i>'+escapeHtml(p[0])+'</i></span>'));
 });
-dati.appendChild(riga);
+// Un periodo senza giri si dice, invece di mostrare una fila di zeri. (22/09/2026)
+if(n.giri === 0) dati.appendChild(el('<span class="hm-vuota-testo">'+escapeHtml(t("home_periodo_vuoto"))+'</span>'));
+else dati.appendChild(riga);
 barra.appendChild(dati);
 /* QUI C'ERANO LE BARRE DEL MESE, E SONO STATE TOLTE. (21/08/2026, viste da
    Alessandro sul telefono: «sono tutte storte, devono essere legate a
@@ -24015,7 +24181,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-09-22-avvio-storico";
+var BUILD_STAMP = "2026-09-22-home-periodi";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24024,7 +24190,7 @@ var BUILD_STAMP = "2026-09-22-avvio-storico";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-09-18-campi-fiarc";
+var BUILD_PARENT = "2026-09-22-avvio-storico";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

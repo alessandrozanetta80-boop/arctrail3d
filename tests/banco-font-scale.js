@@ -32,6 +32,8 @@
    sovrappongono, la barra in fondo sta in fondo e dentro lo schermo, la
    testata non cambia altezza scorrendo e attaccata sta a 0, e si va e torna
    Home -> Profilo -> Home e Profilo -> Attrezzatura -> Profilo.
+   Dal 22/09/2026, da 384 px in su e fino al 150%: testata su una riga e porta
+   di Allenamento non piu' alta di Gara (le due foto del S26 Ultra).
 
    NON e' un banco Samsung: niente user agent, niente modelli, niente DPR.
    NON tocca l'app: lavora su una copia in una cartella temporanea.
@@ -248,6 +250,29 @@ async function combinazione(browser, modo, s, w, h, lang, completa){
     await p.waitForTimeout(600);
     var st = await p.evaluate(function(){ return JSON.parse(localStorage.getItem("arctrail3d_state_v3")) || {}; });
     if (!casa || st.screen !== "menu" || st.tab !== "home") tutti.push("dal Profilo la barra non riporta alla Home");
+  }
+  /* S26 ULTRA. (22/09/2026, le due foto: sul telefono dell'amico testata su
+     due righe e porte di Tira molto piu' alte.) Da 384 px in su e fino al
+     150%: la testata sta su UNA riga, e la porta di Allenamento non e' piu'
+     alta di quella di Gara (era 140 contro 108: il titolo andava a capo).
+     Misura a mano di tutte le combinazioni: tools/misura-s26.js. */
+  if (modo === "T" && telefono && w >= 384 && s <= 1.5) {
+    var righe = await p.evaluate(function(){
+      var h = document.querySelector("header.top"), b = h && h.querySelector(".brandblock"), a = h && h.querySelector(".head-actions");
+      return (b && a && a.getBoundingClientRect().top > b.getBoundingClientRect().bottom - 4) ? 2 : 1; });
+    if (righe > 1) tutti.push("la testata va su due righe");
+    var tira = await p.evaluate(function(){
+      var x = document.querySelectorAll(".tabbar-bottom > *")[2];   // Home, Campi, Tira, Marketplace: in ogni lingua
+      if (!x) return false; x.click(); return true; });
+    await p.waitForTimeout(700);
+    var porte = await p.evaluate(function(){
+      function alta(q){ var e = document.querySelector(q); return e ? Math.round(e.getBoundingClientRect().height) : 0; }
+      return { all: alta(".menu-btn.training"), gara: alta(".menu-btn.gara") }; });
+    if (!tira || !porte.all) tutti.push("non si arriva alle porte di Tira");
+    else {
+      annota("Tira", await p.evaluate(guasti));
+      if (porte.all > porte.gara + 4) tutti.push("la porta di Allenamento e' alta " + porte.all + "px, Gara " + porte.gara);
+    }
   }
   if (errori.length) tutti.push("errori in pagina: " + errori.slice(0, 2).join(" | "));
   await ctx.close();

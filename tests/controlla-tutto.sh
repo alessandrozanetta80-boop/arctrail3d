@@ -96,6 +96,7 @@ banco "banco-schede.js (le sei schede del pannello, jsdom)" "node tests/banco-sc
 banco "banco-avvio.js (i primi due secondi, jsdom)" "node tests/banco-avvio.js"
 banco "banco-allenamenti.js (le tendine degli allenamenti, playwright)" "node tests/banco-allenamenti.js"
 banco "banco-home.js (i quattro numeri della Home, playwright)" "node tests/banco-home.js"
+banco "banco-home-periodi.js (il periodo della Home: mese, 3 mesi, stagione, 1 anno)" "node tests/banco-home-periodi.js"
 banco "banco-compagnia.js (l'area compagnia a schede, playwright)" "node tests/banco-compagnia.js"
 banco "banco-barra.js (la barra sta dentro lo schermo, playwright)" "node tests/banco-barra.js"
 banco "banco-campi.js (la ricerca dei campi, playwright)" "node tests/banco-campi.js"

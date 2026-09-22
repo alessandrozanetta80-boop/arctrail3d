@@ -34,8 +34,12 @@ const { execSync } = require('child_process');
 
 const PROGETTO = 'arctrail3d-prova';
 const REGOLE_OGGI = process.env.REGOLE || 'firestore.rules';
-// Il ramo da cui si pubblica: `main` e' quello che c'e' online.
-const BASE = process.env.BASE || 'main';
+// Le regole ONLINE. Fino al gate 1 erano quelle di `main`. Dal 22/09/2026
+// `main` porta anche il firestore.rules nuovo, che NON e' pubblicato (solo
+// il sito lo e'): le regole online restano quelle del 18/09, cioe' di
+// `1cd0652` (il ritorno allo stato del 18/09). Quando le regole nuove vanno
+// online (gate 2), questa riga torna `main`. L'app di ieri resta `main`.
+const BASE = process.env.BASE || '1cd0652';
 
 const A  = { uid:'utenteA', email:'a@esempio.it', email_verified:true };
 const B  = { uid:'utenteB', email:'b@esempio.it', email_verified:true };

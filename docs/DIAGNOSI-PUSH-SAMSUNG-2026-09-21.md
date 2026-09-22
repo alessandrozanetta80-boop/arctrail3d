@@ -4,6 +4,81 @@ Le due cose si chiudono solo con un telefono in mano: qui c'è cosa è già stat
 fatto, dove sta, cosa è stato corretto nella notte fra il 21 e il 22 e cosa resta
 da guardare.
 
+## 22/09 sera: le due foto del S26 Ultra, la causa e il fix (ramo `work/home-s26-2026-09-22`, NON pubblicato)
+
+**Le foto.** Sul telefono di Alessandro la testata sta su una riga e le porte di Tira
+sono compatte. Sul S26 Ultra dell'amico la testata va su due righe (marchio sopra,
+icone sotto) e le porte sono molto più alte. Succede anche nella PWA: **l'APK non
+c'entra.**
+
+**Causa tecnica, misurata.** È il carattere grande di Android/Samsung sul viewport del
+S26 Ultra (384×832 px CSS). Le misure fisse non crescono, il testo sì:
+- **Testata.** Al 150% il marchio «ArcTrail 3D» + sentiero è largo 173 px. Con 8 px di spazio
+  e i quattro tasti da 44 (176 px) fa 357 px, e ce ne sono 352: la testata va a capo
+  (`flex-wrap`) e passa da 61 a 102 px. Va a capo già dal 130%.
+- **Porte di Tira.** La colonna del testo è fissa a 225 px: placca 56, spazio 14, 42 px
+  per la freccia. Al 150% «Inizia Allenamento» ne chiede 253, quindi il titolo va a capo
+  e la porta passa da 92 a 140 px. Gara, il cui titolo sta su una riga, arriva a 108.
+- Non c'entrano `rem`, `clamp()` o l'unità del viewport.
+
+**Fix (solo quando serve; dove la riga ci sta già non cambia niente).**
+Il telefono di Alessandro al 100% risulta identico nelle misure.
+- **Testata.** `adattaTestata()` misura dopo ogni disegno, al cambio di misura e quando
+  arrivano i caratteri. Se le icone scendono sotto il marchio, la testata prende
+  `stretta`:
+  - il sentiero passa da 1.25em a 1em;
+  - i quattro tasti restano 44×44 ma si toccano.
+  - Testo, tasti e colori non cambiano.
+- **Porte.** `adattaTira()` applica lo stesso principio. Se il titolo di Allenamento o di
+  Gara andrebbe a capo, il gruppo prende `porte-strette`:
+  - la placca dell'icona passa da 56 a 40;
+  - gli spazi passano a 10;
+  - la freccia si avvicina al bordo.
+  - Il testo non si rimpicciolisce.
+- **Barra in basso.** Già a posto dal 18/09: quattro voci su una riga, MARKETPLACE dentro
+  la sua cella fino al 200%.
+
+**Misure** (`node tools/misura-s26.js`, 384×832; zoom = viewport ristretto):
+
+| testo | zoom | testata prima → dopo | porte Tira (All./Gara/Prep.) prima → dopo | barra |
+|---|---|---|---|---|
+| 100% | 100% | 61, 1 riga → 61, 1 riga | 92/92/110 → 92/92/110 | 4 voci, 1 riga |
+| 120% | 100% | 61, 1 riga → 61, 1 riga | 92/92/125 → uguale | 4 voci, 1 riga |
+| **130%** | 100% | **97, 2 righe** → **61, 1 riga** | 92/97/133 → uguale | 4 voci, 1 riga |
+| **150%** | 100% | **102, 2 righe** → **61, 1 riga** | **140**/108/148 → **92**/108/148 | 4 voci, 1 riga |
+| 175% | 100% | 107, 2 righe → 103, 2 righe | 159/122/167 → uguale | 4 voci, 1 riga |
+| 200% | 100% | 112, 2 righe → 108, 2 righe | 178/136/186 → uguale | 4 voci, 1 riga |
+| 100% | 115% (334 px) | **91, 2 righe** → **61, 1 riga** | 92/92/110 → uguale | 4 voci, 1 riga |
+| 100% | 130% (295 px) | 90, 2 righe → 88, 2 righe | 102/92/110 → 92/92/110 | 4 voci, 1 riga |
+| 130% | 115% (334 px) | 97, 2 righe → 94, 2 righe | 125/97/133 → uguale | 4 voci, 1 riga |
+| 150% | 115% (334 px) | 101, 2 righe → 98, 2 righe | 140/108/148 → uguale | 4 voci, 1 riga |
+
+In tutte le combinazioni: nessuno scorrimento di lato, tasti della testata 44 px, niente
+fuori schermo.
+
+**Oltre il requisito, documentati a parte.** Il testo al 175–200%, oppure lo zoom schermo
+insieme al testo grande, lasciano 300–330 px utili. Lì la riga non ci sta senza
+nascondere o rimpicciolire qualcosa di funzionale, e la testata resta su due righe,
+come prima e senza guasti.
+
+**Test automatici.** `banco-font-scale.js` ha due prove nuove, attive da 384 px in su
+fino al 150%:
+- la testata sta su una riga;
+- la porta di Allenamento non è più alta di Gara.
+
+Esito: 67/67 sull'app nuova. Sull'app di prima (`main`) le prove nuove falliscono 7 volte
+(130% e 150% a 384 e 390 px, 150% a 412 px). `--sabota` resta rosso.
+
+**TEST REALE S26 ULTRA ANCORA NECESSARIO: SÌ.** Il testo di Samsung è simulato
+(Chromium da computer non applica la scala di Android) e il carattere del telefono non è
+quello del banco. Da guardare sul telefono dell'amico, dopo la pubblicazione di questo
+ramo:
+1. testata su una riga;
+2. porte di Tira;
+3. barra in basso.
+
+Annotare «Dimensione carattere» e «Zoom schermo».
+
 ## Notte 21–22/09: cosa è cambiato
 
 **Push — un difetto di codice corretto, uno escluso.**

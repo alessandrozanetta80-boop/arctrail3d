@@ -11,7 +11,33 @@ allenamenti `02-ALLENAMENTI.md`, push e Samsung `03-PUSH-SAMSUNG.md`.
 
 ---
 
-## ADESSO (22/09/2026, 12:00)
+## ADESSO (22/09/2026, sera) — HOME + S26, ramo `work/home-s26-2026-09-22`, NON pubblicato
+
+- **Home.** Il riquadro «Questo mese» ora sceglie il periodo: Questo mese, 3 mesi,
+  Stagione, 1 anno. Si apre toccando il titolo (il triangolino); la freccia a destra
+  apre i dettagli come prima.
+  - Le finestre sono quelle del Diario (31 giorni, 92 giorni, dal 1° gennaio) più
+    1 anno (365 giorni), in una funzione sola per Home e Diario (`inizioPeriodo`).
+  - La scelta resta sul telefono (`arctrail3d_home_periodo`), nessuna lettura dal cloud.
+  - Con zero giri nel periodo compare «Nessun giro in questo periodo.».
+  - «Ultimo giro» non cambia.
+- **S26 Ultra.** Causa, fix e misure: `03-PUSH-SAMSUNG.md`, prima sezione.
+  - Testata su una riga fino al 150% a 384 px (prima andava a capo dal 130%).
+  - Porta di Allenamento a 92 px invece di 140 al 150%.
+  - Il telefono di Alessandro resta identico.
+- **Versioni.** App `2026-09-22-home-periodi` (genitore `2026-09-22-avvio-storico`),
+  cassa `arctrail3d-v169`.
+- **Test.** Nuovo `banco-home-periodi.js` (21 prove); `banco-font-scale.js` ha 67 combinazioni.
+- **Deploy: NO.** Per pubblicare serve il via di Alessandro: stesso percorso del
+  gate 1, solo sito, Functions e regole invariate.
+- **Test reali da fare dopo la pubblicazione.**
+  1. Home: cambio periodo.
+  2. Home: il periodo resta dopo la riapertura.
+  3. S26: testata.
+  4. S26: porte di Tira.
+  5. S26: barra in basso.
+
+## Gate 1 (22/09/2026, 12:00)
 
 **GATE 1 REALE SUPERATO.** Il sito del ramo `work/sicurezza-qualita-2026-09-22` è
 online (`main` = `5f4878d`, push fatto a mano da Alessandro; app
@@ -119,9 +145,13 @@ può raggiungere la produzione.
 - **Diagnosi.** Viewport, `text-size-adjust`, tacca e barra in basso già a posto
   (17–18/09). Misurato stanotte: sul viewport di un S26 Ultra la testata va a capo
   dal **130%** di testo (61 → 97 px, fino a 112 al 200%; zoom schermo 90 px).
-- **Fix.** Nessuno: non è un guasto (niente si sovrappone o esce), è una scelta di
-  design (marchio troncato o comandi sotto i 44 px). Il banco ora misura la testata e
-  dice no sopra un quinto dello schermo.
+- **Fix (22/09 sera, dopo le due foto; ramo non pubblicato).** Si toglie aria solo
+  quando serve, senza toccare testo e tasti:
+  - testata `stretta`: sentiero 1em, tasti 44×44 attaccati;
+  - porte di Tira `porte-strette`: placca 40, spazi 10.
+  - Risultato: una riga fino al 150% a 384 px; Allenamento 92 px invece di 140.
+  - Oltre il 150%, o con zoom schermo e testo grande insieme, la testata resta su due
+    righe (documentato).
 - **Resta:** `TEST REALE S26 ULTRA NECESSARIO`, con i valori di «Dimensione
   carattere» e «Zoom schermo».
 
