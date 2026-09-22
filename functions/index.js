@@ -212,6 +212,13 @@ exports.sendNotification = onCall({ cors: true, enforceAppCheck: APP_CHECK_OBBLI
   if (!toUid || !title) {
     throw new HttpsError("invalid-argument", "Servono toUid e title.");
   }
+  /* `toUid` DIVENTA UN PERCORSO, quindi prima si guarda com'e' fatto. (22/09/2026.)
+     Un uid di Firebase e' corto e senza «/». Con una barra dentro si puntava a
+     un altro livello di `users/...`: nessun danno (errore interno o «destinatario
+     inesistente»), ma un parametro che diventa un percorso non si lascia al caso. */
+  if (!/^[A-Za-z0-9_-]{1,128}$/.test(toUid)) {
+    throw new HttpsError("invalid-argument", "toUid non valido.");
+  }
 
   const db = admin.firestore();
 

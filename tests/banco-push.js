@@ -293,6 +293,10 @@ var AVVISO = {
           m.data && m.data.link);
     prova("urgenza alta: in Doze non aspetta lo sblocco",
           !!(m.webpush && m.webpush.headers && m.webpush.headers.Urgency === "high"), JSON.stringify(m.webpush));
+    // (22/09/2026) Il TTL c'era nel codice e in nessuna prova: senza, FCM tiene
+    // l'avviso fino a quattro settimane e lo consegna quando non serve piu'.
+    prova("TTL di un giorno: un avviso vecchio non arriva giorni dopo",
+          !!(m.webpush && m.webpush.headers && m.webpush.headers.TTL === "86400"), JSON.stringify(m.webpush && m.webpush.headers));
 
     prova("un dispositivo spento (enabled:false) non riceve", tk.indexOf("token-spento") < 0, JSON.stringify(m.tokens));
 
@@ -334,6 +338,18 @@ var AVVISO = {
     return ultimaNotifica.dest;
   }
   var ultimaNotifica = {};
+  // A3-bis — `toUid` diventa un percorso: com'e' fatto si guarda prima. (22/09/2026)
+  async function esitoDi(toUid){
+    notificheScritte = [];
+    try {
+      await chiama({ auth:{ uid:"mittente-vero", token:{ email_verified:true } }, data:{ toUid: toUid, title:"Ciao", body:"x" } });
+      return "passata (" + notificheScritte.length + " scritte)";
+    } catch (e) { return (e && e.code) || String(e); }
+  }
+  var conBarra = await esitoDi("qualcuno/items/finto");
+  prova("toUid con una barra dentro: rifiutato prima di toccare il database", /invalid-argument/.test(conBarra) && notificheScritte.length === 0, conBarra);
+  var lungo = await esitoDi(new Array(300).join("x"));
+  prova("toUid di 300 caratteri: rifiutato", /invalid-argument/.test(lungo), lungo);
   var dm = await manda({ k:"dm", uid:"qualcun-altro" });
   prova("dm: la destinazione e' la chat col MITTENTE VERO, non quello dichiarato",
         !!(dm && dm.k === "dm" && dm.uid === "mittente-vero"), JSON.stringify(dm));
