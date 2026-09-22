@@ -39,6 +39,9 @@ Il push stavolta è passato da Claude Code, autorizzato dal file
   (`firestore.rules`) dalle regole live (`REGOLE_LIVE`, di default `1cd0652`, cioè il
   18/09). Se coincidono, si ferma. Quando le regole nuove andranno online, il default
   torna `main`.
+- **Test reale Home: SUPERATO** sul telefono di Alessandro (22/09, sera).
+- **S26 Ultra: in attesa degli screenshot** (Home e Tira, con «Dimensione e stile
+  carattere» e «Zoom schermo»).
 - **Test reali da fare (adesso che è online).** Il S26 prende la v169 alla riapertura.
   Se il problema resta: niente fix alla cieca, servono gli screenshot e i valori del
   telefono.
