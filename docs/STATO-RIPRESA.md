@@ -54,6 +54,27 @@ In Dropbox vanno tutti e cinque dentro `CONSEGNA_CHATGPT.zip`.
 
 ---
 
+## TEST REALE SAMSUNG S26 ULTRA: SUPERATO — 23/09/2026
+
+Sul S26 Ultra vero, con la v170 online (`arctrail3d-v170`): screenshot di **Profilo,
+Tira, Home e Campi** ricevuti e verificati. **Il problema responsive S26 è chiuso.**
+
+- Telefono: QHD+ 3120×1440, carattere Samsung predefinito, grassetto OFF, dimensione
+  carattere e zoom schermo circa standard.
+- Testata ArcTrail su **una riga**; logo, campanella, chat, avatar e bandiera allineati;
+  nessun a capo.
+- Tira: porte compatte, «Inizia Allenamento» su una riga, «Gara libera» e «Prepara
+  gara» impaginate bene.
+- Barra in basso stabile; Home e Profilo corretti; Campi usabile senza rotture;
+  nessuno scorrimento orizzontale evidente.
+- Nessun altro fix S26. Codice, sito, Functions, regole e APK non toccati in questo
+  passaggio. Dettaglio: `03-PUSH-SAMSUNG.md`, prima sezione.
+
+I punti «S26» più sotto (test da fare, `TEST REALE S26 ULTRA NECESSARIO`) sono
+**superati** da questo test.
+
+---
+
 ## ADESSO (22/09/2026, sera) — HOME + S26 PUBBLICATI (solo sito)
 
 **Online:** `main` = `03b16d0`, app `2026-09-22-home-periodi`, cassa `arctrail3d-v169`.
@@ -220,6 +241,7 @@ può raggiungere la produzione.
     righe (documentato).
 - **Resta:** `TEST REALE S26 ULTRA NECESSARIO`, con i valori di «Dimensione
   carattere» e «Zoom schermo».
+- **23/09: `TEST REALE SAMSUNG S26 ULTRA: SUPERATO`** con la v170 (vedi in cima).
 
 ## Service worker / offline
 

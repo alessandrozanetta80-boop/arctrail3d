@@ -4,6 +4,28 @@ Le due cose si chiudono solo con un telefono in mano: qui c'è cosa è già stat
 fatto, dove sta, cosa è stato corretto nella notte fra il 21 e il 22 e cosa resta
 da guardare.
 
+## 23/09: TEST REALE SAMSUNG S26 ULTRA: SUPERATO — 23/09/2026
+
+Test sul S26 Ultra vero con la v170 online (`arctrail3d-v170`, il fix a gradini qui
+sotto). Screenshot di **Profilo, Tira, Home e Campi** ricevuti e verificati.
+**Il problema responsive S26 è RISOLTO.**
+
+**Impostazioni del telefono:** QHD+ 3120×1440; carattere Samsung predefinito;
+grassetto OFF; dimensione carattere circa standard; zoom schermo circa standard.
+
+**Verifiche visive superate:**
+- testata ArcTrail su UNA riga, nessun a capo;
+- logo, campanella, chat, avatar e bandiera allineati;
+- porte di Tira compatte; «Inizia Allenamento» su una riga;
+- «Gara libera» e «Prepara gara» impaginate correttamente;
+- barra inferiore stabile;
+- Home e Profilo corretti; Campi usabile senza rotture di layout;
+- nessuno scorrimento orizzontale evidente.
+
+Le righe «TEST REALE S26 ULTRA ANCORA NECESSARIO» più sotto sono **chiuse** da questo
+test. Nessun altro fix S26; codice, sito, Functions, regole e APK non toccati.
+Resta aperto, e non riguarda il S26: la push ad app chiusa (sezione A).
+
 ## 22/09 notte: il S26 vero smentisce la simulazione, e il fix diventa a gradini
 
 **I valori letti sul telefono dell'amico** (non stimati):
@@ -82,6 +104,7 @@ sabotaggio rimette gli spazi di prima e deve diventare rosso: **60 rossi su 83**
 v169 pubblicata, provata con le regole nuove, cade 20 volte.
 
 **TEST REALE S26 ULTRA ANCORA NECESSARIO: SÌ**, dopo la pubblicazione della v170.
+*(23/09: fatto e SUPERATO — vedi la sezione in cima.)*
 Serve: aprire l'app quando ha preso la v170, screenshot della Home, screenshot di
 Tira e — se possibile — aprire `?diag=s26` e riportare i valori del riquadro. Quelli
 dicono in un colpo solo quanto spazio c'è davvero e cosa se lo prende.
