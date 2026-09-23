@@ -59,6 +59,14 @@ function Leggi-Prop($file) {
   return $h
 }
 function Impronta-Normale($s) { return (($s -replace '[^0-9A-Fa-f]', '').ToUpper()) }
+# I programmi esterni (java, keytool, apksigner, aapt, gradle) scrivono su stderr
+# anche quando va tutto bene: PowerShell 5.1 con 'Stop' lo prenderebbe per un
+# errore. Qui girano con 'Continue' e si guarda solo $LASTEXITCODE.
+function Nativo([scriptblock]$b) {
+  $prima = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+  try { return ((& $b 2>&1 | ForEach-Object { "$_" }) -join "`n") }
+  finally { $ErrorActionPreference = $prima }
+}
 
 Write-Host ""
 Write-Host "ArcTrail 3D - generazione APK release" -ForegroundColor White
@@ -70,7 +78,7 @@ foreach ($c in @($env:JAVA_HOME, "$env:ProgramFiles\Android\Android Studio\jbr")
   if ($c -and (Test-Path (Join-Path $c 'bin\java.exe'))) { $java = $c; break }
 }
 if (-not $java) { Stop-Qui "Java non trovato (JAVA_HOME o Android Studio\jbr)." }
-$jv = (& (Join-Path $java 'bin\java.exe') -version 2>&1 | Out-String)
+$jv = Nativo { & (Join-Path $java 'bin\java.exe') -version }
 if ($jv -notmatch 'version "(\d+)') { Stop-Qui "versione di Java illeggibile." }
 if ([int]$Matches[1] -lt 17) { Stop-Qui "serve Java 17 o piu' recente (trovato $($Matches[1]))." }
 Ok "Java $($Matches[1]) - $java"
@@ -108,13 +116,13 @@ Ok "chiave release presente (fuori dal repository)"
 Passo "2. Stato git"
 Push-Location $Radice
 try {
-  $sporchi = @(git status --porcelain -- android .well-known 2>$null | Where-Object { $_ })
+  $sporchi = @((Nativo { git status --porcelain -- android .well-known }) -split "`n" | Where-Object { $_ })
   if ($sporchi.Count) { Stop-Qui ("modifiche non committate in android/ o .well-known/:`n" + ($sporchi -join "`n")) }
-  $tracciatiSegreti = @(git ls-files 2>$null | Where-Object { $_ -match '\.(apk|aab|jks|keystore|p12|pk8)$' -or $_ -match '(^|/)(keystore|signing)\.properties$' })
+  $tracciatiSegreti = @((Nativo { git ls-files }) -split "`n" | Where-Object { $_ -match '\.(apk|aab|jks|keystore|p12|pk8)$' -or $_ -match '(^|/)(keystore|signing)\.properties$' })
   if ($tracciatiSegreti.Count) { Stop-Qui ("file che non devono stare in git: " + ($tracciatiSegreti -join ', ')) }
-  $altri = @(git status --porcelain 2>$null | Where-Object { $_ })
+  $altri = @((Nativo { git status --porcelain }) -split "`n" | Where-Object { $_ })
   if ($altri.Count) { Avviso "altri file modificati nel repository ($($altri.Count)): non entrano nell'APK." }
-  Ok "android/ e .well-known/ puliti, nessun segreto tracciato - ramo $(git branch --show-current)"
+  Ok "android/ e .well-known/ puliti, nessun segreto tracciato - ramo $(Nativo { git branch --show-current })"
 } finally { Pop-Location }
 
 # -- 3. MANIFEST PWA -----------------------------------------------------------
@@ -140,7 +148,7 @@ Passo "5. Firma"
 # La password passa per una variabile d'ambiente del solo processo, non per la
 # riga di comando (che si vede nell'elenco dei processi) e non a schermo.
 $env:AT3D_STOREPASS = $pf['storePassword']
-try { $elenco = (& $keytool -list -v -keystore $jks -alias $ALIAS -storepass:env AT3D_STOREPASS 2>&1 | Out-String) }
+try { $elenco = Nativo { & $keytool -list -v -keystore $jks -alias $ALIAS -storepass:env AT3D_STOREPASS } }
 finally { Remove-Item Env:\AT3D_STOREPASS -ErrorAction SilentlyContinue }
 if ($elenco -notmatch 'SHA256:\s*([0-9A-F:]{95})') { Stop-Qui "impossibile leggere l'impronta della chiave (password o keystore errati)." }
 $impronta = $Matches[1]
@@ -164,11 +172,11 @@ $pv = Leggi-Prop $FileVers
 $codice = [int]$pv['versionCode'] + 1
 $pubblicato = Join-Path $Dropbox $ApkNome
 if (Test-Path $pubblicato) {
-  $b = (& $aapt dump badging $pubblicato 2>$null | Select-Object -First 1)
+  $b = Nativo { & $aapt dump badging $pubblicato }
   if ($b -match "versionCode='(\d+)'" -and [int]$Matches[1] -ge $codice) { $codice = [int]$Matches[1] + 1 }
 }
 $nome = (Get-Date).ToString('yyyy.MM.dd')
-[IO.File]::WriteAllText($FileVers, "versionCode=$codice`nversionName=$nome`n")
+[IO.File]::WriteAllText($FileVers, "# Scritto SOLO da tools/genera-apk.ps1. versionCode sale sempre: un valore gia' usato non torna.`nversionCode=$codice`nversionName=$nome`n")
 $twaTesto = [IO.File]::ReadAllText((Join-Path $Android 'twa-manifest.json'))
 $twaTesto2 = $twaTesto -replace '"appVersionCode":\s*\d+', "`"appVersionCode`": $codice" `
                        -replace '"appVersionName":\s*"[^"]*"', "`"appVersionName`": `"$nome`"" `
@@ -186,21 +194,22 @@ Passo "7. Build release"
 if (Test-Path $ApkOut) { Remove-Item $ApkOut -Force }
 Push-Location $Android
 try {
-  & .\gradlew.bat --no-daemon -q assembleRelease
+  $log = Nativo { & .\gradlew.bat --no-daemon -q assembleRelease }
   $esito = $LASTEXITCODE
+  if ($esito -ne 0) { Write-Host $log }
 } finally { Pop-Location }
 if ($esito -ne 0 -or -not (Test-Path $ApkOut)) { Annulla-Versione; Stop-Qui "build fallita (gradle uscito con $esito)." }
 Ok "build riuscita: $ApkOut"
 
 # -- 8/9. VERIFICA DELL'APK ----------------------------------------------------
 Passo "8. Verifica APK"
-$ver = (& $apksigner verify --verbose --print-certs $ApkOut 2>&1 | Out-String)
+$ver = Nativo { & $apksigner verify --verbose --print-certs $ApkOut }
 if ($LASTEXITCODE -ne 0 -or $ver -notmatch '(?m)^Verifies') { Annulla-Versione; Stop-Qui "apksigner: firma NON valida.`n$ver" }
 if ($ver -notmatch 'certificate SHA-256 digest:\s*([0-9a-f]{64})') { Annulla-Versione; Stop-Qui "apksigner: impronta non trovata." }
 if ($Matches[1].ToUpper() -ne (Impronta-Normale $impronta)) { Annulla-Versione; Stop-Qui "l'APK e' firmato con una chiave diversa da quella ufficiale." }
 if ($ver -match 'CN=Android Debug') { Annulla-Versione; Stop-Qui "l'APK e' firmato con la chiave di DEBUG." }
 Ok "firma valida, chiave ufficiale"
-$badging = (& $aapt dump badging $ApkOut 2>&1 | Out-String)
+$badging = Nativo { & $aapt dump badging $ApkOut }
 if ($badging -notmatch "package: name='([^']+)' versionCode='(\d+)' versionName='([^']+)'") { Annulla-Versione; Stop-Qui "aapt: APK illeggibile." }
 if ($Matches[1] -ne $PACKAGE -or [int]$Matches[2] -ne $codice -or $Matches[3] -ne $nome) {
   Annulla-Versione; Stop-Qui "aapt: package/versione inattesi ($($Matches[1]) $($Matches[2]) $($Matches[3]))."

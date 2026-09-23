@@ -4,10 +4,46 @@ Da qui si riparte. Il dettaglio sta nei tre documenti tecnici:
 `ALLENAMENTI-2026-09-21.md` (registrazione e storico, tenuti separati),
 `DIAGNOSI-PUSH-SAMSUNG-2026-09-21.md`, `RUNBOOK-DEPLOY-2026-09-22.md`.
 
-Nella cartella **`00-ALESSANDRO-CHATGPT`** (radice del progetto, e la stessa in
-Dropbox) gli stessi quattro documenti hanno nomi fissi: questo è
-`00-LEGGIMI-STATO-PROGETTO.md`, il runbook è `01-RUNBOOK-DEPLOY.md`, gli
-allenamenti `02-ALLENAMENTI.md`, push e Samsung `03-PUSH-SAMSUNG.md`.
+Nella cartella **`00-ALESSANDRO-CHATGPT`** (radice del progetto, fuori da Git) gli
+stessi documenti hanno nomi fissi: questo è `00-LEGGIMI-STATO-PROGETTO.md`, il runbook
+è `01-RUNBOOK-DEPLOY.md`, gli allenamenti `02-ALLENAMENTI.md`, push e Samsung
+`03-PUSH-SAMSUNG.md`, l'APK `04-APK.md` (scritto dallo script leggendo l'APK vero).
+In Dropbox vanno tutti e cinque dentro `CONSEGNA_CHATGPT.zip`.
+
+---
+
+## DISTRIBUZIONE ARCTRAIL (dal 23/09/2026)
+
+- **Tecnologia Android:** Trusted Web Activity, progetto `android/` generato da
+  Bubblewrap (`@bubblewrap/core` 1.25.0). L'APK è un contenitore: apre
+  `https://arctrail3d.com/app.html` a schermo intero con Chrome. L'app vera resta il
+  sito: gli aggiornamenti web arrivano da soli, **l'APK si rigenera solo se cambiano
+  icona, nome, colori o package**. Scelta perché ArcTrail è già una PWA completa
+  (manifest, icone maskable, service worker, dominio proprio); Capacitor non serviva.
+- **Package:** `com.arctrail3d.app` — definitivo, non si cambia più.
+- **Firma ufficiale:** chiave `arctrail3d` (RSA 4096, PKCS12, 10000 giorni), creata il
+  23/09/2026 in `C:\Users\Ale\.arctrail3d\signing\` (permessi solo per l'utente Ale).
+  Password solo in `keystore.properties` in quella cartella. **Mai nel repository, mai
+  in Dropbox.** Se la cartella si perde, nessun APK futuro aggiornerà quelli installati:
+  **Alessandro deve farne una copia su chiavetta.**
+- **SHA-256:** `2E:93:03:A4:B6:93:5D:28:BA:1A:C2:5D:37:D4:A3:20:DA:A9:DB:9B:1E:78:CB:D2:6D:81:48:E3:01:8D:9D:69`
+  (lo stesso in `.well-known/assetlinks.json`, che lega l'APK al dominio: senza,
+  l'app si apre con la barra dell'indirizzo).
+- **APK corrente:** `ArcTrail3D.apk`, release firmata.
+- **versionName:** `2026.09.23`
+- **versionCode:** `1` (in `android/versione-apk.properties`, sale sempre).
+- **Aggiornabile da vecchio APK: NO.** Il vecchio APK (package e firma mai ritrovati,
+  vedi «APK (ricerca completa)» sotto) non si aggiorna: **QUESTO APK È PER NUOVE
+  INSTALLAZIONI. NON AGGIORNA IL VECCHIO APK CON FIRMA DIVERSA.** Chi ha il vecchio lo
+  disinstalla a mano e installa questo. Da oggi ogni APK nuovo aggiorna questo.
+- **Comando automatico build:** `powershell -ExecutionPolicy Bypass -File tools\genera-apk.ps1`
+  (controlla tutto, costruisce, verifica firma/package/versione, copia in Dropbox), poi
+  si committa `android/versione-apk.properties` e `android/twa-manifest.json`.
+  Consegna: `powershell -ExecutionPolicy Bypass -File tools\prepara-consegna.ps1`.
+- **Dropbox** `C:\Users\Ale\Dropbox\PROGETTI\ArcTrail 3D\`, solo tre file:
+  - APK: `ArcTrail3D.apk`
+  - WEB: `ArcTrail3D-WEB.url` → `https://arctrail3d.com/app.html`
+  - `CONSEGNA_CHATGPT.zip`: i cinque documenti `00`–`04`, nient'altro.
 
 ---
 
@@ -216,15 +252,14 @@ può raggiungere la produzione.
 
 - **Cartella locale:** `C:\Users\Ale\Desktop\PROGETTI\ArcTrail 3D` (prima
   `ArcTrail3D-Git`). È il repository: la fonte di verità del codice è GitHub.
-- **`00-ALESSANDRO-CHATGPT/`** in radice: SOLO i quattro documenti correnti, nomi
+- **`00-ALESSANDRO-CHATGPT/`** in radice: SOLO i documenti correnti (`00`–`04`), nomi
   fissi, fuori da Git e fuori dal sito. Si aggiornano, non si moltiplicano.
-- **Dropbox** `C:\Users\Ale\Dropbox\PROGETTI\ArcTrail 3D\`: SOLO la stessa cartella
-  `00-ALESSANDRO-CHATGPT`. Niente mirror del repository, niente snapshot, niente
-  sorgenti, niente link al sito, niente APK (ArcTrail non ne ha). Nel sistema di
-  backup ArcTrail ha `"Backup": false`, come Adrenalina.
-- **A fine di ogni sessione sostanziale:** si aggiornano gli originali in `docs/`,
-  poi le quattro copie in `00-ALESSANDRO-CHATGPT`, poi le stesse in Dropbox; si
-  controlla che coincidano; su Dropbox non va altro.
+- **Dropbox** `C:\Users\Ale\Dropbox\PROGETTI\ArcTrail 3D\` (dal 23/09): SOLO
+  `ArcTrail3D.apk`, `ArcTrail3D-WEB.url`, `CONSEGNA_CHATGPT.zip` — vedi «DISTRIBUZIONE
+  ARCTRAIL» in cima. Niente mirror del repository, niente snapshot, niente sorgenti,
+  niente storico di APK o ZIP. Nel sistema di backup ArcTrail ha `"Backup": false`.
+- **A fine di ogni sessione sostanziale:** si aggiornano gli originali in `docs/`, poi
+  `tools\prepara-consegna.ps1` (copie locali, ZIP, link, pulizia di Dropbox).
 - Quello che c'era in Dropbox fino al 22/09 (mirror del 20/09 e uno snapshot) è
   stato spostato, non cancellato, in
   `C:\Users\Ale\Desktop\PROGETTI\_ARCHIVIO\ArcTrail 3D - Dropbox fino al 2026-09-22\`.
@@ -304,6 +339,9 @@ Verifica tecnica: `controlla-base` IN PARI (app, sw, vetrina, mercatino);
 **APK.** Vedi la sezione «APK» qui sotto, aggiornata alla ricerca completa.
 
 ## APK (ricerca completa, 22/09 pomeriggio)
+
+> **Superato il 23/09:** c'è una pipeline APK nuova con firma nuova — vedi
+> «DISTRIBUZIONE ARCTRAIL» in cima. Quanto sotto resta vero per il VECCHIO APK.
 
 **`APK UPDATE NON GENERABILE: FIRMA ORIGINALE NON RECUPERATA.`**
 
