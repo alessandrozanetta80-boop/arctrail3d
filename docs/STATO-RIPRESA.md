@@ -28,7 +28,14 @@ In Dropbox vanno tutti e cinque dentro `CONSEGNA_CHATGPT.zip`.
   **Alessandro deve farne una copia su chiavetta.**
 - **SHA-256:** `2E:93:03:A4:B6:93:5D:28:BA:1A:C2:5D:37:D4:A3:20:DA:A9:DB:9B:1E:78:CB:D2:6D:81:48:E3:01:8D:9D:69`
   (lo stesso in `.well-known/assetlinks.json`, che lega l'APK al dominio: senza,
-  l'app si apre con la barra dell'indirizzo).
+  l'app si apre con la barra dell'indirizzo). **Online dal 23/09** (push di `main`
+  `0048d36`, solo sito, dopo la suite verde): HTTP 200, JSON valido, package e
+  impronta giusti, confermati anche dall'API Digital Asset Links di Google. App e
+  cassa invariate (`arctrail3d-v170`); `android/`, `tools/`, `docs/` a 404.
+  **Functions e regole INVARIATE.**
+- **Da provare a mano:** installare `ArcTrail3D.apk` su un Android (serve «installa
+  app sconosciute») e controllare che si apra a schermo intero, senza barra
+  dell'indirizzo. Nessun telefono era collegato: non provato su dispositivo.
 - **APK corrente:** `ArcTrail3D.apk`, release firmata.
 - **versionName:** `2026.09.23`
 - **versionCode:** `1` (in `android/versione-apk.properties`, sale sempre).
