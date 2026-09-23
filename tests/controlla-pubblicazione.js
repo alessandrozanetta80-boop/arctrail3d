@@ -25,21 +25,22 @@ function prova(n, c, extra) {
 console.log("\n  COSA VA SUL SITO\n");
 var cfg = fs.existsSync("_config.yml") ? fs.readFileSync("_config.yml", "utf8") : "";
 prova("_config.yml esiste", !!cfg);
-var esclusi = [];
-var dentro = false;
+var esclusi = [], inclusi = [];
+var dentro = null;
 cfg.split(/\r?\n/).forEach(function (r) {
-  if (/^exclude:\s*$/.test(r)) { dentro = true; return; }
+  if (/^exclude:\s*$/.test(r)) { dentro = esclusi; return; }
+  if (/^include:\s*$/.test(r)) { dentro = inclusi; return; }
   if (dentro) {
     var m = r.match(/^\s+-\s+(.+?)\s*$/);
-    if (m) esclusi.push(m[1].replace(/^["']|["']$/g, ""));
-    else if (/^\S/.test(r)) dentro = false;
+    if (m) dentro.push(m[1].replace(/^["']|["']$/g, ""));
+    else if (/^\S/.test(r)) dentro = null;
   }
 });
 function escluso(f) {
   return esclusi.some(function (e) { return e.slice(-1) === "/" ? f.indexOf(e) === 0 : f === e; });
 }
 prova("non c'e' .nojekyll (spegnerebbe _config.yml)", !fs.existsSync(".nojekyll"));
-["docs/", "tests/", "tools/", "archive/", "functions/", "firestore.rules", "storage.rules", "pubblica.sh", "package.json"].forEach(function (x) {
+["android/", "docs/", "tests/", "tools/", "archive/", "functions/", "firestore.rules", "storage.rules", "pubblica.sh", "package.json"].forEach(function (x) {
   prova("interno, fuori dal sito: " + x, escluso(x.slice(-1) === "/" ? x + "qualcosa" : x));
 });
 
@@ -78,8 +79,11 @@ console.log("\n  L'USCITA DI JEKYLL, FILE PER FILE\n");
 var tracciati = [];
 try { tracciati = require("child_process").execSync("git ls-files", { encoding: "utf8" }).split(/\r?\n/).filter(Boolean); } catch (e) {}
 prova("git elenca i file tracciati", tracciati.length > 20, tracciati.length + " file");
+/* `include` riapre una cartella che Jekyll salterebbe (23/09/2026: solo
+   `.well-known`, per `assetlinks.json` dell'APK). */
+function incluso(f) { return inclusi.some(function (i) { return f === i || f.indexOf(i + "/") === 0; }); }
 function jekyllLoTiene(f) {
-  if (f.split("/").some(function (p) { return /^[_.#~]/.test(p); })) return false;
+  if (!incluso(f) && f.split("/").some(function (p) { return /^[_.#~]/.test(p); })) return false;
   if (/^(node_modules|vendor)\//.test(f) || /^Gemfile/.test(f)) return false;
   return !escluso(f) && !esclusi.some(function (e) { return e.slice(-1) === "/" && f.indexOf(e) === 0; });
 }
@@ -87,12 +91,12 @@ var pubblicati = tracciati.filter(jekyllLoTiene);
 /* Cosa puo' stare sul sito. Pagine, script del sito, immagini, i file che
    il browser o i motori cercano per nome. Il .json ammesso e' uno solo. */
 var DA_SITO = /\.(html|js|png|webp|jpg|jpeg|svg|ico|xml|txt|woff2?)$/i;
-var PER_NOME = { "CNAME": 1, "manifest.json": 1 };
+var PER_NOME = { "CNAME": 1, "manifest.json": 1, ".well-known/assetlinks.json": 1 };
 var estranei = pubblicati.filter(function (f) { return !DA_SITO.test(f) && !PER_NOME[f]; });
 prova("sul sito escono solo file da sito (" + pubblicati.length + " pubblicati)", estranei.length === 0, estranei.join(", "));
-var INTERNI = /^(docs|tests|tools|archive|functions)\//;
+var INTERNI = /^(android|docs|tests|tools|archive|functions)\//;
 var dentro = pubblicati.filter(function (f) { return INTERNI.test(f); });
-prova("nessun file di docs/, tests/, tools/, archive/, functions/", dentro.length === 0, dentro.slice(0, 5).join(", "));
+prova("nessun file di android/, docs/, tests/, tools/, archive/, functions/", dentro.length === 0, dentro.slice(0, 5).join(", "));
 var js = pubblicati.filter(function (f) { return /\.js$/.test(f) && f.indexOf("/") < 0; });
 var JS_DEL_SITO = { "sw.js": 1, "firebase-messaging-sw.js": 1, "compagnie-data.js": 1 };
 var jsEstranei = js.filter(function (f) { return !JS_DEL_SITO[f]; });
@@ -113,6 +117,25 @@ var gi = fs.existsSync(".gitignore") ? fs.readFileSync(".gitignore", "utf8") : "
 });
 var locali = tracciati.filter(function (f) { return /^(00-ALESSANDRO-CHATGPT|_SESSIONI-CLAUDE)\//.test(f) || /^ARCTRAIL3D_.*\.md$/.test(f) || /^docs\/(APERTI|AUDIT)-/.test(f); });
 prova("nessuna carta di lavoro locale e' tracciata", locali.length === 0, locali.join(", "));
+
+/* ══ L'APK: IL LEGAME COL DOMINIO ESCE, LA CHIAVE NO ══════════════════════
+   (23/09/2026.) `assetlinks.json` deve uscire sul sito e dire il package e
+   l'impronta della firma ufficiale (le stesse di `android/`). La chiave, le
+   sue password e gli APK non devono mai essere nel repository. */
+console.log("\n  L'APK\n");
+prova("il sito pubblica .well-known/assetlinks.json", pubblicati.indexOf(".well-known/assetlinks.json") >= 0);
+try {
+  var al = JSON.parse(fs.readFileSync(".well-known/assetlinks.json", "utf8"));
+  var tw = JSON.parse(fs.readFileSync("android/twa-manifest.json", "utf8"));
+  prova("assetlinks.json: stesso package dell'APK (" + tw.packageId + ")", al[0].target.package_name === tw.packageId);
+  prova("assetlinks.json: un'impronta SHA-256 sola, ben formata",
+    al[0].target.sha256_cert_fingerprints.length === 1 && /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(al[0].target.sha256_cert_fingerprints[0]));
+} catch (e) { prova("assetlinks.json e twa-manifest.json si leggono", false, e.message); }
+var segreti = tracciati.filter(function (f) { return /\.(apk|aab|idsig|jks|keystore|p12|pk8)$/i.test(f) || /(^|\/)(keystore|signing)\.properties$/.test(f); });
+prova("nessun APK, chiave o file di password tracciato", segreti.length === 0, segreti.join(", "));
+["*.apk", "*.jks", "*.keystore", "keystore.properties"].forEach(function (x) {
+  prova(".gitignore tiene fuori " + x, gi.split(/\r?\n/).indexOf(x) >= 0);
+});
 
 console.log("\n  " + ok + " passate, " + ko + " fallite.\n");
 process.exit(ko ? 1 : 0);

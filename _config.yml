@@ -16,7 +16,15 @@
 #
 # Non cambia niente per chi lavora: `controlla-base.js` e `pubblica.sh` leggono
 # da raw.githubusercontent.com (cioe' dal repository), non dal sito.
+#
+# `include` (23/09/2026): Jekyll salta le cartelle che iniziano con «.», e
+# `.well-known/assetlinks.json` deve uscire — e' cio' che lega l'APK
+# (Trusted Web Activity, `android/`) al dominio: senza, l'app si apre con la
+# barra dell'indirizzo invece che a schermo intero.
+include:
+  - .well-known
 exclude:
+  - android/
   - docs/
   - tests/
   - tools/

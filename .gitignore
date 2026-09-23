@@ -42,3 +42,21 @@ __pycache__/
 /ui-debug.log
 /database-debug.log
 /pubsub-debug.log
+
+# ── L'APK (23/09/2026) ──────────────────────────────────────────────────────
+# `android/` e' il progetto Trusted Web Activity: si committa il progetto, mai
+# quello che produce. La chiave di firma vive in %USERPROFILE%\.arctrail3d\signing\,
+# fuori da qui: queste righe sono la rete se un giorno qualcuno ce la copia.
+*.apk
+*.aab
+*.idsig
+*.jks
+*.keystore
+*.p12
+*.pk8
+keystore.properties
+signing.properties
+/android/.gradle/
+/android/build/
+/android/app/build/
+/android/local.properties

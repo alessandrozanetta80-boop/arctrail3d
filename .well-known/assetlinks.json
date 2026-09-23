@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.arctrail3d.app",
+      "sha256_cert_fingerprints": [
+        "2E:93:03:A4:B6:93:5D:28:BA:1A:C2:5D:37:D4:A3:20:DA:A9:DB:9B:1E:78:CB:D2:6D:81:48:E3:01:8D:9D:69"
+      ]
+    }
+  }
+]
