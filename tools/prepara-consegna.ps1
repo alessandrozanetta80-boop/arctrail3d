@@ -166,7 +166,17 @@ foreach ($x in Get-ChildItem $Dropbox -Force) {
   if ($TENUTI -contains $x.Name) { continue }
   $noto = ($x.PSIsContainer -and $x.Name -eq '00-ALESSANDRO-CHATGPT') -or
           (-not $x.PSIsContainer -and $x.Extension -in '.apk', '.aab', '.idsig', '.zip', '.url', '.tmp')
-  if ($noto) { Remove-Item $x.FullName -Recurse -Force; Ok "rimosso $($x.Name)"; $tolti++ }
+  if ($noto) {
+    # Il client di Dropbox tiene aperti per qualche secondo i file che sta
+    # sincronizzando: si riprova, e se proprio non si puo' lo si dice.
+    $fatto = $false
+    for ($i = 1; $i -le 5 -and -not $fatto; $i++) {
+      try { Remove-Item $x.FullName -Recurse -Force -ErrorAction Stop; $fatto = $true }
+      catch { Start-Sleep -Seconds 3 }
+    }
+    if ($fatto) { Ok "rimosso $($x.Name)"; $tolti++ }
+    else { Avviso "NON rimosso (in uso da Dropbox?): $($x.Name) - rilanciare lo script fra poco." }
+  }
   else { Avviso "NON riconosciuto, lasciato dov'e': $($x.Name)" }
 }
 if (-not $tolti) { Ok "niente da togliere" }
