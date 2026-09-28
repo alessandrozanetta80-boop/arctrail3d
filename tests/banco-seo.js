@@ -19,14 +19,18 @@
  *   8. nessuna pagina pubblica dice che ArcTrail sia ufficiale, approvata o
  *      valida in gara. La frase negata («non e' un'app ufficiale») si'.
  *
- * NOTO E NON ROSSO: la home e privacy/termini dichiarano hreflang verso
- * `?lang=xx`, che hanno canonical sulla pagina senza parametro. Google li
- * ignora. Non si ripara con una riga: serve un URL vero per lingua — piano in
- * docs/SEO-MULTILINGUA-PIANO.md. Il banco lo STAMPA a ogni giro, perche' un
- * debito che nessuno vede e' un debito che nessuno paga.
+ * hreflang verso `?lang=xx`: fino al 27/09 la home e privacy/termini li
+ * dichiaravano, con canonical sulla pagina senza parametro — Google li
+ * ignorava e scopriva URL doppi. Tolti il 28/09 (proposta SEO 2 approvata da
+ * Alessandro): da allora sono ROSSI. Torneranno solo con un URL vero per
+ * lingua (docs/SEO-MULTILINGUA-PIANO.md).
+ *
+ * La home linka direttamente le sette pagine SEO prioritarie (28/09/2026,
+ * proposta SEO 1): a un clic dalla pagina piu' forte del sito, non a due.
  *
  * SABOTAGGIO: `node tests/banco-seo.js --sabota` rimette app.html nella
- * sitemap e pretende il rosso.
+ * sitemap; `--sabota-hreflang` rimette un hreflang `?lang=en` nella home;
+ * `--sabota-piede` toglie dalla home il link ad ASA. Tutti pretendono il rosso.
  */
 "use strict";
 const fs = require("fs");
@@ -99,6 +103,14 @@ for (const f of FILE) {
   };
 }
 const INDICIZZABILI = FILE.filter(f => PAG[f].indicizzabile);
+if (process.argv.indexOf("--sabota-hreflang") !== -1) {
+  PAG["index.html"].alt.push({ lang: "en", href: SITO + "/?lang=en" }, { lang: "x-default", href: SITO + "/" });
+  console.log("  (SABOTAGGIO: hreflang ?lang=en rimesso nella home)");
+}
+if (process.argv.indexOf("--sabota-piede") !== -1) {
+  PAG["index.html"].link = PAG["index.html"].link.filter(h => h.indexOf("asa-3d.html") < 0);
+  console.log("  (SABOTAGGIO: tolto dalla home il link ad ASA)");
+}
 
 // ── 1. I metadati di ogni pagina indicizzabile ──────────────────────────
 console.log("\n  1. Metadati delle pagine indicizzabili (" + INDICIZZABILI.length + ")\n");
@@ -152,10 +164,8 @@ for (const f of FILE) {
   }
 }
 const conQuery = Array.from(new Set(noteQuery));
-if (conQuery.length) {
-  console.log("  … NOTO, NON ROSSO: hreflang verso ?lang= (canonical altrove) in " +
-              conQuery.join(", ") + " — vedi docs/SEO-MULTILINGUA-PIANO.md");
-}
+ok("nessun hreflang verso ?lang= (stessa pagina, canonical altrove)", conQuery.length === 0,
+   conQuery.join(", ") + " — vedi docs/SEO-MULTILINGUA-PIANO.md");
 
 // ── 3. La sitemap ────────────────────────────────────────────────────────
 console.log("\n  3. sitemap.xml\n");
@@ -219,6 +229,10 @@ for (const f of ["asa-3d.html", "ibo-3d.html"]) {
   ok(f + " dichiara l'anno del regolamento", /2026/.test(testo(PAG[f].html)));
 }
 ok("presentazione → hub", linka("presentazione.html", "regolamenti-3d.html"));
+for (const f of ["3d-archery-scoring-app.html", "asa-3d.html", "ibo-3d.html", "ifaa-3d.html",
+                 "world-archery-3d.html", "fitarco-3d.html", "nfas-3d.html"]) {
+  ok("home → " + f + " (un clic)", linka("index.html", f));
+}
 
 // ── 7. Link interni e pagine orfane ──────────────────────────────────────
 console.log("\n  7. Link interni\n");

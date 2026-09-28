@@ -92,16 +92,10 @@
   "url": "https://arctrail3d.com/"
 }
 </script>
-<link rel="alternate" hreflang="it" href="https://arctrail3d.com/?lang=it">
-<link rel="alternate" hreflang="en" href="https://arctrail3d.com/?lang=en">
-<link rel="alternate" hreflang="fr" href="https://arctrail3d.com/?lang=fr">
-<link rel="alternate" hreflang="de" href="https://arctrail3d.com/?lang=de">
-<link rel="alternate" hreflang="tr" href="https://arctrail3d.com/?lang=tr">
-<link rel="alternate" hreflang="ru" href="https://arctrail3d.com/?lang=ru">
-<link rel="alternate" hreflang="es" href="https://arctrail3d.com/?lang=es">
-<link rel="alternate" hreflang="sv" href="https://arctrail3d.com/?lang=sv">
-<link rel="alternate" hreflang="nl" href="https://arctrail3d.com/?lang=nl">
-<link rel="alternate" hreflang="x-default" href="https://arctrail3d.com/">
+<!-- Niente hreflang (28/09/2026, proposta SEO 2 approvata): puntavano a
+     `?lang=xx`, che hanno canonical su `/` — Google li ignorava e intanto
+     scopriva URL doppi. Torneranno con un URL vero per lingua
+     (docs/SEO-MULTILINGUA-PIANO.md). Il cambio lingua non cambia. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet">
@@ -542,6 +536,8 @@ body{margin:0}
 .piede a:hover{color:var(--osso)}
 .piede .link{display:flex; gap:22px; flex-wrap:wrap}
 .piede .fine{margin-left:auto; font-size:13px; color:rgba(245,242,237,.4)}
+/* le pagine dei regolamenti, a un clic dalla home (28/09/2026, proposta SEO 1) */
+.piede .regole{flex-basis:100%; gap:8px 18px; font-size:13px}
 
 /* ── comparsa allo scorrimento ─────────────────────────────── */
 .sale{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
@@ -677,7 +673,7 @@ body{margin:0}
 <!-- Il timbro, come marketplace.html: `data-build` dice quale versione e'
      questa, `data-parent` da quale e' nata. La prima anteprima non ne aveva
      nessuno — quindi il genitore e' dichiarato per nome, non inventato. -->
-<body data-build="2026-09-19-risanamento" data-parent="2026-09-18-inglese">
+<body data-build="2026-09-28-seo-regolamenti" data-parent="2026-09-19-risanamento">
 <div class="vetrina">
 
 <!-- ══════════ TESTATA ══════════ -->
@@ -991,6 +987,16 @@ body{margin:0}
       <a href="mailto:info@arctrail3d.com">info@arctrail3d.com</a>
     </div>
     <div class="fine">© 2026 ArcTrail 3D</div>
+    <!-- Nomi propri: non si traducono, quindi niente data-k. -->
+    <div class="link regole">
+      <a href="/world-archery-3d.html">World Archery 3D</a>
+      <a href="/fitarco-3d.html">FITARCO 3D</a>
+      <a href="/ifaa-3d.html">IFAA 3D</a>
+      <a href="/nfas-3d.html">NFAS 3D</a>
+      <a href="/asa-3d.html">ASA 3D</a>
+      <a href="/ibo-3d.html">IBO 3D</a>
+      <a href="/3d-archery-scoring-app.html" lang="en">3D archery scoring app</a>
+    </div>
   </div>
 </footer>
 
