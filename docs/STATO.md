@@ -11,7 +11,7 @@ intero**. Gli archivi non si leggono mai tutti: si cercano.
 | **NOTE-DESIGN.md** | perché l'app è così — archivio | si cerca |
 | **NOTE-MERCATINO.md** | perché il mercatino è così — archivio | si cerca |
 
-Aggiornato il **22/09/2026** (notte senza deploy: si parte da **`STATO-RIPRESA.md`**, §R).
+Aggiornato il **28/09/2026** (timbri di §1). Lo stato di ogni giorno sta in **`STATO-RIPRESA.md`**, §1.
 
 ---
 
@@ -22,23 +22,23 @@ più vecchio chiama `index.html` l'app.
 
 | file | cos'è | timbro | copia buona |
 |---|---|---|---|
-| `index.html` | la vetrina, porta di casa | online `2026-09-18-inglese` · ramo `2026-09-19-risanamento` | **GitHub** |
-| `app.html` | l'app | online `2026-09-18-campi-fiarc` · ramo `2026-09-22-avvio-storico` | **GitHub** |
+| `index.html` | la vetrina, porta di casa | online `2026-09-28-seo-regolamenti` | **GitHub** |
+| `app.html` | l'app | online `2026-09-22-testata-s26` | **GitHub** |
 | `compagnie-data.js` | le societa', 4950 in otto paesi | — | **GitHub** |
 | `marketplace.html` | il mercatino | `2026-08-25-radice` | **GitHub** |
-| `sw.js` | | online `arctrail3d-v166` · ramo `v168` *(v167 è stata online 30 min il 20/09)* | **GitHub** |
+| `sw.js` | | online `arctrail3d-v171` *(v167 è stata online 30 min il 20/09)* | **GitHub** |
 | `favicon.ico` | l'icona per chi guarda da fuori | — | GitHub, caricata a mano |
 | cinque `vetrina-*.webp` | le foto della vetrina | — | GitHub, caricate a mano |
-| `functions/index.js` | 7 Cloud Functions online, 8 nel ramo *(in `functions/`)* | online `2026-08-28-notifica-verificata` · ramo `2026-09-22-push-argomento` | GitHub *(deploy: `bash ~/pubblica.sh`)* |
-| `firestore.rules` | | console `2026-08-28-porte-verified` · ramo `2026-09-20-visibilita` | GitHub **e** console Firebase |
+| `functions/index.js` | 7 Cloud Functions online, 8 su `main` *(in `functions/`)* | online `2026-08-28-notifica-verificata` · `main` `2026-09-22-push-argomento` (non pubblicato) | GitHub *(deploy: `bash ~/pubblica.sh`)* |
+| `firestore.rules` | | console `2026-08-28-porte-verified` · `main` `2026-09-20-visibilita` (non pubblicate) | GitHub **e** console Firebase |
 | diari, banchi, script | `docs/`, `tests/`, `tools/` | — | il progetto, **e dal 15/09 anche GitHub**: `docs/STRUTTURA-REPOSITORY.md` |
 | `DOPPIE-TESSERE-ITALIA.md` | le 40 società italiane con due tessere | — | il progetto; su GitHub in `docs/` |
 
 `vetrina.html` e `vetrina-anteprima.html` **non sono più pagine del sito** (25/08); l'anteprima è conservata in `archive/` (15/09).
 
-**20/09/2026 — `index.js` e `firestore.rules` sono cambiati** (ramo
-`risanamento-post-audit`, non ancora su `main`): torna a valere la regola 9. Cosa
-va pubblicato, in che ordine, e cosa si guarda col telefono: §R.
+**20/09/2026 — `index.js` e `firestore.rules` sono cambiati:** dal 22/09 sono su
+`main`, ma **non pubblicati in Firebase** (gate 2 e 3): vale la regola 9. Cosa va
+pubblicato, in che ordine, e cosa si guarda col telefono: `RUNBOOK-DEPLOY-2026-09-22.md`.
 
 **`tests/controlla-base.js` confronta i TIMBRI, non il contenuto:** file diversi con
 lo stesso timbro e il banco dice IN PARI. **Prima di ogni consegna di un FILE DEL

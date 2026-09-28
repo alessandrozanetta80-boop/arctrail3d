@@ -1,8 +1,18 @@
 # ARCTRAIL 3D — REPORT SEO / SEARCH CONSOLE — 28/09/2026
 
-> **AGGIORNAMENTO, stesso giorno — fasi B, C, D.** Alessandro ha approvato le
-> proposte **1, 2 e 3**; la 4 e la 5 restano aperte. Pubblicate con il push di
-> `main` `84ee133` (solo sito):
+## STATO ATTUALE (28/09/2026, dopo la pubblicazione)
+
+| proposta | esito |
+|---|---|
+| 1. link dalla home alle pagine regolamento | **approvata e pubblicata** (`84ee133`) |
+| 2. via gli hreflang verso `?lang=` | **approvata e pubblicata** (`84ee133`) |
+| 3. lastmod della home | **approvata e pubblicata** (`84ee133`), con data 2026-09-28 |
+| 4. accorciare 4 title | **non approvata**, in sospeso |
+| 5. Search Console API | **predisposta, non ancora autorizzata né configurata**: da fare in un secondo momento |
+
+**Audit online finale: stato tecnico OK, 0 bloccanti, 0 avvisi.**
+
+Dettaglio della pubblicazione (fasi B, C, D):
 > - **1.** Piede della home: link a World Archery, FITARCO, IFAA, NFAS, ASA, IBO
 >   e al confronto in inglese (nomi propri, senza traduzione). Le 7 prioritarie
 >   passano da 2 a **1 clic** dalla home.
@@ -25,6 +35,15 @@
 > **Prossimo passo:** fra 3–4 settimane `npm run seo:control`; niente nuove
 > richieste di indicizzazione, salvo al massimo una sulla home (è cambiata
 > davvero) se Alessandro vuole accelerare la lettura dei nuovi link.
+
+---
+
+# STORICO — la fase A del 28/09 mattina, come fu scritta
+
+*Da qui in giù è l'analisi fatta PRIMA dell'approvazione. Dove dice «in
+attesa», «proposta» o «da approvare», vale lo STATO ATTUALE qui sopra: 1, 2 e 3
+sono pubblicate, la 4 non è approvata, la 5 è da fare. Anche i conteggi dei
+test (per esempio 217 prove di `banco-seo`) sono quelli di allora.*
 
 Giro di **sola analisi e strumentazione** (fase A). **Nessuna modifica di
 produzione:** nessun file del sito toccato, nessun push, nessuna richiesta a

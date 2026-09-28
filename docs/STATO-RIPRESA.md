@@ -1,18 +1,171 @@
-# STATO-RIPRESA — ArcTrail 3D, mattina del 22/09/2026
+# STATO-RIPRESA — ArcTrail 3D — aggiornato il 28/09/2026
 
-Da qui si riparte. Il dettaglio sta nei tre documenti tecnici:
-`ALLENAMENTI-2026-09-21.md` (registrazione e storico, tenuti separati),
-`DIAGNOSI-PUSH-SAMSUNG-2026-09-21.md`, `RUNBOOK-DEPLOY-2026-09-22.md`.
+Da qui si riparte. **§1 è lo stato di oggi, §2 cosa resta da fare, §3 lo storico.**
+Dove lo storico dice «non pubblicato», «in attesa» o «da approvare», vale §1.
 
-Nella cartella **`00-ALESSANDRO-CHATGPT`** (radice del progetto, fuori da Git) gli
-stessi documenti hanno nomi fissi: questo è `00-LEGGIMI-STATO-PROGETTO.md`, il runbook
-è `01-RUNBOOK-DEPLOY.md`, gli allenamenti `02-ALLENAMENTI.md`, push e Samsung
-`03-PUSH-SAMSUNG.md`, l'APK `04-APK.md` (scritto dallo script leggendo l'APK vero).
-In Dropbox vanno tutti e cinque dentro `CONSEGNA_CHATGPT.zip`.
+Nella consegna (`CONSEGNA_CHATGPT.zip`, e la cartella `00-ALESSANDRO-CHATGPT` in radice,
+fuori da Git) gli stessi documenti hanno nomi fissi:
+
+| file nella consegna | originale | cosa |
+|---|---|---|
+| `00-LEGGIMI-STATO-PROGETTO.md` | `docs/STATO-RIPRESA.md` | **questo**: stato, prossimi passi, storico |
+| `01-RUNBOOK-DEPLOY.md` | `docs/RUNBOOK-DEPLOY-2026-09-22.md` | come si pubblicano sito, Functions e regole (gate 1–3) |
+| `02-ALLENAMENTI.md` | `docs/ALLENAMENTI-2026-09-21.md` | registrazione allenamenti e storico dei giri |
+| `03-PUSH-SAMSUNG.md` | `docs/DIAGNOSI-PUSH-SAMSUNG-2026-09-21.md` | push, Samsung S26, App Check |
+| `04-APK.md` | scritto dallo script leggendo l'APK vero | package, versione, firma |
+| `05-SEO-REPORT.md` | `docs/ARCTRAIL_SEO_REPORT.md` | report SEO del 28/09 (analisi e pubblicazione) |
+| `06-SEO-AUTOMAZIONE.md` | `docs/SEO-AUTOMAZIONE.md` | procedura SEO, comandi, come autorizzare Search Console |
+| `07-PULIZIA-REPORT.md` | `docs/ARCTRAIL_PULIZIA_REPORT.md` | l'ultimo giro: pulizia del 28/09 |
+
+Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
+(nel repository GitHub); l'elenco completo delle voci aperte del prodotto in
+`docs/STATO.md` §3.
 
 ---
 
-## SEO / SEARCH CONSOLE (28/09/2026) — PROPOSTE 1, 2, 3 PUBBLICATE
+## 1. STATO ATTUALE (28/09/2026)
+
+### 1.1 Produzione
+
+- **GitHub:** `main` = `origin/main`. Ultimo commit che ha toccato il sito: `84ee133`
+  (28/09, proposte SEO 1–3). Repository pubblico `alessandrozanetta80-boop/arctrail3d`;
+  il sito è GitHub Pages su arctrail3d.com.
+- **Sito online, verificato il 28/09** (`controlla-base` IN PARI, file interni a 404):
+  vetrina `2026-09-28-seo-regolamenti`, app `2026-09-22-testata-s26`, mercatino
+  `2026-08-25-radice`, cassa `arctrail3d-v171`.
+- **Functions e regole Firestore: INVARIATE dal 18/09.** Online: 7 Functions
+  `2026-08-28-notifica-verificata`, regole `2026-08-28-porte-verified`. Su `main` ci
+  sono già le versioni nuove, **NON pubblicate**: Functions `2026-09-22-push-argomento`
+  (8 funzioni) e regole `2026-09-20-visibilita` — gate 2 e 3 del runbook, solo su
+  decisione di Alessandro.
+- **Test reali superati:** gate 1 (22/09: giro salvato, riapertura, sincronizzazione
+  su un secondo dispositivo); Home con i periodi (22/09); **Samsung S26 Ultra (23/09)**:
+  testata su una riga, Tira, Home, Profilo e Campi a posto.
+
+### 1.2 SEO (28/09/2026)
+
+- **Proposte 1, 2, 3: approvate da Alessandro e PUBBLICATE** (`84ee133`): nel piede
+  della home i link alle 7 pagine prioritarie (ora a 1 clic); tolti gli hreflang verso
+  `?lang=` da home, privacy e termini; lastmod della home 2026-09-28.
+- **Audit online finale: stato tecnico OK, 0 bloccanti, 0 avvisi.**
+- **Proposta 4** (accorciare 4 title lunghi): **NON approvata**, in sospeso.
+- **Proposta 5** (Search Console API): **predisposta, NON ancora autorizzata né
+  configurata**; si fa in un secondo momento (§2).
+- **Regola:** ANALISI → PROPOSTA → **APPROVAZIONE di Alessandro** → MODIFICA → TEST →
+  PUBBLICAZIONE → VERIFICA → REPORT. Claude non tocca file SEO del sito senza il sì.
+- **Comandi (sola lettura):** `npm run seo:audit`, `npm run seo:audit:online`,
+  `npm run seo:control`, `npm run seo:gsc`, `npm run seo:gsc:ispeziona`. Dettagli in
+  `06-SEO-AUTOMAZIONE.md`; analisi completa in `05-SEO-REPORT.md`.
+- **Search Console al 27/09** (ultimo dato, letto a mano): 8 clic e 84 impressioni in
+  3 mesi; 4 pagine indicizzate, 15 no (di cui 9 «rilevate, non indicizzate», nessun
+  blocco tecnico). L'indicizzazione di `3d-archery-scoring-app.html` è già stata
+  chiesta una volta: **non si ripete**.
+
+### 1.3 Distribuzione: APK e Dropbox (dal 23/09/2026)
+
+- **Tecnologia Android:** Trusted Web Activity, progetto `android/` generato da
+  Bubblewrap (`@bubblewrap/core` 1.25.0). L'APK è un contenitore: apre
+  `https://arctrail3d.com/app.html` a schermo intero con Chrome. L'app vera resta il
+  sito: gli aggiornamenti web arrivano da soli, **l'APK si rigenera solo se cambiano
+  icona, nome, colori o package**. Scelta perché ArcTrail è già una PWA completa
+  (manifest, icone maskable, service worker, dominio proprio); Capacitor non serviva.
+- **Package:** `com.arctrail3d.app` — definitivo, non si cambia più.
+- **Firma ufficiale:** chiave `arctrail3d` (RSA 4096, PKCS12, 10000 giorni), creata il
+  23/09/2026 in `C:\Users\Ale\.arctrail3d\signing\` (permessi solo per l'utente Ale).
+  Password solo in `keystore.properties` in quella cartella. **Mai nel repository, mai
+  in Dropbox.** Se la cartella si perde, nessun APK futuro aggiornerà quelli installati:
+  **Alessandro deve farne una copia su chiavetta.**
+- **SHA-256:** `2E:93:03:A4:B6:93:5D:28:BA:1A:C2:5D:37:D4:A3:20:DA:A9:DB:9B:1E:78:CB:D2:6D:81:48:E3:01:8D:9D:69`
+  (lo stesso in `.well-known/assetlinks.json`, che lega l'APK al dominio: senza,
+  l'app si apre con la barra dell'indirizzo). **Online dal 23/09** (push di `main`
+  `0048d36`, solo sito, dopo la suite verde): HTTP 200, JSON valido, package e
+  impronta giusti, confermati anche dall'API Digital Asset Links di Google. App e
+  cassa invariate (`arctrail3d-v170`); `android/`, `tools/`, `docs/` a 404.
+  **Functions e regole INVARIATE.**
+- **Da provare a mano:** installare `ArcTrail3D.apk` su un Android (serve «installa
+  app sconosciute») e controllare che si apra a schermo intero, senza barra
+  dell'indirizzo. Nessun telefono era collegato: non provato su dispositivo.
+- **APK corrente:** `ArcTrail3D.apk`, release firmata.
+- **versionName:** `2026.09.23`
+- **versionCode:** `1` (in `android/versione-apk.properties`, sale sempre).
+- **Aggiornabile da vecchio APK: NO.** Il vecchio APK (package e firma mai ritrovati,
+  vedi «APK (ricerca completa)» sotto) non si aggiorna: **QUESTO APK È PER NUOVE
+  INSTALLAZIONI. NON AGGIORNA IL VECCHIO APK CON FIRMA DIVERSA.** Chi ha il vecchio lo
+  disinstalla a mano e installa questo. Da oggi ogni APK nuovo aggiorna questo.
+- **Comando automatico build:** `powershell -ExecutionPolicy Bypass -File tools\genera-apk.ps1`
+  (controlla tutto, costruisce, verifica firma/package/versione, copia in Dropbox), poi
+  si committa `android/versione-apk.properties` e `android/twa-manifest.json`.
+  Consegna: `powershell -ExecutionPolicy Bypass -File tools\prepara-consegna.ps1`.
+- **Dropbox** `C:\Users\Ale\Dropbox\PROGETTI\ArcTrail 3D\`, solo tre file:
+  - APK: `ArcTrail3D.apk`
+  - WEB: `ArcTrail3D-WEB.url` → `https://arctrail3d.com/app.html`
+  - `CONSEGNA_CHATGPT.zip`: i documenti `00`–`07` elencati in cima, nient'altro.
+
+### 1.4 Cose aperte fuori dalla SEO che chiedono un'azione
+
+- **APK:** mai provato installato su un telefono vero (serve «installa app
+  sconosciute»): deve aprirsi a schermo intero, senza barra dell'indirizzo. Il test
+  S26 del 23/09 era sulla web app, non sull'APK.
+- **Push:** `TEST REALE TELEFONO NECESSARIO` — app chiusa, telefono bloccato, due
+  dispositivi; ha senso dopo il gate 2 (Functions).
+- **Chiave di firma:** una copia di `C:\Users\Ale\.arctrail3d\signing\` su chiavetta.
+- **Admin:** in console Auth, l'email dell'admin è verificata? Serve prima di
+  stringere `isAdmin()` (P3).
+
+### 1.5 Metodo di lavoro (dal 22/09/2026, come Adrenalina e Gestionale Comprensori)
+
+- **Cartella locale:** `C:\Users\Ale\Desktop\PROGETTI\ArcTrail 3D` (prima
+  `ArcTrail3D-Git`). È il repository: la fonte di verità del codice è GitHub.
+- **`00-ALESSANDRO-CHATGPT/`** in radice: SOLO i documenti correnti (`00`–`07`), nomi
+  fissi, fuori da Git e fuori dal sito. Si aggiornano, non si moltiplicano.
+- **`CONSEGNA_CHATGPT.zip`**: uno solo, in Dropbox e (copia identica) nella radice del
+  progetto, fuori da Git. Lo rifà `tools\prepara-consegna.ps1`.
+- **Istruzioni di sessione eseguite** (`ARCTRAIL3D_*.md`, `CLAUDE_TASK_*.md`): non
+  restano in radice, vanno in `_SESSIONI-CLAUDE\istruzioni\` (fuori da Git).
+- **Dropbox** `C:\Users\Ale\Dropbox\PROGETTI\ArcTrail 3D\` (dal 23/09): SOLO
+  `ArcTrail3D.apk`, `ArcTrail3D-WEB.url`, `CONSEGNA_CHATGPT.zip` — vedi «DISTRIBUZIONE
+  ARCTRAIL» in cima. Niente mirror del repository, niente snapshot, niente sorgenti,
+  niente storico di APK o ZIP. Nel sistema di backup ArcTrail ha `"Backup": false`.
+- **A fine di ogni sessione sostanziale:** si aggiornano gli originali in `docs/`, poi
+  `tools\prepara-consegna.ps1` (copie locali, ZIP, link, pulizia di Dropbox).
+- Quello che c'era in Dropbox fino al 22/09 (mirror del 20/09 e uno snapshot) è
+  stato spostato, non cancellato, in
+  `C:\Users\Ale\Desktop\PROGETTI\_ARCHIVIO\ArcTrail 3D - Dropbox fino al 2026-09-22\`.
+
+---
+
+## 2. PROSSIMI PASSI
+
+Separati e indipendenti; ognuno chiede prima il sì di Alessandro.
+
+**SEO — configurazione Search Console API (proposta 5).** Una volta sola, ~10 minuti,
+nessun segreto in chat: service account `seo-lettura` nel progetto Cloud `arctrail3d`,
+chiave JSON in `C:\Users\Ale\.arctrail3d\gsc\credenziali.json`, utente **Limitato** in
+Search Console, poi `node tools/seo-gsc.js --verifica`. Passo passo in
+`06-SEO-AUTOMAZIONE.md`.
+
+**SEO — proposta 4 (title), solo se Alessandro la approva.** Accorciare sotto ~65
+caratteri i title di `world-archery-3d.html` (80), `fiarc.html` (73), `fitarco-3d.html`
+(73) e `presentazione.html` (71), stessa sostanza; il testo nuovo si mostra prima.
+
+**SEO — monitoraggio nelle prossime settimane.** Verso il 20/10: `npm run seo:control`
+(senza API: Search Console a mano, *Pagine* e *Rendimento*) e confronto col 27/09.
+Controllo a mano, 2 minuti: in *Sitemap*, `https://arctrail3d.com/sitemap.xml` inviata
+nella stessa proprietà delle ispezioni, letta dopo il 18/09, 13 URL. Niente richieste
+di indicizzazione in serie; al massimo una sulla home.
+
+**Prodotto (decisioni di Alessandro):** gate 2 (Functions) e gate 3 (regole) del
+runbook; test dell'APK su un telefono; test push ad app chiusa; copia della chiave di
+firma.
+
+---
+
+## 3. STORICO
+
+Non è lo stato attuale: racconta come ci si è arrivati. Dove dice «non pubblicato»,
+«in attesa» o «da approvare», **vale §1**.
+
+### SEO, 28/09 — la pubblicazione e, sotto, la fase A com'era (superata)
 
 **Pubblicato il 28/09** (approvazione di Alessandro, push di `main` `84ee133`, solo
 sito): la home linka nel piede le 7 pagine prioritarie (ora a **1 clic**); tolti gli
@@ -65,49 +218,7 @@ ne è il riassunto).
 
 ---
 
-## DISTRIBUZIONE ARCTRAIL (dal 23/09/2026)
-
-- **Tecnologia Android:** Trusted Web Activity, progetto `android/` generato da
-  Bubblewrap (`@bubblewrap/core` 1.25.0). L'APK è un contenitore: apre
-  `https://arctrail3d.com/app.html` a schermo intero con Chrome. L'app vera resta il
-  sito: gli aggiornamenti web arrivano da soli, **l'APK si rigenera solo se cambiano
-  icona, nome, colori o package**. Scelta perché ArcTrail è già una PWA completa
-  (manifest, icone maskable, service worker, dominio proprio); Capacitor non serviva.
-- **Package:** `com.arctrail3d.app` — definitivo, non si cambia più.
-- **Firma ufficiale:** chiave `arctrail3d` (RSA 4096, PKCS12, 10000 giorni), creata il
-  23/09/2026 in `C:\Users\Ale\.arctrail3d\signing\` (permessi solo per l'utente Ale).
-  Password solo in `keystore.properties` in quella cartella. **Mai nel repository, mai
-  in Dropbox.** Se la cartella si perde, nessun APK futuro aggiornerà quelli installati:
-  **Alessandro deve farne una copia su chiavetta.**
-- **SHA-256:** `2E:93:03:A4:B6:93:5D:28:BA:1A:C2:5D:37:D4:A3:20:DA:A9:DB:9B:1E:78:CB:D2:6D:81:48:E3:01:8D:9D:69`
-  (lo stesso in `.well-known/assetlinks.json`, che lega l'APK al dominio: senza,
-  l'app si apre con la barra dell'indirizzo). **Online dal 23/09** (push di `main`
-  `0048d36`, solo sito, dopo la suite verde): HTTP 200, JSON valido, package e
-  impronta giusti, confermati anche dall'API Digital Asset Links di Google. App e
-  cassa invariate (`arctrail3d-v170`); `android/`, `tools/`, `docs/` a 404.
-  **Functions e regole INVARIATE.**
-- **Da provare a mano:** installare `ArcTrail3D.apk` su un Android (serve «installa
-  app sconosciute») e controllare che si apra a schermo intero, senza barra
-  dell'indirizzo. Nessun telefono era collegato: non provato su dispositivo.
-- **APK corrente:** `ArcTrail3D.apk`, release firmata.
-- **versionName:** `2026.09.23`
-- **versionCode:** `1` (in `android/versione-apk.properties`, sale sempre).
-- **Aggiornabile da vecchio APK: NO.** Il vecchio APK (package e firma mai ritrovati,
-  vedi «APK (ricerca completa)» sotto) non si aggiorna: **QUESTO APK È PER NUOVE
-  INSTALLAZIONI. NON AGGIORNA IL VECCHIO APK CON FIRMA DIVERSA.** Chi ha il vecchio lo
-  disinstalla a mano e installa questo. Da oggi ogni APK nuovo aggiorna questo.
-- **Comando automatico build:** `powershell -ExecutionPolicy Bypass -File tools\genera-apk.ps1`
-  (controlla tutto, costruisce, verifica firma/package/versione, copia in Dropbox), poi
-  si committa `android/versione-apk.properties` e `android/twa-manifest.json`.
-  Consegna: `powershell -ExecutionPolicy Bypass -File tools\prepara-consegna.ps1`.
-- **Dropbox** `C:\Users\Ale\Dropbox\PROGETTI\ArcTrail 3D\`, solo tre file:
-  - APK: `ArcTrail3D.apk`
-  - WEB: `ArcTrail3D-WEB.url` → `https://arctrail3d.com/app.html`
-  - `CONSEGNA_CHATGPT.zip`: i cinque documenti `00`–`04`, nient'altro.
-
----
-
-## TEST REALE SAMSUNG S26 ULTRA: SUPERATO — 23/09/2026
+### TEST REALE SAMSUNG S26 ULTRA: SUPERATO — 23/09/2026
 
 Sul S26 Ultra vero, con la v170 online (`arctrail3d-v170`): screenshot di **Profilo,
 Tira, Home e Campi** ricevuti e verificati. **Il problema responsive S26 è chiuso.**
@@ -128,7 +239,7 @@ I punti «S26» più sotto (test da fare, `TEST REALE S26 ULTRA NECESSARIO`) son
 
 ---
 
-## ADESSO (22/09/2026, sera) — HOME + S26 PUBBLICATI (solo sito)
+### ADESSO (22/09/2026, sera) — HOME + S26 PUBBLICATI (solo sito)
 
 **Online:** `main` = `03b16d0`, app `2026-09-22-home-periodi`, cassa `arctrail3d-v169`.
 Prima del push la suite era verde: 67 banchi, 2890 prove, 0 cadute, «TUTTI PASSATI».
@@ -177,7 +288,7 @@ Il push stavolta è passato da Claude Code, autorizzato dal file
   4. S26: porte di Tira.
   5. S26: barra in basso.
 
-## Gate 1 (22/09/2026, 12:00)
+### Gate 1 (22/09/2026, 12:00)
 
 **GATE 1 REALE SUPERATO.** Il sito del ramo `work/sicurezza-qualita-2026-09-22` è
 online (`main` = `5f4878d`, push fatto a mano da Alessandro; app
@@ -191,7 +302,7 @@ gate 2 e gate 3 solo su decisione esplicita. Le sezioni qui sotto raccontano com
 
 ---
 
-## Produzione (fino al gate 1)
+### Produzione (fino al gate 1)
 
 **INVARIATA — NESSUN DEPLOY NOTTURNO.** È il rollback del 20/09, verificato il 21/09
 file per file: sito = `7b0ffe9` (app `2026-09-18-campi-fiarc`, cassa `v166`), sette
@@ -203,7 +314,7 @@ può raggiungere la produzione.
 
 ---
 
-## Registrazione allenamenti
+### Registrazione allenamenti
 
 - **Causa.** L'app della release del 20/09 partiva **prima** delle librerie
   Firebase (`defer`) e non le inizializzava mai (`956bf36`, fase 23): modalità locale
@@ -218,7 +329,7 @@ può raggiungere la produzione.
 - **Perché non si vedeva:** i banchi mettevano Firebase finto **prima** della
   pagina; l'ordine vero non l'aveva nessuno.
 
-## Storico >150
+### Storico >150
 
 - **Causa del limite.** `HISTORY_MAX = 150` nel telefono (dall'agosto); la scheda
   Giri ne mostrava **20**; oltre i 150 non si vedeva niente; ogni apertura leggeva
@@ -233,7 +344,7 @@ può raggiungere la produzione.
 - **Prestazioni.** 2.000 giri: apertura ≤ 450 letture (prima 2.300); 30 letture per
   blocco; 270 righe ridisegnate in 186–268 ms a CPU ×4.
 
-## Dati locali
+### Dati locali
 
 - **Il 20/09 non si è perso niente.** La migrazione «di chi sono i dati» della
   release vive in `onAuthReady`, che con Firebase spento non è mai partito; i giri
@@ -252,7 +363,7 @@ può raggiungere la produzione.
   messo da parte i dati di un altro account, l'app del 18/09 non li vede (non
   conosce `arctrail3d_orfani_v1`). Non si cancellano: tornano con l'app nuova.
 
-## File interni
+### File interni
 
 - **Causa dell'esposizione.** Il sito è il repository (GitHub Pages + Jekyll).
   `_config.yml` con l'elenco `exclude` è nato il 19/09 nella release; il revert del
@@ -270,7 +381,7 @@ può raggiungere la produzione.
   dal sito, non da github.com. I documenti riservati si proteggono solo non
   committandoli.
 
-## Push
+### Push
 
 - **Diagnosi.** In produzione: un token per persona (l'ultimo dispositivo vince),
   nessuna `Urgency` (Android in Doze aspetta lo sblocco), token rinnovato solo
@@ -280,7 +391,7 @@ può raggiungere la produzione.
 - **Resta:** `TEST REALE TELEFONO NECESSARIO` — app chiusa, telefono bloccato, due
   dispositivi, risparmio batteria di Samsung su Chrome.
 
-## S26
+### S26
 
 - **Diagnosi.** Viewport, `text-size-adjust`, tacca e barra in basso già a posto
   (17–18/09). Misurato stanotte: sul viewport di un S26 Ultra la testata va a capo
@@ -296,7 +407,7 @@ può raggiungere la produzione.
   carattere» e «Zoom schermo».
 - **23/09: `TEST REALE SAMSUNG S26 ULTRA: SUPERATO`** con la v170 (vedi in cima).
 
-## Service worker / offline
+### Service worker / offline
 
 - **Stato.** Tre salti provati col banco del salto di versione, dati e giro aperto
   compresi: **v166 → v168** (domani, dalla produzione), **v167 → v168** (chi ha
@@ -307,7 +418,7 @@ può raggiungere la produzione.
 - **Test.** `banco-salto-versione.js` (con `VECCHIO=`/`NUOVO=`), `banco-italia-offline`,
   `banco-giro-sicuro`, `banco-esterni`, `banco-librerie-defer` — tutti nel giro.
 
-## Suite finale (22/09, notte)
+### Suite finale (22/09, notte)
 
 - `sh tests/controlla-tutto.sh`: **65 banchi, 2831 prove, 0 cadute — TUTTI PASSATI**.
   Include `banco-regole` e `banco-finestra` (emulatore), `banco-claim`, `banco-push`,
@@ -320,7 +431,7 @@ può raggiungere la produzione.
 - Fuori dal giro, eseguiti: `sh tests/lancia-e2e.sh` **18/18**,
   `sh tests/lancia-e2e-claim.sh` **11/11**.
 
-## Git
+### Git (22/09, superato: oggi `main` = `origin/main`, vedi §1)
 
 - Ramo di lavoro: **`fix/avvio-firebase-2026-09-21`**, solo locale (niente push).
 - `main` = `origin/main` = `1cd0652` (il revert del 20/09), intatto.
@@ -330,25 +441,9 @@ può raggiungere la produzione.
 - Commit locali: quelli del 21/09 (`811c5f4`, `738cb24`) più quelli della notte —
   l'elenco preciso: `git log --oneline main..fix/avvio-firebase-2026-09-21`.
 
-## Metodo di lavoro (dal 22/09/2026, come Adrenalina e Gestionale Comprensori)
-
-- **Cartella locale:** `C:\Users\Ale\Desktop\PROGETTI\ArcTrail 3D` (prima
-  `ArcTrail3D-Git`). È il repository: la fonte di verità del codice è GitHub.
-- **`00-ALESSANDRO-CHATGPT/`** in radice: SOLO i documenti correnti (`00`–`04`), nomi
-  fissi, fuori da Git e fuori dal sito. Si aggiornano, non si moltiplicano.
-- **Dropbox** `C:\Users\Ale\Dropbox\PROGETTI\ArcTrail 3D\` (dal 23/09): SOLO
-  `ArcTrail3D.apk`, `ArcTrail3D-WEB.url`, `CONSEGNA_CHATGPT.zip` — vedi «DISTRIBUZIONE
-  ARCTRAIL» in cima. Niente mirror del repository, niente snapshot, niente sorgenti,
-  niente storico di APK o ZIP. Nel sistema di backup ArcTrail ha `"Backup": false`.
-- **A fine di ogni sessione sostanziale:** si aggiornano gli originali in `docs/`, poi
-  `tools\prepara-consegna.ps1` (copie locali, ZIP, link, pulizia di Dropbox).
-- Quello che c'era in Dropbox fino al 22/09 (mirror del 20/09 e uno snapshot) è
-  stato spostato, non cancellato, in
-  `C:\Users\Ale\Desktop\PROGETTI\_ARCHIVIO\ArcTrail 3D - Dropbox fino al 2026-09-22\`.
-
 ---
 
-## Primo passo
+### Primo passo (22/09, superato: il gate 1 è fatto)
 
 Leggere `RUNBOOK-DEPLOY-2026-09-22.md` (in cima: lo stato del gate 1 e quale ramo
 usare), e se si decide di procedere: **GATE 1, solo il sito, a mano**, poi i test
@@ -356,7 +451,7 @@ usare), e se si decide di procedere: **GATE 1, solo il sito, a mano**, poi i tes
 
 ---
 
-## LAVORO AUTONOMO DEL 22/09
+### LAVORO AUTONOMO DEL 22/09
 
 **Gate 1 precedente.** Tecnicamente pronto e verificato (precondizioni verdi,
 suite 65/2831/0, e2e 18/18), **non pubblicato**: il fast-forward di `main` e il
@@ -409,7 +504,7 @@ claim con Functions vere 11/11.
 
 ---
 
-## SESSIONE DEL 22/09, MATTINA (gate 1 e APK)
+### SESSIONE DEL 22/09, MATTINA (gate 1 e APK)
 
 **Gate 1.** Test del ramo tutti verdi (suite 66 banchi / 2869 prove / 0 cadute; e2e
 18/18; claim 11/11); `main` avanzato in fast-forward a `5f4878d`; push bloccato dal
@@ -420,7 +515,7 @@ Verifica tecnica: `controlla-base` IN PARI (app, sw, vetrina, mercatino);
 
 **APK.** Vedi la sezione «APK» qui sotto, aggiornata alla ricerca completa.
 
-## APK (ricerca completa, 22/09 pomeriggio)
+### APK (ricerca completa, 22/09 pomeriggio)
 
 > **Superato il 23/09:** c'è una pipeline APK nuova con firma nuova — vedi
 > «DISTRIBUZIONE ARCTRAIL» in cima. Quanto sotto resta vero per il VECCHIO APK.

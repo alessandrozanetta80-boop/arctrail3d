@@ -12,8 +12,12 @@
         01-RUNBOOK-DEPLOY.md          <- docs\RUNBOOK-DEPLOY-*.md       (il piu' recente)
         02-ALLENAMENTI.md             <- docs\ALLENAMENTI-*.md          (il piu' recente)
         03-PUSH-SAMSUNG.md            <- docs\DIAGNOSI-PUSH-SAMSUNG-*.md (il piu' recente)
+        05-SEO-REPORT.md              <- docs\ARCTRAIL_SEO_REPORT.md
+        06-SEO-AUTOMAZIONE.md         <- docs\SEO-AUTOMAZIONE.md
+        07-PULIZIA-REPORT.md          <- docs\ARCTRAIL_PULIZIA_REPORT.md
       e scrive 04-APK.md leggendo i dati dall'APK vero (non da un documento a mano);
-   2. fa CONSEGNA_CHATGPT.zip con quei cinque file e nient'altro, in Dropbox e
+      (05-07 dal 28/09/2026: lo ZIP deve bastare a ChatGPT per riprendere il lavoro);
+   2. fa CONSEGNA_CHATGPT.zip con quegli otto file e nient'altro, in Dropbox e
       (copia identica) nella radice del progetto;
    3. controlla che ArcTrail3D.apk in Dropbox sia la build corrente
       (versionCode di android\versione-apk.properties, firma ufficiale);
@@ -99,7 +103,11 @@ $mappa = [ordered]@{
   '01-RUNBOOK-DEPLOY.md'         = (Piu-Recente 'RUNBOOK-DEPLOY-*.md')
   '02-ALLENAMENTI.md'            = (Piu-Recente 'ALLENAMENTI-*.md')
   '03-PUSH-SAMSUNG.md'           = (Piu-Recente 'DIAGNOSI-PUSH-SAMSUNG-*.md')
+  '05-SEO-REPORT.md'             = (Join-Path $Docs 'ARCTRAIL_SEO_REPORT.md')
+  '06-SEO-AUTOMAZIONE.md'        = (Join-Path $Docs 'SEO-AUTOMAZIONE.md')
+  '07-PULIZIA-REPORT.md'         = (Join-Path $Docs 'ARCTRAIL_PULIZIA_REPORT.md')
 }
+foreach ($k in $mappa.Keys) { if (-not (Test-Path $mappa[$k])) { Stop-Qui "manca $($mappa[$k])" } }
 foreach ($k in $mappa.Keys) {
   Copy-Item $mappa[$k] (Join-Path $Locale $k) -Force
   Ok "$k  <- docs\$(Split-Path -Leaf $mappa[$k])"
@@ -121,7 +129,7 @@ Generato da ``tools\prepara-consegna.ps1`` leggendo l'APK in Dropbox il $((Get-D
 "@
 [IO.File]::WriteAllText((Join-Path $Locale '04-APK.md'), $apkMd, (New-Object Text.UTF8Encoding($false)))
 Ok "04-APK.md  <- dati letti dall'APK"
-$attesi = @($mappa.Keys) + '04-APK.md'
+$attesi = @(@($mappa.Keys) + '04-APK.md' | Sort-Object)
 Get-ChildItem $Locale | Where-Object { $attesi -notcontains $_.Name } | ForEach-Object { Avviso "in 00-ALESSANDRO-CHATGPT c'e' anche $($_.Name): non entra nello ZIP." }
 
 # -- 2. ZIP ------------------------------------------------------------------------
@@ -149,7 +157,7 @@ try {
 } finally { $z.Dispose() }
 $z = [IO.Compression.ZipFile]::OpenRead($tmpZip)
 try { $dentro = @($z.Entries | ForEach-Object { $_.FullName }) } finally { $z.Dispose() }
-if ((Compare-Object $dentro $attesi) -ne $null) { Remove-Item $tmpZip -Force; Stop-Qui "lo ZIP non contiene esattamente i cinque documenti." }
+if ((Compare-Object $dentro $attesi) -ne $null) { Remove-Item $tmpZip -Force; Stop-Qui "lo ZIP non contiene esattamente i $($attesi.Count) documenti." }
 Move-Item $tmpZip $Zip -Force
 Ok "$($dentro.Count) file: $($dentro -join ', ')"
 # Una copia anche nella radice del progetto, come Adrenalina e Gestionale
