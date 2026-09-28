@@ -12,7 +12,20 @@ In Dropbox vanno tutti e cinque dentro `CONSEGNA_CHATGPT.zip`.
 
 ---
 
-## SEO / SEARCH CONSOLE (28/09/2026) — FASE A FATTA, ATTENDO APPROVAZIONE
+## SEO / SEARCH CONSOLE (28/09/2026) — PROPOSTE 1, 2, 3 PUBBLICATE
+
+**Pubblicato il 28/09** (approvazione di Alessandro, push di `main` `84ee133`, solo
+sito): la home linka nel piede le 7 pagine prioritarie (ora a **1 clic**); tolti gli
+hreflang verso `?lang=` da home, privacy e termini; lastmod della home 2026-09-28.
+Vetrina `2026-09-28-seo-regolamenti` (da `2026-09-19-risanamento`), cassa
+`arctrail3d-v171` (da v170). Prima del push: `banco-seo` (hreflang `?lang=` ora
+rosso, home → 7 pagine; tre sabotaggi rossi), vetrina, vetrina-inglese, lingue,
+paese-lingua, regolamenti, accessibile, bordi, versioni, cassa, pubblicazione, pwa,
+contrasto: tutti verdi; piede guardato a 360 e 1280 px. Dopo: `controlla-base` IN
+PARI (index, app, mercatino, sw), interni a 404, `seo:audit:online` **OK, 0
+bloccanti, 0 avvisi**. **App, Functions e regole INVARIATE.** Restano aperte le
+proposte 4 (title lunghi) e 5 (Search Console API). Sotto: la fase A, com'era.
+
 
 Giro di sola analisi e strumenti. **Nessuna modifica di produzione**: file del sito,
 app, Functions, regole e APK invariati; nessun push; nessuna richiesta a Google.

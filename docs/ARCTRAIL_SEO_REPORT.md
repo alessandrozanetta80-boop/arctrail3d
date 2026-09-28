@@ -1,5 +1,31 @@
 # ARCTRAIL 3D — REPORT SEO / SEARCH CONSOLE — 28/09/2026
 
+> **AGGIORNAMENTO, stesso giorno — fasi B, C, D.** Alessandro ha approvato le
+> proposte **1, 2 e 3**; la 4 e la 5 restano aperte. Pubblicate con il push di
+> `main` `84ee133` (solo sito):
+> - **1.** Piede della home: link a World Archery, FITARCO, IFAA, NFAS, ASA, IBO
+>   e al confronto in inglese (nomi propri, senza traduzione). Le 7 prioritarie
+>   passano da 2 a **1 clic** dalla home.
+> - **2.** Tolti gli hreflang verso `?lang=` da `index.html`, `privacy.html`,
+>   `termini.html` (un commento dice perché). `banco-seo` ora li considera un
+>   errore e controlla i sette link della home (203 prove; sabotaggi
+>   `--sabota`, `--sabota-hreflang`, `--sabota-piede` tutti rossi).
+> - **3.** `lastmod` della home a **2026-09-28**, non al 19/09 come proposto:
+>   con questa modifica la home è cambiata oggi, e la data onesta è questa.
+>
+> Timbri: vetrina `2026-09-28-seo-regolamenti`, privacy/termini
+> `2026-09-28-seo-hreflang`, cassa `arctrail3d-v171` (impronta riscritta).
+> Test prima del push: tutti i banchi della vetrina e delle lingue, versioni,
+> cassa, pubblicazione, pwa, contrasto, accessibile, bordi — verdi; piede
+> guardato a 360 e 1280 px, senza scorrimento orizzontale. Dopo la
+> pubblicazione: `controlla-base` IN PARI, file interni a 404,
+> **`seo:audit:online` → Stato tecnico OK, 0 bloccanti, 0 avvisi.**
+> App, Functions, regole e APK invariati.
+>
+> **Prossimo passo:** fra 3–4 settimane `npm run seo:control`; niente nuove
+> richieste di indicizzazione, salvo al massimo una sulla home (è cambiata
+> davvero) se Alessandro vuole accelerare la lettura dei nuovi link.
+
 Giro di **sola analisi e strumentazione** (fase A). **Nessuna modifica di
 produzione:** nessun file del sito toccato, nessun push, nessuna richiesta a
 Google. Le proposte in fondo aspettano l'approvazione di Alessandro (fase B).
