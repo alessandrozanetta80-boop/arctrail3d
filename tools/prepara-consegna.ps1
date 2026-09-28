@@ -13,7 +13,8 @@
         02-ALLENAMENTI.md             <- docs\ALLENAMENTI-*.md          (il piu' recente)
         03-PUSH-SAMSUNG.md            <- docs\DIAGNOSI-PUSH-SAMSUNG-*.md (il piu' recente)
       e scrive 04-APK.md leggendo i dati dall'APK vero (non da un documento a mano);
-   2. fa CONSEGNA_CHATGPT.zip con quei cinque file e nient'altro;
+   2. fa CONSEGNA_CHATGPT.zip con quei cinque file e nient'altro, in Dropbox e
+      (copia identica) nella radice del progetto;
    3. controlla che ArcTrail3D.apk in Dropbox sia la build corrente
       (versionCode di android\versione-apk.properties, firma ufficiale);
    4. scrive ArcTrail3D-WEB.url;
@@ -41,6 +42,7 @@ $Dropbox  = Join-Path $RadiceDb 'ArcTrail 3D'
 $Apk      = Join-Path $Dropbox 'ArcTrail3D.apk'
 $Url      = Join-Path $Dropbox 'ArcTrail3D-WEB.url'
 $Zip      = Join-Path $Dropbox 'CONSEGNA_CHATGPT.zip'
+$ZipLocale = Join-Path $Radice 'CONSEGNA_CHATGPT.zip'
 $TENUTI   = @('ArcTrail3D.apk', 'ArcTrail3D-WEB.url', 'CONSEGNA_CHATGPT.zip')
 
 function Passo($t)  { Write-Host ""; Write-Host "== $t" -ForegroundColor Cyan }
@@ -150,6 +152,11 @@ try { $dentro = @($z.Entries | ForEach-Object { $_.FullName }) } finally { $z.Di
 if ((Compare-Object $dentro $attesi) -ne $null) { Remove-Item $tmpZip -Force; Stop-Qui "lo ZIP non contiene esattamente i cinque documenti." }
 Move-Item $tmpZip $Zip -Force
 Ok "$($dentro.Count) file: $($dentro -join ', ')"
+# Una copia anche nella radice del progetto, come Adrenalina e Gestionale
+# Comprensori (28/09/2026): e' quella che si allega a ChatGPT dal PC. Fuori da
+# git (.gitignore) e quindi fuori dal sito.
+Copy-Item $Zip $ZipLocale -Force
+Ok "copia in $ZipLocale"
 
 # -- 4. LINK -----------------------------------------------------------------------
 Passo "4. ArcTrail3D-WEB.url"

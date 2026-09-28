@@ -5,7 +5,12 @@
   "private": true,
   "scripts": {
     "controlla": "sh tests/controlla-tutto.sh",
-    "regole": "sh tests/lancia-regole.sh"
+    "regole": "sh tests/lancia-regole.sh",
+    "seo:audit": "node tools/seo-audit.js",
+    "seo:audit:online": "node tools/seo-audit.js --online",
+    "seo:control": "node tools/seo-audit.js --online --gsc",
+    "seo:gsc": "node tools/seo-gsc.js",
+    "seo:gsc:ispeziona": "node tools/seo-gsc.js --ispeziona"
   },
   "dependencies": {
     "jsdom": "^30.0.1",

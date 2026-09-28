@@ -12,6 +12,46 @@ In Dropbox vanno tutti e cinque dentro `CONSEGNA_CHATGPT.zip`.
 
 ---
 
+## SEO / SEARCH CONSOLE (28/09/2026) — FASE A FATTA, ATTENDO APPROVAZIONE
+
+Giro di sola analisi e strumenti. **Nessuna modifica di produzione**: file del sito,
+app, Functions, regole e APK invariati; nessun push; nessuna richiesta a Google.
+Report completo: `docs/ARCTRAIL_SEO_REPORT.md`; procedura e comandi:
+`docs/SEO-AUTOMAZIONE.md` (entrambi nel repository, non nello ZIP: questa sezione
+ne è il riassunto).
+
+- **Regola da oggi:** ANALISI → PROPOSTA → **APPROVAZIONE di Alessandro** → MODIFICA →
+  TEST → PUBBLICAZIONE → VERIFICA → REPORT. Claude non tocca file SEO del sito senza il sì.
+- **Stato tecnico: ATTENZIONE, 0 bloccanti.** Le 7 prioritarie (confronto EN, ASA, IBO,
+  IFAA, World Archery, FITARCO, NFAS) rispondono 200, indicizzabili, canonical su se
+  stesse, in sitemap, 461–1.140 parole di HTML statico, nessuna orfana. Sitemap (13 URL)
+  e robots.txt corretti, identici fra sito e repository.
+- **Search Console al 27/09:** 3 «redirect» = `http://` e `www` → 301 alla home,
+  corretti. 9 «rilevate, non indicizzate» (ultima scansione N/D): nessun blocco
+  tecnico, è la coda di scansione. «Nessuna sitemap di referral»: il file è giusto;
+  da controllare a mano in *Sitemap* che sia inviata nella **stessa proprietà**, letta
+  **dopo il 18/09**, con **13 URL**.
+- **Problemi:** M1 hreflang di home, privacy e termini verso `?lang=xx` (canonical
+  altrove: Google li ignora, probabile origine delle voci «alternativa» e «duplicata»);
+  M2 le prioritarie sono a 2 clic dalla home (solo via `regolamenti-3d.html`);
+  M3 Search Console API non configurata. Bassi: lastmod della home fermo al 28/08,
+  4 title oltre 70 caratteri.
+- **Proposte in attesa (MICRO, indipendenti):** 1) link dal piede della home alle 7
+  pagine regolamento; 2) togliere gli hreflang `?lang=`; 3) lastmod home 2026-09-19;
+  4) accorciare 4 title; 5) autorizzare Search Console API. La 1 e la 2 toccano
+  `index.html` (nell'`APP_SHELL`): timbro e cassa salgono, meglio insieme.
+- **Comandi (sola lettura):** `npm run seo:audit` (file locali), `npm run seo:audit:online`
+  (sito vero), `npm run seo:control` (sito + Search Console), `npm run seo:gsc`,
+  `npm run seo:gsc:ispeziona`. Exit 1 = bloccante.
+- **Search Console API:** codice pronto (`tools/seo-gsc.js`, scope `webmasters.readonly`,
+  niente Indexing API). Manca l'autorizzazione una tantum: service account `seo-lettura`
+  nel progetto Cloud `arctrail3d`, chiave in `C:\Users\Ale\.arctrail3d\gsc\credenziali.json`
+  (mai repository, Dropbox o chat), utente **Limitato** in Search Console.
+- **Segnalato:** nella radice c'è `CLAUDE_TASK_VCO3_CENSIMENTI_RECUPERI_ISPRA_02.md`, file
+  di Gestionale Comprensori (fuori da git). Non toccato: va tolto a mano.
+
+---
+
 ## DISTRIBUZIONE ARCTRAIL (dal 23/09/2026)
 
 - **Tecnologia Android:** Trusted Web Activity, progetto `android/` generato da

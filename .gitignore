@@ -17,6 +17,8 @@
 # di docs/, aggiornate a fine sessione. Gli originali stanno in docs/ e vanno su
 # GitHub; le copie no (niente doppioni nel repository, niente pagine sul sito).
 /00-ALESSANDRO-CHATGPT/
+# La stessa consegna in ZIP, copia di quella in Dropbox (28/09/2026).
+/CONSEGNA_CHATGPT.zip
 # Le carte di sessione locali (istruzioni ricevute, foto e log dei banchi).
 /_SESSIONI-CLAUDE/
 
@@ -60,3 +62,12 @@ signing.properties
 /android/build/
 /android/app/build/
 /android/local.properties
+
+# ── SEARCH CONSOLE (28/09/2026) ─────────────────────────────────────────────
+# Le credenziali stanno in %USERPROFILE%\.arctrail3d\gsc\, fuori da qui:
+# tools/seo-gsc.js si rifiuta di usarle se sono dentro al repository. `.env`
+# contiene solo percorsi, ma resta locale. Queste righe sono la rete.
+.env
+/credenziali*.json
+/service-account*.json
+/client_secret*.json
