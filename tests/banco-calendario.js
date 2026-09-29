@@ -260,8 +260,8 @@ function leggi() {
     JSON.stringify(fonti.slice(0, 3)));
   // Finche' c'e' una fonte sola, e' una sola: il calendario NON simula altre
   // federazioni per sembrare un aggregatore (28/09/2026).
-  prova("la fonte e' quella vera: FIARC, e nessuna federazione inventata",
-    fonti.length > 0 && fonti.every(function (f) { return f === "Fonte: FIARC"; }),
+  prova("la fonte e' quella vera: FIARC o FITARCO (29/09/2026), e nessuna federazione inventata",
+    fonti.length > 0 && fonti.every(function (f) { return f === "Fonte: FIARC" || f === "Fonte: FITARCO"; }),
     JSON.stringify(Array.from(new Set(fonti))));
   var d2 = await a.page.evaluate(leggi);
   prova("la pagina dice che ArcTrail non organizza le gare",
@@ -331,8 +331,8 @@ function leggi() {
   // ── 5. IL CARTELLO DEI DATI FINTI ───────────────────────────────────────
   titolo("I DATI SONO VERI: NIENTE CARTELLO «DI ESEMPIO», E LA FONTE CON LA DATA");
   prova("il cartello dei dati di esempio non c'e' piu'", d.avviso.trim() === "" && !/esempio/i.test(d.testoTutto), d.avviso);
-  prova("c'e' la nota: calendari ufficiali FIARC, aggiornati al 28/09/2026",
-    /ufficiali FIARC/.test(d.aggiornato) && /28\/09\/2026/.test(d.aggiornato), d.aggiornato);
+  prova("c'e' la nota: calendari ufficiali FIARC e FITARCO, aggiornati al 29/09/2026",
+    /ufficiali FIARC e FITARCO/.test(d.aggiornato) && /29\/09\/2026/.test(d.aggiornato), d.aggiornato);
   prova("e dice che ArcTrail non e' un servizio FIARC", /non è un servizio FIARC/.test(d.aggiornato), d.aggiornato);
 
   // ── 6. I FILTRI ─────────────────────────────────────────────────────────
@@ -363,11 +363,14 @@ function leggi() {
     d.righe.length > 0 && d.righe.every(function (r) { return r.luogo.trim().length > 2; }),
     JSON.stringify(d.righe.map(function (r) { return r.luogo; })));
   // Nessuna provincia: la provincia sarebbe quella del CAMPO della compagnia.
-  prova("nessuna riga inventa una provincia",
-    d.righe.every(function (r) { return !/\(\w{2}\)/.test(r.luogo); }),
+  // (29/09/2026.) Le gare FITARCO hanno il luogo vero dall'invito ufficiale:
+  // la regola «niente provincia inventata» vale per le righe FIARC.
+  var righeFiarc = d.righe.filter(function (r) { return /^FIARC /.test(r.sotto); });
+  prova("nessuna riga FIARC inventa una provincia",
+    righeFiarc.length > 0 && righeFiarc.every(function (r) { return !/\(\w{2}\)/.test(r.luogo); }),
     JSON.stringify(d.righe.map(function (r) { return r.luogo; }).slice(0, 3)));
   prova("e dice «Luogo da confermare» con la zona",
-    d.righe.every(function (r) { return /^Luogo da confermare \u00b7 \S/.test(r.luogo); }),
+    righeFiarc.every(function (r) { return /^Luogo da confermare \u00b7 \S/.test(r.luogo); }),
     JSON.stringify(d.righe.map(function (r) { return r.luogo; })));
   var gerarchia = await a.page.evaluate(function () {
     var r = document.querySelector(".al-blocco");
@@ -388,7 +391,7 @@ function leggi() {
   prova("c'e' la pastiglia della federazione presente nei dati, FIARC",
     sigle.indexOf("FIARC") >= 0, JSON.stringify(sigle));
   prova("e nessuna pastiglia per federazioni senza una fonte vera",
-    ["FITARCO", "DSB", "SFSF", "NFAS", "FAAS"].every(function (x) { return sigle.indexOf(x) < 0; }),
+    ["DSB", "SFSF", "NFAS", "FAAS"].every(function (x) { return sigle.indexOf(x) < 0; }),
     JSON.stringify(sigle));
   prova("i quattro tipi di gara FIARC hanno la loro pastiglia",
     ["Round 3D", "Percorso", "Tracciato", "Battuta"].every(function (x) { return sigle.indexOf(x) >= 0; }),

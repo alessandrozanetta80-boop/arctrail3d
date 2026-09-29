@@ -99,7 +99,11 @@ function carica(quando) {
   return ctx.__;
 }
 var C = carica(OGGI);
-var GARE = C.CAL_GARE, FONTI = C.CAL_FONTI;
+// (29/09/2026.) In CAL_GARE ci sono anche le gare FITARCO 3D: le guarda
+// banco-calendario-fitarco.js. Qui si prova solo il FIARC.
+function soloFiarc(l) { return l.filter(function (e) { return e.federation === "fiarc"; }); }
+var GARE = soloFiarc(C.CAL_GARE), FONTI = {};
+Object.keys(C.CAL_FONTI).forEach(function (k) { if (C.CAL_FONTI[k].federation === "fiarc") FONTI[k] = C.CAL_FONTI[k]; });
 
 var COMP = (function () {
   var s = fs.readFileSync("compagnie-data.js", "utf8");
@@ -255,27 +259,27 @@ function trova(r) {
     C.calUrlSicuro("javascript:alert(1)") === null && C.calUrlSicuro("data:text/html,x") === null &&
     C.calUrlSicuro("/le-nostre-gare/") === null);
   prova("ogni pagina ha la data di verifica, uguale all'aggiornamento dichiarato",
-    Object.keys(FONTI).every(function (k) { return FONTI[k].verificata === C.CAL_AGGIORNATO; }) && C.CAL_AGGIORNATO === "2026-09-28");
+    Object.keys(FONTI).every(function (k) { return FONTI[k].verificata === "2026-09-28"; }) && C.CAL_AGGIORNATO >= "2026-09-28");
 
   // ── 6. L'ORDINE E IL PASSATO ────────────────────────────────────────────
   titolo("ORDINE CRONOLOGICO, E IL PASSATO SE NE VA DA SOLO");
-  var ev = C.calEventi();
+  var ev = soloFiarc(C.calEventi());
   var ordinate = ev.every(function (e, i) { return i === 0 || ev[i - 1].date <= e.date; });
   prova("il " + OGGI.slice(0, 10) + " calEventi() le da' in ordine di data", ordinate && ev.length > 0,
     ev.map(function (e) { return e.date; }).join(" "));
-  var ev2 = carica("2026-09-28T10:00:00").calEventi();
+  var ev2 = soloFiarc(carica("2026-09-28T10:00:00").calEventi());
   prova("il 28/09/2026 si vedono tutte le " + GARE.length, ev2.length === GARE.length, ev2.length);
-  var ev3 = carica("2026-10-12T10:00:00").calEventi();
+  var ev3 = soloFiarc(carica("2026-10-12T10:00:00").calEventi());
   prova("il 12/10/2026 le gare del 4, 10 e 11 ottobre non ci sono piu'",
     ev3.every(function (e) { return e.date >= "2026-10-12"; }) && ev3.length === GARE.filter(function (e) { return e.date >= "2026-10-12"; }).length,
     ev3.map(function (e) { return e.date; }).join(" "));
-  var ev4 = carica("2026-11-22T23:00:00").calEventi();
+  var ev4 = soloFiarc(carica("2026-11-22T23:00:00").calEventi());
   prova("il giorno della gara la gara c'e' ancora (22/11 sera)", ev4.length === 2, ev4.length);
-  var ev5 = carica("2026-11-23T08:00:00").calEventi();
+  var ev5 = soloFiarc(carica("2026-11-23T08:00:00").calEventi());
   prova("dal 23/11/2026 il calendario e' vuoto, non pieno di gare passate", ev5.length === 0, ev5.length);
-  var ev6 = carica("2026-09-28T10:00:00").calEventi();
+  var ev6 = soloFiarc(carica("2026-09-28T10:00:00").calEventi());
   prova("a parita' di giorno l'ordine e' sempre lo stesso",
-    JSON.stringify(ev6.map(function (e) { return e.id; })) === JSON.stringify(carica("2026-09-28T10:00:00").calEventi().map(function (e) { return e.id; })) &&
+    JSON.stringify(ev6.map(function (e) { return e.id; })) === JSON.stringify(soloFiarc(carica("2026-09-28T10:00:00").calEventi()).map(function (e) { return e.id; })) &&
     ev6.every(function (e, i) { return i === 0 || ev6[i - 1].date < e.date || ev6[i - 1].id < e.id; }));
 
   // ── 7. LE LINGUE: NIENTE PIU' «DATI DI ESEMPIO» ─────────────────────────
@@ -346,7 +350,7 @@ function trova(r) {
     }
     // Il conteggio qui sotto e' quello del 28/09: l'app si apre quel giorno.
     var p = await apri("2026-09-28T10:00:00");
-    var d = await p.page.evaluate(leggi);
+    var d = await p.page.evaluate(leggi); d.righe = d.righe.filter(function (r) { return /^FIARC /.test(r.sotto); });
     prova("il calendario si apre senza errori", d.righe.length > 0 && p.err.length === 0, p.err.join(" | "));
     prova("ci sono tutte le " + GARE.length + " gare", d.righe.length === GARE.length, d.righe.length);
     prova("ogni riga porta il codice della compagnia che la FIARC pubblica",
@@ -407,16 +411,16 @@ function trova(r) {
     await p.ctx.close();
 
     var q = await apri("2026-10-12T10:00:00");
-    var d2 = await q.page.evaluate(leggi);
+    var d2 = await q.page.evaluate(leggi); d2.righe = d2.righe.filter(function (r) { return /^FIARC /.test(r.sotto); });
     prova("aperto il 12/10/2026, la prima gara e' del 18 ottobre (il passato non si vede)",
       d2.righe.length === GARE.filter(function (e) { return e.date >= "2026-10-12"; }).length && d2.righe[0] && d2.righe[0].giorno.trim() === "18",
       d2.righe.length + " righe, prima: " + (d2.righe[0] && d2.righe[0].giorno));
     await q.ctx.close();
 
     var r = await apri("2026-09-28T10:00:00", "en");
-    var d3 = await r.page.evaluate(leggi);
+    var d3 = await r.page.evaluate(leggi); d3.righe = d3.righe.filter(function (r) { return /^FIARC /.test(r.sotto); });
     prova("[en] «Venue to be confirmed» e la nota della fonte in inglese",
-      d3.righe.every(function (x) { return /^Venue to be confirmed · /.test(x.luogo); }) && /official FIARC calendars/.test(d3.testo),
+      d3.righe.every(function (x) { return /^Venue to be confirmed · /.test(x.luogo); }) && /official FIARC and FITARCO calendars/.test(d3.testo),
       JSON.stringify(d3.righe.slice(0, 1)));
     await r.ctx.close();
     await browser.close();

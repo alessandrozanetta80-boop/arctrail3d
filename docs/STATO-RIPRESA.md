@@ -26,6 +26,24 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 
 ## 1. STATO ATTUALE (29/09/2026)
 
+### 1.0-ter Calendario FITARCO 3D (29/09/2026, terzo giro)
+
+Task `CLAUDE_TASK_ARCTRAIL_FITARCO_3D_2026.md`. Fonte unica: elenco inviti ufficiale
+https://www.fitarco-italia.org/gare/inviti.php (verificato il 29/09/2026).
+
+- **Aggiunte 3 gare FITARCO 3D** (`federation:"fitarco"`, `roundType:"3D"`, fonte
+  `fitarco-2026-inviti` in `CAL_FONTI`): R2621020 03/10 Bressanone/Brixen (BZ) FT21013,
+  R2621021 04/10 Bressanone/Brixen (BZ) FT21013, R2612053 04/10 Colleferro (RM) FT12162.
+  Esclusa S2611006 (Città della Pieve, mista HF+3D). Nessun'altra gara 3D futura nell'elenco.
+- La scheda mostra «Codice gara FITARCO» (nuova chiave `cal_det_codice_gara`, 9 lingue); la
+  nota del calendario ora cita FIARC e FITARCO (9 lingue). `CAL_AGGIORNATO` = `2026-09-29`.
+  Le 17 gare FIARC sono invariate.
+- **Versioni:** app `2026-09-29-calendario-fitarco` (genitore `2026-09-29-fiarc-finale`),
+  cassa `arctrail3d-v174` (genitore v173), impronta `arctrail3d-v174:dc2ec7b09c86f734`.
+- **Test:** nuovo `tests/banco-calendario-fitarco.js`; `banco-calendario.js` e
+  `banco-calendario-fiarc.js` adattati alla presenza di FITARCO (le prove FIARC restano su FIARC).
+- **Pubblicazione:** vedi riga finale di questa sezione.
+
 ### 1.0-bis FIARC finale (29/09/2026, secondo giro)
 
 Task `CLAUDE_TASK_ARCTRAIL_FIARC_FINALE.md`; dettaglio e fonti in `08-FIARC-REPORT.md` §9.
