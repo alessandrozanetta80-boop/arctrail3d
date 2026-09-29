@@ -47,4 +47,5 @@ jobs:
       - name: Chromium di playwright
         run: npx playwright install --with-deps chromium
       - name: Tutti i banchi
-        run: sh tests/controlla-tutto.sh
+        # Browser/test seriali in CI: evita falsi rossi da carico concorrente senza escludere prove.
+        run: PAR=1 sh tests/controlla-tutto.sh
