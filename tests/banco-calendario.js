@@ -19,9 +19,14 @@
  * che funziona solo con FIARC e FITARCO si scopre il giorno che arriva il
  * primo feed tedesco, cioe' troppo tardi.
  *
- * LA QUARTA e' il cartello dei dati finti. Finche' il calendario e' di
- * prova, chi lo guarda deve saperlo: un calendario che sembra vero e non lo
- * e' manda qualcuno in macchina.
+ * LA QUARTA era il cartello dei dati finti. Dal 28/09/2026 i dati sono le
+ * gare FIARC vere (vedi `banco-calendario-fiarc.js`, che controlla il DATO):
+ * il cartello non c'e' piu', e al suo posto c'e' una nota con la fonte e il
+ * giorno dell'aggiornamento. Questo banco controlla la SCHERMATA.
+ *
+ * L'OROLOGIO E' FERMO AL 28/09/2026 (`OGGI=` per cambiarlo). Le gare vere
+ * hanno date vere: col calendario del telefono, a dicembre questo banco
+ * troverebbe l'elenco vuoto e direbbe no per il motivo sbagliato.
  *
  * NON SOSTITUISCE IL TELEFONO VERO: prova che ci sia, non che si legga.
  */
@@ -32,6 +37,8 @@ var url = require("url");
 var { chromium } = require("playwright");
 
 var FILE = process.argv[2] || "app.html";
+var OGGI = process.env.OGGI || "2026-09-28T10:00:00";
+async function fermaOrologio(ctx) { await ctx.clock.setFixedTime(new Date(OGGI)); }
 var D = path.join(os.tmpdir(), "arctrail-banco-calendario");
 if (!fs.existsSync(D)) fs.mkdirSync(D, { recursive: true });
 fs.writeFileSync(path.join(D, "index.html"),
@@ -75,6 +82,7 @@ function stato(lang, compagnia) {
 // raggiungibile — ed e' esattamente il difetto che rende una schermata morta.
 async function apriCalendario(browser, lang, compagnia) {
   var ctx = await browser.newContext({ viewport: { width: 390, height: 1400 } });
+  await fermaOrologio(ctx);
   await ctx.addInitScript("try{ localStorage.setItem('arctrail3d_state_v3', " +
     JSON.stringify(JSON.stringify(stato(lang, compagnia))) + "); localStorage.setItem('arctrail3d_welcome_v2','1'); }catch(e){}");
   var page = await ctx.newPage();
@@ -107,27 +115,28 @@ var D2 = path.join(os.tmpdir(), "arctrail-banco-calendario-storta");
 async function apriStorta(browser) {
   if (!fs.existsSync(D2)) fs.mkdirSync(D2, { recursive: true });
   var src = fs.readFileSync(FILE, "utf8").replace(/\r\n/g, "\n");
-  var ancora = "var CAL_MOCK = [\n";
-  if (src.split(ancora).length - 1 !== 1) throw new Error("banco-calendario: CAL_MOCK non e' piu' dove pensavo");
+  var ancora = "var CAL_GARE = [\n";
+  if (src.split(ancora).length - 1 !== 1) throw new Error("banco-calendario: CAL_GARE non e' piu' dove pensavo");
   var extra =
     '{ id:"prova-veleno", kind:"gara", title:"Gara con indirizzi storti", date:calFraGiorni(1), endDate:null,\n' +
     '  federation:"fiarc", roundType:"Battuta", club:"Prova", clubCode:null, country:"it",\n' +
     '  region:"Piemonte", location:"Prova (XX)", latitude:null, longitude:null,\n' +
-    '  officialUrl:"javascript:alert(1)", registrationUrl:"data:text/html,<h1>x", source:"PROVA" },\n' +
+    '  officialUrl:"javascript:alert(1)", registrationUrl:"data:text/html,<h1>x", source:"PROVA", sourceRef:"fiarc-2026-toscana" },\n' +
     '{ id:"prova-buono", kind:"gara", title:"Gara con indirizzo buono", date:calFraGiorni(2), endDate:null,\n' +
     '  federation:"fiarc", roundType:"Battuta", club:"Prova", clubCode:null, country:"it",\n' +
     '  region:"Piemonte", location:"Prova (XX)", latitude:null, longitude:null,\n' +
-    '  officialUrl:"https://www.fiarc.it/", registrationUrl:null, source:"PROVA" },\n' +
+    '  officialUrl:"https://www.fiarc.it/", registrationUrl:null, source:"PROVA", sourceRef:"fiarc-2026-toscana" },\n' +
     '{ id:"prova-http", kind:"gara", title:"Gara con indirizzo http", date:calFraGiorni(2), endDate:null,\n' +
     '  federation:"fiarc", roundType:"Battuta", club:"Prova", clubCode:null, country:"it",\n' +
     '  region:"Piemonte", location:"Prova (XX)", latitude:null, longitude:null,\n' +
-    '  officialUrl:"http://example.org/bando", registrationUrl:null, source:"PROVA" },\n';
+    '  officialUrl:"http://example.org/bando", registrationUrl:null, source:"PROVA", sourceRef:"fiarc-2026-toscana" },\n';
   fs.writeFileSync(path.join(D2, "index.html"),
     require("./copia-dev.js").accendiDev(src.replace(ancora, ancora + extra)));
   ["compagnie-data.js", "logo.webp", "logo.jpg"].forEach(function (x) {
     if (fs.existsSync(x)) fs.copyFileSync(x, path.join(D2, x));
   });
   var ctx = await browser.newContext({ viewport: { width: 390, height: 1400 } });
+  await fermaOrologio(ctx);
   await ctx.addInitScript("try{ localStorage.setItem('arctrail3d_state_v3', " +
     JSON.stringify(JSON.stringify(stato("it", "01VERB"))) + "); localStorage.setItem('arctrail3d_welcome_v2','1'); }catch(e){}");
   var page = await ctx.newPage();
@@ -197,7 +206,8 @@ function leggi() {
   var card = document.querySelector("#app .card");
   return {
     titolo: (document.querySelector(".section-title") || {}).textContent || "",
-    avviso: (document.querySelector(".cal-avviso") || {}).textContent || "",
+    avviso: (card && card.querySelector(".cal-avviso") || {}).textContent || "",
+    aggiornato: (card && card.querySelector(".cal-aggiornato") || {}).textContent || "",
     mesi: Array.prototype.map.call(document.querySelectorAll(".cal-mese"), function (m) { return m.textContent; }),
     righe: righe,
     chip: chip,
@@ -248,8 +258,11 @@ function leggi() {
   prova("ogni gara aperta dichiara da chi viene il dato",
     fonti.length > 0 && fonti.every(function (f) { return f && /Fonte:/.test(f); }),
     JSON.stringify(fonti.slice(0, 3)));
-  prova("le fonti non sono tutte la stessa: e' un aggregatore, non un canale",
-    new Set(fonti).size >= 3, JSON.stringify(Array.from(new Set(fonti))));
+  // Finche' c'e' una fonte sola, e' una sola: il calendario NON simula altre
+  // federazioni per sembrare un aggregatore (28/09/2026).
+  prova("la fonte e' quella vera: FIARC, e nessuna federazione inventata",
+    fonti.length > 0 && fonti.every(function (f) { return f === "Fonte: FIARC"; }),
+    JSON.stringify(Array.from(new Set(fonti))));
   var d2 = await a.page.evaluate(leggi);
   prova("la pagina dice che ArcTrail non organizza le gare",
     /non organizza le gare/.test(d2.testoTutto));
@@ -263,7 +276,7 @@ function leggi() {
   var det = await a.page.evaluate(function () {
     var r = Array.prototype.filter.call(document.querySelectorAll(".al-blocco"), function (x) {
       var b = x.querySelector(".al-dove b");
-      return b && /Campionato Regionale 3D/.test(b.textContent);
+      return b && /Arcieri del Dahu/.test(b.textContent);
     })[0];
     if (!r) return null;
     r.querySelector(".al-tocca").click();
@@ -281,8 +294,12 @@ function leggi() {
   prova("dice quando, dove, chi organizza e che tipo di gara e'",
     ["Quando", "Dove", "Organizza", "Tipo"].every(function (x) { return d2b.etichette.indexOf(x) >= 0; }),
     JSON.stringify(d2b.etichette));
-  prova("al posto della distanza c'e' il luogo vero", /Vignone/.test(d2b.visibile), d2b.visibile);
-  prova("e la regione, che e' quello che l'app sa davvero", /Piemonte/.test(d2b.visibile));
+  // Il luogo della gara la fonte non lo dice: il campo della compagnia
+  // (Valdilana Trivero) NON e' il luogo della gara, e non si scrive.
+  prova("il luogo che la fonte non dice resta «da confermare»", /Luogo da confermare/.test(d2b.visibile), d2b.visibile);
+  prova("e il campo della compagnia non viene spacciato per luogo gara", !/Trivero|Valdilana/.test(d2b.visibile), d2b.visibile);
+  prova("la regione c'e', che e' quello che l'app sa davvero", /Piemonte/.test(d2b.visibile));
+  prova("senza luogo non c'e' «Portami li'»", !/Portami/.test(d2b.visibile), d2b.visibile);
   prova("nessuna riga dichiara una distanza in km",
     !/\b\d+[\s\u00a0]?km\b/i.test(d2.testoTutto),
     (d2.testoTutto.match(/\b\d+[\s\u00a0]?km\b/i) || [""])[0]);
@@ -312,9 +329,11 @@ function leggi() {
   await storta.ctx.close();
 
   // ── 5. IL CARTELLO DEI DATI FINTI ───────────────────────────────────────
-  titolo("FINCHE' I DATI SONO DI PROVA, LA PAGINA LO DICE");
-  prova("il cartello c'e'", d.avviso.trim().length > 10, d.avviso);
-  prova("e dice che il vero arrivera' dalle federazioni", /federazioni/i.test(d.avviso));
+  titolo("I DATI SONO VERI: NIENTE CARTELLO «DI ESEMPIO», E LA FONTE CON LA DATA");
+  prova("il cartello dei dati di esempio non c'e' piu'", d.avviso.trim() === "" && !/esempio/i.test(d.testoTutto), d.avviso);
+  prova("c'e' la nota: calendari ufficiali FIARC, aggiornati al 28/09/2026",
+    /ufficiali FIARC/.test(d.aggiornato) && /28\/09\/2026/.test(d.aggiornato), d.aggiornato);
+  prova("e dice che ArcTrail non e' un servizio FIARC", /non è un servizio FIARC/.test(d.aggiornato), d.aggiornato);
 
   // ── 6. I FILTRI ─────────────────────────────────────────────────────────
   titolo("LE PASTIGLIE NASCONO DAI DATI, NON DA UN ELENCO SCRITTO A MANO");
@@ -340,14 +359,15 @@ function leggi() {
   // Un elenco si legge per confrontare, e per confrontare bisogna vedere:
   // aprire dieci righe per sapere quale gara e' a mezz'ora non e' confrontare.
   titolo("LA RIGA CHIUSA DICE ANCHE DOVE");
-  prova("ogni gara mostra la localita' senza che si apra niente",
+  prova("ogni gara dice dove, per quel che si sa, senza che si apra niente",
     d.righe.length > 0 && d.righe.every(function (r) { return r.luogo.trim().length > 2; }),
     JSON.stringify(d.righe.map(function (r) { return r.luogo; })));
-  prova("la localita' porta la provincia quando c'e'",
-    d.righe.some(function (r) { return /\(\w{2}\)/.test(r.luogo); }),
+  // Nessuna provincia: la provincia sarebbe quella del CAMPO della compagnia.
+  prova("nessuna riga inventa una provincia",
+    d.righe.every(function (r) { return !/\(\w{2}\)/.test(r.luogo); }),
     JSON.stringify(d.righe.map(function (r) { return r.luogo; }).slice(0, 3)));
-  prova("e la regione quando la provincia non c'e'",
-    d.righe.some(function (r) { return /\u00b7/.test(r.luogo); }),
+  prova("e dice «Luogo da confermare» con la zona",
+    d.righe.every(function (r) { return /^Luogo da confermare \u00b7 \S/.test(r.luogo); }),
     JSON.stringify(d.righe.map(function (r) { return r.luogo; })));
   var gerarchia = await a.page.evaluate(function () {
     var r = document.querySelector(".al-blocco");
@@ -365,27 +385,30 @@ function leggi() {
   prova("ed e' terziaria per misura, non con un colore inventato",
     gerarchia.colore === gerarchia.coloreSec, gerarchia.colore + " vs " + gerarchia.coloreSec);
 
-  prova("c'e' una pastiglia per ogni federazione presente nei dati",
-    ["FIARC", "FITARCO", "DSB", "SFSF", "NFAS", "FAAS"].every(function (x) { return sigle.indexOf(x) >= 0; }),
+  prova("c'e' la pastiglia della federazione presente nei dati, FIARC",
+    sigle.indexOf("FIARC") >= 0, JSON.stringify(sigle));
+  prova("e nessuna pastiglia per federazioni senza una fonte vera",
+    ["FITARCO", "DSB", "SFSF", "NFAS", "FAAS"].every(function (x) { return sigle.indexOf(x) < 0; }),
     JSON.stringify(sigle));
-  prova("l'elenco NON e' legato a FIARC e FITARCO: ci sono federazioni estere",
-    sigle.indexOf("DSB") >= 0 && sigle.indexOf("SFSF") >= 0);
+  prova("i quattro tipi di gara FIARC hanno la loro pastiglia",
+    ["Round 3D", "Percorso", "Tracciato", "Battuta"].every(function (x) { return sigle.indexOf(x) >= 0; }),
+    JSON.stringify(sigle));
 
   titolo("UN FILTRO RESTRINGE, E SI PUO' TOGLIERE");
   var dopo = await a.page.evaluate(function () {
     var b = Array.prototype.filter.call(document.querySelectorAll(".chip-filtro"), function (c) {
-      return c.textContent.trim() === "DSB";
+      return c.textContent.trim() === "Tracciato";
     })[0];
     if (b) b.click();
     return null;
   });
   await a.page.waitForTimeout(300);
   var d3 = await a.page.evaluate(leggi);
-  prova("premendo DSB restano solo le gare DSB",
-    d3.righe.length > 0 && d3.righe.every(function (r) { return /DSB/.test(r.sotto); }),
+  prova("premendo Tracciato restano solo i Tracciati",
+    d3.righe.length > 0 && d3.righe.length < d.righe.length && d3.righe.every(function (r) { return /Tracciato/.test(r.sotto); }),
     JSON.stringify(d3.righe.map(function (r) { return r.sotto; })));
   prova("la pastiglia premuta si vede accesa",
-    d3.chip.some(function (c) { return c.testo === "DSB" && c.acceso; }));
+    d3.chip.some(function (c) { return c.testo === "Tracciato" && c.acceso; }));
   prova("adesso «Azzera» c'e'", d3.azzera);
   await a.page.evaluate(function () {
     var z = document.querySelector(".cal-azzera"); if (z) z.click();
@@ -398,7 +421,8 @@ function leggi() {
   titolo("UN FILTRO CHE NON TROVA NIENTE LO DICE, INVECE DI RESTARE VUOTO");
   await a.page.evaluate(function () {
     Array.prototype.forEach.call(document.querySelectorAll(".chip-filtro"), function (c) {
-      if (c.textContent.trim() === "DSB" || c.textContent.trim() === "Battuta") c.click();
+      // Il 28/09/2026 il weekend e' il 3-4 ottobre: due Percorsi, nessuna Battuta.
+      if (c.textContent.trim() === "Questo weekend" || c.textContent.trim() === "Battuta") c.click();
     });
   });
   await a.page.waitForTimeout(300);
@@ -450,7 +474,9 @@ function leggi() {
   prova("restano solo le gare della propria regione, e ce n'e' almeno una",
     e3.righe.length > 0 && e3.righe.length < e2.righe.length,
     e3.righe.length + " su " + e2.righe.length);
-  prova("nessuna gara estera e' rimasta dentro", !/Freiburg|Uppsala|Otley/.test(e3.testoTutto));
+  prova("e sono tutte del Piemonte, la regione di 01VERB",
+    e3.righe.every(function (r) { return /Piemonte$/.test(r.luogo); }),
+    JSON.stringify(e3.righe.map(function (r) { return r.luogo; })));
   await c.ctx.close();
 
   // ── 8. LE NOVE LINGUE ───────────────────────────────────────────────────

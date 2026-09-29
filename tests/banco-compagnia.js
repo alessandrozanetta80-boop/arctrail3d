@@ -194,6 +194,13 @@ prova("i risultati mostrano nome e luogo su due righe",
       /class="club-voce"><b>'\+escapeHtml\(c\.nome\)/.test(src));
 prova("e quello che si SALVA e' il nome, non la stringa incollata",
       /clubNome = c\.nome;/.test(src) && !/clubNome = label;/.test(src));
+/* (28/09/2026, audit FIARC.) Il codice e' quello che un arciere FIARC sa:
+   scriverlo deve trovare la compagnia, e la riga lo deve mostrare. */
+prova("si cerca anche sul codice FIARC, e il codice si vede nella riga",
+      /var label = c\.nome \+[^\n]*codF/.test(src) && /var sottoVoce = \[codF,/.test(src));
+prova("in Prepara gara un codice FITARCO non passa per compagnia FIARC",
+      /var nome = codiceFiarcDi\(p\.compagnia\) \? compagniaNome\(p\.compagnia\) : null;/.test(src) &&
+      /codiceFiarcDi\(p\.compagnia\) && compagniaNome\(p\.compagnia\)\) \|\| !haElencoCompagnie/.test(src));
 
 (async function () {
   var browser = await chromium.launch();

@@ -52,6 +52,7 @@ eval(estrai("sigleDi"));
 eval(estrai("sigleDentro"));
 eval(estrai("compagniaNome"));
 eval(estrai("haElencoCompagnie"));
+eval(estrai("codiceFiarcDi"));
 eval(estrai("menuSigle"));
 eval(estrai("iscrittoRow"));
 eval(estrai("pgLeggiRiga"));

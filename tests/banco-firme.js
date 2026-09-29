@@ -375,6 +375,10 @@ function compagniaNome(cod){ return cod === "01VERB" ? "A.S.D. Arcieri Finti" : 
 // giudica. Qui il banco lavora sempre su una gara FIARC, quindi il conteggio
 // deve restare quello di prima — che e' proprio la cosa da verificare.
 function haElencoCompagnie(fed){ return fed === "fiarc"; }
+// Dal 29/09/2026 `pgImporta` conta il codice solo se e' FIARC vero
+// (`codiceFiarcDi`, audit FIARC del 28/09). Nel finto elenco qui sopra l'unica
+// compagnia e' FIARC, quindi basta che esista.
+function codiceFiarcDi(cod){ return compagniaNome(cod) ? String(cod).trim().toUpperCase() : null; }
 function pgFederazione(){ return "fiarc"; }
 eval(estrai("sigleDi"));
 eval(estrai("sigleDentro"));

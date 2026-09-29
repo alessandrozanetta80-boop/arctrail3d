@@ -5334,8 +5334,10 @@ schermata sei mesi dopo, in un caso che nessuno riprova.
 
 ### Le due cose che il banco ha trovato, e che a ragionare non si vedevano
 
-**La tastiera in Percorso cambia a ogni freccia.** Prima freccia 20/18/16,
-seconda 14/12/10, terza 8/6/4: con una firma sola la tastiera si rifaceva
+**La tastiera in Percorso cambia a ogni freccia.** Prima freccia 11/9/6,
+seconda 9/7/4, terza 7/5/2 (valori corretti il 28/09/2026 per allinearli al
+codice e al regolamento: qui erano rimasti numeri vecchi, 20/18/16 · 14/12/10 ·
+8/6/4, che il codice non usa): con una firma sola la tastiera si rifaceva
 **287 volte su 288**, cioè il tasto sotto il dito moriva comunque e tutto
 questo lavoro non serviva a niente. Quindi due firme:
 

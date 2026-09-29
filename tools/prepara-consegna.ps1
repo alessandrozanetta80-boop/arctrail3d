@@ -15,9 +15,11 @@
         05-SEO-REPORT.md              <- docs\ARCTRAIL_SEO_REPORT.md
         06-SEO-AUTOMAZIONE.md         <- docs\SEO-AUTOMAZIONE.md
         07-PULIZIA-REPORT.md          <- docs\ARCTRAIL_PULIZIA_REPORT.md
+        08-FIARC-REPORT.md            <- docs\FIARC-CHIUSURA-*.md       (il piu' recente)
       e scrive 04-APK.md leggendo i dati dall'APK vero (non da un documento a mano);
-      (05-07 dal 28/09/2026: lo ZIP deve bastare a ChatGPT per riprendere il lavoro);
-   2. fa CONSEGNA_CHATGPT.zip con quegli otto file e nient'altro, in Dropbox e
+      (05-07 dal 28/09/2026: lo ZIP deve bastare a ChatGPT per riprendere il lavoro;
+       08 dal 28/09/2026 sera: calendario FIARC reale e audit FIARC);
+   2. fa CONSEGNA_CHATGPT.zip con quei nove file e nient'altro, in Dropbox e
       (copia identica) nella radice del progetto;
    3. controlla che ArcTrail3D.apk in Dropbox sia la build corrente
       (versionCode di android\versione-apk.properties, firma ufficiale);
@@ -106,6 +108,7 @@ $mappa = [ordered]@{
   '05-SEO-REPORT.md'             = (Join-Path $Docs 'ARCTRAIL_SEO_REPORT.md')
   '06-SEO-AUTOMAZIONE.md'        = (Join-Path $Docs 'SEO-AUTOMAZIONE.md')
   '07-PULIZIA-REPORT.md'         = (Join-Path $Docs 'ARCTRAIL_PULIZIA_REPORT.md')
+  '08-FIARC-REPORT.md'           = (Piu-Recente 'FIARC-CHIUSURA-*.md')
 }
 foreach ($k in $mappa.Keys) { if (-not (Test-Path $mappa[$k])) { Stop-Qui "manca $($mappa[$k])" } }
 foreach ($k in $mappa.Keys) {

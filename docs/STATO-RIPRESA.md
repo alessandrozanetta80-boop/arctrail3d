@@ -1,4 +1,4 @@
-# STATO-RIPRESA — ArcTrail 3D — aggiornato il 28/09/2026
+# STATO-RIPRESA — ArcTrail 3D — aggiornato il 29/09/2026
 
 Da qui si riparte. **§1 è lo stato di oggi, §2 cosa resta da fare, §3 lo storico.**
 Dove lo storico dice «non pubblicato», «in attesa» o «da approvare», vale §1.
@@ -15,7 +15,8 @@ fuori da Git) gli stessi documenti hanno nomi fissi:
 | `04-APK.md` | scritto dallo script leggendo l'APK vero | package, versione, firma |
 | `05-SEO-REPORT.md` | `docs/ARCTRAIL_SEO_REPORT.md` | report SEO del 28/09 (analisi e pubblicazione) |
 | `06-SEO-AUTOMAZIONE.md` | `docs/SEO-AUTOMAZIONE.md` | procedura SEO, comandi, come autorizzare Search Console |
-| `07-PULIZIA-REPORT.md` | `docs/ARCTRAIL_PULIZIA_REPORT.md` | l'ultimo giro: pulizia del 28/09 |
+| `07-PULIZIA-REPORT.md` | `docs/ARCTRAIL_PULIZIA_REPORT.md` | pulizia del 28/09 |
+| `08-FIARC-REPORT.md` | `docs/FIARC-CHIUSURA-2026-09-28.md` | l'ultimo giro: calendario FIARC reale e audit FIARC (28/09) |
 
 Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 (nel repository GitHub); l'elenco completo delle voci aperte del prodotto in
@@ -23,7 +24,30 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 
 ---
 
-## 1. STATO ATTUALE (28/09/2026)
+## 1. STATO ATTUALE (29/09/2026)
+
+### 1.0 FIARC: calendario reale, PRONTO IN LOCALE, NON PUBBLICATO (28/09, chiuso il 29/09)
+
+- **Il calendario non è più di prova.** Tolti `CAL_MOCK` (10 gare inventate, 6 federazioni) e
+  il cartello «Dati di esempio». Ci sono **17 gare FIARC 2026 vere**, dal 04/10 al 22/11,
+  ricopiate dalle immagini ufficiali di 7 pagine fiarc.it: le 11 del task più 6 di Emilia
+  Romagna e Triveneto, che il 28/09 mostrano «CALENDARIO GARE 2026» (prova nel report).
+  Sardegna esclusa (nessun calendario 2026 pubblico). Il luogo della gara resta **«Luogo da
+  confermare»**: non si usa il campo della compagnia. Niente link alle iscrizioni.
+- **Audit FIARC:** nessun problema bloccante. Corretti in questo giro la ricerca della
+  compagnia per codice (profilo) e il controllo del codice FIARC in «Prepara gara». 01VICO non
+  esiste: è 01BICO, già VB dal 18/09.
+- **Chiuso il 29/09:** il timbro dell'app è passato al 29/09, perché il lavoro si è chiuso quel
+  giorno. Dati e data di verifica del calendario restano al 28/09. Due banchi di prova
+  (`banco-firme`, `prova-schermo`) sono stati allineati alla funzione nuova `codiceFiarcDi`.
+- **Versioni in locale:** app `2026-09-29-calendario-fiarc`, cassa `arctrail3d-v172` (impronta
+  `5bf13f453fcbe9da`). **Online restano** `2026-09-22-testata-s26` e `v171`: la pubblicazione
+  (solo sito) aspetta il sì di Alessandro. Nessun commit, push, deploy o APK in questo giro.
+- **Test (29/09):** suite completa **68 banchi, 2973 prove, 0 cadute, TUTTI PASSATI**. I 4 banchi
+  senza conteggio sono stati letti a mano e sono puliti. Dettaglio in `08-FIARC-REPORT.md` §8.1.
+  Banco nuovo: `tests/banco-calendario-fiarc.js` (66/66).
+- **Da fare:** ricontrollare le 7 pagine FIARC a metà ottobre (rinvii o aggiunte). Dopo il
+  22/11 il calendario resta vuoto fino al 2027.
 
 ### 1.1 Produzione
 
@@ -137,6 +161,12 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 ## 2. PROSSIMI PASSI
 
 Separati e indipendenti; ognuno chiede prima il sì di Alessandro.
+
+**FIARC: revisione e pubblicazione del calendario reale (§1.0).** Leggere
+`08-FIARC-REPORT.md`, decidere se tenere le 6 gare di Emilia Romagna e Triveneto, poi
+commit e push del sito (app v172). Functions e regole non sono coinvolte. Proposte
+separate, non fatte: una compagnia per federazione nel profilo; una regola unica per la
+regione in `compagnie-data.js`.
 
 **SEO — configurazione Search Console API (proposta 5).** Una volta sola, ~10 minuti,
 nessun segreto in chat: service account `seo-lettura` nel progetto Cloud `arctrail3d`,

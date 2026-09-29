@@ -123,6 +123,7 @@ banco "banco-ifaa.js (il bareme IFAA e i giri di ieri)" "node tests/banco-ifaa.j
 banco "banco-asa.js (il bareme ASA Pro/Am, sulle regole 2026)" "node tests/banco-asa.js"
 banco "banco-ibo.js (il bareme IBO, sulle regole 2026)" "node tests/banco-ibo.js"
 banco "banco-calendario.js (il calendario dice da chi viene il dato)" "node tests/banco-calendario.js app.html"
+banco "banco-calendario-fiarc.js (le gare FIARC 2026 vere: date, codici, tipi, niente 2025, niente luoghi inventati)" "node tests/banco-calendario-fiarc.js app.html"
 banco "banco-ritorno.js (il ritorno canonico e le cose che non tornano)" "node tests/banco-ritorno.js app.html"
 banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node tests/controlla-diari.js"
 # Dal 19/09/2026 (risanamento post-audit). Le regole Firestore non giravano in
