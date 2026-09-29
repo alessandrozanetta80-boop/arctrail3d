@@ -26,7 +26,18 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 
 ## 1. STATO ATTUALE (29/09/2026)
 
-### 1.0 FIARC: calendario reale, PRONTO IN LOCALE, NON PUBBLICATO (28/09, chiuso il 29/09)
+### 1.0 FIARC: calendario reale, PUBBLICATO E VERIFICATO ONLINE (29/09/2026)
+
+- **Pubblicato:** commit `1bcc935` «feat(fiarc): calendario reale 2026 e audit area FIARC»
+  pushato su `main` (solo sito). Functions, regole e APK invariati.
+- **Verificato su arctrail3d.com il 29/09:** HTTP 200, `BUILD_STAMP`
+  `2026-09-29-calendario-fiarc`, 17 gare FIARC vere, `CAL_MOCK` assente, `CAL_AGGIORNATO` =
+  `2026-09-28`, presenti la prima (`01DAHU` 04/10) e l'ultima (`14ELFI` 22/11); `sw.js` online
+  `arctrail3d-v172`, genitore `v171`, impronta `arctrail3d-v172:5bf13f453fcbe9da`.
+- **Le 6 gare di Emilia Romagna e Triveneto restano:** verificate sulle pagine ufficiali FIARC
+  2026, e Alessandro ha chiesto di avere tutto il calendario disponibile.
+
+Sotto, il giro com'era a fine lavoro in locale (28/09, chiuso il 29/09):
 
 - **Il calendario non è più di prova.** Tolti `CAL_MOCK` (10 gare inventate, 6 federazioni) e
   il cartello «Dati di esempio». Ci sono **17 gare FIARC 2026 vere**, dal 04/10 al 22/11,
@@ -40,9 +51,8 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 - **Chiuso il 29/09:** il timbro dell'app è passato al 29/09, perché il lavoro si è chiuso quel
   giorno. Dati e data di verifica del calendario restano al 28/09. Due banchi di prova
   (`banco-firme`, `prova-schermo`) sono stati allineati alla funzione nuova `codiceFiarcDi`.
-- **Versioni in locale:** app `2026-09-29-calendario-fiarc`, cassa `arctrail3d-v172` (impronta
-  `5bf13f453fcbe9da`). **Online restano** `2026-09-22-testata-s26` e `v171`: la pubblicazione
-  (solo sito) aspetta il sì di Alessandro. Nessun commit, push, deploy o APK in questo giro.
+- **Versioni:** app `2026-09-29-calendario-fiarc`, cassa `arctrail3d-v172` (impronta
+  `5bf13f453fcbe9da`), **online dal 29/09** (prima: `2026-09-22-testata-s26` e `v171`).
 - **Test (29/09):** suite completa **68 banchi, 2973 prove, 0 cadute, TUTTI PASSATI**. I 4 banchi
   senza conteggio sono stati letti a mano e sono puliti. Dettaglio in `08-FIARC-REPORT.md` §8.1.
   Banco nuovo: `tests/banco-calendario-fiarc.js` (66/66).
@@ -51,12 +61,12 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 
 ### 1.1 Produzione
 
-- **GitHub:** `main` = `origin/main`. Ultimo commit che ha toccato il sito: `84ee133`
-  (28/09, proposte SEO 1–3). Repository pubblico `alessandrozanetta80-boop/arctrail3d`;
-  il sito è GitHub Pages su arctrail3d.com.
-- **Sito online, verificato il 28/09** (`controlla-base` IN PARI, file interni a 404):
-  vetrina `2026-09-28-seo-regolamenti`, app `2026-09-22-testata-s26`, mercatino
-  `2026-08-25-radice`, cassa `arctrail3d-v171`.
+- **GitHub:** ultimo commit che ha toccato il sito: `1bcc935` (29/09, calendario FIARC reale).
+  Eventuali commit successivi solo documentali non cambiano la versione online. Repository pubblico
+  `alessandrozanetta80-boop/arctrail3d`; il sito è GitHub Pages su arctrail3d.com.
+- **Sito online:** vetrina `2026-09-28-seo-regolamenti` e mercatino `2026-08-25-radice`
+  (verificati il 28/09); app `2026-09-29-calendario-fiarc` e cassa `arctrail3d-v172`
+  (verificate il 29/09, §1.0).
 - **Functions e regole Firestore: INVARIATE dal 18/09.** Online: 7 Functions
   `2026-08-28-notifica-verificata`, regole `2026-08-28-porte-verified`. Su `main` ci
   sono già le versioni nuove, **NON pubblicate**: Functions `2026-09-22-push-argomento`
@@ -123,7 +133,7 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 - **Dropbox** `C:\Users\Ale\Dropbox\PROGETTI\ArcTrail 3D\`, solo tre file:
   - APK: `ArcTrail3D.apk`
   - WEB: `ArcTrail3D-WEB.url` → `https://arctrail3d.com/app.html`
-  - `CONSEGNA_CHATGPT.zip`: i documenti `00`–`07` elencati in cima, nient'altro.
+  - `CONSEGNA_CHATGPT.zip`: i documenti `00`–`08` elencati in cima, nient'altro.
 
 ### 1.4 Cose aperte fuori dalla SEO che chiedono un'azione
 
@@ -140,7 +150,7 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 
 - **Cartella locale:** `C:\Users\Ale\Desktop\PROGETTI\ArcTrail 3D` (prima
   `ArcTrail3D-Git`). È il repository: la fonte di verità del codice è GitHub.
-- **`00-ALESSANDRO-CHATGPT/`** in radice: SOLO i documenti correnti (`00`–`07`), nomi
+- **`00-ALESSANDRO-CHATGPT/`** in radice: SOLO i documenti correnti (`00`–`08`), nomi
   fissi, fuori da Git e fuori dal sito. Si aggiornano, non si moltiplicano.
 - **`CONSEGNA_CHATGPT.zip`**: uno solo, in Dropbox e (copia identica) nella radice del
   progetto, fuori da Git. Lo rifà `tools\prepara-consegna.ps1`.
@@ -162,11 +172,10 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 
 Separati e indipendenti; ognuno chiede prima il sì di Alessandro.
 
-**FIARC: revisione e pubblicazione del calendario reale (§1.0).** Leggere
-`08-FIARC-REPORT.md`, decidere se tenere le 6 gare di Emilia Romagna e Triveneto, poi
-commit e push del sito (app v172). Functions e regole non sono coinvolte. Proposte
-separate, non fatte: una compagnia per federazione nel profilo; una regola unica per la
-regione in `compagnie-data.js`.
+**FIARC: manutenzione del calendario (pubblicato il 29/09, §1.0).** Ricontrollare le 7
+pagine FIARC a metà ottobre (rinvii o aggiunte) e quando esce il 2027. Proposte separate,
+non fatte: una compagnia per federazione nel profilo; una regola unica per la regione in
+`compagnie-data.js`. Altri residui in `08-FIARC-REPORT.md` §6.
 
 **SEO — configurazione Search Console API (proposta 5).** Una volta sola, ~10 minuti,
 nessun segreto in chat: service account `seo-lettura` nel progetto Cloud `arctrail3d`,

@@ -1,11 +1,25 @@
 # FIARC: calendario reale e audit mirato. 28/09/2026
 
 Il giro è partito dal task `CLAUDE_TASK_ARCTRAIL_FIARC.md` ed è stato fatto da Claude Code sul ramo
-`main` il 28/09 e chiuso il 29/09 (timbro, test finali, report), **senza commit, push, deploy
-né APK**. Tutto è pronto in locale per la revisione.
+`main` il 28/09 e chiuso il 29/09 (timbro, test finali, report). Il giro di lavoro non ha fatto
+né commit né push: la pubblicazione è venuta dopo (§0).
 
-**Giudizio operativo: PRONTO PER REVISIONE E PUBBLICAZIONE.** L'unica cosa aperta è la
-§6.1. Spiego il motivo in §8.
+**Stato: PUBBLICATO E VERIFICATO ONLINE (29/09/2026).** Restano aperti solo i punti della §6.
+
+## 0. Pubblicazione (29/09/2026)
+
+- **Commit** `1bcc935` «feat(fiarc): calendario reale 2026 e audit area FIARC», pushato su
+  `main` (`main` = `origin/main` = `1bcc935`). Solo sito: **Functions, regole Firestore e APK
+  invariati**.
+- **Verifica di produzione su arctrail3d.com, 29/09/2026:**
+  - `app.html` risponde HTTP 200, `BUILD_STAMP` `2026-09-29-calendario-fiarc`;
+  - 17 gare FIARC vere presenti, `CAL_MOCK` assente, `CAL_AGGIORNATO` = `2026-09-28`;
+  - prima e ultima gara presenti: `01DAHU` 04/10 e `14ELFI` 22/11;
+  - `sw.js` online: cassa `arctrail3d-v172`, genitore `v171`, impronta
+    `arctrail3d-v172:5bf13f453fcbe9da`.
+- **Le 6 gare di Emilia Romagna e RSM e Triveneto restano.** Sono verificate sulle pagine
+  ufficiali FIARC 2026 (§1) e Alessandro ha chiesto di avere tutto il calendario disponibile.
+  L'indicazione della §1 su come toglierle non si applica più.
 
 ---
 
@@ -47,10 +61,8 @@ Il 28/09 le **stesse pagine ufficiali** collegate dalla home mostrano:
   30/01/2026.
 
 Probabilmente il sito è stato aggiornato dopo il controllo di ChatGPT, oppure ChatGPT ha visto
-una copia in cache. **Le 6 gare future di queste due zone sono state importate** (§2). Se
-Alessandro preferisce restare sulla linea del task, basta togliere le righe con
-`sourceRef:"fiarc-2026-triveneto"` e `"fiarc-2026-emilia-romagna-rsm"` e le relative voci
-`AGGIUNTE` nel banco.
+una copia in cache. **Le 6 gare future di queste due zone sono state importate** (§2) e,
+su decisione di Alessandro, **restano nel calendario pubblicato** (§0).
 
 ## 2. Gare importate (17, dal 28/09/2026 in poi)
 
@@ -136,7 +148,7 @@ Per ogni gara valgono queste regole:
     modificato quel giorno, quindi `controlla-versioni` chiedeva un timbro non più vecchio
     del file. È cambiato **solo il timbro**: dati del calendario, `CAL_AGGIORNATO` e
     `verificata` restano al 28/09, che è la data vera della verifica sulle fonti;
-  - cassa `arctrail3d-v172` (genitore `v171`), invariata: la v172 non è mai andata online;
+  - cassa `arctrail3d-v172` (genitore `v171`), invariata dal 28/09; è online dal 29/09 (§0);
   - `SHELL_IMPRONTA` riscritta il 29/09 con `controlla-cache.js --scrivi
     --versione-non-pubblicata`: `arctrail3d-v172:5bf13f453fcbe9da`.
 
