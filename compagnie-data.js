@@ -42,7 +42,7 @@
     "04ESTI": { nome:"A.S.D. Arcieri dell'Est Ticino", regione:"Lombardia", provincia:"PV", luogo:"Casorate Primo (PV)", completa:true, telefono:"347 0005680", email:"arcieri04esti@gmail.com" },
     "04GAOP": { nome:"A.S.D. Gruppo Arcieri Oltrep\u00f2 Pavese", regione:"Lombardia", provincia:"PV", luogo:"Castana (PV)", completa:true, email:"g.villa2710@gmail.com" },
     "04GATT": { nome:"A.S.D. Gruppo Arcieri Tecno Tradizionali", regione:"Lombardia", provincia:"BG", luogo:"Villa d'Alm\u00e8 (BG)", completa:true, telefono:"328 2364763", email:"arcieri04gatt@outlook.it" },
-    "04GROA": { nome:"A.S.D. Compagnia Arcieri delle Groane", regione:"Lombardia", provincia:"MB", luogo:"\u2014", completa:true, telefono:"348 3465553", email:"04groa@gmail.com" },
+    "04GROA": { nome:"A.S.D. Compagnia Arcieri delle Groane", regione:"Lombardia", provincia:"—", luogo:"\u2014", completa:true, telefono:"348 3465553", email:"04groa@gmail.com" },
     "04HOOD": { nome:"A.S.D. Arcieri Cesano Boscone", regione:"Lombardia", provincia:"MI", luogo:"Cesano Boscone (MI)", completa:true, telefono:"339 2281896", email:"woodypek.ga@gmail.com", sito:"arciericesanoboscone.it" },
     "04LAKE": { nome:"A.S.D. Arcieri del Lago", regione:"Lombardia", provincia:"BG", luogo:"Ranzanico (BG)", completa:true, telefono:"0341 220191", email:"periniraffa@libero.it" },
     "04LOTO": { nome:"A.S.D. Arcieri del Mincio", regione:"Lombardia", provincia:"MN", luogo:"Marmirolo (MN)", completa:true, email:"segreteria@arcierimincio.it", sito:"arcierimincio.it" },

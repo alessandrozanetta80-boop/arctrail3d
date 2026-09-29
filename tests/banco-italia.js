@@ -80,6 +80,10 @@ function statico(src) {
   return { round3d: m("round3d"), percorso: m("percorso"), tracciato: m("tracciato"), battuta: m("battuta"),
     training: m("training"), fitarco3d: m("fitarco3d"), fitarco_training: m("fitarco_training"),
     reg: A.REGOLAMENTI.fiarc_rt, it: it,
+    desc: Object.keys(A.STRINGS).map(function (l) {
+      var S = A.STRINGS[l];
+      return { lang: l, round3d: S.mode_round3d_desc, percorso: S.mode_percorso_desc, tracciato: S.mode_tracciato_desc, battuta: S.mode_battuta_desc };
+    }),
     piquet: Object.keys(it).filter(function (k) { return typeof it[k] === "string" && /piquet/i.test(it[k]); }),
     fidasc: A.FEDERATIONS.fidasc, fiarc: A.FEDERATIONS.fiarc, fitarco: A.FEDERATIONS.fitarco,
     itFeds: (A.COUNTRY_FEDERATIONS.it || []).map(function (f) { return f.code; }),
@@ -175,6 +179,41 @@ function sporge(page) { return page.evaluate(function () { return document.docum
         !/stesso/i.test(M.it.mode_round3d_desc) && /distanze diverse/i.test(M.it.mode_round3d_desc), M.it.mode_round3d_desc);
   prova("Round 3D: il ginocchio non si impone, non e' «mai ammesso» (art. 7.1f)",
         !/mai ammesso/i.test(M.it.mode_round3d_desc), M.it.mode_round3d_desc);
+  // Descrizioni dei 4 formati contro il PDF ufficiale del 02/12/2023, letto il
+  // 29/09/2026. Il regolamento da' per ogni gruppo una distanza MASSIMA (Battuta
+  // e Percorso 40/40/30/20, Tracciato 55/40/30/20, Round 3D 35 per tutti): non
+  // c'e' una distanza minima. Fino al 29/09 i testi dicevano «Distanze da 20 a
+  // 40 m», cioe' un minimo di 20 m che il regolamento non mette.
+  var d = M.it;
+  prova("Battuta (art. 4.1): 28 piazzole, 48 frecce, 14 singole, 4 mobili, 6 branchi, 4 a tempo, 10 in ginocchio",
+        /28 piazzole/.test(d.mode_battuta_desc) && /48 frecce/.test(d.mode_battuta_desc) && /14 piazzole singole e 4 mobili/.test(d.mode_battuta_desc) &&
+        /6 branchi da 3/.test(d.mode_battuta_desc) && /4 gruppi a tempo limitato da 3/.test(d.mode_battuta_desc) && /10 frecce obbligatorie in ginocchio/.test(d.mode_battuta_desc),
+        d.mode_battuta_desc);
+  prova("Battuta (art. 4.1d): distanza massima 40/40/30/20 m",
+        /massima per gruppo \(1-4\): 40\/40\/30\/20 m/.test(d.mode_battuta_desc), d.mode_battuta_desc);
+  prova("Percorso (art. 5.1): 24 piazzole, 3 frecce, 10 a tempo, 10 in ginocchio, max 40/40/30/20 m",
+        /24 piazzole, 3 frecce/.test(d.mode_percorso_desc) && /10 piazzole a tempo limitato/.test(d.mode_percorso_desc) &&
+        /10 frecce obbligatorie in ginocchio/.test(d.mode_percorso_desc) && /massima per gruppo \(1-4\): 40\/40\/30\/20 m/.test(d.mode_percorso_desc),
+        d.mode_percorso_desc);
+  prova("Tracciato (art. 6.1): 24 piazzole, fino a 3 frecce, vale la prima a segno, 10 in ginocchio, max 55/40/30/20 m",
+        /24 piazzole, fino a 3 frecce/.test(d.mode_tracciato_desc) && /solo la prima a segno/.test(d.mode_tracciato_desc) &&
+        /10 frecce obbligatorie in ginocchio/.test(d.mode_tracciato_desc) && /massima per gruppo \(1-4\): 55\/40\/30\/20 m/.test(d.mode_tracciato_desc),
+        d.mode_tracciato_desc);
+  prova("Round 3D (art. 7.1): 24 piazzole, 2 frecce, 8 a tempo, 4 mobili, max 35 m, niente ginocchio obbligatorio",
+        /24 piazzole, 2 frecce/.test(d.mode_round3d_desc) && /8 piazzole a tempo limitato, 4 con bersaglio mobile/.test(d.mode_round3d_desc) &&
+        /massima 35 m per tutti i gruppi/.test(d.mode_round3d_desc) && /Nessun tiro in ginocchio obbligatorio/.test(d.mode_round3d_desc),
+        d.mode_round3d_desc);
+  var gruppi = { percorso: "40/40/30/20", tracciato: "55/40/30/20", battuta: "40/40/30/20" };
+  var sbagliate = [];
+  M.desc.forEach(function (x) {
+    Object.keys(gruppi).forEach(function (k) {
+      var t = String(x[k] || "");
+      if (t.indexOf(gruppi[k] + " ") < 0 || /\b20\s*(a|to|à|bis|до|till|tot)\s*\d{2}\b|\b20-\d{2}\b/.test(t)) sbagliate.push(x.lang + ":" + k);
+    });
+    if (!/\b35\b/.test(String(x.round3d || ""))) sbagliate.push(x.lang + ":round3d");
+  });
+  prova("in tutte le " + M.desc.length + " lingue: distanze massime per gruppo, nessun «da 20 a ...»",
+        M.desc.length === 9 && sbagliate.length === 0, sbagliate.join(", "));
   prova("in italiano si dice picchetto: nessuna frase con «piquet»", M.piquet.length === 0, M.piquet.join(", "));
 
   titolo("4. FIDASC — nascosta a chi arriva, intatta per chi c'e'");

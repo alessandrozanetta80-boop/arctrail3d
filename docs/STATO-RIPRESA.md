@@ -16,7 +16,7 @@ fuori da Git) gli stessi documenti hanno nomi fissi:
 | `05-SEO-REPORT.md` | `docs/ARCTRAIL_SEO_REPORT.md` | report SEO del 28/09 (analisi e pubblicazione) |
 | `06-SEO-AUTOMAZIONE.md` | `docs/SEO-AUTOMAZIONE.md` | procedura SEO, comandi, come autorizzare Search Console |
 | `07-PULIZIA-REPORT.md` | `docs/ARCTRAIL_PULIZIA_REPORT.md` | pulizia del 28/09 |
-| `08-FIARC-REPORT.md` | `docs/FIARC-CHIUSURA-2026-09-28.md` | l'ultimo giro: calendario FIARC reale e audit FIARC (28/09) |
+| `08-FIARC-REPORT.md` | `docs/FIARC-CHIUSURA-2026-09-28.md` | calendario FIARC reale e audit FIARC (28/09), chiusura FIARC finale (29/09, §9) |
 
 Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 (nel repository GitHub); l'elenco completo delle voci aperte del prodotto in
@@ -25,6 +25,29 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 ---
 
 ## 1. STATO ATTUALE (29/09/2026)
+
+### 1.0-bis FIARC finale (29/09/2026, secondo giro)
+
+Task `CLAUDE_TASK_ARCTRAIL_FIARC_FINALE.md`; dettaglio e fonti in `08-FIARC-REPORT.md` §9.
+Solo fonti ufficiali fiarc.it (elenchi compagnie di luglio 2026, calendario Emilia-RSM,
+Regolamento Sportivo 02/12/2023).
+
+- **08LAUR / 08LUAR:** il calendario stampa 08LAUR (08/11/2026, Percorso); l'elenco compagnie
+  del 22/07/2026 ha solo 08LUAR «I Lunghi Archi», Sasso Marconi BO. La gara conserva il codice
+  della fonte (`sourceClubCode`, id) e risolve la compagnia canonica 08LUAR (nome, regione). La
+  scheda mostra «Codice sul calendario FIARC: 08LAUR» (9 lingue). Luogo gara sempre «da
+  confermare».
+- **Metadati compagnie:** 01LUPI, 03LUNA, 04CORM, 09ATON coincidono con gli elenchi (campo vuoto →
+  «—»). 04GROA: tolta la provincia «MB», non presente nell'elenco ufficiale. 08LUAR coincide.
+- **Regolamento:** punteggi e codice dei 4 formati già giusti. Corrette in 9 lingue le distanze
+  delle descrizioni di Battuta, Percorso e Tracciato: erano «da 20 a 40/55 m», il regolamento dà
+  solo massimi per gruppo (40/40/30/20, Tracciato 55/40/30/20). Chiusa la voce «descrizioni non
+  verificabili a fondo».
+- **Versioni:** app `2026-09-29-fiarc-finale` (genitore `2026-09-29-calendario-fiarc`), cassa
+  `arctrail3d-v173` (genitore v172), impronta `arctrail3d-v173:51ba4b7dde86329a`.
+- **Test:** suite completa 68 banchi, 2994 prove, 0 cadute, TUTTI PASSATI (un primo giro aveva una
+  caduta di `banco-font-scale` sotto carico, 83/83 da solo: vedi report §9.5).
+- **Pubblicazione:** vedi §1.1 e report §9.6. Functions, regole Firestore e APK invariati.
 
 ### 1.0 FIARC: calendario reale, PUBBLICATO E VERIFICATO ONLINE (29/09/2026)
 
@@ -173,9 +196,11 @@ Sotto, il giro com'era a fine lavoro in locale (28/09, chiuso il 29/09):
 Separati e indipendenti; ognuno chiede prima il sì di Alessandro.
 
 **FIARC: manutenzione del calendario (pubblicato il 29/09, §1.0).** Ricontrollare le 7
-pagine FIARC a metà ottobre (rinvii o aggiunte) e quando esce il 2027. Proposte separate,
-non fatte: una compagnia per federazione nel profilo; una regola unica per la regione in
-`compagnie-data.js`. Altri residui in `08-FIARC-REPORT.md` §6.
+pagine FIARC a metà ottobre (rinvii o aggiunte) e quando esce il 2027; se FIARC corregge
+08LAUR/08LUAR su una delle due fonti, togliere `sourceClubCode`. Backlog separato, non
+bloccante per l'uso FIARC attuale: una compagnia per federazione nel profilo; una regola unica
+(comitato o geografia) per la regione in `compagnie-data.js`; classifiche ufficiali. Altri
+residui in `08-FIARC-REPORT.md` §6.
 
 **SEO — configurazione Search Console API (proposta 5).** Una volta sola, ~10 minuti,
 nessun segreto in chat: service account `seo-lettura` nel progetto Cloud `arctrail3d`,

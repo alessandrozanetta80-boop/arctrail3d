@@ -4,7 +4,9 @@ Il giro è partito dal task `CLAUDE_TASK_ARCTRAIL_FIARC.md` ed è stato fatto da
 `main` il 28/09 e chiuso il 29/09 (timbro, test finali, report). Il giro di lavoro non ha fatto
 né commit né push: la pubblicazione è venuta dopo (§0).
 
-**Stato: PUBBLICATO E VERIFICATO ONLINE (29/09/2026).** Restano aperti solo i punti della §6.
+**Stato: PUBBLICATO E VERIFICATO ONLINE (29/09/2026).** Il 29/09 un secondo giro («FIARC
+finale», §9) ha chiuso 08LAUR/08LUAR, i metadati delle compagnie e la verifica sul regolamento.
+Restano aperti solo i punti della §6.
 
 ## 0. Pubblicazione (29/09/2026)
 
@@ -80,7 +82,7 @@ su decisione di Alessandro, **restano nel calendario pubblicato** (§0).
 | 25/10/2026 | 07HAWK | Round 3D | Triveneto ★ | Il Falcone Arco Club | Friuli-Venezia Giulia |
 | 25/10/2026 | 08CALE | Battuta | Emilia Romagna e RSM ★ | Le Lontre del Bosconé di Calendasco | Emilia-Romagna |
 | 25/10/2026 | 12RING | Battuta | Lazio | A.S.D. La Compagnia dell'Anello | Lazio |
-| 08/11/2026 | 08LAUR | Percorso | Emilia Romagna e RSM ★ | — *(codice non presente in `compagnie-data.js`)* | — |
+| 08/11/2026 | 08LAUR (sul calendario) → 08LUAR | Percorso | Emilia Romagna e RSM ★ | I Lunghi Archi *(dal 29/09, §9.1)* | Emilia-Romagna |
 | 08/11/2026 | 09ROSE | Percorso | Toscana | A.S.D. Compagnia Arcieri delle Sei Rose | Toscana |
 | 15/11/2026 | 17LAGO | Tracciato | Campania, Puglia, Calabria, Basilicata | A.S.D. Arcieri del Lago | Calabria |
 | 22/11/2026 | 09TEAM | Tracciato | Toscana | Arcieri del Borgo le Piane | Toscana |
@@ -103,7 +105,9 @@ Per ogni gara valgono queste regole:
   iscrizioni della singola gara. Il gestionale FIARC richiede il login, e non è stato usato come
   finto link pubblico.
 - Per `08LAUR`, che non è nel file delle compagnie, **il nome e la regione non sono stati
-  indovinati**. La riga mostra «Compagnia 08LAUR» e la zona «Emilia Romagna e RSM».
+  indovinati**. La riga mostrava «Compagnia 08LAUR» e la zona «Emilia Romagna e RSM».
+  *Superato il 29/09 (§9.1): ora è risolta sulla compagnia canonica 08LUAR, con il codice della
+  fonte conservato.*
 
 ## 3. Aree non importate
 
@@ -162,7 +166,7 @@ Per ogni gara valgono queste regole:
 | Codice compagnia in «Prepara gara» | **Corretto in questo giro.** Per una gara FIARC venivano accettati come validi anche codici FITARCO o esteri presenti nello stesso file (per esempio `FT01100`). Ora vale solo un codice FIARC vero (`codiceFiarcDi`). |
 | «Tira» | **OK.** Con FIARC compaiono esattamente Round 3D, Percorso, Tracciato e Battuta, più «Allenamento». Nessun formato FITARCO o IFAA. |
 | Punteggi dei 4 formati | **OK, coerenti** tra codice, `fiarc.html`, `docs/ITALIA-READY-2026-09-18.md` e `banco-italia.js`. Round 3D 24×2 (16/14/10, 9/7/5). Percorso 24×3 (11/9/6, 9/7/4, 7/5/2). Tracciato 24 × fino a 3 (22/20/16, 16/14/10, 10/8/4). Battuta 28 piazzole × 48 frecce (13/11/7). **Divergenza trovata solo in un documento storico**: `docs/NOTE-DESIGN.md` riportava per il Percorso 20/18/16 · 14/12/10 · 8/6/4. **Corretto** il documento; il codice era giusto. |
-| Descrizioni dei formati | **Non verificabili a fondo.** Distanze e conteggi delle descrizioni (per esempio «max 35 m», «20–55 m») non hanno una fonte nel repository. Il PDF del regolamento non è qui (§6.3). |
+| Descrizioni dei formati | **Verificate il 29/09 sul PDF ufficiale** (§9.3). Conteggi, frecce, piazzole a tempo, mobili, ginocchio e punteggi coincidono. Corretta una divergenza: le distanze erano scritte «da 20 a 40/55 m», ma il regolamento dà solo massimi per gruppo (40/40/30/20, Tracciato 55/40/30/20). |
 | Diario, record, statistiche | **OK, nessuna contaminazione.** I record sono per arciere e per modo di tiro, e FIARC e FITARCO hanno chiavi diverse. Traguardi e stagioni confrontano solo giri dello stesso tipo. |
 | Elenco compagnie FIARC | **Coerente** (147 voci FIARC, codici `NN` + 4 lettere). **01VICO non esiste** da nessuna parte (file, storia git su tutti i rami, documenti, altre cartelle): è quasi certamente un refuso per **01BICO** (Compagnia Arcieri Bicocca, Madonna del Sasso). Quella correzione, provincia **VB**, è già in `compagnie-data.js` (commit `3fe51c5`, 18/09). Non c'era niente da fare. |
 | `fiarc.html` | **OK.** Cita il Regolamento Sportivo del 02/12/2023 e linka `https://www.fiarc.it/download-regolamenti/`. Il disclaimer «non è un'app ufficiale FIARC» è presente e le tabelle coincidono con il codice. |
@@ -177,10 +181,11 @@ Per ogni gara valgono queste regole:
 - **Dopo il 22/11/2026 il calendario resta vuoto** finché non arriva il 2027. Mostra lo stato
   vuoto già esistente e non si rompe. Il banco usa un orologio fisso (`OGGI=`), quindi non diventa
   rosso da solo.
-- **Codici compagnia con provincia «—»**: `01LUPI`, `03LUNA`, `04CORM`, `09ATON` (e `04GROA` senza
-  luogo). Serve l'elenco ufficiale FIARC per completarli.
-- **`08LAUR` non è in `compagnie-data.js`.** Va aggiunta quando si ha la scheda ufficiale della
-  compagnia.
+- ~~Codici compagnia con provincia «—»~~ **Chiuso il 29/09 (§9.2):** gli elenchi FIARC di luglio
+  2026 lasciano vuoto il campo di `01LUPI`, `03LUNA`, `04CORM`, `04GROA`, `09ATON`: il «—» è il dato
+  vero. Tolta a `04GROA` la provincia «MB», che nessuna fonte ufficiale dice.
+- ~~`08LAUR` non è in `compagnie-data.js`~~ **Chiuso il 29/09 (§9.1).** Se FIARC corregge il
+  calendario o l'elenco, si toglie `sourceClubCode`.
 - Il conteggio «gare» dei traguardi guarda solo i modi della federazione attiva. Chi passa da FIARC
   a FITARCO smette di vedere nel conto le gare FIARC passate (non le perde).
 
@@ -200,8 +205,7 @@ Per ogni gara valgono queste regole:
 - **Luogo esatto delle gare**: le immagini FIARC non lo dicono. Servono i bandi o le locandine
   delle singole compagnie, se e quando le pubblicano.
 - **Link iscrizioni pubblici**: non esistono (il gestionale richiede il login).
-- **Regolamento Sportivo in PDF**: serve per verificare distanze e conteggi citati nelle
-  descrizioni dei formati.
+- ~~Regolamento Sportivo in PDF~~ **Letto il 29/09 (§9.3).**
 - **Formato della tessera FIARC**: serve per validare il campo, che oggi è testo libero.
 
 ## 7. File modificati
@@ -275,3 +279,104 @@ cadute, «TUTTI PASSATI», uscita 0.**
 | `banco-avvio` | 48/48 |
 | `banco-tiri` | 28/28 |
 | `banco-firme`, `prova-schermo` (dopo la correzione) | puliti |
+
+---
+
+## 9. Giro «FIARC finale» (29/09/2026)
+
+Task `CLAUDE_TASK_ARCTRAIL_FIARC_FINALE.md`, fatto da Claude Code su `main`. Solo fonti ufficiali
+FIARC, scaricate e lette il 29/09 (SHA-256, primi 16 caratteri):
+
+| Fonte | URL | Data sul documento | SHA-256 (16) |
+|---|---|---|---|
+| Elenco compagnie Emilia-Romagna/RSM | https://www.fiarc.it/wp-content/uploads/2026/07/elencoCompagnie-Emilia-San-Marino-Lam.pdf | 22/07/2026 | a845bc6a5681ed29 |
+| Elenco compagnie Piemonte | https://www.fiarc.it/wp-content/uploads/2026/07/elencoCompagnie-Piemonte.pdf | 10/07/2026 | dd8bd142212b57bd |
+| Elenco compagnie Liguria | https://www.fiarc.it/wp-content/uploads/2026/07/elencoCompagnie3-10.pdf | 13/07/2026 | ea7df6bc95f39d45 |
+| Elenco compagnie Lombardia | https://www.fiarc.it/wp-content/uploads/2026/07/elencoCompagnie-Lombardia.pdf | 10/07/2026 | 05f4809cccd911a6 |
+| Elenco compagnie Toscana | https://www.fiarc.it/wp-content/uploads/2026/07/elencoCompagnie-Toscana.pdf | 10/07/2026 | a8b17f79cc1cb1cf |
+| Calendario Emilia-Romagna/RSM, seconda immagine | https://www.fiarc.it/wp-content/uploads/2026/01/Emilia_cale_2-1024x576.jpg (pagina https://www.fiarc.it/le-nostre-gare/emilia-romagna-e-rsm-2025/) | 2026 | 0d23feb4996b045b |
+| Regolamento Sportivo | https://www.fiarc.it/wp-content/uploads/2023/12/Regolamento-Sportivo_02122023.pdf | 02/12/2023 | 81c08fefe4c116bc |
+
+### 9.1 08LAUR (calendario) / 08LUAR (elenco compagnie)
+
+- **Il fatto.** Il calendario stampa «08/11/2026 — 08LAUR — Percorso» (riguardato sull'immagine il
+  29/09). L'elenco compagnie del 22/07/2026 non ha nessun 08LAUR, e ha «08LUAR — I LUNGHI ARCHI —
+  Loc. Campo: SASSO MARCONI BO». Stesse lettere, stessa zona (08), unico candidato.
+- **La scelta**, senza nascondere niente:
+  - `sourceClubCode:"08LAUR"` è il codice com'è sulla fonte; anche l'id resta
+    `fiarc-2026-11-08-08LAUR-percorso` (stabile, fedele al calendario);
+  - `clubCode:"08LUAR"` è la compagnia canonica: nome «I Lunghi Archi» e regione Emilia-Romagna
+    vengono da `compagnie-data.js`, come per le altre gare;
+  - il luogo della gara resta `null` («Luogo da confermare»): Sasso Marconi è il campo della
+    compagnia, non il luogo della gara;
+  - la riga mostra «I Lunghi Archi — FIARC · Percorso · 08LUAR»; la scheda aperta mostra
+    «Organizza: I Lunghi Archi (08LUAR)» e **«Codice sul calendario FIARC: 08LAUR»** (chiave
+    nuova `cal_det_codice_fonte`, 9 lingue). La riga compare solo quando i due codici differiscono.
+  - Il campo `sourceClubCode` è documentato nella forma del dato in `app.html`. Se FIARC corregge
+    una delle due fonti, si toglie.
+
+### 9.2 Metadati compagnie
+
+Confronto riga per riga con gli elenchi ufficiali (i PDF hanno le colonne sfalsate: l'ordine
+codici/schede è stato ricontrollato su ogni blocco).
+
+| Codice | Nome nell'elenco | Loc. Campo nell'elenco | In `compagnie-data.js` | Esito |
+|---|---|---|---|---|
+| 01LUPI | Lupi delle Alpi | `-` | provincia/luogo «—», tel. 328 9236568, dabran@libero.it | coincide, invariato |
+| 03LUNA | Arcatores Lunae | `----` | «—», fiorellacavallini@hotmail.it | coincide, invariato |
+| 04CORM | Gruppo Arcieri Cormorano | `-` | «—», 392 0446510, dario.bononi@gmail.com | coincide, invariato |
+| 04GROA | A.S.D. Compagnia Arcieri delle Groane | `-` | provincia **«MB»**, luogo «—» | **corretto**: provincia «—». «MB» era nel file dal primo caricamento (01/08) e nessuna fonte ufficiale la dice |
+| 09ATON | Arcieri del Sole | `-` | «—», alfonsopistolesi@alice.it | coincide, invariato |
+| 08LUAR | I Lunghi Archi | SASSO MARCONI BO | BO, Sasso Marconi (BO), 349 5366760, ilunghiarchi@gmail.com, ilunghiarchi.org | coincide, invariato |
+
+Effetto di 04GROA: nei filtri per provincia (Campi, Profilo) la compagnia passa fra le «non
+specificate». «MB» resta fra le province per le altre 10 compagnie che ce l'hanno.
+
+### 9.3 Regolamento Sportivo 02/12/2023
+
+| Formato | Regolamento | Codice (`GAME_MODES`) | Testo (`mode_*_desc`) |
+|---|---|---|---|
+| Battuta, art. 4 | 48 bersagli, 28 piazzole, 48 frecce; 14 singole, 4 mobili, 6 branchi da 3, 4 gruppi a tempo da 3; 10 frecce in ginocchio; max 40/40/30/20 m; 13/11/7 | coincide | coincideva, tranne le distanze |
+| Percorso, art. 5 | 24 piazzole, 3 frecce sommate; max 40/40/30/20 m; 10 a tempo; 10 in ginocchio; SS 11/9/7, Spot 9/7/5, Sagoma 6/4/2 | coincide | coincideva, tranne le distanze |
+| Tracciato, art. 6 | 24 piazzole, max 3 frecce, vale la prima a punto; max 55/40/30/20 m; 10 in ginocchio; SS 22/16/10, Spot 20/14/8, Sagoma 16/10/4 | coincide | coincideva, tranne le distanze |
+| Round 3D, art. 7 | 24 piazzole, 2 frecce sommate, solo 3D, max 35 m, 8 a tempo, 4 mobili, niente ginocchio imposto; SS 16/9, Spot 14/7, Sagoma 10/5 | coincide | coincide, invariato |
+
+- **Divergenza corretta.** In tutte e 9 le lingue Battuta, Percorso e Tracciato dicevano «Distanze
+  da 20 a 40 m» (Tracciato «da 20 a 55 m»), cioè un minimo di 20 m che il regolamento non mette:
+  il Gruppo 4 ha un **massimo** di 20 m. Ora: «Distanza massima per gruppo (1-4): 40/40/30/20 m»
+  (Tracciato 55/40/30/20). Punteggi e codice non sono cambiati: erano già giusti.
+- Corretto anche un refuso nell'olandese del Percorso («kniel end» → «knielend»).
+- La voce «Descrizioni non verificabili a fondo» della §5 è chiusa.
+
+### 9.4 File modificati
+
+- `app.html`: gara 08LAUR (`sourceClubCode`/`clubCode` 08LUAR, nome e regione), riga
+  «Codice sul calendario FIARC» nella scheda, chiave `cal_det_codice_fonte` in 9 lingue,
+  descrizioni dei formati (distanze massime) in 9 lingue, `BUILD_STAMP`
+  `2026-09-29-fiarc-finale` (genitore `2026-09-29-calendario-fiarc`).
+- `compagnie-data.js`: 04GROA provincia «—».
+- `sw.js`: cassa `arctrail3d-v173` (genitore `v172`), impronta `arctrail3d-v173:51ba4b7dde86329a`.
+- `tests/banco-calendario-fiarc.js`: sezioni 4-bis (08LAUR/08LUAR, 7 prove + 3 nell'app) e 4-ter
+  (metadati compagnie, 6 prove), chiave nuova in 9 lingue. Controprova: sull'`app.html` di prima
+  7 rosse; col `compagnie-data.js` di prima, 04GROA rossa.
+- `tests/banco-italia.js`: 6 prove sulle descrizioni contro gli art. 4–7, in tutte le lingue.
+- `docs/FIARC-CHIUSURA-2026-09-28.md` (questo file) e `docs/STATO-RIPRESA.md`.
+
+### 9.5 Test (29/09/2026)
+
+**Banchi mirati, uno per uno, tutti uscita 0:** `controlla-sintassi` OK, `controlla-versioni`
+30/30, `controlla-cache` (impronta v173 coerente), `controlla-pwa` 26/26,
+`controlla-pubblicazione` 32/32, `banco-calendario` 65/65, **`banco-calendario-fiarc` 81/81**
+(prima 66), `banco-compagnia` 72/72, `banco-chiavi-compagnie` 21/21, `banco-campi` 30/30,
+**`banco-italia` 78/78** (prima 72), `banco-italia-mobile` 513/513, `banco-italia-offline` 9/9,
+`banco-lingue` tutte passate (9 lingue), `banco-paese-lingua` 30/30, `banco-sw-aggiornamento`
+14/14, `banco-avvio` 48/48.
+
+**Suite completa** (`sh tests/controlla-tutto.sh`):
+- primo giro: 68 banchi, 2994 prove, **1 caduta**: `banco-font-scale`, «T 150% 320x568 de — la
+  testata va su due righe». Il giro non tocca testata né CSS; rilanciato da solo: **83/83**. È
+  instabilità di misura sotto carico (6 browser in parallelo), non una regressione: segnalata qui,
+  non mascherata;
+- secondo giro, identico: **68 banchi, 2994 prove, 0 cadute, «TUTTI PASSATI», uscita 0**. I 4
+  banchi senza conteggio letti a mano, puliti (`controlla-token` «Niente e' peggiorato»,
+  `banco-firme`, `prova-schermo`, mercatino). Saltato come sempre `banco-porta.js` (rete vera).

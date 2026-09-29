@@ -109,9 +109,13 @@ var COMP = (function () {
   return c.__C;
 })();
 
+// Il codice com'e' STAMPATO sul calendario: e' quello che le liste qui sopra
+// ricopiano. Di solito coincide con `clubCode`; per 08LAUR no (vedi sotto).
+function codiceFonte(e) { return e.sourceClubCode || e.clubCode; }
+
 function trova(r) {
   return GARE.filter(function (e) {
-    return e.date === r[0] && e.clubCode === r[1] && e.roundType === r[2];
+    return e.date === r[0] && codiceFonte(e) === r[1] && e.roundType === r[2];
   });
 }
 
@@ -142,8 +146,8 @@ function trova(r) {
     !/calFraGiorni\(/.test(SRC.slice(SRC.indexOf("var CAL_GARE = ["), SRC.indexOf("function calGaraValida("))));
   prova("gli id sono unici", new Set(GARE.map(function (e) { return e.id; })).size === GARE.length);
   prova("ogni id e' stabile: fiarc-AAAA-MM-GG-CODICE-tipo",
-    GARE.every(function (e) { return e.id === idDi([e.date, e.clubCode, e.roundType]); }),
-    GARE.filter(function (e) { return e.id !== idDi([e.date, e.clubCode, e.roundType]); }).map(function (e) { return e.id; }).join(", "));
+    GARE.every(function (e) { return e.id === idDi([e.date, codiceFonte(e), e.roundType]); }),
+    GARE.filter(function (e) { return e.id !== idDi([e.date, codiceFonte(e), e.roundType]); }).map(function (e) { return e.id; }).join(", "));
   prova("tutte FIARC: federation \"fiarc\", source \"FIARC\", country \"it\", kind \"gara\"",
     GARE.every(function (e) { return e.federation === "fiarc" && e.source === "FIARC" && e.country === "it" && e.kind === "gara"; }));
   prova("il tipo e' uno dei quattro formati FIARC, scritto esatto",
@@ -192,8 +196,52 @@ function trova(r) {
     }),
     GARE.filter(function (e) { var c = COMP[e.clubCode]; return c && (e.club !== c.nome || e.region !== c.regione); })
       .map(function (e) { return e.clubCode; }).join(", "));
-  prova("08LAUR, che nel file non c'e', resta senza nome e senza regione (non si indovina)",
-    GARE.filter(function (e) { return e.clubCode === "08LAUR"; }).every(function (e) { return !COMP["08LAUR"] && e.club === null && e.region === null; }));
+
+  // ── 4-bis. 08LAUR SUL CALENDARIO, 08LUAR NELL'ELENCO ────────────────────
+  // (29/09/2026.) Due fonti FIARC ufficiali non coincidono:
+  //   - calendario Emilia-Romagna/RSM (Emilia_cale_2.jpg): «08/11/2026 08LAUR Percorso»;
+  //   - elenco compagnie Emilia-Romagna/RSM al 22/07/2026: nessun 08LAUR, e
+  //     «08LUAR — I LUNGHI ARCHI — Loc. Campo: SASSO MARCONI BO».
+  // Scelta: il codice della fonte resta (`sourceClubCode`, e l'id), la
+  // compagnia e' quella canonica dell'elenco (`clubCode`), e la scheda mostra
+  // tutti e due. Qui si prova che l'incongruenza c'e' e che e' gestita cosi'.
+  titolo("08LAUR (CALENDARIO) / 08LUAR (ELENCO COMPAGNIE): FEDELE ALLA FONTE, UTILE ALL'ARCIERE");
+  var laur = GARE.filter(function (e) { return e.date === "2026-11-08" && codiceFonte(e) === "08LAUR"; });
+  prova("l'incongruenza e' reale: 08LAUR non e' nell'elenco, 08LUAR si'",
+    !COMP["08LAUR"] && !!COMP["08LUAR"] && COMP["08LUAR"].nome === "I Lunghi Archi" &&
+    COMP["08LUAR"].regione === "Emilia-Romagna" && COMP["08LUAR"].luogo === "Sasso Marconi (BO)");
+  prova("una sola gara, e conserva il codice stampato dal calendario (sourceClubCode e id)",
+    laur.length === 1 && laur[0].sourceClubCode === "08LAUR" && laur[0].id === "fiarc-2026-11-08-08LAUR-percorso",
+    JSON.stringify(laur));
+  prova("la compagnia canonica e' 08LUAR, con nome e regione dall'elenco",
+    laur.length === 1 && laur[0].clubCode === "08LUAR" && laur[0].club === "I Lunghi Archi" &&
+    laur[0].title === "I Lunghi Archi" && laur[0].region === "Emilia-Romagna");
+  prova("stessa zona e stesse lettere: e' l'unico candidato con prefisso 08",
+    Object.keys(COMP).filter(function (k) {
+      return /^08/.test(k) && k.split("").sort().join("") === "08LAUR".split("").sort().join("");
+    }).join(",") === "08LUAR");
+  prova("il luogo della gara non si prende dal campo della compagnia (Sasso Marconi)",
+    laur.length === 1 && laur[0].location === null);
+  prova("sourceClubCode c'e' solo dove le due fonti non coincidono",
+    GARE.filter(function (e) { return "sourceClubCode" in e; }).map(function (e) { return e.id; }).join(",") === "fiarc-2026-11-08-08LAUR-percorso" &&
+    GARE.every(function (e) { return !e.sourceClubCode || e.sourceClubCode !== e.clubCode; }));
+  prova("ogni codice compagnia del calendario risolve una compagnia dell'elenco",
+    GARE.every(function (e) { return !!COMP[e.clubCode]; }),
+    GARE.filter(function (e) { return !COMP[e.clubCode]; }).map(function (e) { return e.clubCode; }).join(", "));
+
+  // ── 4-ter. COMPAGNIE CON IL CAMPO VUOTO NELL'ELENCO FIARC ───────────────
+  // (29/09/2026.) Elenchi FIARC Piemonte 10/07, Liguria 13/07, Lombardia 10/07,
+  // Toscana 10/07/2026: per queste compagnie «Loc. Campo: -». Provincia e luogo
+  // restano «—»: non si deducono da fonti non ufficiali. 04GROA aveva «MB»
+  // (dal primo caricamento del file, 01/08), che l'elenco non dice: tolto.
+  titolo("COMPAGNIE SENZA CAMPO NELL'ELENCO FIARC: PROVINCIA E LUOGO «—», NIENTE DEDOTTO");
+  [["01LUPI", "Piemonte"], ["03LUNA", "Liguria"], ["04CORM", "Lombardia"], ["04GROA", "Lombardia"], ["09ATON", "Toscana"]].forEach(function (x) {
+    var c = COMP[x[0]];
+    prova(x[0] + " " + (c ? c.nome : "?") + ": " + x[1] + ", provincia e luogo «—»",
+      !!c && c.regione === x[1] && c.provincia === "—" && c.luogo === "—", JSON.stringify(c));
+  });
+  prova("08LUAR invece il campo ce l'ha: Sasso Marconi (BO)",
+    !!COMP["08LUAR"] && COMP["08LUAR"].provincia === "BO" && COMP["08LUAR"].luogo === "Sasso Marconi (BO)");
 
   // ── 5. LA FONTE, E I SUOI LINK ──────────────────────────────────────────
   titolo("OGNI GARA PORTA LA SUA PAGINA UFFICIALE, E PASSA DAL VAGLIO DEI LINK");
@@ -238,6 +286,9 @@ function trova(r) {
   prova("la nota della fonte c'e' in nove lingue, con la data e il nome FIARC",
     agg.length === 9 && agg.every(function (x) { return /\{d\}/.test(x) && /FIARC/.test(x); }), agg.length);
   prova("«Luogo da confermare» c'e' in nove lingue", nd.length === 9, nd.length);
+  var cf = SRC.match(/cal_det_codice_fonte: "[^"]*"/g) || [];
+  prova("«Codice sul calendario FIARC» c'e' in nove lingue, col nome FIARC",
+    cf.length === 9 && cf.every(function (x) { return /FIARC/.test(x); }), cf.length);
   prova("le frasi di esempio di prima sono sparite",
     !/Dati di esempio|Sample data|Données d’exemple|Beispieldaten|Örnek veriler|Пример данных|Datos de ejemplo|Exempeldata|Voorbeeldgegevens/.test(SRC));
 
@@ -301,9 +352,34 @@ function trova(r) {
     prova("ogni riga porta il codice della compagnia che la FIARC pubblica",
       d.righe.every(function (r) { return /\b\d{2}[A-Z]{4}\b/.test(r.sotto); }),
       JSON.stringify(d.righe.map(function (r) { return r.sotto; }).slice(0, 3)));
-    prova("08LAUR si presenta col suo codice, senza nome inventato",
-      d.righe.some(function (r) { return r.titolo === "Compagnia 08LAUR" && /Emilia Romagna e RSM$/.test(r.luogo); }),
-      JSON.stringify(d.righe.filter(function (r) { return /08LAUR/.test(r.titolo); })));
+    var rLuar = d.righe.filter(function (r) { return r.giorno.trim() === "8" && /08LUAR/.test(r.sotto); });
+    prova("la gara 08LAUR non si presenta come compagnia sconosciuta: I Lunghi Archi, 08LUAR, Emilia-Romagna",
+      rLuar.length === 1 && rLuar[0].titolo === "I Lunghi Archi" && /Emilia-Romagna$/.test(rLuar[0].luogo) &&
+      !d.righe.some(function (r) { return /Compagnia 08LAUR/.test(r.titolo); }),
+      JSON.stringify(rLuar));
+    var det = await p.page.evaluate(function () {
+      var b = Array.prototype.filter.call(document.querySelectorAll(".al-blocco"), function (x) {
+        return /08LUAR/.test(x.textContent);
+      })[0];
+      if (!b) return "";
+      b.querySelector(".al-tocca").click();
+      var aperto = Array.prototype.filter.call(document.querySelectorAll(".al-blocco.aperta"), function (x) {
+        return /08LUAR/.test(x.textContent);
+      })[0];
+      return aperto ? aperto.innerText : "";
+    });
+    prova("aperta, la scheda dice tutte e due le fonti: «I Lunghi Archi (08LUAR)» e «Codice sul calendario FIARC 08LAUR»",
+      /I Lunghi Archi \(08LUAR\)/.test(det) && /Codice sul calendario FIARC\s*08LAUR/.test(det), JSON.stringify(det));
+    var detAltro = await p.page.evaluate(function () {
+      var b = Array.prototype.filter.call(document.querySelectorAll(".al-blocco"), function (x) { return /01DAHU/.test(x.textContent); })[0];
+      b.querySelector(".al-tocca").click();
+      var aperto = document.querySelector(".al-blocco.aperta");
+      return aperto ? aperto.innerText : "";
+    });
+    prova("e le altre gare non hanno la riga del codice di calendario",
+      /01DAHU/.test(detAltro) && !/Codice sul calendario/.test(detAltro), JSON.stringify(detAltro));
+    await p.page.evaluate(function () { var a = document.querySelector(".al-blocco.aperta .al-tocca"); if (a) a.click(); });
+    await p.page.waitForTimeout(200);
     prova("il cartello «dati di esempio» non compare", !/esempio/i.test(d.testo));
     await p.page.evaluate(function () {
       var b = Array.prototype.filter.call(document.querySelectorAll(".chip-filtro"), function (c) { return c.textContent.trim() === "FIARC"; })[0];
