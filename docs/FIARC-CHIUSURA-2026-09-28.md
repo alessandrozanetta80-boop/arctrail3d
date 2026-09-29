@@ -380,3 +380,31 @@ specificate». «MB» resta fra le province per le altre 10 compagnie che ce l'h
 - secondo giro, identico: **68 banchi, 2994 prove, 0 cadute, «TUTTI PASSATI», uscita 0**. I 4
   banchi senza conteggio letti a mano, puliti (`controlla-token` «Niente e' peggiorato»,
   `banco-firme`, `prova-schermo`, mercatino). Saltato come sempre `banco-porta.js` (rete vera).
+
+### 9.6 Pubblicazione (29/09/2026)
+
+- **Commit** `cc4f468` «feat(fiarc): 08LAUR->08LUAR, metadati compagnie e descrizioni da
+  regolamento», pushato su `main` dopo la suite verde. **Solo sito: Functions, regole Firestore e
+  APK invariati.**
+- **Verifica di produzione su arctrail3d.com** (GitHub Pages servito al 5° controllo, ~1 minuto):
+  - `app.html`, `sw.js`, `compagnie-data.js` HTTP 200 e **identici byte per byte** al commit;
+  - `BUILD_STAMP` `2026-09-29-fiarc-finale`, genitore `2026-09-29-calendario-fiarc`; 17 gare,
+    `var CAL_MOCK` assente; la gara dell'08/11 ha `clubCode:"08LUAR", sourceClubCode:"08LAUR"`;
+    `cal_det_codice_fonte` in 9 lingue; distanze massime nei testi;
+  - `sw.js`: `arctrail3d-v173`, genitore `v172`, impronta `arctrail3d-v173:51ba4b7dde86329a`;
+  - `compagnie-data.js`: 04GROA con provincia «—»;
+  - `tests/controlla-base.js`: **IN PARI**; `tools/controlla-sito-pubblico.js`: «Tutto come deve
+    essere» (interni a 404, per esempio `docs/STATO-RIPRESA.md`, `tests/banco-italia.js`).
+- **CI GitHub «banchi» (run 36536620491): rosso, come nei 5 run precedenti.** 68 banchi, 2994
+  prove, 8 cadute:
+  - 6 × `banco-font-scale` «la testata va su due righe» (it/de, 320–352 px, 120–150%): le
+    stesse cadute ci sono in tutti i run precedenti (3–6 per run), perché sul runner Linux i
+    caratteri sono diversi da quelli del telefono. **Pre-esistente, non causato da questo giro**
+    (testata e CSS non toccati). In locale 83/83;
+  - 2 × `banco-dati-rollback` («l'app del 18/09 vede tutti e 5 i giri — giri 4», «il giro della
+    finestra SALE sul cloud — cloud 4»): nuove in questo run, ma quelle prove girano sulle app
+    del 18/09 e della release prese dalla storia git, che il giro non tocca. In locale **23/23
+    tre volte su tre**. Trattate come instabilità del runner; se ricompaiono nel prossimo run,
+    vanno guardate a parte.
+  - Da decidere a parte (backlog): rendere `banco-font-scale` stabile in CI (font fissati) o
+    escluderlo dal workflow, così il rosso della CI torna a voler dire qualcosa.

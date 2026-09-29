@@ -47,7 +47,13 @@ Regolamento Sportivo 02/12/2023).
   `arctrail3d-v173` (genitore v172), impronta `arctrail3d-v173:51ba4b7dde86329a`.
 - **Test:** suite completa 68 banchi, 2994 prove, 0 cadute, TUTTI PASSATI (un primo giro aveva una
   caduta di `banco-font-scale` sotto carico, 83/83 da solo: vedi report §9.5).
-- **Pubblicazione:** vedi §1.1 e report §9.6. Functions, regole Firestore e APK invariati.
+- **PUBBLICATO E VERIFICATO ONLINE (29/09):** commit `cc4f468` su `main`, solo sito. Online
+  `app.html`, `sw.js` e `compagnie-data.js` identici al commit, timbro `2026-09-29-fiarc-finale`,
+  cassa `arctrail3d-v173`; `controlla-base` IN PARI, file interni a 404 (report §9.6).
+  Functions, regole Firestore e APK invariati.
+- **CI GitHub «banchi»: rossa, come nei 5 run precedenti** — 6 cadute di `banco-font-scale`
+  (font del runner Linux, pre-esistenti) e 2 di `banco-dati-rollback` (app storiche, 23/23 in
+  locale tre volte). Dettaglio e proposta in report §9.6.
 
 ### 1.0 FIARC: calendario reale, PUBBLICATO E VERIFICATO ONLINE (29/09/2026)
 
@@ -84,12 +90,13 @@ Sotto, il giro com'era a fine lavoro in locale (28/09, chiuso il 29/09):
 
 ### 1.1 Produzione
 
-- **GitHub:** ultimo commit che ha toccato il sito: `1bcc935` (29/09, calendario FIARC reale).
+- **GitHub:** ultimo commit che ha toccato il sito: `cc4f468` (29/09, FIARC finale; prima
+  `1bcc935`, calendario FIARC reale).
   Eventuali commit successivi solo documentali non cambiano la versione online. Repository pubblico
   `alessandrozanetta80-boop/arctrail3d`; il sito è GitHub Pages su arctrail3d.com.
 - **Sito online:** vetrina `2026-09-28-seo-regolamenti` e mercatino `2026-08-25-radice`
-  (verificati il 28/09); app `2026-09-29-calendario-fiarc` e cassa `arctrail3d-v172`
-  (verificate il 29/09, §1.0).
+  (verificati il 28/09); app `2026-09-29-fiarc-finale` e cassa `arctrail3d-v173`
+  (verificate il 29/09, §1.0-bis).
 - **Functions e regole Firestore: INVARIATE dal 18/09.** Online: 7 Functions
   `2026-08-28-notifica-verificata`, regole `2026-08-28-porte-verified`. Su `main` ci
   sono già le versioni nuove, **NON pubblicate**: Functions `2026-09-22-push-argomento`
