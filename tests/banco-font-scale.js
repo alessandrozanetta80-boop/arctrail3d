@@ -57,6 +57,7 @@ var { chromium } = require("playwright");
 var SABOTA = process.argv.indexOf("--sabota") >= 0;
 var FILE = process.argv.slice(2).filter(function(a){ return a.indexOf("--") !== 0; })[0] || "app.html";
 var src = fs.readFileSync(FILE, "utf8").replace(/\r\n/g, "\n");
+var INTER_TEST = require.resolve("@fontsource-variable/inter/files/inter-latin-wght-normal.woff2");
 
 var ok = 0, ko = 0;
 function prova(n, c, extra){
@@ -81,6 +82,11 @@ if (SABOTA) {
 
 var D = path.join(os.tmpdir(), "arctrail-banco-font-scale");
 if(!fs.existsSync(D)) fs.mkdirSync(D, { recursive:true });
+/* Il banco deve misurare la tipografia dell app, non il font casuale del runner.
+   La produzione usa Inter quando arriva Google Fonts; qui lo fissiamo localmente
+   cosi Windows e Linux misurano gli stessi glifi anche senza rete. */
+fs.copyFileSync(INTER_TEST, path.join(D, "inter-test.woff2"));
+src += "\n<style>@font-face{font-family:\"Inter\";src:url(./inter-test.woff2) format(\"woff2\");font-style:normal;font-weight:100 900;font-display:block}</style>\n";
 fs.writeFileSync(path.join(D, "index.html"), require("./copia-dev.js").accendiDev(src));
 ["compagnie-data.js", "logo.webp", "logo.jpg"].forEach(function(x){
   if(fs.existsSync(x)) fs.copyFileSync(x, path.join(D, x));
@@ -180,6 +186,7 @@ async function combinazione(browser, modo, s, w, h, lang, completa){
   }, stato(lang));
   if (modo === "T" && s !== 1) await p.addInitScript(scalaTesto, s);
   await p.goto(URL);
+  await p.evaluate(function(){ return document.fonts.load("800 16px Inter"); });
   await p.waitForTimeout(900);
 
   var etichetta = modo + " " + Math.round(s * 100) + "% " + w + "x" + h + (modo === "Z" ? " (css " + vw + "x" + vh + ")" : "") + " " + lang;
