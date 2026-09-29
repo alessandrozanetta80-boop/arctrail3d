@@ -41,6 +41,22 @@
 # repository: i file del sito (app.html, index.html...) si leggono da li'.
 cd "$(dirname "$0")/.." || exit 1
 
+# GUARDIANO DELLA SUITE (29/09/2026): una sola suite per volta, e ogni banco
+# ha un tempo massimo. Evita doppioni/orfani che possono bruciare ore.
+BANCO_TIMEOUT=${BANCO_TIMEOUT:-420}
+ARCTRAIL_SUITE_LOCK="${TMPDIR:-/tmp}/arctrail3d-suite.lock"
+if ! mkdir "$ARCTRAIL_SUITE_LOCK" 2>/dev/null; then
+  oldpid="$(cat "$ARCTRAIL_SUITE_LOCK/pid" 2>/dev/null || true)"
+  if [ -n "$oldpid" ] && kill -0 "$oldpid" 2>/dev/null; then
+    echo "SUITE GIA' IN CORSO (pid $oldpid): non ne avvio una seconda."
+    exit 75
+  fi
+  rm -rf "$ARCTRAIL_SUITE_LOCK"
+  mkdir "$ARCTRAIL_SUITE_LOCK" || exit 75
+fi
+echo "$$" > "$ARCTRAIL_SUITE_LOCK/pid"
+trap 'rm -rf "$ARCTRAIL_SUITE_LOCK"' EXIT INT TERM HUP
+
 PAR=${PAR:-6}
 fallito=0
 riga() { echo ""; echo "════════ $1 ════════"; }
@@ -170,7 +186,7 @@ attivi=0
 while [ $i -le $n ]; do
   # Ogni banco scrive nel SUO file: due che stampano insieme sulla stessa
   # uscita si intrecciano riga per riga, ed e' illeggibile.
-  ( sh -c "$(cat "$D/$i.cmd")" > "$D/$i.out" 2>&1; echo $? > "$D/$i.esito" ) &
+  ( timeout "${BANCO_TIMEOUT}s" sh -c "$(cat "$D/$i.cmd")" > "$D/$i.out" 2>&1; rc=$?; [ "$rc" = "124" ] && echo "TIMEOUT: banco oltre ${BANCO_TIMEOUT}s" >> "$D/$i.out"; echo "$rc" > "$D/$i.esito" ) &
   attivi=$((attivi + 1))
   if [ $attivi -ge $PAR ]; then wait; attivi=0; fi
   i=$((i + 1))

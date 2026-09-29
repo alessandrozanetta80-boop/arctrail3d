@@ -11,6 +11,10 @@
 # push a main i file sono quelli online (IN PARI), su un ramo sono AVANTI.
 name: banchi
 
+concurrency:
+  group: banchi-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
   pull_request:
@@ -21,7 +25,7 @@ permissions:
 jobs:
   banchi:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,5 +51,5 @@ jobs:
       - name: Chromium di playwright
         run: npx playwright install --with-deps chromium
       - name: Tutti i banchi
-        # Browser/test seriali in CI: evita falsi rossi da carico concorrente senza escludere prove.
-        run: PAR=1 sh tests/controlla-tutto.sh
+        # Parallelismo controllato: abbastanza rapido, senza saturare il runner o creare falsi rossi.
+        run: PAR=3 BANCO_TIMEOUT=420 sh tests/controlla-tutto.sh

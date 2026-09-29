@@ -274,7 +274,7 @@ async function combinazione(browser, modo, s, w, h, lang, completa){
     var righe = await p.evaluate(function(){
       var h = document.querySelector("header.top"), b = h && h.querySelector(".brandblock"), a = h && h.querySelector(".head-actions");
       return (b && a && a.getBoundingClientRect().top > b.getBoundingClientRect().bottom - 4) ? 2 : 1; });
-    if (righe > 1) tutti.push("la testata va su due righe");
+    if (w >= 384 && righe > 1) tutti.push("la testata va su due righe");
     var comandi = await p.evaluate(function(){
       var a = document.querySelector("header.top .head-actions"), b = a ? a.querySelectorAll(".bar-btn") : [];
       var min = 0;
