@@ -98,7 +98,8 @@ var INTERNI = /^(android|docs|tests|tools|archive|functions)\//;
 var dentro = pubblicati.filter(function (f) { return INTERNI.test(f); });
 prova("nessun file di android/, docs/, tests/, tools/, archive/, functions/", dentro.length === 0, dentro.slice(0, 5).join(", "));
 var js = pubblicati.filter(function (f) { return /\.js$/.test(f) && f.indexOf("/") < 0; });
-var JS_DEL_SITO = { "sw.js": 1, "firebase-messaging-sw.js": 1, "compagnie-data.js": 1 };
+var JS_DEL_SITO = { "sw.js": 1, "firebase-messaging-sw.js": 1, "compagnie-data.js": 1,
+                   "campo-geo.js": 1, "campo-mappa.js": 1 };  // Mappa campo GPS (02/10/2026)
 var jsEstranei = js.filter(function (f) { return !JS_DEL_SITO[f]; });
 prova("i .js in radice sono solo quelli del sito", jsEstranei.length === 0, jsEstranei.join(", "));
 if (process.env.ELENCO) pubblicati.forEach(function (f) { console.log("    " + f); });

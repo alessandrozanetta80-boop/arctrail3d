@@ -1,0 +1,11 @@
+{
+  "storage": { "rules": ".campo-avvio-storage.rules" },
+  "emulators": {
+    "firestore": { "port": 8086, "websocketPort": 9156 },
+    "storage": { "port": 9198 },
+    "hub": { "port": 4406 },
+    "logging": { "port": 4506 },
+    "ui": { "enabled": false },
+    "singleProjectMode": true
+  }
+}

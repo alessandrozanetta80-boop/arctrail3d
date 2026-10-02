@@ -1962,6 +1962,23 @@ background:none; width:auto; height:auto; }
    Resta maiuscola — serve a distinguerla dal contenuto — ma piu' piccola,
    piu' stretta e piu' vicina al suo campo: sopra `--s-3`, sotto `--s-1`
    diventa un blocco solo con l'input invece di due cose separate. */
+/* MAPPA CAMPO / MANUTENZIONE CAMPO (02/10/2026): disegno in campo-mappa.js. */
+.campo-mappa .card{ margin-bottom:var(--s-3); }
+.campo-riga,.campo-bottoni,.campo-azioni,.campo-nav{ display:flex; flex-wrap:wrap; gap:var(--s-2); align-items:center; margin-top:var(--s-2); }
+.campo-riga > .input-field{ flex:1 1 140px; min-width:0; }
+.campo-mappa-box{ width:100%; border:1px solid var(--line); border-radius:var(--r-app); overflow:hidden; }
+.campo-svg{ display:block; width:100%; height:auto; max-height:60vh; touch-action:manipulation; }
+.campo-svg polyline{ fill:none; stroke:var(--green-500); stroke-width:3; stroke-linejoin:round; stroke-linecap:round; }
+.campo-mk circle{ fill:var(--red-700); stroke:var(--bg-panel); stroke-width:2; } .campo-mk text{ font-size:10px; fill:var(--bg-panel); pointer-events:none; }
+.campo-mk-in_progress circle{ fill:var(--text-3); } .campo-mk-resolved circle{ fill:var(--green-500); }
+.campo-io{ fill:var(--blue-600); stroke:var(--bg-panel); stroke-width:2; }
+.campo-mappa-vuota,.campo-sotto,.campo-scala-t,.campo-reg-stato,.campo-gps,.campo-pos,.campo-dist{ font-size:var(--t-xs); color:var(--text-3); margin-top:var(--s-1); }
+.campo-voce{ display:block; width:100%; text-align:left; padding:var(--s-2) 0; border:0; border-bottom:1px solid var(--line); background:none; color:inherit; font:inherit; }
+.campo-voce-t{ font-weight:600; } .campo-st-resolved{ opacity:.7; }
+.campo-sync{ font-size:var(--t-xs); margin-top:var(--s-2); } .campo-sync-attesa{ color:var(--danger); font-weight:600; }
+.campo-foto{ max-width:100%; border-radius:var(--r-xs); margin-top:var(--s-2); }
+.campo-freccia{ display:inline-block; font-size:1.4em; line-height:1; }
+.campo-pericolo{ color:var(--danger); } .campo-storia,.campo-nota{ font-size:var(--t-xs); margin-top:var(--s-2); white-space:pre-wrap; overflow-wrap:anywhere; }
 .campo-eti{ font-size:var(--t-2xs); font-weight:700; letter-spacing:.04em;
 text-transform:uppercase; color:var(--text-3);
 margin:var(--s-3) 0 var(--s-1); line-height:1.3; }
@@ -16902,6 +16919,7 @@ if(pgAccessAllowed() === false){ state.screen = "menu"; save(); app.appendChild(
 else { app.appendChild(preparaGaraScreen()); }
 break;
 case "campi": app.appendChild(campiScreen()); break;
+case "campo-mappa": app.appendChild(campoMappaScreen()); break;
 case "calendario": app.appendChild(calendarioScreen()); break;
 case "compagnie": app.appendChild(compagnieScreen()); break;
 case "club-space": app.appendChild(clubSpaceScreen()); break;
@@ -23122,9 +23140,65 @@ wrap.appendChild(card);
 return wrap;
 }
 
+/* ══ MAPPA CAMPO / MANUTENZIONE CAMPO (02/10/2026) ═══════════════════════
+   Logica e repository in campo-geo.js, disegno in campo-mappa.js: si caricano
+   quando la schermata si apre, come compagnie-data.js, non a ogni avvio.
+   Lo Storage SDK (foto) arriva solo quando serve davvero una foto. */
+var campoScriptStato = null; // null | "carica" | "ok" | "errore"
+function caricaCampoScript(){
+if(campoScriptStato) return;
+campoScriptStato = "carica";
+function uno(src, dopo){
+var sc = document.createElement("script"); sc.src = src; sc.async = false;
+sc.onload = dopo; sc.onerror = function(){ campoScriptStato = "errore"; try{ render(); }catch(e){} };
+document.head.appendChild(sc);
+}
+uno("campo-geo.js", function(){ uno("campo-mappa.js", function(){ campoScriptStato = "ok"; try{ render(); }catch(e){} }); });
+}
+var campoStoragePromessa = null;
+function caricaStorageCampo(){
+if(typeof firebase !== "undefined" && firebase.storage) return Promise.resolve(true);
+if(campoStoragePromessa) return campoStoragePromessa;
+campoStoragePromessa = new Promise(function(risolvi){
+var sc = document.createElement("script");
+sc.src = "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js";
+sc.onload = function(){ risolvi(!!(firebase && firebase.storage)); };
+sc.onerror = function(){ campoStoragePromessa = null; risolvi(false); };
+document.head.appendChild(sc);
+});
+return campoStoragePromessa;
+}
+function campoMappaScreen(){
+initCompagnieData();
+var wrap = el('<div></div>');
+var indietro = el('<button type="button" class="btn btn-ghost">← ' + escapeHtml(state.lang === "it" || !state.lang ? "Campi" : "Courses") + '</button>');
+indietro.addEventListener("click", function(){ state.screen = "campi"; save(); render(); });
+wrap.appendChild(indietro);
+if(campoScriptStato !== "ok" || !window.CampoMappaUI){
+caricaCampoScript();
+wrap.appendChild(el('<div class="card"><div class="nota">' + escapeHtml(campoScriptStato === "errore" ? "Mappa campo non disponibile: serve la rete la prima volta." : "…") + '</div></div>'));
+return wrap;
+}
+wrap.appendChild(window.CampoMappaUI.schermo({
+el: el, escapeHtml: escapeHtml, lang: state.lang || "it",
+db: (typeof db !== "undefined" && db && currentUser) ? db : null,
+storage: function(){ return (typeof firebase !== "undefined" && firebase.storage) ? firebase.storage() : null; },
+caricaStorage: caricaStorageCampo,
+user: currentUser || null,
+isAdmin: !!(currentUser && currentUser.email === ADMIN_EMAIL && currentUser.emailVerified),
+clubCode: myClubCode(),
+nomeCompagnia: compagniaNome,
+render: render
+}));
+return wrap;
+}
+
 function campiScreen(){
 initCompagnieData();
 var wrap = el('<div></div>');
+var vaiMappa = el('<button type="button" class="btn btn-ghost btn-block" data-campo-mappa="1">' + escapeHtml(state.lang === "it" || !state.lang ? "Mappa campo · Segnala problema" : "Course map · Report a problem") + '</button>');
+vaiMappa.addEventListener("click", function(){ state.screen = "campo-mappa"; save(); render(); });
+wrap.appendChild(vaiMappa);
 
 function apriMaps(query){
 var openIt = function(coords){
@@ -24499,7 +24573,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-09-29-calendario-fitarco";
+var BUILD_STAMP = "2026-10-02-campo-gps";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24508,7 +24582,7 @@ var BUILD_STAMP = "2026-09-29-calendario-fitarco";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-09-29-fiarc-finale";
+var BUILD_PARENT = "2026-09-29-calendario-fitarco";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

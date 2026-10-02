@@ -141,6 +141,8 @@ banco "banco-ibo.js (il bareme IBO, sulle regole 2026)" "node tests/banco-ibo.js
 banco "banco-calendario.js (il calendario dice da chi viene il dato)" "node tests/banco-calendario.js app.html"
 banco "banco-calendario-fiarc.js (le gare FIARC 2026 vere: date, codici, tipi, niente 2025, niente luoghi inventati)" "node tests/banco-calendario-fiarc.js app.html"
 banco "banco-calendario-fitarco.js (le 3 gare FITARCO 3D dall'invito ufficiale, FIARC intatto)" "node tests/banco-calendario-fitarco.js app.html"
+banco "banco-campo-geo.js (mappa campo: geohash, segmenti, lunghezza, coda offline, stati, permessi)" "node tests/banco-campo-geo.js"
+banco "banco-campo-schermo.js (mappa campo nel browser: 360, 384, desktop; coda offline che sopravvive alla ricarica)" "node tests/banco-campo-schermo.js"
 banco "banco-ritorno.js (il ritorno canonico e le cose che non tornano)" "node tests/banco-ritorno.js app.html"
 banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node tests/controlla-diari.js"
 # Dal 19/09/2026 (risanamento post-audit). Le regole Firestore non giravano in
@@ -151,6 +153,7 @@ banco "controlla-diari.js (i file di testo si possono ancora leggere)" "node tes
 # `banco-finestra` chiede se dicono di SI' a chi non ha ancora aggiornato l'app —
 # due domande diverse, e la seconda si scopre solo il giorno del deploy.
 banco "banco-regole.js + banco-finestra.js (le regole sull'emulatore: chi puo' scrivere cosa, e la finestra di deploy)" "sh tests/lancia-regole.sh"
+banco "banco-campo-regole.js (mappa campo: regole Firestore e Storage sugli emulatori)" "sh tests/lancia-campo-regole.sh"
 banco "banco-xss.js (quello che scrive un altro non diventa codice sul mio telefono)" "node tests/banco-xss.js"
 banco "banco-account.js (due persone, un telefono: i dati di A non vanno a B)" "node tests/banco-account.js"
 banco "banco-sw-aggiornamento.js (una versione nuova non toglie l'app di mano, nemmeno a meta' giro)" "node tests/banco-sw-aggiornamento.js"

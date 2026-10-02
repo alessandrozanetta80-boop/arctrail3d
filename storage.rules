@@ -1,6 +1,6 @@
 rules_version = '2';
 // ArcTrail 3D — regole Storage
-// Versione 2026-08-13-listall
+// Versione 2026-10-02-campo-gps (nata da 2026-08-13-listall)
 //
 // CORREZIONE: prima c'era solo "match /market/{userId}/{fileName}".
 // Il delete del singolo file funzionava, ma listAll() sulla CARTELLA no:
@@ -32,6 +32,38 @@ service firebase.storage {
 
         allow delete: if request.auth != null && request.auth.uid == userId;
       }
+    }
+
+    // Foto delle segnalazioni del campo (02/10/2026), separate dal mercatino.
+    // Percorso: field_issues/{companyCode}/{issueId}/{fotoId}.jpg
+    // L'app salva il PATH in Firestore, mai l'URL: l'URL si chiede quando serve.
+    match /field_issues/{code}/{issueId}/{fileName} {
+      allow read: if request.auth != null;
+
+      // Chi carica si firma nei metadati; un file esistente non si sovrascrive
+      // (stesso path = stessa foto: un nuovo tentativo dopo una rete caduta
+      // trova il file gia' li' e passa oltre). Solo immagini, sotto 5 MB.
+      // `resource == null` e' la riga che vieta davvero la sovrascrittura:
+      // senza, l'emulatore (e Storage) trattano un put su un file esistente
+      // come `create`, e un altro utente rimpiazzava la foto col proprio nome.
+      allow create: if request.auth != null
+                    && resource == null
+                    && request.auth.token.get('email_verified', false) == true
+                    && request.resource.size < 5 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*')
+                    && request.resource.metadata.ownerUid == request.auth.uid;
+      allow update: if false;
+
+      // Cancella chi l'ha caricata, oppure chi gestisce quel campo (stessa
+      // definizione di `isFieldManager` in firestore.rules).
+      allow delete: if request.auth != null && (
+        resource.metadata.ownerUid == request.auth.uid
+        || request.auth.token.get('email', '') == "alessandro.zanetta80@gmail.com"
+        || (firestore.exists(/databases/(default)/documents/compagnie_admin/$(code))
+            && firestore.get(/databases/(default)/documents/compagnie_admin/$(code)).data.adminUid == request.auth.uid)
+        || (firestore.exists(/databases/(default)/documents/field_maintainers/$(code)/members/$(request.auth.uid))
+            && firestore.get(/databases/(default)/documents/field_maintainers/$(code)/members/$(request.auth.uid)).data.active == true)
+      );
     }
   }
 }
