@@ -26,10 +26,24 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 
 ## 1. STATO ATTUALE (29/09/2026; in cima il giro del 02/10)
 
-### 1.0-quater Mappa campo GPS: percorsi + segnalazioni (02/10/2026) — PUBBLICATO (giro _06)
+### 1.0-quater Mappa campo GPS: percorsi + segnalazioni (02/10/2026) — PUBBLICATO (giri _06 e _08)
+
+**Giro _08 (`CLAUDE_TASK_ARCTRAIL_GPS_UI_PUBBLICAZIONE_08.md`, 02/10): v176 PUBBLICATA E
+VERIFICATA ONLINE.** Push autorizzato da Alessandro nel task. Prima del push, test mirati di nuovo
+verdi: `banco-campo-schermo` 75/75, `banco-campo-geo` 53/53, `controlla-versioni` 30/30,
+`controlla-cache` ok, `controlla-pubblicazione` 32/32, `git diff --check` pulito. Commit
+`dcd80cd` su `main` (i 5 file del giro _07). Online dopo ~1 minuto: `app.html`, `sw.js`,
+`campo-mappa.js`, `campo-geo.js` **identici al commit**; timbro `2026-10-02-campo-porte`, cassa
+`arctrail3d-v176`. Nel browser su `https://arctrail3d.com` (pagina scaricata dall'online, con il
+solo interruttore DEV del banco perché senza login l'online mostra l'accesso; script del campo
+presi dal sito vero) a 360×740, 384×832 e 1280×800: due tasti «Mappa campo» / «Segnala problema»
+in `.campo-porte`, dentro lo schermo, alti 58/58/44 px; vecchia scheda «Segnala un problema su un
+percorso» assente; «Segnala problema» apre il modulo, «Mappa campo» no; nessuno scorrimento
+orizzontale; nessun errore JS. **Firebase (regole, Storage), Functions e APK invariati.** Suite
+completa non rilanciata (come da task). Resta la prova a telefono da utente loggato (sotto).
 
 **Giro _07 (`CLAUDE_TASK_ARCTRAIL_GPS_UI_CONTINUAZIONE_07.md`, 02/10): Campi con due porte
-separate — PRONTO IN LOCALE, NON committato, NON pushato, NON pubblicato, nessun APK.**
+separate — pubblicato nel giro _08 (sopra); qui com'era a fine giro, in locale.**
 Nato dalla prova a telefono: il tasto unico «Mappa campo · Segnala problema» e la vecchia
 scheda in fondo «Segnala un problema su un percorso» confondevano.
 - **Cosa cambia (solo UI):** in cima a Campi due tasti affiancati (`.campo-porte`):
@@ -322,6 +336,8 @@ Sotto, il giro com'era a fine lavoro in locale (28/09, chiuso il 29/09):
 - **02/10 (giro _06): sito v175 (`5005e24`, mappa campo GPS) e regole Firestore
   `2026-10-02-live-campo-gps` + Storage `2026-10-02-campo-gps` ONLINE** — §1.0-quater. Le
   regole live sono quelle del 28/08 + solo campo GPS; il resto della riga sotto vale ancora.
+- **02/10 (giro _08): sito v176 (`dcd80cd`, Campi con «Mappa campo» / «Segnala problema»)
+  ONLINE**, app `2026-10-02-campo-porte`, cassa `arctrail3d-v176` — §1.0-quater. Solo sito.
 - **Functions INVARIATE dal 18/09; regole Firestore fino al 02/10.** Online: 7 Functions
   `2026-08-28-notifica-verificata`, regole `2026-08-28-porte-verified`. Su `main` ci
   sono già le versioni nuove, **NON pubblicate**: Functions `2026-09-22-push-argomento`
