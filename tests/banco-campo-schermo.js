@@ -152,6 +152,31 @@ async function misura(page) {
       m = await misura(page);
       prova("dettaglio: niente scorrimento orizzontale", m.scroll <= 0, m.scroll + " px");
       prova("dettaglio: tasti dentro lo schermo", !m.fuori.length, m.fuori.join("; "));
+
+      // Campi: due porte separate in cima, niente vecchia scheda in fondo.
+      await page.click("text=← Campi");
+      await page.waitForSelector("[data-campo-segnala]");
+      var porte = await page.evaluate(function () {
+        var W = document.documentElement.clientWidth, H = window.innerHeight;
+        function r(s) { var e = document.querySelector(s); if (!e) return null; var b = e.getBoundingClientRect(); return { t: e.textContent.trim(), l: b.left, r: b.right, top: b.top, h: b.height }; }
+        return { m: r("[data-campo-mappa]"), s: r("[data-campo-segnala]"), W: W, H: H, scroll: document.documentElement.scrollWidth - W,
+          vecchia: /Segnala un problema su un percorso/.test(document.body.innerText) };
+      });
+      prova("Campi: tasto «Mappa campo» da solo", porte.m && porte.m.t === "Mappa campo", porte.m && porte.m.t);
+      prova("Campi: tasto «Segnala problema» separato", porte.s && porte.s.t === "Segnala problema", porte.s && porte.s.t);
+      prova("Campi: i due tasti visibili in cima, dentro lo schermo, alti ≥ 44 px",
+        porte.m && porte.s && [porte.m, porte.s].every(function (b) { return b.l >= -0.5 && b.r <= porte.W + 0.5 && b.top < porte.H / 2 && b.h >= 43.5; }),
+        JSON.stringify(porte));
+      prova("Campi: niente scorrimento orizzontale", porte.scroll <= 0, porte.scroll + " px");
+      prova("Campi: la vecchia scheda «Segnala un problema su un percorso» non c'e' piu'", !porte.vecchia);
+      await page.click("[data-campo-segnala]");
+      await page.waitForSelector(".campo-mappa", { timeout: 8000 });
+      prova("«Segnala problema» apre subito il modulo della segnalazione", !!(await page.$(".campo-mappa .fr-tipi")) && !!(await page.$("text=Salva segnalazione")));
+      await page.click("text=← Campi");
+      await page.click("[data-campo-mappa]");
+      await page.waitForSelector(".campo-mappa", { timeout: 8000 });
+      prova("«Mappa campo» apre mappa e percorsi, non il modulo",
+        !(await page.$(".campo-mappa .fr-tipi")) && !!(await page.$(".campo-mappa .campo-azioni")) && !!(await page.$(".campo-mappa-box, .campo-mappa-vuota")));
       prova("nessun errore JS", !A.errori.length, A.errori.join(" | "));
       await A.ctx.close();
     }

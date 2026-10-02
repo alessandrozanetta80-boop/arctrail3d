@@ -255,17 +255,17 @@ self.addEventListener("message", function(event){
 // Il service worker nuovo il telefono se lo prende da solo, perche' il
 // browser rilegge SEMPRE questo file dalla rete: e' l'unica cosa che non
 // passa dalla cache, ed e' per questo che la cura sta qui e non altrove.
-var CACHE_NAME = "arctrail3d-v175";
+var CACHE_NAME = "arctrail3d-v176";
 // Alzata a v19 il 20/08 per lo stesso motivo di sempre: e' cambiato
 // `index.html`, che sta in APP_SHELL: senza il nome nuovo il telefono
 // continuerebbe a servire la copia di prima e la correzione non si
 // vedrebbe. Stessa regola del BUILD_STAMP, stesso motivo.
-var CACHE_PARENT = "arctrail3d-v174";
+var CACHE_PARENT = "arctrail3d-v175";
 // L'impronta dei file di APP_SHELL, scritta per questo CACHE_NAME.
 // La controlla `tests/controlla-cache.js`: se un file della shell cambia e il
 // nome no, il banco dice no. Si riscrive con `--scrivi`, DOPO aver alzato
 // CACHE_NAME (il banco rifiuta di farlo prima). (19/09/2026, audit S4.)
-var SHELL_IMPRONTA = "arctrail3d-v175:6cd82103f2245479";
+var SHELL_IMPRONTA = "arctrail3d-v176:f496cc1ecc70c814";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.

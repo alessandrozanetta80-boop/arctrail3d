@@ -1966,6 +1966,9 @@ background:none; width:auto; height:auto; }
 .campo-mappa .card{ margin-bottom:var(--s-3); }
 .campo-riga,.campo-bottoni,.campo-azioni,.campo-nav{ display:flex; flex-wrap:wrap; gap:var(--s-2); align-items:center; margin-top:var(--s-2); }
 .campo-riga > .input-field{ flex:1 1 140px; min-width:0; }
+/* In cima a Campi: «Mappa campo» e «Segnala problema», due tasti affiancati. */
+.campo-porte{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2); margin-bottom:var(--s-3); }
+.campo-porte > .btn{ margin:0; min-width:0; }
 .campo-mappa-box{ width:100%; border:1px solid var(--line); border-radius:var(--r-app); overflow:hidden; }
 .campo-svg{ display:block; width:100%; height:auto; max-height:60vh; touch-action:manipulation; }
 .campo-svg polyline{ fill:none; stroke:var(--green-500); stroke-width:3; stroke-linejoin:round; stroke-linecap:round; }
@@ -23145,6 +23148,7 @@ return wrap;
    quando la schermata si apre, come compagnie-data.js, non a ogni avvio.
    Lo Storage SDK (foto) arriva solo quando serve davvero una foto. */
 var campoScriptStato = null; // null | "carica" | "ok" | "errore"
+var campoApriVista = null; // "mappa" | "segnala": quale porta di Campi si e' usata
 function caricaCampoScript(){
 if(campoScriptStato) return;
 campoScriptStato = "carica";
@@ -23179,8 +23183,10 @@ caricaCampoScript();
 wrap.appendChild(el('<div class="card"><div class="nota">' + escapeHtml(campoScriptStato === "errore" ? "Mappa campo non disponibile: serve la rete la prima volta." : "…") + '</div></div>'));
 return wrap;
 }
+var vistaCampo = campoApriVista; campoApriVista = null;
 wrap.appendChild(window.CampoMappaUI.schermo({
 el: el, escapeHtml: escapeHtml, lang: state.lang || "it",
+vista: vistaCampo,
 db: (typeof db !== "undefined" && db && currentUser) ? db : null,
 storage: function(){ return (typeof firebase !== "undefined" && firebase.storage) ? firebase.storage() : null; },
 caricaStorage: caricaStorageCampo,
@@ -23196,9 +23202,19 @@ return wrap;
 function campiScreen(){
 initCompagnieData();
 var wrap = el('<div></div>');
-var vaiMappa = el('<button type="button" class="btn btn-ghost btn-block" data-campo-mappa="1">' + escapeHtml(state.lang === "it" || !state.lang ? "Mappa campo · Segnala problema" : "Course map · Report a problem") + '</button>');
-vaiMappa.addEventListener("click", function(){ state.screen = "campo-mappa"; save(); render(); });
-wrap.appendChild(vaiMappa);
+/* DUE PORTE, DUE STANZE. (02/10/2026, prova a telefono di Alessandro.) Il tasto
+   unico «Mappa campo · Segnala problema» e la vecchia scheda in fondo «Segnala un
+   problema su un percorso» erano tre porte per due cose: ora «Mappa campo» apre
+   mappa e percorsi GPS, «Segnala problema» apre subito il modulo della segnalazione
+   geolocalizzata (stessa schermata, vista «segnala»). */
+var itCampo = state.lang === "it" || !state.lang;
+var campoPorte = el('<div class="campo-porte"></div>');
+var vaiMappa = el('<button type="button" class="btn btn-ghost btn-block" data-campo-mappa="1">' + escapeHtml(itCampo ? "Mappa campo" : "Course map") + '</button>');
+vaiMappa.addEventListener("click", function(){ campoApriVista = "mappa"; state.screen = "campo-mappa"; save(); render(); });
+var vaiSegnala = el('<button type="button" class="btn btn-ghost btn-block" data-campo-segnala="1">' + escapeHtml(itCampo ? "Segnala problema" : "Report a problem") + '</button>');
+vaiSegnala.addEventListener("click", function(){ campoApriVista = "segnala"; state.screen = "campo-mappa"; save(); render(); });
+campoPorte.appendChild(vaiMappa); campoPorte.appendChild(vaiSegnala);
+wrap.appendChild(campoPorte);
 
 function apriMaps(query){
 var openIt = function(coords){
@@ -23510,30 +23526,14 @@ setTimeout(function(){ locBtn.innerHTML = icon("pin",16)+' '+t("campi_btn"); }, 
 mapsCard.appendChild(locBtn);
 wrap.appendChild(mapsCard);
 
-// Scorciatoie: annunciare un allenamento e segnalare un problema.
-// La scelta del campo avviene dentro i rispettivi moduli, che hanno gia' la ricerca.
 // «ANNUNCIA UN ALLENAMENTO» NON STA ANCHE QUI. (21/08/2026.) Lo stesso tasto
 // era in tre posti: sulla Home dentro «Allenamenti aperti», nella scheda Tira,
 // e qui. Tre porte per la stessa stanza non sono tre comodita': sono tre volte
 // la stessa domanda, e in una schermata che serve a TROVARE un campo e' anche
 // fuori tema.
-if(currentUser){
-/* IN CAMPI LA SEGNALAZIONE RESTA UNA RIGA LARGA. (22/08/2026, visto da
-   Alessandro: «e' diventato un rettangolo, io lo metterei lungo qua; sono due
-   cose diverse rispetto a quelle del profilo».)
-   Ed e' vero che sono due cose diverse: nel profilo le tessere sono un ELENCO
-   DI STANZE fra cui scegliere, e messe in griglia si confrontano. Questa e'
-   una sola, ed e' un'AZIONE — non c'e' niente da confrontare. Una tessera da
-   un terzo di pagina, sola in mezzo al bianco, sembra la prima di tre che non
-   sono mai arrivate.
-   `riga-lunga` esclude questa scheda dalla griglia a tre. */
-var actCard = el('<div class="card campi-seguito riga-lunga"></div>');
-
-var repBtn = el('<button class="btn btn-ghost btn-block menu-btn riga-attenzione"><span class="menu-icon">'+navIcon("azavviso",24,"unica")+'</span><span class="menu-txt">'+t("fr_report_open_btn")+'<span class="menu-sub">'+t("fr_report_sub")+'</span></span></button>');
-repBtn.addEventListener("click", function(){ state.frFrom = "menu"; frEsito = null; state.screen = "field-report"; save(); render(); });
-actCard.appendChild(repBtn);
-wrap.appendChild(actCard);
-}
+// Per la stessa ragione la vecchia scheda «Segnala un problema su un percorso»
+// in fondo non c'e' piu' (02/10/2026): la segnalazione si apre dal tasto
+// «Segnala problema» in cima.
 
 return wrap;
 }
@@ -24573,7 +24573,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-10-02-campo-gps";
+var BUILD_STAMP = "2026-10-02-campo-porte";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24582,7 +24582,7 @@ var BUILD_STAMP = "2026-10-02-campo-gps";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-09-29-calendario-fitarco";
+var BUILD_PARENT = "2026-10-02-campo-gps";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

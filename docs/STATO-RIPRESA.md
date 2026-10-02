@@ -1,4 +1,4 @@
-# STATO-RIPRESA — ArcTrail 3D — aggiornato il 29/09/2026
+# STATO-RIPRESA — ArcTrail 3D — aggiornato il 02/10/2026
 
 Da qui si riparte. **§1 è lo stato di oggi, §2 cosa resta da fare, §3 lo storico.**
 Dove lo storico dice «non pubblicato», «in attesa» o «da approvare», vale §1.
@@ -24,7 +24,211 @@ Le regole di lavoro complete stanno in `docs/REGOLE-LAVORO.md` e `docs/STATO.md`
 
 ---
 
-## 1. STATO ATTUALE (29/09/2026)
+## 1. STATO ATTUALE (29/09/2026; in cima il giro del 02/10)
+
+### 1.0-quater Mappa campo GPS: percorsi + segnalazioni (02/10/2026) — PUBBLICATO (giro _06)
+
+**Giro _07 (`CLAUDE_TASK_ARCTRAIL_GPS_UI_CONTINUAZIONE_07.md`, 02/10): Campi con due porte
+separate — PRONTO IN LOCALE, NON committato, NON pushato, NON pubblicato, nessun APK.**
+Nato dalla prova a telefono: il tasto unico «Mappa campo · Segnala problema» e la vecchia
+scheda in fondo «Segnala un problema su un percorso» confondevano.
+- **Cosa cambia (solo UI):** in cima a Campi due tasti affiancati (`.campo-porte`):
+  **«Mappa campo»** apre la schermata `campo-mappa` nella vista mappa/percorsi (Registra
+  percorso, elenco percorsi, mappa); **«Segnala problema»** apre la stessa schermata già nella
+  vista «segnala» (posizione GPS, categoria, nota, foto) e avvia il GPS. Se l'utente non può
+  segnalare (email non verificata) si ricade sulla mappa con l'avviso di sempre. La vista
+  scelta resta anche dopo la scelta del codice compagnia. **Tolta** la vecchia scheda in fondo.
+- **File:** `app.html` (tasti, variabile `campoApriVista`, passaggio `vista` a
+  `CampoMappaUI.schermo`, CSS `.campo-porte`, scheda vecchia rimossa), `campo-mappa.js`
+  (legge `ctx.vista`; 10 righe), `sw.js`, `tests/banco-campo-schermo.js` (+9 prove).
+  Logica GPS, modello dati, regole Firestore/Storage, Functions: **invariati**.
+- **Versioni:** app `2026-10-02-campo-porte` (genitore `2026-10-02-campo-gps`), cassa
+  `arctrail3d-v176` (genitore v175), impronta `arctrail3d-v176:f496cc1ecc70c814`.
+- **Test mirati:** `banco-campo-schermo` 75/75 a 360×740, 384×832 (S26) e 1280×800 (due tasti
+  separati, in cima, dentro lo schermo, ≥ 44 px, vecchia scheda assente, «Segnala problema» apre
+  subito il modulo, «Mappa campo» apre mappa e non il modulo, nessun errore JS);
+  `banco-campo-geo` 53/53; `controlla-versioni` 30/30; `controlla-cache` ok;
+  `controlla-pubblicazione` 32/32; `controlla-token` «niente è peggiorato»; `git diff --check`
+  pulito. Suite completa NON rilanciata (quella GPS del _04 era verde; modifica solo UI).
+- **Da provare a telefono (dopo la pubblicazione, decisione di Alessandro):** Campi → i due
+  tasti in cima, leggibili; «Segnala problema» → chiede la posizione e mostra subito il modulo;
+  «Mappa campo» → mappa e percorsi; in fondo a Campi nessuna scheda di segnalazione.
+- **Backlog laterale (non toccato):** il vecchio modulo `field-report` resta raggiungibile solo
+  dal tasto «Segnala» della barra durante un giro (`app.html` ~riga 18810): decidere se
+  portarlo anche lui alla segnalazione geolocalizzata; la chiave i18n `fr_report_open_btn` (9 lingue)
+  non è più usata da nessuna parte (`fr_report_sub` sì, altrove); le etichette dei due tasti sono solo
+  it/en come il tasto di prima.
+
+**Giro _06 (`CLAUDE_TASK_ARCTRAIL_GPS_PUBBLICAZIONE_06.md`, 02/10): GPS ONLINE senza gate 2/3.**
+Strada (b) autorizzata da Alessandro. Vale questo paragrafo; quanto sotto sul _05 è superato.
+- **Regole Firestore PUBBLICATE** (02/10 16:13 UTC, ruleset `8690dc23…`): file
+  `tools/regole-live-campo/firestore.rules`, versione `2026-10-02-live-campo-gps` = regole che
+  erano online (`2026-08-28-porte-verified`, letto dall'API Rules: identico a `7b0ffe9`) + SOLO il
+  blocco `field_maintainers`/`field_routes`(+`segments`)/`field_issues`(+`history`) + le due
+  funzioni che usa (`testoOpz`, `attivo`, copiate identiche da main; nessuna regola vecchia le
+  usa). Rispetto al live cambiano solo 2 righe di commento in testa. Si pubblica con
+  `npx firebase deploy --only firestore:rules --project arctrail3d --config tools/regole-live-campo/firebase.json`.
+  **`firestore.rules` di main resta il gate 3 (`2026-10-02-campo-gps`, NON pubblicato).**
+- **Regole Storage PUBBLICATE** (ruleset `130de6c9…`): `storage.rules` `2026-10-02-campo-gps` =
+  live `2026-08-13-listall` + sola regola `field_issues/...`; target `storage` aggiunto in
+  `firebase.json` (gli altri invariati). Online letto dopo il deploy = file locale, per entrambe.
+- **Rollback:** copie delle regole online PRIMA del deploy in
+  `C:\Users\Ale\.arctrail3d\rollback-regole\` (`cloud.firestore.rules`,
+  `arctrail3d.firebasestorage.app.rules`), fuori da Git.
+- **Test mirati prima del deploy:** `banco-campo-regole` sulle regole live+campo
+  (`REGOLE=tools/regole-live-campo/firestore.rules sh tests/lancia-campo-regole.sh`) 58/58;
+  banco regole dell'epoca live (`7b0ffe9:tests/banco-regole.js`) 78/78 sia sul live originale sia
+  sul live+campo (comportamento vecchio invariato); `banco-finestra` col live+campo 28/31: i 3
+  «rossi» sono proprio i comportamenti del gate 3 (app di ieri che perde elenco «solo club» e
+  scheda referente, documento `devices`), assenti come voluto; `banco-campo-geo` 53/53;
+  `controlla-versioni` 30/30; `controlla-cache` ok; `controlla-pubblicazione` 32/32 (ammessi
+  `campo-geo.js` e `campo-mappa.js` fra i .js del sito); dry-run di deploy compilato sul server;
+  `git diff --check` pulito. Suite completa NON rilanciata (quella del _04 era verde).
+- **Sito v175 PUBBLICATO:** commit `5005e24` pushato su `main`. Online `app.html`, `sw.js`,
+  `campo-geo.js`, `campo-mappa.js` identici al commit; timbro `2026-10-02-campo-gps`; nel browser
+  (384×832) cassa `arctrail3d-v175` con i due file del campo, nessun errore JS; regole, banchi,
+  `tools/` e `docs/` a 404.
+- **APK: NO** (TWA, GPS in primo piano). Functions invariate (7, `2026-08-28-notifica-verificata`).
+- **Resta solo la prova a telefono** (sotto, «Prova reale»): permesso posizione, percorso breve,
+  segnalazione con foto/note, offline→online. Per registrare percorsi serve essere admin,
+  referente (`compagnie_admin`) o manutentore in `field_maintainers/{code}/members/{uid}`.
+- **Backlog laterale (non toccato):** `banco-finestra`/`lancia-regole` usano come «live»
+  `REGOLE_LIVE=1cd0652`, ora non più vero (online c'è il live+campo): il prossimo giro sulle
+  regole deve aggiornarlo; al gate 3 si pubblica `firestore.rules` di main (contiene già il
+  campo) e `tools/regole-live-campo/` va ritirato. CI «banchi» del push in corso al momento della
+  chiusura.
+
+**Giro _05 (`CLAUDE_TASK_ARCTRAIL_GPS_PUBBLICAZIONE_05.md`, 02/10): PUBBLICAZIONE BLOCCATA PRIMA
+DI QUALUNQUE DEPLOY. Nulla pubblicato, nulla committato, nessun push, nessun APK.** Controlli
+iniziali verdi (HEAD `9f5649b`, working tree = quello del giro _04, `git diff --check` pulito,
+nessun altro Claude ArcTrail attivo). Tre blocchi reali, nessuno risolvibile senza una decisione
+di Alessandro:
+1. **Regole Firestore = regressione in produzione se pubblicate ora.** `firestore.rules` del
+   working tree (`2026-10-02-campo-gps`) è costruito sopra `2026-09-20-visibilita` di `main`,
+   cioè il **gate 3** del runbook, mai pubblicato (online c'è ancora `2026-08-28-porte-verified`).
+   Quelle regole chiudono i «solo club» dietro il claim `compagnia` della Function
+   `claimCompagnia`, che fa parte del **gate 2** (Functions `2026-09-22-push-argomento`), anch'esso
+   NON pubblicato (online le 7 Functions `2026-08-28-notifica-verificata`). Pubblicarle oggi:
+   i soci non vedono più gli allenamenti «solo club» della propria compagnia, e l'app del 18/09
+   si vede rifiutare l'elenco (runbook, gate 2–3). Ordine obbligato: gate 2 → conferma telefono →
+   gate 3 (+ campo GPS), oppure un file regole separato = live `2026-08-28` + sole regole
+   `field_*` (nuovo lavoro, da testare agli emulatori).
+2. **Sito v175 = push su GitHub.** Il sito è GitHub Pages: «pubblicare hosting/web» significa
+   `git push origin main`, vietato dal task (e bloccato dai permessi di Claude Code: lo ha
+   sempre fatto Alessandro a mano). Pubblicare il sito senza le regole sarebbe comunque inutile:
+   le scritture su `field_routes`/`field_issues` verrebbero rifiutate dalle regole live.
+3. **Regole Storage: nessun target di deploy.** `firebase.json` non ha la voce `storage` (solo
+   `tests/campo-firebase.json` per gli emulatori): `firebase deploy --only storage` oggi non ha
+   cosa pubblicare. Serve aggiungere `"storage": {"rules": "storage.rules"}` (modifica di
+   configurazione, non fatta). Le regole Storage nuove sono solo additive (`field_issues/...`,
+   mercatino invariato) e da sole non danno rischi, ma senza Firestore e sito non servono.
+
+**APK: NO** — l'APK è una TWA che apre `https://arctrail3d.com/app.html`; il GPS è in primo piano
+(`navigator.geolocation` + Wake Lock dalla pagina), il permesso posizione lo chiede Chrome per il
+sito: nessuna modifica nativa necessaria. Punto 9 (TWA che carica la v175) non verificabile finché
+il sito non è pubblicato. **Decisione chiesta ad Alessandro:** (a) prima gate 2 (Functions) e,
+dopo la conferma a telefono, gate 3 insieme al campo GPS + push del sito fatto a mano; oppure
+(b) un giro che prepara regole «live + solo campo GPS» da provare agli emulatori, per pubblicare
+il GPS senza gate 2/3. Prova reale a telefono (sotto) ancora tutta da fare.
+**Rilancio del giro _05 (02/10, 18:00), stesso task file senza decisione nuova: blocco CONFERMATO,
+nessuna azione.** `firestore.rules` = `HEAD` (`2026-09-20-visibilita`) + 113 righe `field_*`;
+`firebase.json` ancora senza `storage`; working tree identico. Rilanciare il _05 non serve: serve
+un task nuovo con la scelta (a) o (b).
+
+**Giro _04 (`CLAUDE_TASK_ARCTRAIL_GPS_VERIFICA_FINALE_04.md`, 02/10): modulo GPS VERIFICATO e
+pronto per la decisione di pubblicazione di Alessandro.** Una sola suite completa
+`tests/controlla-tutto.sh` con la correzione porte di `tests/campo-firebase.json`: **72 banchi,
+3174 prove, 0 cadute, TUTTI PASSATI, exit 0**. Banchi GPS/emulatori: `banco-campo-geo` 53/53,
+`banco-campo-schermo` 54/54, regole 180/180 + finestra 31/31, `banco-campo-regole` 58/58 (i due
+banchi a emulatore partiti in parallelo senza conflitti). Nessun `java` emulatore né porta
+emulatore rimasti aperti dopo la suite. `git diff --check` pulito. Nessuna modifica al codice in
+questo giro; nulla committato, pushato o deployato. Il deploy (regole Firestore + Storage, poi
+sito) resta rischio C e decisione di Alessandro; poi la prova reale a telefono qui sotto. Il
+residuo e il backlog laterale del giro _03 restano validi.
+
+Task `CLAUDE_TASK_ARCTRAIL_GPS_PERCORSI_SEGNALAZIONI_01/02.md`, rischio **C**. Nulla committato,
+pushato o deployato. Il giro _01 è stato fermato dal supervisore lasciando il lock; il giro _02
+l'ha ripreso (stesso agente, nessun processo vivo) e ha completato il collegamento all'app.
+
+- **File:** `campo-geo.js` (logica pura + `creaRepositoryFirestore`: unico punto che parla con
+  Firebase, da sostituire per PostGIS), `campo-mappa.js` (schermata), `app.html` (rotta
+  `campo-mappa`, tasto «Mappa campo · Segnala problema» in cima a Campi, caricamento pigro dei due
+  script e dello Storage SDK, CSS `.campo-*`), `sw.js` (i due file nell'`APP_SHELL`),
+  `firestore.rules` (`2026-10-02-campo-gps`), `storage.rules` (`2026-10-02-campo-gps`),
+  `tests/banco-campo-geo.js`, `tests/banco-campo-regole.js`, `tests/lancia-campo-regole.sh`,
+  `tests/campo-firebase.json` (emulatori su 8086/9198), `tests/controlla-tutto.sh` (+2 banchi).
+- **Modello dati:** `field_routes/{id}` (companyCode, name, status `draft|published`, createdBy,
+  date, bbox, center, lengthM, pointCount, segmentCount, schemaVersion 1) +
+  `segments/{seq}` (≤ 500 punti, WGS84 lat/lon a 1e-7, acc, t, geohash 9); `field_issues/{id}`
+  (lat/lon/acc/geohash, categoria `pianta|sentiero|bersaglio|piazzola|segnaletica|sicurezza|altro`,
+  stato `open|in_progress|resolved`, reporterUid, statusBy/At, routeId opz., `photoPaths`) +
+  `history/{hId}` solo in aggiunta; `field_maintainers/{code}/members/{uid}` (`active`, grantedBy).
+  Foto in Storage `field_issues/{code}/{issueId}/{fotoId}.jpg`: si salva il **path**, mai l'URL.
+  Export GeoJSON (LineString + Point); GPX in `campo-geo.js`.
+- **Sicurezza:** percorso pubblicato leggibile da chi ha un account; bozza solo da chi gestisce
+  (admin, referente `compagnie_admin`, manutentore con `active == true`). `users.compagnia` NON
+  dà poteri. Segnalazione: qualunque account attivo, a nome proprio, sempre «aperta»; cambio stato
+  solo a chi gestisce, con voce di storico nello stesso batch. Storage: solo immagini, < 5 MB,
+  email verificata, `ownerUid` = chi carica, niente sovrascritture; cancella proprietario o gestore.
+- **Limiti dichiarati:** registrazione **solo con app aperta e schermo acceso** (Wake Lock se c'è);
+  nessun tracking in background nella TWA/PWA. La «mappa» è un disegno SVG in metri (percorso,
+  marker, posizione, scala) + «Apri nel navigatore»: niente tile né mappe offline in questo giro.
+  Offline: traccia, segnalazione e foto restano in coda locale (`localStorage`) e partono al ritorno
+  della rete con id stabili (nessun doppione); «sincronizzato» solo dopo Storage + Firestore.
+- **Versioni:** app `2026-10-02-campo-gps` (genitore `2026-09-29-calendario-fitarco`), cassa
+  `arctrail3d-v175` (genitore v174), impronta `arctrail3d-v175:6cd82103f2245479` (giro _03).
+- **Test fatti (mirati):** `banco-campo-geo` 53/53; `lancia-campo-regole.sh` (Firestore+Storage
+  emulatori) 58/58; `controlla-versioni` 30/30; `controlla-cache` ok; `controlla-pubblicazione`
+  32/32; `git diff --check` pulito; `lancia-regole.sh` (banco regole principale): vedi report finale
+  del giro.
+- **NON fatti — BLOCCO di tempo (supervisore 30 min / 35 turni):** suite completa finale; prova
+  responsive 360/384/desktop a schermo; prova offline simulata nel browser vero (la coda è provata
+  solo nel banco Node); nomi delle compagnie nella schermata (mostra il solo codice). Sono il
+  prossimo giro, prima di qualunque deploy. Adrenalina e Gestionale non toccati.
+- **Esito test del giro _02:** `lancia-regole.sh` 180/180 + finestra 31/31. **Suite completa (una sola): 71
+  banchi, 3120 prove, 0 cadute, ma exit 1** per `controlla-token` (guardiano dello stile): il CSS `.campo-*`
+  aveva tinte esadecimali e raggi a mano. Corretto coi token (`--line`, `--r-app`, `--r-xs`, `--red-700`,
+  `--green-500`, `--blue-600`, `--danger`, `--bg-panel`). Rilanciato da solo **senza gli argomenti della
+  suite** segna ancora «esadecimale +1, misura fuori scala +22, clamp +6»: va rilanciato come lo chiama
+  `controlla-tutto.sh` per capire se resta qualcosa di mio (probabile: `.campo-mk text{ font-size:10px }`
+  e `.campo-freccia{ font-size:1.4em }`). **Prossimo giro, primo passo:** chiudere `controlla-token`,
+  poi responsive 360/384/desktop e offline simulato nel browser, poi una suite completa.
+
+- **Giro _03 (`CLAUDE_TASK_ARCTRAIL_GPS_CONTINUA_03.md`, 02/10):**
+  - FATTO: `controlla-token` ora verde come lo chiama la suite (niente peggiorato: il ritocco
+    coi token del giro _02 bastava). Nome della compagnia accanto al codice nella schermata
+    (`ctx.nomeCompagnia = compagniaNome`, una riga in `app.html`). Nuovo banco
+    `tests/banco-campo-schermo.js` (Playwright, nella suite): 360×740, S26 384×832, desktop
+    1280×800 — niente scorrimento orizzontale, tasti dentro lo schermo e ≥ 44 px; senza rete
+    registrazione (GPS finto, da manutentore) + segnalazione restano in coda, sopravvivono alla
+    ricarica senza doppioni; «Raggiungi» dà distanza e direzione; l'utente semplice non vede
+    «Registra percorso»; nessun errore JS. Impronta riscritta su `v175` (mai pubblicata):
+    `arctrail3d-v175:6cd82103f2245479`.
+  - TEST: `banco-campo-schermo` 54/54; `banco-campo-geo` 53/53; `controlla-versioni` 30/30;
+    `controlla-cache` ok; `controlla-pubblicazione` 32/32; `controlla-token` ok;
+    `git diff --check` pulito. **Suite completa (una sola): 72 banchi, 2905 prove, 0 cadute, ma
+    exit 1**: i due banchi a emulatore (45 `lancia-regole.sh`, 46 `lancia-campo-regole.sh`) non
+    sono partiti, «Error: An unexpected error» del CLI. Causa (da `firebase-debug.log`): girando
+    in parallelo usavano lo stesso hub (4400) e la stessa websocket Firestore (9150); il giro _02
+    era passato per caso d'ordine. Corretto in `tests/campo-firebase.json` (hub 4406, logging
+    4506, websocket 9156). Il giro fallito aveva lasciato due `java` emulatore orfani su 8080 e
+    8086 (progetti di prova), terminati. Prova mirata **dei due banchi insieme, in parallelo come
+    nella suite**: 180/180 + finestra 31/31, campo 58/58, nessun processo rimasto. Seconda suite
+    completa NON lanciata (regola: una per giro) → **da rifare una volta prima di qualunque
+    deploy** (rischio C).
+  - RESIDUO: invio reale della coda nel browser (rete che torna → Firestore/Storage) provato
+    solo nel banco Node e sugli emulatori, non dal browser con Firebase; prova a telefono dopo
+    il deploy (sotto). Backlog laterale, non toccato: `controlla-token` segnala 3 classi senza
+    regola (`cal-aggiornato`, `finale-sotto`, `finale-stato`) e un «ritmo rotto» del riquadro,
+    pre-esistenti; `.campo-eti` è definita due volte in `app.html` (righe ~1982 e ~5049, la
+    seconda è di un'altra schermata); un banco a emulatore che fallisce all'avvio lascia il
+    `java` dell'emulatore vivo (il runner non lo raccoglie): da guardare nel supervisore/runner.
+
+- **Prova reale (dopo il deploy, se Alessandro decide):** gate regole (Firestore + Storage), poi
+  sito. Da telefono: Campi → «Mappa campo» → codice compagnia → Registra percorso (Start, Pausa,
+  Riprendi, Termina) camminando 2–3 minuti a schermo acceso → Pubblica; Segnala problema con foto in
+  modalità aereo → riattivare la rete → la segnalazione compare una volta sola su un secondo
+  dispositivo; un manutentore autorizzato cambia stato; revocato non può più.
 
 ### 1.0-ter Calendario FITARCO 3D (29/09/2026, terzo giro)
 
@@ -115,7 +319,10 @@ Sotto, il giro com'era a fine lavoro in locale (28/09, chiuso il 29/09):
 - **Sito online:** vetrina `2026-09-28-seo-regolamenti` e mercatino `2026-08-25-radice`
   (verificati il 28/09); app `2026-09-29-fiarc-finale` e cassa `arctrail3d-v173`
   (verificate il 29/09, §1.0-bis).
-- **Functions e regole Firestore: INVARIATE dal 18/09.** Online: 7 Functions
+- **02/10 (giro _06): sito v175 (`5005e24`, mappa campo GPS) e regole Firestore
+  `2026-10-02-live-campo-gps` + Storage `2026-10-02-campo-gps` ONLINE** — §1.0-quater. Le
+  regole live sono quelle del 28/08 + solo campo GPS; il resto della riga sotto vale ancora.
+- **Functions INVARIATE dal 18/09; regole Firestore fino al 02/10.** Online: 7 Functions
   `2026-08-28-notifica-verificata`, regole `2026-08-28-porte-verified`. Su `main` ci
   sono già le versioni nuove, **NON pubblicate**: Functions `2026-09-22-push-argomento`
   (8 funzioni) e regole `2026-09-20-visibilita` — gate 2 e 3 del runbook, solo su

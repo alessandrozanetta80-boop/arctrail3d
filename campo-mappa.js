@@ -273,6 +273,9 @@
   function schermo(ctx) {
     S.ultimoCtx = ctx;
     nodi = {};
+    // Da quale tasto di Campi si arriva: «Mappa campo» o «Segnala problema».
+    // Resta nello stato, cosi' vale anche dopo la scelta della compagnia.
+    if (ctx.vista === "mappa" || ctx.vista === "segnala") { S.vista = ctx.vista; S.dettaglio = null; S.raggiungi = false; S.gpsDaPorta = ctx.vista === "segnala"; }
     var E = ctx.el, X = ctx.escapeHtml;
     var wrap = E('<div class="campo-mappa"></div>');
     var card = E('<div class="card"></div>');
@@ -309,7 +312,12 @@
     nodi.gps = E('<div class="campo-gps" aria-live="polite"></div>'); card.appendChild(nodi.gps);
     if (S.msg) { card.appendChild(E('<div class="fr-stato">' + X(S.msg) + "</div>")); S.msg = ""; }
 
-    if (S.vista === "segnala") { wrap.appendChild(formSegnala(ctx, P)); aggiornaGps(ctx); return wrap; }
+    if (S.vista === "segnala" && !P.segnala) S.vista = "mappa";
+    if (S.vista === "segnala") {
+      wrap.appendChild(formSegnala(ctx, P));
+      if (S.gpsDaPorta) { S.gpsDaPorta = false; avviaGps(ctx); }
+      aggiornaGps(ctx); return wrap;
+    }
     if (S.vista === "dettaglio" && S.dettaglio) { wrap.appendChild(schedaDettaglio(ctx, P)); aggiornaGps(ctx); return wrap; }
 
     // azioni
