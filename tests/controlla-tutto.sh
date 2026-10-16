@@ -179,6 +179,8 @@ banco "banco-fumo.js (una sessione sola, dall'inizio alla fine, come la farebbe 
 banco "banco-librerie-defer.js (le librerie Firebase arrivano DOPO l'app, come in produzione: si entra e il giro sale)" "node tests/banco-librerie-defer.js"
 banco "banco-storico-150.js (oltre i 150 giri: si vede tutto, niente doppioni, aprire non legge tutto lo storico)" "node tests/banco-storico-150.js"
 banco "banco-dati-rollback.js (lo stesso telefono: 18/09 → release → 18/09 → ramo; niente si perde, i dati dei primi giorni si riconoscono)" "node tests/banco-dati-rollback.js"
+banco "banco-proposte-gps.cjs (arciere propone, responsabile approva, bozze private a320/384)" "node tests/banco-proposte-gps.cjs"
+banco "banco-campo-notifiche.cjs (proposte e problemi: avviso interno senza email, retry senza doppioni)" "node tests/banco-campo-notifiche.cjs"
 banco "banco-gps-incrementale.cjs (journal nativo: sequenze, quota e piazzole)" "node tests/banco-gps-incrementale.cjs"
 banco "banco-gps-web.cjs (GPS Android: flusso, MessagePort e salvataggio completo)" "node tests/banco-gps-web.cjs"
 banco "banco-campi-elimina.cjs (codice compagnia e cancellazione allenamenti)" "node tests/banco-campi-elimina.cjs"

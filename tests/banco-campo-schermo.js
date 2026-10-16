@@ -289,7 +289,7 @@ async function provaGiro(browser) {
 
       // Registra un percorso: tre fix GPS distanti ~15 m, rete spenta.
       await A.ctx.setOffline(true);
-      prova("utente semplice: niente «Registra percorso»", !(await page.$("text=Registra percorso")));
+      prova("utente semplice: può registrare un percorso", !!(await page.$("text=Registra percorso")));
       // Senza Firebase i permessi non si leggono: qui si fa il manutentore autorizzato.
       await page.evaluate(function () {
         var S = window.CampoMappaUI._stato;

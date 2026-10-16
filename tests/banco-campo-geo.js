@@ -91,8 +91,8 @@ function memoria() {
   var pM = G.permessi({ signedIn: true, verified: true, isMaintainer: true });
   var pC = G.permessi({ signedIn: true, verified: true, isClubAdmin: true });
   var pNV = G.permessi({ signedIn: true, verified: false, isMaintainer: true });
-  prova("utente verificato: segnala, non registra né gestisce", pU.segnala && !pU.registra && !pU.gestisce && !pU.pubblica);
-  prova("manutentore: registra e gestisce, non autorizza altri", pM.registra && pM.gestisce && !pM.autorizzaManutentori);
+  prova("utente verificato: registra e segnala, non pubblica né gestisce", pU.segnala && pU.registra && !pU.gestisce && !pU.pubblica);
+  prova("manutentore: registra e gestisce, non autorizza altri", pM.registra && pM.gestisce && !pM.pubblica && !pM.autorizzaManutentori);
   prova("admin compagnia: autorizza manutentori", pC.autorizzaManutentori && pC.gestisce);
   prova("non verificato: niente segnalazione né gestione", !pNV.segnala && !pNV.gestisce);
   prova("solo users.compagnia non basta (nessun flag → nessuna gestione)", !G.permessi({ signedIn: true, verified: true, compagnia: "01VERB" }).gestisce);

@@ -23317,17 +23317,6 @@ return trovati.length === 1 ? trovati[0] : null;
 }
 // Il referente della compagnia riceve l'avviso come col vecchio modulo:
 // nessun secondo record, la segnalazione e' una sola (`field_issues`).
-function avvisaReferenteCampo(seg, categoria){
-if(!currentUser || !seg || !seg.companyCode) return;
-caricaContattoCompagnia(seg.companyCode, function(dati){
-var adminUid = (dati || {}).adminUid;
-if(!adminUid || adminUid === currentUser.uid) return;
-var desc = categoria + (seg.piazzola ? " · " + t("fr_piazzola_label") + " " + seg.piazzola : "") + (seg.note ? " · " + seg.note : "");
-sendPushViaFirestore(adminUid, t("fr_notif_title"),
-t("fr_notif_body", { name: myDisplayName(), desc: desc.slice(0,90) }),
-{ k:"club-space", code: seg.companyCode });
-});
-}
 function campoMappaScreen(){
 initCompagnieData();
 var wrap = el('<div></div>');
@@ -23349,7 +23338,6 @@ vista: vistaCampo,
 codice: (vistaCampo && cs) ? cs.codice : undefined,
 piazzola: (vistaCampo && cs) ? cs.piazzola : null,
 alChiudi: cs ? tornaIndietro : null,
-dopoSegnala: avvisaReferenteCampo,
 db: (typeof db !== "undefined" && db && currentUser) ? db : null,
 storage: function(){ return (typeof firebase !== "undefined" && firebase.storage) ? firebase.storage() : null; },
 caricaStorage: caricaStorageCampo,
@@ -24747,7 +24735,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-10-16-storico-x-conferma";
+var BUILD_STAMP = "2026-10-16-proposte-gps-avvisi";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24756,7 +24744,7 @@ var BUILD_STAMP = "2026-10-16-storico-x-conferma";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-10-16-gps-codici-elimina-giri";
+var BUILD_PARENT = "2026-10-16-storico-x-conferma";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -26587,30 +26575,9 @@ createdAt: firebase.firestore.FieldValue.serverTimestamp()
 // sono tutte e due nel contatto pubblico. (SEC-09)
 caricaContattoCompagnia(frCod, function(dati){
 var adm = dati || {};
-var adminUid = adm.adminUid;
-// Il referente riceve SEMPRE il contenuto della segnalazione, anche quando
-// e' lui stesso ad averla scritta: e' il messaggio che gli serve avere sotto mano.
-if(adminUid){
-/* CON LA STRADA DENTRO. (25/08/2026, Alessandro: «arriva notifica su app
-   che non si puo' aprire per vedere i dettagli».)
-   Partiva senza `dest`, quindi `destinazioneNotifica()` rispondeva null e la
-   riga nel centro notifiche non era premibile: diceva che c'era una
-   segnalazione e lasciava cercare dove si legge. Il posto e' lo spazio
-   compagnia, che e' anche dove il referente la puo' chiudere.
-   Passa per `dest` e non per `apri`, che lo scrivono le funzioni sul server:
-   cosi' non serve nessun deploy per accendere questa strada. */
-sendPushViaFirestore(adminUid, t("fr_notif_title"),
-t("fr_notif_body", { name: myDisplayName(), desc: descInp.value.trim().slice(0,90) }),
-{ k:"club-space", code: frCod });
-}
-// A chi segnala va la conferma, ma solo se non e' gia' lui il referente:
-// altrimenti riceverebbe due notifiche per la stessa cosa.
-if(adminUid !== currentUser.uid){
-sendPushViaFirestore(currentUser.uid, t("notif_self_report_title"),
-t(adminUid ? "notif_self_report_body" : "notif_self_report_body_noadmin", { field: frLabel }));
-}
-status.className = "fr-stato " + (adminUid ? "bene" : "avviso");
-status.textContent = adminUid ? t("fr_sent_to",{name:frLabel}) : t("fr_no_admin_warn");
+// L’avviso al responsabile parte dal server dopo la scrittura, anche senza contatto pubblico/email.
+status.className = "fr-stato bene";
+status.textContent = state.lang === "it" ? "Segnalazione salvata. L’avviso nell’app non richiede l’email della compagnia." : "Report saved. In-app notifications do not require a club email.";
 
 // L'email non puo' partire da sola senza un server: si apre gia' pronta
 // nell'app di posta dell'utente, che deve solo premere invia.
@@ -29040,6 +29007,9 @@ if(d && d.k === "ot" && d.id) return { etichetta: t("notif_open_msg"), k:"ot", v
 /* Anche da `dest`, non solo da `apri`: `apri` lo scrivono le Cloud Functions,
    `dest` puo' scriverlo l'app. Senza questa riga la segnalazione di un
    percorso arrivava muta — vedi 25/08/2026. */
+if(d && d.k === "campo-mappa" && currentUser){
+return {etichetta:state.lang === "it" ? "Apri mappa campo" : "Open course map",k:"campo-mappa",val:d.code||""};
+}
 if(d && d.k === "club-space" && currentUser){
 return { etichetta: t("club_space_title"), k:"club-space", val: d.code || n.clubCode || myClubCode() || "" };
 }
@@ -29220,6 +29190,9 @@ else if(dove.k === "ot") apriChatAllenamentoDaNotifica(dove.val, row);
 else if(dove.k === "admin"){ adminTab = admTabDaAvviso(n.id); state.screen = "admin"; save(); render(); }
 // Senza questa riga finiva nell'`else` qui sotto e veniva trattato come
 // l'id di un annuncio del mercatino: cioe' apriva il nulla.
+else if(dove.k === "campo-mappa"){
+state.campoSegnala={codice:dove.val,torna:"notifications"};campoApriVista="mappa";state.screen="campo-mappa";save();render();
+}
 else if(dove.k === "club-space"){
 if(dove.val) state.clubSpaceCode = dove.val;
 state.screen = "club-space"; save(); render();

@@ -46,7 +46,7 @@ fs.writeFileSync(path.join(D, "index.html"), html);
 ["compagnie-data.js", "logo.webp", "logo.jpg"].forEach(function (x) {
   if (fs.existsSync(x)) fs.copyFileSync(x, path.join(D, x));
 });
-var PAGINA = url.pathToFileURL(path.join(D, "index.html")).href;
+var PAGINA = "http://arctrail-italia.test/index.html";
 
 
 /* I BLOCCHI DELL'APP, LETTI DAL SORGENTE. Il codice gira in un contenitore
@@ -115,6 +115,12 @@ async function apri(browser, stato, opz) {
       (opz.storico ? " localStorage.setItem('arctrail3d_storico_v1', " + JSON.stringify(JSON.stringify(opz.storico)) + ");" : "") +
       " localStorage.setItem('banco-seme','1'); } }catch(e){}");
   }
+  await ctx.route('**/*',function(route){
+    var u=new URL(route.request().url());if(u.hostname!=='arctrail-italia.test')return route.abort();
+    var f=path.resolve(D,'.'+decodeURIComponent(u.pathname));
+    if(!f.startsWith(path.resolve(D)+path.sep)||!fs.existsSync(f))return route.abort();
+    return route.fulfill({path:f});
+  });
   var page = await ctx.newPage();
   var err = [];
   page.on("pageerror", function (e) { err.push(String(e.message)); });

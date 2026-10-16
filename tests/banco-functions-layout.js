@@ -30,7 +30,7 @@ function prova(n, c, extra){
 }
 function leggi(p){ try{ return fs.readFileSync(path.join(RADICE, p), "utf8"); }catch(e){ return null; } }
 
-/* LE SETTE FUNZIONI, SCRITTE A MANO QUI. Un banco che si fa dettare l'elenco
+/* LE UNDICI FUNZIONI, SCRITTE A MANO QUI. Un banco che si fa dettare l'elenco
    dal file che deve controllare non puo' dire di no: se domani una sparisce,
    l'elenco sparirebbe con lei e il banco direbbe di si'. Queste sono quelle
    che `pubblica.sh` pretende da sempre, nello stesso ordine. */
@@ -43,7 +43,7 @@ function leggi(p){ try{ return fs.readFileSync(path.join(RADICE, p), "utf8"); }c
    che viene PUBBLICATA, e deve passare da qui e non da una distrazione. */
 var ATTESE = ["sendNotification", "pushNotifica", "avvisaRicerche",
               "avvisaSegnalazione", "avvisaRichiestaClub", "avvisaIscrizione",
-              "avvisaPercorso", "claimCompagnia"];
+              "avvisaPercorso", "claimCompagnia", "avvisaProblemaCampo", "avvisaTracciatoCampo", "avvisaProblemaCampoPrecedente"];
 
 console.log("\n  DOVE FIREBASE VA A CERCARE IL BACKEND");
 
@@ -84,7 +84,7 @@ console.log("\n  LE SETTE FUNZIONI, NE' UNA IN PIU' NE' UNA IN MENO");
 var src = leggi("functions/index.js") || "";
 var trovate = (src.match(/^exports\.[A-Za-z0-9_]+/gm) || [])
   .map(function(x){ return x.replace("exports.", ""); });
-prova("gli export sono otto", trovate.length === ATTESE.length, trovate.length + ": " + trovate.join(", "));
+prova("gli export sono undici", trovate.length === ATTESE.length, trovate.length + ": " + trovate.join(", "));
 ATTESE.forEach(function(nome){
   prova("c'e' " + nome, trovate.indexOf(nome) >= 0);
 });

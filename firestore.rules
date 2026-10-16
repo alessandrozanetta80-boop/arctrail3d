@@ -1,7 +1,7 @@
 rules_version = '2';
 // ArcTrail 3D — regole Firestore
-// Versione 2026-10-02-campo-gps
-// Nata da: 2026-08-28-porte-verified (l'ultima incollata in console)
+// Versione 2026-10-16-proposte-gps
+// Nata da: 2026-10-02-campo-gps
 //
 // NOVITA' 2026-09-20 — DISPOSITIVI, TIPI E LIMITI (risanamento notturno)
 //  1) users/{uid}/devices/{deviceId}: un documento per telefono (token delle push).
@@ -1323,36 +1323,48 @@ service cloud.firestore {
     }
 
     match /field_routes/{routeId} {
-      allow read: if (signedIn() && resource.data.get('status', '') == 'published')
-                  || isFieldManager(resource.data.get('companyCode', ''));
-      // Si nasce sempre bozza: la pubblicazione e' un gesto a parte.
-      allow create: if isFieldManager(request.resource.data.companyCode)
+      function owner(d){return attivo() && d.get('createdBy','') == request.auth.uid;}
+      function approver(d){return isAdmin() || isClubAdmin(d.get('companyCode',''));}
+      allow read: if (signedIn() && resource.data.get('status','') == 'published')
+                  || owner(resource.data) || isAdmin()
+                  || (resource.data.get('status','') == 'pending' && isFieldManager(resource.data.get('companyCode','')));
+      allow create: if owner(request.resource.data)
                     && request.resource.data.id == routeId
-                    && request.resource.data.createdBy == request.auth.uid
+                    && request.resource.data.companyCode is string && request.resource.data.companyCode != ''
                     && request.resource.data.status == 'draft'
                     && request.resource.data.schemaVersion == 1
-                    && testoOpz(request.resource.data, 'name', 240);
-      allow update: if isFieldManager(resource.data.get('companyCode', ''))
-                    && request.resource.data.companyCode == resource.data.companyCode
+                    && testoOpz(request.resource.data,'name',240);
+      allow update: if request.resource.data.companyCode == resource.data.companyCode
                     && request.resource.data.createdBy == resource.data.createdBy
                     && request.resource.data.id == resource.data.id
-                    && request.resource.data.status in ['draft', 'published']
-                    && testoOpz(request.resource.data, 'name', 240);
-      allow delete: if isFieldManager(resource.data.get('companyCode', ''));
-
+                    && testoOpz(request.resource.data,'name',240)
+                    && (
+                      (approver(resource.data) && (resource.data.status in ['pending','published'] || owner(resource.data))
+                        && request.resource.data.status in ['draft','published'])
+                      || (owner(resource.data) && resource.data.status == 'draft'
+                          && (request.resource.data.status == 'draft'
+                              || (request.resource.data.status == 'pending'
+                                  && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','submittedAt','updatedAt'])
+                                  && request.resource.data.submittedAt is number)))
+                    );
+      allow delete: if approver(resource.data) || (owner(resource.data) && resource.data.status == 'draft');
       match /segments/{segId} {
         allow read: if signedIn() && (
-          get(/databases/$(database)/documents/field_routes/$(routeId)).data.get('status', '') == 'published'
-          || isFieldManager(get(/databases/$(database)/documents/field_routes/$(routeId)).data.get('companyCode', '')));
-        // `getAfter`: il percorso e i suoi segmenti si scrivono nello stesso batch.
+          get(/databases/$(database)/documents/field_routes/$(routeId)).data.get('status','') == 'published'
+          || owner(get(/databases/$(database)/documents/field_routes/$(routeId)).data)
+          || isAdmin()
+          || (get(/databases/$(database)/documents/field_routes/$(routeId)).data.status == 'pending'
+              && isFieldManager(get(/databases/$(database)/documents/field_routes/$(routeId)).data.companyCode)));
         allow create, update: if existsAfter(/databases/$(database)/documents/field_routes/$(routeId))
-                    && isFieldManager(getAfter(/databases/$(database)/documents/field_routes/$(routeId)).data.companyCode)
+                    && owner(getAfter(/databases/$(database)/documents/field_routes/$(routeId)).data)
+                    && getAfter(/databases/$(database)/documents/field_routes/$(routeId)).data.status == 'draft'
                     && request.resource.data.schemaVersion == 1
                     && request.resource.data.seq is int
-                    && request.resource.data.points is list
-                    && request.resource.data.points.size() <= 500;
+                    && request.resource.data.points is list && request.resource.data.points.size() <= 500;
         allow delete: if exists(/databases/$(database)/documents/field_routes/$(routeId))
-                    && isFieldManager(get(/databases/$(database)/documents/field_routes/$(routeId)).data.companyCode);
+                    && (approver(get(/databases/$(database)/documents/field_routes/$(routeId)).data)
+                        || (owner(get(/databases/$(database)/documents/field_routes/$(routeId)).data)
+                            && get(/databases/$(database)/documents/field_routes/$(routeId)).data.status == 'draft'));
       }
     }
 

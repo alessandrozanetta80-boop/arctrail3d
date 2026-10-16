@@ -93,9 +93,9 @@ const JPG = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0]);
   console.log('\n  PERCORSI\n');
   await prova('manutentore crea percorso bozza + segmento in un batch', () => assertSucceeds(creaRotta(M, 'r1')));
   await prova('referente salva percorso nominato con piazzole GPS', () => assertSucceeds(creaRotta(M, 'r-piazzole', {name:'Verde',piazzole:[{n:1,lat:45.9,lon:8.5,acc:6,t:1}]})));
-  await prova('arciere normale non salva percorsi con piazzole', () => assertFails(creaRotta(U, 'r-negato-piazzole', {name:'Verde',piazzole:[{n:1,lat:45.9,lon:8.5,acc:6,t:1}]})));
-  await prova('utente normale non crea percorsi', () => assertFails(creaRotta(U, 'r2')));
-  await prova('users.compagnia autodichiarata non basta per creare', () => assertFails(creaRotta(AUTO, 'r3')));
+  await prova('arciere normale salva la propria bozza con piazzole', () => assertSucceeds(creaRotta(U, 'r-negato-piazzole', {name:'Verde',piazzole:[{n:1,lat:45.9,lon:8.5,acc:6,t:1}]})));
+  await prova('utente normale crea la propria bozza', () => assertSucceeds(creaRotta(U, 'r2')));
+  await prova('compagnia autodichiarata: crea solo la propria bozza', () => assertSucceeds(creaRotta(AUTO, 'r3')));
   await prova('non si nasce «published»', () => assertFails(creaRotta(M, 'r4', { status: 'published' })));
   await prova('bozza NON leggibile da un utente normale', () => assertFails(db(U).doc('field_routes/r1').get()));
   await prova('segmenti della bozza NON leggibili da un utente normale', () => assertFails(db(U).collection('field_routes/r1/segments').get()));
@@ -104,16 +104,34 @@ const JPG = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0]);
   await prova('la query delle bozze e\' rifiutata all\'utente normale', () =>
     assertFails(db(U).collection('field_routes').where('companyCode', '==', CODE).where('status', '==', 'draft').get()));
   await prova('utente normale non pubblica', () => assertFails(db(U).doc('field_routes/r1').update({ status: 'published' })));
-  await prova('manutentore pubblica', () => assertSucceeds(db(M).doc('field_routes/r1').update({ status: 'published', publishedBy: M.uid, publishedAt: 2, updatedAt: 2 })));
+  await prova('manutentore invia la propria bozza',()=>assertSucceeds(db(M).doc('field_routes/r1').update({status:'pending',submittedAt:2,updatedAt:2})));
+  await prova('referente approva e pubblica', () => assertSucceeds(db(CA).doc('field_routes/r1').update({ status: 'published', publishedBy: CA.uid, publishedAt: 2, updatedAt: 2 })));
   await prova('percorso pubblicato leggibile dall\'utente normale', () => assertSucceeds(db(U).doc('field_routes/r1').get()));
   await prova('segmenti del pubblicato leggibili', () => assertSucceeds(db(U).collection('field_routes/r1/segments').orderBy('seq').get()));
   await prova('nessuno sposta un percorso sotto un\'altra compagnia', () => assertFails(db(M).doc('field_routes/r1').update({ companyCode: '02ALTR' })));
   await prova('utente normale non scrive segmenti', () => assertFails(db(U).doc('field_routes/r1/segments/0001').set(segm())));
   await prova('segmento oltre 500 punti rifiutato', () => {
     const s = segm(); s.points = Array.from({ length: 501 }, (_, i) => ({ lat: 45, lon: 8, t: i }));
-    return assertFails(db(M).doc('field_routes/r1/segments/0009').set(s));
+    return assertFails(db(M).doc('field_routes/r-piazzole/segments/0009').set(s));
   });
 
+  await prova('autore legge la propria bozza',()=>assertSucceeds(db(U).doc('field_routes/r2').get()));
+  await prova('autore elenca solo i propri percorsi',()=>assertSucceeds(db(U).collection('field_routes').where('companyCode','==',CODE).where('createdBy','==',U.uid).get()));
+  await prova('autore legge i propri segmenti',()=>assertSucceeds(db(U).collection('field_routes/r2/segments').get()));
+  await prova('altro utente non legge bozza privata',()=>assertFails(db(AUTO).doc('field_routes/r2').get()));
+  await prova('non verificato non crea bozze',()=>assertFails(creaRotta(NV,'r-nv')));
+  await prova('non crea una bozza a nome altrui',()=>assertFails(creaRotta(U,'r-forge',{createdBy:CA.uid})));
+  await prova('referente non legge bozza privata prima dell invio',()=>assertFails(db(CA).doc('field_routes/r2').get()));
+  await prova('referente non approva bozza privata non inviata',()=>assertFails(db(CA).doc('field_routes/r2').update({status:'published'})));
+  await prova('autore invia al responsabile',()=>assertSucceeds(db(U).doc('field_routes/r2').update({status:'pending',submittedAt:10,updatedAt:10})));
+  await prova('autore non cambia traccia in approvazione',()=>assertFails(db(U).doc('field_routes/r2/segments/0000').set(segm())));
+  await prova('autore non pubblica la propria proposta',()=>assertFails(db(U).doc('field_routes/r2').update({status:'published'})));
+  await prova('autore non finge approvazione insieme all invio',()=>assertFails(db(AUTO).doc('field_routes/r3').update({status:'pending',submittedAt:10,publishedBy:AUTO.uid})));
+  await prova('manutentore non approva la proposta',()=>assertFails(db(M).doc('field_routes/r2').update({status:'published'})));
+  await prova('referente legge le proposte',()=>assertSucceeds(db(CA).collection('field_routes').where('companyCode','==',CODE).where('status','==','pending').get()));
+  await prova('altro utente non legge proposte altrui',()=>assertFails(db(AUTO).doc('field_routes/r2').get()));
+  await prova('referente approva la proposta',()=>assertSucceeds(db(CA).doc('field_routes/r2').update({status:'published',publishedBy:CA.uid,publishedAt:12,updatedAt:12})));
+  await prova('dopo approvazione la mappa è leggibile dagli altri',()=>assertSucceeds(db(AUTO).collection('field_routes/r2/segments').get()));
   console.log('\n  SEGNALAZIONI\n');
   await prova('utente verificato crea una segnalazione (aperta, con storia)', () => assertSucceeds(creaSegn(U, 'i1')));
   await prova('utente non verificato non segnala', () => assertFails(creaSegn(NV, 'i2')));
@@ -145,7 +163,7 @@ const JPG = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0]);
   await prova('il referente revoca il manutentore', () => assertSucceeds(db(CA).doc(`field_maintainers/${CODE}/members/${M.uid}`).delete()));
   await prova('dopo la revoca il manutentore non gestisce piu\'', () => assertFails(cambia(M, 'i1', 'resolved', 10)));
   await prova('dopo la revoca non legge piu\' le bozze', async () => {
-    await scena(d => d.doc('field_routes/r9').set(rotta('r9')));
+    await scena(d => d.doc('field_routes/r9').set(rotta('r9',{createdBy:CA.uid})));
     await assertFails(db(M).doc('field_routes/r9').get());
   });
   await prova('manutentore disattivato (active:false) non gestisce', async () => {

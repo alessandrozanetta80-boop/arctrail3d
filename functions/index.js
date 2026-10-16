@@ -1,6 +1,6 @@
 // ArcTrail 3D — Cloud Functions
-// Versione 2026-09-22-push-argomento
-// Nata da: 2026-08-28-notifica-verificata (col layout functions/ del 17/09)
+// Versione 2026-10-16-avvisi-campo
+// Nata da: 2026-09-22-push-argomento
 //
 // NOVITA' 2026-09-20 — I DISPOSITIVI SONO DOCUMENTI: users/{uid}/devices/{deviceId}
 //  { token, platform, language, enabled, createdAt, updatedAt, lastSeen }. deviceId e'
@@ -1008,3 +1008,10 @@ exports.claimCompagnia = onDocumentWritten("users/{uid}", async (event) => {
     console.error("claim compagnia per " + uid + ":", err && err.code ? err.code : err);
   }
 });
+
+// Campo GPS: avvisi affidati al server, inclusi invii offline e segnalazioni del responsabile stesso.
+const notificheCampo=require("./campo-notifiche")(admin,ADMIN_EMAIL);
+exports.avvisaProblemaCampo=onDocumentCreated({document:"field_issues/{issueId}",retry:false},notificheCampo.problema);
+exports.avvisaTracciatoCampo=onDocumentWritten({document:"field_routes/{routeId}",retry:false},notificheCampo.percorso);
+
+exports.avvisaProblemaCampoPrecedente=onDocumentCreated({document:"field_reports/{reportId}",retry:false},notificheCampo.precedente);

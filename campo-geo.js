@@ -269,9 +269,9 @@
     return {
       vedePubblicati: !!c.signedIn,
       segnala: !!(c.signedIn && c.verified),
-      registra: gestore && !!c.verified,
+      registra: !!(c.signedIn && c.verified),
       gestisce: gestore && !!c.verified,
-      pubblica: gestore && !!c.verified,
+      pubblica: !!(c.isAdmin || c.isClubAdmin) && !!c.verified,
       autorizzaManutentori: !!(c.isAdmin || c.isClubAdmin)
     };
   }
@@ -418,6 +418,9 @@
       appendRouteSegment: function (routeId, s) {
         return rC(routeId).collection("segments").doc(idSeg(s.seq)).set(s);
       },
+      submitRoute: function(routeId, ora) {
+        return rC(routeId).update({status:"pending",submittedAt:ora,updatedAt:ora});
+      },
       publishRoute: function (routeId, uid, ora) {
         return rC(routeId).update({ status: "published", publishedBy: uid, publishedAt: ora, updatedAt: ora });
       },
@@ -434,12 +437,13 @@
       },
       /* Due query, come `percorsi_campo`: Firestore rifiuta INTERA una query
          che puo' toccare documenti vietati. */
-      listRoutes: function (code, gestore) {
+      listRoutes: function (code, gestore, uid) {
         var q = [db.collection("field_routes").where("companyCode", "==", code).where("status", "==", "published").get()];
-        if (gestore) q.push(db.collection("field_routes").where("companyCode", "==", code).where("status", "==", "draft").get());
+        if (gestore) q.push(db.collection("field_routes").where("companyCode","==",code).where("status","==","pending").get());
+        if (uid) q.push(db.collection("field_routes").where("companyCode","==",code).where("createdBy","==",uid).get());
         return Promise.all(q).then(function (snaps) {
           var out = [];
-          snaps.forEach(function (s) { s.forEach(function (d) { out.push(d.data()); }); });
+          snaps.forEach(function (s) { s.forEach(function (d) { if(!out.some(function(x){return x.id===d.id;})) out.push(d.data()); }); });
           return out;
         });
       },

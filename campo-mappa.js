@@ -86,6 +86,7 @@
       nome_percorso: "Nome del percorso", in_pausa: "In pausa", registrando: "Registrazione in corso",
       wake_si: "Schermo tenuto acceso", wake_no: "Tieni lo schermo acceso a mano",
       percorsi: "Percorsi", nessun_percorso: "Nessun percorso per questa compagnia.",
+      pending: "In approvazione", proponi: "Invia al responsabile", approva: "Approva e pubblica", proposta_salvata: "Percorso inviato al responsabile per approvazione.", prima_sync: "Attendi che la bozza sia sincronizzata, poi inviala al responsabile.", guida_traccia: "Scrivi un nome, avvia il GPS e percorri il campo. Segna ogni piazzola. Alla fine salva e invia al responsabile: comparirà nelle mappe dopo l’approvazione.",
       bozza: "Bozza", pubblicato: "Pubblicato", mostra: "Mostra", pubblica: "Pubblica", ritira: "Torna bozza",
       elimina: "Elimina", elimina_conf: "Eliminare definitivamente questo elemento?",
       segnalazioni: "Segnalazioni", nessuna_segn: "Nessuna segnalazione.",
@@ -123,6 +124,7 @@
       rimuovi_piazzola: "Remove station", conferma_piazzola: "Remove this station from the draft?",
       nome_percorso: "Route name", in_pausa: "Paused", registrando: "Recording",
       wake_si: "Screen kept on", wake_no: "Keep the screen on manually",
+      pending:"Awaiting approval",proponi:"Send to club manager",approva:"Approve and publish",proposta_salvata:"Route sent for approval.",prima_sync:"Wait for the draft to sync before submitting.",guida_traccia:"Name your route, start GPS, walk the course and mark each stake. Save, then submit it to the club manager. It appears on maps after approval.",
       percorsi: "Routes", nessun_percorso: "No routes for this club.",
       bozza: "Draft", pubblicato: "Published", mostra: "Show", pubblica: "Publish", ritira: "Back to draft",
       elimina: "Delete", elimina_conf: "Delete this item permanently?",
@@ -318,7 +320,7 @@
     S.caricatoCode = S.code;
     var code = S.code;
     calcolaPermessi(ctx, code).then(function () {
-      return Promise.all([r.listRoutes(code, S.perm.gestisce), r.listIssues(code)]);
+      return Promise.all([r.listRoutes(code, S.perm.gestisce, S.perm.registra ? ctx.user.uid : null), r.listIssues(code)]);
     }).then(function (v) {
       if (S.code !== code) return;
       S.rotte = v[0]; S.segn = v[1];
@@ -335,7 +337,7 @@
     var r = repo(ctx);
     return Promise.all([
       r.isMaintainer(code, u.uid),
-      ctx.db.collection("compagnie_contatto").doc(code).get().then(function (d) { return d.exists && d.data().adminUid === u.uid; }, function () { return false; })
+      ctx.db.collection("compagnie_admin").where("adminUid","==",u.uid).get().then(function(snap){var found=false;snap.forEach(function(d){if(d.id===code)found=true;});return found;},function(){return false;})
     ]).then(function (v) {
       base.isMaintainer = v[0]; base.isClubAdmin = v[1];
       S.perm = G.permessi(base); S.permCode = code;
@@ -429,7 +431,7 @@
     var vai = E('<button type="button" class="btn btn-ghost">OK</button>');
     vai.disabled = !!bozzaAttiva;
     vai.addEventListener("click", function () {
-      var v = inp.value.trim().toUpperCase();
+      var v = inp.value.trim().replace(/[\s-]+/g, "").toUpperCase();
       S.code = v || null; S.perm = null; S.rotte = []; S.segn = []; S.puntiRotta = {}; S.rottaVista = null; S.caricatoCode = null;
       if (v) { store.set("arctrail3d_campo_codice", v); daCache(v); }
       ctx.render();
@@ -466,6 +468,7 @@
     if (P.registra && !d) {
       var nomeNuovo = E('<input type="text" class="input-field in-modulo" data-campo-nome-nuovo maxlength="120" placeholder="' + X(T(ctx, "nome_percorso")) + '">');
       nomeNuovo.setAttribute("aria-label", T(ctx, "nome_percorso"));
+      az.appendChild(E('<p class="nota">'+X(T(ctx,"guida_traccia"))+'</p>'));
       az.appendChild(nomeNuovo);
       var erroreNome = E('<div class="nota" role="alert"></div>'); az.appendChild(erroreNome);
       var bR = E('<button type="button" class="btn btn-primary btn-block">' + X(T(ctx, "registra")) + "</button>");
@@ -569,18 +572,27 @@
     var E = ctx.el, X = ctx.escapeHtml;
     var c = E('<div class="card"></div>');
     c.appendChild(E('<div class="campo-eti">' + X(T(ctx, "percorsi")) + "</div>"));
-    if (!S.rotte.length) c.appendChild(E('<div class="nota">' + X(T(ctx, "nessun_percorso")) + "</div>"));
-    S.rotte.forEach(function (r) {
+    var inCoda=coda.elenco().filter(function(o){return o.tipo==="route";}).map(function(o){return o.dati.meta;});
+    var rotte=inCoda.concat(S.rotte.filter(function(r){return !inCoda.some(function(p){return p.id===r.id;});}));
+    if (!rotte.length) c.appendChild(E('<div class="nota">' + X(T(ctx, "nessun_percorso")) + "</div>"));
+    rotte.forEach(function (r) {
       var v = E('<div class="campo-voce"></div>');
-      v.appendChild(E('<div class="campo-voce-t"><b>' + X(r.name) + "</b> · " + X(r.status === "published" ? T(ctx, "pubblicato") : T(ctx, "bozza")) + " · " + metri(r.lengthM || 0) + " · " + (r.pointCount || 0) + " " + X(T(ctx, "punti")) + "</div>"));
+      v.appendChild(E('<div class="campo-voce-t"><b>' + X(r.name) + "</b> · " + X(r.status === "published" ? T(ctx, "pubblicato") : T(ctx, r.status === "pending" ? "pending" : "bozza")) + " · " + metri(r.lengthM || 0) + " · " + (r.pointCount || 0) + " " + X(T(ctx, "punti")) + "</div>"));
       if (r.piazzole && r.piazzole.length) v.appendChild(E('<div class="nota">' + X(T(ctx, "piazzole_segnate")) + ': ' + r.piazzole.map(function (p) { return X(String(p.n)); }).join(" · ") + '</div>'));
       var bt = E('<div class="campo-riga campo-bottoni"></div>');
       function tasto(k, fn, cls) { var b = E('<button type="button" class="btn btn-ghost campo-mini ' + (cls || "") + '">' + X(T(ctx, k) || k) + "</button>"); b.addEventListener("click", fn); bt.appendChild(b); }
       tasto("mostra", function () { puntiDi(ctx, r.id).then(function () { S.rottaVista = r.id; ctx.render(); }, function (e) { S.msg = T(ctx, "errore"); ctx.render(); }); });
       tasto("GeoJSON", function () { puntiDi(ctx, r.id).then(function (p) { scarica(r.id + ".geojson", "application/geo+json", JSON.stringify(G.toGeoJSON(r, p, S.segn), null, 1)); }); });
       tasto("GPX", function () { puntiDi(ctx, r.id).then(function (p) { scarica(r.id + ".gpx", "application/gpx+xml", G.toGPX(r, p)); }); });
+      if (r.status === "draft" && r.createdBy === ctx.user.uid) {
+        tasto("proponi", function(){
+          if(coda.elenco().some(function(o){return o.tipo==="route" && o.dati.meta.id===r.id;})){ S.msg=T(ctx,"prima_sync");ctx.render();return; }
+          var rp=repo(ctx);if(!rp){S.msg=T(ctx,"prima_sync");ctx.render();return;}
+          rp.submitRoute(r.id,Date.now()).then(function(){S.msg=T(ctx,"proposta_salvata");S.msgBuono=true;carica(ctx);},function(e){S.msg=T(ctx,"errore")+": "+(e.code||e.message);ctx.render();});
+        });
+      }
       if (P.pubblica) {
-        tasto(r.status === "published" ? "ritira" : "pubblica", function () {
+        tasto(r.status === "published" ? "ritira" : (r.status === "pending" ? "approva" : "pubblica"), function () {
           var rp = repo(ctx), ora = Date.now();
           (r.status === "published" ? rp.unpublishRoute(r.id, ora) : rp.publishRoute(r.id, ctx.user.uid, ora))
             .then(function () { carica(ctx); }, function (e) { S.msg = T(ctx, "errore") + ": " + (e.code || e.message); ctx.render(); });
@@ -654,7 +666,7 @@
         var id = G.nuovoId("i"), ora = Date.now();
         var seg = G.nuovaSegnalazione({ id: id, companyCode: S.code, routeId: S.rottaVista || null, piazzola: pz.value || null, category: cat, note: nota.value.trim(), lat: S.pos.lat, lon: S.pos.lon, acc: S.pos.acc, uid: ctx.user.uid, createdAt: ora });
         coda.aggiungi({ id: "issue-" + id, tipo: "issue", dati: { seg: seg, foto: du ? [{ id: "f1", dataUrl: du }] : [] } });
-        if (ctx.dopoSegnala) { try { ctx.dopoSegnala(seg, catNome(ctx, cat)); } catch (e) {} }
+        // L’avviso al responsabile parte dal trigger server dopo il salvataggio, anche dalla coda offline.
         S.msg = T(ctx, "salvato_locale");
         sincronizza(ctx);
         if (ctx.alChiudi) esci(); else { S.vista = "mappa"; ctx.render(); }
