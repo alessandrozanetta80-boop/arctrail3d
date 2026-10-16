@@ -44,7 +44,7 @@ def firma = new Properties()
 if (fileFirma.exists()) { fileFirma.withInputStream { firma.load(it) } }
 
 def twaManifest = [
-    applicationId: 'com.arctrail3d.app',
+    applicationId: 'com.arctrail3d.myapp',
     hostName: 'arctrail3d.com', // The domain being opened in the TWA.
     launchUrl: '/app.html', // The start path for the TWA. Must be relative to the domain.
     name: 'ArcTrail 3D', // The application name.
@@ -77,8 +77,8 @@ android {
     compileSdkVersion 36
     namespace "com.arctrail3d.app"
     defaultConfig {
-        applicationId "com.arctrail3d.app"
-        minSdkVersion 21
+        applicationId "com.arctrail3d.myapp"
+        minSdkVersion 24
         targetSdkVersion 36
         versionCode Math.max(1, Integer.parseInt(versioneApk['versionCode'].toString().trim()))
         versionName versioneApk['versionName'].toString().trim()
@@ -184,6 +184,10 @@ android {
         }
     }
     buildTypes {
+        debug {
+            applicationIdSuffix ".prova"
+            resValue "string", "providerAuthority", "com.arctrail3d.myapp.prova.fileprovider"
+        }
         release {
             minifyEnabled true
             signingConfig signingConfigs.release
@@ -251,5 +255,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     
         implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.6.2'
+    implementation 'com.google.android.play:app-update:2.1.0'
     
 }

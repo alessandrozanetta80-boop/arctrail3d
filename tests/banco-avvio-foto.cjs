@@ -1,0 +1,21 @@
+const fs=require('fs'),path=require('path'),assert=require('assert');
+const root='C:/Users/Ale/Desktop/PROGETTI/ArcTrail 3D';
+const {chromium}=require(root+'/node_modules/playwright'),{accendiDev}=require(root+'/tests/copia-dev.js');
+const html=fs.readFileSync(process.env.APP||path.join(root,'app.html'),'utf8');
+const manifest=fs.readFileSync(root+'/android/app/src/main/AndroidManifest.xml','utf8');
+const java=fs.readFileSync(root+'/android/app/src/main/java/com/arctrail3d/app/LauncherActivity.java','utf8');
+assert(!html.includes('native-intro')&&!html.includes('window.authState'),'Nessuna copertura web con stato privato');
+assert(!manifest.includes('SPLASH_IMAGE_DRAWABLE'),'Nessuna seconda foto nel browser');
+assert(!java.includes('nativeIntro'),'Android non attiva più alcun intro web');
+const body=accendiDev(html);let count=3;
+(async()=>{const b=await chromium.launch();try{for(const width of [320,384]){const ctx=await b.newContext({viewport:{width,height:832},deviceScaleFactor:2,serviceWorkers:'block'});
+await ctx.addInitScript(()=>{localStorage.setItem('arctrail3d_state_v3',JSON.stringify({screen:'menu',tab:'home',lang:'it',country:'it',federation:'fiarc',theme:'light',profile:{nomeCognome:'Prova locale'},profileSkipped:false}));localStorage.setItem('arctrail3d_welcome_v2','1');});
+await ctx.route('**/*',async r=>{const u=new URL(r.request().url());if(u.hostname!=='arctrail.test')return r.abort();if(u.pathname==='/app.html')return r.fulfill({contentType:'text/html',body});const f=path.join(root,decodeURIComponent(u.pathname));if(f.startsWith(root)&&fs.existsSync(f)&&fs.statSync(f).isFile())return r.fulfill({path:f});return r.abort();});
+const p=await ctx.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
+await p.goto('https://arctrail.test/app.html?nativeIntro=1&nativeIntroAt='+Date.now(),{waitUntil:'domcontentloaded'});
+await p.locator('#app').filter({has:p.locator('button')}).waitFor();
+assert(await p.locator('#app').isVisible());assert(!await p.evaluate(()=>document.documentElement.classList.contains('native-intro')));
+assert(!await p.evaluate(()=>getComputedStyle(document.documentElement,'::before').position==='fixed'));
+await p.screenshot({path:root+'/UI_REVIEW/AVVIO_FOTO/corretto-web-'+width+'.png'});
+assert(errors.length===0,errors.join('\n'));count+=4;console.log('OK App completa renderizzata e accessibile subito '+width+'px, anche con URL v7');await ctx.close();}
+console.log('CORREZIONE AVVIO '+count+'/'+count+' · app effettiva, stato privato invariato, Firebase disabilitato nella sola prova');}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1});

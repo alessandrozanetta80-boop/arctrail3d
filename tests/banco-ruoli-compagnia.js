@@ -76,6 +76,7 @@ async function apri(prep){
   return { referente:/Mario Rossi/.test(txt), emailPrivata:/privata@club\.it/.test(txt),
    telefono:/333 1234567/.test(txt), note:/chiave sotto il sasso/.test(txt),
    modificabili:document.querySelectorAll("#app input:not([disabled]), #app textarea").length,
+   gpsPercorsi:!!document.querySelector("[data-compagnia-percorsi-gps]"),
    salva:/Salva/i.test(txt), chiedi:/Chiedi di gestire/i.test(txt),
    inAttesa:/in attesa|da confermare/i.test(txt), testo:txt.replace(/\n+/g," | ").slice(0,110) };});
  await ctx.close(); return r;
@@ -88,6 +89,7 @@ prova("non vede il telefono", !v.telefono);
 prova("non vede le note del campo", !v.note);
 prova("non ha campi da compilare", v.modificabili === 0, v.modificabili+" campi");
 prova("non gli si offre di gestire la compagnia", !v.chiedi);
+prova("visitatore: niente gestione GPS", !v.gpsPercorsi);
 
 console.log("\n  ARCIERE SENZA COMPAGNIA");
 var a=await apri(()=>{ window.__prova.entra("u1"); window.__prova.nessunReferente("01VERB"); window.__prova.spazio("01VERB"); });
@@ -113,6 +115,7 @@ prova("vede l'email della compagnia", r2.emailPrivata);
 prova("vede le note del campo", r2.note);
 prova("ha il tasto per salvare", r2.salva);
 prova("non gli si chiede di diventare referente", !r2.chiedi);
+prova("referente: accesso Percorsi GPS nello Spazio compagnia", r2.gpsPercorsi);
 
 /* ══ CHI GESTIVA GIA' PRIMA DEL 20/09 ═══════════════════════════════════════
    Dal 20/09 la schermata chiede prima `compagnie_contatto`, che per le
@@ -124,5 +127,6 @@ console.log("\n  REFERENTE DI PRIMA (contatto pubblico non ancora scritto)");
 var r3=await apri(()=>{ window.__prova.entra("u1"); window.__prova.club("01VERB"); window.__prova.referenteSenzaContatto("01VERB","u1"); window.__prova.spazio("01VERB"); });
 prova("vede lo stesso la sua schermata", r3.modificabili > 0, r3.modificabili+" campi");
 prova("e non gli si chiede di diventare referente", !r3.chiedi);
+prova("referente storico: stesso accesso Percorsi GPS", r3.gpsPercorsi);
 console.log("\n  "+ok+" passate, "+ko+" fallite.\n");
 await b.close(); process.exit(ko?1:0);})();

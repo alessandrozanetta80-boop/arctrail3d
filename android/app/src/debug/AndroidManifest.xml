@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <application>
+    <activity android:name=".ProvaAggiornamentiActivity" android:exported="true" android:label="Prova aggiornamenti — SOLO DEBUG" android:theme="@style/AvvioTheme">
+      <meta-data android:name="android.support.customtabs.trusted.DEFAULT_URL" android:value="https://arctrail3d.com/app.html" />
+    </activity>
+  <activity android:name=".ProvaGpsActivity" android:exported="true" android:theme="@android:style/Theme.Material.Light"/></application>
+</manifest>

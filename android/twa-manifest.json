@@ -1,5 +1,5 @@
 {
-  "packageId": "com.arctrail3d.app",
+  "packageId": "com.arctrail3d.myapp",
   "host": "arctrail3d.com",
   "name": "ArcTrail 3D",
   "launcherName": "ArcTrail 3D",
@@ -20,8 +20,8 @@
     "path": "NON-USATO",
     "alias": "arctrail3d"
   },
-  "appVersionName": "2026.09.23",
-  "appVersionCode": 1,
+  "appVersionName": "2026.10.16",
+  "appVersionCode": 10,
   "shortcuts": [],
   "generatorApp": "bubblewrap-core-1.25.0",
   "webManifestUrl": "https://arctrail3d.com/manifest.json",
@@ -34,7 +34,7 @@
   "isChromeOSOnly": false,
   "isMetaQuest": false,
   "fullScopeUrl": "https://arctrail3d.com/",
-  "minSdkVersion": 21,
+  "minSdkVersion": 24,
   "orientation": "portrait",
   "fingerprints": [],
   "additionalTrustedOrigins": [],
@@ -43,5 +43,5 @@
   "fileHandlers": [],
   "launchHandlerClientMode": "",
   "displayOverride": [],
-  "appVersion": "2026.09.23"
+  "appVersion": "2026.10.16"
 }

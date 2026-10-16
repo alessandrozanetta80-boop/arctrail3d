@@ -2,6 +2,45 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<script>
+/* Verified TWA MessagePort. The browser/PWA intentionally has no background GPS claim. */
+(function(root){
+  "use strict";
+  var port=null,token=null,pkg=null,serial=0,pending={};
+  var api=root.ArcTrailGpsNativo={disponibile:function(){return !!port;},richiedeNativo:new URLSearchParams(root.location.search).get("nativeGps")==="1"};
+  function receive(e){
+    var d;try{d=JSON.parse(e.data);}catch(_){return;}
+    var p=pending[d.richiesta];if(!p)return;
+    delete pending[d.richiesta];clearTimeout(p.timer);
+    if(d.error)p.reject(new Error(d.error));else p.resolve(d.result);
+  }
+  root.addEventListener("message",function(e){
+    if(e.origin!=="https://arctrail3d.com"||!e.ports||!e.ports[0])return;
+    var d;try{d=JSON.parse(e.data);}catch(_){return;}
+    if(d.tipo!=="arctrail-gps-ready"||typeof d.token!=="string"||!/^[a-f0-9-]{36}$/.test(d.token)||
+       (d.package!=="com.arctrail3d.myapp"&&d.package!=="com.arctrail3d.myapp.prova"))return;
+    if(port)port.close();port=e.ports[0];token=d.token;pkg=d.package;port.onmessage=receive;port.start();
+    root.dispatchEvent(new Event("arctrail-gps-ready"));
+  });
+  api.comando=function(cmd,uid,id,after){
+    return new Promise(function(resolve,reject){
+      if(!port){reject(new Error("Aggiorna l’app Android per il GPS a schermo spento."));return;}
+      var request=String(++serial),timer=setTimeout(function(){delete pending[request];reject(new Error("GPS Android non risponde. La traccia resta nel telefono."));},7000);
+      pending[request]={resolve:resolve,reject:reject,timer:timer};
+      try{port.postMessage(JSON.stringify({cmd:cmd,uid:uid,id:id,after:after||0,token:token,richiesta:request}));}
+      catch(e){clearTimeout(timer);delete pending[request];reject(e);}
+    });
+  };
+  api.avvia=function(d,uid){
+    if(!port)throw new Error("GPS Android non disponibile");
+    var query="token="+encodeURIComponent(token)+"&uid="+encodeURIComponent(uid)+"&id="+encodeURIComponent(d.id)+
+      "&name="+encodeURIComponent(d.name)+"&companyCode="+encodeURIComponent(d.companyCode);
+    // Called synchronously from the button gesture, so Chrome permits the native permission screen.
+    root.location.href="intent://start?"+query+"#Intent;scheme=arctrailgps;package="+pkg+";end";
+  };
+})(window);
+
+</script>
 <!-- Niente maximum-scale (19/09/2026, audit M3): chi ci vede poco deve poter ingrandire con due dita.
      Il doppio tocco sui tasti non zooma: .tastiera .quick-btn ha touch-action:manipulation. -->
 <!-- `interactive-widget=resizes-content`: quando si apre la tastiera la
@@ -1964,12 +2003,36 @@ background:none; width:auto; height:auto; }
    diventa un blocco solo con l'input invece di due cose separate. */
 /* MAPPA CAMPO / MANUTENZIONE CAMPO (02/10/2026): disegno in campo-mappa.js. */
 .campo-mappa .card{ margin-bottom:var(--s-3); }
+.pista-segnala{ min-height:48px; margin-bottom:var(--s-3); color:var(--danger); border:2px solid var(--danger); }
+.segnala-in-testata .pista-segnala{ min-height:44px; margin:0; width:auto; flex:0 1 auto; padding:var(--s-2) var(--s-3); font-size:var(--t-sm); }
+@media(max-width:600px){
+body.segnala-in-testata header.top .brandblock,body.segnala-in-testata [data-header-action="profilo"]{ display:none; }
+body.segnala-in-testata header.top .head-actions{ width:100%; justify-content:space-between; }
+}
+.campo-piazzola circle{ fill:var(--accent); stroke:var(--surface); stroke-width:2px; }
+.campo-piazzola text{ fill:var(--surface); font-size:12px; font-weight:800; }
+.campo-piazzola-riga{ align-items:center; justify-content:space-between; }
+.campo-azioni [data-campo-nome-nuovo]{ width:100%; }
+.campo-testata-registra .sezione-occhiello,.campo-testata-registra>.campo-eti,.campo-testata-registra>.campo-riga{ display:none; }
+.campo-testata-registra .sezione-titolo{ font-size:var(--t-lg); margin-bottom:var(--s-1); }
+.campo-testata-registra{ padding:var(--s-3); }
+.campo-segna-riga{ display:flex; align-items:center; gap:var(--s-2); margin-bottom:var(--s-3); }
+.campo-segna-riga input{ width:64px; flex:0 0 64px; }
+.campo-segna-riga button{ flex:1; width:auto; min-height:48px; }
+.campo-piazzole{ margin:var(--s-2) 0; }
+.campo-piazzole summary{ min-height:44px; padding:var(--s-2) 0; font-weight:700; cursor:pointer; }
+.campo-esito-ok{ color:var(--accent-ink); }
+.campo-controlli-traccia{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2); margin-top:var(--s-2); }
+.campo-controlli-traccia button{ width:100%; min-width:0; min-height:48px; white-space:normal; }
 .campo-riga,.campo-bottoni,.campo-azioni,.campo-nav{ display:flex; flex-wrap:wrap; gap:var(--s-2); align-items:center; margin-top:var(--s-2); }
 .campo-riga > .input-field{ flex:1 1 140px; min-width:0; }
 /* In cima a Campi: «Mappa campo» e «Segnala problema», due tasti affiancati. */
 .campo-porte{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s-2); margin-bottom:var(--s-3); }
 .campo-porte > .btn{ margin:0; min-width:0; }
-.campo-mappa-box{ width:100%; border:1px solid var(--line); border-radius:var(--r-app); overflow:hidden; }
+/* Angolo: --r-md come le schede. (08/10/2026.) Era --r-app (22%, la forma dell'icona):
+   su un riquadro largo diventava un ovale e tagliava la scritta «Niente da disegnare». */
+.campo-mappa-box{ width:100%; border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden; }
+.campo-mappa-box > .campo-mappa-vuota{ margin:0; padding:var(--s-3); }
 .campo-svg{ display:block; width:100%; height:auto; max-height:60vh; touch-action:manipulation; }
 .campo-svg polyline{ fill:none; stroke:var(--green-500); stroke-width:3; stroke-linejoin:round; stroke-linecap:round; }
 .campo-mk circle{ fill:var(--red-700); stroke:var(--bg-panel); stroke-width:2; } .campo-mk text{ font-size:10px; fill:var(--bg-panel); pointer-events:none; }
@@ -5996,6 +6059,7 @@ var arrivaDaEmail = false;   // acceso da leggiRitornoEmail(), all'avvio
 var authState = DEV_MODE ? "ready" : ((firebaseReady || firebaseInArrivo) ? "loading" : "firebaseError"); // loading | needLogin | linkSent | pendingApproval | authError | firebaseError | ready
 var authErrorMsg = "";
 var currentUser = null;
+window.addEventListener("arctrail-gps-ready", function(){ if(currentUser) window.ArcTrailGpsNativo.comando("account",currentUser.uid,"").catch(function(){}); });
 var PENDING_EMAIL_KEY = "arctrail3d_pending_email";
 var PENDING_PROFILE_KEY = "arctrail3d_pending_profile";
 var ADMIN_EMAIL = "alessandro.zanetta80@gmail.com";
@@ -6310,6 +6374,7 @@ cb(list);
 
 function onAuthReady(user){
 currentUser = user;
+if(window.ArcTrailGpsNativo.disponibile()) window.ArcTrailGpsNativo.comando("account", user.uid, "").catch(function(){});
 // PRIMA DI TUTTO: di chi sono i dati di questo telefono? (P0-2) Se sono di un
 // altro si svuotano adesso, prima che una qualunque sincronia li porti nel
 // cloud di chi e' appena entrato.
@@ -6625,6 +6690,17 @@ var HISTORY_MAX = 150;
 var PROPRIETARIO_KEY = "arctrail3d_proprietario_v1";
 function leggiProprietario(){ try{ return localStorage.getItem(PROPRIETARIO_KEY) || ""; }catch(e){ return ""; } }
 function segnaProprietario(uid){ try{ if(uid) localStorage.setItem(PROPRIETARIO_KEY, uid); }catch(e){} }
+// Tracciato della mappa campo nato prima del 08/10/2026: chiave senza uid. Qui,
+// prima di qualunque accesso, il proprietario dei dati e' ancora chi l'ha
+// registrato (uscire lo cancella): passa a lui. Senza proprietario resta dov'e',
+// non si mostra a nessuno e non si cancella.
+(function(){ try{
+var vecchia = localStorage.getItem("arctrail3d_campo_traccia_v1"), chi = leggiProprietario();
+if(vecchia && chi && !localStorage.getItem("arctrail3d_campo_traccia_v1:" + chi)){
+localStorage.setItem("arctrail3d_campo_traccia_v1:" + chi, vecchia);
+localStorage.removeItem("arctrail3d_campo_traccia_v1");
+}
+}catch(e){} })();
 /* MEGLIO DA PARTE CHE NEL CLOUD SBAGLIATO. (20/09/2026, fase P0-2 del brief.)
    Il 19/09 i dati di un altro si SVUOTAVANO: niente contaminazione, ma un giro
    di A fatto senza rete e mai salito spariva quando entrava B. E i dati di prima
@@ -6776,17 +6852,21 @@ if(!x) return;
 scriviOrfani(leggiOrfani().filter(function(y){ return !(y.il === x.il && !y.uid && !y.email); }));
 }
 function svuotaDatiUtenteLocali(){
+if(window.CampoMappaUI) window.CampoMappaUI.lascia(true);
 var tieni = { lang: state.lang, theme: state.theme, country: state.country, federation: state.federation };
 // ORFANI_KEY NON sta qui: i dati messi da parte restano finche' non tornano al loro proprietario.
 var chiavi = [STORAGE_KEY, HISTORY_KEY, LIFETIME_KEY, LIFETIME_VISTI_KEY, DELETED_KEY, PROPRIETARIO_KEY,
   "arctrail3d_ifaa_schema_v1", "arctrail3d_misure_v1", "arctrail3d_attrezzi_v1",
-  "arctrail3d_push_spenta", "arctrail3d_pending_profile", "arctrail3d_pending_email"];
+  "arctrail3d_push_spenta", "arctrail3d_pending_profile", "arctrail3d_pending_email", "arctrail3d_campo_codice"];
 try{
 chiavi.forEach(function(k){ localStorage.removeItem(k); });
 var altre = [];
 for(var i = 0; i < localStorage.length; i++){
 var k = localStorage.key(i);
-if(k && k.indexOf("arctrail3d_avviso_") === 0) altre.push(k);
+// Mappa campo: la copia locale di percorsi e segnalazioni gia' online si
+// rilegge dal cloud. La coda e il tracciato NON inviati non stanno qui:
+// hanno l'uid nella chiave e aspettano il loro proprietario. (08/10/2026)
+if(k && (k.indexOf("arctrail3d_avviso_") === 0 || k.indexOf("arctrail3d_campo_cache_") === 0)) altre.push(k);
 }
 altre.forEach(function(k){ localStorage.removeItem(k); });
 }catch(e){}
@@ -14456,6 +14536,14 @@ function sigleDi(voci){ return voci.map(function(v){ return v.s; }); }
 // Il codice di Compagnia non e' testo libero: l'elenco vero e' gia' nel file.
 // Un codice sbagliato spedito alla Segreteria e' un errore che scopre
 // qualcun altro, giorni dopo, e che nessuno puo' piu' correggere.
+// Il codice compagnia si cerca anche con spazi o trattini: 01 Verb = 01VERB.
+function compagniaCorrisponde(cod, c, query){
+var q = String(query || "").trim().toLowerCase();
+if(!q) return true;
+var testo = [cod, c.nome, c.luogo, c.provincia, c.regione].filter(Boolean).join(" ").toLowerCase();
+var compatto = q.replace(/[\s-]+/g, "");
+return testo.indexOf(q) !== -1 || (!!compatto && String(cod).toLowerCase().indexOf(compatto) !== -1);
+}
 function compagniaNome(cod){
 if(!cod || typeof COMPAGNIE === "undefined") return null;
 var c = COMPAGNIE[String(cod).toUpperCase()];
@@ -14568,6 +14656,12 @@ setTimeout(function(){ try{ render(); }catch(e){} }, 0);
 return removed;
 }
 
+var historyDeletePending = null;
+function deleteHistoryRoundByDate(date){
+var hist = loadHistory(), i = hist.findIndex(function(h){ return h && h.date === date; });
+if(i < 0){ var old = giriVecchi.findIndex(function(h){ return h && h.date === date; }); if(old < 0) return false; i = hist.length + old; }
+deleteHistoryRound(i); return true;
+}
 function deleteHistoryRound(idx){
 var hist = loadHistory();
 var h = hist[idx];
@@ -15566,8 +15660,9 @@ function pushLocalHistoryToCloud(cb){
 var ref = cloudHistoryRef();
 if(!ref){ if(cb) cb(null, 0); return; }
 var hist = loadHistory();
-if(!hist.length){ if(cb) cb(null, 0); return; }
 var chiesti = {}, delLocali = loadDeletedRounds();
+// Anche senza giri rimasti, le cancellazioni offline devono raggiungere gli altri dispositivi.
+if(!hist.length && !Object.keys(delLocali).length){ if(cb) cb(null, 0); return; }
 hist.forEach(function(h){ if(h && h.date) chiesti[roundDocId(h.date)] = true; });
 Object.keys(delLocali).forEach(function(id){ chiesti[id] = true; });
 leggiStoricoPerId(ref, Object.keys(chiesti)).then(function(snap){
@@ -15867,6 +15962,7 @@ if(btn) btn.disabled = true;
 var uid = currentUser && currentUser.uid;
 var nonSalvatoAllUscita = datiNonSalvatiOnline();
 var passi = [];
+if(window.ArcTrailGpsNativo.disponibile()) passi.push(window.ArcTrailGpsNativo.comando("account","","").catch(function(){}));
 if(uid && db && !DEV_MODE){
 // Il dispositivo si spegne sempre (anche se il token non e' passato di qui). (fase 16)
 passi.push(togliTokenPush(uid, tokenScrittoQui));
@@ -16646,6 +16742,9 @@ function render(){
 // Un aggiornamento arrivato a meta' giro si applica al primo disegno fuori
 // dal giro. (P0-3) Asincrono: prima si finisce di disegnare.
 if(aggiornamentoPronto && !giroInCorso()){ setTimeout(function(){ applicaAggiornamentoSeLibero(false); }, 0); }
+// Fuori dalla mappa del campo il GPS si spegne (e una registrazione va in
+// pausa), da qualunque porta si esca: indietro, barra in basso, logout. (08/10/2026)
+if((state.screen !== "campo-mappa" || authState === "needLogin") && window.CampoMappaUI && window.CampoMappaUI.lascia){ window.CampoMappaUI.lascia(authState === "needLogin" || !currentUser); }
 // Uscendo dalla chat di un allenamento il suo ascoltatore si chiude. (audit C3)
 // Qui e non nel gestore del tasto «indietro»: dalla chat si esce da sei posti
 // diversi, e sei chiusure scritte a mano diventano cinque il giorno dopo.
@@ -16697,7 +16796,7 @@ adattaMisurePiuTardi();
 var GRADINI_TESTATA = 4;
 function testataACapo(h){
 var b = h.querySelector(".brandblock"), a = h.querySelector(".head-actions");
-if(!b || !a) return false;
+if(!b || !a || !b.getBoundingClientRect().width) return false;
 return a.getBoundingClientRect().top > b.getBoundingClientRect().bottom - 4;
 }
 function adattaTestata(){
@@ -16811,7 +16910,17 @@ Object.keys(m).forEach(function(k){
 p.appendChild(tab);
 try{ if(console.table) console.table(m); else console.log(m); }catch(e){}
 }
-function adattaMisure(){ adattaTestata(); adattaTira(); pannelloDiag(); }
+function adattaSegnalazioneGiro(){
+var b = document.querySelector(".pista-segnala"), h = document.querySelector("header.top .head-actions"), pista = document.querySelector(".pista");
+var compatta = !!(b && h && document.body.classList.contains("schermo-percorso") && window.innerHeight <= 600);
+document.body.classList.toggle("segnala-in-testata", compatta);
+if(!b || !h) return;
+if(!b.__segnalaOrigine) b.__segnalaOrigine = b.parentNode;
+pista = pista || b.__segnalaOrigine;
+if(compatta && b.parentNode !== h) h.appendChild(b);
+else if(!compatta && pista && b.parentNode !== pista) pista.insertBefore(b, pista.firstChild);
+}
+function adattaMisure(){ adattaSegnalazioneGiro(); adattaTestata(); adattaTira(); pannelloDiag(); }
 function adattaMisurePiuTardi(){
 try{ requestAnimationFrame(function(){ setTimeout(adattaMisure, 0); }); }catch(e){ setTimeout(adattaMisure, 16); }
 }
@@ -18390,7 +18499,7 @@ var c = COMPAGNIE[cod];
    distinguere due compagnie quasi omonime senza toccare il nome. */
 var codF = codiceFiarcDi(cod);
 var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "") + (codF ? " " + codF : "");
-if(label.toLowerCase().indexOf(q) === -1) return;
+if(!compagniaCorrisponde(cod, c, q)) return;
 found++;
 var sottoVoce = [codF, (c.luogo && c.luogo !== "\u2014") ? c.luogo : null].filter(Boolean).join(" \u00b7 ");
 var row = el('<button type="button" class="club-voce"><b>'+escapeHtml(c.nome)+'</b>'
@@ -18806,11 +18915,14 @@ if(duranteGiro){ homeOverride = true; }
 else { state.screen = "menu"; }
 save(); render();
 }});
-if(duranteGiro && currentUser){
+if(duranteGiro && currentUser && state.screen !== "round"){
 azioni.push({ id:"segnala", glifo:"warn", testo:t("fr_report_btn_short"), titolo:t("fr_report_title"),
 conParola:true, pericolo:true, vai:function(){
-state.frFrom = state.screen;
-frEsito = null; state.screen = "field-report"; save(); render();
+/* (02/10/2026, giro _09.) Apre la segnalazione GPS `field_issues`, non piu'
+   il vecchio `field-report`: campo dal «Dove» del giro (se certo), piazzola
+   corrente, e ritorno esatto a questa schermata. */
+apriSegnalaCampo({ torna: state.screen, codice: campoCodiceDelGiro(),
+piazzola: (state.roundActive && state.target) ? state.target : null });
 }});
 }
 }
@@ -18970,6 +19082,7 @@ var classi = conParola
 ? ("home-btn" + (a.forte ? " small" : "") + (a.pericolo ? " pericolo" : ""))
 : ("bar-btn" + (a.pericolo ? " pericolo" : ""));
 var b = el('<button type="button" class="'+classi+' no-print"></button>');
+b.setAttribute("data-header-action", a.id || "");
 b.setAttribute("title", a.titolo || a.testo);
 b.setAttribute("aria-label", a.titolo || a.testo);
 /* Sulla pastiglia chiara si scrive sempre in tinta: il verde e' il colore
@@ -23172,11 +23285,52 @@ document.head.appendChild(sc);
 });
 return campoStoragePromessa;
 }
+/* SEGNALA PROBLEMA SUL CAMPO, DA DOVE SEI. (02/10/2026, giro _09.)
+   Tre porte per la stessa segnalazione GPS (`field_issues`): Campi, la scheda
+   di un campo, e soprattutto il tasto «Segnala» della barra durante il giro
+   (prima apriva il vecchio `field-report`). `state.campoSegnala` ricorda da
+   dove si e' partiti, cosi' chiudere o inviare riporta li' — anche dopo una
+   ricarica. Il giro non si tocca: si cambia solo `state.screen`.
+   codice: stringa = quel campo; null = non certo, si sceglie a mano;
+   undefined = comportamento di sempre (compagnia del profilo / ultima usata). */
+function apriSegnalaCampo(o){
+state.campoSegnala = { torna: o.torna || "campi", codice: o.codice, piazzola: o.piazzola || null };
+campoApriVista = "segnala"; state.screen = "campo-mappa"; save(); render();
+}
+// Il campo del giro: SOLO se il «Dove» scritto all'avvio indica una compagnia
+// sola (codice, nome o luogo identici). Mai la compagnia del profilo al suo posto.
+function campoCodiceDelGiro(){
+var q = String(state.campo || "").trim().toLowerCase();
+if(!q || typeof COMPAGNIE === "undefined") return null;
+var codCompatto = q.replace(/[\s-]+/g, "").toUpperCase();
+if(COMPAGNIE[codCompatto]) return codCompatto;
+var trovati = Object.keys(COMPAGNIE).filter(function(cod){
+var c = COMPAGNIE[cod];
+return String(c.luogo || "").trim().toLowerCase() === q || String(c.nome || "").trim().toLowerCase() === q;
+});
+return trovati.length === 1 ? trovati[0] : null;
+}
+// Il referente della compagnia riceve l'avviso come col vecchio modulo:
+// nessun secondo record, la segnalazione e' una sola (`field_issues`).
+function avvisaReferenteCampo(seg, categoria){
+if(!currentUser || !seg || !seg.companyCode) return;
+caricaContattoCompagnia(seg.companyCode, function(dati){
+var adminUid = (dati || {}).adminUid;
+if(!adminUid || adminUid === currentUser.uid) return;
+var desc = categoria + (seg.piazzola ? " · " + t("fr_piazzola_label") + " " + seg.piazzola : "") + (seg.note ? " · " + seg.note : "");
+sendPushViaFirestore(adminUid, t("fr_notif_title"),
+t("fr_notif_body", { name: myDisplayName(), desc: desc.slice(0,90) }),
+{ k:"club-space", code: seg.companyCode });
+});
+}
 function campoMappaScreen(){
 initCompagnieData();
 var wrap = el('<div></div>');
-var indietro = el('<button type="button" class="btn btn-ghost">← ' + escapeHtml(state.lang === "it" || !state.lang ? "Campi" : "Courses") + '</button>');
-indietro.addEventListener("click", function(){ state.screen = "campi"; save(); render(); });
+var cs = state.campoSegnala || null;
+function tornaIndietro(){ var dove = (cs && cs.torna) || "campi"; state.campoSegnala = null; state.screen = dove; save(); render(); }
+var itM = state.lang === "it" || !state.lang;
+var indietro = el('<button type="button" class="btn btn-ghost">← ' + escapeHtml(cs && cs.torna === "club-space" ? (itM ? "Spazio compagnia" : "Club space") : cs && cs.torna !== "campi" ? (itM ? "Torna al giro" : "Back to round") : (itM ? "Campi" : "Courses")) + '</button>');
+indietro.addEventListener("click", tornaIndietro);
 wrap.appendChild(indietro);
 if(campoScriptStato !== "ok" || !window.CampoMappaUI){
 caricaCampoScript();
@@ -23187,6 +23341,10 @@ var vistaCampo = campoApriVista; campoApriVista = null;
 wrap.appendChild(window.CampoMappaUI.schermo({
 el: el, escapeHtml: escapeHtml, lang: state.lang || "it",
 vista: vistaCampo,
+codice: (vistaCampo && cs) ? cs.codice : undefined,
+piazzola: (vistaCampo && cs) ? cs.piazzola : null,
+alChiudi: cs ? tornaIndietro : null,
+dopoSegnala: avvisaReferenteCampo,
 db: (typeof db !== "undefined" && db && currentUser) ? db : null,
 storage: function(){ return (typeof firebase !== "undefined" && firebase.storage) ? firebase.storage() : null; },
 caricaStorage: caricaStorageCampo,
@@ -23194,6 +23352,7 @@ user: currentUser || null,
 isAdmin: !!(currentUser && currentUser.email === ADMIN_EMAIL && currentUser.emailVerified),
 clubCode: myClubCode(),
 nomeCompagnia: compagniaNome,
+giroInCorso: state.roundActive === true,
 render: render
 }));
 return wrap;
@@ -23210,9 +23369,9 @@ var wrap = el('<div></div>');
 var itCampo = state.lang === "it" || !state.lang;
 var campoPorte = el('<div class="campo-porte"></div>');
 var vaiMappa = el('<button type="button" class="btn btn-ghost btn-block" data-campo-mappa="1">' + escapeHtml(itCampo ? "Mappa campo" : "Course map") + '</button>');
-vaiMappa.addEventListener("click", function(){ campoApriVista = "mappa"; state.screen = "campo-mappa"; save(); render(); });
-var vaiSegnala = el('<button type="button" class="btn btn-ghost btn-block" data-campo-segnala="1">' + escapeHtml(itCampo ? "Segnala problema" : "Report a problem") + '</button>');
-vaiSegnala.addEventListener("click", function(){ campoApriVista = "segnala"; state.screen = "campo-mappa"; save(); render(); });
+vaiMappa.addEventListener("click", function(){ state.campoSegnala = null; campoApriVista = "mappa"; state.screen = "campo-mappa"; save(); render(); });
+var vaiSegnala = el('<button type="button" class="btn btn-ghost btn-block" data-campo-segnala="1">' + escapeHtml(itCampo ? "Segnala problema sul campo" : "Report a course problem") + '</button>');
+vaiSegnala.addEventListener("click", function(){ apriSegnalaCampo({ torna:"campi" }); });
 campoPorte.appendChild(vaiMappa); campoPorte.appendChild(vaiSegnala);
 wrap.appendChild(campoPorte);
 
@@ -23373,8 +23532,7 @@ Object.keys(COMPAGNIE).forEach(function(cod){
 var c = COMPAGNIE[cod];
 if(!campiDelPaese(cod)) return;
 if(q){
-var ago = (c.luogo+" "+c.nome+" "+c.provincia+" "+c.regione+" "+cod).toLowerCase();
-if(ago.indexOf(q) < 0) return;
+if(!compagniaCorrisponde(cod, c, q)) return;
 } else {
 if(!state.campiRegione) return;
 if(c.regione !== state.campiRegione) return;
@@ -23457,6 +23615,12 @@ state.compagniaAttiva = cod; compVaiGiu = true;
 save(); render();
 });
 box.appendChild(sch);
+
+// Segnalazione GPS gia' su questo campo; chiusa, si torna a questa scheda
+// (`campoAttivo` resta quello).
+var seg = el('<button type="button" class="btn btn-ghost btn-block btn-sm" data-campo-scheda-segnala="'+escapeHtml(cod)+'">'+escapeHtml(state.lang === "it" || !state.lang ? "Segnala problema sul campo" : "Report a course problem")+'</button>');
+seg.addEventListener("click", function(){ apriSegnalaCampo({ torna:"campi", codice: cod }); });
+box.appendChild(seg);
 return box;
 }
 
@@ -23658,6 +23822,11 @@ body.appendChild(claimCard);
 return;
 }
 
+// Percorsi GPS della compagnia: stessa autorizzazione del pannello referente.
+var gpsCard = el('<div class="card"><h2 class="section-title">' + escapeHtml(state.lang === "it" ? "Percorsi GPS" : "GPS routes") + '</h2></div>');
+var gpsBtn = el('<button type="button" class="btn btn-primary btn-block" data-compagnia-percorsi-gps>' + escapeHtml(state.lang === "it" ? "Registra percorso e piazzole" : "Record route and shooting stations") + '</button>');
+gpsBtn.addEventListener("click", function(){ state.campoSegnala = { codice: codice, torna: "club-space" }; campoApriVista = "mappa"; state.screen = "campo-mappa"; save(); render(); });
+gpsCard.appendChild(gpsBtn); body.appendChild(gpsCard);
 // ── Dati di riferimento ──────────────────────────────────────────────────
 var infoCard = el('<div class="card"></div>');
 infoCard.appendChild(el('<h2 class="section-title">'+t("club_contacts_title")+'</h2>'));
@@ -24573,7 +24742,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-10-16-avvio-singolo";
+var BUILD_STAMP = "2026-10-16-gps-codici-elimina-giri";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24582,7 +24751,7 @@ var BUILD_STAMP = "2026-10-16-avvio-singolo";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-10-16-avvio-foto";
+var BUILD_PARENT = "2026-10-16-avvio-singolo";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -25861,34 +26030,40 @@ var d = new Date(h.date);
 var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 var winner = h.results.length ? h.results[0] : null;
 var mLabel = modeLabel(h.modeKey || modeKeyDaLabel(h.modeLabel) || "training");
-var row = el('<div class="timeline-row" style="cursor:pointer;position:relative;padding-right:var(--s-5);"></div>');
-row.appendChild(el('<div class="timeline-icon">'+icon("target",16)+'</div>'));
-var content = el('<div class="timeline-content"></div>');
+var row = el('<div class="timeline-row history-row" style="cursor:pointer;display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:4px 8px;"></div>');
+row.appendChild(el('<div class="timeline-icon" style="grid-column:1;grid-row:1 / 3;">'+icon("target",16)+'</div>'));
+var content = el('<div class="timeline-content" style="grid-column:2 / 4;grid-row:1;"></div>');
 content.appendChild(el('<span class="timeline-meta">'+dateStr+' &middot; '+escapeHtml(mLabel)+' &middot; '+h.format+' '+t("targets_word")+'</span>'));
 row.appendChild(content);
-row.appendChild(el('<span class="timeline-result">'+(winner ? escapeHtml(winner.name)+" "+winner.total+"pt" : "")+'</span>'));
+row.appendChild(el('<span class="timeline-result" style="grid-column:2;grid-row:2;justify-self:start;margin:0;">'+(winner ? escapeHtml(winner.name)+" "+winner.total+"pt" : "")+'</span>'));
 row.addEventListener("click", function(){
 state.historyIndex = hIdx;
 state.screen = "history-detail";
 save(); render();
 });
-var delRound = el('<button title="'+t("hist_delete_one")+'" style="position:absolute;top:50%;right:2px;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:var(--t-lg);line-height:1;cursor:pointer;padding:var(--s-1) var(--s-1);">&times;</button>');
+var ownerDelete = (currentUser && currentUser.uid) || null;
+function inConferma(){ return historyDeletePending && historyDeletePending.date === h.date && historyDeletePending.uid === ownerDelete && Date.now() < historyDeletePending.until; }
+var delRound = el('<button type="button" class="btn btn-ghost history-delete" title="'+escapeHtml(t("hist_delete_one"))+'" aria-label="'+escapeHtml(t("hist_delete_one"))+'" style="grid-column:3;grid-row:2;min-height:44px;min-width:44px;max-width:80px;font-size:var(--t-xs);padding:var(--s-1);"></button>');
+delRound.setAttribute("data-history-delete", h.date);
+function mostraElimina(){
+var armed = inConferma();
+delRound.textContent = t(armed ? "pc_conferma" : "notif_delete_one");
+delRound.classList.toggle("btn-armed", !!armed);
+delRound.dataset.armed = armed ? "1" : "";
+}
+mostraElimina();
+if(inConferma()) setTimeout(function(){ if(delRound.isConnected) mostraElimina(); }, Math.max(0,historyDeletePending.until-Date.now())+50);
 delRound.addEventListener("click", function(ev){
 ev.stopPropagation();
-if(delRound.dataset.armed === "1"){
-deleteHistoryRound(hIdx);
-render();
-return;
+if(((currentUser && currentUser.uid) || null) !== ownerDelete) return;
+if(inConferma()){
+historyDeletePending = null;
+deleteHistoryRoundByDate(h.date);
+render(); return;
 }
-delRound.dataset.armed = "1";
-delRound.style.color = "var(--danger)";
-delRound.innerHTML = "&#10003;";
-setTimeout(function(){
-if(!delRound.parentNode) return;
-delRound.dataset.armed = "";
-delRound.style.color = "var(--muted)";
-delRound.innerHTML = "&times;";
-}, 3000);
+historyDeletePending = {date:h.date,uid:ownerDelete,until:Date.now()+10000};
+mostraElimina();
+setTimeout(function(){ if(delRound.isConnected) mostraElimina(); }, 10050);
 });
 row.appendChild(delRound);
 histList.appendChild(row);
@@ -26013,7 +26188,7 @@ wrap.appendChild(shareBtn);
 var delRoundBtn = el('<button class="btn btn-ghost btn-outline-danger btn-block no-print" style="margin-top:var(--s-2);">'+t("hist_delete_one")+'</button>');
 wrap.appendChild(delRoundBtn);
 armDoubleConfirm(delRoundBtn, t("hist_delete_confirm"), function(){
-deleteHistoryRound(state.historyIndex);
+deleteHistoryRoundByDate(h.date);
 state.screen = "history"; save(); render();
 });
 
@@ -26343,7 +26518,7 @@ if(found >= 30) return;
 if(!compagniaVisibile(cod)) return;
 var c = COMPAGNIE[cod];
 var label = c.nome + (c.luogo ? " \u2014 " + c.luogo : "");
-if(label.toLowerCase().indexOf(q) === -1) return;
+if(!compagniaCorrisponde(cod, c, q)) return;
 found++;
 var row = el('<div class="fr-voce">'+escapeHtml(label)+'</div>');
 row.addEventListener("click", function(){ frCod = cod; frLabel = label; searchInp.value = ""; refreshField(); });
@@ -29160,7 +29335,7 @@ var c = COMPAGNIE[cod];
 // altro paese non serve a nessuno.
 if(!compagniaVisibile(cod)) return;
 var label = c.nome + (c.luogo ? " — " + c.luogo : "");
-if(label.toLowerCase().indexOf(q.toLowerCase()) !== -1) matches.push({ label:label, cod:cod });
+if(compagniaCorrisponde(cod, c, q)) matches.push({ label:label, cod:cod });
 });
 }
 if(matches.length === 0){
@@ -29679,11 +29854,16 @@ ascoltaGiroCloud();
 }
 
 // ---------- ROUND ----------
+function comandoSegnalaGiro(){
+var b = el('<button type="button" class="btn btn-ghost btn-block pericolo pista-segnala">' + icon("warn", 20) + ' ' + escapeHtml(state.lang === "it" ? "Segnala problema" : t("fr_report_btn_short")) + '</button>');
+b.addEventListener("click", function(){ apriSegnalaCampo({ torna: state.screen, codice: campoCodiceDelGiro(), piazzola: (state.roundActive && state.target) ? state.target : null }); });
+return b;
+}
 function roundScreen(){
 // L'unica sosta a tutto schermo che resta e' la fine del giro: le 95
 // interruzioni per "tocca al prossimo" sono state sostituite dalla fila dei
 // turni dentro la scena, che dice la stessa cosa senza fermare nessuno.
-if(state.awaitingStep === "target"){ return targetTransitionScreen(); }
+if(state.awaitingStep === "target"){ var passo = targetTransitionScreen(); if(currentUser) passo.insertBefore(comandoSegnalaGiro(), passo.firstChild); return passo; }
 // Chi aveva un giro in corso salvato dalla versione precedente arriva qui con
 // una sosta "archer" che non esiste piu': la si consuma facendo quello che
 // faceva il tasto della vecchia schermata, cioe' passare all'arciere dopo.
@@ -29700,6 +29880,7 @@ startOwnSessionListener();
 
 var mode = effectiveMode();
 var wrap = el('<div class="pista"></div>');
+if(currentUser) wrap.appendChild(comandoSegnalaGiro());
 if(giroConflitto){
 var cf = el('<div class="card giro-conflitto" role="alert"></div>');
 cf.appendChild(el('<div class="nota">'+escapeHtml(t("giro_conflitto_testo", { n: giroConflitto.piazzola, m: state.target || 1 }))+'</div>'));

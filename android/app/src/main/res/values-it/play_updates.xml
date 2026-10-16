@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_opening">Apertura ArcTrail 3D…</string>
+    <string name="update_available_title">Aggiornamento ArcTrail disponibile</string>
+    <string name="update_available_body">Scarica la nuova versione da Google Play. Puoi continuare a usare ArcTrail durante il download.</string>
+    <string name="update_ready_title">Aggiornamento ArcTrail pronto</string>
+    <string name="update_ready_body">La nuova versione è stata scaricata. Vuoi installarla prima di entrare nell’app?</string>
+    <string name="update_download">Aggiorna</string>
+    <string name="update_install">Installa ora</string>
+    <string name="update_later">Più tardi</string>
+    <string name="update_failed">Aggiornamento non disponibile. Puoi continuare a usare ArcTrail e riprovare più tardi.</string>
+</resources>

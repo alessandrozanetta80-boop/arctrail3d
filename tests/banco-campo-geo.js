@@ -134,6 +134,30 @@ function memoria() {
   reg2.annulla();
   prova("annulla: nessuna traccia resta nel telefono", G.creaRegistratore(mem).stato() === "fermo" && Object.keys(mem._m).length === 0);
 
+  // Piazzole: coordinate reali, dati offline, numerazione e salvataggio atomico.
+  var mp = memoria(), rp = G.creaRegistratore(mp), fixP = { lat:45.9, lon:8.5, t:1000, acc:6 };
+  rp.avvia({ id:"verde", companyCode:"01VERB", name:"Verde", ora:1000 }); rp.fix(fixP);
+  prova("piazzola: senza GPS non inventa coordinate", !rp.segnaPiazzola(1, null,1000).ok && !rp.dati().piazzole.length);
+  prova("piazzola: rifiuta fix impreciso", !rp.segnaPiazzola(1,Object.assign({},fixP,{acc:80}),1000).ok);
+  prova("piazzola: rifiuta fix vecchio", !rp.segnaPiazzola(1,fixP,32000).ok);
+  prova("piazzola: rifiuta numeri frazionari o fuori intervallo", !rp.segnaPiazzola(1.5,fixP,1000).ok && !rp.segnaPiazzola(0,fixP,1000).ok && !rp.segnaPiazzola(201,fixP,1000).ok);
+  prova("piazzola1: conserva GPS e precisione", rp.segnaPiazzola(1,fixP,1000).ok && rp.dati().piazzole[0].acc===6);
+  prova("doppio tocco piazzola: nessun duplicato", !rp.segnaPiazzola(1,fixP,1000).ok && rp.dati().piazzole.length===1);
+  rp.segnaPiazzola(2,Object.assign({},fixP,{lat:45.9002,t:2000}),2000);
+  var rp2=G.creaRegistratore(mp);rp2.pausa();
+  prova("ricarica: nome, traccia e due piazzole conservati", rp2.dati().name==="Verde" && rp2.dati().punti.length===1 && rp2.dati().piazzole.length===2);
+  prova("in pausa non segna piazzole per errore", !rp2.segnaPiazzola(3,fixP,2000).ok);
+  var metaP=G.metaPercorso({id:"verde",companyCode:"01VERB",name:"Verde",uid:"u",createdAt:2000,punti:rp2.dati().punti,piazzole:rp2.dati().piazzole});
+  prova("metadati e GeoJSON conservano entrambe le piazzole", metaP.piazzole.length===2 && G.toGeoJSON(metaP,rp2.dati().punti,[]).features.filter(function(f){return f.properties.type==="piazzola";}).length===2);
+  var gpxP=G.toGPX(metaP,rp2.dati().punti);
+  prova("GPX: waypoint delle piazzole prima della traccia", (gpxP.match(/<wpt /g)||[]).length===2 && gpxP.indexOf('<wpt ')<gpxP.indexOf('<trk>'));
+  rp2.rimuoviPiazzola(1);
+  prova("rimozione piazzola: traccia e altra piazzola intatte", rp2.dati().piazzole.length===1 && rp2.dati().piazzole[0].n===2 && rp2.dati().punti.length===1);
+  var guasto=false, mG=memoria(), storeG={get:mG.get,set:function(k,v){if(guasto)throw Error("quota");mG.set(k,v);},remove:mG.remove};
+  var rG=G.creaRegistratore(storeG);rG.avvia({id:"quota",companyCode:"C",name:"P",ora:1000});guasto=true;
+  try{rG.segnaPiazzola(1,fixP,1000);}catch(e){}
+  prova("memoria piena: non dichiara salvata una piazzola non persistita", !rG.dati().piazzole.length);
+
   /* ── repository su Firestore finto ── */
   var log = [];
   function docRef(path) {

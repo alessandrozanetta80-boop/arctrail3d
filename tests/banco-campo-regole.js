@@ -92,6 +92,8 @@ const JPG = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0]);
 
   console.log('\n  PERCORSI\n');
   await prova('manutentore crea percorso bozza + segmento in un batch', () => assertSucceeds(creaRotta(M, 'r1')));
+  await prova('referente salva percorso nominato con piazzole GPS', () => assertSucceeds(creaRotta(M, 'r-piazzole', {name:'Verde',piazzole:[{n:1,lat:45.9,lon:8.5,acc:6,t:1}]})));
+  await prova('arciere normale non salva percorsi con piazzole', () => assertFails(creaRotta(U, 'r-negato-piazzole', {name:'Verde',piazzole:[{n:1,lat:45.9,lon:8.5,acc:6,t:1}]})));
   await prova('utente normale non crea percorsi', () => assertFails(creaRotta(U, 'r2')));
   await prova('users.compagnia autodichiarata non basta per creare', () => assertFails(creaRotta(AUTO, 'r3')));
   await prova('non si nasce «published»', () => assertFails(creaRotta(M, 'r4', { status: 'published' })));

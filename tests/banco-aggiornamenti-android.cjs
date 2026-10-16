@@ -1,0 +1,24 @@
+// Native UI integration tests. Requires a disposable emulator and the debug APK.
+// Google's FakeAppUpdateManager is confined to src/debug; production has no test entry point.
+const fs=require('fs'),path=require('path'),assert=require('assert'),{execFileSync}=require('child_process');
+const root='C:/Users/Ale/Desktop/PROGETTI/ArcTrail 3D';
+const adb=process.env.ANDROID_HOME?path.join(process.env.ANDROID_HOME,'platform-tools/adb.exe'):'C:/Users/Ale/AppData/Local/Android/Sdk/platform-tools/adb.exe';
+const serial=process.env.ARCTRAIL_EMULATORE||'emulator-5554',dir=process.env.ARCTRAIL_UI_OUT||path.join(root,'UI_REVIEW/AGGIORNAMENTI_PLAY');fs.mkdirSync(dir,{recursive:true});let checks=0;
+const run=(...args)=>execFileSync(adb,['-s',serial,...args],{encoding:'utf8',windowsHide:true,timeout:15000,maxBuffer:8000000});
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const ok=(value,message)=>{assert(value,message);checks++;console.log('OK '+message);};
+function ui(){for(let n=0;n<3;n++){const result=run('shell','uiautomator','dump','/sdcard/arctrail-update-ui.xml');if(result.includes('dumped to:')){const xml=run('shell','cat','/sdcard/arctrail-update-ui.xml');if(xml.includes('package="com.arctrail3d.myapp.prova"'))return xml;}}throw new Error('Gerarchia UI non disponibile dopo tre letture');}
+async function start(scenario){run('shell','am','force-stop','com.arctrail3d.myapp.prova');run('shell','am','start','-W','-n','com.arctrail3d.myapp.prova/com.arctrail3d.app.ProvaAggiornamentiActivity','-a','android.intent.action.MAIN','-c','android.intent.category.LAUNCHER','--es','scenario',scenario);await wait(3300);return ui();}
+function tap(xml,pattern){const nodes=xml.match(/<node\b[^>]*>/g)||[];const node=nodes.find(n=>pattern.test((n.match(/text="([^"]*)"/)||[])[1]||''));assert(node,'Pulsante assente: '+pattern);const b=node.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);assert(b,'bounds');run('shell','input','tap',String((+b[1]+ +b[3])/2|0),String((+b[2]+ +b[4])/2|0));}
+function screenshot(name){fs.writeFileSync(path.join(dir,name),execFileSync(adb,['-s',serial,'exec-out','screencap','-p'],{windowsHide:true,timeout:15000,maxBuffer:8000000}));}
+(async()=>{run('install','-r',path.join(root,'android/app/build/outputs/apk/debug/app-debug.apk'));run('shell','cmd','locale','set-app-locales','com.arctrail3d.myapp.prova','--locales','it-IT');run('shell','input','keyevent','82');
+try{
+for(const width of [320,384]){run('shell','wm','size',`${width*3}x${width*6}`);run('shell','wm','density','480');let x=await start('available');ok(x.includes('Aggiornamento ArcTrail disponibile')&&/Aggiorna/i.test(x)&&/Più tardi/i.test(x),'Avviso disponibile '+width+'dp');screenshot('disponibile-'+width+'.png');tap(x,/Più tardi/i);await wait(200);ok(ui().includes('APP APERTA'),'Più tardi apre app '+width+'dp');x=await start('downloaded');ok(/Installa ora/i.test(x),'Download pronto '+width+'dp');screenshot('pronto-'+width+'.png');tap(x,/Più tardi/i);await wait(200);ok(ui().includes('APP APERTA'),'Installazione rimandabile '+width+'dp');}
+for(const scenario of ['none','error','timeout','apk','link','late','postponed'])ok((await start(scenario)).includes('APP APERTA'),'Accesso non bloccato: '+scenario);
+ok((await start('new-version')).includes('Aggiornamento ArcTrail disponibile'),'Nuova versione riproposta anche dopo rinvio della precedente');
+run('logcat','-c');let x=await start('available');tap(x,/^Aggiorna$/i);await wait(300);ok(ui().includes('APP APERTA'),'Dopo consenso Google si entra nell’app');ok(run('logcat','-d','-s','ArcTrailUpdateTest:I','*:S').includes('FLEXIBLE=true'),'Solo download flessibile, nessun aggiornamento forzato');
+x=await start('decline');tap(x,/^Aggiorna$/i);await wait(300);ok(ui().includes('APP APERTA'),'Annullamento del consenso Google non blocca l’app');
+x=await start('available');run('shell','input','keyevent','4');await wait(200);ok(ui().includes('APP APERTA'),'Indietro chiude avviso e apre app');
+run('logcat','-c');x=await start('downloaded');ok(!run('logcat','-d','-s','ArcTrailUpdateTest:I','*:S').includes('INSTALL_REQUESTED=true'),'Nessuna installazione senza consenso');tap(x,/Installa ora/i);await wait(300);ok(run('logcat','-d','-s','ArcTrailUpdateTest:I','*:S').includes('INSTALL_REQUESTED=true'),'Installa ora completa il download tramite Google');
+console.log('VERIFICHE NATIVE '+checks+'/'+checks);fs.writeFileSync(path.join(dir,'esito.txt'),'Verifiche native '+checks+'/'+checks+' con FakeAppUpdateManager ufficiale. Nessun account, backend o dato reale.\nLa disponibilità su Play richiede installazione dal canale di test e una release successiva.\n');
+}finally{run('shell','wm','size','reset');run('shell','wm','density','reset');run('shell','am','force-stop','com.arctrail3d.myapp.prova');}})().catch(e=>{console.error(e);process.exitCode=1});

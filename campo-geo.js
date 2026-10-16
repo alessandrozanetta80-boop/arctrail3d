@@ -168,7 +168,8 @@
       startedAt: o.punti.length ? o.punti[0].t : null,
       endedAt: o.punti.length ? o.punti[o.punti.length - 1].t : null,
       bbox: b, center: centro(b), lengthM: Math.round(lunghezza(o.punti)),
-      pointCount: o.punti.length, segmentCount: segs.length
+      pointCount: o.punti.length, segmentCount: segs.length,
+      piazzole: (o.piazzole || []).map(function (p) { return Object.assign({}, p); })
     };
   }
 
@@ -183,6 +184,10 @@
         times: punti.map(function (p) { return new Date(p.t).toISOString(); })
       }
     }];
+    (percorso.piazzole || []).forEach(function (p) {
+      feat.push({ type: "Feature", geometry: { type: "Point", coordinates: [p.lon, p.lat] },
+        properties: { type: "piazzola", n: p.n, name: "Piazzola " + p.n, accuracy: p.acc } });
+    });
     (segnalazioni || []).forEach(function (s) {
       feat.push({
         type: "Feature",
@@ -199,7 +204,11 @@
   function toGPX(percorso, punti) {
     var r = ['<?xml version="1.0" encoding="UTF-8"?>',
       '<gpx version="1.1" creator="ArcTrail 3D" xmlns="http://www.topografix.com/GPX/1/1">',
-      "<trk><name>" + xml(percorso.name) + "</name><trkseg>"];
+      ];
+    (percorso.piazzole || []).forEach(function (p) {
+      r.push('<wpt lat="' + p.lat + '" lon="' + p.lon + '"><name>Piazzola ' + p.n + '</name><time>' + new Date(p.t).toISOString() + '</time></wpt>');
+    });
+    r.push("<trk><name>" + xml(percorso.name) + "</name><trkseg>");
     punti.forEach(function (p) {
       r.push('<trkpt lat="' + p.lat + '" lon="' + p.lon + '"><time>' + new Date(p.t).toISOString()
         + "</time>" + (p.acc != null ? "<hdop>" + p.acc + "</hdop>" : "") + "</trkpt>");
@@ -218,8 +227,11 @@
   function nuovaSegnalazione(o) {
     if (!coordValide(o.lat, o.lon)) throw new Error("posizione mancante");
     if (!categoriaValida(o.category)) throw new Error("categoria non valida");
+    // Piazzola: facoltativa (dal giro in corso o scelta a mano), intero 1-999.
+    var pz = parseInt(o.piazzola, 10);
     return {
       id: o.id, companyCode: o.companyCode, routeId: o.routeId || null,
+      piazzola: (pz >= 1 && pz <= 999) ? pz : null,
       category: o.category, note: String(o.note || "").slice(0, 2000),
       lat: Math.round(o.lat * 1e7) / 1e7, lon: Math.round(o.lon * 1e7) / 1e7,
       acc: typeof o.acc === "number" ? Math.round(o.acc) : null,
@@ -331,7 +343,7 @@
       avvia: function (o) {
         if (st) throw new Error("registrazione gia' in corso");
         st = { id: o.id, companyCode: o.companyCode, name: o.name || "", fase: "registra",
-               punti: [], scartati: 0, ultimoMotivo: null, avviatoIl: o.ora };
+               punti: [], piazzole: [], scartati: 0, ultimoMotivo: null, avviatoIl: o.ora };
         salva(); return st;
       },
       pausa: function () { if (st && st.fase === "registra") { st.fase = "pausa"; salva(); } },
@@ -341,6 +353,40 @@
         var u = st.punti[st.punti.length - 1] || null, v = valutaFix(u, f);
         if (v.ok) st.punti.push(punto(f)); else { st.scartati++; st.ultimoMotivo = v.motivo; }
         salva(); return v;
+      },
+      modalitaNativa: function () { if (!st) throw new Error("bozza assente"); st.nativo = true; st.fase = "pausa"; salva(); },
+      importaNativo: function (batch) {
+        if (!st || !st.nativo || !batch || batch.id !== st.id || batch.companyCode !== st.companyCode) throw new Error("percorso diverso");
+        var prima = st; st = JSON.parse(JSON.stringify(st));
+        try {
+          (batch.punti || []).forEach(function (f) {
+            if (f.seq <= (st.nativeCursor || 0)) return;
+            if (f.seq !== (st.nativeCursor || 0) + 1) throw new Error("punti mancanti");
+            var v = valutaFix(st.punti[st.punti.length - 1] || null, f);
+            if (v.ok) st.punti.push(punto(f)); else { st.scartati++; st.ultimoMotivo = v.motivo; }
+            st.nativeCursor = f.seq;
+          });
+          st.fase = batch.fase === "registra" ? "registra" : "pausa";
+          salva(); return st;
+        } catch (e) { st = prima; throw e; }
+      },
+      segnaPiazzola: function (n, f, ora) {
+        if (!st || st.fase !== "registra") return { ok: false, motivo: "non-registra" };
+        if (!Number.isInteger(n) || n < 1 || n > 200) return { ok: false, motivo: "numero" };
+        if (!Number.isFinite(ora) || !f || !coordValide(f.lat, f.lon) || !Number.isFinite(f.acc) || f.acc < 0 || f.acc > SOGLIE.accMax ||
+            !Number.isFinite(f.t) || ora - f.t > 30000 || ora < f.t) return { ok: false, motivo: "gps" };
+        var prima = st.piazzole || [];
+        if (prima.some(function (p) { return p.n === n; })) return { ok: false, motivo: "duplicata" };
+        var p = Object.assign(punto(f), { n: n });
+        st.piazzole = prima.concat([p]).sort(function (x, y) { return x.n - y.n; });
+        try { salva(); } catch (e) { st.piazzole = prima; throw e; }
+        return { ok: true, piazzola: p };
+      },
+      rimuoviPiazzola: function (n) {
+        if (!st) return;
+        var prima = st.piazzole || [];
+        st.piazzole = prima.filter(function (p) { return p.n !== n; });
+        try { salva(); } catch (e) { st.piazzole = prima; throw e; }
       },
       termina: function () { var d = st; st = null; salva(); return d; },
       annulla: function () { st = null; salva(); }

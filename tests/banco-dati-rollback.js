@@ -35,7 +35,17 @@ scrivi("app-1809.html", execSync("git show 7b0ffe9:app.html", { encoding: "utf8"
 scrivi("app-release.html", execSync("git show bae26e8:app.html", { encoding: "utf8", maxBuffer: 1 << 26 }));
 scrivi("app-ramo.html", fs.readFileSync(process.env.APP || "app.html", "utf8"));
 ["compagnie-data.js", "logo.webp", "logo.jpg"].forEach(function (x) { if (fs.existsSync(x)) fs.copyFileSync(x, path.join(D, x)); });
-function url(n) { return "file://" + path.join(D, n).replace(/\\/g, "/"); }
+// Tutte le versioni devono condividere un'origine HTTP, come in produzione.
+// file:// non garantisce un'origine storage stabile tra file/browser/piattaforme.
+var baseURL, server = require("http").createServer(function(req, res) {
+  var name = decodeURIComponent(new URL(req.url, "http://localhost").pathname).slice(1);
+  if (["app-1809.html", "app-release.html", "app-ramo.html", "compagnie-data.js", "logo.webp", "logo.jpg"].indexOf(name) < 0) { res.writeHead(404); res.end(); return; }
+  var f = path.join(D, name);
+  if (!fs.existsSync(f)) { res.writeHead(404); res.end(); return; }
+  res.setHeader("Content-Type", /html$/.test(name) ? "text/html; charset=utf-8" : /js$/.test(name) ? "text/javascript" : /webp$/.test(name) ? "image/webp" : "image/jpeg");
+  res.end(fs.readFileSync(f));
+});
+function url(n) { return baseURL + "/" + n; }
 
 var U = { uid: "uidMario", email: "mario@esempio.it" };
 function giro(i, tot) {
@@ -76,6 +86,7 @@ async function nuovoTelefono(browser, locale, dati, utente) {
     "(" + F.installa.toString() + ")({ utente: " + JSON.stringify(utente || U) + ", dati: s || " + JSON.stringify(dati) + " }); })();";
   await ctx.route(/^https?:\/\//, function (r) {
     var u = r.request().url();
+    if (u.indexOf(baseURL + "/") === 0) return r.continue();
     if (u.indexOf("https://www.gstatic.com/firebasejs/") !== 0) return r.abort();
     return r.fulfill({ status: 200, contentType: "text/javascript", body: /firebase-app-compat\.js$/.test(u) ? corpo : "" });
   });
@@ -85,7 +96,7 @@ async function nuovoTelefono(browser, locale, dati, utente) {
 }
 async function apri(ctx, nome) {
   var page = ctx.pages()[0] || await ctx.newPage();
-  if (page.url().indexOf("file://") === 0) {
+  if (page.url().indexOf(baseURL + "/") === 0) {
     await page.evaluate(function () { try { sessionStorage.setItem("cloudFinto", JSON.stringify(window.__DATI || null)); } catch (e) {} }).catch(function () {});
   }
   await page.goto(url(nome));
@@ -121,6 +132,8 @@ async function tiraUnGiro(page) {
 }
 
 (async function () {
+  await new Promise(function(resolve) { server.listen(0, "127.0.0.1", resolve); });
+  baseURL = "http://127.0.0.1:" + server.address().port;
   var browser = await chromium.launch();
 
   console.log("\n  IL 20/09, COM'E' ANDATA: 18/09 → release → 18/09 (rollback)\n");
@@ -208,6 +221,7 @@ async function tiraUnGiro(page) {
   await c4.close();
 
   await browser.close();
+  await new Promise(function(resolve) { server.close(resolve); });
   try { fs.rmSync(D, { recursive: true, force: true }); } catch (e) {}
   console.log("\n  " + ok + " passate, " + ko + " fallite.\n");
   process.exit(ko ? 1 : 0);

@@ -1,0 +1,14 @@
+const assert=require('assert'),G=require('../campo-geo.js');
+let data={},fail=false,count=0;const st={get:k=>data[k],set:(k,v)=>{if(fail)throw Error('QUOTA');data[k]=v;},remove:k=>delete data[k]};
+const check=(n,c)=>{assert(c,n);count++;console.log('  ✓ '+n);};
+let r=G.creaRegistratore(st,'a');r.avvia({id:'r1',companyCode:'01VERB',name:'Verde',ora:1000});r.modalitaNativa();
+const batch={id:'r1',companyCode:'01VERB',fase:'registra',punti:[{seq:1,lat:45.92,lon:8.55,acc:5,t:1000},{seq:2,lat:45.9201,lon:8.5501,acc:5,t:5000}]};
+r.importaNativo(batch);check('Importa punti nativi nello stesso percorso',r.dati().punti.length===2&&r.dati().nativeCursor===2);
+r.importaNativo(batch);check('Ripetere una risposta non duplica il tracciato',r.dati().punti.length===2);
+r=G.creaRegistratore(st,'a');check('Riavvio pagina mantiene cursore e punti',r.dati().nativeCursor===2&&r.dati().punti.length===2);
+let before=JSON.stringify(r.dati());let threw=false;try{r.importaNativo({...batch,id:'other'});}catch(_){threw=true;}check('Respinge un percorso diverso',threw&&JSON.stringify(r.dati())===before);
+threw=false;try{r.importaNativo({...batch,punti:[{seq:4,lat:45.9204,lon:8.5504,acc:5,t:9000}]});}catch(_){threw=true;}check('Non ignora buchi nella sequenza',threw&&JSON.stringify(r.dati())===before);
+fail=true;threw=false;try{r.importaNativo({...batch,punti:[{seq:3,lat:45.9202,lon:8.5502,acc:5,t:9000}]});}catch(_){threw=true;}check('Quota piena non avanza il cursore né perde punti',threw&&JSON.stringify(r.dati())===before);fail=false;
+r.importaNativo({...batch,fase:'pausa',punti:[{seq:3,lat:45.9202,lon:8.5502,acc:5,t:9000}]});check('Importa la coda finale anche dopo Pausa',r.stato()==='pausa'&&r.dati().punti.length===3);
+r.riprendi();r.segnaPiazzola(1,r.dati().punti[2],10000);check('Piazzola associata alla traccia nativa',r.dati().piazzole[0].n===1);
+console.log(count+' passate, 0 fallite.');

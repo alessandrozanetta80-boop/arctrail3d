@@ -146,8 +146,9 @@ try {
   prova("assetlinks.json: delega mancante rifiutata",
     !associazioneAndroid([{ target: { namespace: "android_app", package_name: tw.packageId }, relation: [] }], tw.packageId));
   var fingerprints = associazione && associazione.target.sha256_cert_fingerprints;
-  prova("assetlinks.json: un'impronta SHA-256 sola, ben formata",
-    Array.isArray(fingerprints) && fingerprints.length === 1 && /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(fingerprints[0]));
+  function impronteValide(v) { return Array.isArray(v) && v.length > 0 && new Set(v).size === v.length && v.every(function(f){ return /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(f); }); }
+  prova("assetlinks.json: impronte SHA-256 valide e uniche", impronteValide(fingerprints));
+  prova("certificati multipli ammessi, vuoti e malformati respinti", impronteValide(["AA:".repeat(31)+"AA", "BB:".repeat(31)+"BB"]) && !impronteValide([]) && !impronteValide(["invalid"]) && !impronteValide(["AA:".repeat(31)+"AA", "AA:".repeat(31)+"AA"]));
 } catch (e) { prova("assetlinks.json e twa-manifest.json si leggono", false, e.message); }
 var segreti = tracciati.filter(function (f) { return /\.(apk|aab|idsig|jks|keystore|p12|pk8)$/i.test(f) || /(^|\/)(keystore|signing)\.properties$/.test(f); });
 prova("nessun APK, chiave o file di password tracciato", segreti.length === 0, segreti.join(", "));
