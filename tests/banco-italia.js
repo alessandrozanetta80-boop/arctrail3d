@@ -34,7 +34,7 @@ var fs = require("fs"), path = require("path"), os = require("os"), url = requir
 var { chromium } = require("playwright");
 
 var SABOTA = process.argv.indexOf("--sabota") !== -1;
-var FILE = "app.html";
+var FILE = process.env.APP || "app.html";
 var D = path.join(os.tmpdir(), "arctrail-banco-italia");
 fs.mkdirSync(D, { recursive: true });
 var html = require("./copia-dev.js").accendiDev(fs.readFileSync(FILE, "utf8"));

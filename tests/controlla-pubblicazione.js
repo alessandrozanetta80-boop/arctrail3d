@@ -128,9 +128,26 @@ prova("il sito pubblica .well-known/assetlinks.json", pubblicati.indexOf(".well-
 try {
   var al = JSON.parse(fs.readFileSync(".well-known/assetlinks.json", "utf8"));
   var tw = JSON.parse(fs.readFileSync("android/twa-manifest.json", "utf8"));
-  prova("assetlinks.json: stesso package dell'APK (" + tw.packageId + ")", al[0].target.package_name === tw.packageId);
+  // Nuovo package Play e APK legacy possono convivere: l'ordine non identifica l'app.
+  function associazioneAndroid(entries, packageId) {
+    return entries.find(function (entry) {
+      return entry.target && entry.target.namespace === "android_app" &&
+        entry.target.package_name === packageId && Array.isArray(entry.relation) &&
+        entry.relation.indexOf("delegate_permission/common.handle_all_urls") >= 0;
+    });
+  }
+  var associazione = associazioneAndroid(al, tw.packageId);
+  prova("assetlinks.json: associazione Android per il package dell'APK (" + tw.packageId + ")", !!associazione);
+  prova("assetlinks.json: ordine delle associazioni irrilevante", !!associazioneAndroid(al.slice().reverse(), tw.packageId));
+  prova("assetlinks.json: un altro package non sostituisce quello richiesto",
+    !associazioneAndroid(al.filter(function (entry) { return entry.target.package_name !== tw.packageId; }), tw.packageId));
+  prova("assetlinks.json: namespace sbagliato rifiutato",
+    !associazioneAndroid([{ target: { namespace: "web", package_name: tw.packageId }, relation: ["delegate_permission/common.handle_all_urls"] }], tw.packageId));
+  prova("assetlinks.json: delega mancante rifiutata",
+    !associazioneAndroid([{ target: { namespace: "android_app", package_name: tw.packageId }, relation: [] }], tw.packageId));
+  var fingerprints = associazione && associazione.target.sha256_cert_fingerprints;
   prova("assetlinks.json: un'impronta SHA-256 sola, ben formata",
-    al[0].target.sha256_cert_fingerprints.length === 1 && /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(al[0].target.sha256_cert_fingerprints[0]));
+    Array.isArray(fingerprints) && fingerprints.length === 1 && /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(fingerprints[0]));
 } catch (e) { prova("assetlinks.json e twa-manifest.json si leggono", false, e.message); }
 var segreti = tracciati.filter(function (f) { return /\.(apk|aab|idsig|jks|keystore|p12|pk8)$/i.test(f) || /(^|\/)(keystore|signing)\.properties$/.test(f); });
 prova("nessun APK, chiave o file di password tracciato", segreti.length === 0, segreti.join(", "));
