@@ -2352,6 +2352,12 @@ color:var(--success-role); }
 .editorial-icon{ width:44px; height:44px; border-radius:50%; background:var(--qsag); color:var(--sand-50); display:flex; align-items:center; justify-content:center; margin:0 auto var(--s-3); }
 .editorial-title{ font-family:var(--font-display); font-weight:700; font-size:var(--t-lg); line-height:1.45; margin-bottom:var(--s-3); text-wrap:balance; }
 .editorial-body{ font-size:var(--t-sm); color:var(--muted); line-height:1.6; max-width:360px; margin:0 auto; }
+.timeline-row.history-row{ cursor:pointer; display:grid; grid-template-columns:30px minmax(0,1fr) 24px; gap:var(--s-1) var(--s-2); }
+.history-row .timeline-icon{ grid-column:1; grid-row:1 / 3; }
+.history-row .timeline-content{ grid-column:2; grid-row:1; }
+.history-row .timeline-result{ grid-column:2; grid-row:2; }
+.history-row .timeline-meta{ white-space:normal; overflow:visible; text-overflow:clip; }
+.history-delete{ grid-column:3; grid-row:1 / 3; align-self:center; width:24px; height:44px; padding:0; background:none; border:none; color:var(--muted); font-size:var(--t-lg); line-height:1; cursor:pointer; }
 .timeline-row{ display:flex; align-items:center; gap:var(--s-3); padding:var(--s-2) var(--s-3); background:var(--bg-panel-2); border-left:3px solid var(--accent-soft); border-radius:var(--r-sm); margin-bottom:var(--s-2); }
 /* Lo storico a pagine (21/09/2026): i due tasti in fondo alla scheda Giri e le loro righe. */
 .giri-altri, .giri-vecchi{ margin-top:var(--s-2); }
@@ -14656,7 +14662,6 @@ setTimeout(function(){ try{ render(); }catch(e){} }, 0);
 return removed;
 }
 
-var historyDeletePending = null;
 function deleteHistoryRoundByDate(date){
 var hist = loadHistory(), i = hist.findIndex(function(h){ return h && h.date === date; });
 if(i < 0){ var old = giriVecchi.findIndex(function(h){ return h && h.date === date; }); if(old < 0) return false; i = hist.length + old; }
@@ -24742,7 +24747,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-10-16-gps-codici-elimina-giri";
+var BUILD_STAMP = "2026-10-16-storico-x-conferma";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24751,7 +24756,7 @@ var BUILD_STAMP = "2026-10-16-gps-codici-elimina-giri";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-10-16-avvio-singolo";
+var BUILD_PARENT = "2026-10-16-gps-codici-elimina-giri";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -26030,40 +26035,27 @@ var d = new Date(h.date);
 var dateStr = d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, {hour:"2-digit", minute:"2-digit"});
 var winner = h.results.length ? h.results[0] : null;
 var mLabel = modeLabel(h.modeKey || modeKeyDaLabel(h.modeLabel) || "training");
-var row = el('<div class="timeline-row history-row" style="cursor:pointer;display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:4px 8px;"></div>');
-row.appendChild(el('<div class="timeline-icon" style="grid-column:1;grid-row:1 / 3;">'+icon("target",16)+'</div>'));
-var content = el('<div class="timeline-content" style="grid-column:2 / 4;grid-row:1;"></div>');
+var row = el('<div class="timeline-row history-row"></div>');
+row.appendChild(el('<div class="timeline-icon">'+icon("target",16)+'</div>'));
+var content = el('<div class="timeline-content"></div>');
 content.appendChild(el('<span class="timeline-meta">'+dateStr+' &middot; '+escapeHtml(mLabel)+' &middot; '+h.format+' '+t("targets_word")+'</span>'));
 row.appendChild(content);
-row.appendChild(el('<span class="timeline-result" style="grid-column:2;grid-row:2;justify-self:start;margin:0;">'+(winner ? escapeHtml(winner.name)+" "+winner.total+"pt" : "")+'</span>'));
+row.appendChild(el('<span class="timeline-result">'+(winner ? escapeHtml(winner.name)+" "+winner.total+"pt" : "")+'</span>'));
 row.addEventListener("click", function(){
 state.historyIndex = hIdx;
 state.screen = "history-detail";
 save(); render();
 });
 var ownerDelete = (currentUser && currentUser.uid) || null;
-function inConferma(){ return historyDeletePending && historyDeletePending.date === h.date && historyDeletePending.uid === ownerDelete && Date.now() < historyDeletePending.until; }
-var delRound = el('<button type="button" class="btn btn-ghost history-delete" title="'+escapeHtml(t("hist_delete_one"))+'" aria-label="'+escapeHtml(t("hist_delete_one"))+'" style="grid-column:3;grid-row:2;min-height:44px;min-width:44px;max-width:80px;font-size:var(--t-xs);padding:var(--s-1);"></button>');
+var delRound = el('<button type="button" class="history-delete" title="'+escapeHtml(t("hist_delete_one"))+'" aria-label="'+escapeHtml(t("hist_delete_one"))+'">&times;</button>');
 delRound.setAttribute("data-history-delete", h.date);
-function mostraElimina(){
-var armed = inConferma();
-delRound.textContent = t(armed ? "pc_conferma" : "notif_delete_one");
-delRound.classList.toggle("btn-armed", !!armed);
-delRound.dataset.armed = armed ? "1" : "";
-}
-mostraElimina();
-if(inConferma()) setTimeout(function(){ if(delRound.isConnected) mostraElimina(); }, Math.max(0,historyDeletePending.until-Date.now())+50);
 delRound.addEventListener("click", function(ev){
 ev.stopPropagation();
 if(((currentUser && currentUser.uid) || null) !== ownerDelete) return;
-if(inConferma()){
-historyDeletePending = null;
+if(!window.confirm(t("hist_delete_one")+"?\n"+dateStr+" · "+mLabel)) return;
+if(((currentUser && currentUser.uid) || null) !== ownerDelete) return;
 deleteHistoryRoundByDate(h.date);
-render(); return;
-}
-historyDeletePending = {date:h.date,uid:ownerDelete,until:Date.now()+10000};
-mostraElimina();
-setTimeout(function(){ if(delRound.isConnected) mostraElimina(); }, 10050);
+render();
 });
 row.appendChild(delRound);
 histList.appendChild(row);

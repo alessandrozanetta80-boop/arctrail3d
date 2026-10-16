@@ -16,14 +16,20 @@ const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.me
 await page.evaluate(()=>__fixTest.vai('open-training-create'));
 for(const q of['01VERB','01 Verb','01-verb','Vignone','Arcieri del VCO']){const input=page.locator('input.cerca').first();await input.fill(q);check('Campo trovato per '+q+' a '+width,(await page.locator('#app').innerText()).includes('A.S.D. Arcieri del VCO & Valgrande'));}
 await page.locator('input.cerca').first().fill('01 Verb');await page.locator('#app').getByText('A.S.D. Arcieri del VCO & Valgrande — Via A. Alberti, Vignone (VB)',{exact:true}).click();check('Selezione conserva il codice corretto '+width,await page.evaluate(()=>document.querySelector('[data-cod]')?.getAttribute('data-cod')==='01VERB'));
-await page.evaluate(()=>__fixTest.vai('diario'));const target=page.locator('[data-history-delete="'+stamp+'"]');await target.click();check('Conferma leggibile senza spunta ambigua '+width,(await target.innerText())==='Conferma');await page.evaluate(()=>__fixTest.render());check('Conferma sopravvive al ridisegno '+width,(await page.locator('[data-history-delete="'+stamp+'"]').innerText())==='Conferma');
+await page.evaluate(()=>__fixTest.vai('diario'));const target=page.locator('[data-history-delete="'+stamp+'"]');
+check('X compatta ripristinata '+width,(await target.innerText())==='×');
+page.once('dialog',d=>d.dismiss());await target.click();check('Annulla conserva il giro '+width,await target.count()===1);
+await page.evaluate(()=>__fixTest.render());
 await page.evaluate(()=>__fixTest.add({date:'2026-10-16T15:00:00.000Z',modeKey:'training',format:4,results:[{name:'Altro giro',total:45,perTarget:[]}]}));
+page.once('dialog',d=>{check('Conferma identifica la data '+width,d.message().includes('16/10/2026'));return d.accept();});
 await page.locator('[data-history-delete="'+stamp+'"]').click();check('Elimina il giro scelto anche se cambia posizione '+width,await page.evaluate(stamp=>{let h=JSON.parse(localStorage.getItem('arctrail3d_storico_v1'));return !h.some(g=>g.date===stamp)&&h.some(g=>g.results[0].name==='Altro giro');},stamp));
 await page.evaluate(()=>__fixTest.restore());check('Il giro non ritorna dalla sincronizzazione '+width,await page.locator('[data-history-delete="'+stamp+'"]').count()===0);
+await page.evaluate(()=>__fixTest.render());
+check('X visibile e data senza troncamento '+width,await page.evaluate(()=>{var x=document.querySelector('[data-history-delete]'),m=document.querySelector('.history-row .timeline-meta');return x&&x.getBoundingClientRect().width>=24&&m&&getComputedStyle(m).textOverflow!=='ellipsis'&&document.documentElement.scrollWidth<=innerWidth;}));
 await page.screenshot({path:__dirname+'/storico-corretto-'+width+'.png',fullPage:true});
 // Last local round removed offline, while its old cloud copy is still present.
 await page.evaluate(({g,id,U})=>{localStorage.setItem('arctrail3d_storico_v1',JSON.stringify([g]));localStorage.setItem('arctrail3d_storico_cancellati_v1','{}');window.__DATI['users/'+U.uid+'/storico'][id]=g;__fixTest.offline(true);__fixTest.render();},{g,id:id(stamp),U});
-await page.locator('[data-history-delete="'+stamp+'"]').click();await page.locator('[data-history-delete="'+stamp+'"]').click();
+page.once('dialog',d=>d.accept());await page.locator('[data-history-delete="'+stamp+'"]').click();
 await page.evaluate(()=>{__fixTest.offline(false);return __fixTest.push();});check('Ultimo allenamento eliminato offline viene cancellato anche dal cloud '+width,await page.evaluate(({U,id})=>window.__DATI['users/'+U.uid+'/storico'][id].deleted===true,{U,id:id(stamp)}));
 check('Nessun errore JavaScript '+width,errors.length===0);await ctx.close();}
 console.log(n+' passate, 0 fallite.');}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
