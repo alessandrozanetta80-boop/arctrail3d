@@ -84,22 +84,23 @@ prova("git elenca i file tracciati", tracciati.length > 20, tracciati.length + "
 function incluso(f) { return inclusi.some(function (i) { return f === i || f.indexOf(i + "/") === 0; }); }
 function jekyllLoTiene(f) {
   if (!incluso(f) && f.split("/").some(function (p) { return /^[_.#~]/.test(p); })) return false;
-  if (/^(node_modules|vendor)\//.test(f) || /^Gemfile/.test(f)) return false;
+  if (/^node_modules\//.test(f) || (/^vendor\//.test(f) && !incluso(f)) || /^Gemfile/.test(f)) return false;
   return !escluso(f) && !esclusi.some(function (e) { return e.slice(-1) === "/" && f.indexOf(e) === 0; });
 }
 var pubblicati = tracciati.filter(jekyllLoTiene);
 /* Cosa puo' stare sul sito. Pagine, script del sito, immagini, i file che
    il browser o i motori cercano per nome. Il .json ammesso e' uno solo. */
 var DA_SITO = /\.(html|js|png|webp|jpg|jpeg|svg|ico|xml|txt|woff2?)$/i;
-var PER_NOME = { "CNAME": 1, "manifest.json": 1, ".well-known/assetlinks.json": 1 };
-var estranei = pubblicati.filter(function (f) { return !DA_SITO.test(f) && !PER_NOME[f]; });
+var PER_NOME = { "CNAME": 1, "manifest.json": 1, "mappe-offline/manifest.json": 1, ".well-known/assetlinks.json": 1 };
+var VENDOR_STATICO = /^vendor\/(?:leaflet|pmtiles|protomaps-leaflet|offline|mappe-comuni-0\.1\.1)\/(?:[A-Za-z0-9_.\/-]+\.(?:js|css|png|d\.ts|md)|(?:[^/]+\/)*LICENSE|(?:[^/]+\/)*(?:package|PROVENIENZA)\.json)$/;
+var estranei = pubblicati.filter(function (f) { return !DA_SITO.test(f) && !PER_NOME[f] && !VENDOR_STATICO.test(f) && f !== "vendor/mappe-comuni-0.1.1.tgz" && f !== "vendor/PROVENIENZA_ARCTRAIL.json"; });
 prova("sul sito escono solo file da sito (" + pubblicati.length + " pubblicati)", estranei.length === 0, estranei.join(", "));
 var INTERNI = /^(android|docs|tests|tools|archive|functions)\//;
 var dentro = pubblicati.filter(function (f) { return INTERNI.test(f); });
 prova("nessun file di android/, docs/, tests/, tools/, archive/, functions/", dentro.length === 0, dentro.slice(0, 5).join(", "));
 var js = pubblicati.filter(function (f) { return /\.js$/.test(f) && f.indexOf("/") < 0; });
 var JS_DEL_SITO = { "sw.js": 1, "firebase-messaging-sw.js": 1, "compagnie-data.js": 1,
-                   "campo-geo.js": 1, "campo-mappa.js": 1 };  // Mappa campo GPS (02/10/2026)
+                   "campo-geo.js": 1, "campo-mappa.js": 1, "campo-carta.js": 1 };  // Mappa campo GPS (02/10/2026)
 var jsEstranei = js.filter(function (f) { return !JS_DEL_SITO[f]; });
 prova("i .js in radice sono solo quelli del sito", jsEstranei.length === 0, jsEstranei.join(", "));
 if (process.env.ELENCO) pubblicati.forEach(function (f) { console.log("    " + f); });

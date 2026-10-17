@@ -23,6 +23,7 @@
 # barra dell'indirizzo invece che a schermo intero.
 include:
   - .well-known
+  - vendor
 exclude:
   - android/
   - docs/
