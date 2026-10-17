@@ -1,0 +1,41 @@
+{
+  "name": "mappe-comuni",
+  "version": "0.1.1",
+  "private": true,
+  "description": "Base cartografica comune di Adrenalina e Gestionale Comprensori: motore Leaflet, controlli (LAYER, STRUMENTI, SEGNA POSIZIONE), stile, territori a pacchetto, adattatori dati Firebase/Supabase. Uso privato: si installa dal .tgz verificato, mai pubblicato su npm.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": ["*.css"],
+  "main": "./src/index.js",
+  "types": "./tipi/index.d.ts",
+  "exports": {
+    ".": { "types": "./tipi/index.d.ts", "default": "./src/index.js" },
+    "./core": { "types": "./tipi/core.d.ts", "default": "./src/core.js" },
+    "./dati": { "types": "./tipi/dati.d.ts", "default": "./src/dati/index.js" },
+    "./dati/firebase": { "types": "./tipi/dati.d.ts", "default": "./src/dati/firebase.js" },
+    "./dati/supabase": { "types": "./tipi/dati.d.ts", "default": "./src/dati/supabase.js" },
+    "./gps": { "types": "./tipi/gps.d.ts", "default": "./src/gps.js" },
+    "./offline": { "types": "./tipi/offline.d.ts", "default": "./src/offline.js" },
+    "./react": { "types": "./tipi/react.d.ts", "default": "./src/react/index.js" },
+    "./stile.css": "./stile/mappe-comuni.css",
+    "./package.json": "./package.json"
+  },
+  "files": ["src/", "stile/", "tipi/", "PROVENIENZA.json", "CHANGELOG.md", "README.md"],
+  "engines": { "node": ">=20" },
+  "peerDependencies": {
+    "leaflet": "^1.9.4",
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": { "optional": true }
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\""
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "2.117.2",
+    "firebase": "12.19.0",
+    "jsdom": "30.1.0",
+    "leaflet": "1.9.4"
+  }
+}

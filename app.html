@@ -5479,6 +5479,24 @@ color:var(--text-2); font-size:var(--t-lg); line-height:1; cursor:pointer; }
 header.top .brandblock .headtxt{ display:flex; align-items:center; gap:.06em; }
 header.top .brandblock .sentiero{ height:1.25em; width:auto; display:block;
   flex:0 0 auto; margin-top:.10em; }
+
+/* Mappa del percorso: controlli semplici, nessuno strumento di distanza. */
+.campo-mappa{overflow-anchor:none;}
+.campo-carta-vista{height:352px;isolation:isolate;border-radius:var(--r-bolla);background:var(--bg-panel-2);}
+.campo-carta-comandi{display:flex;flex-wrap:wrap;gap:var(--s-2);margin-bottom:var(--s-3);}
+.campo-carta-comandi .btn{margin:0;flex:1;min-height:44px;}
+.campo-carta-comandi [aria-pressed="true"]{background:var(--green-800);color:var(--sand-50);}
+.campo-carta .leaflet-control-attribution{font-size:10px;max-width:260px;}
+.campo-carta-piazzola{display:flex;align-items:center;justify-content:center;background:var(--green-800);border:2px solid var(--sand-50);border-radius:var(--r-pill);color:var(--sand-50);font-weight:700;font-size:var(--t-sm);}
+.campo-carta-offline{margin-top:12px;}
+.campo-carta-offline summary{min-height:44px;padding:12px 0;font-weight:700;cursor:pointer;}
+.campo-carta-pacchetto{padding:12px 0;border-top:1px solid var(--line);}
+.campo-carta-pacchetto .btn{min-height:44px;margin:4px;}
+.campo-carta-stato{min-height:20px;}
+[data-campo-registra-gps]{margin-bottom:var(--s-3);}
+body.schermo-percorso{overflow-y:auto;overflow-x:hidden;}
+.pista{position:relative;}
+[data-termina-giro-separato]{position:absolute;top:100%;left:0;width:100%;margin:var(--s-3) 0;min-height:44px;}
 </style>
 
 <style id="arctrail-tira-mockup-fedele-v1">
@@ -7516,7 +7534,7 @@ pista_chiudi: "Chiudi",
 pista_tocca_a: "Tocca a {name}",
 pista_freccia_di: "Freccia {n} di {tot}",
 pista_per_piazzola: "Piazzola per piazzola",
-interrupt_btn: "Termina percorso e vedi classifica",
+interrupt_btn: "Termina giro",
 done_word: "fatto",
 next_archer_btn: "Prossimo: {name} \u2192",
 target_done: "Piazzola completata",
@@ -23367,6 +23385,9 @@ var vaiSegnala = el('<button type="button" class="btn btn-ghost btn-block" data-
 vaiSegnala.addEventListener("click", function(){ apriSegnalaCampo({ torna:"campi" }); });
 campoPorte.appendChild(vaiMappa); campoPorte.appendChild(vaiSegnala);
 wrap.appendChild(campoPorte);
+var gpsPercorso = el('<button type="button" class="btn btn-primary btn-block" data-campo-registra-gps>' + escapeHtml(itCampo ? "Registra percorso GPS" : "Record GPS route") + '</button>');
+gpsPercorso.addEventListener("click", function(){ state.campoSegnala=null;campoApriVista="registra";state.screen="campo-mappa";save();render(); });
+wrap.appendChild(gpsPercorso);
 
 function apriMaps(query){
 var openIt = function(coords){
@@ -24735,7 +24756,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-10-16-proposte-gps-avvisi";
+var BUILD_STAMP = "2026-10-17-mappa-percorsi-gps";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24744,7 +24765,7 @@ var BUILD_STAMP = "2026-10-16-proposte-gps-avvisi";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-10-16-storico-x-conferma";
+var BUILD_PARENT = "2026-10-16-proposte-gps-avvisi";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -29920,6 +29941,11 @@ var striscia = pistaStriscia();
 if(striscia) wrap.appendChild(striscia);
 
 wrap.appendChild(pistaTastiera(c));
+if(state.panel !== "classifica"){
+var terminaGiro = el('<button type="button" class="btn btn-ghost-danger btn-block" data-termina-giro-separato>'+t("interrupt_btn")+'</button>');
+armDoubleConfirm(terminaGiro,t("clear_confirm"),function(){chiudiGiro(true);save();render();});
+wrap.appendChild(terminaGiro);
+}
 
 return wrap;
 }
@@ -30443,12 +30469,8 @@ piazzFlow.appendChild(pCard);
 p.appendChild(piazzFlow);
 
 var sotto = el('<div class="pannello-sotto"></div>');
-var stop = el('<button class="btn btn-ghost-danger btn-block">'+t("interrupt_btn")+'</button>');
-armDoubleConfirm(stop, t("clear_confirm"), function(){
-// Chiude il giro (storico + via la copia cloud + sessione chiusa): prima
-// lasciava roundActive acceso, e «Riprendi» riapriva un giro gia' salvato.
-chiudiGiro(true); save(); render();
-});
+var stop = el('<button type="button" class="btn btn-ghost btn-block" data-classifica-indietro>'+(state.lang === "it" ? "Indietro" : "Back")+'</button>');
+stop.addEventListener("click",function(){state.panel=null;save();render();});
 sotto.appendChild(stop);
 if(state.arrowsPerTargetOverride && (GAME_MODES[state.mode]||{}).freeFormat){
 var skipBtn = el('<button class="btn btn-ghost btn-block" style="margin-top:var(--s-2);">'+t("skip_remaining_btn")+'</button>');

@@ -309,7 +309,7 @@ async function provaGiro(browser) {
       prova("registrazione: tasti dentro lo schermo", !m.fuori.length, m.fuori.join("; "));
       var punti = await page.evaluate(function () { var d = window.CampoMappaUI._reg.dati(); return d ? d.punti.length : -1; });
       prova("registrazione: i fix diventano punti", punti >= 2, punti);
-      prova("Segna piazzola subito visibile senza scorrere", await page.locator("[data-campo-segna-piazzola]").evaluate(function(b){var r=b.getBoundingClientRect();return r.top>=0&&r.bottom<innerHeight-65;}));
+      prova("Segna piazzola subito visibile senza scorrere", await page.locator("[data-campo-segna-piazzola]").evaluate(function(b){var r=b.getBoundingClientRect();window.__piazzolaRect={top:r.top,bottom:r.bottom,h:innerHeight};return r.top>=0&&r.bottom<innerHeight-65;}),JSON.stringify(await page.evaluate(function(){return window.__piazzolaRect;})));
       await page.click("[data-campo-segna-piazzola]");
       await A.ctx.setGeolocation({ latitude:45.9217, longitude:8.551, accuracy:6 });
       await page.waitForTimeout(400);

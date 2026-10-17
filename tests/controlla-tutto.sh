@@ -181,6 +181,8 @@ banco "banco-storico-150.js (oltre i 150 giri: si vede tutto, niente doppioni, a
 banco "banco-dati-rollback.js (lo stesso telefono: 18/09 → release → 18/09 → ramo; niente si perde, i dati dei primi giorni si riconoscono)" "node tests/banco-dati-rollback.js"
 banco "banco-proposte-gps.cjs (arciere propone, responsabile approva, bozze private a320/384)" "node tests/banco-proposte-gps.cjs"
 banco "banco-campo-notifiche.cjs (proposte e problemi: avviso interno senza email, retry senza doppioni)" "node tests/banco-campo-notifiche.cjs"
+banco "banco-carta-gps.cjs (mappa geografica, precisione, offline, GPX/immagine, punteggio separato)" "node tests/banco-carta-gps.cjs"
+banco "banco-compagnia-gps.cjs (GPS: compagnia da percorsi approvati, alternative, codice-nome e scelta manuale)" "node tests/banco-compagnia-gps-puro.cjs && node tests/banco-compagnia-gps.cjs"
 banco "banco-gps-incrementale.cjs (journal nativo: sequenze, quota e piazzole)" "node tests/banco-gps-incrementale.cjs"
 banco "banco-gps-web.cjs (GPS Android: flusso, MessagePort e salvataggio completo)" "node tests/banco-gps-web.cjs"
 banco "banco-campi-elimina.cjs (codice compagnia e cancellazione allenamenti)" "node tests/banco-campi-elimina.cjs"
@@ -246,3 +248,4 @@ if [ -n "$muti" ]; then
 fi
 if [ $fallito -eq 0 ]; then echo "TUTTI PASSATI."; else echo "ALMENO UNO HA DETTO NO — leggere sopra."; fi
 exit $fallito
+

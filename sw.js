@@ -255,17 +255,17 @@ self.addEventListener("message", function(event){
 // Il service worker nuovo il telefono se lo prende da solo, perche' il
 // browser rilegge SEMPRE questo file dalla rete: e' l'unica cosa che non
 // passa dalla cache, ed e' per questo che la cura sta qui e non altrove.
-var CACHE_NAME = "arctrail3d-v184";
+var CACHE_NAME = "arctrail3d-v185";
 // Alzata a v19 il 20/08 per lo stesso motivo di sempre: e' cambiato
 // `index.html`, che sta in APP_SHELL: senza il nome nuovo il telefono
 // continuerebbe a servire la copia di prima e la correzione non si
 // vedrebbe. Stessa regola del BUILD_STAMP, stesso motivo.
-var CACHE_PARENT = "arctrail3d-v183";
+var CACHE_PARENT = "arctrail3d-v184";
 // L'impronta dei file di APP_SHELL, scritta per questo CACHE_NAME.
 // La controlla `tests/controlla-cache.js`: se un file della shell cambia e il
 // nome no, il banco dice no. Si riscrive con `--scrivi`, DOPO aver alzato
 // CACHE_NAME (il banco rifiuta di farlo prima). (19/09/2026, audit S4.)
-var SHELL_IMPRONTA = "arctrail3d-v184:9ea07d1be0d46703";
+var SHELL_IMPRONTA = "arctrail3d-v185:5d7f37d74bc1d405";
 var NET_TIMEOUT = 3000;
 
 // Quello che serve per aprire l'app anche senza rete, al primo colpo.
@@ -295,7 +295,58 @@ var APP_SHELL = [
   // Mappa campo (02/10/2026): senza rete la segnalazione e la traccia si
   // salvano nel telefono, quindi anche la schermata deve aprirsi offline.
   "campo-geo.js",
-  "campo-mappa.js"
+  "campo-mappa.js",
+  "campo-carta.js",
+  "mappe-offline/manifest.json",
+  "vendor/mappe-comuni-0.1.1/src/core.js",
+  "vendor/mappe-comuni-0.1.1/src/dati/contratto.js",
+  "vendor/mappe-comuni-0.1.1/src/dati/firebase.js",
+  "vendor/mappe-comuni-0.1.1/src/dati/index.js",
+  "vendor/mappe-comuni-0.1.1/src/dati/supabase.js",
+  "vendor/mappe-comuni-0.1.1/src/gps.js",
+  "vendor/mappe-comuni-0.1.1/src/index.js",
+  "vendor/mappe-comuni-0.1.1/src/motore/aree.js",
+  "vendor/mappe-comuni-0.1.1/src/motore/MotoreMappa.js",
+  "vendor/mappe-comuni-0.1.1/src/offline/cacheIsolata.js",
+  "vendor/mappe-comuni-0.1.1/src/offline.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/BrowserGeolocationProvider.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/dtmOffline.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/fornitori.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/geo.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/geojson.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/LocationProvider.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/mappaLeggibileUi.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/modello.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/nomiCarta.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/pacchettoDtm.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/pisteOsm.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/profiloGrafico.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/rilievo.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/rilievoUi.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/scritteCarta.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/SimulatedLocationProvider.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/strumentiMappa.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/strumentiUi.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/terreno.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/toponimi.js",
+  "vendor/mappe-comuni-0.1.1/src/origine/utm.js",
+  "vendor/mappe-comuni-0.1.1/src/react/index.js",
+  "vendor/mappe-comuni-0.1.1/src/territorio/territorio.js",
+  "vendor/mappe-comuni-0.1.1/src/ui/mappaComune.js",
+  "vendor/mappe-comuni-0.1.1/src/versione.js",
+  "vendor/leaflet/images/layers-2x.png",
+  "vendor/leaflet/images/layers.png",
+  "vendor/leaflet/images/marker-icon-2x.png",
+  "vendor/leaflet/images/marker-icon.png",
+  "vendor/leaflet/images/marker-shadow.png",
+  "vendor/leaflet/leaflet.css",
+  "vendor/leaflet/leaflet.js",
+  "vendor/pmtiles/pmtiles.js",
+  "vendor/protomaps-leaflet/protomaps-leaflet.js",
+  "vendor/offline/archivioMappe.js",
+  "vendor/offline/mappaOffline.js",
+  "vendor/offline/pacchettiMappe.js",
+  "vendor/offline/pacchettiOffline.js"
 ];
 
 // Domini esterni di cui teniamo copia: caratteri e librerie. NON i dati.

@@ -1,0 +1,57 @@
+/* ADATTAMENTI DEL CONTENITORE (scritti a mano, 15/10/2026) — SOLO posizione e base tipografica.
+   In Adrenalina la mappa occupa tutta la finestra (regole fixed, html/body); qui la mappa riempie il contenitore che
+   l'app le da' (pagina intera nell'app vanilla, riquadro nel Gestionale React), quindi fixed -> absolute dentro
+   .mc-radice. Stesso criterio gia' verificato nel Gestionale v18 (src/cartografia/adrenalina/adattamenti.css):
+   colori, caratteri, misure dei comandi e testi restano quelli di battuta-live.css. Ogni regola dice perche' esiste. */
+
+/* reset di Adrenalina («*, *::before, *::after { box-sizing: border-box }», globale nella fonte e quindi escluso
+   dall'importazione) circoscritto alla mappa: senza, fogli e voci risultano piu' larghi/alti della fonte */
+.mc-radice, .mc-radice *, .mc-radice *::before, .mc-radice *::after { box-sizing: border-box; }
+
+/* base di Adrenalina (html/body/button della fonte, non copiati perche' globali) circoscritta alla mappa */
+.mc-radice {
+  position: relative; width: 100%; height: 100%; overflow: hidden; background: #dfe3dc;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px; font-weight: 400; line-height: normal; color: var(--testo);
+  -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent;
+  /* niente pannello basso di Adrenalina: crediti e scala al fondo della mappa */
+  --pannello-h: 0px; --alto: 0px;
+}
+.mc-radice [hidden] { display: none !important; }
+.mc-radice button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
+.mc-radice .bl-ctrl { color: var(--verde-scuro); padding: 0; }
+.mc-radice .bl-ctrl[aria-pressed="true"], .mc-radice .bl-ctrl-strumenti[aria-expanded="true"] { color: #fff; }
+.mc-radice .bl-segna { color: #1c1a00; }
+.mc-radice .bl-btn { color: var(--verde-scuro); }
+.mc-radice .bl-btn-primario { color: #fff; }
+.mc-radice .bl-btn-tenue { color: var(--testo-tenue); }
+.mc-radice .bl-foglio h2 { font-weight: 700; line-height: normal; letter-spacing: normal; }
+.mc-radice .bl-foglio h3 { line-height: normal; }
+/* app ospitanti con regole globali su label/input (il Gestionale): le voci del foglio restano quelle di Adrenalina */
+.mc-radice label.bl-scelta { flex-direction: row; font-size: 16px; font-weight: 400; color: var(--testo); }
+.mc-radice label.bl-piste-filtro { flex-direction: row; gap: 6px; font-weight: 700; font-size: 14px; color: var(--testo); }
+.mc-radice .bl-scelta input[type='checkbox'], .mc-radice .bl-scelta input[type='radio'] { width: 24px; height: 24px; min-height: 0; accent-color: var(--verde); }
+.mc-radice .bl-piste-filtro input[type='radio'] { width: 20px; height: 20px; min-height: 0; margin: 0; accent-color: var(--verde); }
+
+/* mappa: riempie il contenitore (in Adrenalina .bl-mappa e' fixed sulla finestra) */
+.mc-radice .mc-mappa { position: absolute; inset: 0; }
+.mc-radice .leaflet-control-attribution { margin-bottom: 0 !important; }
+.mc-radice .leaflet-control-scale { margin-bottom: 8px !important; }
+
+/* colonna dei comandi, SEGNA POSIZIONE, fogli e riquadro: dentro la mappa (absolute) invece che fissi sulla finestra */
+.mc-radice .bl-controlli { position: absolute; top: calc(8px + var(--mc-alto, 0px)); right: 8px; z-index: 900; }
+.mc-radice .bl-segna { position: absolute; bottom: calc(var(--attrib-h, 18px) + 12px); }
+.mc-radice .bl-foglio { position: absolute; }
+/* riquadro degli strumenti: in Adrenalina sta dentro .bl-stati (left 8, right 64) con left 10, right 64 -> in pagina
+   18 px a sinistra e 128 px a destra (238 px su 384), stessa geometria gia' adottata dal Gestionale v18; l'altezza
+   (top) dipende dal contenitore */
+.mc-radice .bl-strumento { top: calc(8px + var(--mc-alto, 0px)); left: 18px; right: 128px; }
+.mc-radice .bl-mini-strumenti { max-height: calc(var(--mc-altezza, 100vh) - 140px); }
+
+/* avvisi brevi della mappa (in Adrenalina la pila .bl-avvisi appartiene al pannello della traccia, non copiata) */
+.mc-radice .mc-avvisi { position: absolute; left: 10px; right: 64px; bottom: calc(var(--attrib-h, 18px) + 64px); z-index: 960; pointer-events: none; display: flex; flex-direction: column; gap: 6px; }
+.mc-radice .mc-avviso { background: rgba(28, 33, 30, .92); color: #fff; border-radius: 10px; padding: 8px 10px; font-size: 14px; line-height: 1.3; box-shadow: var(--ombra); }
+.mc-radice .mc-avviso-errore { background: rgba(163, 32, 32, .95); }
+
+/* modulo (vento manuale): campi come .bl-campo di Adrenalina, select come select.bl-select */
+.mc-radice .bl-campo select, .mc-radice .bl-campo input { width: 100%; min-height: 48px; font: inherit; font-size: 16px; padding: 8px; border: 2px solid var(--bordo); border-radius: var(--raggio-sm); background: #fff; box-sizing: border-box; }

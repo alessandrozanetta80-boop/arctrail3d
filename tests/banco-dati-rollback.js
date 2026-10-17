@@ -127,7 +127,7 @@ async function tiraUnGiro(page) {
   await page.evaluate(function () { window.__prova.vai("menu"); });
   await tocca("Tira"); await tocca("Gara libera"); await tocca("Continua"); await tocca("Round 3D"); await tocca("Inizia gara");
   for (var i = 0; i < 2; i++) { await premi(".quick-btn.superspot"); await premi(".quick-btn.spot"); }
-  await tocca("Classifica"); await tocca("Termina percorso"); await tocca("Tocca di nuovo per confermare");
+  await tocca("Classifica"); var nuovaChiusura=await page.locator("[data-classifica-indietro]").count(); if(nuovaChiusura)await tocca("Indietro"); await tocca(nuovaChiusura?"Termina giro":"Termina percorso"); await tocca("Tocca di nuovo per confermare");
   await page.waitForTimeout(1200);
 }
 

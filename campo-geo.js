@@ -537,6 +537,23 @@
     return repo;
   }
 
+
+  // Riconosce la vicinanza a un campo approvato, mai da sede legale/profilo.
+  function compagnieVicine(fix, percorsi, ora) {
+    if(!fix || !coordValide(fix.lat,fix.lon) || !Number.isFinite(fix.acc) || fix.acc<0 || fix.acc>SOGLIE.accMax || !Number.isFinite(fix.t) || ora-fix.t>30000 || ora<fix.t)return [];
+    var trovate={};
+    (percorsi||[]).forEach(function(p){
+      if(!p || p.status!=="published" || typeof p.companyCode!=="string" || !p.companyCode)return;
+      var b=p.bbox, vicino=null;
+      if(b && coordValide(b.minLat,b.minLon) && coordValide(b.maxLat,b.maxLon) && b.minLat<=b.maxLat && b.minLon<=b.maxLon && distanza({lat:b.minLat,lon:b.minLon},{lat:b.maxLat,lon:b.maxLon})<=3000)
+        vicino={lat:Math.max(b.minLat,Math.min(b.maxLat,fix.lat)),lon:Math.max(b.minLon,Math.min(b.maxLon,fix.lon))};
+      else if(p.center && coordValide(p.center.lat,p.center.lon))vicino=p.center;
+      if(!vicino)return;var d=distanza(fix,vicino);
+      if(d<=150 && (!trovate[p.companyCode] || d<trovate[p.companyCode].metri))trovate[p.companyCode]={codice:p.companyCode,metri:Math.round(d)};
+    });
+    return Object.keys(trovate).map(function(k){return trovate[k];}).sort(function(a,b){return a.metri-b.metri||a.codice.localeCompare(b.codice);});
+  }
+
   function nuovoId(prefisso) {
     var r = "";
     for (var i = 0; i < 12; i++) r += B32.charAt(Math.floor(Math.random() * 32));
@@ -546,7 +563,7 @@
   return {
     SCHEMA_VERSION: SCHEMA_VERSION, PUNTI_PER_SEGMENTO: PUNTI_PER_SEGMENTO, SOGLIE: SOGLIE,
     CATEGORIE: CATEGORIE, STATI: STATI, STATI_IT: STATI_IT,
-    coordValide: coordValide, geohash: geohash, distanza: distanza, direzione: direzione,
+    compagnieVicine: compagnieVicine, coordValide: coordValide, geohash: geohash, distanza: distanza, direzione: direzione,
     cardinale: cardinale, lunghezza: lunghezza, bbox: bbox, centro: centro,
     valutaFix: valutaFix, punto: punto, segmenta: segmenta, ricomponi: ricomponi,
     metaPercorso: metaPercorso, toGeoJSON: toGeoJSON, toGPX: toGPX,

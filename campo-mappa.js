@@ -4,7 +4,8 @@
  * repository. `app.html` chiama `CampoMappaUI.schermo(ctx)` con quello che
  * serve (el, escapeHtml, db, utente, codice compagnia, render...).
  *
- * LA MAPPA E' UN DISEGNO SVG, non una carta: percorso, segnalazioni e la tua
+ * Mappa geografica tramite campo-carta.js e MAPPE COMUNI. Lo schema SVG
+ * rimane una riserva esplicita se la carta non si carica: percorso, segnalazioni e la tua
  * posizione in proiezione locale (metri), con la scala. Funziona senza rete
  * e senza librerie o chiavi nuove. Per la carta vera c'e' «Apri nel
  * navigatore» (Google Maps / app di sistema, in una scheda nuova: ArcTrail
@@ -171,11 +172,15 @@
   var nessuno = { get: function () { return null; }, set: function () {}, remove: function () {} };
   var coda = G.creaCoda(nessuno), reg = G.creaRegistratore(nessuno), chiaveTraccia = null;
   var nodi = {};
+  var cartaModulo = null;
+  function caricaCarta(){ if(!cartaModulo) cartaModulo=import("./campo-carta.js").catch(function(e){cartaModulo=null;throw e;});return cartaModulo; }
+  function chiudiCarta(){ if(nodi.mappa && nodi.mappa._carta)nodi.mappa._carta.distruggi(); if(nodi.mappa)nodi.mappa._chiusa=true; }
   function perUtente(ctx) {
     var uid = (ctx && ctx.user && ctx.user.uid) || null;
     if (S.uid === uid && chiaveTraccia !== null) return;
     lascia(true);
     S.uid = uid; S.ultimoCtx = null; S.code = null; S.perm = null; S.permCode = null; S.rotte = []; S.segn = [];
+    S.indiceCompagnie=undefined;S.indiceCompleto=false;S.sceltaManuale=false;
     S.caricatoCode = null; S.puntiRotta = {}; S.rottaVista = null; S.pos = null; S.dettaglio = null; S.manut = null;
     if (!uid) { coda = G.creaCoda(nessuno); reg = G.creaRegistratore(nessuno); chiaveTraccia = null; return; }
     coda = G.creaCoda(store, CHIAVE_CODA + ":" + uid);
@@ -197,6 +202,7 @@
      spegne, una registrazione in corso va in pausa (resta salvata), il wake
      lock si rilascia. Lo chiama app.html a ogni render fuori da `campo-mappa`. */
   function lascia(account) {
+    chiudiCarta();
     var d = reg.dati();
     if (d && d.nativo && !account) { wakeLock(false); S.raggiungi = false; return; }
     if (d && d.nativo && nativo()) N.comando("pause", S.uid, d.id).catch(function(){});
@@ -220,6 +226,36 @@
   function senzaDistanze(ctx) { return !!(ctx && ctx.giroInCorso); }
   function metri(m) { return m < 1000 ? Math.round(m) + " m" : (m / 1000).toFixed(m < 10000 ? 2 : 1) + " km"; }
   function data(ts) { try { return new Date(ts).toLocaleString(); } catch (e) { return ""; } }
+
+
+  function preparaRilevamento(ctx){
+    if(S.indiceCompagnie!==undefined)return;
+    try{S.indiceCompagnie=JSON.parse(store.get("arctrail3d_campo_pubblicati_v1")||"[]").filter(function(p){return p.status==="published";});}catch(e){S.indiceCompagnie=[];}
+    S.indiceCompleto=false;
+    if(!ctx.db||navigator.onLine===false)return;
+    var uid=S.uid;
+    ctx.db.collection("field_routes").where("status","==","published").limit(201).get().then(function(snap){
+      if(S.uid!==uid)return;var arr=[];snap.forEach(function(d){var p=d.data()||{};if(p.status==="published")arr.push({companyCode:p.companyCode,status:p.status,bbox:p.bbox||null,center:p.center||null});});
+      S.indiceCompagnie=arr;S.indiceCompleto=arr.length<201 && !(snap.metadata&&snap.metadata.fromCache);
+      try{store.set("arctrail3d_campo_pubblicati_v1",JSON.stringify(arr));}catch(e){}
+      if(S.ultimoCtx)aggiornaRilevamento(S.ultimoCtx);
+    }).catch(function(){S.indiceCompleto=false;});
+  }
+  function aggiornaRilevamento(ctx){
+    var box=nodi.rileva;if(!box||!box.isConnected)return;
+    var it=ctx.lang==="it",vicine=G.compagnieVicine(S.pos,S.indiceCompagnie||[],Date.now());
+    box.textContent=it?"Rilevamento compagnia: attendo un GPS preciso…":"Club detection: waiting for accurate GPS…";
+    if(!S.pos || !Number.isFinite(S.pos.acc) || S.pos.acc>G.SOGLIE.accMax || Date.now()-S.pos.t>30000)return;
+    if(!vicine.length){box.textContent=it?"Nessun campo riconosciuto: scegli il codice. Il rilevamento richiede un percorso approvato nella zona.":"No course recognised: choose the club code. Detection needs an approved route nearby.";return;}
+    box.textContent=it?(vicine.length>1?"Compagnie vicine: scegli quella corretta.":"Compagnia vicina al GPS:"):(vicine.length>1?"Nearby clubs: choose yours.":"Club near your GPS:");
+    var nomeInput=document.querySelector("[data-campo-nome-nuovo]"),puoAuto=!reg.dati()&&!S.sceltaManuale&&S.indiceCompleto&&vicine.length===1&&!(nomeInput&&nomeInput.value.trim());
+    if(puoAuto&&S.code!==vicine[0].codice){scegliCompagnia(ctx,vicine[0].codice,false);return;}
+    vicine.forEach(function(v){var nome=ctx.nomeCompagnia?ctx.nomeCompagnia(v.codice):null;var b=ctx.el('<button type="button" class="btn btn-ghost campo-mini"></button>');b.textContent=v.codice+(nome?" — "+nome:"")+(S.code===v.codice?(it?" · selezionata":" · selected"):"");b.disabled=!!reg.dati();b.addEventListener("click",function(){scegliCompagnia(ctx,v.codice,true);});box.appendChild(b);});
+  }
+  function scegliCompagnia(ctx,code,manuale){
+    if(reg.dati())return;S.code=code;S.sceltaManuale=manuale;S.perm=null;S.rotte=[];S.segn=[];S.puntiRotta={};S.rottaVista=null;S.caricatoCode=null;
+    store.set("arctrail3d_campo_codice",code);daCache(code);ctx.render();
+  }
 
   /* ── GPS ── */
   function avviaGps(ctx, alFix) {
@@ -273,11 +309,21 @@
       nodi.raggiungi.textContent = T(ctx, "distanza") + " " + metri(dist) + " · " + T(ctx, "direzione") + " " + Math.round(dir) + "° " + G.cardinale(dir);
       if (nodi.freccia) nodi.freccia.style.transform = "rotate(" + Math.round(dir) + "deg)";
     }
+    aggiornaRilevamento(ctx);
     if (nodi.mappa) disegnaMappa(ctx, nodi.mappa);
   }
 
   /* ── mappa SVG ── */
   function disegnaMappa(ctx, box) {
+    if(!box._schema){
+      var d=reg.dati(), r=S.rotte.filter(function(r){return r.id===S.rottaVista;})[0];
+      var dati={key:d?d.id:S.rottaVista,punti:(S.rottaVista&&S.puntiRotta[S.rottaVista])||[],traccia:d?d.punti:[],piazzole:d?(d.piazzole||[]):((r&&r.piazzole)||[]),pos:S.pos,segn:S.segn,salvata:!d&&!!S.rottaVista};
+      box._dati=dati;
+      if(box._carta){box._carta.aggiorna(dati);return;}
+      if(!box._attesaCarta){box._attesaCarta=true;box.textContent=ctx.lang==="it"?"Caricamento mappa…":"Loading map…";
+        setTimeout(function(){if(box._chiusa)return;caricaCarta().then(function(m){if(box._chiusa)return;return m.creaCarta(box,{lang:ctx.lang,uid:S.uid,senzaDistanze:senzaDistanze(ctx),pannello:nodi.pannelloRegistra,chiediGps:function(){avviaGps(ctx);},suSegnalazione:function(id){apriDettaglio(ctx,id);}});}).then(function(api){if(api&&!box._chiusa)api.aggiorna(box._dati);else if(api)api.distruggi();}).catch(function(){if(box._chiusa)return;box._schema=true;box.textContent="";if(nodi.pannelloRegistra&&box.parentNode&&box.parentNode.parentNode){box.parentNode.parentNode.insertBefore(nodi.pannelloRegistra,box.parentNode);nodi.pannelloRegistra.scrollIntoView({block:"start"});}var msg=document.createElement("p");msg.className="nota";msg.textContent=ctx.lang==="it"?"Carta non disponibile: viene mostrato solo lo schema della traccia. Riapri la pagina quando sei online.":"Map unavailable: track diagram only. Reopen when online.";box.parentNode.insertBefore(msg,box);disegnaMappa(ctx,box);});},0);
+      }return;
+    }
     var punti = (S.rottaVista && S.puntiRotta[S.rottaVista]) || [];
     var d = reg.dati();
     var traccia = d ? d.punti : [];
@@ -318,18 +364,19 @@
     var r = repo(ctx);
     if (!r || !S.code) return;
     S.caricatoCode = S.code;
-    var code = S.code;
+    var code = S.code, proprietario=S.uid;
     calcolaPermessi(ctx, code).then(function () {
+      if(S.uid!==proprietario||S.code!==code)return null;
       return Promise.all([r.listRoutes(code, S.perm.gestisce, S.perm.registra ? ctx.user.uid : null), r.listIssues(code)]);
     }).then(function (v) {
-      if (S.code !== code) return;
+      if (S.code !== code || S.uid !== proprietario || !v) return;
       S.rotte = v[0]; S.segn = v[1];
-      store.set("arctrail3d_campo_cache_" + code, JSON.stringify({ rotte: S.rotte, segn: S.segn }));
+      store.set("arctrail3d_campo_cache_" + S.uid + "_" + code, JSON.stringify({ rotte: S.rotte, segn: S.segn }));
       ctx.render();
     }).catch(function (e) { S.msg = T(ctx, "errore") + ": " + (e && (e.code || e.message)); ctx.render(); });
   }
   function daCache(code) {
-    try { var c = JSON.parse(store.get("arctrail3d_campo_cache_" + code) || "null"); if (c) { S.rotte = c.rotte || []; S.segn = c.segn || []; } } catch (e) {}
+    try { var c = JSON.parse(store.get("arctrail3d_campo_cache_" + S.uid + "_" + code) || "null"); if (c) { S.rotte = c.rotte || []; S.segn = c.segn || []; } } catch (e) {}
   }
   function calcolaPermessi(ctx, code) {
     var u = ctx.user, base = { signedIn: !!u, verified: !!(u && u.emailVerified), isAdmin: !!ctx.isAdmin };
@@ -339,6 +386,7 @@
       r.isMaintainer(code, u.uid),
       ctx.db.collection("compagnie_admin").where("adminUid","==",u.uid).get().then(function(snap){var found=false;snap.forEach(function(d){if(d.id===code)found=true;});return found;},function(){return false;})
     ]).then(function (v) {
+      if(S.uid!==u.uid||S.code!==code)return;
       base.isMaintainer = v[0]; base.isClubAdmin = v[1];
       S.perm = G.permessi(base); S.permCode = code;
     });
@@ -385,7 +433,10 @@
   }
   function puntiDi(ctx, id) {
     if (S.puntiRotta[id]) return Promise.resolve(S.puntiRotta[id]);
-    return repo(ctx).getRoutePoints(id).then(function (p) { S.puntiRotta[id] = p; return p; });
+    var owner=S.uid,key="arctrail3d_campo_cache_punti_"+S.uid+"_"+id;
+    try{var cache=JSON.parse(store.get(key)||"null");if(Array.isArray(cache)&&cache.length){S.puntiRotta[id]=cache;return Promise.resolve(cache);}}catch(e){}
+    var rp=repo(ctx);if(!rp)return Promise.reject(new Error("Percorso non ancora scaricato nel telefono."));
+    return rp.getRoutePoints(id).then(function (p) { if(S.uid!==owner)throw new Error("Account cambiato: riapri il percorso."); S.puntiRotta[id] = p; try{store.set(key,JSON.stringify(p));}catch(e){} return p; });
   }
 
   function apriDettaglio(ctx, id) {
@@ -398,16 +449,18 @@
     perUtente(ctx);
     S.ultimoCtx = ctx;
     if (nativo()) seguiNativo(ctx);
+    chiudiCarta();
     nodi = {};
     // Da quale tasto di Campi si arriva: «Mappa campo» o «Segnala problema».
     // Resta nello stato, cosi' vale anche dopo la scelta della compagnia.
-    if (ctx.vista === "mappa" || ctx.vista === "segnala") {
+    if (ctx.vista === "mappa" || ctx.vista === "segnala" || ctx.vista === "registra") {
       S.vista = ctx.vista; S.dettaglio = null; S.raggiungi = false; S.gpsDaPorta = ctx.vista === "segnala";
       S.piazzola = ctx.piazzola || null;
       // Contesto dal giro o dalla scheda compagnia: `codice` stringa = quel campo;
       // `codice` null = campo non certo, si sceglie a mano (niente compagnia del
       // profilo al suo posto); assente = comportamento di sempre.
       S.sceltaEsplicita = ctx.codice === null;
+      S.sceltaManuale=!!ctx.codice;
       if (ctx.codice !== undefined && (ctx.codice || null) !== S.code) {
         S.code = ctx.codice || null; S.perm = null; S.rotte = []; S.segn = []; S.puntiRotta = {}; S.rottaVista = null; S.caricatoCode = null;
       }
@@ -418,7 +471,7 @@
     if (bozzaAttiva && bozzaAttiva.companyCode !== S.code) { S.code = bozzaAttiva.companyCode; S.perm = null; S.caricatoCode = null; }
     var card = E('<div class="card' + (bozzaAttiva ? ' campo-testata-registra' : '') + '"></div>');
     card.appendChild(E('<div class="sezione-occhiello">' + X(T(ctx, "occhiello")) + "</div>"));
-    card.appendChild(E('<h2 class="sezione-titolo">' + X(T(ctx, S.vista === "segnala" ? "segnala" : "titolo")) + "</h2>"));
+    card.appendChild(E('<h2 class="sezione-titolo">' + X(T(ctx, S.vista === "segnala" ? "segnala" : S.vista === "registra" ? "registra" : "titolo")) + "</h2>"));
     wrap.appendChild(card);
     if (!ctx.user) { card.appendChild(E('<div class="nota">' + X(T(ctx, "serve_accesso")) + "</div>")); return wrap; }
 
@@ -432,13 +485,16 @@
     vai.disabled = !!bozzaAttiva;
     vai.addEventListener("click", function () {
       var v = inp.value.trim().replace(/[\s-]+/g, "").toUpperCase();
+      S.sceltaManuale=true;
       S.code = v || null; S.perm = null; S.rotte = []; S.segn = []; S.puntiRotta = {}; S.rottaVista = null; S.caricatoCode = null;
       if (v) { store.set("arctrail3d_campo_codice", v); daCache(v); }
       ctx.render();
     });
     riga.appendChild(inp); riga.appendChild(vai); card.appendChild(riga);
     var nomeC = S.code && ctx.nomeCompagnia ? ctx.nomeCompagnia(S.code) : "";
-    if (nomeC) card.appendChild(E('<div class="nota">' + X(nomeC) + "</div>"));
+    if (nomeC) card.appendChild(E('<div class="nota">' + X(S.code + " — " + nomeC) + "</div>"));
+    if(!bozzaAttiva){nodi.rileva=E('<div class="nota campo-rileva-compagnia" role="status"></div>');card.appendChild(nodi.rileva);
+    preparaRilevamento(ctx);avviaGps(ctx);aggiornaRilevamento(ctx);requestAnimationFrame(function(){if(S.ultimoCtx===ctx)aggiornaRilevamento(ctx);});}
     if (!S.code) { card.appendChild(E('<div class="nota">' + X(T(ctx, "scegli_compagnia")) + "</div>")); return wrap; }
     if (S.caricatoCode !== S.code) { daCache(S.code); carica(ctx); }
     var P = S.perm || G.permessi({ signedIn: true, verified: !!ctx.user.emailVerified, isAdmin: !!ctx.isAdmin });
@@ -477,25 +533,26 @@
         if (N && N.richiedeNativo && !nativo()) { erroreNome.textContent = "GPS Android non collegato: attendi il collegamento o aggiorna l’app. La registrazione non è partita."; return; }
         reg.avvia({ id: G.nuovoId("r"), companyCode: S.code, name: nomeNuovo.value.trim(), ora: Date.now() });
         if (nativo()) { reg.modalitaNativa(); N.avvia(reg.dati(), S.uid); seguiNativo(ctx); }
-        else { wakeLock(true); avviaGps(ctx); }
+        else { if(S.pos && Date.now()-S.pos.t>=0 && Date.now()-S.pos.t<=30000)reg.fix(S.pos); wakeLock(true); avviaGps(ctx); }
         ctx.render();
+        requestAnimationFrame(function(){var pagina=document.querySelector(".campo-mappa");if(pagina)pagina.scrollIntoView({block:"start"});});
       });
       az.appendChild(bR);
     }
     wrap.appendChild(az);
-    if (d) wrap.appendChild(pannelloRegistra(ctx));
+    if (d) { nodi.pannelloRegistra=pannelloRegistra(ctx); wrap.appendChild(nodi.pannelloRegistra); }
 
     // mappa
     var mc = E('<div class="card campo-mappa-card"></div>');
     nodi.mappa = E('<div class="campo-mappa-box"></div>');
     mc.appendChild(nodi.mappa);
-    wrap.appendChild(mc);
+    wrap.insertBefore(mc, az);
 
     wrap.appendChild(elencoRotte(ctx, P));
     wrap.appendChild(elencoSegn(ctx));
     if (P.autorizzaManutentori) wrap.appendChild(pannelloManut(ctx));
     aggiornaGps(ctx);
-    if (S.pos || d) avviaGps(ctx);
+    avviaGps(ctx);
     if (nq && navigator.onLine !== false) setTimeout(function () { sincronizza(ctx); }, 0);
     return wrap;
   }
@@ -557,6 +614,7 @@
       if (x.nativo) await N.comando("clear", S.uid, x.id);
       reg.termina(); wakeLock(false);
       S.puntiRotta[meta.id] = x.punti; S.rottaVista = meta.id;
+      try{store.set("arctrail3d_campo_cache_punti_"+S.uid+"_"+meta.id,JSON.stringify(x.punti));}catch(e){}
       if (!S.rotte.some(function (q) { return q.id === meta.id; })) S.rotte.unshift(meta);
       S.msg = T(ctx, "salvato_locale");
       sincronizza(ctx); ctx.render();
@@ -583,7 +641,8 @@
       function tasto(k, fn, cls) { var b = E('<button type="button" class="btn btn-ghost campo-mini ' + (cls || "") + '">' + X(T(ctx, k) || k) + "</button>"); b.addEventListener("click", fn); bt.appendChild(b); }
       tasto("mostra", function () { puntiDi(ctx, r.id).then(function () { S.rottaVista = r.id; ctx.render(); }, function (e) { S.msg = T(ctx, "errore"); ctx.render(); }); });
       tasto("GeoJSON", function () { puntiDi(ctx, r.id).then(function (p) { scarica(r.id + ".geojson", "application/geo+json", JSON.stringify(G.toGeoJSON(r, p, S.segn), null, 1)); }); });
-      tasto("GPX", function () { puntiDi(ctx, r.id).then(function (p) { scarica(r.id + ".gpx", "application/gpx+xml", G.toGPX(r, p)); }); });
+      tasto("GPX", function () { puntiDi(ctx, r.id).then(function (p) { scarica(r.id + ".gpx", "application/gpx+xml", G.toGPX(r, p)); }).catch(function(e){S.msg=e.message;ctx.render();}); });
+      tasto(ctx.lang === "it" ? "Condividi immagine" : "Share image", function(){if(!confirm(ctx.lang==="it"?"Condividere la traccia e le piazzole di questo percorso?":"Share this track and its stations?"))return;puntiDi(ctx,r.id).then(function(p){return caricaCarta().then(function(m){return m.immaginePercorso(r,p);});}).catch(function(e){if(e.name!=="AbortError"){S.msg=e.message;ctx.render();}});});
       if (r.status === "draft" && r.createdBy === ctx.user.uid) {
         tasto("proponi", function(){
           if(coda.elenco().some(function(o){return o.tipo==="route" && o.dati.meta.id===r.id;})){ S.msg=T(ctx,"prima_sync");ctx.render();return; }

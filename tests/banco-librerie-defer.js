@@ -126,7 +126,8 @@ async function unGiro(page) {
   var partito = await tocca(page, "Inizia gara");
   for (var i = 0; i < 3; i++) { await premi(page, ".quick-btn.superspot"); await premi(page, ".quick-btn.spot"); }
   await tocca(page, "Classifica");
-  await tocca(page, "Termina percorso");
+  await tocca(page, "Indietro");
+  await tocca(page, "Termina giro");
   await tocca(page, "Tocca di nuovo per confermare");
   await page.waitForTimeout(1200);
   var st = await page.evaluate(function () { return window.__prova ? window.__prova.storico() : []; }).catch(function () { return []; });

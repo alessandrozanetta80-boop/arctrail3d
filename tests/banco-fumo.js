@@ -129,7 +129,8 @@ function testo(page) { return page.evaluate(function () { var a = document.query
   /* Il tasto che chiude sta dentro il pannello della classifica, non sulla
      pista: prima si apre il pannello. */
   await tocca(page, "Classifica");
-  await tocca(page, "Termina percorso");
+  await tocca(page, "Indietro");
+  await tocca(page, "Termina giro");
   await tocca(page, "Tocca di nuovo per confermare");   // il secondo tocco
   await page.waitForTimeout(900);
   var dopo = await testo(page);

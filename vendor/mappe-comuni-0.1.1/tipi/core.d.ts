@@ -1,0 +1,11 @@
+export const geo: any;
+export const utm: any;
+export const strumentiMappa: any;
+export const terreno: any;
+export const profiloGrafico: any;
+export const rilievo: any;
+export const dtmOffline: any;
+export const pisteOsm: any;
+export const toponimi: any;
+export const nomiCarta: any;
+export { classificaNeutra, STATO_AREA, COLORE_AREA, problemiTerritorio, FORMATO_TERRITORIO } from './index';

@@ -1,0 +1,26 @@
+{
+  "data": "2026-10-17",
+  "comune": {
+    "versione": "0.1.1",
+    "sha256": "ff518d6eebba02d9cd67f72e50f03695fc0b3a586d528c458c39972751854ea8",
+    "installazione": "Distribuzione ESM estratta esclusivamente dal tgz verificato, versione fissata; nessun link alla cartella sorgente."
+  },
+  "offline": {
+    "origine": "Adrenalina battuta-live",
+    "file": [
+      "pacchettiOffline.js",
+      "archivioMappe.js",
+      "mappaOffline.js",
+      "pacchettiMappe.js"
+    ],
+    "adattamenti": [
+      "Import relativi locali",
+      "Database e manifest isolati arctrail3d; nessuna modifica ad Adrenalina"
+    ],
+    "hashFonti": {
+      "pacchettiOffline.js": "79b4b4e83bf888524665a6e2d7f0b58ead018fd603339821f61b24d49eec1413",
+      "archivioMappe.js": "be8f556486389d4319a52df1ed5f80f5ca4671453f7bf80f0952e17c00000625",
+      "mappaOffline.js": "a6e28d84bf5f91bf248313c66080f9ecbba3dcc530c8e96789a755910ebb670a"
+    }
+  }
+}

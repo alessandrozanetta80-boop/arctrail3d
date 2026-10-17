@@ -101,7 +101,8 @@ async function iniziaRound3D(page) {
   for (var i = 0; i < 2; i++) { await premi(a.page, ".quick-btn.superspot"); await premi(a.page, ".quick-btn.spot"); }
   prova("giro aperto alla piazzola 3", /PIAZZOLA 3 \/ 24/i.test(await testo(a.page)));
   await tocca(a.page, "Classifica");
-  await tocca(a.page, "Termina percorso"); await tocca(a.page, "Tocca di nuovo");
+  await tocca(a.page, "Indietro");
+  await tocca(a.page, "Termina giro"); await tocca(a.page, "Tocca di nuovo");
   await a.page.waitForTimeout(600);
   var la = await locale(a.page);
   prova("dopo «Interrompi» il giro NON e' piu' attivo", la.stato.roundActive !== true, "roundActive=" + la.stato.roundActive);

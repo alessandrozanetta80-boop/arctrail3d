@@ -1,0 +1,191 @@
+{
+  "generato": "strumenti/importa-da-fonti.mjs",
+  "fonti": {
+    "Adrenalina": {
+      "commit": "c6586b66360e9aeef9349ed16d08549050147973",
+      "versione": "app 0.23.40 / battuta-live 0.18.21"
+    },
+    "GESTIONALE COMPRENSORI": {
+      "commit": "62d935678eeda6b0526ea486410a1474918a859b",
+      "versione": "v18 (1.1.18-test); geo.js da v20 (1.1.20-test)"
+    }
+  },
+  "file": [
+    {
+      "file": "src/origine/geo.js",
+      "fonte": "GESTIONALE COMPRENSORI:src/gps/shared/geo.js",
+      "sha256Fonte": "0f26b7737848a62328593bd93fc2ffe432249fe783bb465b3ee0277e1043bbd8",
+      "sostituzioni": 0,
+      "adattamenti": "dalla 0.1.1 la fonte è la copia del Gestionale v20 (1.1.20-test): uguale a battuta-live/shared/geo.js salvo riquadro() per ogni geometria GeoJSON (correzione del crash mappa v19 «e[0] is not iterable» con i livelli a linee)",
+      "sha256Copia": "974720ec14fe1bf1629fba72aac6fed34885f8727a3a5b793049ecc1b831d741"
+    },
+    {
+      "file": "src/origine/utm.js",
+      "fonte": "Adrenalina:battuta-live/shared/utm.js",
+      "sha256Fonte": "f1cff43440874c5779166ae123ccdeb69aabf28438d26a264e49d9048c4d58e4",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "0881645df4710f5612063a93c2d0af4d744d836e1556ada27625dcb7ebb5351a"
+    },
+    {
+      "file": "src/origine/geojson.js",
+      "fonte": "Adrenalina:battuta-live/shared/geojson.js",
+      "sha256Fonte": "b2fb2c3ceee94d42d76af4b9d5758a5007bbe6847029ccfcee77d52706429546",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "3f988491eedb1c5a053037da2a0127f2b89eb3b54f0e64a8764431fffefb1a15"
+    },
+    {
+      "file": "src/origine/modello.js",
+      "fonte": "Adrenalina:battuta-live/shared/modello.js",
+      "sha256Fonte": "b792ecc86bcc5698ecce0fcd168bc9ec87906f2f239dae5a13b351b3868c354e",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "03bbba932452bdd00fb5ca3c3229d9435aa8662c55137dc9866f9eacd429b00f"
+    },
+    {
+      "file": "src/origine/strumentiMappa.js",
+      "fonte": "Adrenalina:battuta-live/shared/strumentiMappa.js",
+      "sha256Fonte": "41d515f2bb1dc757d1bfa94ab2a118a089c0eaca218e9f2802c95c9d9da386dc",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "9c49a1aa576824ce6bc36597f7e6c21948f53f2a362ec8e8b59bc411e95691cc"
+    },
+    {
+      "file": "src/origine/terreno.js",
+      "fonte": "Adrenalina:battuta-live/shared/terreno.js",
+      "sha256Fonte": "52e039b4c0cfedc4d47f26107030a21b16af88ad3bc4f9492873b7622d588dc8",
+      "sostituzioni": 2,
+      "adattamenti": "testi senza «CA VCO1» (come il Gestionale v18, che scrive «Comprensorio»; qui «territorio», neutro)",
+      "sha256Copia": "e95b4bb814f9a43edc0282be0eb37503155ae58fec967d624071b3a4128c06dc"
+    },
+    {
+      "file": "src/origine/profiloGrafico.js",
+      "fonte": "Adrenalina:battuta-live/shared/profiloGrafico.js",
+      "sha256Fonte": "406253cf47297c5b6aa54bed5a0450f1aa7291f7229eaf6e50704f4101f8fbec",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "3a36a439ffabe0295d445ccc779ab8ba1b1da0784da37de0c8af210c50f3054b"
+    },
+    {
+      "file": "src/origine/rilievo.js",
+      "fonte": "Adrenalina:battuta-live/shared/rilievo.js",
+      "sha256Fonte": "146d46f7ab14942ce0981bab43621d24ff1de11f8b3f8c83248cc61f14242c71",
+      "sostituzioni": 1,
+      "adattamenti": "il CA non e' fisso (in Adrenalina CAVCO1): lo da' il pacchetto territoriale (stesso adattamento del Gestionale v18)",
+      "sha256Copia": "4b060f22241ef759cfc6b86c116679bf432a591f18b219cfabe512115a574460"
+    },
+    {
+      "file": "src/origine/dtmOffline.js",
+      "fonte": "Adrenalina:battuta-live/shared/dtmOffline.js",
+      "sha256Fonte": "3eaf527b3cf1ee761fcf593871b4577aad879190922876dfef9b1d04d9257928",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "38e70c61d78cdb4664c068628e6e49d664411194a8b9b01c3a1a1be5566cd2ca"
+    },
+    {
+      "file": "src/origine/pisteOsm.js",
+      "fonte": "Adrenalina:battuta-live/shared/pisteOsm.js",
+      "sha256Fonte": "19d03cdf32d2f2418b209e3d4fb0f47a6e48f14269178e206d8d7367c390ccb5",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "e9af7f11077c23b851e5b9cb59623c0582eba8e480233a1fccffbd49b593dd62"
+    },
+    {
+      "file": "src/origine/nomiCarta.js",
+      "fonte": "Adrenalina:battuta-live/shared/nomiCarta.js",
+      "sha256Fonte": "000f6027769b4756e1fdd54197e4b8a79969e3e67846e307ea6cf42405a06d56",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "b03fe4b0c572591cbcc5e18c200688da929b02d85d94811b1f41065297c310b9"
+    },
+    {
+      "file": "src/origine/scritteCarta.js",
+      "fonte": "Adrenalina:battuta-live/shared/scritteCarta.js",
+      "sha256Fonte": "e8ffff76b7fe46b52d8ed89629463242bf0d223429fd44787f5e60ec0a4e7c7e",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "05706c1e50a82307cd2b500ca3dd51db3d5d2d156069e3fd684eec2be8966c07"
+    },
+    {
+      "file": "src/origine/toponimi.js",
+      "fonte": "Adrenalina:battuta-live/shared/toponimi.js",
+      "sha256Fonte": "3825d468cd6d5a25cffac01d0eec9d57babf6efae72bb23a6596499c5b678af9",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "6c600b9154ea12900ca0108ae1dd082b5d7a57495d905662cd43b92561792cc2"
+    },
+    {
+      "file": "src/origine/fornitori.js",
+      "fonte": "Adrenalina:battuta-live/js/map/fornitori.js",
+      "sha256Fonte": "8b9bc1359726850acb867a4810cc794d22db7f290da8447b367e6d37d3b8be18",
+      "sostituzioni": 1,
+      "adattamenti": null,
+      "sha256Copia": "e940de1998fa3ad47473ee217e5d0148864de2ec4759f468e56787614ac313d3"
+    },
+    {
+      "file": "src/origine/LocationProvider.js",
+      "fonte": "Adrenalina:battuta-live/js/location/LocationProvider.js",
+      "sha256Fonte": "ab3844ea6edc2acfcc6e51d325b5c144be8ab12b012ba3e4709346d3beeb7459",
+      "sostituzioni": 0,
+      "adattamenti": null,
+      "sha256Copia": "a8da8bbb13ff34acca14f988d745e47c33a913ded1e4d1a4426b07eeca0feb6f"
+    },
+    {
+      "file": "src/origine/BrowserGeolocationProvider.js",
+      "fonte": "Adrenalina:battuta-live/js/location/BrowserGeolocationProvider.js",
+      "sha256Fonte": "2011a5cd96f258f241064517a85703244f5525c86c2461f1be9dec99f265fe46",
+      "sostituzioni": 1,
+      "adattamenti": null,
+      "sha256Copia": "e5547fb9bac358ad486a230248e541f455dd2fca0cb28de6e9aaa06aad638e4f"
+    },
+    {
+      "file": "src/origine/SimulatedLocationProvider.js",
+      "fonte": "Adrenalina:battuta-live/js/location/SimulatedLocationProvider.js",
+      "sha256Fonte": "91b6cfeeca7fbc85d020ce131fd69653d54a6ed5492c231e5f447ab6681a7558",
+      "sostituzioni": 1,
+      "adattamenti": null,
+      "sha256Copia": "fa7544c5779285800f81f4f813101a5d4b3b8d0182a2deeb0a80ef0d7fa9a637"
+    },
+    {
+      "file": "src/origine/strumentiUi.js",
+      "fonte": "Adrenalina:battuta-live/js/strumentiUi.js",
+      "sha256Fonte": "87c1d278289a308e39937100914351b867b4f326e92041f0f56390a881fb71d3",
+      "sostituzioni": 3,
+      "adattamenti": "gli elementi si cercano dentro la mappa che li possiede (vista.el) e non in tutto il documento: piu' mappe per pagina",
+      "sha256Copia": "ed3005f2a7dc73b4d84c6bd82ebafc447c7229b88465354191d21a749ebd7c89"
+    },
+    {
+      "file": "src/origine/rilievoUi.js",
+      "fonte": "Adrenalina:battuta-live/js/rilievoUi.js",
+      "sha256Fonte": "16dc37ec274ddb386f641eb490df136cb3f93cb4f58f8331eca63e3f14b626b6",
+      "sostituzioni": 5,
+      "adattamenti": "confine dal pacchetto territoriale (codiceConfine, nomeConfine) invece del CA VCO1 fisso",
+      "sha256Copia": "a898fe8569f0484d53c8dc98cc6e68ff32076b796e1d5d8e63b28f047aae374f"
+    },
+    {
+      "file": "src/origine/mappaLeggibileUi.js",
+      "fonte": "Adrenalina:battuta-live/js/mappaLeggibileUi.js",
+      "sha256Fonte": "8a5e7d7b522d406afaa8ad6b11605504f2dff16020d54c154f205bea893686f7",
+      "sostituzioni": 4,
+      "adattamenti": "file dei nomi dal pacchetto territoriale (opzione file) invece dei percorsi fissi del VCO",
+      "sha256Copia": "86a108ee218afda7caa395c655c331bc3ecf4ba8e9b9d43f655a7f078af4d6cc"
+    },
+    {
+      "file": "src/origine/pacchettoDtm.js",
+      "fonte": "GESTIONALE COMPRENSORI:src/cartografia/pacchettoDtm.js",
+      "sha256Fonte": "ca7305de0df182baf16ceb0e67da9fd88b8e66eee560f62fd560546cc88a1a44",
+      "sostituzioni": 1,
+      "adattamenti": null,
+      "sha256Copia": "0647742bd91893e987e487684271afc1c1187ee4521960089ff533c2f31fd646"
+    },
+    {
+      "file": "stile/battuta-live.css",
+      "fonte": "Adrenalina:battuta-live/css/battuta-live.css",
+      "sha256Fonte": "1d301288ea561efd2cb923f602f929d243095cd64dab1c864ead7931360bcc40",
+      "sostituzioni": 0,
+      "adattamenti": "regole della mappa sotto .bl-tema; esclusi barra, pannello della traccia, postazioni, squadra, diagnostica",
+      "sha256Copia": "8be88924f9b82e70f3445caa0b54e633855b80a16584135f16d1096d7b265d56"
+    }
+  ]
+}

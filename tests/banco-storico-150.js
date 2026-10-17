@@ -142,7 +142,7 @@ function doppioni(a) { var v = {}, d = 0; a.forEach(function (x) { if (v[x]) d++
   var tocca = async function (t) { await y.page.evaluate(function (tt) { var b = Array.prototype.filter.call(document.querySelectorAll("#app button, .tabbar button, #app a"), function (b) { return b.offsetParent && b.textContent.replace(/\s+/g, " ").indexOf(tt) >= 0; })[0]; if (b) b.click(); }, t); await y.page.waitForTimeout(450); };
   await tocca("Tira"); await tocca("Gara libera"); await tocca("Continua"); await tocca("Round 3D"); await tocca("Inizia gara");
   for (var i = 0; i < 2; i++) { await clic(y.page, ".quick-btn.superspot"); await clic(y.page, ".quick-btn.spot"); }
-  await tocca("Classifica"); await tocca("Termina percorso"); await tocca("Tocca di nuovo per confermare");
+  await tocca("Classifica"); await tocca("Indietro"); await tocca("Termina giro"); await tocca("Tocca di nuovo per confermare");
   await y.page.waitForTimeout(1200);
   var st = await y.page.evaluate(function () {
     var c = window.__DATI["users/uidMario/storico"] || {};

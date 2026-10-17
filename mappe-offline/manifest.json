@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "nota": "Estratti OSM riusati dalla consegna Adrenalina; stesso contenuto, dimensioni e SHA-256, nessun download automatico.",
+  "generatedAt": "2026-09-21T12:42:07.321Z",
+  "licenza": "Dati OpenStreetMap: ODbL (attribuzione obbligatoria). Protomaps Basemap e go-pmtiles: BSD-3.",
+  "attribuzione": "© OpenStreetMap contributors · Protomaps",
+  "packages": [
+    {
+      "id": "CAVCO1",
+      "nome": "VCO1 — Verbania-Cusio",
+      "versione": "20260918-baa9913e",
+      "bytes": 30619178,
+      "sha256": "baa9913e3c8dc9897d8a3265e7ac7dacbc7dba9844409ca77034e98a4bcf791e",
+      "url": "https://adrenalina---hunting.firebaseapp.com/mappe-offline/CAVCO1-20260918-baa9913e.pmtiles",
+      "bbox": [
+        8.165427,
+        45.739967,
+        8.767715,
+        46.151508
+      ],
+      "bufferKm": 3,
+      "minZoom": 0,
+      "maxZoom": 15,
+      "build": "20260918",
+      "sorgente": "https://build.protomaps.com/20260918.pmtiles",
+      "datiOsm": "2026-09-18T04:00:00Z",
+      "versioneSchema": "4.15.2",
+      "generato": "2026-09-21T12:41:28.182Z"
+    },
+    {
+      "id": "CAVCO2",
+      "nome": "VCO2 — Ossola Nord",
+      "versione": "20260918-3b4e7fa0",
+      "bytes": 18308427,
+      "sha256": "3b4e7fa0a862e27213cb1f7cbc59d1a7b89f412048caf5ac084e52785e629006",
+      "url": "https://adrenalina---hunting.firebaseapp.com/mappe-offline/CAVCO2-20260918-3b4e7fa0.pmtiles",
+      "bbox": [
+        8.154414,
+        46.016105,
+        8.649999,
+        46.491245
+      ],
+      "bufferKm": 3,
+      "minZoom": 0,
+      "maxZoom": 15,
+      "build": "20260918",
+      "sorgente": "https://build.protomaps.com/20260918.pmtiles",
+      "datiOsm": "2026-09-18T04:00:00Z",
+      "versioneSchema": "4.15.2",
+      "generato": "2026-09-21T12:41:45.639Z"
+    },
+    {
+      "id": "CAVCO3",
+      "nome": "VCO3 — Ossola Sud",
+      "versione": "20260918-46ff8727",
+      "bytes": 24424473,
+      "sha256": "46ff872777208316dce2374ad02c88a8700c7a48292755e5c68e4ed35056b5ac",
+      "url": "https://adrenalina---hunting.firebaseapp.com/mappe-offline/CAVCO3-20260918-46ff8727.pmtiles",
+      "bbox": [
+        7.82976,
+        45.873718,
+        8.516377,
+        46.332469
+      ],
+      "bufferKm": 3,
+      "minZoom": 0,
+      "maxZoom": 15,
+      "build": "20260918",
+      "sorgente": "https://build.protomaps.com/20260918.pmtiles",
+      "datiOsm": "2026-09-18T04:00:00Z",
+      "versioneSchema": "4.15.2",
+      "generato": "2026-09-21T12:42:07.321Z"
+    }
+  ]
+}
