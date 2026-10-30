@@ -59,6 +59,7 @@ function prova(n, c, extra) { if (c) { ok++; console.log("  ✓ " + n); } else {
   await page.goto("file:///" + path.join(D, "index.html").split(path.sep).join("/"));
   await page.waitForTimeout(1400);
 
+  await page.locator(".home-mese-apri").click();
   var r = await page.evaluate(function () {
     /* La striscia del mese (21/08/2026): etichetta in <i>, cifra in <b>.
        SI GUARDA DENTRO IL PANNELLO DEL MESE, non in tutta la pagina.
@@ -187,7 +188,7 @@ function prova(n, c, extra) { if (c) { ok++; console.log("  ✓ " + n); } else {
     // L'andamento sta dentro la striscia del mese: prima si tocca, come una
     // persona. Prima era sempre a schermo, e il banco non doveva chiedere.
     await p.evaluate(function () {
-      var b = document.querySelector(".home-mese-barra");
+      var b = document.querySelector(".home-mese-apri");
       if (b && !document.querySelector(".home-mese.aperta")) b.click();
     });
     await p.waitForTimeout(700);
@@ -220,6 +221,7 @@ function prova(n, c, extra) { if (c) { ok++; console.log("  ✓ " + n); } else {
         /226/.test(r6.assey) && /186/.test(r6.assey), r6.assey);
 
   console.log("\n  E SI LEGGE TOCCANDOLO");
+  await a2.page.locator(".home-tela svg").scrollIntoViewIfNeeded();
   var box = await a2.page.evaluate(function () {
     var s = document.querySelector(".home-tela svg"); var r = s.getBoundingClientRect();
     return { x: r.left + r.width * 0.5, y: r.top + r.height / 2 };
