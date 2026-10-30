@@ -71,9 +71,7 @@ async function apri(browser, storico, opz) {
   await page.waitForTimeout(1500);
   return { ctx: ctx, page: page, errori: errori };
 }
-async function leggi(page) {
-  var toggle = page.locator('.home-mese-apri[aria-expanded="false"]');
-  if(await toggle.count()) await toggle.click();
+function leggi(page) {
   return page.evaluate(function () {
     var sez = document.querySelector(".home-mese");
     if (!sez) return null;

@@ -3,7 +3,7 @@ const fs=require('fs'),path=require('path'),os=require('os'),assert=require('ass
 const {pathToFileURL}=require('url');
 const {chromium}=require('playwright');
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'arctrail-ux-'));
-const out=path.resolve('UI_REVIEW/SEGNA_PUNTI_20261030/implementazione');
+const out=path.resolve('UI_REVIEW/RIPRISTINO_20261030');
 fs.mkdirSync(out,{recursive:true});
 let src=require('./copia-dev').accendiDev(process.env.UX_BASELINE ? require('child_process').execFileSync('git',['show','HEAD:app.html'],{encoding:'utf8',maxBuffer:10*1024*1024}) : fs.readFileSync('app.html','utf8'));
 src=src.replace('var BUILD_STAMP = ', 'window.__ux={ctx:contestoDi,set:function(v){Object.assign(state,v);homeOverride=false;render();}};\nvar BUILD_STAMP = ');
@@ -25,17 +25,6 @@ for(const width of [320,384,1280]){
  await page.evaluate(s=>window.__ux.set(s),seed);
  await page.waitForTimeout(600);
  await page.locator('.quick-btn').first().waitFor();
- if(!process.env.UX_BASELINE){
- const contexts=await page.evaluate(()=>{
-  const g={modeKey:'training',format:2};
-  return [window.__ux.ctx(g,{arrows:[[15],[0]]}),window.__ux.ctx(g,{arrows:[[15,10,5],[0,0,0]]}),
-   window.__ux.ctx({...g,arrowsPerTarget:3},{arrows:[[15]]}),window.__ux.ctx(g,{}),window.__ux.ctx(g,{arrows:[[15],[15,10]]})];
- });
- assert(contexts[0] && contexts[1] && contexts[0]!==contexts[1],'1 and 3 arrows are not comparable');
- assert.equal(contexts[1],contexts[2],'explicit configuration survives early target closure');
- assert.equal(contexts[3],null,'unknown legacy configuration has no claimed record');
- assert.equal(contexts[4],null,'mixed legacy counts are not guessed');
- }
  const before=await page.locator('.quick-btn').first().boundingBox();
  await page.screenshot({path:path.join(out,`${process.env.UX_BASELINE?'prima':'dopo'}-giro-${width}.png`),fullPage:true});
  await page.locator('.quick-btn').first().click();

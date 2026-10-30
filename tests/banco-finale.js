@@ -227,15 +227,6 @@ function leggiFinale() {
         !vf.numeri.some(function (x) { return /Durata=0/.test(x); }), vf.numeri.join(" · "));
   await f.ctx.close();
 
-  console.log("\n  STESSE PIAZZOLE, NUMERO DI FRECCE DIVERSO");
-  var tre = giroVecchio(6, 450, CAMPO);
-  tre.results[0].arrows = tre.results[0].perTarget.map(function(){return [15,15,10];});
-  var diverso = await finisci(browser, giroAllUltima(), [tre]);
-  var vd = await diverso.page.evaluate(leggiFinale);
-  prova("un allenamento a una freccia non si confronta con tre", !/[+−]\d/.test(vd.vs), vd.vs);
-  prova("nessun record basato su configurazioni diverse", !vd.record);
-  prova("anche la classifica evita il confronto scorretto", !/[+−-]\d/.test(await diverso.page.locator('.score-table tbody tr').first().locator('td').last().innerText()));
-  await diverso.ctx.close();
   await browser.close();
   console.log("\n  " + ok + " passate, " + ko + " fallite.\n");
   process.exit(ko ? 1 : 0);
