@@ -28,7 +28,7 @@ fs.writeFileSync(path.join(D, "index.html"),
 function giro(giorniFa, punti, piazzole) {
   var d = new Date(Date.now() - giorniFa * 86400000);
   return {
-    date: d.toISOString(), format: piazzole, modeKey: "training", modeLabel: "Allenamento",
+    date: d.toISOString(), format: piazzole, modeKey: "training", modeLabel: "Allenamento", arrowsPerTarget: 1,
     results: [{ name: "alez", total: punti, isSelf: true, ownerUid: null,
                 perTarget: new Array(piazzole).fill(0), arrows: [] }]
   };

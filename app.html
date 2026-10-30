@@ -5496,7 +5496,37 @@ header.top .brandblock .sentiero{ height:1.25em; width:auto; display:block;
 [data-campo-registra-gps]{margin-bottom:var(--s-3);}
 body.schermo-percorso{overflow-y:auto;overflow-x:hidden;}
 .pista{position:relative;}
-[data-termina-giro-separato]{position:absolute;top:100%;left:0;width:100%;margin:var(--s-3) 0;min-height:44px;}
+.pista-servizi{position:absolute;top:100%;left:0;width:100%;padding:var(--s-3) 0 calc(var(--s-4) + env(safe-area-inset-bottom));}
+.pista-servizi [data-termina-giro-separato]{margin-top:var(--s-5);min-height:48px;}
+/* UX 30/10: the scoring surface keeps its dimensions; ancillary actions scroll below it. */
+.pista-scena{background:transparent;border:0;box-shadow:none;padding:var(--s-3) 0;}
+.pista-arciere{font-family:var(--font-ui);overflow-wrap:anywhere;}
+.pista-freccia{color:var(--text-2);font-weight:600;}
+.pista-frecce{display:flex;gap:var(--s-2);margin-top:var(--s-3);}
+.pista-frecce span{flex:1 1 0;min-width:0;padding:var(--s-2);text-align:center;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface-1);font-family:var(--font-num);font-weight:700;}
+.pista-frecce span[aria-current="true"]{border:2px solid var(--brand);}
+.pista-frecce small{display:block;font-family:var(--font-ui);font-size:var(--t-xs);color:var(--text-2);font-weight:500;}
+.pista-turni{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--s-2);}
+.pista-scorciatoie{margin:var(--s-2) 0 0;}
+.pista-scorciatoie .btn{flex:1 1 0;justify-content:center;}
+.striscia-annulla{background:var(--surface-2);border-color:var(--border-strong);color:var(--text-1);}
+.striscia-annulla > span{white-space:normal;line-height:1.25;overflow-wrap:anywhere;}
+.striscia-annulla button:disabled{color:var(--text-3);cursor:default;}
+.pista-servizi .pista-segnala{background:var(--surface-1);border-color:var(--border);color:var(--text-2);min-height:48px;}
+.ux-prepara .card{border-radius:var(--r-xl);box-shadow:none;}
+.ux-prepara .section-title{font-family:var(--font-ui);font-size:var(--t-lg);text-transform:none;letter-spacing:0;}
+.ux-prepara .frecce-scelta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));}
+.ux-prepara input,.ux-prepara .chip{min-height:48px;}
+.ux-prepara .chip-group{gap:var(--s-2);}
+.ux-prepara .chip{display:flex;align-items:center;justify-content:center;flex:1 1 0;font-weight:700;}
+.ux-prepara .reg-riga{padding:var(--s-4);border-radius:var(--r-xl);}
+.ux-prepara .reg-riga.on{border-width:2px;}
+.resume-banner{border-radius:var(--r-xl);}
+.pannello{box-shadow:none;}
+.fin-hero{box-shadow:none;border-radius:var(--r-xl);}
+@media (min-height:741px){.tastiera .quick-btn{min-height:72px;}}
+@media (max-width:360px){.striscia-annulla{padding:0 var(--s-2);gap:var(--s-1);}.striscia-annulla button{padding:0 var(--s-1);}}
+@media (max-height:600px){.pista-scena{padding:0;}.pista-frecce{display:none;}}
 </style>
 
 <style id="arctrail-tira-mockup-fedele-v1">
@@ -16934,14 +16964,8 @@ p.appendChild(tab);
 try{ if(console.table) console.table(m); else console.log(m); }catch(e){}
 }
 function adattaSegnalazioneGiro(){
-var b = document.querySelector(".pista-segnala"), h = document.querySelector("header.top .head-actions"), pista = document.querySelector(".pista");
-var compatta = !!(b && h && document.body.classList.contains("schermo-percorso") && window.innerHeight <= 600);
-document.body.classList.toggle("segnala-in-testata", compatta);
-if(!b || !h) return;
-if(!b.__segnalaOrigine) b.__segnalaOrigine = b.parentNode;
-pista = pista || b.__segnalaOrigine;
-if(compatta && b.parentNode !== h) h.appendChild(b);
-else if(!compatta && pista && b.parentNode !== pista) pista.insertBefore(b, pista.firstChild);
+// Report stays below scoring at every height, never competes with the current arrow.
+document.body.classList.remove("segnala-in-testata");
 }
 function adattaMisure(){ adattaSegnalazioneGiro(); adattaTestata(); adattaTira(); pannelloDiag(); }
 function adattaMisurePiuTardi(){
@@ -19193,7 +19217,7 @@ state.pendingArchers = [{ id: uid(), name: selfName, isSelf:true, ownerUid: (cur
 
 // ---------- REGISTRAZIONE ----------
 function registrationScreen(){
-var wrap = el('<div></div>');
+var wrap = el('<div class="ux-prepara"></div>');
 
 var card2 = el('<div class="card"></div>');
 var pendingOra = state.pendingArchers || [];
@@ -21556,7 +21580,7 @@ state.campo = (i && i.value.trim()) ? i.value.trim().slice(0, 60) : null;
 }
 
 function trainingSetupScreen(){
-var wrap = el('<div></div>');
+var wrap = el('<div class="ux-prepara"></div>');
 var trainKey = fedCorrente().trainingMode;
 var mode = GAME_MODES[trainKey];
 wrap.appendChild(rigaArcieri("training-setup"));
@@ -21573,9 +21597,9 @@ var isFiarcTraining = (trainKey === "training");
 if(isFiarcTraining){
 var arrowsCard = el('<div class="card"></div>');
 arrowsCard.appendChild(el('<h2 class="section-title">'+t("train_arrows_title")+'</h2>'));
-var arrowsGrid = el('<div class="chip-group"></div>');
+var arrowsGrid = el('<div class="chip-group frecce-scelta"></div>');
 [1,2,3].forEach(function(n){
-var c = el('<div class="chip">'+n+'</div>');
+var c = el('<button type="button" class="chip" aria-pressed="'+((state.trainingArrowsChoice||1) === n)+'">'+n+'</button>');
 if((state.trainingArrowsChoice||1) === n) c.classList.add("active");
 c.addEventListener("click", function(){ state.trainingArrowsChoice = n; save(); render(); });
 arrowsGrid.appendChild(c);
@@ -21649,7 +21673,7 @@ return card;
 
 // ---------- GARA: setup ----------
 function garaSetupScreen(){
-var wrap = el('<div></div>');
+var wrap = el('<div class="ux-prepara"></div>');
 wrap.appendChild(rigaArcieri("gara-setup"));
 var garaModes = fedCorrente().garaModes;
 // Si riparte da quello che hai usato l'ultima volta, non dal primo
@@ -24756,7 +24780,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-10-17-mappa-percorsi-gps-pages";
+var BUILD_STAMP = "2026-10-30-segna-punti-ux";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24765,7 +24789,7 @@ var BUILD_STAMP = "2026-10-17-mappa-percorsi-gps-pages";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-10-17-mappa-percorsi-gps";
+var BUILD_PARENT = "2026-10-17-mappa-percorsi-gps-pages";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -25816,6 +25840,7 @@ if(isMyResult(r) || (!anyMine && res.length === 1)){
 mine.push({ hi: hIdx, date: h.date, sessionType: h.sessionType,
 modeLabel: h.modeLabel, modeKey: h.modeKey, scoringVersion: h.scoringVersion,
 format: h.format, total: r.total, perTarget: r.perTarget||[],
+arrows: r.arrows, arrowsPerTarget: h.arrowsPerTarget,
 pos: (res.indexOf(r)+1), tot: res.length });
 }
 });
@@ -28421,7 +28446,18 @@ var quante = (risultato && risultato.perTarget && risultato.perTarget.length)
            ? risultato.perTarget.length
            : (giro.format || 0);
 if(!quante) return null;
-return tipoSessione(giro) + "|" + modo + "|" + quante;
+var frecce = "";
+if(modo === "training"){
+var configurate = giro.arrowsPerTarget;
+if(!configurate && risultato && Array.isArray(risultato.arrows) && risultato.arrows.length){
+var lunghezze = risultato.arrows.map(function(a){return Array.isArray(a) ? a.length : 0;});
+if(lunghezze.every(function(n){return n > 0 && n === lunghezze[0];})) configurate = lunghezze[0];
+}
+// Missing or mixed legacy arrow counts cannot substantiate a personal best.
+if(!configurate) return null;
+frecce = "|f" + configurate;
+}
+return tipoSessione(giro) + "|" + modo + "|" + quante + frecce;
 }
 
 /* Due risultati si confrontano solo se questa dice di si'. `null` non e'
@@ -28448,6 +28484,8 @@ var nome = giro.modeLabel || giro.modeKey || "";
    dice cos'e'. */
 var modo = modoDelGiro(giro.modeKey, giro.scoringVersion);
 var coda = (modo && /_v1$/.test(String(modo))) ? (" \u00b7 " + t("ctx_vecchio")) : "";
+var cx = modo === "training" ? contestoDi(giro, risultato) : null;
+if(cx){ var f = /\|f(\d+)$/.exec(cx); if(f) coda += " \u00b7 " + t("attr_frecce") + ": " + f[1]; }
 return (nome ? (nome + " \u00b7 " + quante) : String(quante)) + coda;
 }
 
@@ -29849,7 +29887,7 @@ function roundScreen(){
 // L'unica sosta a tutto schermo che resta e' la fine del giro: le 95
 // interruzioni per "tocca al prossimo" sono state sostituite dalla fila dei
 // turni dentro la scena, che dice la stessa cosa senza fermare nessuno.
-if(state.awaitingStep === "target"){ var passo = targetTransitionScreen(); if(currentUser) passo.insertBefore(comandoSegnalaGiro(), passo.firstChild); return passo; }
+if(state.awaitingStep === "target"){ var passo = targetTransitionScreen(); if(currentUser) passo.appendChild(comandoSegnalaGiro()); return passo; }
 // Chi aveva un giro in corso salvato dalla versione precedente arriva qui con
 // una sosta "archer" che non esiste piu': la si consuma facendo quello che
 // faceva il tasto della vecchia schermata, cioe' passare all'arciere dopo.
@@ -29866,7 +29904,6 @@ startOwnSessionListener();
 
 var mode = effectiveMode();
 var wrap = el('<div class="pista"></div>');
-if(currentUser) wrap.appendChild(comandoSegnalaGiro());
 if(giroConflitto){
 var cf = el('<div class="card giro-conflitto" role="alert"></div>');
 cf.appendChild(el('<div class="nota">'+escapeHtml(t("giro_conflitto_testo", { n: giroConflitto.piazzola, m: state.target || 1 }))+'</div>'));
@@ -29905,6 +29942,7 @@ pickGrid.appendChild(b);
 });
 pickCard.appendChild(pickGrid);
 wrap.appendChild(pickCard);
+if(currentUser) wrap.appendChild(comandoSegnalaGiro());
 return wrap;
 }
 
@@ -29933,7 +29971,6 @@ scorciatoie.appendChild(bSole);
 var bCla = el('<button class="btn btn-standings">'+icon("target",16)+' '+t("pista_classifica_btn")+'</button>');
 bCla.addEventListener("click", function(){ misura("classifiche"); state.panel = "classifica"; save(); render(); });
 scorciatoie.appendChild(bCla);
-wrap.appendChild(scorciatoie);
 }
 
 // La striscia dell'annulla c'e' solo se c'e' qualcosa da annullare.
@@ -29941,11 +29978,15 @@ var striscia = pistaStriscia();
 if(striscia) wrap.appendChild(striscia);
 
 wrap.appendChild(pistaTastiera(c));
+if(scorciatoie) wrap.appendChild(scorciatoie);
+var servizi = el('<div class="pista-servizi no-print"></div>');
+if(currentUser) servizi.appendChild(comandoSegnalaGiro());
 if(state.panel !== "classifica"){
 var terminaGiro = el('<button type="button" class="btn btn-ghost-danger btn-block" data-termina-giro-separato>'+t("interrupt_btn")+'</button>');
 armDoubleConfirm(terminaGiro,t("clear_confirm"),function(){chiudiGiro(true);save();render();});
-wrap.appendChild(terminaGiro);
+servizi.appendChild(terminaGiro);
 }
+wrap.appendChild(servizi);
 
 return wrap;
 }
@@ -30170,6 +30211,14 @@ var sotto = t("pista_freccia_di",{n:arrowNumber, tot:totArrows});
 if(state.pendingArrows.length){ sotto += t("finora",{list:state.pendingArrows.join(', ')}); }
 if(mode.stopAtFirstHit){ sotto += t("vale_prima"); }
 scena.appendChild(el('<div class="pista-freccia">'+sotto+'</div>'));
+if(totArrows > 1){
+var frecce = el('<div class="pista-frecce"></div>');
+for(var f = 0; f < totArrows; f++){
+var segnata = f < state.pendingArrows.length;
+frecce.appendChild(el('<span aria-current="'+(f === arrowNumber-1)+'"><small>'+escapeHtml(t("pista_freccia_di",{n:f+1,tot:totArrows}))+'</small>'+(segnata ? state.pendingArrows[f] : '—')+'</span>'));
+}
+scena.appendChild(frecce);
+}
 if(mode.provisional){ scena.appendChild(el('<div class="pista-nota">'+t("provisional_note")+'</div>')); }
 
 var turni = el('<div class="pista-turni"></div>');
@@ -30237,7 +30286,10 @@ return sp;
 // risolvibili solo sapendo che uno e' un totale e l'altro un'ultima freccia.
 // Adesso la striscia dice quale delle due cose sta mostrando.
 function pistaStriscia(){
-if(!state.lastShotInfo) return null;
+if(!state.lastShotInfo){
+var vuota = el('<div class="striscia-annulla no-print" data-regione="striscia" data-firma="vuota"><span></span><button type="button" disabled>'+icon("undo",16)+' '+t("pista_annulla_freccia")+'</button></div>');
+return vuota;
+}
 var info = state.lastShotInfo;
 // role="status": la striscia compare dopo ogni freccia ed e' il rimedio.
 // Comparire in silenzio significherebbe non esistere, per chi non vede.
@@ -30620,6 +30672,7 @@ sessionType: SESSIONE_3D,
 format: state.format,
 modeKey: state.mode,
 modeLabel: mLabel,
+arrowsPerTarget: effectiveMode().arrowsPerTarget,
 // QUALE TABELLA HA CALCOLATO QUESTI NUMERI. Senza questa riga il giro non
 // si distingue da uno del barème vecchio, e i due si sommerebbero.
 scoringVersion: schemaPunteggio(state.mode),
@@ -31288,7 +31341,7 @@ return r ? r.total : null;
    per non essere piu' d'accordo, ed e' esattamente il motivo per cui il
    contesto e' stato fatto uno solo.* */
 var ctxOra = contestoDi({ sessionType: state.sessionType, modeKey: state.mode,
-scoringVersion: state.scoringVersion, format: state.format }, { perTarget: io.perTarget });
+scoringVersion: state.scoringVersion, format: state.format, arrowsPerTarget: mode.arrowsPerTarget }, { perTarget: io.perTarget });
 function stessoTipo(h){
 if(h.date === state.roundEntryDate) return false;
 var r = (h.results || []).filter(function(x){ return x.isSelf === true; })[0]
@@ -31393,13 +31446,16 @@ setTimeout(celebrationBurst, 150);
 }
 
 var histAll = loadHistory();
-function prevTotalFor(name){
-for(var i=1;i<histAll.length;i++){
+function prevTotalFor(arciere){
+var entries = state.scores[arciere.id] || [];
+var ctx = contestoDi({sessionType:state.sessionType,modeKey:state.mode,
+scoringVersion:schemaPunteggio(state.mode),format:state.format,arrowsPerTarget:effectiveMode().arrowsPerTarget},
+{perTarget:entries.map(function(e){return e.total;})});
+for(var i=0;i<histAll.length;i++){
 var h = histAll[i];
-var hKey = h.modeKey || null;
-if(hKey ? hKey !== state.mode : h.modeLabel !== mLabel) continue;
-for(var j=0;j<h.results.length;j++){
-if(h.results[j].name === name) return h.results[j].total;
+if(h.date === state.roundEntryDate) continue;
+for(var j=0;j<(h.results||[]).length;j++){
+if(h.results[j].name === arciere.name && stessoContesto(contestoDi(h,h.results[j]),ctx)) return h.results[j].total;
 }
 }
 return null;
@@ -31410,7 +31466,7 @@ var tbody = table.querySelector("tbody");
 ranked.forEach(function(a, i){
 var entries = state.scores[a.id] || [];
 var tot = totalFor(a.id);
-var prev = prevTotalFor(a.name);
+var prev = prevTotalFor(a);
 var deltaTxt = "&mdash;";
 if(prev !== null){
 var diff = tot - prev;

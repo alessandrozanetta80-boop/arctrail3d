@@ -48,7 +48,7 @@ function assetto(id, nome, opz) {
 }
 function giroVecchio(giorniFa, tot, assettoId, assettoNome) {
   return { date: new Date(Date.now() - giorniFa * 86400000).toISOString(), format: 12,
-    modeKey: "training", modeLabel: "Allenamento", campo: "Campo A",
+    modeKey: "training", modeLabel: "Allenamento", campo: "Campo A", arrowsPerTarget: 1,
     assetto: assettoId || null, assettoNome: assettoNome || null,
     results: [{ name: "Alessandro", total: tot, isSelf: true,
       perTarget: new Array(12).fill(Math.round(tot / 12)), arrows: [] }] };

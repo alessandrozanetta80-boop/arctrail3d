@@ -118,6 +118,7 @@ banco "banco-barra.js (la barra sta dentro lo schermo, playwright)" "node tests/
 banco "banco-campi.js (la ricerca dei campi, playwright)" "node tests/banco-campi.js"
 banco "banco-giro-sicuro.js (il giro in corso non muore col telefono)" "node tests/banco-giro-sicuro.js"
 banco "banco-finale.js (la fine del giro non mente, playwright)" "node tests/banco-finale.js"
+banco "banco-ux-20261030.js (Segna punti: gerarchia, stabilita e confronti)" "node tests/banco-ux-20261030.js"
 banco "banco-regolamenti.js (la scelta del tipo di gara, playwright)" "node tests/banco-regolamenti.js"
 banco "banco-traguardi.js (i traguardi contano cose vere, playwright)" "node tests/banco-traguardi.js"
 banco "banco-attrezzatura.js (l'assetto resta attaccato al giro)" "node tests/banco-attrezzatura.js"
