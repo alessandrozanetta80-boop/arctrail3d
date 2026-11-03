@@ -6391,28 +6391,51 @@ return (nomiVivi && nomiVivi[uid]) || null;
 }
 // Da chiamare dove i nomi contano. Se la lista non c'e' la chiede e ridisegna
 // una volta: senza, il nome giusto comparirebbe solo alla schermata dopo.
+var publicProfilesLoad = null, publicProfilesRetryAt = 0, publicProfilesRetryOwner = null;
+function profiliInPausa(){
+return publicProfilesRetryOwner === (currentUser && currentUser.uid) && Date.now() < publicProfilesRetryAt;
+}
 function assicuraNomi(){
-if(publicProfilesCache || !db) return;
+if(publicProfilesCache || !db || profiliInPausa()) return;
+if(publicProfilesLoad && publicProfilesLoad.db === db && publicProfilesLoad.uid === (currentUser && currentUser.uid)) return;
 loadPublicProfiles(function(){ render(); });
 }
 
 function loadPublicProfiles(cb){
 if(publicProfilesCache){ cb(publicProfilesCache); return; }
-if(!db){ cb([]); return; }
-db.collection("public_profiles").get().then(function(snap){
+if(!db || profiliInPausa()){ cb([]); return; }
+var uid = currentUser && currentUser.uid, fonte = db;
+var richiesta = publicProfilesLoad;
+if(!richiesta || richiesta.uid !== uid || richiesta.db !== fonte){
+richiesta = { uid:uid, db:fonte };
+publicProfilesLoad = richiesta;
+richiesta.promise = Promise.resolve().then(function(){
+return fonte.collection("public_profiles").get();
+}).then(function(snap){
 var list = [];
 snap.forEach(function(doc){
 var d = doc.data() || {};
-if(d.username){
-list.push({
-uid: doc.id, username: d.username, nomeCognome: d.nomeCognome || "",
-compagnia: d.compagnia || null, compagniaNome: d.compagniaNome || ""
+if(d.username) list.push({ uid:doc.id, username:d.username, nomeCognome:d.nomeCognome || "",
+compagnia:d.compagnia || null, compagniaNome:d.compagniaNome || "" });
+});
+if(publicProfilesLoad === richiesta && db === fonte && (currentUser && currentUser.uid) === uid){
+publicProfilesCache = list; publicProfilesRetryAt = 0; publicProfilesRetryOwner = null;
+}
+return list;
+}).catch(function(e){
+if(publicProfilesLoad === richiesta && db === fonte && (currentUser && currentUser.uid) === uid){
+publicProfilesRetryOwner = uid;
+publicProfilesRetryAt = Date.now() + (/resource-exhausted/.test(String(e && e.code)) ? 900000 : 60000);
+}
+console.error("elenco arcieri:", e); return [];
+}).then(function(list){
+if(publicProfilesLoad === richiesta) publicProfilesLoad = null;
+return list;
 });
 }
+richiesta.promise.then(function(list){
+cb(db === fonte && (currentUser && currentUser.uid) === uid ? list : []);
 });
-publicProfilesCache = list;
-cb(list);
-}).catch(function(e){ console.error("elenco arcieri:", e); cb([]); });
 }
 
 function onAuthReady(user){
@@ -24769,7 +24792,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-10-30-ripristino-solo-punteggio";
+var BUILD_STAMP = "2026-11-03-consumi-profili";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24778,7 +24801,7 @@ var BUILD_STAMP = "2026-10-30-ripristino-solo-punteggio";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-10-30-home-allenamenti-ux";
+var BUILD_PARENT = "2026-10-30-ripristino-solo-punteggio";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

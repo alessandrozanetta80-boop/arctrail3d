@@ -111,6 +111,7 @@ banco "banco-lingue.js (nove lingue e porte d'ingresso)" "node tests/banco-lingu
 banco "banco-schede.js (le sei schede del pannello, jsdom)" "node tests/banco-schede.js"
 banco "banco-avvio.js (i primi due secondi, jsdom)" "node tests/banco-avvio.js"
 banco "banco-allenamenti.js (le tendine degli allenamenti, playwright)" "node tests/banco-allenamenti.js"
+banco "banco-consumi-profili.js (richiesta unica, quota e cambio account)" "node tests/banco-consumi-profili.js"
 banco "banco-home.js (i quattro numeri della Home, playwright)" "node tests/banco-home.js"
 banco "banco-home-periodi.js (il periodo della Home: mese, 3 mesi, stagione, 1 anno)" "node tests/banco-home-periodi.js"
 banco "banco-compagnia.js (l'area compagnia a schede, playwright)" "node tests/banco-compagnia.js"
