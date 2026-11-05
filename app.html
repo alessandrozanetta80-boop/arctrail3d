@@ -5014,8 +5014,6 @@ border-color:color-mix(in srgb, var(--danger-role) 40%, var(--line)); margin-lef
    divisi da un filetto si leggono come uno strumento, non come un cruscotto.
    E restano grandi abbastanza — chi ha sessant'anni deve poter leggere il
    proprio record senza avvicinare il telefono. */
-.home-rendimento{display:block;margin-top:var(--s-3);}
-.home-rendimento select{display:block;width:100%;min-height:44px;font-size:.875rem;}
 .home-mese-barra{ display:block; width:100%; padding:0; background:none;
   border:0; font:inherit; color:inherit; text-align:left; cursor:pointer; }
 .home-mese-capo{ display:flex; align-items:center; justify-content:space-between;
@@ -5712,86 +5710,103 @@ body.schermo-percorso{overflow-y:auto;overflow-x:hidden;}
 
 
 <style id="home-compatta-v2">
-/* HOME — SOLO Ultimo giro + Questo mese.
-   Hero, header, CTA, bottom navigation e JS restano invariati. */
-
-/* Le due sezioni diventano piu' basse e piu' dense. */
+/* Ritmo e gerarchia della Home: sezioni, filtro, risultato e conteggi. */
 .home-ultimo,
 .home-mese{
-  padding-top:12px !important;
-  padding-bottom:12px !important;
+  padding-top:16px;
+  padding-bottom:16px;
 }
-
 .home-ultimo .strato-eti,
 .home-mese .home-mese-capo{
-  margin-bottom:6px !important;
+  margin-bottom:12px;
 }
-
-/* ULTIMO GIRO: numero importante, ma meno da poster. */
 .home-ultimo .home-mese-dati{
-  margin-top:8px !important;
+  margin-top:0;
 }
 .home-ultimo .hm-voce:first-child b{
-  font-size:clamp(3rem,12vw,4.4rem) !important;
-  line-height:.88 !important;
+  font-size:clamp(2.75rem,10vw,3.5rem);
+  line-height:1;
 }
 .home-ultimo .hm-voce i{
-  margin-top:6px !important;
-  font-size:var(--t-xs) !important;
-  line-height:1.25 !important;
+  margin-top:6px;
+  font-size:var(--t-xs);
+  line-height:1.35;
 }
 .home-ultimo .hm-vuota-testo{
-  margin-top:6px !important;
-  line-height:1.35 !important;
+  margin-top:8px;
+  line-height:1.45;
 }
-.home-ultimo .ug-record{ margin-top:6px !important; }
-
-/* QUESTO MESE: pannello tecnico, con media dominante e tre KPI compatti. */
+.home-ultimo .ug-record{
+  margin-top:10px;
+}
+.home-rendimento{
+  display:grid;
+  justify-items:start;
+  gap:8px;
+  margin:0 0 18px;
+}
+.home-rendimento-label{
+  font-size:var(--t-xs);
+  font-weight:600;
+  line-height:1.4;
+  color:var(--text-3);
+}
+.home-rendimento select{
+  width:auto;
+  max-width:100%;
+  min-height:44px;
+  padding:8px 12px;
+  border-width:1px;
+  font-size:var(--t-sm);
+  font-weight:500;
+  line-height:1.35;
+}
 .home-mese .home-mese-dati{
-  margin-top:8px !important;
+  display:grid;
+  grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);
+  align-items:baseline;
+  column-gap:20px;
+  row-gap:16px;
+  margin-top:0;
 }
 .home-mese .home-mese-dati > .hm-voce:first-child b{
-  font-size:clamp(2.8rem,10vw,4rem) !important;
-  line-height:.9 !important;
+  font-size:clamp(2.5rem,9vw,3.25rem);
+  line-height:1;
+}
+.home-mese .home-mese-dati > .hm-voce + .hm-voce b{
+  font-size:1.625rem;
+  line-height:1.1;
 }
 .home-mese .hm-voce i{
-  margin-top:5px !important;
-  line-height:1.2 !important;
+  margin-top:6px;
+  line-height:1.4;
+  letter-spacing:.04em;
 }
 .home-mese .hm-riga{
-  margin-top:10px !important;
-  padding-top:10px !important;
+  grid-column:1 / -1;
+  margin-top:0;
+  padding-top:14px;
 }
 .home-mese .hm-riga .hm-voce{
-  padding-left:12px !important;
+  padding-left:16px;
+}
+.home-mese .hm-riga .hm-voce:first-child{
+  padding-left:0;
 }
 .home-mese .hm-riga .hm-voce b{
-  font-size:var(--t-md) !important;
-  line-height:1 !important;
+  font-size:var(--t-lg);
+  line-height:1.1;
 }
 .home-mese .hm-riga .hm-voce i{
-  font-size:var(--t-2xs) !important;
-  letter-spacing:.06em !important;
+  font-size:var(--t-2xs);
+  line-height:1.4;
 }
-
-/* Se il grafico mensile viene aperto, anche il suo ingresso resta compatto. */
+.home-mese .hm-vuota-testo{
+  grid-column:1 / -1;
+}
 .home-mese-dentro{
-  margin-top:12px !important;
-  padding-top:12px !important;
-}
-
-@media (max-width:520px){
-  .home-ultimo,
-  .home-mese{
-    padding-top:10px !important;
-    padding-bottom:10px !important;
-  }
-  .home-ultimo .hm-voce:first-child b{
-    font-size:clamp(2.8rem,16vw,4rem) !important;
-  }
-  .home-mese .home-mese-dati > .hm-voce:first-child b{
-    font-size:clamp(2.6rem,14vw,3.7rem) !important;
-  }
+  margin-top:16px;
+  padding-top:16px;
 }
 </style>
 
@@ -7758,6 +7773,7 @@ home_install_generic_text: "Cerca l'icona di installazione nella barra dell'indi
 home_dev_title: "App in fase di sviluppo",
 home_dev_text: "Per segnalare errori o malfunzionamenti: {email} — {sito}.",
 home_performance: "Rendimento",
+home_free_training: "Allenamento libero",
 home_per_arrow: "punti per freccia",
 home_partial: "Giro interrotto",
 home_total_rounds: "Giri totali",
@@ -8449,6 +8465,7 @@ compagnie_provincia: "Province", compagnie_punteggi_word: "scores recorded", com
 compagnie_salva: "Save", compagnie_title: "Clubs", compagnie_tutti: "All", country_uk: "United Kingdom", country_turkey: "Turkey", country_russia: "Russia", country_spain: "Spain", country_netherlands: "Netherlands", country_sweden: "Sweden", 
 home_dev_text: "To report bugs or issues: {email} — {sito}.",
 home_performance: "Performance",
+home_free_training: "Free practice",
 home_per_arrow: "points per arrow",
 home_partial: "Unfinished round",
 home_total_rounds: "Total rounds",
@@ -9217,6 +9234,7 @@ compagnie_provincia: "Province", compagnie_punteggi_word: "scores enregistr\u00e
 compagnie_salva: "Enregistrer", compagnie_title: "Clubs", compagnie_tutti: "Tous", country_uk: "Royaume-Uni", country_turkey: "Turquie", country_russia: "Russie", country_spain: "Espagne", country_netherlands: "Pays-Bas", country_sweden: "Su\u00e8de", 
 home_dev_text: "Pour signaler un bug ou un problème : {email} — {sito}.",
 home_performance: "Performance",
+home_free_training: "Entraînement libre",
 home_per_arrow: "points par flèche",
 home_partial: "Parcours interrompu",
 home_total_rounds: "Total des parcours",
@@ -9985,6 +10003,7 @@ compagnie_provincia: "Provinz", compagnie_punteggi_word: "erfasste Ergebnisse", 
 compagnie_salva: "Speichern", compagnie_title: "Vereine", compagnie_tutti: "Alle", country_uk: "Vereinigtes K\u00f6nigreich", country_turkey: "T\u00fcrkei", country_russia: "Russland", country_spain: "Spanien", country_netherlands: "Niederlande", country_sweden: "Schweden", 
 home_dev_text: "Um Fehler oder Probleme zu melden: {email} — {sito}.",
 home_performance: "Leistung",
+home_free_training: "Freies Training",
 home_per_arrow: "Punkte pro Pfeil",
 home_partial: "Abgebrochene Runde",
 home_total_rounds: "Runden gesamt",
@@ -10843,6 +10862,7 @@ home_install_generic_text: "Adres \u00e7ubu\u011funda (yukar\u0131da) kurulum si
 home_dev_title: "Uygulama geli\u015ftirme a\u015famas\u0131nda",
 home_dev_text: "Hata veya sorun bildirmek için: {email} — {sito}.",
 home_performance: "Performans",
+home_free_training: "Serbest antrenman",
 home_per_arrow: "ok başına puan",
 home_partial: "Yarım kalan tur",
 home_total_rounds: "Toplam tur",
@@ -11624,6 +11644,7 @@ home_install_generic_text: "Найдите значок установки в а
 home_dev_title: "Приложение в разработке",
 home_dev_text: "Чтобы сообщить об ошибках: {email} — {sito}.",
 home_performance: "Результативность",
+home_free_training: "Свободная тренировка",
 home_per_arrow: "очков за стрелу",
 home_partial: "Незавершённый круг",
 home_total_rounds: "Всего кругов",
@@ -12405,6 +12426,7 @@ home_install_generic_text: "Busca el icono de instalaci\u00f3n en la barra de di
 home_dev_title: "App en fase de desarrollo",
 home_dev_text: "Para informar de errores o fallos: {email} — {sito}.",
 home_performance: "Rendimiento",
+home_free_training: "Entrenamiento libre",
 home_per_arrow: "puntos por flecha",
 home_partial: "Recorrido interrumpido",
 home_total_rounds: "Total de recorridos",
@@ -13186,6 +13208,7 @@ home_install_generic_text: "Leta efter installationsikonen i adressf\u00e4ltet (
 home_dev_title: "Appen \u00e4r under utveckling",
 home_dev_text: "För att rapportera fel eller problem: {email} — {sito}.",
 home_performance: "Prestation",
+home_free_training: "Fri träning",
 home_per_arrow: "poäng per pil",
 home_partial: "Avbruten runda",
 home_total_rounds: "Totalt antal rundor",
@@ -13967,6 +13990,7 @@ home_install_generic_text: "Zoek naar het installatie-icoon in de adresbalk (bov
 home_dev_title: "App in ontwikkeling",
 home_dev_text: "Om fouten of problemen te melden: {email} — {sito}.",
 home_performance: "Prestatie",
+home_free_training: "Vrije training",
 home_per_arrow: "punten per pijl",
 home_partial: "Afgebroken ronde",
 home_total_rounds: "Totaal aantal rondes",
@@ -20264,7 +20288,7 @@ var tiri = Array.isArray(io.arrows) ? io.arrows : [];
 var frecce = tiri.flat().filter(Number.isFinite).length;
 var primeFrecce = g.modeKey === "tracciato" ? tiri.map(function(p){return p && p[0];}).filter(Number.isFinite) : [];
 var punti = Number.isFinite(io.total) ? io.total : null;
-var modo = g.modeLabel || g.modeKey || "";
+var modo = g.modeKey === "training" ? t("home_free_training") : (g.modeLabel || g.modeKey || "");
 var ctx = null, eti = "";
 if(allenamento && frecce){
 ctx = tipoSessione(g) + "|" + modoDelGiro(g.modeKey, g.scoringVersion);
@@ -20742,9 +20766,16 @@ sez.appendChild(menu);
 var unita = n.allenamento ? t("home_per_arrow") : t("fin_punti");
 if(n.gruppi.size){
 var filtro = el('<label class="home-rendimento"></label>');
-filtro.textContent = t("home_performance");
+filtro.appendChild(el('<span class="home-rendimento-label">'+escapeHtml(t("home_performance"))+'</span>'));
 var selettore = el('<select></select>');
-n.gruppi.forEach(function(lista, chiave){
+var opzioni = Array.from(n.gruppi.entries());
+opzioni.sort(function(a,b){
+var prima = a[1][0], seconda = b[1][0];
+return Number(seconda.allenamento) - Number(prima.allenamento) ||
+prima.eti.localeCompare(seconda.eti, state.lang || "it");
+});
+opzioni.forEach(function(voce){
+var chiave = voce[0], lista = voce[1];
 var opzione = el('<option></option>');
 opzione.value = chiave;
 opzione.textContent = lista[0].eti;
@@ -24837,7 +24868,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-11-05-home-allenamento";
+var BUILD_STAMP = "2026-11-05-home-selettore";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24846,7 +24877,7 @@ var BUILD_STAMP = "2026-11-05-home-allenamento";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-11-05-home-rendimento";
+var BUILD_PARENT = "2026-11-05-home-allenamento";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

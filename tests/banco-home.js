@@ -35,8 +35,11 @@ function giro(giorniFa, punti, piazzole, frecce) {
                 arrows: frecce ? Array.from({length:piazzole}, function(){return Array(frecce).fill(punti / (piazzole * frecce));}) : [] }]
   };
 }
-/* Due configurazioni di allenamento e un Round 3D nello stesso periodo. */
-var STORICO = [giro(1, 420, 14, 3), giro(3, 0, 14, 1), giro(5, 240, 24)];
+/* Due configurazioni di allenamento e quattro specialità in ordine sparso. */
+var STORICO = [giro(1, 420, 14, 3), giro(3, 0, 14, 1), giro(5, 240, 24),
+  Object.assign(giro(6, 200, 24), {modeKey:"tracciato",modeLabel:"Tracciato"}),
+  Object.assign(giro(7, 300, 28), {modeKey:"battuta",modeLabel:"Battuta"}),
+  Object.assign(giro(8, 210, 24), {modeKey:"percorso",modeLabel:"Percorso"})];
 
 var STATO = { screen: "menu", tab: "home", pendingArchers: [], lang: "it", country: "it",
               federation: "fiarc", theme: "light",
@@ -83,12 +86,14 @@ function prova(n, c, extra) { if (c) { ok++; console.log("  ✓ " + n); } else {
 
   var v = r.numeri.map(function(n){return n.v;});
   prova("420 punti e 10 punti per freccia nel giro a tre frecce", /420/.test(r.ultimo) && /10,0/.test(r.ultimo), r.ultimo);
-  prova("ultimo giro mostra solo Allenamento", /Allenamento/.test(r.ultimo) && !/3 frecce/.test(r.ultimo));
-  prova("media e record per freccia; conteggi su tutte le uscite", v.join("|") === "7,5|10,0|3|52", v.join("|"));
+  prova("ultimo giro mostra Allenamento libero", /Allenamento libero/.test(r.ultimo) && !/3 frecce/.test(r.ultimo));
+  prova("media e record per freccia; conteggi su tutte le uscite", v.join("|") === "7,5|10,0|6|128", v.join("|"));
   await page.locator(".home-mese select").selectOption({label:"Round 3D · 24"});
   prova("il filtro passa al punteggio del Round 3D", (await page.locator(".home-mese-barra .hm-voce b").first().textContent()) === "240");
-  await page.locator(".home-mese select").selectOption({label:"Allenamento"});
-  prova("il filtro mostra una sola voce per l’allenamento", (await page.locator(".home-mese select option").count()) === 2);
+  await page.locator(".home-mese select").selectOption({label:"Allenamento libero"});
+  var opzioni = await page.locator(".home-mese select option").allTextContents();
+  prova("Allenamento libero per primo, poi le specialità in ordine alfabetico",
+    opzioni.join("|") === "Allenamento libero|Battuta · 28|Percorso · 24|Round 3D · 24|Tracciato · 24", opzioni.join("|"));
   if(process.env.ARCTRAIL_HOME_QA){
     for(const width of [320,384,412]){
       await page.setViewportSize({width:width,height:950});
