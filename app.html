@@ -5014,6 +5014,8 @@ border-color:color-mix(in srgb, var(--danger-role) 40%, var(--line)); margin-lef
    divisi da un filetto si leggono come uno strumento, non come un cruscotto.
    E restano grandi abbastanza — chi ha sessant'anni deve poter leggere il
    proprio record senza avvicinare il telefono. */
+.home-rendimento{display:block;margin-top:var(--s-3);}
+.home-rendimento select{display:block;width:100%;min-height:44px;font-size:.875rem;}
 .home-mese-barra{ display:block; width:100%; padding:0; background:none;
   border:0; font:inherit; color:inherit; text-align:left; cursor:pointer; }
 .home-mese-capo{ display:flex; align-items:center; justify-content:space-between;
@@ -7754,7 +7756,16 @@ home_install_btn: "Installa l'app sul telefono",
 home_install_ios_text: "<b>Su iPhone:</b> tocca il pulsante <b>Condividi</b> in basso nel browser (il quadrato con la freccia verso l'alto), poi scegli <b>\u201cAggiungi alla schermata Home\u201d</b>. Comparir\u00e0 un'icona come per qualsiasi altra app.",
 home_install_generic_text: "Cerca l'icona di installazione nella barra dell'indirizzo (in alto), oppure apri il menu del browser (di solito i tre puntini in alto a destra) e cerca la voce <b>\u201cInstalla app\u201d</b>.",
 home_dev_title: "App in fase di sviluppo",
-home_dev_text: "Per segnalare errori o malfunzionamenti: {email} — {sito}. I dati inseriti in questa fase potrebbero essere cancellati o azzerati.",
+home_dev_text: "Per segnalare errori o malfunzionamenti: {email} — {sito}.",
+home_performance: "Rendimento",
+home_per_arrow: "punti per freccia",
+home_one_arrow: "freccia",
+home_arrows: "frecce",
+home_partial: "Giro interrotto",
+home_total_rounds: "Giri totali",
+home_single_round: "giro",
+home_no_comparable: "Nessun giro confrontabile nel periodo",
+home_first_hit: "A segno alla prima freccia",
 profile_title: "Crea il tuo profilo", 
 profile_nome: "Nome e cognome", profile_username: "Username", profile_username_hint: "(quello che vedono gli altri in classifica)",
 profile_hide_name: "Nascondi nome e cognome agli altri arcieri", profile_hide_name_note: "Negli elenchi e nelle chat comparirà solo il tuo nome utente. Nome e cognome restano visibili a chi organizza una gara a cui ti iscrivi, perché le classifiche ufficiali si compilano con quelli.",
@@ -8438,7 +8449,16 @@ compagnie_pick_luogo: "Choose the field\u2026", compagnie_pick_provincia: "Choos
 compagnie_paese_vuoto: "There are no clubs listed for your country yet. If you know a field or a club, write to me and I’ll add it.", compagnie_paese_segnala: "Suggest a club", campi_maps_query: "3D archery range",
 compagnie_provincia: "Province", compagnie_punteggi_word: "scores recorded", compagnie_punteggio: "Score", compagnie_regione: "Region",
 compagnie_salva: "Save", compagnie_title: "Clubs", compagnie_tutti: "All", country_uk: "United Kingdom", country_turkey: "Turkey", country_russia: "Russia", country_spain: "Spain", country_netherlands: "Netherlands", country_sweden: "Sweden", 
-home_dev_text: "To report bugs or issues: {email} — {sito}. Data entered at this stage may be deleted or reset.",
+home_dev_text: "To report bugs or issues: {email} — {sito}.",
+home_performance: "Performance",
+home_per_arrow: "points per arrow",
+home_one_arrow: "arrow",
+home_arrows: "arrows",
+home_partial: "Unfinished round",
+home_total_rounds: "Total rounds",
+home_single_round: "round",
+home_no_comparable: "No comparable rounds in this period",
+home_first_hit: "First-arrow hits",
 home_dev_title: "App under development", home_install_btn: "Install the app on your phone",
 home_install_generic_text: "Look for the install icon in the address bar (at the top), or open the browser menu (usually the three dots top right) and look for <b>\u201cInstall app\u201d</b>.",
 home_install_ios_text: "<b>On iPhone:</b> tap the <b>Share</b> button at the bottom of the browser (the square with an upward arrow), then choose <b>\u201cAdd to Home Screen\u201d</b>. An icon will appear just like any other app.",
@@ -9199,7 +9219,16 @@ compagnie_pick_luogo: "Choisissez le terrain\u2026", compagnie_pick_provincia: "
 compagnie_paese_vuoto: "Aucun club n’est encore répertorié pour votre pays. Si vous connaissez un terrain ou un club, écrivez‑moi et je l’ajoute.", compagnie_paese_segnala: "Signaler un club", campi_maps_query: "parcours tir à l’arc 3D",
 compagnie_provincia: "Province", compagnie_punteggi_word: "scores enregistr\u00e9s", compagnie_punteggio: "Score", compagnie_regione: "R\u00e9gion",
 compagnie_salva: "Enregistrer", compagnie_title: "Clubs", compagnie_tutti: "Tous", country_uk: "Royaume-Uni", country_turkey: "Turquie", country_russia: "Russie", country_spain: "Espagne", country_netherlands: "Pays-Bas", country_sweden: "Su\u00e8de", 
-home_dev_text: "Pour signaler un bug ou un problème : {email} — {sito}. Les données saisies à ce stade peuvent être supprimées ou réinitialisées.",
+home_dev_text: "Pour signaler un bug ou un problème : {email} — {sito}.",
+home_performance: "Performance",
+home_per_arrow: "points par flèche",
+home_one_arrow: "flèche",
+home_arrows: "flèches",
+home_partial: "Parcours interrompu",
+home_total_rounds: "Total des parcours",
+home_single_round: "parcours",
+home_no_comparable: "Aucun parcours comparable sur cette période",
+home_first_hit: "Touches à la première flèche",
 home_dev_title: "Application en cours de d\u00e9veloppement", home_install_btn: "Installer l’application sur le t\u00e9l\u00e9phone",
 home_install_generic_text: "Cherchez l’ic\u00f4ne d’installation dans la barre d’adresse (en haut), ou ouvrez le menu du navigateur (g\u00e9n\u00e9ralement les trois points en haut \u00e0 droite) et cherchez <b>\u00ab Installer l’application \u00bb</b>.",
 home_install_ios_text: "<b>Sur iPhone :</b> appuyez sur le bouton <b>Partager</b> en bas du navigateur (le carr\u00e9 avec une fl\u00e8che vers le haut), puis choisissez <b>\u00ab Sur l’\u00e9cran d’accueil \u00bb</b>. Une ic\u00f4ne appara\u00eetra comme pour toute autre application.",
@@ -9960,7 +9989,16 @@ compagnie_pick_luogo: "W\u00e4hle den Platz\u2026", compagnie_pick_provincia: "W
 compagnie_paese_vuoto: "Für dein Land sind noch keine Vereine eingetragen. Wenn du einen Parcours oder Verein kennst, schreib mir — ich trage ihn ein.", compagnie_paese_segnala: "Verein melden", campi_maps_query: "3D Bogenparcours",
 compagnie_provincia: "Provinz", compagnie_punteggi_word: "erfasste Ergebnisse", compagnie_punteggio: "Ergebnis", compagnie_regione: "Region",
 compagnie_salva: "Speichern", compagnie_title: "Vereine", compagnie_tutti: "Alle", country_uk: "Vereinigtes K\u00f6nigreich", country_turkey: "T\u00fcrkei", country_russia: "Russland", country_spain: "Spanien", country_netherlands: "Niederlande", country_sweden: "Schweden", 
-home_dev_text: "Um Fehler oder Probleme zu melden: {email} — {sito}. In dieser Phase eingegebene Daten können gelöscht oder zurückgesetzt werden.",
+home_dev_text: "Um Fehler oder Probleme zu melden: {email} — {sito}.",
+home_performance: "Leistung",
+home_per_arrow: "Punkte pro Pfeil",
+home_one_arrow: "Pfeil",
+home_arrows: "Pfeile",
+home_partial: "Abgebrochene Runde",
+home_total_rounds: "Runden gesamt",
+home_single_round: "Runde",
+home_no_comparable: "Keine vergleichbaren Runden in diesem Zeitraum",
+home_first_hit: "Treffer mit dem ersten Pfeil",
 home_dev_title: "App in Entwicklung", home_install_btn: "App auf dem Handy installieren",
 home_install_generic_text: "Suche das Installationssymbol in der Adressleiste (oben), oder \u00f6ffne das Browsermen\u00fc (meist die drei Punkte oben rechts) und suche <b>\u201eApp installieren\u201c</b>.",
 home_install_ios_text: "<b>Auf dem iPhone:</b> Tippe unten im Browser auf <b>Teilen</b> (das Quadrat mit dem Pfeil nach oben), dann w\u00e4hle <b>\u201eZum Home-Bildschirm\u201c</b>. Ein Symbol erscheint wie bei jeder anderen App.",
@@ -10811,7 +10849,16 @@ home_install_btn: "Uygulamay\u0131 telefona kur",
 home_install_ios_text: "<b>iPhone\u2019da:</b> taray\u0131c\u0131n\u0131n altındaki <b>Payla\u015f</b> d\u00fc\u011fmesine (yukar\u0131 ok i\u015faretli kare) dokun, sonra <b>\u201cAna Ekrana Ekle\u201d</b>y\u0131 se\u00e7. Di\u011fer uygulamalar gibi bir simge belirir.",
 home_install_generic_text: "Adres \u00e7ubu\u011funda (yukar\u0131da) kurulum simgesini ara, ya da taray\u0131c\u0131 men\u00fcs\u00fcn\u00fc (genelde sa\u011f üstteki \u00fc\u00e7 nokta) a\u00e7\u0131p <b>\u201cUygulamay\u0131 y\u00fckle\u201d</b> se\u00e7ene\u011fini bul.",
 home_dev_title: "Uygulama geli\u015ftirme a\u015famas\u0131nda",
-home_dev_text: "Hata veya sorun bildirmek için: {email} — {sito}. Bu aşamada girilen veriler silinebilir veya sıfırlanabilir.",
+home_dev_text: "Hata veya sorun bildirmek için: {email} — {sito}.",
+home_performance: "Performans",
+home_per_arrow: "ok başına puan",
+home_one_arrow: "ok",
+home_arrows: "ok",
+home_partial: "Yarım kalan tur",
+home_total_rounds: "Toplam tur",
+home_single_round: "tur",
+home_no_comparable: "Bu dönemde karşılaştırılabilir tur yok",
+home_first_hit: "İlk ok isabeti",
 profile_title: "Profilini olu\u015ftur", 
 profile_nome: "Ad ve soyad", profile_username: "Kullan\u0131c\u0131 ad\u0131", profile_username_hint: "(di\u011ferlerinin s\u0131ralamada g\u00f6rd\u00fc\u011f\u00fc isim)",
 profile_hide_name: "Ad ve soyad\u0131m\u0131 di\u011fer ok\u00e7ulardan gizle", profile_hide_name_note: "Listelerde ve sohbetlerde yaln\u0131zca kullan\u0131c\u0131 ad\u0131n g\u00f6r\u00fcn\u00fcr. Kayd\u0131n\u0131 yapt\u0131\u011f\u0131n bir yar\u0131\u015fmay\u0131 d\u00fczenleyenler ad ve soyad\u0131n\u0131 g\u00f6rmeye devam eder, \u00e7\u00fcnk\u00fc resm\u00ee s\u0131ralamalar bunlarla haz\u0131rlan\u0131r.",
@@ -11585,7 +11632,16 @@ home_install_btn: "Установить приложение на телефон
 home_install_ios_text: "<b>На iPhone:</b> нажмите кнопку <b>Поделиться</b> внизу браузера (квадрат со стрелкой вверх), затем выберите <b>«Добавить на экран Домой»</b>. Появится значок, как у любого другого приложения.",
 home_install_generic_text: "Найдите значок установки в адресной строке (вверху), либо откройте меню браузера (обычно три точки справа вверху) и найдите пункт <b>«Установить приложение»</b>.",
 home_dev_title: "Приложение в разработке",
-home_dev_text: "Чтобы сообщить об ошибках: {email} — {sito}. Данные, введённые на этом этапе, могут быть удалены или сброшены.",
+home_dev_text: "Чтобы сообщить об ошибках: {email} — {sito}.",
+home_performance: "Результативность",
+home_per_arrow: "очков за стрелу",
+home_one_arrow: "стрела",
+home_arrows: "стрелы",
+home_partial: "Незавершённый круг",
+home_total_rounds: "Всего кругов",
+home_single_round: "круг",
+home_no_comparable: "Нет сопоставимых кругов за этот период",
+home_first_hit: "Попадания первой стрелой",
 profile_title: "Создайте свой профиль", 
 profile_nome: "Имя и фамилия", profile_username: "Имя пользователя", profile_username_hint: "(то, что видят остальные в рейтинге)",
 profile_hide_name: "\u0421\u043a\u0440\u044b\u0442\u044c \u0438\u043c\u044f \u0438 \u0444\u0430\u043c\u0438\u043b\u0438\u044e \u043e\u0442 \u0434\u0440\u0443\u0433\u0438\u0445 \u0441\u0442\u0440\u0435\u043b\u043a\u043e\u0432", profile_hide_name_note: "\u0412 \u0441\u043f\u0438\u0441\u043a\u0430\u0445 \u0438 \u0447\u0430\u0442\u0430\u0445 \u0431\u0443\u0434\u0435\u0442 \u0432\u0438\u0434\u043d\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u0438\u043c\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f. \u0418\u043c\u044f \u0438 \u0444\u0430\u043c\u0438\u043b\u0438\u044f \u043e\u0441\u0442\u0430\u044e\u0442\u0441\u044f \u0432\u0438\u0434\u043d\u044b \u043e\u0440\u0433\u0430\u043d\u0438\u0437\u0430\u0442\u043e\u0440\u0430\u043c \u0441\u043e\u0440\u0435\u0432\u043d\u043e\u0432\u0430\u043d\u0438\u044f, \u043d\u0430 \u043a\u043e\u0442\u043e\u0440\u043e\u0435 \u0432\u044b \u0437\u0430\u043f\u0438\u0441\u0430\u043b\u0438\u0441\u044c, \u043f\u043e\u0442\u043e\u043c\u0443 \u0447\u0442\u043e \u043e\u0444\u0438\u0446\u0438\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u0440\u043e\u0442\u043e\u043a\u043e\u043b\u044b \u0441\u043e\u0441\u0442\u0430\u0432\u043b\u044f\u044e\u0442\u0441\u044f \u043f\u043e \u043d\u0438\u043c.",
@@ -12359,7 +12415,16 @@ home_install_btn: "Instalar la app en el tel\u00e9fono",
 home_install_ios_text: "<b>En iPhone:</b> toca el bot\u00f3n <b>Compartir</b> en la parte inferior del navegador (el cuadrado con la flecha hacia arriba), luego elige <b>\u201cA\u00f1adir a pantalla de inicio\u201d</b>. Aparecer\u00e1 un icono como el de cualquier otra app.",
 home_install_generic_text: "Busca el icono de instalaci\u00f3n en la barra de direcciones (arriba), o abre el men\u00fa del navegador (normalmente los tres puntos arriba a la derecha) y busca la opci\u00f3n <b>\u201cInstalar app\u201d</b>.",
 home_dev_title: "App en fase de desarrollo",
-home_dev_text: "Para informar de errores o fallos: {email} — {sito}. Los datos introducidos en esta fase podrían borrarse o reiniciarse.",
+home_dev_text: "Para informar de errores o fallos: {email} — {sito}.",
+home_performance: "Rendimiento",
+home_per_arrow: "puntos por flecha",
+home_one_arrow: "flecha",
+home_arrows: "flechas",
+home_partial: "Recorrido interrumpido",
+home_total_rounds: "Total de recorridos",
+home_single_round: "recorrido",
+home_no_comparable: "No hay recorridos comparables en este periodo",
+home_first_hit: "Aciertos con la primera flecha",
 profile_title: "Crea tu perfil", 
 profile_nome: "Nombre y apellidos", profile_username: "Nombre de usuario", profile_username_hint: "(lo que ven los dem\u00e1s en la clasificaci\u00f3n)",
 profile_hide_name: "Ocultar mi nombre y apellidos a los dem\u00e1s arqueros", profile_hide_name_note: "En las listas y en los chats solo aparecer\u00e1 tu nombre de usuario. El nombre y los apellidos siguen siendo visibles para quien organiza una competici\u00f3n en la que te inscribes, porque las clasificaciones oficiales se elaboran con ellos.",
@@ -13133,7 +13198,16 @@ home_install_btn: "Installera appen p\u00e5 telefonen",
 home_install_ios_text: "<b>P\u00e5 iPhone:</b> tryck p\u00e5 knappen <b>Dela</b> l\u00e4ngst ner i webbl\u00e4saren (fyrkanten med pilen upp\u00e5t), v\u00e4lj sedan <b>\u201dL\u00e4gg till p\u00e5 hemsk\u00e4rmen\u201d</b>. En ikon dyker upp precis som f\u00f6r vilken annan app som helst.",
 home_install_generic_text: "Leta efter installationsikonen i adressf\u00e4ltet (l\u00e4ngst upp), eller \u00f6ppna webbl\u00e4sarens meny (oftast de tre punkterna uppe till h\u00f6ger) och leta efter <b>\u201dInstallera app\u201d</b>.",
 home_dev_title: "Appen \u00e4r under utveckling",
-home_dev_text: "För att rapportera fel eller problem: {email} — {sito}. Uppgifter som anges i det här skedet kan raderas eller nollställas.",
+home_dev_text: "För att rapportera fel eller problem: {email} — {sito}.",
+home_performance: "Prestation",
+home_per_arrow: "poäng per pil",
+home_one_arrow: "pil",
+home_arrows: "pilar",
+home_partial: "Avbruten runda",
+home_total_rounds: "Totalt antal rundor",
+home_single_round: "runda",
+home_no_comparable: "Inga jämförbara rundor under perioden",
+home_first_hit: "Träff på första pilen",
 profile_title: "Skapa din profil", 
 profile_nome: "F\u00f6r- och efternamn", profile_username: "Anv\u00e4ndarnamn", profile_username_hint: "(det andra ser i resultatlistan)",
 profile_hide_name: "D\u00f6lj f\u00f6r- och efternamn f\u00f6r andra skyttar", profile_hide_name_note: "I listorna och i chattarna visas bara ditt anv\u00e4ndarnamn. F\u00f6r- och efternamn f\u00f6rblir synliga f\u00f6r den som arrangerar en t\u00e4vling du anm\u00e4ler dig till, eftersom de officiella resultatlistorna g\u00f6rs med dem.",
@@ -13907,7 +13981,16 @@ home_install_btn: "Installeer de app op je telefoon",
 home_install_ios_text: "<b>Op iPhone:</b> tik op de knop <b>Delen</b> onderaan de browser (het vierkant met de pijl omhoog), kies dan <b>\u201cZet op beginscherm\u201d</b>. Er verschijnt een icoon zoals bij elke andere app.",
 home_install_generic_text: "Zoek naar het installatie-icoon in de adresbalk (bovenaan), of open het menu van de browser (meestal de drie puntjes rechtsboven) en zoek naar <b>\u201cApp installeren\u201d</b>.",
 home_dev_title: "App in ontwikkeling",
-home_dev_text: "Om fouten of problemen te melden: {email} — {sito}. Gegevens die in deze fase worden ingevoerd, kunnen worden gewist of gereset.",
+home_dev_text: "Om fouten of problemen te melden: {email} — {sito}.",
+home_performance: "Prestatie",
+home_per_arrow: "punten per pijl",
+home_one_arrow: "pijl",
+home_arrows: "pijlen",
+home_partial: "Afgebroken ronde",
+home_total_rounds: "Totaal aantal rondes",
+home_single_round: "ronde",
+home_no_comparable: "Geen vergelijkbare rondes in deze periode",
+home_first_hit: "Raak met de eerste pijl",
 profile_title: "Maak je profiel aan", 
 profile_nome: "Voor- en achternaam", profile_username: "Gebruikersnaam", profile_username_hint: "(wat anderen zien in het klassement)",
 profile_hide_name: "Voor- en achternaam verbergen voor andere boogschutters", profile_hide_name_note: "In de lijsten en in de gesprekken verschijnt alleen je gebruikersnaam. Voor- en achternaam blijven zichtbaar voor wie een wedstrijd organiseert waarvoor je je inschrijft, omdat de offici\u00eble uitslagen daarmee worden opgesteld.",
@@ -15622,6 +15705,7 @@ nota: h.nota || null,
    Aggiungere campi non rompe l'app di ieri: `giroDaNuvola` copia i campi che
    conosce e lascia stare gli altri. */
 roundId: h.roundId || null,
+trainingArrows: h.trainingArrows || null,
 interrotto: (h.interrotto === true),
 // Da quale gara viene (fase 5). `null` e' una risposta, non un buco.
 federation: h.federation || null,
@@ -15650,6 +15734,7 @@ nota: d.nota || null,
 // Assenti nei documenti scritti prima del 20/09: `null` e `false` sono la
 // risposta giusta, non un dato inventato.
 roundId: d.roundId || null,
+trainingArrows: d.trainingArrows || null,
 interrotto: (d.interrotto === true),
 federation: d.federation || null,
 division: d.division || null,
@@ -20183,100 +20268,76 @@ return { reg: (c && c.regione) ? c.regione : null, prov: (c && c.provincia) ? c.
 }
 var otReg = "", otProv = "";   // fuori dalla funzione: sopravvivono a render()
 
-/* I QUATTRO NUMERI DELLA HOME, dallo storico vero. (20/08/2026.)
-   Nessun dato inventato: se non ci sono giri questa funzione restituisce
-   null e la fascia non viene disegnata. *Un cruscotto pieno di zeri non
-   informa: scoraggia, e per giunta mente sul fatto che l'app sia gia' stata
-   usata.* */
+var homeContestoScelto = "";
+function homeGiri(){
+var giri = [];
+(loadHistory() || []).forEach(function(g){
+var io = (g.results || []).find(function(r){ return r.isSelf === true; });
+var data = new Date(g.date);
+if(!io || !g.date || !Number.isFinite(data.getTime())) return;
+var piazzole = (io.perTarget || []).filter(Number.isFinite).length || (g.interrotto ? 0 : g.format || 0);
+var regola = GAME_MODES[modoDelGiro(g.modeKey, g.scoringVersion)];
+var allenamento = !!(regola && regola.freeFormat);
+var tiri = Array.isArray(io.arrows) ? io.arrows : [];
+var frecce = tiri.flat().filter(Number.isFinite).length;
+// Tre tiri effettivi dimostrano la configurazione massima anche nei giri vecchi.
+// Uno o due tiri possono invece appartenere a una sessione con frecce saltate.
+var configurazione = [1,2,3].includes(g.trainingArrows) ? g.trainingArrows :
+(g.modeKey === "training" ? (tiri.some(function(p){return Array.isArray(p) && p.filter(Number.isFinite).length === 3;}) ? 3 : null) : allenamento ? regola.arrowsPerTarget : null);
+var primeFrecce = g.modeKey === "tracciato" ? tiri.map(function(p){return p && p[0];}).filter(Number.isFinite) : [];
+var punti = Number.isFinite(io.total) ? io.total : null;
+var modo = g.modeLabel || g.modeKey || "";
+var ctx = null, eti = "";
+if(allenamento && configurazione && frecce){
+ctx = tipoSessione(g) + "|" + modoDelGiro(g.modeKey, g.scoringVersion) + "|" + configurazione;
+eti = modo + " · " + configurazione + " " + t(configurazione === 1 ? "home_one_arrow" : "home_arrows");
+}else if(!allenamento && piazzole === g.format){
+if(regola && Array.isArray(regola.formats) && regola.formats.includes(g.format)){
+ctx = contestoDi(g, io);
+eti = etichettaContesto(g, io);
+if(g.modeKey === "battuta" && frecce && frecce !== 48) ctx = null;
+}
+}
+giri.push({data:data, punti:punti, piazzole:piazzole, frecce:frecce,
+ctx: g.interrotto || punti === null ? null : ctx, eti:eti, modo:modo,
+campo:g.campo || "", dove:g.campo || modo, allenamento:allenamento,
+primeFrecce:primeFrecce, interrotto:g.interrotto === true,
+v:allenamento && frecce && punti !== null ? punti / frecce : punti});
+});
+return giri.sort(function(a,b){ return b.data - a.data; });
+}
+
+function homeValore(v, decimali){
+return v.toLocaleString(state.lang || "it", {maximumFractionDigits:decimali, minimumFractionDigits:decimali});
+}
+
 function homeNumeri(){
-var lista = [];
-try{ lista = loadHistory() || []; }catch(e){ lista = []; }
-var miei = [];
-lista.forEach(function(g){
-var io = (g.results || []).filter(function(r){ return r.isSelf === true; })[0];
-if(!io) return;
-var d = null;
-try{ d = new Date(g.date); }catch(e){}
-if(!d || isNaN(d.getTime())) return;
-miei.push({ data:d, punti: io.total || 0, piazzole: (io.perTarget || []).length || g.format || 0,
-// Il contesto si calcola qui, dove il giro intero e' ancora sotto mano.
-ctx: contestoDi(g, io), eti: contestoDi(g, io) ? etichettaContesto(g, io) : "",
-            // il campo se c'e', altrimenti il tipo di giro: mai niente
-            dove: g.campo || g.modeLabel || "", formato: g.format || 0 });
-});
+var miei = homeGiri();
 if(!miei.length) return null;
-/* IL PERIODO E' QUELLO SCELTO NELLA HOME, con la definizione del Diario
-   (`inizioPeriodo`). (22/09/2026.) Prima era sempre il mese di calendario. */
-var da = inizioPeriodo(homePeriodo);
-var mese = miei.filter(function(x){ return x.data.getTime() >= da; });
-// La media e' del MESE: un numero che non si muove mai non e' una notizia.
-// Se questo mese non si e' ancora tirato, si prende tutto lo storico e lo
-// si dice cambiando etichetta, invece di mostrare un vuoto.
-/* STESSA REGOLA DEL DIARIO: non si mescolano formati. (25/08/2026.)
-   Questa e' la cifra grande arancione della Home — la piu' guardata dell'app.
-   Sommava allenamenti da 12 piazzole e gare da 24 e ne faceva una media, che
-   e' un numero che non descrive nessuno dei due giri e si muove col
-   calendario. `gruppoOmogeneo` tiene il gruppo di formato piu' numeroso; se
-   i formati sono tutti uguali — il caso normale — il numero e' identico a
-   ieri. La formula sta scritta per esteso accanto a `gruppoOmogeneo`. */
-/* NIENTE PIU' RIPIEGO SU TUTTO LO STORICO. (22/09/2026.) Quando il mese era
-   l'unico periodo, un mese vuoto mostrava tutto lo storico sotto l'etichetta
-   «Diario». Con un periodo SCELTO, mostrare altro da quello che si e' scelto
-   sarebbe un numero sbagliato col nome giusto: un periodo vuoto si dice. */
-var baseTutta = mese;
-var gruppoHome = gruppoOmogeneo(baseTutta.map(function(x){
-return { format:x.formato, punti:x.punti, piazzole:x.piazzole, ctx:x.ctx, eti:x.eti }; }));
-/* NIENTE RIPIEGO SU `baseTutta`. (29/08/2026.) Qui c'era un `? :` che, se
-   nessun giro aveva un contesto valido, tornava a mediare TUTTO — cioe'
-   annullava la regola proprio nel caso in cui serviva. *Un ripiego che
-   ricompare quando la cura non si applica non e' un ripiego: e' la malattia
-   con un nome piu' gentile.* Se il gruppo e' vuoto non c'e' media, non c'e'
-   meglio, non c'e' record. I conteggi restano. */
-var base = gruppoHome.lista;
-var somma = 0; base.forEach(function(x){ somma += x.punti; });
-var piazz = 0; base.forEach(function(x){ piazz += x.piazzole; });
-/* IL «MEGLIO» DEL MESE ESCE DAL GRUPPO CONFRONTABILE, non da tutti i giri.
-   (29/08/2026.) Prima guardava `miei` per intero: stesso difetto che aveva
-   `mioRecord`, in una funzione che nessuno aveva guardato. */
-var meglio = 0; gruppoHome.lista.forEach(function(x){ if(x.punti > meglio) meglio = x.punti; });
-var ultimo = miei[0];
-/* IL PRECEDENTE E' IL PRECEDENTE CONFRONTABILE, non quello di ieri.
-   (29/08/2026.) Prima era `miei[1]`, cioe' il giro immediatamente prima in
-   ordine di data: se ieri hai tirato una Battuta da 28 e oggi un round IFAA,
-   il «+55» non misurava niente. Adesso si scorre indietro fino a trovare un
-   giro dello STESSO contesto, e se non c'e' il delta e' `null` — nessun
-   numero e' meglio di un numero sbagliato. */
-var precedente = null;
-if(ultimo && ultimo.ctx){
-for(var pi = 1; pi < miei.length; pi++){
-if(stessoContesto(miei[pi].ctx, ultimo.ctx)){ precedente = miei[pi]; break; }
-}
-}
-/* E IL RECORD SI GIUDICA NEL CONTESTO DELL'ULTIMO GIRO, non contro il gruppo
-   piu' numeroso. Se l'ultimo appartiene a un contesto diverso da quello
-   dominante, il `meglio` di sopra non lo riguarda affatto. */
-var miglioreSuo = 0, quantiSuoi = 0;
-if(ultimo && ultimo.ctx){
-miei.forEach(function(x){
-if(!stessoContesto(x.ctx, ultimo.ctx)) return;
-quantiSuoi++;
-if(x !== ultimo && x.punti > miglioreSuo) miglioreSuo = x.punti;
+var periodo = miei.filter(function(g){ return g.data.getTime() >= inizioPeriodo(homePeriodo); });
+var gruppi = new Map();
+periodo.forEach(function(g){
+if(!g.ctx) return;
+if(!gruppi.has(g.ctx)) gruppi.set(g.ctx, []);
+gruppi.get(g.ctx).push(g);
 });
-}
+var selezione = gruppi.has(homeContestoScelto) ? homeContestoScelto : gruppi.keys().next().value;
+var base = gruppi.get(selezione) || [];
+var allenamento = !!(base.length && base[0].allenamento);
+var somma = base.reduce(function(n,g){ return n + g.punti; }, 0);
+var peso = base.reduce(function(n,g){ return n + (allenamento ? g.frecce : 1); }, 0);
+var ultimo = miei[0];
+var passati = ultimo.ctx ? miei.slice(1).filter(function(g){ return g.ctx === ultimo.ctx; }) : [];
+var precedente = passati.find(function(g){ return ultimo.campo && g.campo === ultimo.campo; }) || passati[0];
 return {
-media: base.length ? Math.round(somma / base.length) : null,
-giri: base.length,
-piazzole: piazz,
-meglio: base.length ? meglio : null,
-etichetta: gruppoHome.etichetta || "",
-nelMese: mese.length > 0,
-ultimo: ultimo,
-delta: (ultimo && precedente) ? (ultimo.punti - precedente.punti) : null,
-/* Serve a scegliere fra le due frasi che l'app ha gia': confrontare due giri
-   sullo STESSO campo e' un paragone; su campi diversi e' un'informazione con
-   un asterisco, e la frase lo dice. */
-stessoCampo: !!(ultimo && precedente && ultimo.dove && ultimo.dove === precedente.dove),
-eRecord: !!(ultimo && ultimo.ctx && quantiSuoi > 1 && ultimo.punti > miglioreSuo)
+ultimo:ultimo, gruppi:gruppi, selezione:selezione,
+serie:base.slice().reverse(), allenamento:allenamento,
+media:peso ? somma / peso : null,
+giri:periodo.length, piazzole:periodo.reduce(function(n,g){ return n + g.piazzole; },0),
+meglio:base.length ? Math.max.apply(null,base.map(function(g){return g.v;})) : null,
+delta:precedente && precedente.campo ? ultimo.v - precedente.v : null,
+stessoCampo:!!(precedente && ultimo.campo && ultimo.campo === precedente.campo),
+eRecord:passati.length > 0 && passati.every(function(g){ return ultimo.v > g.v; })
 };
 }
 
@@ -20375,7 +20436,7 @@ uscita.misto = gr.misto;
 return uscita;
 }
 
-function homeGrafico(){
+function homeGrafico(serieHome){
 var card = el('<div class="card"></div>');
 
 var barra = el('<div class="home-tempo" role="group"></div>');
@@ -20386,9 +20447,9 @@ b.setAttribute("aria-pressed", String(homeFinestra === v[0]));
 b.addEventListener("click", function(){ homeFinestra = v[0]; render(); });
 barra.appendChild(b);
 });
-card.appendChild(barra);
+if(!serieHome) card.appendChild(barra);
 
-var serie = homeSerie();
+var serie = serieHome || homeSerie();
 if(serie.length >= 4 && serie.etichetta){
 card.appendChild(el('<div class="nota">'+escapeHtml(serie.etichetta)+'</div>'));
 }
@@ -20398,6 +20459,7 @@ return card;
 }
 
 var W = 320, H = 132, PL = 34, PR = 8, PT = 10, PB = 8;
+var decimaliAsse = serie[0].allenamento ? 1 : 0;
 var min = serie[0].v, max = serie[0].v;
 serie.forEach(function(p){ if(p.v < min) min = p.v; if(p.v > max) max = p.v; });
 if(max === min){ max = min + 1; }   // una serie piatta non deve dividere per zero
@@ -20425,7 +20487,7 @@ g += '<line class="home-mira" x1="0" y1="'+PT+'" x2="0" y2="'+(H-PB)+'" stroke="
 g += '<circle class="home-mira-p" r="5" fill="var(--chart-line)" stroke="var(--surface-1)" stroke-width="2"></circle>';
 svg.innerHTML = g;
 tela.appendChild(svg);
-tela.appendChild(el('<div class="home-assey"><span>'+max+'</span><span>'+min+'</span></div>'));
+tela.appendChild(el('<div class="home-assey"><span>'+homeValore(max,decimaliAsse)+'</span><span>'+homeValore(min,decimaliAsse)+'</span></div>'));
 card.appendChild(tela);
 
 function quando(p){
@@ -20450,7 +20512,7 @@ var p = serie[i];
 mira.setAttribute("x1", X(i).toFixed(1)); mira.setAttribute("x2", X(i).toFixed(1));
 miraP.setAttribute("cx", X(i).toFixed(1)); miraP.setAttribute("cy", Y(p.v).toFixed(1));
 tela.classList.add("legge");
-letto.innerHTML = '<b>'+p.v+'</b> \u00b7 ' + escapeHtml(quando(p)) + (p.dove ? ' \u00b7 ' + escapeHtml(p.dove) : '');
+letto.innerHTML = '<b>'+homeValore(p.v, p.allenamento ? 1 : 0)+'</b> \u00b7 ' + escapeHtml(quando(p)) + (p.dove ? ' \u00b7 ' + escapeHtml(p.dove) : '');
 }
 function spegni(){ tela.classList.remove("legge"); letto.innerHTML = ""; }
 ["pointerdown", "pointermove"].forEach(function(ev){
@@ -20627,14 +20689,26 @@ var ug = el('<div class="strato home-ultimo"></div>');
    plurale fa cercare gli altri — e fa perdere la cosa che il numero grande
    deve dire in mezzo secondo: che 364 e' il risultato di IERI. */
 ug.appendChild(el('<div class="strato-eti">'+escapeHtml(t("home_last_round"))+'</div>'));
+var ultimo = n.ultimo;
+var dettagli = [ultimo.data.toLocaleDateString(state.lang || "it"), ultimo.campo,
+ultimo.eti || ultimo.modo + " · " + ultimo.piazzole + " " + t("diario_targets_word")];
+if(ultimo.allenamento && ultimo.eti) dettagli.push(ultimo.piazzole + " " + t("diario_targets_word"));
+if(ultimo.interrotto) dettagli.push(t("home_partial"));
 var ugDati = el('<div class="home-mese-dati"></div>');
-ugDati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(n.ultimo.punti))+'</b><i>'
-  + escapeHtml(n.ultimo.dove || t("fin_punti")) + '</i></span>'));
+if(ultimo.punti !== null){
+ugDati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(homeValore(ultimo.punti,0))+'</b><i>'+escapeHtml(t("fin_punti"))+'</i></span>'));
+}
+ugDati.appendChild(el('<div class="hm-vuota-testo">'+escapeHtml(dettagli.filter(Boolean).join(" · "))+'</div>'));
+if(ultimo.allenamento && ultimo.v !== null && ultimo.frecce){
+ugDati.appendChild(el('<div class="hm-vuota-testo">'+escapeHtml(homeValore(ultimo.v,1)+" "+t("home_per_arrow"))+'</div>'));
+}
 ug.appendChild(ugDati);
-if(n.delta !== null){
-var segno = (n.delta > 0 ? "+" : "") + n.delta;
-ug.appendChild(el('<div class="hm-vuota-testo">'
-  + escapeHtml(t(n.stessoCampo ? "fin_vs_qui" : "fin_vs", { n: segno })) + '</div>'));
+if(n.delta !== null && ultimo.campo){
+var differenza = Number(n.delta.toFixed(ultimo.allenamento ? 1 : 0));
+var segno = (differenza > 0 ? "+" : "") + homeValore(differenza, ultimo.allenamento ? 1 : 0);
+ug.appendChild(el('<div class="hm-vuota-testo">'+escapeHtml(
+t(n.stessoCampo ? "fin_vs_qui" : "fin_vs", {n:segno}) + " · " +
+(ultimo.allenamento ? t("home_per_arrow") : t("fin_punti")) + " · " + ultimo.eti)+'</div>'));
 }
 if(n.eRecord){
 ug.appendChild(el('<div class="al-tag ug-record">'+escapeHtml(t("fin_record_nuovo"))+'</div>'));
@@ -20687,65 +20761,58 @@ menu.appendChild(voce);
 });
 sez.appendChild(menu);
 }
+var unita = n.allenamento ? t("home_per_arrow") : t("fin_punti");
+if(n.gruppi.size){
+var filtro = el('<label class="home-rendimento"></label>');
+filtro.textContent = t("home_performance");
+var selettore = el('<select></select>');
+n.gruppi.forEach(function(lista, chiave){
+var opzione = el('<option></option>');
+opzione.value = chiave;
+opzione.textContent = lista[0].eti;
+selettore.appendChild(opzione);
+});
+selettore.value = n.selezione;
+selettore.addEventListener("change", function(){
+homeContestoScelto = selettore.value;
+render();
+var nuovo = document.querySelector(".home-mese select");
+if(nuovo) nuovo.focus();
+});
+filtro.appendChild(selettore);
+sez.appendChild(filtro);
+}
 var barra = el('<button class="home-mese-barra" aria-expanded="'+aperta+'"></button>');
-/* IL PANNELLO DEI NUMERI. (22/08/2026, chiesto da Alessandro: «e' un'utilita'
-   dove uno vede i propri numeri, dovrebbe avere un look piu' tecnico, adesso
-   si fonde con tutto il resto».)
-   Tre mosse, e nessuna aggiunge niente:
-   1. il fondo scende di mezzo tono — non e' piu' una carta come le altre, e'
-      un pannello di lettura;
-   2. la media sta sopra un filetto, i tre numeri minori sotto: il filetto e'
-      quello che trasforma quattro cifre in una tabella;
-   3. l'unita' entra nell'etichetta dove esiste — «media · punti», «record ·
-      punti». Giri e piazzole sono conteggi e l'unita' e' il nome stesso.
-
-   QUELLO CHE NON SI PUO' FARE, ed e' stato scartato da Alessandro: scrivere
-   «122 su 280». Il massimo dipende dalla disciplina E da quante piazzole si
-   tirano, quindi quel denominatore sarebbe inventato — cioe' la stessa bugia
-   delle barre tolte ieri, scritta in cifre invece che disegnata. */
 var dati = el('<span class="home-mese-dati"></span>');
-var conPunti = function(parola){ return parola + " \u00b7 " + t("fin_punti"); };
-/* MEDIA E RECORD SOLO SE ESISTONO. (29/08/2026.) `homeNumeri` da ieri
-   restituisce `null` quando nessun giro e' confrontabile, ma qui c'era
-   `String(n.media)`, che di `null` fa la parola «null». *Un buco lasciato
-   scoperto dal renderer disfa la cura fatta nel calcolo, e per giunta la fa
-   sembrare un guasto.* Stesso principio gia' applicato nella stagione: se non
-   c'e' un gruppo confrontabile la voce non si disegna, e i conteggi restano.
-   La gara di riferimento e' scritta accanto: un numero senza contesto e'
-   proprio quello che si e' passata la settimana a togliere. */
-if(n.media !== null && n.media !== undefined){
-dati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(n.media))+'</b><i>'+escapeHtml(conPunti(t("diario_media"))+(n.etichetta ? (" \u00b7 "+n.etichetta) : ""))+'</i></span>'));
+if(n.media !== null){
+var precisione = n.allenamento ? 1 : 0;
+var etichetta = t("diario_media") + " · " + unita + " · " + n.serie.length + " " + t(n.serie.length === 1 ? "home_single_round" : "home_rounds_word");
+dati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(homeValore(n.media,precisione))+'</b><i>'+escapeHtml(etichetta)+'</i></span>'));
+dati.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(homeValore(n.meglio,precisione))+'</b><i>'+escapeHtml(t("diario_record")+" · "+unita)+'</i></span>'));
+}else if(n.giri){
+dati.appendChild(el('<span class="hm-vuota-testo">'+escapeHtml(t("home_no_comparable"))+'</span>'));
 }
+if(n.giri){
 var riga = el('<span class="hm-riga"></span>');
-var voci = [[t("home_rounds_word"), n.giri]];
-if(n.meglio !== null && n.meglio !== undefined){
-voci.push([t("diario_record")+(n.etichetta ? (" \u00b7 "+n.etichetta) : ""), n.meglio]);
-}
-voci.push([t("diario_targets_word"), n.piazzole]);
-voci.forEach(function(p){
+[[t("home_total_rounds"),n.giri],[t("diario_targets_word"),n.piazzole]].forEach(function(p){
 riga.appendChild(el('<span class="hm-voce"><b>'+escapeHtml(String(p[1]))+'</b><i>'+escapeHtml(p[0])+'</i></span>'));
 });
-// Un periodo senza giri si dice, invece di mostrare una fila di zeri. (22/09/2026)
-if(n.giri === 0) dati.appendChild(el('<span class="hm-vuota-testo">'+escapeHtml(t("home_periodo_vuoto"))+'</span>'));
-else dati.appendChild(riga);
+dati.appendChild(riga);
+}else{
+dati.appendChild(el('<span class="hm-vuota-testo">'+escapeHtml(t("home_periodo_vuoto"))+'</span>'));
+}
 barra.appendChild(dati);
-/* QUI C'ERANO LE BARRE DEL MESE, E SONO STATE TOLTE. (21/08/2026, viste da
-   Alessandro sul telefono: «sono tutte storte, devono essere legate a
-   qualcosa».) Erano legate ai dati — una barra per giro, alta quanto il
-   punteggio — ma il difetto era piu' profondo del disegno: i punteggi di tiro
-   stanno stretti, fra 268 e 291. Una barra proporzionale o parte da zero, e
-   allora sono tutte uguali; o parte dal minimo del mese, e allora tre punti
-   di scarto diventano una barra doppia dell'altra.
-   *E' esattamente la bugia contro cui esiste gia' la regola dell'asse scritto
-   sul grafico dell'andamento.* Il grafico e' a un tocco di distanza, dice fra
-   che numeri si muove e sotto quattro giri non disegna niente: la domanda
-   aveva gia' una risposta onesta, e questa ne era una seconda disonesta. */
 barra.addEventListener("click", function(){ state.homeMese = !aperta; save(); render(); });
 sez.appendChild(barra);
 if(aperta){
 var dentro = el('<div class="home-mese-dentro"></div>');
 dentro.appendChild(el('<div class="home-titolo"><h2>'+escapeHtml(t("home_trend"))+'</h2></div>'));
-dentro.appendChild(homeGrafico());
+var prime = n.serie.flatMap(function(g){return g.primeFrecce;});
+if(prime.length){
+var percentuale = Math.round(100 * prime.filter(function(p){return p > 0;}).length / prime.length);
+dentro.appendChild(el('<div class="nota">'+escapeHtml(t("home_first_hit") + " · " + percentuale + "% (" + prime.length + " " + t("diario_targets_word") + ")")+'</div>'));
+}
+dentro.appendChild(homeGrafico(n.serie));
 sez.appendChild(dentro);
 }
 strati.appendChild(sez);
@@ -24792,7 +24859,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-11-03-consumi-profili";
+var BUILD_STAMP = "2026-11-05-home-rendimento";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24801,7 +24868,7 @@ var BUILD_STAMP = "2026-11-03-consumi-profili";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-10-30-ripristino-solo-punteggio";
+var BUILD_PARENT = "2026-11-03-consumi-profili";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO
@@ -30670,6 +30737,7 @@ sessionType: SESSIONE_3D,
 format: state.format,
 modeKey: state.mode,
 modeLabel: mLabel,
+trainingArrows: state.mode === "training" ? (state.arrowsPerTargetOverride || 1) : null,
 // QUALE TABELLA HA CALCOLATO QUESTI NUMERI. Senza questa riga il giro non
 // si distingue da uno del barème vecchio, e i due si sommerebbero.
 scoringVersion: schemaPunteggio(state.mode),

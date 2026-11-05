@@ -80,7 +80,7 @@ function leggi(page) {
       return { v: (e.querySelector("b") || {}).textContent, i: (e.querySelector("i") || {}).textContent || "" };
     });
     function cerca(re) { var x = voci.filter(function (v) { return re.test(v.i); })[0]; return x ? +x.v : null; }
-    return { eti: eti, media: cerca(/media/i), giri: cerca(/^giri$/i), record: cerca(/record/i), piazzole: cerca(/piazzole/i),
+    return { eti: eti, media: cerca(/media/i), giri: cerca(/^giri totali$/i), record: cerca(/record/i), piazzole: cerca(/piazzole/i),
              vuoto: /Nessun giro in questo periodo/.test(sez.innerText), menu: !!sez.querySelector(".home-periodi"),
              storico: localStorage.getItem("arctrail3d_storico_v1"),
              letture: ((window.__letture || {})["users/uidMario/storico"] || 0) };

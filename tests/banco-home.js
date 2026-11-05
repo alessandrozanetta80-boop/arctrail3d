@@ -25,18 +25,18 @@ fs.writeFileSync(path.join(D, "index.html"),
   if (fs.existsSync(x)) fs.copyFileSync(x, path.join(D, x));
 });
 
-function giro(giorniFa, punti, piazzole) {
+function giro(giorniFa, punti, piazzole, frecce) {
   var d = new Date(Date.now() - giorniFa * 86400000);
   return {
-    date: d.toISOString(), format: piazzole, modeKey: "training", modeLabel: "Allenamento",
+    date: d.toISOString(), format: piazzole, modeKey: frecce ? "training" : "round3d", modeLabel: frecce ? "Allenamento" : "Round 3D",
+    trainingArrows: frecce || null,
     results: [{ name: "alez", total: punti, isSelf: true, ownerUid: null,
-                perTarget: new Array(piazzole).fill(0), arrows: [] }]
+                perTarget: new Array(piazzole).fill(0),
+                arrows: frecce ? Array.from({length:piazzole}, function(){return Array(frecce).fill(10);}) : [] }]
   };
 }
-/* Tre giri questo mese: 200, 220, 240 → media 220, meglio 240, piazzole 12+12+24=48.
-   Il primo dell'elenco e' il piu' recente (hist.unshift), quindi 240 e' l'ultimo
-   e il delta rispetto al precedente (220) e' +20. */
-var STORICO = [giro(1, 240, 24), giro(3, 220, 12), giro(5, 200, 12)];
+/* Due configurazioni di allenamento e un Round 3D nello stesso periodo. */
+var STORICO = [giro(1, 420, 14, 3), giro(3, 140, 14, 1), giro(5, 240, 24)];
 
 var STATO = { screen: "menu", tab: "home", pendingArchers: [], lang: "it", country: "it",
               federation: "fiarc", theme: "light",
@@ -72,41 +72,34 @@ function prova(n, c, extra) { if (c) { ok++; console.log("  ✓ " + n); } else {
     var num = Array.prototype.map.call(document.querySelectorAll(".home-mese .hm-voce"), function (e) {
       return { v: (e.querySelector("b") || {}).textContent, eti: (e.querySelector("i") || {}).textContent };
     });
-    var g = document.querySelector(".home-giro");
+    var g = document.querySelector(".home-ultimo");
     return {
       numeri: num,
       ultimo: g ? g.innerText.replace(/\s+/g, " ") : null,
+      recordUltimo: !!(g && g.querySelector(".ug-record")),
       testo: document.getElementById("app").innerText.slice(0, 60).replace(/\s+/g, " ")
     };
   });
 
-  /* ══ QUESTE QUATTRO PROVE FISSAVANO UN DIFETTO ═════════════════════════
-     (25/08/2026.) Chiedevano media 220, cioe' (200+220+240)/3 — la media di
-     TRE giri di DUE formati diversi: due da 12 piazzole e uno da 24. Quel
-     numero non descrive nessuno dei tre giri, e sale o scende col miscuglio
-     invece che col tiro. *Il banco non stava sbagliando i conti: stava
-     controllando che l'app continuasse a farne uno sbagliato.*
-
-     Il seme resta identico apposta — adesso e' il caso di prova del vincolo,
-     non del difetto. Con la regola nuova vince il formato piu' numeroso (12,
-     due giri): media (200+220)/2 = 210, due giri, 24 piazzole.
-
-     E IL RECORD È 220, NON 240. (Corretto il 30/08/2026.) Fino a qui questa
-     riga chiedeva 240 — «un massimo non si sporca mescolando: e' il
-     punteggio piu' alto che hai fatto, punto». Il 29/08 l'app ha deciso il
-     contrario, e lo ha scritto accanto a `homeNumeri`: *«il "meglio" del mese
-     esce dal gruppo confrontabile, non da tutti i giri»*. Il record adesso
-     esce dallo stesso gruppo della media, e la sua etichetta dice di quale
-     gara e': «record · <contesto>». Un massimo etichettato non mescola.
-     *Questa riga e' rimasta rossa dal 29 al 30 agosto senza che nessuno la
-     leggesse: e' il difetto raccontato il 22/08, ripetuto.* */
-  console.log("\n  I QUATTRO NUMERI VENGONO DALLO STORICO, E NON MESCOLANO FORMATI");
-  var v = r.numeri.map(function (x) { return x.v; });
-  prova("ce ne sono quattro", r.numeri.length === 4, "trovati " + r.numeri.length);
-  prova("media 210: i due giri da 12, non i tre di formati diversi", v[0] === "210", "e' " + v[0]);
-  prova("due giri, quelli del formato che vince", v[1] === "2", "e' " + v[1]);
-  prova("record 220: il massimo del gruppo confrontabile, non dei tre giri", v[2] === "220", "e' " + v[2]);
-  prova("24 piazzole (12+12)", v[3] === "24", "e' " + v[3]);
+  var v = r.numeri.map(function(n){return n.v;});
+  prova("420 punti e 10 punti per freccia nel giro a tre frecce", /420/.test(r.ultimo) && /10,0/.test(r.ultimo), r.ultimo);
+  prova("nessun record fra una e tre frecce", !r.recordUltimo);
+  prova("media e record per freccia; conteggi su tutte le uscite", v.join("|") === "10,0|10,0|3|52", v.join("|"));
+  await page.locator(".home-mese select").selectOption({label:"Round 3D · 24"});
+  prova("il filtro passa al punteggio del Round 3D", (await page.locator(".home-mese-barra .hm-voce b").first().textContent()) === "240");
+  await page.locator(".home-mese select").selectOption({label:"Allenamento · 1 freccia"});
+  prova("il filtro separa allenamento a una e tre frecce", (await page.locator(".home-mese select option").count()) === 3);
+  if(process.env.ARCTRAIL_HOME_QA){
+    for(const width of [320,384,412]){
+      await page.setViewportSize({width:width,height:950});
+      prova("nessun overflow orizzontale a "+width, await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth));
+      await page.screenshot({path:path.join(process.env.ARCTRAIL_HOME_QA,"home-"+width+".png"),fullPage:true});
+    }
+    await page.addStyleTag({content:"html{font-size:150% !important}"});
+    await page.setViewportSize({width:320,height:950});
+    prova("nessun overflow orizzontale a 320 con testo al 150%", await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth));
+    await page.screenshot({path:path.join(process.env.ARCTRAIL_HOME_QA,"home-320-testo.png"),fullPage:true});
+  }
 
   /* L'ULTIMO GIRO NON STA PIU' SULLA HOME. (21/08/2026.) La prima schermata
      ha tre cose — inizia un giro, i numeri del mese, gli allenamenti aperti —
@@ -221,7 +214,9 @@ function prova(n, c, extra) { if (c) { ok++; console.log("  ✓ " + n); } else {
 
   console.log("\n  E SI LEGGE TOCCANDOLO");
   var box = await a2.page.evaluate(function () {
-    var s = document.querySelector(".home-tela svg"); var r = s.getBoundingClientRect();
+    var s = document.querySelector(".home-tela svg");
+    s.scrollIntoView({block:"center"});
+    var r = s.getBoundingClientRect();
     return { x: r.left + r.width * 0.5, y: r.top + r.height / 2 };
   });
   await a2.page.mouse.move(box.x, box.y);
