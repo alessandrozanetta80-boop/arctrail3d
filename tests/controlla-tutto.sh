@@ -83,7 +83,12 @@ node tests/controlla-sintassi.js index.html || fallito=1
 # ── GLI ALTRI, IN PARALLELO ───────────────────────────────────────────────
 # `banco <titolo> <comando>` registra e basta. La riga comincia con `banco `
 # perche' e' quella che si conta: vedi in cima.
-D=$(mktemp -d)
+if [ -n "${BANCO_LOG_DIR:-}" ]; then
+  mkdir -p "$BANCO_LOG_DIR" || exit 1
+  D=$(mktemp -d "$BANCO_LOG_DIR/run-XXXXXX") || exit 1
+else
+  D=$(mktemp -d) || exit 1
+fi
 n=0
 banco() {
   n=$((n + 1))
@@ -214,11 +219,21 @@ i=1
 prove=0
 cadute=0
 muti=""
+falliti=""
 while [ $i -le $n ]; do
   tit="$(cat "$D/$i.tit")"
   riga "$i/$n — $tit"
   cat "$D/$i.out"
-  [ "$(cat "$D/$i.esito" 2>/dev/null)" = "0" ] || fallito=1
+  esito=$(cat "$D/$i.esito" 2>/dev/null)
+  if [ "$esito" = "0" ]; then
+    echo "ESITO: PASS"
+  else
+    esito=${esito:-125}
+    echo "ESITO: FAIL (exit $esito)"
+    fallito=1
+    falliti="$falliti
+      $i/$n $tit (exit $esito)"
+  fi
   # Prima la riga di riepilogo del banco; se non ce l'ha, si contano i segni di
   # spunta che ha stampato. Quattro banchi non fanno ne' l'una ne' l'altra cosa
   # (raccontano a parole): quelli si elencano, e si leggono a mano.
@@ -241,13 +256,21 @@ while [ $i -le $n ]; do
       $i/$n $tit (dice di aver saltato qualcosa)"; fi
   i=$((i + 1))
 done
-rm -rf "$D"
-
+{
 echo ""
 echo "  $n banchi, $prove prove contate, $cadute cadute."
+if [ -n "$falliti" ]; then
+  echo "  BANCHI FALLITI:$falliti"
+fi
 if [ -n "$muti" ]; then
   echo "  Banchi che non hanno contato le prove (da leggere a mano):$muti"
 fi
 if [ $fallito -eq 0 ]; then echo "TUTTI PASSATI."; else echo "ALMENO UNO HA DETTO NO — leggere sopra."; fi
+} | tee "$D/riepilogo.txt"
+if [ -n "${BANCO_LOG_DIR:-}" ]; then
+  echo "  Log conservati: $D"
+else
+  rm -rf "$D"
+fi
 exit $fallito
 

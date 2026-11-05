@@ -24,14 +24,34 @@ fs.writeFileSync(path.join(D, "app.html"), accendiDev(fs.readFileSync("app.html"
 ["compagnie-data.js", "campo-geo.js", "campo-mappa.js", "logo.webp", "logo.jpg", "icon-192.png"].forEach(function (x) {
   if (fs.existsSync(x)) fs.copyFileSync(x, path.join(D, x));
 });
-var URL = "file://" + path.join(D, "app.html").replace(/\\/g, "/");
+// Origine web stabile: lo storage di file:// dipende dal browser/sistema.
+// La shell viene servita dalla fixture anche offline, senza Firebase o rete reale.
+var ORIGINE = "https://arctrail.test/";
+var URL = ORIGINE + "app.html";
 var CODICE = "01VERB";
 // Copia con un gancio per cambiare utente, uscire senza ricaricare («GPS e account») e aprire/chiudere il giro (distanze).
-var GANCIO = 'window.__campoProva = { utente: function(u){ currentUser = u; render(); }, vai: function(s){ state.screen = s; render(); }, ' +
+var GANCIO = 'window.__campoProva = { uid: function(){ return currentUser && currentUser.uid; }, utente: function(u){ currentUser = u; render(); }, vai: function(s){ state.screen = s; render(); }, ' +
   'segnala: function(){ apriSegnalaCampo({ torna: "campi" }); }, svuota: function(){ svuotaDatiUtenteLocali(); }, ' +
   'giro: function(v){ state.roundActive = v; render(); } };\n';
 fs.writeFileSync(path.join(D, "app-gancio.html"), fs.readFileSync(path.join(D, "app.html"), "utf8").replace("var BUILD_STAMP = ", GANCIO + "var BUILD_STAMP = "));
-var URL_GANCIO = "file://" + path.join(D, "app-gancio.html").replace(/\\/g, "/");
+var URL_GANCIO = ORIGINE + "app-gancio.html";
+var ASSET = fs.readdirSync(D);
+async function isolaRete(ctx) {
+  await ctx.route("**/*", function(route) {
+    var url = route.request().url();
+    if (url.indexOf(ORIGINE) !== 0) return route.abort();
+    var nome = url.slice(ORIGINE.length).split("?")[0];
+    if (ASSET.indexOf(nome) < 0) return route.fulfill({status:404, body:"Fixture non presente"});
+    var tipo = /\.html$/.test(nome) ? "text/html" : /\.js$/.test(nome) ? "application/javascript" : /\.webp$/.test(nome) ? "image/webp" : /\.png$/.test(nome) ? "image/png" : "image/jpeg";
+    return route.fulfill({status:200, contentType:tipo, body:fs.readFileSync(path.join(D,nome))});
+  });
+}
+async function codaSalvata(page) {
+  return page.evaluate(function() {
+    return {uid:window.__campoProva.uid(), offline:!navigator.onLine,
+      raw:localStorage.getItem("arctrail3d_campo_coda_v1:dev-locale")};
+  });
+}
 
 var ok = 0, ko = 0;
 function prova(n, c, extra) {
@@ -52,9 +72,10 @@ async function apri(browser, S) {
   var ctx = await browser.newContext({ viewport: { width: S.w, height: S.h }, deviceScaleFactor: S.dpr || 1,
     isMobile: !!S.mobile, hasTouch: !!S.mobile, geolocation: { latitude: 45.9210, longitude: 8.5510, accuracy: 6 },
     permissions: ["geolocation"] });
+  await isolaRete(ctx);
   await ctx.addInitScript(function (a) {
     try {
-      localStorage.setItem("arctrail3d_state_v3", JSON.stringify(a.st));
+      if (!localStorage.getItem("arctrail3d_state_v3")) localStorage.setItem("arctrail3d_state_v3", JSON.stringify(a.st));
       localStorage.setItem("arctrail3d_welcome_v2", "1");
       if (!localStorage.getItem("arctrail3d_campo_codice")) localStorage.setItem("arctrail3d_campo_codice", a.code);
     } catch (e) {}
@@ -119,6 +140,7 @@ function ganciGeo() {
 function geo(page) { return page.evaluate(function () { return { chiamate: window.__geo.chiamate, attivi: Object.keys(window.__geo.attivi).length }; }); }
 async function apriGiro(browser, stato, larghezza) {
   var ctx = await browser.newContext({ viewport: { width: larghezza || 384, height: 832 }, geolocation: { latitude: 45.9210, longitude: 8.5510, accuracy: 6 }, permissions: ["geolocation"] });
+  await isolaRete(ctx);
   await ctx.addInitScript(ganciGeo);
   await ctx.addInitScript(function (st) {
     try {
@@ -149,6 +171,7 @@ function giroDi(page) {
 async function provaAccountGps(browser) {
   console.log("\nGPS e account");
   var ctx = await browser.newContext({ viewport: { width: 384, height: 832 }, geolocation: { latitude: 45.9210, longitude: 8.5510, accuracy: 6 }, permissions: ["geolocation"] });
+  await isolaRete(ctx);
   await ctx.addInitScript(ganciGeo);
   await ctx.addInitScript(function (a) {
     try {
@@ -341,15 +364,27 @@ async function provaGiro(browser) {
       var coda = await page.evaluate(function () { return window.CampoMappaUI._coda.elenco().map(function (o) { return o.tipo; }).sort().join(","); });
       prova("offline: percorso e segnalazione in coda", coda === "issue,route", coda);
       prova("offline: la schermata lo dice", /in attesa di rete/.test(await page.textContent(".campo-sync")));
+      var primaRicarica = await codaSalvata(page);
+      prova("prima della ricarica: offline e proprietario corretto", primaRicarica.offline && primaRicarica.uid === "dev-locale", JSON.stringify(primaRicarica));
+      prova("prima della ricarica: due operazioni persistite nello storage", JSON.parse(primaRicarica.raw || "[]").length === 2, primaRicarica.raw);
 
       // Ricarica: la coda resta, una volta sola.
       await page.reload();
+      // Chromium perde navigator.onLine=false sul nuovo documento. setOffline(true)
+      // ripetuto e' un no-op in Playwright: riapplichiamo l'emulazione nativa,
+      // prima di proseguire. Nessun dato della coda viene ricreato o modificato.
+      var reteOffline = await A.ctx.newCDPSession(page);
+      await reteOffline.send("Network.emulateNetworkConditions", {offline:true,latency:0,downloadThroughput:-1,uploadThroughput:-1});
       await vai(page);
       await page.waitForTimeout(300);
+      var dopoRicarica = await codaSalvata(page);
+      prova("dopo la ricarica: ancora offline e stesso proprietario", dopoRicarica.offline && dopoRicarica.uid === primaRicarica.uid, JSON.stringify(dopoRicarica));
+      prova("dopo la ricarica: stessi dati e id persistiti, senza risemina", dopoRicarica.raw === primaRicarica.raw, JSON.stringify(dopoRicarica));
       coda = await page.evaluate(function () { return window.CampoMappaUI._coda.elenco().map(function (o) { return o.tipo; }).sort().join(","); });
       prova("ricarica: la coda e' ancora li', senza doppioni", coda === "issue,route", coda);
       var voci = await page.$$eval(".campo-voce-btn", function (v) { return v.length; });
       prova("ricarica: una sola segnalazione in elenco", voci === 1, voci);
+      if (coda !== "issue,route" || voci !== 1) throw new Error("Coda dopo ricarica: " + JSON.stringify({prima:primaRicarica,dopo:dopoRicarica,coda:coda,voci:voci}));
       await page.click(".campo-voce-btn");
       await page.waitForSelector(".campo-dettaglio");
       await page.click("text=Raggiungi");

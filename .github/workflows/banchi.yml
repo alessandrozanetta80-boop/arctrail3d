@@ -51,5 +51,14 @@ jobs:
       - name: Chromium di playwright
         run: npx playwright install --with-deps chromium
       - name: Tutti i banchi
+        env:
+          BANCO_LOG_DIR: ${{ runner.temp }}/arctrail-banchi
         # Parallelismo controllato: abbastanza rapido, senza saturare il runner o creare falsi rossi.
         run: PAR=3 BANCO_TIMEOUT=420 sh tests/controlla-tutto.sh
+      - name: Log e riepilogo dei banchi
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: banchi-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/arctrail-banchi/
+          retention-days: 7
