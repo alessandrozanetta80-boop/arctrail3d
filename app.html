@@ -7759,8 +7759,6 @@ home_dev_title: "App in fase di sviluppo",
 home_dev_text: "Per segnalare errori o malfunzionamenti: {email} — {sito}.",
 home_performance: "Rendimento",
 home_per_arrow: "punti per freccia",
-home_one_arrow: "freccia",
-home_arrows: "frecce",
 home_partial: "Giro interrotto",
 home_total_rounds: "Giri totali",
 home_single_round: "giro",
@@ -8452,8 +8450,6 @@ compagnie_salva: "Save", compagnie_title: "Clubs", compagnie_tutti: "All", count
 home_dev_text: "To report bugs or issues: {email} — {sito}.",
 home_performance: "Performance",
 home_per_arrow: "points per arrow",
-home_one_arrow: "arrow",
-home_arrows: "arrows",
 home_partial: "Unfinished round",
 home_total_rounds: "Total rounds",
 home_single_round: "round",
@@ -9222,8 +9218,6 @@ compagnie_salva: "Enregistrer", compagnie_title: "Clubs", compagnie_tutti: "Tous
 home_dev_text: "Pour signaler un bug ou un problème : {email} — {sito}.",
 home_performance: "Performance",
 home_per_arrow: "points par flèche",
-home_one_arrow: "flèche",
-home_arrows: "flèches",
 home_partial: "Parcours interrompu",
 home_total_rounds: "Total des parcours",
 home_single_round: "parcours",
@@ -9992,8 +9986,6 @@ compagnie_salva: "Speichern", compagnie_title: "Vereine", compagnie_tutti: "Alle
 home_dev_text: "Um Fehler oder Probleme zu melden: {email} — {sito}.",
 home_performance: "Leistung",
 home_per_arrow: "Punkte pro Pfeil",
-home_one_arrow: "Pfeil",
-home_arrows: "Pfeile",
 home_partial: "Abgebrochene Runde",
 home_total_rounds: "Runden gesamt",
 home_single_round: "Runde",
@@ -10852,8 +10844,6 @@ home_dev_title: "Uygulama geli\u015ftirme a\u015famas\u0131nda",
 home_dev_text: "Hata veya sorun bildirmek için: {email} — {sito}.",
 home_performance: "Performans",
 home_per_arrow: "ok başına puan",
-home_one_arrow: "ok",
-home_arrows: "ok",
 home_partial: "Yarım kalan tur",
 home_total_rounds: "Toplam tur",
 home_single_round: "tur",
@@ -11635,8 +11625,6 @@ home_dev_title: "Приложение в разработке",
 home_dev_text: "Чтобы сообщить об ошибках: {email} — {sito}.",
 home_performance: "Результативность",
 home_per_arrow: "очков за стрелу",
-home_one_arrow: "стрела",
-home_arrows: "стрелы",
 home_partial: "Незавершённый круг",
 home_total_rounds: "Всего кругов",
 home_single_round: "круг",
@@ -12418,8 +12406,6 @@ home_dev_title: "App en fase de desarrollo",
 home_dev_text: "Para informar de errores o fallos: {email} — {sito}.",
 home_performance: "Rendimiento",
 home_per_arrow: "puntos por flecha",
-home_one_arrow: "flecha",
-home_arrows: "flechas",
 home_partial: "Recorrido interrumpido",
 home_total_rounds: "Total de recorridos",
 home_single_round: "recorrido",
@@ -13201,8 +13187,6 @@ home_dev_title: "Appen \u00e4r under utveckling",
 home_dev_text: "För att rapportera fel eller problem: {email} — {sito}.",
 home_performance: "Prestation",
 home_per_arrow: "poäng per pil",
-home_one_arrow: "pil",
-home_arrows: "pilar",
 home_partial: "Avbruten runda",
 home_total_rounds: "Totalt antal rundor",
 home_single_round: "runda",
@@ -13984,8 +13968,6 @@ home_dev_title: "App in ontwikkeling",
 home_dev_text: "Om fouten of problemen te melden: {email} — {sito}.",
 home_performance: "Prestatie",
 home_per_arrow: "punten per pijl",
-home_one_arrow: "pijl",
-home_arrows: "pijlen",
 home_partial: "Afgebroken ronde",
 home_total_rounds: "Totaal aantal rondes",
 home_single_round: "ronde",
@@ -20280,17 +20262,13 @@ var regola = GAME_MODES[modoDelGiro(g.modeKey, g.scoringVersion)];
 var allenamento = !!(regola && regola.freeFormat);
 var tiri = Array.isArray(io.arrows) ? io.arrows : [];
 var frecce = tiri.flat().filter(Number.isFinite).length;
-// Tre tiri effettivi dimostrano la configurazione massima anche nei giri vecchi.
-// Uno o due tiri possono invece appartenere a una sessione con frecce saltate.
-var configurazione = [1,2,3].includes(g.trainingArrows) ? g.trainingArrows :
-(g.modeKey === "training" ? (tiri.some(function(p){return Array.isArray(p) && p.filter(Number.isFinite).length === 3;}) ? 3 : null) : allenamento ? regola.arrowsPerTarget : null);
 var primeFrecce = g.modeKey === "tracciato" ? tiri.map(function(p){return p && p[0];}).filter(Number.isFinite) : [];
 var punti = Number.isFinite(io.total) ? io.total : null;
 var modo = g.modeLabel || g.modeKey || "";
 var ctx = null, eti = "";
-if(allenamento && configurazione && frecce){
-ctx = tipoSessione(g) + "|" + modoDelGiro(g.modeKey, g.scoringVersion) + "|" + configurazione;
-eti = modo + " · " + configurazione + " " + t(configurazione === 1 ? "home_one_arrow" : "home_arrows");
+if(allenamento && frecce){
+ctx = tipoSessione(g) + "|" + modoDelGiro(g.modeKey, g.scoringVersion);
+eti = modo;
 }else if(!allenamento && piazzole === g.format){
 if(regola && Array.isArray(regola.formats) && regola.formats.includes(g.format)){
 ctx = contestoDi(g, io);
@@ -24859,7 +24837,7 @@ return wrap;
 }
 
 // ---------- INFO / DISCLAIMER ----------
-var BUILD_STAMP = "2026-11-05-home-rendimento";
+var BUILD_STAMP = "2026-11-05-home-allenamento";
 // DA QUALE VERSIONE E' NATO QUESTO FILE. Non e' una curiosita' storica: e' il
 // controllo che il 17/08 non c'era. Quel giorno una sessione e' ripartita da
 // una copia di due ore prima e ha cancellato mezza mattinata di lavoro, e il
@@ -24868,7 +24846,7 @@ var BUILD_STAMP = "2026-11-05-home-rendimento";
 // Con questa riga non serve piu' indovinare: controlla-base.js confronta il
 // genitore dichiarato con l'ultimo timbro online, e se non combaciano non e'
 // un aggiornamento, e' una cancellazione.
-var BUILD_PARENT = "2026-11-03-consumi-profili";
+var BUILD_PARENT = "2026-11-05-home-rendimento";
 
 /* ══════════════════════════════════════════════════════════════════════════
    QUATTRO NUMERI, E DOVE NON VANNO

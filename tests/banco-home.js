@@ -32,11 +32,11 @@ function giro(giorniFa, punti, piazzole, frecce) {
     trainingArrows: frecce || null,
     results: [{ name: "alez", total: punti, isSelf: true, ownerUid: null,
                 perTarget: new Array(piazzole).fill(0),
-                arrows: frecce ? Array.from({length:piazzole}, function(){return Array(frecce).fill(10);}) : [] }]
+                arrows: frecce ? Array.from({length:piazzole}, function(){return Array(frecce).fill(punti / (piazzole * frecce));}) : [] }]
   };
 }
 /* Due configurazioni di allenamento e un Round 3D nello stesso periodo. */
-var STORICO = [giro(1, 420, 14, 3), giro(3, 140, 14, 1), giro(5, 240, 24)];
+var STORICO = [giro(1, 420, 14, 3), giro(3, 0, 14, 1), giro(5, 240, 24)];
 
 var STATO = { screen: "menu", tab: "home", pendingArchers: [], lang: "it", country: "it",
               federation: "fiarc", theme: "light",
@@ -83,12 +83,12 @@ function prova(n, c, extra) { if (c) { ok++; console.log("  ✓ " + n); } else {
 
   var v = r.numeri.map(function(n){return n.v;});
   prova("420 punti e 10 punti per freccia nel giro a tre frecce", /420/.test(r.ultimo) && /10,0/.test(r.ultimo), r.ultimo);
-  prova("nessun record fra una e tre frecce", !r.recordUltimo);
-  prova("media e record per freccia; conteggi su tutte le uscite", v.join("|") === "10,0|10,0|3|52", v.join("|"));
+  prova("ultimo giro mostra solo Allenamento", /Allenamento/.test(r.ultimo) && !/3 frecce/.test(r.ultimo));
+  prova("media e record per freccia; conteggi su tutte le uscite", v.join("|") === "7,5|10,0|3|52", v.join("|"));
   await page.locator(".home-mese select").selectOption({label:"Round 3D · 24"});
   prova("il filtro passa al punteggio del Round 3D", (await page.locator(".home-mese-barra .hm-voce b").first().textContent()) === "240");
-  await page.locator(".home-mese select").selectOption({label:"Allenamento · 1 freccia"});
-  prova("il filtro separa allenamento a una e tre frecce", (await page.locator(".home-mese select option").count()) === 3);
+  await page.locator(".home-mese select").selectOption({label:"Allenamento"});
+  prova("il filtro mostra una sola voce per l’allenamento", (await page.locator(".home-mese select option").count()) === 2);
   if(process.env.ARCTRAIL_HOME_QA){
     for(const width of [320,384,412]){
       await page.setViewportSize({width:width,height:950});
